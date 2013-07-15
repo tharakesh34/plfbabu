@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_SelectFinanceTypeDialog"
+		title="${c:l('window_SelectFinanceTypeDialog.title')}" border="normal"
+		apply="${selectFinanceTypeDialogCtrl}" width="60%" height="20%"
+		sizable="false" closable="true">
+		<borderlayout id="borderlayoutFinanceMain">
+			<center border="none" autoscroll="true">
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px">
+					<columns>
+						<column width="150px" />
+						<column />
+					</columns>
+					<rows>
+						<row id="finTypeRow" visible="true">
+							<label
+								id="label_FinanceMainQDEDialog_FinType"
+								value="${c:l('label_FinanceMainQDEDialog_FinType.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<hbox>
+									<textbox id="finType" width="20px"
+										visible="false">
+									</textbox>
+									<uppercasebox
+										id="lovDescFinTypeName" width="400px" readonly="true" />
+									<button id="btnSearchFinType"
+										image="/images/icons/LOVSearch.png" height="24px"
+										tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnSearchFinType.tooltiptext')}">
+									</button>
+								</hbox>
+							</hbox>
+						</row>
+						<row id="wIfReferenceRow" visible="true">
+							<label
+								id="label_FinanceMainQDEDialog_WIFFinaceRef"
+								value="${c:l('label_FinanceMainQDEDialog_WIFFinaceRef.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory"/>
+								<hbox>
+									<textbox id="wIfFinaceRef" width="400px"
+										readonly="true" >
+									</textbox>
+									<button id="btnSearchWIFFinaceRef"
+										image="/images/icons/LOVSearch.png" height="24px"
+										tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnSearchWIFFinaceRef.tooltiptext')}">
+									</button>
+								</hbox>
+							</hbox>
+						</row>
+						<row visible="true">
+							<space spacing="200px" />
+							<hbox>
+								<space spacing="2px" />
+								<hbox>
+									<space spacing="10px" />
+									<button id="btnProceed"
+										label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
+										height="24px" style="align:center"
+										tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}">
+									</button>
+								</hbox>
+							</hbox>
+						</row>
+					</rows>
+				</grid>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

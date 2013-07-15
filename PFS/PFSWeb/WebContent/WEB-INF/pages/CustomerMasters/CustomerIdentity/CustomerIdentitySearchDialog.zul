@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CustomerIdentitySearch"
+		title="${c:l('window_CustomerIdentitySearch.title')}" border="none"
+		apply="${customerIdentitySearchCtrl}" closable="true" width="360px"
+		height="340px" sizable="true">
+
+		<borderlayout>
+			<north></north>
+			<center flex="true">
+
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px; padding-left:5px; padding-right:5px;">
+					<columns>
+						<column width="130px" />
+						<column width="50px" />
+						<column width="100%" />
+					</columns>
+					<rows>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_IdCustCIF"
+								value="${c:l('label_CustomerIdentitySearch_IdCustCIF.value')}" />
+							<listbox id="sortOperator_idCustCIF"
+								width="43px" mold="select" rows="1" />
+							<textbox id="idCustCIF" width="150px"
+								maxlength="19" />
+						</row>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_IdType"
+								value="${c:l('label_CustomerIdentitySearch_IdType.value')}" />
+							<listbox id="sortOperator_idType"
+								width="43px" mold="select" rows="1" />
+							<textbox id="idType" width="150px"
+								maxlength="8" />
+						</row>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_IdIssuedBy"
+								value="${c:l('label_CustomerIdentitySearch_IdIssuedBy.value')}" />
+							<listbox id="sortOperator_idIssuedBy"
+								width="43px" mold="select" rows="1" />
+							<textbox id="idIssuedBy" width="150px"
+								maxlength="50" />
+						</row>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_IdRef"
+								value="${c:l('label_CustomerIdentitySearch_IdRef.value')}" />
+							<listbox id="sortOperator_idRef"
+								width="43px" mold="select" rows="1" />
+							<textbox id="idRef" width="150px"
+								maxlength="50" />
+						</row>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_IdIssueCountry"
+								value="${c:l('label_CustomerIdentitySearch_IdIssueCountry.value')}" />
+							<listbox id="sortOperator_idIssueCountry"
+								width="43px" mold="select" rows="1" />
+							<textbox id="idIssueCountry" width="150px"
+								maxlength="2" />
+						</row>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_IdIssuedOn"
+								value="${c:l('label_CustomerIdentitySearch_IdIssuedOn.value')}" />
+							<listbox id="sortOperator_idIssuedOn"
+								width="43px" mold="select" rows="1" />
+							<datebox id="idIssuedOn" width="120px" format="dd/MM/yyyy" />
+						</row>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_IdExpiresOn"
+								value="${c:l('label_CustomerIdentitySearch_IdExpiresOn.value')}" />
+							<listbox id="sortOperator_idExpiresOn"
+								width="43px" mold="select" rows="1" />
+							<datebox id="idExpiresOn" width="120px" format="dd/MM/yyyy" />
+						</row>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_IdLocation"
+								value="${c:l('label_CustomerIdentitySearch_IdLocation.value')}" />
+							<listbox id="sortOperator_idLocation"
+								width="43px" mold="select" rows="1" />
+							<textbox id="idLocation" width="150px"
+								maxlength="100" />
+						</row>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_RecordStatus"
+								value="${c:l('label_CustomerIdentitySearch_RecordStatus.value')}" />
+							<listbox id="sortOperator_recordStatus"
+								width="43px" mold="select" rows="1" />
+							<textbox id="recordStatus" width="150px"
+								maxlength="50" />
+						</row>
+						<row>
+							<label
+								id="label_CustomerIdentitySearch_RecordType"
+								value="${c:l('label_CustomerIdentitySearch_RecordType.value')}" />
+							<listbox id="sortOperator_recordType"
+								width="43px" mold="select" rows="1" />
+							<listbox id="recordType" width="150px"
+								mold="select" />
+						</row>
+					</rows>
+				</grid>
+
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouthCustomerIdentity" align="left"
+					width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20"
+										label="${c:l('btnSearch.label')}"
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+									<button id="btnClose" height="20"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<label
+										id="label_CustomerIdentitySearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+
+		</borderlayout>
+	</window>
+</zk>

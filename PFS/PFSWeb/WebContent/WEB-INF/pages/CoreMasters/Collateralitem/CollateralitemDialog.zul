@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_CollateralitemDialog"
+			title="${c:l('window_CollateralitemDialog.title')}" border="normal"
+			apply="${collateralitemDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+			<div sclass="z-toolbar" style="padding:0">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%">
+
+					<!-- COMMON BUTTONS -->
+					<toolbar align="start"
+						style="float:left; border-style: none;">
+						<button id="btnNew" height="24px"
+							tooltiptext="${c:l('btnNew.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						<button id="btnEdit" height="24px"
+							tooltiptext="${c:l('btnEdit.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						<button id="btnDelete" height="24px"
+							tooltiptext="${c:l('btnDelete.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						<button id="btnSave" height="24px"
+							tooltiptext="${c:l('btnSave.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						<button id="btnCancel" height="24px"
+							tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+						<button id="btnNotes" height="24px"
+							tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					</toolbar>
+					<!-- SEARCH AREA -->
+					<toolbar align="center"
+						style="float:left; border-style: none;">
+						<hbox align="center" style="padding: 2px"></hbox>
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end"
+						style="float:right; border-style: none;">
+						<button id="btnHelp" height="24px"
+							label = "${c:l('label_Help')}"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						<button id="btnClose" height="24px"
+							tooltiptext="${c:l('btnClose.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderlayoutCollateralitem">
+				<center border="none" autoscroll="true">
+					<vlayout>
+						<groupbox id="gb_basicDetails" >
+							<caption label="Basic Details"></caption>
+							<grid sclass="GridLayoutNoBorder"
+								fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="150px" />
+									<column />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYCLP"
+											value="${c:l('label_CollateralitemDialog_HYCLP.value')}" />
+										<hbox>
+											<space spacing="2px"  />
+											<textbox id="hYCLP" maxlength="2" width="50px;" visible="false"/>
+											<textbox
+												id="lovDescCollateralTypeName" width="200px"
+												readonly="true" />
+											<button
+												id="btnSearchCollateralType"
+												image="/images/icons/LOVSearch.png" height="24px" />
+										</hbox>
+									</row>
+									<row visible="true" id="rHYCLR">
+										<label
+											id="label_CollateralitemDialog_HYCLR"
+											value="${c:l('label_CollateralitemDialog_HYCLR.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="hYCLR" maxlength="35" width="315px" /><label id="or1"  value="(or)" style="color:red;font-weight:bold;"/>
+										</hbox>
+									</row>
+									
+									<row visible="true" id="rHYDLP">
+										<label
+											id="label_CollateralitemDialog_HYDLP"
+											value="${c:l('label_CollateralitemDialog_HYDLP.value')}" />
+										<hbox>
+											<space spacing="2px"  />
+											<textbox id="hYDLP" maxlength="3" width="27px" />
+											<textbox id="hYDBNM" maxlength="4" width="36px" />
+											<textbox id="hYDLR" maxlength="13" width="117px" />
+											<space spacing="1px" />
+											<label id="or2"  value="(or)" style="color:red;font-weight:bold;" width="20px"/>
+										</hbox>
+									</row>
+									
+									<row visible="true" id="rHYAB">
+										<label
+											id="label_CollateralitemDialog_HYAB"
+											value="${c:l('label_CollateralitemDialog_HYAB.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="hYAB" maxlength="4" width="36px" />
+											<textbox id="hYAN" maxlength="6" width="54px" />
+											<textbox id="hYAS" maxlength="3" width="27px" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox>
+							<caption Label="Maintainance Details" />
+							<grid sclass="GridLayoutNoBorder"
+								fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="150px" />
+									<column />
+									<column width="150px" />
+									<column />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYCUS"
+											value="${c:l('label_CollateralitemDialog_HYCUS.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<longbox id="custID"
+												width="150px" maxlength="26" visible="false" />
+											<textbox id="hYCUS"
+												width="150px" maxlength="50" style="overflow: hidden;" />
+											<textbox id="hYCLC"
+												maxlength="3" width="27px" />
+											<label id="custShrtName"
+												width="200px" />
+											<button
+												id="btnSearchPRCustid" image="/images/icons/LOVSearch.png"
+												height="24px" />
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYCCM"
+											value="${c:l('label_CollateralitemDialog_HYCCM.value')}" />
+										<hbox>
+											<space spacing="2px" />
+
+											<checkbox id="hYCCM" checked="false" visible="true"/>
+											<label id="lhYCCM" visible="false" style="font-weight:bold;"/>
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYCNA"
+											value="${c:l('label_CollateralitemDialog_HYCNA.value')}" />
+										<hbox>
+											<space spacing="2px"/>
+
+											<textbox id="hYCNA" visible="false" 
+												maxlength="2" width="18px" />
+											<textbox
+												id="lovDescCollateralCountryName" width="200px"
+												readonly="true" />
+											<button
+												id="btnSearchCollateralCountry"
+												image="/images/icons/LOVSearch.png" height="24px" />
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYCLO"
+											value="${c:l('label_CollateralitemDialog_HYCLO.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<textbox id="hYCLO" width="36px" visible="false"/>
+											<textbox
+												id="lovDescCollateralLocationName" width="250px"
+												readonly="true" />
+											<button
+												id="btnSearchCollateralLocation"
+												image="/images/icons/LOVSearch.png" height="24px" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYDPC"
+											value="${c:l('label_CollateralitemDialog_HYDPC.value')}" />
+										<hbox>
+											<space spacing="2px"  />
+
+											<textbox id="hYDPC"  visible="false" width="27px" />
+											<textbox id="lovDescCollateralDeptName" width="250px"
+													style="overflow: hidden;" readonly="true" />
+												<button id="btnSearchCollateralDept" image="/images/icons/LOVSearch.png"
+													height="24px" />
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYCPI"
+											value="${c:l('label_CollateralitemDialog_HYCPI.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="hYCPI" checked="false" visible="true"/>
+											<label id="lhYCPI"  visible="false" style="font-weight:bold;"/>
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYCXD"
+											value="${c:l('label_CollateralitemDialog_HYCXD.value')}" />
+										<hbox>
+											<space spacing="2px" />
+
+											<datebox id="hYCXD" width="144px">
+											</datebox>
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYLRD"
+											value="${c:l('label_CollateralitemDialog_HYLRD.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox id="hYLRD" width="144px" readonly="true"/>
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYFRQ"
+											value="${c:l('label_CollateralitemDialog_HYFRQ.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="hYFRQ" maxlength="15" visible="false" />
+											<combobox id="hYFRQCode" width="90px" readonly="true" tabindex="30" />
+											<combobox id="hYFRQMth" width="130px" readonly="true" tabindex="31" />
+											<combobox id="hYFRQDay" width="40px" readonly="true" tabindex="32" />
+										</hbox>
+
+										<label
+											id="label_CollateralitemDialog_HYNRD"
+											value="${c:l('label_CollateralitemDialog_HYNRD.value')}" />
+										<hbox>
+											<space spacing="2px"/>
+											<datebox id="hYNRD" width="144px" readonly="true"/>
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYNOU"
+											value="${c:l('label_CollateralitemDialog_HYNOU.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+
+											<decimalbox id="hYNOU" width="81px" maxlength="9" />
+											
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYUNP"
+											value="${c:l('label_CollateralitemDialog_HYUNP.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+
+											<decimalbox id="hYUNP" width="135px" maxlength="15">
+											</decimalbox>
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYCCY"
+											value="${c:l('label_CollateralitemDialog_HYCCY.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+
+											<hbox>
+												<textbox id="hYCCY"
+													width="27px" visible="false">
+												</textbox>
+												<textbox
+													id="lovDescHYCCYName" width="150px" readonly="true" />
+												<button
+												id="btnSearchHYCCY" image="/images/icons/LOVSearch.png"
+												height="24px" />
+											</hbox>
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYCLV"
+											value="${c:l('label_CollateralitemDialog_HYCLV.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+
+											<decimalbox id="hYCLV"
+												width="135px" maxlength="15" readonly="true">
+											</decimalbox>
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYSVM"
+											value="${c:l('label_CollateralitemDialog_HYSVM.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+
+											<decimalbox id="hYSVM"
+												width="72px" maxlength="5">
+											</decimalbox>
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYMCV"
+											value="${c:l('label_CollateralitemDialog_HYMCV.value')}" />
+										<hbox>
+											<space spacing="2px"/>
+
+											<decimalbox id="hYMCV"
+												width="135px" maxlength="15">
+											</decimalbox>
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYBKV"
+											value="${c:l('label_CollateralitemDialog_HYBKV.value')}" />
+										<hbox>
+											<space spacing="2px"/>
+											<decimalbox id="hYBKV" width="135px" maxlength="15" readonly="true"/>									
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYTOTA"
+											value="${c:l('label_CollateralitemDialog_HYTOTA.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+
+											<decimalbox id="hYTOTA"
+												width="135px" maxlength="15">
+											</decimalbox>
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYISV"
+											value="${c:l('label_CollateralitemDialog_HYISV.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+
+											<decimalbox id="hYISV"
+												width="135px" maxlength="15">
+											</decimalbox>
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYIXD"
+											value="${c:l('label_CollateralitemDialog_HYIXD.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+
+											<datebox id="hYIXD"
+												width="144px">
+											</datebox>
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYNR1"
+											value="${c:l('label_CollateralitemDialog_HYNR1.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory"/>
+
+											<textbox id="hYNR1" maxlength="35" width="315px" />
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYNR2"
+											value="${c:l('label_CollateralitemDialog_HYNR2.value')}" />
+										<hbox>
+											<space spacing="2px" />
+
+											<textbox id="hYNR2"
+												maxlength="35" width="315px" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralitemDialog_HYNR3"
+											value="${c:l('label_CollateralitemDialog_HYNR3.value')}" />
+										<hbox>
+											<space spacing="2px" />
+
+											<textbox id="hYNR3"
+												maxlength="35" width="315px" />
+										</hbox>
+										<label
+											id="label_CollateralitemDialog_HYNR4"
+											value="${c:l('label_CollateralitemDialog_HYNR4.value')}" />
+										<hbox>
+											<space spacing="2px" />
+
+											<textbox id="hYNR4"
+												maxlength="35" width="315px" />
+										</hbox>
+									</row>
+									<row visible="false" spans="2" align="right" id="maintainDate">
+										<label
+											id="label_CollateralitemDialog_HYDLM"
+											value="${c:l('label_CollateralitemDialog_HYDLM.value')}" />
+										<hbox>
+											<datebox id="hYDLM" width="144px" readonly="true"/>
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</vlayout>
+				</center>
+				<south height="105px" border="none">
+					<groupbox id="gb_statusDetails" mold="3d"
+						width="100%">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px; padding:0px;">
+							<columns>
+								<column width="150px" />
+								<column />
+							</columns>
+							<rows>
+								<row id="statusRow">
+									<label
+										id="label_CollateralitemDialog_RecordStatus"
+										value="${c:l('label_CollateralitemDialog_RecordStatus.value')}" />
+									<label id="recordStatus" />
+								</row>
+								<row spans="2">
+									<label value="   " />
+								</row>
+								<row spans="2">
+									<label value="   " />
+								</row>
+								<row spans="2">
+									<groupbox id="groupboxWf"
+										width="97%">
+										<caption
+											label="${c:l('Action')}" style="font-weight:bold" />
+										<hbox>
+											<radiogroup id="userAction"
+												name="action" />
+										</hbox>
+									</groupbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

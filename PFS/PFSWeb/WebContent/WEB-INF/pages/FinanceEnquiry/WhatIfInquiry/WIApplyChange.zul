@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_WIApplyChangeDialog" border="normal"
+		apply="${wIApplyChangeDialogCtrl}" width="800px" height="240px"
+		sizable="false">
+
+		<borderlayout id="borderlayoutRateChange">
+			<center border="none" autoscroll="true">
+
+				<groupbox id="gb_RateDetails" mold="3d" height="170px">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="260px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_WIApplyChangeDialog_FromDate" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" id="space_FromDate" />
+									<combobox id="wIRateChangeFromDate"
+										readonly="true" width="120px" visible="false">
+									</combobox>
+									<datebox id="wIFromDate"
+										visible="false" width="144px">
+									</datebox>
+								</hbox>
+								<hbox />
+							</row>
+							<row>
+								<label
+									id="label_WIApplyChangeDialog_ToDate" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" id="space_ToDate" />
+									<combobox id="wIRateChangeToDate"
+										readonly="true" width="120px" visible="false">
+									</combobox>
+								</hbox>
+								<hbox />
+							</row>
+							<row id="rateAmountRow" visible="false">
+								<label
+									id="label_WIApplyChangeDialog_WIRate" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" id="space_RateAmount" />
+									<decimalbox id="wIRateChange"
+										visible="false" width="120px" maxlength="15">
+									</decimalbox>
+									<decimalbox id="wIAmount"
+										visible="false" width="120px" maxlength="15">
+									</decimalbox>
+								</hbox>
+								<label />
+								<hbox />
+							</row>
+							<row id="baseRateRow" visible="false"> 
+								<label
+									id="label_WIApplyChangeDialog_BaseRate"
+									value="${c:l('label_WIApplyChangeDialog_BaseRate.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" id="space_BaseRate" />
+
+									<hbox>
+										<textbox id="wiBaseRate"
+											width="120px" readonly="true">
+										</textbox>
+										<button id="btnSearchWIBaseRate"
+											image="/images/icons/LOVSearch.png" height="24px">
+										</button>
+									</hbox>
+								</hbox>
+								<hbox />
+							</row>
+							<row id="splRateRow" visible="false">
+								<label
+									id="label_WIApplyChangeDialog_SplRate"
+									value="${c:l('label_WIApplyChangeDialog_SplRate.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" id="space_SplRate" />
+
+									<hbox>
+										<textbox id="wiSplRate"
+											width="120px" readonly="true">
+										</textbox>
+										<button id="btnSearchWISplRate"
+											image="/images/icons/LOVSearch.png" height="24px">
+										</button>
+									</hbox>
+								</hbox>
+								<hbox />
+							</row>
+							<row>
+								<label
+									id="label_WIApplyChangeDialog_ReCalType"
+									value="${c:l('label_WIApplyChangeDialog_RecalType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" id="space_ReCalType" />
+									<combobox id="wIReCalType"
+										width="200px" readonly="true">
+									</combobox>
+								</hbox>
+								<hbox />
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouth" align="left" width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnApplyChange"
+										height="24px" label="${c:l('btnApply.label')}"
+										tooltiptext="${c:l('btnApplyRate.tooltiptext')}" />
+									<button id="btnClose" height="24px"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_HomeLoanDetailDialog"
+		title="${c:l('window_HomeLoanDetailDialog.title')}" border="none"
+		apply="${homeLoanDetailDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<div id="toolbar" sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					style="float:left; border-style: none;">
+					<button id="btnNew" height="24px"
+						tooltiptext="${c:l('btnNew.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnEdit" height="24px"
+						tooltiptext="${c:l('btnEdit.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnDelete" height="24px"
+						tooltiptext="${c:l('btnDelete.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnSave" height="24px"
+						tooltiptext="${c:l('btnSave.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnCancel" height="24px"
+						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+					<button id="btnNotes" height="24px"
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+				</toolbar>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					style="float:left; border-style: none;">
+					<hbox align="center" style="padding: 2px"></hbox>
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					style="float:right; border-style: none;">
+					<button id="btnHelp" height="24px"
+						label = "${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnClose" height="24px"
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderlayoutHomeLoanDetail">
+			<center border="none">
+
+				<groupbox id="gb_basicDetails" >
+				<caption id="caption_homeLoan" label="${c:l('HomeLoanDetail')}" visible="false"/>
+					<grid id="grid_basicDetails"
+						sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="150px" />
+							<column />
+							<column width="150px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="false">
+								<label
+									id="label_HomeLoanDetailDialog_LoanRefNumber"
+									value="${c:l('label_HomeLoanDetailDialog_LoanRefNumber.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="loanRefNumber"
+										readonly="true" width="171px" maxlength="26" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_LoanRefType"
+									value="${c:l('label_HomeLoanDetailDialog_LoanRefType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<checkbox id="loanRefType"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeDetails"
+									value="${c:l('label_HomeLoanDetailDialog_HomeDetails.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="homeDetails"
+										width="171px" visible="false" />
+									<textbox id="lovDescHomeDetailsName"
+										width="250px" readonly="true" />
+									<button id="btnSearchHomeDetails"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomeBuilderName"
+									value="${c:l('label_HomeLoanDetailDialog_HomeBuilderName.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="homeBuilderName"
+										maxlength="20" width="300px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeCostPerFlat"
+									value="${c:l('label_HomeLoanDetailDialog_HomeCostPerFlat.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox id="homeCostPerFlat"
+										width="171px" maxlength="25" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomeCostOfLand"
+									value="${c:l('label_HomeLoanDetailDialog_HomeCostOfLand.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox id="homeCostOfLand"
+										width="171px" maxlength="25" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeCostOfConstruction"
+									value="${c:l('label_HomeLoanDetailDialog_HomeCostOfConstruction.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox
+										id="homeCostOfConstruction" width="171px" maxlength="25"
+										/>
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomeConstructionStage"
+									value="${c:l('label_HomeLoanDetailDialog_HomeConstructionStage.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="homeConstructionStage"
+										maxlength="50" width="171px" readonly="true" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeDateOfPocession"
+									value="${c:l('label_HomeLoanDetailDialog_HomeDateOfPocession.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<datebox id="homeDateOfPocession" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomeAreaOfLand"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAreaOfLand.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox id="homeAreaOfLand"
+										width="78px" maxlength="11" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeAreaOfFlat"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAreaOfFlat.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox id="homeAreaOfFlat"
+										width="72px" maxlength="11" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomePropertyType"
+									value="${c:l('label_HomeLoanDetailDialog_HomePropertyType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="homePropertyType"
+										width="171px" visible="false" />
+									<textbox
+										id="lovDescHomePropertyTypeName" width="250px"
+										readonly="true" />
+									<button
+										id="btnSearchHomePropertyType"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeOwnerShipType"
+									value="${c:l('label_HomeLoanDetailDialog_HomeOwnerShipType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="homeOwnerShipType"
+										width="171px" visible="false" />
+									<textbox
+										id="lovDescHomeOwnerShipTypeName" width="250px"
+										readonly="true" />
+									<button
+										id="btnSearchHomeOwnerShipType"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrFlatNbr"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrFlatNbr.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="homeAddrFlatNbr"
+										maxlength="4" width="50px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrStreet"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrStreet.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="homeAddrStreet"
+										maxlength="50" width="300px" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrLane1"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrLane1.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="homeAddrLane1"
+										maxlength="50" width="300px"/>
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrLane2"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrLane2.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="homeAddrLane2"
+										maxlength="50" width="300px" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrPOBox"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrPOBox.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="homeAddrPOBox"
+										maxlength="8" width="72px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrCountry"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrCountry.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="homeAddrCountry"
+										width="18px" visible="false" />
+									<textbox
+										id="lovDescHomeAddrCountryName" width="250px" readonly="true" />
+									<button
+										id="btnSearchHomeAddrCountry"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrProvince"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrProvince.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="homeAddrProvince"
+										width="72px" visible="false" />
+									<textbox
+										id="lovDescHomeAddrProvinceName" width="250px"
+										readonly="true" />
+									<button
+										id="btnSearchHomeAddrProvince"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrCity"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrCity.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="homeAddrCity"
+										width="72px" visible="false" />
+									<textbox
+										id="lovDescHomeAddrCityName" width="250px" readonly="true" />
+									<button id="btnSearchHomeAddrCity"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrZIP"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrZIP.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="homeAddrZIP"
+										maxlength="10" width="90px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_HomeLoanDetailDialog_HomeAddrPhone"
+									value="${c:l('label_HomeLoanDetailDialog_HomeAddrPhone.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="homeAddrPhone"
+										maxlength="50" width="171px" />
+								</hbox>
+							</row>
+							<row id="statusRow">
+								<label
+									id="label_HomeLoanDetailDialog_RecordStatus"
+									value="${c:l('label_HomeLoanDetailDialog_RecordStatus.value')}" />
+								<label id="recordStatus" />
+							</row>
+							<row spans="2">
+								<label value="   " />
+							</row>
+							<row spans="2">
+								<label value="   " />
+							</row>
+							<row spans="2">
+								<groupbox id="groupboxWf" width="97%">
+									<caption label="${c:l('Action')}" />
+									<hbox>
+										<radiogroup id="userAction"
+											name="action" />
+									</hbox>
+								</groupbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+
+			</center>
+		</borderlayout>
+	</window>
+</zk>

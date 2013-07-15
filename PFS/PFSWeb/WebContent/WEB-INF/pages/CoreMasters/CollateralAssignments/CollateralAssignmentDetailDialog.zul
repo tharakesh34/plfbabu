@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_CollateralAssignmentDetailDialog"
+			title="${c:l('window_CollateralAssignmentDetailDialog.title')}"
+			border="normal" width="70%" height="60%" sizable="false"
+			apply="${collateralAssignmentDetailDialogCtrl}">
+
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,50%,20%">
+
+					<toolbar align="start"
+						style="border-style: none;">
+					</toolbar>
+
+					<toolbar align="center"
+						style="border-style: none;">
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" style="border-style: none;">
+						<button id="btnHelp" height="24px"
+							label = "${c:l('label_Help')}"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							autodisable="btnHelp,btnClose" />
+						<button id="btnClose" height="24px"
+							image="/images/icons/btn_exitdoor2_16x16.gif"
+							tooltiptext="${c:l('btnClose.tooltiptext')}"
+							autodisable="btnHelp,btnClose" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderlayout_Enquiry">
+				<north border="none" height="0px" />
+
+				<center border="none" autoscroll="true">
+					<vlayout style="padding:4px;">
+						<groupbox id="gb_basicDetails">
+							<caption
+								label="${c:l('label_CollateralAssignmentDetailDialog_BasicDetails.value')}" />
+							<grid id="grid_enquiryDetails"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px">
+								<columns>
+									<column width="180px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label
+											id="label_CollateralAssignmentDetailDialog_CustCIF"
+											value="${c:l('label_CollateralAssignmentDetailDialog_CustCIF.value')}" />
+										<hbox>
+											<label id="custCIF"
+												style="font-weight:bold;" />
+											<space width="10px" />
+											<label id="custShortName"
+												style="font-weight:bold;" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_CollateralAssignmentDetailDialog_Reference"
+											value="${c:l('label_CollateralAssignmentDetailDialog_Reference.value')}" />
+										<label id="reference"
+											style="font-weight:bold;" />
+									</row>
+									<row>
+										<label
+											id="label_CollateralAssignmentDetailDialog_Value"
+											value="${c:l('label_CollateralAssignmentDetailDialog_Value.value')}" />
+										<hbox>
+											<decimalbox id="value"
+												disabled="true" width="150px"
+												style="font-weight:bold;background-color:white;border:0px;" />
+											<space width="20px" />
+											<label
+												id="label_CollateralAssignmentDetailDialog_Currency"
+												value="${c:l('label_CollateralAssignmentDetailDialog_Currency.value')}" />
+											<label value=" : "
+												style="font-weight:bold;" />
+											<label id="currency"
+												style="font-weight:bold;" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_CollateralAssignmentDetailDialog_ShortFall"
+											value="${c:l('label_CollateralAssignmentDetailDialog_ShortFall.value')}" />
+										<decimalbox id="shortFall"
+											disabled="true" width="150px"
+											style="font-weight:bold;background-color:white;border:0px;" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox id="gb_MaintainDetails">
+							<caption
+								label="${c:l('label_CollateralAssignmentDetailDialog_MaintainanceDetails.value')}" />
+							<grid id="grid_MaintainDetails"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px">
+								<columns>
+									<column width="180px" />
+									<column />
+								</columns>
+								<rows>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_CollateralRef"
+											value="${c:l('label_CollateralAssignmentDetailDialog_CollateralRef.value')}" />
+										<label id="collateralRef"
+											style="font-weight:bold;" />
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_DealType"
+											value="${c:l('label_CollateralAssignmentDetailDialog_DealType.value')}" />
+										<label id="dealType"
+											style="font-weight:bold;" />
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_Reference1"
+											value="${c:l('label_CollateralAssignmentDetailDialog_Reference1.value')}" />
+										<label id="reference1"
+											style="font-weight:bold;" />
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_Branch"
+											value="${c:l('label_CollateralAssignmentDetailDialog_Branch.value')}" />
+										<label id="branch"
+											style="font-weight:bold;" />
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_AccNum"
+											value="${c:l('label_CollateralAssignmentDetailDialog_AccNum.value')}" />
+										<label id="accNum"
+											style="font-weight:bold;" />
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_CustCIF1"
+											value="${c:l('label_CollateralAssignmentDetailDialog_CustCIF1.value')}" />
+										<hbox>
+											<label id="custCIF1"
+												style="font-weight:bold;" />
+											<space width="20px" />
+											<label id="custShortName1"
+												style="font-weight:bold;" />
+										</hbox>
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_CollateralType"
+											value="${c:l('label_CollateralAssignmentDetailDialog_CollateralType.value')}" />
+										<hbox>
+											<label id="collateralType"
+												style="font-weight:bold;" />
+											<space width="20px" />
+											<label
+												id="collateralTypeDesc" style="font-weight:bold;" />
+										</hbox>
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_BankValue"
+											value="${c:l('label_CollateralAssignmentDetailDialog_BankValue.value')}" />
+										<hbox>
+
+											<label id="currency1"
+												style="font-weight:bold;" />
+											<space width="10px" />
+											<decimalbox
+												id="bankValuation" disabled="true" width="110px"
+												style="font-weight:bold;background-color:white;border:0px;" />
+										</hbox>
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_CollateralAvail"
+											value="${c:l('label_CollateralAssignmentDetailDialog_CollateralAvail.value')}" />
+										<decimalbox
+												id="collateralAvail" disabled="true" width="150px"
+												style="font-weight:bold;background-color:white;border:0px;" />
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_AssignRule"
+											value="${c:l('label_CollateralAssignmentDetailDialog_AssignRule.value')}" />
+										<label id="assignRule"
+											style="font-weight:bold;" />
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_Percent"
+											value="${c:l('label_CollateralAssignmentDetailDialog_Percent.value')}" />
+										<label id="percent"
+											style="font-weight:bold;" />
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_MaxAmount"
+											value="${c:l('label_CollateralAssignmentDetailDialog_MaxAmount.value')}" />
+										<decimalbox id="maxAmount"
+											disabled="true" width="150px"
+											style="font-weight:bold;background-color:white;border:0px;" />
+									</row>
+									<row height="20px">
+										<label
+											id="label_CollateralAssignmentDetailDialog_Equivalent"
+											value="${c:l('label_CollateralAssignmentDetailDialog_Equivalent.value')}" />
+										<decimalbox id="equivalent"
+											disabled="true" width="150px"
+											style="font-weight:bold;background-color:white;border:0px;" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</vlayout>
+				</center>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CustomerEmploymentDetailDialog" border="normal"
+		apply="${customerEmploymentDetailDialogCtrl}" width="100%"
+		height="100%" sizable="false">
+
+		<borderlayout id="borderlayoutCustomerEmploymentDetail">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" height="24px"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnEdit" height="24px"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" height="24px"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnSave" height="24px"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel" height="24px"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes" height="24px"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_CustomerEmploymentDetailDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" height="24px"
+								label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnClose" height="24px"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="false">
+
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="150px" />
+							<column />
+							<column width="150px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="true">
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpCIF"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpCIF.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="custID" width="150px"
+										maxlength="26" visible="false" />
+									<textbox id="custCIF" width="150px"
+										maxlength="50" style="overflow: hidden;" />
+									<button id="btnSearchPRCustid"
+										image="/images/icons/LOVSearch.png" height="24px" />
+									<label id="custShrtName"
+										width="150px" />
+								</hbox>
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpName"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpName.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpName"
+										maxlength="50" width="250px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpFrom"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpFrom.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<datebox id="custEmpFrom"
+										width="100px" />
+								</hbox>
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpDesg"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpDesg.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpDesg"
+										width="72px" visible="false" />
+									<textbox id="lovDescCustEmpDesgName"
+										width="160px" readonly="true" />
+									<button id="btnSearchCustEmpDesg"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpDept"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpDept.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpDept"
+										width="72px" visible="false" />
+									<textbox id="lovDescCustEmpDeptName"
+										width="160px" readonly="true" />
+									<button id="btnSearchCustEmpDept"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpID"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpID.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpID"
+										maxlength="50" width="250px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpType"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpType"
+										width="72px" visible="false" />
+									<textbox id="lovDescCustEmpTypeName"
+										width="160px" readonly="true" />
+									<button id="btnSearchCustEmpType"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpHNbr"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpHNbr.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpHNbr"
+										maxlength="50" width="250px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEMpFlatNbr"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEMpFlatNbr.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEMpFlatNbr"
+										maxlength="50" width="250px" />
+								</hbox>
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpAddrStreet"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrStreet.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpAddrStreet"
+										maxlength="50" width="250px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEMpAddrLine1"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEMpAddrLine1.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEMpAddrLine1"
+										maxlength="50" width="250px" />
+								</hbox>
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEMpAddrLine2"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEMpAddrLine2.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEMpAddrLine2"
+										maxlength="50" width="250px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpPOBox"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpPOBox.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpPOBox"
+										maxlength="8" width="72px" />
+								</hbox>
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpAddrCountry"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrCountry.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpAddrCountry"
+										width="72px" visible="false" />
+									<textbox
+										id="lovDescCustEmpAddrCountryName" width="160px"
+										readonly="true" />
+									<button
+										id="btnSearchCustEmpAddrCountry"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpAddrProvince"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrProvince.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpAddrProvince"
+										width="72px" visible="false" />
+									<textbox
+										id="lovDescCustEmpAddrProvinceName" width="160px"
+										readonly="true" />
+									<button
+										id="btnSearchCustEmpAddrProvince"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpAddrCity"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrCity.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpAddrCity"
+										width="72px" visible="false" />
+									<textbox
+										id="lovDescCustEmpAddrCityName" width="160px" readonly="true" />
+									<button
+										id="btnSearchCustEmpAddrCity"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpAddrZIP"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrZIP.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpAddrZIP"
+										maxlength="50" width="250px" />
+								</hbox>
+								<label
+									id="label_CustomerEmploymentDetailDialog_CustEmpAddrPhone"
+									value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrPhone.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custEmpAddrPhone"
+										maxlength="50" width="250px" />
+								</hbox>
+							</row>
+
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_CustomerEmploymentDetailDialog_RecordStatus"
+							value="${c:l('label_CustomerEmploymentDetailDialog_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+
+		</borderlayout>
+	</window>
+</zk>

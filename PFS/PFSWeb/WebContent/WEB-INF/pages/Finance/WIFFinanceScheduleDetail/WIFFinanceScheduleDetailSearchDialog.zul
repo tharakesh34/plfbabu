@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_WIFFinanceScheduleDetailSearch"
+		title="${c:l('window_WIFFinanceScheduleDetailSearch.title')}" border="none"
+		apply="${wIFFinanceScheduleDetailSearchCtrl}" closable="true" width="400px"
+		height="284px" sizable="true">
+
+		<borderlayout>
+			<north></north>
+			<center flex="true">
+				<panel>
+					<panelchildren style="padding: 5px">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column width="100%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_FinReference" value="${c:l('label_WIFFinanceScheduleDetailSearch_FinReference.value')}" />
+									<listbox id="sortOperator_finReference" width="43px" mold="select" rows="1" />
+									 <textbox id="finReference" width="180px" maxlength="20" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_SchDate" value="${c:l('label_WIFFinanceScheduleDetailSearch_SchDate.value')}" />
+									<listbox id="sortOperator_schDate" width="43px" mold="select" rows="1" />
+									 <textbox id="schDate" width="144px" maxlength="16" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_SchSeq" value="${c:l('label_WIFFinanceScheduleDetailSearch_SchSeq.value')}" />
+									<listbox id="sortOperator_schSeq" width="43px" mold="select" rows="1" />
+									 <textbox id="schSeq" width="90px" maxlength="10" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_PftOnSchDate" value="${c:l('label_WIFFinanceScheduleDetailSearch_PftOnSchDate.value')}" />
+									<listbox id="sortOperator_pftOnSchDate" width="43px" mold="select" rows="1" />
+										<checkbox id="pftOnSchDate" checked="false"/>
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_CpzOnSchDate" value="${c:l('label_WIFFinanceScheduleDetailSearch_CpzOnSchDate.value')}" />
+									<listbox id="sortOperator_cpzOnSchDate" width="43px" mold="select" rows="1" />
+										<checkbox id="cpzOnSchDate" checked="false"/>
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_RepayOnSchDate" value="${c:l('label_WIFFinanceScheduleDetailSearch_RepayOnSchDate.value')}" />
+									<listbox id="sortOperator_repayOnSchDate" width="43px" mold="select" rows="1" />
+										<checkbox id="repayOnSchDate" checked="false"/>
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_RvwOnSchDate" value="${c:l('label_WIFFinanceScheduleDetailSearch_RvwOnSchDate.value')}" />
+									<listbox id="sortOperator_rvwOnSchDate" width="43px" mold="select" rows="1" />
+										<checkbox id="rvwOnSchDate" checked="false"/>
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_DisbOnSchDate" value="${c:l('label_WIFFinanceScheduleDetailSearch_DisbOnSchDate.value')}" />
+									<listbox id="sortOperator_disbOnSchDate" width="43px" mold="select" rows="1" />
+										<checkbox id="disbOnSchDate" checked="false"/>
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_DownpaymentOnSchDate" value="${c:l('label_WIFFinanceScheduleDetailSearch_DownpaymentOnSchDate.value')}" />
+									<listbox id="sortOperator_downpaymentOnSchDate" width="43px" mold="select" rows="1" />
+										<checkbox id="downpaymentOnSchDate" checked="false"/>
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_BalanceForPftCal" value="${c:l('label_WIFFinanceScheduleDetailSearch_BalanceForPftCal.value')}" />
+									<listbox id="sortOperator_balanceForPftCal" width="43px" mold="select" rows="1" />
+									 <textbox id="balanceForPftCal" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_BaseRate" value="${c:l('label_WIFFinanceScheduleDetailSearch_BaseRate.value')}" />
+									<listbox id="sortOperator_baseRate" width="43px" mold="select" rows="1" />
+									 <textbox id="baseRate" width="72px" maxlength="8" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_SplRate" value="${c:l('label_WIFFinanceScheduleDetailSearch_SplRate.value')}" />
+									<listbox id="sortOperator_splRate" width="43px" mold="select" rows="1" />
+									 <textbox id="splRate" width="72px" maxlength="8" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_ActRate" value="${c:l('label_WIFFinanceScheduleDetailSearch_ActRate.value')}" />
+									<listbox id="sortOperator_actRate" width="43px" mold="select" rows="1" />
+									 <textbox id="actRate" width="198px" maxlength="13" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_AdjRate" value="${c:l('label_WIFFinanceScheduleDetailSearch_AdjRate.value')}" />
+									<listbox id="sortOperator_adjRate" width="43px" mold="select" rows="1" />
+									 <textbox id="adjRate" width="198px" maxlength="13" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_NoOfDays" value="${c:l('label_WIFFinanceScheduleDetailSearch_NoOfDays.value')}" />
+									<listbox id="sortOperator_noOfDays" width="43px" mold="select" rows="1" />
+									 <textbox id="noOfDays" width="90px" maxlength="10" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_DayFactor" value="${c:l('label_WIFFinanceScheduleDetailSearch_DayFactor.value')}" />
+									<listbox id="sortOperator_dayFactor" width="43px" mold="select" rows="1" />
+									 <textbox id="dayFactor" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_ProfitCalc" value="${c:l('label_WIFFinanceScheduleDetailSearch_ProfitCalc.value')}" />
+									<listbox id="sortOperator_profitCalc" width="43px" mold="select" rows="1" />
+									 <textbox id="profitCalc" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_ProfitSchd" value="${c:l('label_WIFFinanceScheduleDetailSearch_ProfitSchd.value')}" />
+									<listbox id="sortOperator_profitSchd" width="43px" mold="select" rows="1" />
+									 <textbox id="profitSchd" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_PrincipalSchd" value="${c:l('label_WIFFinanceScheduleDetailSearch_PrincipalSchd.value')}" />
+									<listbox id="sortOperator_principalSchd" width="43px" mold="select" rows="1" />
+									 <textbox id="principalSchd" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_RepayAmount" value="${c:l('label_WIFFinanceScheduleDetailSearch_RepayAmount.value')}" />
+									<listbox id="sortOperator_repayAmount" width="43px" mold="select" rows="1" />
+									 <textbox id="repayAmount" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_ProfitBalance" value="${c:l('label_WIFFinanceScheduleDetailSearch_ProfitBalance.value')}" />
+									<listbox id="sortOperator_profitBalance" width="43px" mold="select" rows="1" />
+									 <textbox id="profitBalance" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_DisbAmount" value="${c:l('label_WIFFinanceScheduleDetailSearch_DisbAmount.value')}" />
+									<listbox id="sortOperator_disbAmount" width="43px" mold="select" rows="1" />
+									 <textbox id="disbAmount" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_DownPaymentAmount" value="${c:l('label_WIFFinanceScheduleDetailSearch_DownPaymentAmount.value')}" />
+									<listbox id="sortOperator_downPaymentAmount" width="43px" mold="select" rows="1" />
+									 <textbox id="downPaymentAmount" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_CpzAmount" value="${c:l('label_WIFFinanceScheduleDetailSearch_CpzAmount.value')}" />
+									<listbox id="sortOperator_cpzAmount" width="43px" mold="select" rows="1" />
+									 <textbox id="cpzAmount" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_DiffProfitSchd" value="${c:l('label_WIFFinanceScheduleDetailSearch_DiffProfitSchd.value')}" />
+									<listbox id="sortOperator_diffProfitSchd" width="43px" mold="select" rows="1" />
+									 <textbox id="diffProfitSchd" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_DIffPrincipalSchd" value="${c:l('label_WIFFinanceScheduleDetailSearch_DIffPrincipalSchd.value')}" />
+									<listbox id="sortOperator_dIffPrincipalSchd" width="43px" mold="select" rows="1" />
+									 <textbox id="dIffPrincipalSchd" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_ClosingBalance" value="${c:l('label_WIFFinanceScheduleDetailSearch_ClosingBalance.value')}" />
+									<listbox id="sortOperator_closingBalance" width="43px" mold="select" rows="1" />
+									 <textbox id="closingBalance" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_ProfitFraction" value="${c:l('label_WIFFinanceScheduleDetailSearch_ProfitFraction.value')}" />
+									<listbox id="sortOperator_profitFraction" width="43px" mold="select" rows="1" />
+									 <textbox id="profitFraction" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_PrvRepayAmount" value="${c:l('label_WIFFinanceScheduleDetailSearch_PrvRepayAmount.value')}" />
+									<listbox id="sortOperator_prvRepayAmount" width="43px" mold="select" rows="1" />
+									 <textbox id="prvRepayAmount" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_DeffProfitBal" value="${c:l('label_WIFFinanceScheduleDetailSearch_DeffProfitBal.value')}" />
+									<listbox id="sortOperator_deffProfitBal" width="43px" mold="select" rows="1" />
+									 <textbox id="deffProfitBal" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_DiffPrincipalBal" value="${c:l('label_WIFFinanceScheduleDetailSearch_DiffPrincipalBal.value')}" />
+									<listbox id="sortOperator_diffPrincipalBal" width="43px" mold="select" rows="1" />
+									 <textbox id="diffPrincipalBal" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_SchdPriPaid" value="${c:l('label_WIFFinanceScheduleDetailSearch_SchdPriPaid.value')}" />
+									<listbox id="sortOperator_schdPriPaid" width="43px" mold="select" rows="1" />
+									 <textbox id="schdPriPaid" width="162px" maxlength="18" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_isSchdPftPaid" value="${c:l('label_WIFFinanceScheduleDetailSearch_isSchdPftPaid.value')}" />
+									<listbox id="sortOperator_isSchdPftPaid" width="43px" mold="select" rows="1" />
+										<checkbox id="isSchdPftPaid" checked="false"/>
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_RecordStatus" value="${c:l('label_WIFFinanceScheduleDetailSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_WIFFinanceScheduleDetailSearch_RecordType" value="${c:l('label_WIFFinanceScheduleDetailSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+					</panelchildren>
+				</panel>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouthWIFFinanceScheduleDetail" align="left" width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20"
+										label="${c:l('btnSearch.label')}"
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+									<button id="btnClose" height="20"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<label
+										id="label_WIFFinanceScheduleDetailSearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

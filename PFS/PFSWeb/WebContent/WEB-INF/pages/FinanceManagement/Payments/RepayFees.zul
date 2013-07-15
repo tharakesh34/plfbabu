@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_RepayFees" apply="${paymentDialogCtrl}"
+			border="none" width="65%" height="60%">
+			<div sclass="z-toolbar" style="padding:0" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%">
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end">
+						<button id="btnCloseRepayfees" height="24px" image="/images/icons/btn_close_16x16.gif"
+							tooltiptext="${c:l('btnClose.tooltiptext')}" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderLayout_RuleList">
+				<center border="none">
+
+					<listbox id="listBoxFees" vflex="true"
+						 width="100%"
+						height="100%" multiple="false">
+						<listhead sizable="true">					
+							<listheader id="listheader_FeeCode"
+								label="${c:l('listheader_FeeCode')}" sort="auto"
+								width="10%" />
+							<listheader id="listheader_FeeDesc"
+								label="${c:l('listheader_FeeDesc')}" sort="auto"
+								width="35%" />
+							<listheader id="listheader_FeeCalAmt"
+								label="${c:l('listheader_FeeCalAmt')}" sort="auto"
+								width="20%" />
+							<listheader id="listheader_FeeWaierPer"
+								label="${c:l('listheader_FeeWaierPer')}" sort="auto"
+								width="15%" />
+							<listheader id="listheader_FeeTotAmt"
+								label="${c:l('listheader_FeeTotAmt')}" sort="auto"
+								width="20%" />
+						</listhead>
+					</listbox>
+
+				</center>
+				<south border="none">
+					<paging id="pagingRuleList" height="50px" />
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>

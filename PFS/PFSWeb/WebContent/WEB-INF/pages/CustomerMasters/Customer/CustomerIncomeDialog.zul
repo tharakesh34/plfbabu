@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_CustomerIncomeDialog"
+		title="${c:l('window_CustomerIncomeDialog.title')}" border="normal"
+		apply="${customerIncomeDlgCtrl}" width="800px" height="228px"
+		sizable="false">
+		<div sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					style="float:left; border-style: none;">
+
+					<button id="btnNew" height="24px"
+						tooltiptext="${c:l('btnNew.tooltiptext')}" />
+					<!-- label="${c:l('btnNew.label')}"	 -->
+					<button id="btnEdit" height="24px"
+						tooltiptext="${c:l('btnEdit.tooltiptext')}" />
+					<button id="btnDelete" height="24px"
+						tooltiptext="${c:l('btnDelete.tooltiptext')}" />
+					<button id="btnSave" height="24px"
+						tooltiptext="${c:l('btnSave.tooltiptext')}" />
+					<button id="btnCancel" height="24px"
+						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+					<button id="btnNotes" height="24px"
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+				</toolbar>
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					style="float:left; border-style: none;">
+					<hbox align="center" style="padding: 2px"></hbox>
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					style="float:right; border-style: none;">
+					<button id="btnHelp" height="24px"
+						label = "${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					<button id="btnClose" height="24px"
+						tooltiptext="${c:l('btnClose.tooltiptext')}" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderlayoutCustomerIncome">
+			<center border="none" autoscroll="true">
+				<columnlayout>
+					<columnchildren width="100%" style="padding: 5px">
+
+						<panel border="none">
+							<panelchildren>
+								<groupbox id="gb_basicDetails"
+									mold="3d">
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="150px" />
+											<column />
+										</columns>
+										<rows>
+											<row visible="false">
+												<label id="label_CustomerIncomeDialog_CustID" value="${c:l('label_CustomerIncomeDialog_CustID.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<longbox id="custID" width="100px" readonly="true"></longbox>
+													<textbox id="custShrtName" width="150px" readonly="true">
+													</textbox>
+													
+												</hbox>
+											</row>
+											
+											<row visible="true">
+												<label
+													id="label_CustomerIncomeDialog_CustIncomeType"
+													value="${c:l('label_CustomerIncomeDialog_CustIncomeType.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<textbox
+														id="custIncomeType" width="100px" visible="false">
+													</textbox>
+													<textbox
+														id="lovDescCustIncomeTypeName" width="250px"
+														readonly="true" />
+													<button
+														id="btnSearchCustIncomeType"
+														image="/images/icons/LOVSearch.png" height="24px">
+													</button>
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_CustomerIncomeDialog_CustIncome"
+													value="${c:l('label_CustomerIncomeDialog_CustIncome.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<decimalbox 
+														id="custIncome" width="162px" maxlength="25" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_CustomerIncomeDialog_CustIncomeCountry"
+													value="${c:l('label_CustomerIncomeDialog_CustIncomeCountry.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<textbox
+														id="custIncomeCountry" width="18px" 
+														visible="false" readonly="true"/>
+													<textbox
+														id="lovDescCustIncomeCountryName" width="250px"
+														readonly="true" >
+													</textbox>
+													<button
+														id="btnSearchCustIncomeCountry"
+														image="/images/icons/LOVSearch.png" height="24px">
+													</button>
+												</hbox>
+											</row>
+											<row id="statusRow">
+												<label
+													id="label_CustomerRatingDialog_RecordStatus"
+													value="${c:l('label_CustomerRatingDialog_RecordStatus.value')}" />
+												<label
+													id="recordStatus" />
+											</row>
+											<row spans="2">
+												<label value="   " />
+											</row>
+											<row spans="2">
+												<label value="   " />
+											</row>
+											<row spans="2">
+												<groupbox id="gb"
+													width="97%">
+													<caption
+														label="${c:l('Action')}" />
+													<hbox>
+														<radiogroup
+															id="userAction" name="action" />
+													</hbox>
+												</groupbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</panelchildren>
+						</panel>
+					</columnchildren>
+					<columnchildren width="50%" style="padding: 5px">
+					</columnchildren>
+				</columnlayout>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,150 @@
+package com.pennant.backend.service.customermasters.validation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
+
+public class CustomerDirectorValidation {
+
+	private DirectorDetailDAO directorDetailDAO;
+	
+	
+	public CustomerDirectorValidation(DirectorDetailDAO directorDetailDAO) {
+		this.directorDetailDAO = directorDetailDAO;
+	}
+	
+	/**
+	 * @return the directorDetailDAODAO
+	 */
+	public DirectorDetailDAO getDirectorDetailDAO() {
+		return directorDetailDAO;
+	}
+	
+
+	public AuditHeader directorValidation(AuditHeader auditHeader, String method){
+		
+		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		return auditHeader;
+	}
+
+	public List<AuditDetail> directorListValidation(List<AuditDetail> auditDetails, String method,String  usrLanguage){
+		
+		if(auditDetails!=null && auditDetails.size()>0){
+			List<AuditDetail> details = new ArrayList<AuditDetail>();
+			for (int i = 0; i < auditDetails.size(); i++) {
+				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail); 		
+			}
+			return details;
+		}
+		return new ArrayList<AuditDetail>();
+	}
+
+		
+	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage){
+		
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		DirectorDetail directorDetail= (DirectorDetail) auditDetail.getModelData();
+
+		DirectorDetail tempDirectorDetail= null;
+		if (directorDetail.isWorkflow()){
+			tempDirectorDetail = getDirectorDetailDAO().getDirectorDetailById(
+					directorDetail.getId(), "_Temp");
+		}
+		DirectorDetail befDirectorDetail= getDirectorDetailDAO().getDirectorDetailById(
+				directorDetail.getId(), "");
+
+		DirectorDetail old_DirectorDetail= directorDetail.getBefImage();
+
+
+		String[] errParm= new String[1];
+		String[] valueParm= new String[1];
+		valueParm[0]=String.valueOf(directorDetail.getId());
+		errParm[0]=PennantJavaUtil.getLabel("label_DirectorId")+":"+valueParm[0];
+
+		if (directorDetail.isNew()){ // for New record or new record into work flow
+
+			if (!directorDetail.isWorkflow()){// With out Work flow only new records  
+				if (befDirectorDetail !=null){	// Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", 
+									errParm,valueParm), usrLanguage));
+				}	
+			}else{ // with work flow
+				if (directorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
+					if (befDirectorDetail !=null || tempDirectorDetail!=null ){ // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "41001",
+										errParm,valueParm), usrLanguage));
+					}
+				}else{ // if records not exists in the Main flow table
+					if (befDirectorDetail ==null || tempDirectorDetail!=null ){
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+										errParm,valueParm), usrLanguage));
+					}
+				}
+			}
+		}else{
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!directorDetail.isWorkflow()){	// With out Work flow for update and delete
+
+				if (befDirectorDetail ==null){ // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
+									errParm,valueParm), usrLanguage));
+				}else{
+					if (old_DirectorDetail!=null && !old_DirectorDetail.getLastMntOn().equals(
+							befDirectorDetail.getLastMntOn())){
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
+								PennantConstants.TRAN_DEL)){
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", 
+											errParm,valueParm), usrLanguage));
+						}else{
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetails(PennantConstants.KEY_FIELD, "41004", 
+											errParm,valueParm), usrLanguage));
+						}
+					}
+				}
+			}else{
+
+				if (tempDirectorDetail==null ){ // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+									errParm,valueParm), usrLanguage));
+				}
+
+				if (old_DirectorDetail!=null && !old_DirectorDetail.getLastMntOn().equals(
+						tempDirectorDetail.getLastMntOn())){ 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
+									errParm,valueParm), usrLanguage));
+				}
+			}
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		if(StringUtils.trimToEmpty(method).equals("doApprove") || !directorDetail.isWorkflow()){
+			directorDetail.setBefImage(befDirectorDetail);	
+		}
+
+		return auditDetail;
+	}
+
+	
+}

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_CustomerCategoryList"
+			apply="${customerCategoryListCtrl}" border="none" width="100%">
+
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center"
+						style="border-style: none;">
+						<button
+							id="button_CustomerCategoryList_CustomerCategorySearchDialog"
+							height="24px" label = "${c:l('label_Filter')}"
+							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
+											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_CustomerCategoryList_CustomerCategorySearchDialog.tooltiptext')}" />
+						<button
+							id="button_CustomerCategoryList_PrintList" height="24px"
+							label = "${c:l('label_Print')}"
+							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
+											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_CustomerCategoryList_PrintList.tooltiptext')}" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" style="border-style: none;">
+						<button
+							id="button_CustomerCategoryList_NewCustomerCategory"
+							height="24px" label = "${c:l('label_New')}"
+							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
+											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_CustomerCategoryList_NewCustomerCategory.tooltiptext')}" />
+						<button id="btnRefresh" height="24px"
+							label = "${c:l('label_Refresh')}"
+							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
+											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						<button id="btnHelp" height="24px"
+							label = "${c:l('label_Help')}"
+							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
+											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderLayout_CustomerCategoryList">
+				<north border="none" />
+
+				<center border="none">
+
+					<listbox id="listBoxCustomerCategory" vflex="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
+						<listhead sizable="true">
+							<listheader id="listheader_CustCtgCode"
+								label="${c:l('listheader_CustCtgCode_label')}" sort="auto"
+								width="15%" />
+							<listheader id="listheader_CustCtgDesc"
+								label="${c:l('listheader_CustCtgDesc.label')}" sort="auto"
+								width="40%" />
+							<listheader id="listheader_CustCtgType"
+								label="${c:l('listheader_CustCtgType.label')}" sort="auto"
+								width="15%" />
+							<listheader id="listheader_CustCtgIsActive"
+								label="${c:l('listheader_CustCtgIsActive.label')}" sort="auto"
+								width="10%" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								width="10%" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								width="10%" />
+						</listhead>
+					</listbox>
+
+				</center>
+				<south border="none">
+					<paging id="pagingCustomerCategoryList" />
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>

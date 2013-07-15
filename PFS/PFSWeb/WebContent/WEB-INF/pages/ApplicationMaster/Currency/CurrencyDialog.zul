@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CurrencyDialog" border="normal"
+		apply="${currencyDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+
+		<borderlayout id="borderlayoutCurrency">
+			<north>
+
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" height="24px"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnEdit" height="24px"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" height="24px"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnSave" height="24px"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel" height="24px"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes" height="24px"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_CurrencyDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" height="24px"
+								label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnClose" height="24px"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="false">
+
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="200px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="true">
+								<label id="label_CurrencyDialog_CcyCode"
+									value="${c:l('label_CurrencyDialog_CcyCode.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<uppercasebox id="ccyCode"
+										maxlength="3" width="60px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyNumber"
+									value="${c:l('label_CurrencyDialog_CcyNumber.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="ccyNumber"
+										maxlength="3" width="60px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label id="label_CurrencyDialog_CcyDesc"
+									value="${c:l('label_CurrencyDialog_CcyDesc.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="ccyDesc" maxlength="50"
+										width="600px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcySwiftCode"
+									value="${c:l('label_CurrencyDialog_CcySwiftCode.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<uppercasebox id="ccySwiftCode"
+										maxlength="3" width="60px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyEditField"
+									value="${c:l('label_CurrencyDialog_CcyEditField.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<intbox id="ccyEditField"
+										width="60px" maxlength="1" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyMinorCcyUnits"
+									value="${c:l('label_CurrencyDialog_CcyMinorCcyUnits.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<decimalbox id="ccyMinorCcyUnits"
+										width="60px" maxlength="7" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcySymbol"
+									value="${c:l('label_CurrencyDialog_CcySymbol.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<uppercasebox id="ccySymbol"
+										maxlength="3" width="60px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyMinorCcyDesc"
+									value="${c:l('label_CurrencyDialog_CcyMinorCcyDesc.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="ccyMinorCcyDesc"
+										maxlength="50" width="600px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyDrRateBasisCode"
+									value="${c:l('label_CurrencyDialog_CcyDrRateBasisCode.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="ccyDrRateBasisCode"
+										width="96px" visible="false" readonly="true" />
+									<textbox
+										id="lovDescCcyDrRateBasisCodeName" width="200px"
+										readonly="true" />
+									<button
+										label="${c:l('btnSearch.label')}"
+										id="btnSearchCcyDrRateBasisCode"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyCrRateBasisCode"
+									value="${c:l('label_CurrencyDialog_CcyCrRateBasisCode.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="ccyCrRateBasisCode"
+										width="96px" visible="false" readonly="true" />
+									<textbox
+										id="lovDescCcyCrRateBasisCodeName" width="200px"
+										readonly="true" />
+									<button
+										label="${c:l('btnSearch.label')}"
+										id="btnSearchCcyCrRateBasisCode"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcySpotRate"
+									value="${c:l('label_CurrencyDialog_CcySpotRate.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox id="ccySpotRate"
+										width="288px" maxlength="18" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyIsReceprocal"
+									value="${c:l('label_CurrencyDialog_CcyIsReceprocal.value')}" />
+								<hbox>
+								<space spacing="2px" />
+									<checkbox id="ccyIsReceprocal"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyUserRateBuy"
+									value="${c:l('label_CurrencyDialog_CcyUserRateBuy.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox id="ccyUserRateBuy"
+										width="288px" maxlength="18" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyUserRateSell"
+									value="${c:l('label_CurrencyDialog_CcyUserRateSell.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox id="ccyUserRateSell"
+										width="288px" maxlength="18" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyIsIntRounding"
+									value="${c:l('label_CurrencyDialog_CcyIsIntRounding.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="ccyIsIntRounding"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyIsMember"
+									value="${c:l('label_CurrencyDialog_CcyIsMember.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="ccyIsMember"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyIsGroup"
+									value="${c:l('label_CurrencyDialog_CcyIsGroup.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="ccyIsGroup"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyIsAlwForLoans"
+									value="${c:l('label_CurrencyDialog_CcyIsAlwForLoans.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="ccyIsAlwForLoans"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyIsAlwForDepo"
+									value="${c:l('label_CurrencyDialog_CcyIsAlwForDepo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="ccyIsAlwForDepo"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyIsAlwForAc"
+									value="${c:l('label_CurrencyDialog_CcyIsAlwForAc.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="ccyIsAlwForAc"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CurrencyDialog_CcyIsActive"
+									value="${c:l('label_CurrencyDialog_CcyIsActive.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="ccyIsActive"
+										checked="false" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_CurrencyDialog_RecordStatus"
+							value="${c:l('label_CurrencyDialog_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+
+		</borderlayout>
+	</window>
+</zk>

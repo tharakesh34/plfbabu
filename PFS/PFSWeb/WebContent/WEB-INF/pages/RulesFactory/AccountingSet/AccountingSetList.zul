@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_AccountingSetList"  apply="${accountingSetListCtrl}"
+		border="none" width="100%">
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
+	
+					<!-- COMMON BUTTONS -->
+					<label value="" />	
+					
+					<!-- SEARCH AREA -->
+					<toolbar align="center" style="border-style: none;">
+						<button
+							id="button_AccountingSetList_AccountingSetSearchDialog" height="24px"
+							label = "${c:l('label_Filter')}"
+							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_AccountingSetList_AccountingSetSearchDialog.tooltiptext')}" />
+						<button id="button_AccountingSetList_PrintList"
+							height="24px" label = "${c:l('label_Print')}"
+							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_AccountingSetList_PrintList.tooltiptext')}" />
+					</toolbar>
+	
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" style="border-style: none;">
+						<button id="button_AccountingSetList_NewAccountingSet"
+							height="24px" label = "${c:l('label_New')}"
+							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_AccountingSetList_NewAccountingSet.tooltiptext')}" />
+						<button id="btnRefresh" height="24px"
+							label = "${c:l('label_Refresh')}"
+							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						<button id="btnHelp" height="24px"
+							label = "${c:l('label_Help')}"
+							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderLayout_AccountingSetList">
+				<north border="none" />
+	
+				<center border="none">
+					<listbox id="listBoxAccountingSet"  vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+						<listhead sizable="true">
+							<listheader id="listheader_EventCode" label="${c:l('listheader_EventCode.label')}" sort="auto" 
+								width="10%" />
+							<listheader id="listheader_EventDesc" label="${c:l('listheader_EventDesc.label')}" sort="auto" 
+								width="31%" />
+							<listheader id="listheader_AccountSetCode" label="${c:l('listheader_AccountSetCode.label')}" sort="auto" 
+								width="10%" />
+							<listheader id="listheader_AccountSetCodeName" label="${c:l('listheader_AccountSetCodeName.label')}" sort="auto" 
+								width="31%" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								width="9%" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								width="9%" />
+						</listhead>		
+					</listbox>
+					
+				</center>
+				<south border="none" >
+					<paging id="pagingAccountingSetList" />
+				</south>
+				
+			</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,362 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  CheckListDetailDAOImpl.java                                                   * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  12-12-2011    														*
+ *                                                                  						*
+ * Modified Date    :  12-12-2011    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 12-12-2011       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+*/
+
+package com.pennant.backend.dao.applicationmaster.impl;
+
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.CheckListDetail;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.WorkFlowUtil;
+
+/**
+ * DAO methods implementation for the <b>CheckListDetail model</b> class.<br>
+ * 
+ */
+public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> implements CheckListDetailDAO {
+
+	private static Logger logger = Logger.getLogger(CheckListDetailDAOImpl.class);
+	
+	// Spring Named JDBC Template
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
+	/**
+	 * This method set the Work Flow id based on the module name and return the new CheckListDetail 
+	 * @return CheckListDetail
+	 */
+	@Override
+	public CheckListDetail getCheckListDetail() {
+		logger.debug("Entering");
+		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("CheckListDetail");
+		CheckListDetail checkListDetail= new CheckListDetail();
+		if (workFlowDetails!=null){
+			checkListDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		logger.debug("Leaving");
+		return checkListDetail;
+	}
+
+	/**
+	 * This method get the module from method getCheckListDetail() and set the new record flag as true and return CheckListDetail()   
+	 * @return CheckListDetail
+	 */
+	@Override
+	public CheckListDetail getNewCheckListDetail() {
+		logger.debug("Entering");
+		CheckListDetail checkListDetail = getCheckListDetail();
+		checkListDetail.setNewRecord(true);
+		logger.debug("Leaving");
+		return checkListDetail;
+	}
+
+	/**
+	 * Fetch the Record  Check List Details details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return CheckListDetail
+	 */
+	@Override
+	public CheckListDetail getCheckListDetailById(final long id, String type) {
+		logger.debug("Entering");
+		CheckListDetail checkListDetail = getCheckListDetail();
+		checkListDetail.setId(id);
+		
+		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow,RemarksMand");
+		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		selectSql.append(" RecordType, WorkflowId" );
+		
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append("");
+		}
+		selectSql.append(" From RMTCheckListDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CheckListId =:CheckListId and AnsSeqNo = :AnsSeqNo");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
+		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
+		
+		try{
+			checkListDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			checkListDetail = null;
+		}
+		logger.debug("Leaving");
+		return checkListDetail;
+	}
+	
+	public List<CheckListDetail> getCheckListDetailByChkList(final long checkListId, String type) {
+		logger.debug("Entering");
+		CheckListDetail checkListDetail = getCheckListDetail();
+		checkListDetail.setCheckListId(checkListId);
+		List<CheckListDetail>  chkListDetailList;
+
+		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc");
+		selectSql.append(", AnsCond,RemarksAllow,RemarksMand");
+		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		selectSql.append(" RecordType, WorkflowId" );
+
+		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append("");
+		}
+		selectSql.append(" From RMTCheckListDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CheckListId =:CheckListId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
+		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
+
+		try{
+			chkListDetailList= this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			chkListDetailList = null;
+		}
+		logger.debug("Leaving");
+		return chkListDetailList;
+	}
+	
+	/**
+	 * This method initialize the Record.
+	 * @param CheckListDetail (checkListDetail)
+ 	 * @return CheckListDetail
+	 */
+	@Override
+	public void initialize(CheckListDetail checkListDetail) {
+		super.initialize(checkListDetail);
+	}
+	
+	/**
+	 * This method refresh the Record.
+	 * @param CheckListDetail (checkListDetail)
+ 	 * @return void
+	 */
+	@Override
+	public void refresh(CheckListDetail checkListDetail) {
+		
+	}
+	
+	/**
+	 * To Set  dataSource
+	 * @param dataSource
+	 */
+	public void setDataSource(DataSource dataSource) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+	
+	/**
+	 * This method Deletes the Record from the RMTCheckListDetails or RMTCheckListDetails_Temp.
+	 * if Record not deleted then throws DataAccessException with  error  41003.
+	 * delete Check List Details by key CheckListId
+	 * 
+	 * @param Check List Details (checkListDetail)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public void delete(CheckListDetail checkListDetail,String type) {
+		logger.debug("Entering");
+		int recordCount = 0;
+		
+		StringBuilder deleteSql = new StringBuilder("Delete From RMTCheckListDetails");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where CheckListId =:CheckListId and AnsSeqNo = :AnsSeqNo");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
+		try{
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			if (recordCount <= 0) {
+				ErrorDetails errorDetails= getError("41003",checkListDetail.getLovDescCheckListDesc(),checkListDetail.getAnsDesc(), 
+						checkListDetail.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) {};
+			}
+		}catch(DataAccessException e){
+			logger.error(e);
+			ErrorDetails errorDetails= getError("41006",checkListDetail.getLovDescCheckListDesc(),checkListDetail.getAnsDesc(),
+					checkListDetail.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * This method Deletes the Record from the RMTCheckListDetail or RMTCheckListDetail_Temp.
+
+	 * delete Educational Expenses by key loanRefNumber
+	 * 
+	 */
+	public void delete(long checkListId,String type) {
+		logger.debug("Entering");
+		CheckListDetail checkListDetail = new CheckListDetail();
+		checkListDetail.setCheckListId(checkListId);
+
+		StringBuilder deleteSql =new StringBuilder();
+		deleteSql.append("Delete From RMTCheckListDetails");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where CheckListId =:CheckListId");
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
+		String[] errParm= new String[1];
+		String[] valueParm= new String[1];
+		valueParm[0]=String.valueOf(checkListDetail.getId());
+		errParm[0]=PennantJavaUtil.getLabel("label_AnsSeqNo")+":"+valueParm[0];
+		logger.debug("DeleteSql: " + deleteSql.toString());
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * This method insert new Records into RMTCheckListDetails or RMTCheckListDetails_Temp.
+	 *
+	 * save Check List Details 
+	 * 
+	 * @param Check List Details (checkListDetail)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@Override
+	public long save(CheckListDetail checkListDetail,String type) {
+		logger.debug("Entering");
+		
+		if (checkListDetail.getId()==Long.MIN_VALUE){
+			checkListDetail.setId(getNextidviewDAO().getNextId("SeqRMTCheckListDetail"));
+			logger.debug("get NextID:"+checkListDetail.getId());
+		}
+		StringBuilder insertSql =new StringBuilder("Insert Into RMTCheckListDetails");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow, RemarksMand");
+		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		insertSql.append(", RecordType, WorkflowId)");
+		insertSql.append(" Values( :CheckListId, :AnsSeqNo, :AnsDesc, :AnsCond, :RemarksAllow, :RemarksMand");
+		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId ");
+		insertSql.append(", :RecordType, :WorkflowId)");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+		return checkListDetail.getId();
+	}
+	
+	/**
+	 * This method updates the Record RMTCheckListDetails or RMTCheckListDetails_Temp.
+	 * if Record not updated then throws DataAccessException with  error  41004.
+	 * update Check List Details by key CheckListId and Version
+	 * 
+	 * @param Check List Details (checkListDetail)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	@Override
+	public void update(CheckListDetail checkListDetail,String type) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		StringBuilder	updateSql =new StringBuilder("Update RMTCheckListDetails");
+		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(" Set CheckListId = :CheckListId, AnsSeqNo = :AnsSeqNo, AnsDesc = :AnsDesc, AnsCond = :AnsCond");
+		updateSql.append(", RemarksAllow = :RemarksAllow, RemarksMand = :RemarksMand");
+		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
+		updateSql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
+		updateSql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Where CheckListId =:CheckListId and AnsSeqNo = :AnsSeqNo");
+		
+		if (!type.endsWith("_TEMP")){
+			updateSql.append("  AND Version= :Version-1");
+		}
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError("41004",checkListDetail.getLovDescCheckListDesc(),checkListDetail.getAnsDesc(), 
+					checkListDetail.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");
+	}
+	
+	private ErrorDetails  getError(String errorId, String questionDesc, String ansDescription, String userLanguage){
+		String[][] parms= new String[2][2];
+		parms[1][0] =questionDesc;
+		parms[1][1] = ansDescription;
+		parms[0][0] = PennantJavaUtil.getLabel("label_CheckListDesc")+ ":" + parms[1][0];
+		parms[0][1] =  PennantJavaUtil.getLabel("label_AnsDesc")+ ":" + parms[1][1];
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+	}
+	
+}

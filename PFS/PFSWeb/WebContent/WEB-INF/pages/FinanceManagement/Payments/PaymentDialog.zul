@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<style>
+		.Mywhite{ background-color:white; border:none; font-weight:bold;
+		text-align:right; } div.z-column-cnt { padding: 3px; }
+		div.z-column-cnt, div.z-row-cnt { color: #000000; font-family:
+		Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 11px;
+		font-weight: bold; } .label{margin-left:10px;}
+
+	</style>
+
+	<window id="window_PaymentDialog" border="normal" width="100%"
+		height="100%" sizable="false" apply="${paymentDialogCtrl}">
+		<borderlayout id="borderlayout">
+			<center border="none" autoscroll="true">
+				<vlayout style="padding:5px;padding-top:10px;">
+					<groupbox id="gb_basicDetails" height="100%"
+						closable="false">
+						<caption label="Payment Details" />
+						<grid id="scheduleGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
+							width="100%">
+							<columns>
+								<column width="200px" />
+								<column />
+								<column width="200px" />
+								<column />
+							</columns>
+							<rows>
+								<row height="25px">
+									<label id="label_pFinReference"
+										value="${c:l('label_FinanceMainDialog_FinReference.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<label id="finReference"
+											width="170px" visible="true" style="font-weight:bold;" />
+									</hbox>
+									<label id="label_pFinCcy"
+										value="${c:l('label_FinanceMainDialog_FinCcy.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="finCcy"
+											width="27px" visible="false" />
+										<label id="lovDescFinCcyName"
+											width="250px" style="font-weight:bold" />
+									</hbox>
+								</row>
+								<row height="25px">
+									<label id="label_finStartDate"
+										value="${c:l('label_FinanceMainDialog_FinStartDate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<label id="finStartDate"
+											width="170px" visible="true" style="font-weight:bold" />
+									</hbox>
+									<label id="label_maturityDate"
+										value="${c:l('label_FinanceMainDialog_MaturityDate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<label id="maturityDate"
+											width="250px" style="font-weight:bold" />
+									</hbox>
+								</row>
+								<row height="25px">
+									<label id="label_FinAmount"
+										value="${c:l('label_FinanceMainDialog_FinAmount.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="finAmount"
+											visible="true" width="150px" sclass="Mywhite" readonly="true"
+											tabindex="-1" />
+									</hbox>
+									<label id="label_curFinAmount"
+										value="${c:l('label_curFinAmount.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="curFinAmount"
+											width="150px" sclass="Mywhite" readonly="true" tabindex="-1" />
+									</hbox>
+								</row>
+								<row height="25px">
+									<label id="label_totPftAmount"
+										value="${c:l('label_totPftAmount.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="totPftAmount"
+											width="150px" visible="true" sclass="Mywhite" readonly="true"
+											tabindex="-1" />
+									</hbox>
+									<label id="label_totPftBalence"
+										value="${c:l('label_totPftBalence.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="totPftBalence"
+											width="150px" sclass="Mywhite" readonly="true" tabindex="-1" />
+									</hbox>
+								</row>
+								<row height="25px">
+									<label id="label_rpyAmount"
+										value="${c:l('label_rpyAmount.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="rpyAmount"
+											width="150px" visible="true" style="text-align:right" />
+									</hbox>
+									<label id="label_rpyAmountBal"
+										value="${c:l('label_rpyAmountBal.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="rpyAmountBal"
+											width="150px" sclass="Mywhite" readonly="true" tabindex="-1" />
+									</hbox>
+								</row>
+								<row height="25px">
+									<label id="label_rpyPrincipal"
+										value="${c:l('label_rpyPrincipal.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="rpyPrincipal"
+											width="150px" visible="true" sclass="Mywhite" readonly="true"
+											tabindex="-1" />
+									</hbox>
+									<label id="label_rpyProfit"
+										value="${c:l('label_rpyProfit.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="rpyProfit"
+											width="150px" sclass="Mywhite" readonly="true" tabindex="-1" />
+									</hbox>
+								</row>
+								<row height="25px">
+									<label id="label_rpyPenalty"
+										value="${c:l('label_rpyPenalty.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="rpyPenalty"
+											width="150px" visible="true" sclass="Mywhite" readonly="true"
+											tabindex="-1" />
+									</hbox>
+									<label id="label_rpyWaiver"
+										value="${c:l('label_rpyWaiver.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="rpyWaiver"
+											width="150px" sclass="Mywhite" readonly="true" tabindex="-1" />
+									</hbox>
+								</row>
+								<row height="25px">
+									<label id="label_rpyFromdate"
+										value="${c:l('label_rpyFromdate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<label id="rpyFromdate"
+											width="170px" visible="true" style="font-weight:bold;" />
+									</hbox>
+									<label id="label_rpyRefund"
+										value="${c:l('label_rpyRefund.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="rpyRefund"
+											width="150px" sclass="Mywhite" readonly="true" tabindex="-1" />
+									</hbox>
+								</row>
+								<row height="25px">
+									<label id="label_rpyTodate"
+										value="${c:l('label_rpyTodate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<label id="rpyTodate"
+											width="250px" style="font-weight:bold" />
+									</hbox>
+									<label id="label_CustFundingAcc"
+										value="${c:l('label_CustFundingAcc.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custFundingAcc"
+											width="150px" visible="true" />
+										<button
+											id="btnSearchRepayAcctId" image="/images/icons/LOVSearch.png"
+											height="24px" />
+									</hbox>
+								</row>
+								<row height="25px">
+									<label
+										id="label_FinanceMainDialog_CustID"
+										value="${c:l('label_FinanceMainDialog_CustID.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<label id="custID" width="250px"
+											style="font-weight:bold" />
+									</hbox>
+
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<div style="padding:5px;">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:1px solid #A3A3A3;"
+							width="100%">
+							<columns>
+								<column width="25%" label="" />
+								<column width="25%"
+									label="${c:l('label_Scheduled')}" />
+								<column width="25%"
+									label="${c:l('label_Payment')}" />
+								<column width="25%"
+									label="${c:l('label_Balance')}" />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_Date')}"
+										sclass="label" height="25px" />
+									<label id="schDate" height="25px" />
+									<datebox id="payDate" readonly="true" />
+									<label />
+								</row>
+								<row>
+									<label sclass="label"
+										value="${c:l('label_Penalty')}" />
+									<hbox>
+										<decimalbox width="150px"
+											readonly="true" id="schdpenality" sclass="Mywhite"
+											tabindex="-1" />
+										<button id="btnPenalty"
+											image="/images/icons/btn_notes.gif" height="24px" />
+									</hbox>
+									<decimalbox width="150px"
+										readonly="true" id="schdpenalityPaid" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="schdpenalityBal" sclass="Mywhite"
+										tabindex="-1" />
+								</row>
+								<row>
+									<label sclass="label"
+										value="${c:l('label_Waiver')}" />
+									<decimalbox width="150px"
+										readonly="true" id="schdWaiver" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="false" id="schdWaiverPaid" style="text-align:right" />
+									<decimalbox width="150px"
+										readonly="true" id="schdWaiverBal" sclass="Mywhite"
+										tabindex="-1" />
+								</row>
+								<row id="row_DeferedProfit">
+									<label sclass="label"
+										value="${c:l('label_DeferedProfit')}" />
+									<decimalbox width="150px"
+										readonly="true" id="schdDefPft" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="schdDefPftPaid" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="schdDefPftBal" sclass="Mywhite"
+										tabindex="-1" />
+								</row>
+								<row  id="row_DeferedPrincipal">
+									<label sclass="label"
+										value="${c:l('label_DeferedPrincipal')}" />
+									<decimalbox width="150px"
+										readonly="true" id="schdDefPri" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="schdDefPriPaid" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="schdDefPriBal" sclass="Mywhite"
+										tabindex="-1" />
+								</row>
+
+								<row>
+									<label sclass="label"
+										value="${c:l('label_ScheduleProfit')}" />
+									<decimalbox width="150px"
+										readonly="true" id="prvSchdPft" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="schdPftPaid" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="schdPftBal" sclass="Mywhite"
+										tabindex="-1" />
+								</row>
+								<row id="row_prvScheduleProfit">
+									<label sclass="label"
+										value="${c:l('label_prvScheduleProfit')}" />
+									<decimalbox width="150px"
+										readonly="true" id="schdPft" sclass="Mywhite" visible="false"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="prvSchdPftPaid" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="prvSchdPftBal" sclass="Mywhite"
+										visible="false" tabindex="-1" />
+								</row>
+								<row>
+									<label sclass="label"
+										value="${c:l('label_SchedulePrincipal')}" />
+									<decimalbox width="150px"
+										readonly="true" id="prvSchdPri" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="schdPriPaid" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="schdPriBal" sclass="Mywhite"
+										tabindex="-1" />
+								</row>
+								<row id="row_prvSchedulePrincipal">
+									<label sclass="label"
+										value="${c:l('label_prvSchedulePrincipal')}" />
+									<decimalbox width="150px"
+										readonly="true" id="schdPri" sclass="Mywhite" visible="false"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="prvSchdPriPaid" sclass="Mywhite"
+										tabindex="-1" />
+									<decimalbox width="150px"
+										readonly="true" id="prvSchdPriBal" sclass="Mywhite"
+										visible="false" tabindex="-1" />
+								</row>
+								
+								<row id="row_Refund">
+									<label sclass="label"
+										value="${c:l('label_Refund')}" />
+									<hbox>
+										<decimalbox width="150px"
+											readonly="true" id="schdRefund" sclass="Mywhite"
+											tabindex="-1" />
+										<button id="btnRefund" 
+											image="/images/icons/btn_notes.gif" height="24px" />
+									</hbox>
+									<decimalbox width="150px"
+										readonly="false" id="schdRefundPaid" style="text-align:right" />
+									<decimalbox width="150px"
+										readonly="true" id="schdRefundBal" sclass="Mywhite"
+										tabindex="-1" />
+								</row>
+								<row>
+									<label sclass="label"
+										value="${c:l('label_NetPayment')}" />
+									<label />
+									<decimalbox width="150px"
+										readonly="true" id="netPayment" sclass="Mywhite"
+										tabindex="-1" />
+									<label />
+								</row>
+							</rows>
+						</grid>
+					</div>
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px;padding-bottom:10px;" width="100%">
+						<columns>
+							<column align="right" />
+							<column align="left" />
+						</columns>
+						<rows>
+							<row>
+								<button id="btnPrevious"
+									label="Previous Schedule" style="font-weight:bold;"
+									image="/images/icons/Left_Arrow.png" />
+								<button id="btnNext"
+									label="Next Schedule" style="font-weight:bold;"
+									image="/images/icons/Right_Arrow.png" />
+							</row>
+							<row align="left">
+								<button label="Pay Now" id="btnPayment"
+									style="font-weight:bold;fint-size:12;" />
+							</row>
+						</rows>
+					</grid>
+				</vlayout>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

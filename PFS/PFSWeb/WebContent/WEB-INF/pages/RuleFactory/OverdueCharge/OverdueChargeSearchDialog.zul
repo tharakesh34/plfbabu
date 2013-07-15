@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<window>	
+	<window id="window_OverdueChargeSearch"
+		title="${c:l('window_OverdueChargeSearch.title')}" border="none"
+		apply="${overdueChargeSearchCtrl}" closable="true" width="400px"
+		height="284px" sizable="true">
+
+		<borderlayout>
+			<north></north>
+			<center flex="true">
+				<panel>
+					<panelchildren style="padding: 5px">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column width="100%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_OverdueChargeSearch_ODCRuleCode" value="${c:l('label_OverdueChargeSearch_ODCRuleCode.value')}" />
+									<listbox id="sortOperator_oDCRuleCode" width="43px" mold="select" rows="1" />
+									 <textbox id="oDCRuleCode" width="72px" maxlength="8" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_OverdueChargeSearch_ODCPLAccount" value="${c:l('label_OverdueChargeSearch_ODCPLAccount.value')}" />
+									<listbox id="sortOperator_oDCPLAccount" width="43px" mold="select" rows="1" />
+									 <textbox id="oDCPLAccount" width="72px" maxlength="8" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_OverdueChargeSearch_ODCCharityAccount" value="${c:l('label_OverdueChargeSearch_ODCCharityAccount.value')}" />
+									<listbox id="sortOperator_oDCCharityAccount" width="43px" mold="select" rows="1" />
+									 <textbox id="oDCCharityAccount" width="72px" maxlength="8" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_OverdueChargeSearch_ODCPLShare" value="${c:l('label_OverdueChargeSearch_ODCPLShare.value')}" />
+									<listbox id="sortOperator_oDCPLShare" width="43px" mold="select" rows="1" />
+											<decimalbox id="oDCPLShare" width="63px" maxlength="5" />
+								</row>
+								<row>
+									<label id="label_OverdueChargeSearch_ODCSweepCharges" value="${c:l('label_OverdueChargeSearch_ODCSweepCharges.value')}" />
+									<listbox id="sortOperator_oDCSweepCharges" width="43px" mold="select" rows="1" />
+										<checkbox id="oDCSweepCharges" checked="false"/>
+								</row>
+								<row>
+									<label id="label_OverdueChargeSearch_RecordStatus" value="${c:l('label_OverdueChargeSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_OverdueChargeSearch_RecordType" value="${c:l('label_OverdueChargeSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+					</panelchildren>
+				</panel>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouthOverdueCharge" align="left" width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20"
+										label="${c:l('btnSearch.label')}"
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+									<button id="btnClose" height="20"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<label
+										id="label_OverdueChargeSearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</window>
+</zk>

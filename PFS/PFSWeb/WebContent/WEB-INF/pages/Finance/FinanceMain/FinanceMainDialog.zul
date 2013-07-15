@@ -1,0 +1,1978 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_FinanceMainDialog" border="normal"
+			apply="${financeMainDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+			
+			<borderlayout id="borderlayoutFinanceMain">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start" sclass="toolbar-start">
+								<button id="btnNew" height="24px"
+									tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnEdit" height="24px"
+									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnDelete" height="24px"
+									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnSave" height="24px"
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnCancel" height="24px"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+								<button id="btnNotes" height="24px"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnValidate" label="Verify"
+									tooltiptext="${c:l('btnValidate.tooltiptext')}" height="24px" />
+								<button id="btnBuildSchedule"
+									label="Build" tooltiptext="${c:l('btnSchedule.tooltiptext')}"
+									height="24px" />
+
+							</toolbar>
+
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label
+									value="${c:l('window_FinanceMainDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" height="24px"
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnClose" height="24px"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" id="divCenter">
+					<tabbox id="tabBoxIndexCenter" width="99%"
+						height="100%">
+						<tabs id="tabsIndexCenter">
+							<tab id="financeTypeDetailsTab"
+								label="Finance Main Details" />
+							<tab id="contributorDetailsTab"
+								label="Contributor Details" visible="false" />
+							<tab id="billingDetailsTab"
+								label="Billing Details" visible="false" />
+							<tab id="scheduleDetailsTab"
+								label="Schedule Details" disabled="true" />
+							<tab id="financeElgreferenceTab"
+								label="Eligibility Rules" />
+							<tab id="financeScoreReferenceTab"
+								label="Scoring Group" />
+							<tab id="agreementsTab" label="Agreements"
+								visible="false" />
+							<tab id="documentDetailsTab"
+								label="Document Details" />
+							<tab id="feeChargesTab" label="Fee Charges" />
+							<tab id="accountingTab" label="Accounting" />
+							<tab id="stageAccountingTab"
+								label="WorkFlow Accounting" />
+							<tab id="loanAssetTab" visible="false" />
+							<tab id="checkListTab" label="CheckList"
+								visible="false" />
+							<tab id="addlDetailTab" visible="false" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto">
+								<div id="basicDetailTabDiv">
+									<groupbox id="gb_basicDetails">
+										<caption
+											label="${c:l('finKeyDetails')}" />
+										<grid
+											sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label
+														id="label_FinanceMainDialog_FinType"
+														value="${c:l('label_FinanceMainDialog_FinType.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="finType" width="72px" visible="false" />
+														<textbox
+															id="lovDescFinTypeName" width="250px" readonly="true" />
+														<button
+															id="btnSearchFinType" image="/images/icons/LOVSearch.png"
+															tabindex="1" height="24px" disabled="true" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_FinReference"
+														value="${c:l('label_FinanceMainDialog_FinReference.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<uppercasebox
+															id="finReference" width="170px" visible="true"
+															tabindex="2" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_FinCcy"
+														value="${c:l('label_FinanceMainDialog_FinCcy.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="finCcy" width="27px" visible="false" />
+														<textbox
+															id="lovDescFinCcyName" width="250px" readonly="true" />
+														<button
+															id="btnSearchFinCcy" image="/images/icons/LOVSearch.png"
+															tabindex="3" height="24px" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_ProfitDaysBasis"
+														value="${c:l('label_FinanceMainDialog_ProfitDaysBasis.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<combobox
+															tabindex="4" id="cbProfitDaysBasis" width="275px"
+															readonly="true" disabled="true" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_CustID"
+														value="${c:l('label_FinanceMainDialog_CustID.value')}" />
+													<hbox>
+														<space
+															id="space_custCIF" spacing="2px" sclass="mandatory" />
+														<longbox
+															id="custID" width="171px" maxlength="26" visible="false" />
+														<textbox
+															id="lovDescCustCIF" width="150px" readonly="true" />
+														<button
+															id="btnSearchCustCIF" image="/images/icons/LOVSearch.png"
+															height="24px" tabindex="5" />
+														<label
+															id="custShrtName" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_FinBranch"
+														value="${c:l('label_FinanceMainDialog_FinBranch.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="finBranch" width="72px" visible="false" />
+														<textbox
+															id="lovDescFinBranchName" width="250px" readonly="true" />
+														<button
+															id="btnSearchFinBranch"
+															image="/images/icons/LOVSearch.png" tabindex="6"
+															height="24px" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_FinStartDate"
+														value="${c:l('label_FinanceMainDialog_FinStartDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<datebox
+															id="finStartDate" width="100px" tabindex="7" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_FinContractDate"
+														value="${c:l('label_FinanceMainDialog_FinContractDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<datebox
+															id="finContractDate" width="100px" tabindex="8" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_FinAmount"
+														value="${c:l('label_FinanceMainDialog_FinAmount.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<decimalbox
+															id="finAmount" width="198px" maxlength="25" tabindex="9" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_DownPayment"
+														value="${c:l('label_FinanceMainDialog_DownPayment.value')}"
+														visible="false" />
+													<hbox
+														id="hbox_downPay" visible="false">
+														<space
+															spacing="2px" sclass="mandatory" />
+														<decimalbox
+															id="downPayment" maxlength="25" width="198px"
+															tabindex="10" disabled="true" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_DisbAcctId"
+														value="${c:l('label_FinanceMainDialog_DisbAcctId.value')}" />
+													<hbox>
+														<space
+															id="space_disbAcctId" spacing="2px" sclass="mandatory" />
+														<textbox
+															id="disbAcctId" width="175px" readonly="true" />
+														<button
+															id="btnSearchDisbAcctId"
+															image="/images/icons/LOVSearch.png" tabindex="11"
+															height="24px" />
+														<label
+															id="disbAcctBal" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_RepayAcctId"
+														value="${c:l('label_FinanceMainDialog_RepayAcctId.value')}" />
+													<hbox>
+														<space
+															id="space_repayAcctId" spacing="2px" sclass="mandatory" />
+														<textbox
+															id="repayAcctId" width="175px" readonly="true" />
+														<button
+															id="btnSearchRepayAcctId"
+															image="/images/icons/LOVSearch.png" height="24px"
+															tabindex="12" />
+														<label
+															id="repayAcctBal" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_Defferments"
+														value="${c:l('label_FinanceMainDialog_Defferments.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<intbox
+															id="defferments" width="90px" maxlength="13"
+															tabindex="11" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_FrqDef"
+														value="${c:l('label_FinanceMainDialog_FrqDefferments.value')}" />
+													<hbox
+														id="hbox_FrqDef">
+														<space
+															spacing="2px" sclass="mandatory" />
+														<intbox
+															id="frqDefferments" width="90px" maxlength="14"
+															tabindex="12" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_DepriFrq"
+														value="${c:l('label_FinanceMainDialog_DepriFrq.value')}"
+														visible="false" />
+													<hbox
+														id="hbox_depFrq" visible="false">
+														<space
+															id="space_DepriFrq" spacing="2px" sclass="mandatory" />
+														<textbox
+															id="depreciationFrq" maxlength="15" visible="false" />
+														<combobox
+															id="cbDepreciationFrqCode" width="90px" readonly="true"
+															tabindex="15" />
+														<combobox
+															id="cbDepreciationFrqMth" width="130px" readonly="true"
+															tabindex="16" />
+														<combobox
+															id="cbDepreciationFrqDay" width="40px" readonly="true"
+															tabindex="17" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_FinAssetValue"
+														value="${c:l('label_FinanceMainDialog_FinAssetValue.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<decimalbox
+															id="finAssetValue" width="198px" maxlength="25"
+															tabindex="18" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_CommitRef"
+														value="${c:l('label_FinanceMainDialog_CommitRef.value')}" />
+													<hbox
+														id="hbox_commitmentRef">
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="commitmentRef" width="170px" visible="false" />
+														<textbox
+															id="lovDescCommitmentRefName" width="250px"
+															readonly="true" />
+														<button
+															id="btnSearchCommitmentRef" tabindex="19"
+															image="/images/icons/LOVSearch.png" height="24px" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_FinIsActive"
+														value="${c:l('label_FinanceMainDialog_FinIsActive.value')}"
+														visible="false" />
+													<hbox
+														visible="false">
+														<space
+															spacing="2px" />
+														<checkbox
+															id="finIsActive" checked="false" tabindex="20" />
+													</hbox>
+												</row>
+												<row visible="false">
+													<label
+														id="label_FinanceMainDialog_FinRemarks"
+														value="${c:l('label_FinanceMainDialog_FinRemarks.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="finRemarks" maxlength="50" width="250px" rows="1"
+															tabindex="21" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+									<groupbox
+										id="gb_gracePeriodDetails">
+										<caption
+											label="${c:l('finGracePeriodDetails')}" />
+										<grid
+											sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label
+														id="label_FinanceMainDialog_AlwGrace"
+														value="${c:l('label_FinanceMainDialog_AlwGrace.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="allowGrace" tabindex="22" checked="false" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_GracePeriodEndDate"
+														value="${c:l('label_FinanceMainDialog_GracePeriodEndDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<datebox
+															id="gracePeriodEndDate" tabindex="23" width="100px" />
+														<space
+															spacing="2px" />
+														<datebox
+															id="gracePeriodEndDate_two" readonly="true"
+															buttonVisible="false" width="100px" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_GrcRateBasis"
+														value="${c:l('label_FinanceMainDialog_GrcRateBasis.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<combobox
+															id="grcRateBasis" width="220px" readonly="true"
+															tabindex="24" disabled="true" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_GracePftRate"
+														value="${c:l('label_FinanceMainDialog_GracePftRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<decimalbox
+															id="gracePftRate" width="120px" maxlength="15"
+															tabindex="25" />
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="grcEffectiveRate" width="120px" maxlength="15"
+															readonly="true" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_GraceBaseRate"
+														value="${c:l('label_FinanceMainDialog_GraceBaseRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="graceBaseRate" width="200px" visible="false" />
+														<textbox
+															id="lovDescGraceBaseRateName" width="250px"
+															readonly="true" />
+														<button
+															id="btnSearchGraceBaseRate"
+															image="/images/icons/LOVSearch.png" height="24px"
+															tabindex="26" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_GraceSpecialRate"
+														value="${c:l('label_FinanceMainDialog_GraceSpecialRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="graceSpecialRate" width="200px" visible="false" />
+														<textbox
+															id="lovDescGraceSpecialRateName" width="250px"
+															readonly="true" />
+														<button
+															id="btnSearchGraceSpecialRate"
+															image="/images/icons/LOVSearch.png" height="24px"
+															tabindex="27" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_GraceMargin"
+														value="${c:l('label_FinanceMainDialog_GraceMargin.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="grcMargin" width="120px" maxlength="15" tabindex="28"
+															readonly="true" />
+													</hbox>
+												</row>
+												<row id="alwGrcIndRow"
+													visible="true">
+													<label
+														id="label_FinanceMainDialog_AllowGrcInd"
+														value="${c:l('label_FinanceMainDialog_FinGrcAlwIndRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="allowGrcInd" tabindex="29" checked="false" />
+													</hbox>
+
+													<label
+														id="label_FinanceMainDialog_FinGrcIndBaseRate"
+														value="${c:l('label_FinanceMainDialog_FinGrcIndBaseRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="grcIndBaseRate" width="72px" visible="false" />
+														<textbox
+															id="lovDescGrcIndBaseRateName" width="250px"
+															readonly="true" />
+														<button
+															id="btnSearchGrcIndBaseRate"
+															image="/images/icons/LOVSearch.png" tabindex="30"
+															height="24px" />
+													</hbox>
+												</row>
+												<row id="grcPftFrqRow"
+													visible="true">
+													<label
+														id="label_FinanceMainDialog_GracePftFrq"
+														value="${c:l('label_FinanceMainDialog_GracePftFrq.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="gracePftFrq" maxlength="15" visible="false" />
+														<combobox
+															id="cbGracePftFrqCode" width="90px" readonly="true"
+															tabindex="31" />
+														<combobox
+															id="cbGracePftFrqMth" width="130px" readonly="true"
+															tabindex="32" />
+														<combobox
+															id="cbGracePftFrqDay" width="40px" readonly="true"
+															tabindex="33" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_NextGrcPftDate"
+														value="${c:l('label_FinanceMainDialog_NextGrcPftDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<datebox
+															id="nextGrcPftDate" width="100px" tabindex="34" />
+														<space
+															spacing="2px" />
+														<datebox
+															id="nextGrcPftDate_two" readonly="true"
+															buttonVisible="false" width="100px" />
+													</hbox>
+												</row>
+												<row
+													id="grcPftRvwFrqRow" visible="true">
+													<label
+														id="label_FinanceMainDialog_GracePftRvwFrq"
+														value="${c:l('label_FinanceMainDialog_GracePftRvwFrq.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="gracePftRvwFrq" maxlength="15" visible="false" />
+														<combobox
+															id="cbGracePftRvwFrqCode" width="90px" readonly="true"
+															tabindex="35" />
+														<combobox
+															id="cbGracePftRvwFrqMth" width="130px" readonly="true"
+															tabindex="36" />
+														<combobox
+															id="cbGracePftRvwFrqDay" width="40px" readonly="true"
+															tabindex="37" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_NextGrcPftRvwDate"
+														value="${c:l('label_FinanceMainDialog_NextGrcPftRvwDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<datebox
+															id="nextGrcPftRvwDate" width="100px" tabindex="38" />
+														<space
+															spacing="2px" />
+														<datebox
+															id="nextGrcPftRvwDate_two" readonly="true"
+															buttonVisible="false" width="100px" />
+													</hbox>
+												</row>
+												<row id="grcCpzFrqRow"
+													visible="true">
+													<label
+														id="label_FinanceMainDialog_GraceCpzFrq"
+														value="${c:l('label_FinanceMainDialog_GraceCpzFrq.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="graceCpzFrq" maxlength="15" visible="false" />
+														<combobox
+															id="cbGraceCpzFrqCode" width="90px" readonly="true"
+															tabindex="39" />
+														<combobox
+															id="cbGraceCpzFrqMth" width="130px" readonly="true"
+															tabindex="40" />
+														<combobox
+															id="cbGraceCpzFrqDay" width="40px" readonly="true"
+															tabindex="41" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_NextGrcCpzDate"
+														value="${c:l('label_FinanceMainDialog_NextGrcCpzDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<datebox
+															id="nextGrcCpzDate" width="100px" tabindex="42" />
+														<space
+															spacing="2px" />
+														<datebox
+															id="nextGrcCpzDate_two" readonly="true"
+															buttonVisible="false" width="100px" />
+													</hbox>
+												</row>
+												<row id="grcRepayRow"
+													visible="false">
+													<label
+														id="label_FinanceMainDialog_AlwGrcRepay"
+														value="${c:l('label_FinanceMainDialog_AlwGrcRepay.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="allowGrcRepay" checked="false" tabindex="43"
+															disabled="true" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_GrcSchdMthd"
+														value="${c:l('label_FinanceMainDialog_GrcSchdMthd.value')}" />
+													<hbox>
+														<space
+															spacing="2px" id="space_GrcSchdMthd" />
+														<combobox
+															id="cbGrcSchdMthd" width="275px" tabindex="44"
+															readonly="true" disabled="true" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+									<groupbox
+										id="gb_repaymentDetails">
+										<caption
+											label="${c:l('finRepaymentDetails')}" />
+										<grid
+											sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label
+														id="label_FinanceMainDialog_NumberOfTerms"
+														value="${c:l('label_FinanceMainDialog_NumberOfTerms.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<intbox
+															id="numberOfTerms" width="50px" maxlength="3"
+															tabindex="45" />
+														<space
+															spacing="2px" />
+														<intbox
+															id="numberOfTerms_two" readonly="true" width="50px"
+															maxlength="3" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_FinRepaymentAmount"
+														value="${c:l('label_FinanceMainDialog_FinRepaymentAmount.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="finRepaymentAmount" width="198px" maxlength="25"
+															tabindex="46" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_WIFFinanceMainDialog_RepayRateBasis"
+														value="${c:l('label_WIFFinanceMainDialog_RepayRateBasis.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<combobox
+															id="repayRateBasis" width="275px" readonly="true"
+															tabindex="47" disabled="true" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_ProfitRate"
+														value="${c:l('label_FinanceMainDialog_ProfitRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<decimalbox
+															id="repayProfitRate" width="120px" maxlength="15"
+															tabindex="48" />
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="repayEffectiveRate" width="120px" maxlength="15"
+															readonly="true" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_RepayBaseRate"
+														value="${c:l('label_FinanceMainDialog_RepayBaseRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="repayBaseRate" width="200px" visible="false" />
+														<textbox
+															id="lovDescRepayBaseRateName" width="250px"
+															readonly="true" />
+														<button
+															id="btnSearchRepayBaseRate"
+															image="/images/icons/LOVSearch.png" height="24px"
+															tabindex="49" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_RepaySpecialRate"
+														value="${c:l('label_FinanceMainDialog_RepaySpecialRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="repaySpecialRate" width="200px" visible="false" />
+														<textbox
+															id="lovDescRepaySpecialRateName" width="250px"
+															readonly="true" />
+														<button
+															id="btnSearchRepaySpecialRate"
+															image="/images/icons/LOVSearch.png" height="24px"
+															tabindex="50" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_RepayMargin"
+														value="${c:l('label_FinanceMainDialog_RepayMargin.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<decimalbox
+															id="repayMargin" width="120px" maxlength="15"
+															tabindex="51" readonly="true" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_ScheduleMethod"
+														value="${c:l('label_FinanceMainDialog_ScheduleMethod.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<combobox
+															id="cbScheduleMethod" tabindex="52" width="275px"
+															readonly="true" disabled="true" />
+													</hbox>
+												</row>
+												<row id="alwIndRow"
+													visible="false">
+													<label
+														id="label_FinanceMainDialog_AllowRpyInd"
+														value="${c:l('label_FinanceMainDialog_FinRpyAlwIndRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="allowRpyInd" checked="false" tabindex="53" />
+													</hbox>
+
+													<label
+														id="label_FinanceMainDialog_FinRpyIndBaseRate"
+														value="${c:l('label_FinanceMainDialog_FinRpyIndBaseRate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="rpyIndBaseRate" width="72px" visible="false" />
+														<textbox
+															id="lovDescRpyIndBaseRateName" width="250px"
+															readonly="true" />
+														<button
+															id="btnSearchRpyIndBaseRate" tabindex="54"
+															image="/images/icons/LOVSearch.png" height="24px" />
+													</hbox>
+												</row>
+												<row id="rpyPftFrqRow"
+													visible="true">
+													<label
+														id="label_FinanceMainDialog_RepayPftFrq"
+														value="${c:l('label_FinanceMainDialog_RepayPftFrq.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="repayPftFrq" maxlength="15" visible="false" />
+														<combobox
+															id="cbRepayPftFrqCode" width="90px" readonly="true"
+															tabindex="55" />
+														<combobox
+															id="cbRepayPftFrqMth" width="130px" readonly="true"
+															tabindex="56" />
+														<combobox
+															id="cbRepayPftFrqDay" width="40px" readonly="true"
+															tabindex="57" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_NextRepayPftDate"
+														value="${c:l('label_FinanceMainDialog_NextRepayPftDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<datebox
+															id="nextRepayPftDate" width="100px" tabindex="58" />
+														<space
+															spacing="2px" />
+														<datebox
+															id="nextRepayPftDate_two" readonly="true"
+															buttonVisible="false" width="100px" />
+													</hbox>
+												</row>
+												<row id="rpyRvwFrqRow"
+													visible="false">
+													<label
+														id="label_FinanceMainDialog_RepayRvwFrq"
+														value="${c:l('label_FinanceMainDialog_RepayRvwFrq.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="repayRvwFrq" maxlength="15" visible="false" />
+														<combobox
+															id="cbRepayRvwFrqCode" width="90px" readonly="true"
+															tabindex="59" />
+														<combobox
+															id="cbRepayRvwFrqMth" width="130px" readonly="true"
+															tabindex="60" />
+														<combobox
+															id="cbRepayRvwFrqDay" width="40px" readonly="true"
+															tabindex="61" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_NextRepayRvwDate"
+														value="${c:l('label_FinanceMainDialog_NextRepayRvwDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<datebox
+															id="nextRepayRvwDate" width="100px" tabindex="62" />
+														<space
+															spacing="2px" />
+														<datebox
+															id="nextRepayRvwDate_two" readonly="true"
+															buttonVisible="false" width="100px" />
+													</hbox>
+												</row>
+												<row id="rpyCpzFrqRow"
+													visible="false">
+													<label
+														id="label_FinanceMainDialog_RepayCpzFrq"
+														value="${c:l('label_FinanceMainDialog_RepayCpzFrq.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="repayCpzFrq" maxlength="15" visible="false" />
+														<combobox
+															id="cbRepayCpzFrqCode" width="90px" readonly="true"
+															tabindex="63" />
+														<combobox
+															id="cbRepayCpzFrqMth" width="130px" readonly="true"
+															tabindex="64" />
+														<combobox
+															id="cbRepayCpzFrqDay" width="40px" readonly="true"
+															tabindex="65" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_NextRepayCpzDate"
+														value="${c:l('label_FinanceMainDialog_NextRepayCpzDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<datebox
+															id="nextRepayCpzDate" width="100px" tabindex="66" />
+														<space
+															spacing="2px" />
+														<datebox
+															id="nextRepayCpzDate_two" readonly="true"
+															buttonVisible="false" width="100px" />
+													</hbox>
+												</row>
+												<row id="rpyFrqRow"
+													visible="true">
+													<label
+														id="label_FinanceMainDialog_RepayFrq"
+														value="${c:l('label_FinanceMainDialog_RepayFrq.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory"
+															id="space_FinRepaymentFrq" />
+														<textbox
+															id="repayFrq" maxlength="15" visible="false" />
+														<combobox
+															id="cbRepayFrqCode" width="90px" readonly="true"
+															tabindex="67" />
+														<combobox
+															id="cbRepayFrqMth" width="130px" readonly="true"
+															tabindex="68" />
+														<combobox
+															id="cbRepayFrqDay" width="40px" readonly="true"
+															tabindex="69" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_NextRepayDate"
+														value="${c:l('label_FinanceMainDialog_NextRepayDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<datebox
+															id="nextRepayDate" width="100px" tabindex="70" />
+														<space
+															spacing="2px" />
+														<datebox
+															id="nextRepayDate_two" readonly="true"
+															buttonVisible="false" width="100px" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_FinanceMainDialog_FinRepayPftOnFrq"
+														value="${c:l('label_FinanceMainDialog_FinRepayPftOnFrq.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="finRepayPftOnFrq" checked="false" tabindex="71" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_MaturityDate"
+														value="${c:l('label_FinanceMainDialog_MaturityDate.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<datebox
+															id="maturityDate" width="100px" tabindex="72" />
+														<space
+															spacing="2px" />
+														<datebox
+															id="maturityDate_two" readonly="true"
+															buttonVisible="false" width="100px" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+								</div>
+							</tabpanel>
+							<tabpanel id="contributorTabPanel"
+								style="overflow:auto">
+								<groupbox id="gb_contributorDetails">
+									<caption
+										label="${c:l('ContributorDetails')}" />
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="190px" />
+											<column />
+											<column width="190px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													id="label_FinanceMainDialog_MinContributors"
+													value="${c:l('label_FinanceMainDialog_MinContributors.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<intbox
+														id="minContributors" width="72px" />
+												</hbox>
+												<label
+													id="label_FinanceMainDialog_MaxContributors"
+													value="${c:l('label_FinanceMainDialog_MaxContributors.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<intbox
+														id="maxContributors" width="72px" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceMainDialog_MinContributionAmt"
+													value="${c:l('label_FinanceMainDialog_MinContributionAmt.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<decimalbox
+														id="minContributionAmt" width="150px" />
+												</hbox>
+												<label
+													id="label_FinanceMainDialog_MaxContributionAmt"
+													value="${c:l('label_FinanceMainDialog_MaxContributionAmt.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<decimalbox
+														id="maxContributionAmt" width="150px" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceMainDialog_CurContributors"
+													value="${c:l('label_FinanceMainDialog_CurContributors.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="curContributors" width="72px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceMainDialog_CurContributionAmt"
+													value="${c:l('label_FinanceMainDialog_CurContributionAmt.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<decimalbox
+														id="curContributionAmt" width="150px" readonly="true" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceMainDialog_CurBankInvest"
+													value="${c:l('label_FinanceMainDialog_CurBankInvest.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<decimalbox
+														id="curBankInvest" width="150px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceMainDialog_AvgMudaribRate"
+													value="${c:l('label_FinanceMainDialog_AvgMudaribRate.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<decimalbox
+														id="avgMudaribRate" width="150px" readonly="true" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceMainDialog_AlwContributorsToLeave"
+													value="${c:l('label_FinanceMainDialog_AlwContributorsToLeave.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="alwContributorsToLeave" checked="false" />
+												</hbox>
+												<label
+													id="label_FinanceMainDialog_AlwContributorsToJoin"
+													value="${c:l('label_FinanceMainDialog_AlwContributorsToJoin.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="alwContributorsToJoin" checked="false" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<space height="10px" />
+								<div sclass="z-toolbar"
+									style="padding:0px" height="28px">
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" width="100%"
+										widths="30%,40%,30%">
+										<toolbar align="start"
+											style="border-style: none;" width="100%">
+											<space spacing="2px" />
+											<label
+												id="label_ContributorList"
+												value="${c:l('label_ContributorList.label')}"
+												style="font-weight:bold;font-size:11px;padding-top:5px;" />
+											<space spacing="2px" />
+										</toolbar>
+										<toolbar align="center"
+											style="border-style: none;" width="100%">
+											<space spacing="2px" />
+											<button
+												id="btnPrintContributor" label="${c:l('label_Print')}"
+												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
+												height="24px" />
+											<space spacing="2px" />
+										</toolbar>
+										<toolbar align="end"
+											style="border-style: none;" width="100%">
+											<button
+												id="btnNewContributor" label="${c:l('label_New')}"
+												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
+												height="24px" />
+											<space spacing="5px" />
+										</toolbar>
+									</hbox>
+								</div>
+
+								<listbox id="listBoxFinContributor"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									tooltiptext="${c:l('listbox.tooltiptext')}" width="99.8%"
+									multiple="false">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_ContributorCIF"
+											label="${c:l('listheader_ContributorCIF.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_ContributorInvest"
+											label="${c:l('listheader_ContributorInvest.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_InvestAcc"
+											label="${c:l('listheader_InvestAcc.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_InvestDate"
+											label="${c:l('listheader_InvestDate.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_RecordDate"
+											label="${c:l('listheader_RecordDate.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_TotalInvestPerc"
+											label="${c:l('listheader_TotalInvestPerc.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_MudaribPerc"
+											label="${c:l('listheader_MudaribPerc.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_CRecordStatus"
+											label="${c:l('listheader_RecordStatus.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_CRecordType"
+											label="${c:l('listheader_RecordType.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+							<tabpanel id="billingTabPanel"
+								style="overflow:auto">
+								<groupbox id="gb_billingDetails"
+									closable="false">
+									<caption
+										id="caption_billingDetails" />
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="220px" />
+											<column />
+											<column width="280px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<hbox>
+													<label
+														id="label_FinanceMainDialog_PreContrOrDeffCost"
+														value="${c:l('label_FinanceMainDialog_PreContrOrDeffCost.value')}" />
+													<label
+														id="label_FinanceMainDialog_ContrBillRetain"
+														value="${c:l('label_FinanceMainDialog_ContrBillRetain.value')}" />
+												</hbox>
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<decimalbox
+														id="preContrOrDeffCost" width="150px" />
+													<decimalbox
+														id="contrBillRetain" width="150px" />
+												</hbox>
+												<label
+													id="label_FinanceMainDialog_AutoAcClaimDate"
+													value="${c:l('label_FinanceMainDialog_AutoAcClaimDate.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="autoAcClaimDate" checked="false" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<space height="10px" />
+								<div sclass="z-toolbar"
+									style="padding:0px" height="28px">
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" width="100%"
+										widths="30%,40%,30%">
+										<toolbar align="start"
+											style="border-style: none;" width="100%">
+											<space spacing="2px" />
+											<label
+												id="label_BillingList"
+												value="${c:l('label_BillingList.label')}"
+												style="font-weight:bold;font-size:11px;padding-top:5px;" />
+											<space spacing="2px" />
+										</toolbar>
+										<toolbar align="center"
+											style="border-style: none;" width="100%">
+											<space spacing="2px" />
+											<button id="btnPrintBilling"
+												label="${c:l('label_Print')}"
+												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
+												height="24px" />
+											<space spacing="2px" />
+										</toolbar>
+										<toolbar align="end"
+											style="border-style: none;" width="100%">
+											<button id="btnNewBilling"
+												label="${c:l('label_New')}"
+												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
+												height="24px" />
+											<space spacing="5px" />
+										</toolbar>
+									</hbox>
+								</div>
+
+								<listbox id="listBoxFinBilling"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									tooltiptext="${c:l('listbox.tooltiptext')}" width="99.8%"
+									multiple="false">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_ProgClaimDate"
+											label="${c:l('listheader_ProgClaimDate.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_ProgClaimAmount"
+											label="${c:l('listheader_ProgClaimAmount.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_TotalWorkPerc"
+											label="${c:l('listheader_TotalWorkPerc.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_CumulativeClaimAmount"
+											label="${c:l('listheader_CumulativeClaimAmount.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_TotalCompleteWorkPerc"
+											label="${c:l('listheader_TotalCompleteWorkPerc.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_BRecordStatus"
+											label="${c:l('listheader_RecordStatus.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_BRecordType"
+											label="${c:l('listheader_RecordType.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+							<tabpanel id="scheduleTabPanel"
+								style="overflow:auto">
+								<div id="scheduleTabDiv" />
+								<groupbox>
+									<grid id="grid_effRateOfReturn"
+										sclass="GridLayoutNoBorder" fixedLayout="true"
+										style="border:5px;border-top:0px;">
+										<columns>
+											<column width="200px" />
+											<column />
+											<column width="200px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													id="label_FinanceMainDialog_EffectiveRateOfReturn"
+													value="${c:l('label_FinanceMainDialog_EffectiveRateOfReturn.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<label
+														id="effectiveRateOfReturn"
+														style="font-weight:bold;color:#FF6600;" />
+												</hbox>
+												<label
+													id="label_FinanceMainDialog_AnualizedPercRate"
+													value="${c:l('label_FinanceMainDialog_AnualizedPercRate.value')}"
+													visible="false" />
+												<hbox visible="false">
+													<space
+														spacing="2px" />
+													<label
+														id="anualizedPercRate" style="font-weight:bold;" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<toolbar align="start"
+									style="border-style: none;" width="100%">
+									<button id="btnAddReviewRate"
+										label="${c:l('btnAddRateChange.label')}"
+										tooltiptext="${c:l('btnAddRateChange.tooltiptext')}"
+										height="24px" disabled="true" />
+									<button id="btnChangeRepay"
+										label="${c:l('btnChangeRepayment.label')}"
+										tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
+										height="24px" disabled="true" />
+									<button id="btnAddDisbursement"
+										label="${c:l('btnAddDisbursement.label')}"
+										tooltiptext="${c:l('btnAddDisbursement.tooltiptext')}"
+										height="24px" disabled="true" />
+									<button id="btnAddDefferment"
+										label="${c:l('btnAddDefferment.label')}"
+										tooltiptext="${c:l('btnAddDefferment.tooltiptext')}"
+										height="24px" disabled="true" />
+									<button id="btnRmvDefferment"
+										label="${c:l('btnRmvDefferment.label')}"
+										tooltiptext="${c:l('btnRmvDefferment.tooltiptext')}"
+										height="24px" disabled="true" />
+									<space width="2px" />
+									<button id="btnAddTerms"
+										label="${c:l('btnAddTerm.label')}"
+										tooltiptext="${c:l('btnAddTerms.tooltiptext')}" height="24px" />
+									<space width="2px" />
+									<button id="btnRmvTerms"
+										label="${c:l('btnRmvTerm.label')}"
+										tooltiptext="${c:l('btnRmvTerms.tooltiptext')}" height="24px" />
+									<space width="2px" />
+									<button id="btnReCalcualte"
+										label="${c:l('btnReCalcualte.label')}"
+										tooltiptext="${c:l('btnReCalcualte.tooltiptext')}"
+										height="24px" />
+									<space width="2px" />
+									<button id="btnSubSchedule"
+										label="${c:l('btnSubSchedule.label')}"
+										tooltiptext="${c:l('btnSubSchedule.tooltiptext')}"
+										height="24px" />
+									<space width="2px" />
+									<button id="btnChangeProfit"
+										label="${c:l('btnChangeProfit.label')}"
+										tooltiptext="${c:l('btnChangeProfit.tooltiptext')}"
+										height="24px" />
+									<space width="2px" />
+									<button id="btnPrintSchedule"
+										height="24px" label="${c:l('label_Print')}"
+										tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
+										disabled="true" />
+									<space width="2px" />
+								</toolbar>
+
+								<listbox id="listBoxSchedule"
+									fixedLayout="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									width="100%" multiple="false">
+									<listhead sizable="false"
+										style="padding:0px;position:relative;">
+										<listheader visible="true"
+											width="1%" />
+										<listheader visible="true"
+											label="${c:l('listheader_ScheduleDate.label')}" width="12%" />
+										<listheader
+											label="${c:l('listheader_ScheduleEvent.label')}" width="15%" />
+										<listheader
+											label="${c:l('listheader_CalProfit.label')}" width="14%" />
+										<listheader
+											label="${c:l('listheader_SchProfit.label')}" width="14%" />
+										<listheader
+											label="${c:l('listheader_Principal.label')}" width="15%" />
+										<listheader
+											label="${c:l('listheader_Total.label')}" width="15%" />
+										<listheader
+											label="${c:l('listheader_ScheduleEndBal.label')}"
+											width="14%" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+
+							<tabpanel id="eligibilityTabPanel"
+								style="overflow:auto">
+								<div id="elgDiv" />
+								<toolbar align="start"
+									style="border-style: none;" width="100%">
+									<button
+										label="${c:l('label_RuleExecute.label')}" id="btnElgRule"
+										tooltiptext="${c:l('btnExecuteElgRule.tooltiptext')}"
+										height="24px" />
+									<space width="200px" />
+									<label id="label_ElgRuleSummary"
+										value="${c:l('label_Summary.label')}"
+										style="font-weight:bold;font-size:11px" />
+									<space spacing="2px" />
+									<label id="label_ElgRuleSummaryVal"
+										style="font-weight:bold;font-size:11px" />
+								</toolbar>
+								<listbox id="listBoxFinElgRef"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									width="99.8%" multiple="false">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_FinElgRuleSource"
+											label="Eligibility Rule Source" sort="false" hflex="min"
+											visible="false" />
+										<listheader
+											id="listheader_FinElgRule"
+											label="${c:l('listheader_ElgRuleCode.label')}" sort="auto"
+											hflex="min" />
+										<listheader
+											id="listheader_ElgRuleDesc"
+											label="${c:l('listheader_ElgRuleDesc.label')}" sort="auto"
+											hflex="min" />
+										<listheader
+											id="listheader_ElgRuleOverride"
+											label="${c:l('listheader_ElgRuleOverride.label')}"
+											sort="auto" hflex="min" />
+										<listheader
+											id="listheader_ElgRuleOverrideVal"
+											label="${c:l('listheader_ElgRuleOverrideVal.label')}"
+											sort="auto" hflex="min" />
+										<listheader
+											id="listheader_FinElgRuleResult"
+											label="${c:l('listheader_ElgRuleResult.label')}" sort="auto"
+											hflex="min" />
+										<listheader
+											id="listheader_FinElgRuleCalResult"
+											label="${c:l('listheader_ElgRuleCalResult.label')}"
+											sort="auto" hflex="min" />
+										<listheader
+											id="listheader_ElgRuleCanOverride"
+											label="${c:l('listheader_ElgRuleCanOverride.label')}"
+											sort="auto" hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+
+							<tabpanel id="scoringTabPanel"
+								style="overflow:auto">
+								<div id="scoringDiv" />
+								<toolbar align="start"
+									style="border-style: none;" width="100%">
+									<button
+										label="${c:l('label_RuleExecute.label')}" id="btnScoringGroup"
+										tooltiptext="${c:l('btnExecuteScoringRule.tooltiptext')}"
+										height="24px" />
+
+									<space width="50px" />
+
+									<label id="label_TotalScore"
+										value="${c:l('label_TotalScore.label')}"
+										style="font-weight:bold;font-size:11px" visible="false" />
+									<space spacing="2px" />
+									<label id="totalCorpScore"
+										style="font-weight:bold;font-size:11px" visible="false" />
+
+									<space spacing="60px" />
+
+									<label id="label_CorpCreditWoth"
+										value="${c:l('label_CorpCreditWoth.label')}"
+										style="font-weight:bold;font-size:11px" visible="false" />
+									<space spacing="2px" />
+									<label id="corpCreditWoth"
+										style="font-weight:bold;font-size:11px" visible="false" />
+
+									<space spacing="60px" />
+
+									<label id="label_ScoreSummary"
+										value="${c:l('label_Summary.label')}"
+										style="font-weight:bold;font-size:11px" visible="false" />
+									<space spacing="2px" />
+									<label id="label_ScoreSummaryVal"
+										visible="false" />
+								</toolbar>
+
+								<listbox id="listBoxRetailScoRef"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									width="100%" multiple="false">
+									<listhead sizable="false">
+										<listheader
+											label="${c:l('listheader_Scoring_Metric.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											label="${c:l('listheader_Scoring_MetricDesc.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											label="${c:l('listheader_Scoring_MaxScore.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											label="${c:l('listheader_Scoring_Score.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+
+								<groupbox id="finScoreDetailGroup"
+									mold="3d" visible="false">
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:5px">
+										<columns>
+											<column width="190px" />
+											<column />
+											<column width="190px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													id="label_FinanceMainDialog_MaxFinTotScore"
+													value="${c:l('label_FinanceMainDialog_MaxFinTotScore.value')}" />
+												<decimalbox
+													id="maxFinTotScore" style="font-weight:bold;"
+													disabled="true" width="80px" />
+												<label
+													id="label_FinanceMainDialog_MaxNonFinTotScore"
+													value="${c:l('label_FinanceMainDialog_MaxNonFinTotScore.value')}" />
+												<decimalbox
+													id="maxNonFinTotScore" style="font-weight:bold;"
+													disabled="true" width="80px" />
+											</row>
+											<row>
+												<label
+													id="label_FinanceMainDialog_MinScore"
+													value="${c:l('label_FinanceMainDialog_MinScore.value')}" />
+												<intbox id="minScore"
+													style="font-weight:bold;" readonly="true" width="80px" />
+												<label
+													id="label_FinanceMainDialog_CalTotScore"
+													value="${c:l('label_FinanceMainDialog_CalTotScore.value')}" />
+												<decimalbox
+													id="calTotScore" style="font-weight:bold;" disabled="true"
+													width="80px" />
+											</row>
+											<row
+												id="row_finScoreOverride">
+												<label
+													id="label_FinanceMainDialog_IsOverride"
+													value="${c:l('label_FinanceMainDialog_IsOverride.value')}" />
+												<checkbox
+													id="isOverride" disabled="false" checked="false" />
+												<label
+													id="label_FinanceMainDialog_OverrideScore"
+													value="${c:l('label_FinanceMainDialog_OverrideScore.value')}" />
+												<intbox
+													id="overrideScore" style="font-weight:bold;"
+													readonly="true" width="80px" />
+											</row>
+										</rows>
+									</grid>
+
+									<tabbox width="99%" height="100%"
+										id="tabBoxIndexCenter1">
+										<tabs id="tabsIndexCenter1">
+											<tab id="finScoreMetricTab"
+												label="Financial Scoring Metric Details" visible="true" />
+											<tab
+												id="nonFinScoreMetricTab"
+												label="Non-Financial Scoring Metric Details" visible="true" />
+										</tabs>
+										<tabpanels
+											id="tabpanelsBoxIndexCenter1">
+											<tabpanel
+												style="overflow:auto">
+												<listbox
+													id="listBoxFinancialScoRef" fixedLayout="true" span="true"
+													emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+													width="100%" multiple="false">
+													<listhead
+														sizable="false">
+														<listheader
+															label="${c:l('listheader_FinScoring_Metric.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															label="${c:l('listheader_FinScoring_MetricDesc.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															label="${c:l('listheader_FinScoring_MaxScore.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															label="${c:l('listheader_FinScoring_Score.label')}"
+															sort="false" hflex="min" />
+													</listhead>
+												</listbox>
+											</tabpanel>
+											<tabpanel
+												style="overflow:auto">
+												<listbox
+													id="listBoxNonFinancialScoRef" fixedLayout="true"
+													span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
+													vflex="true" width="100%" multiple="false">
+													<listhead
+														sizable="false">
+														<listheader
+															label="${c:l('listheader_NFScoring_Metric.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															label="${c:l('listheader_NFScoring_MetricDesc.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															label="${c:l('listheader_NFScoring_MaxScore.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															label="${c:l('listheader_NFScoring_Score.label')}"
+															sort="false" hflex="min" />
+													</listhead>
+												</listbox>
+											</tabpanel>
+										</tabpanels>
+									</tabbox>
+								</groupbox>
+							</tabpanel>
+
+							<tabpanel id="agreementTabPanel"
+								style="overflow:auto">
+								<div id="agreementDiv" />
+								<listbox id="listBox_Agreements"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}"
+									tooltiptext="${c:l('label_Generate_Report.tooltip')}"
+									multiple="true" vflex="true" width="100%">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_AgreementCode"
+											label="${c:l('label_AgreementName.value')}" sort="auto"
+											hflex="min" />
+										<listheader
+											id="listheader_AgreementName" sort="auto"
+											label="${c:l('label_ReportName.value')}" hflex="min" />
+									</listhead>
+								</listbox>
+								<space height="10px" />
+								<listbox id="listBox_FinAgreementDetail"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}"
+									tooltiptext="${c:l('label_Generate_Report.tooltip')}"
+									multiple="false" vflex="true" width="100%">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_FinAgrDesc"
+											label="${c:l('listheader_FinAgrDesc.value')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_FinAgrName" sort="false"
+											label="${c:l('listheader_FinAgrName.value')}" hflex="min" />
+										<listheader
+											id="listheader_FinAgrUpload"
+											label="${c:l('listheader_FinAgrUpload.value')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_FinAgrView" sort="false"
+											label="${c:l('listheader_FinAgrView.value')}" hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+
+							<tabpanel id="documnetDetailsTabPanel"
+								style="overflow:auto">
+								<div id="documnetDetailsDiv" />
+								<div sclass="z-toolbar"
+									style="padding:0" height="24px">
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+										style=" padding:0px;">
+										<toolbar align="start"
+											style="float:left; border-style: none; padding:0px;"
+											width="300px" height="24px">
+										</toolbar>
+										<toolbar align="center"
+											style="float:left; border-style: none; padding:0px;"
+											height="24px">
+										</toolbar>
+										<toolbar align="end"
+											style="float:right; border-style: none; padding:0px;"
+											height="24px">
+											<button
+												id="btnNew_DocumentDetails" height="24px"
+												label="${c:l('label_New')}"
+												tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}" />
+										</toolbar>
+										<space width="2px" />
+									</hbox>
+								</div>
+
+								<listbox id="listBoxDocumentDetails"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+									multiple="false">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_DocType"
+											label="${c:l('listheader_DocType.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_DocumnetName"
+											label="${c:l('listheader_DocumnetName.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											label="${c:l('listheader_RecordStatus.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+
+							<tabpanel id="feeChargesTabPanel"
+								style="overflow:auto">
+								<div id="feeChargesDiv" />
+								<toolbar align="start"
+									style="border-style: none;" width="100%">
+									<button
+										label="${c:l('label_RuleExecute.label')}" id="btnFeeCharges"
+										tooltiptext="${c:l('btnExecuteFeeRule.tooltiptext')}"
+										height="24px" />
+									<space width="445px" />
+									<label id="label_feeChargesSummary"
+										value="${c:l('label_totalFCSummary.label')}"
+										style="font-weight:bold;font-size:11px" />
+									<space spacing="2px" />
+									<label
+										id="label_feeChargesSummaryVal"
+										style="font-weight:bold;font-size:11px" />
+								</toolbar>
+								<listbox id="listBoxFinFeeCharges"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									width="100%" multiple="false">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_FC_FeeCode"
+											label="${c:l('listheader_FC_FeeCode.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_FC_FeeDesc"
+											label="${c:l('listheader_FC_FeeDesc.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_FC_Amount"
+											label="${c:l('listheader_FC_Amount.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+
+							<tabpanel id="accountingTabPanel"
+								style="overflow:auto">
+								<div id="accountingDiv" />
+								<toolbar align="start"
+									style="border-style: none;" width="100%">
+									<button
+										label="${c:l('label_RuleExecute.label')}" id="btnAccounting"
+										tooltiptext="${c:l('btnAccounting.tooltiptext')}"
+										height="24px" />
+									<label
+										id="label_AccountingFCSummaryVal"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_FCSummary.label')}" />
+									<space width="2px" />
+									<label id="label_AccountingFCCr"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_TotalCr.label')}" />
+									<space width="2px" />
+									<label id="label_AccountingFCCrVal"
+										style="font-weight:bold;font-size:11px;text-align:right;color:green;" />
+									<space width="2px" />
+									<label id="label_AccountingFCDr"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_TotalDr.label')}" />
+									<space width="2px" />
+									<label id="label_AccountingFCDrVal"
+										style="font-weight:bold;font-size:11px;text-align:right;color:red;" />
+									<space width="10px" />
+									<label
+										id="label_AccountingSummaryVal"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_DisbSummary.label')}" />
+									<space width="2px" />
+									<label id="label_AccountingDisbCr"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_TotalCr.label')}" />
+									<space width="2px" />
+									<label
+										id="label_AccountingDisbCrVal"
+										style="font-weight:bold;font-size:11px;text-align:right;color:green;" />
+									<space width="2px" />
+									<label id="label_AccountingDisbDr"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_TotalDr.label')}" />
+									<space width="2px" />
+									<label
+										id="label_AccountingDisbDrVal"
+										style="font-weight:bold;font-size:11px;text-align:right;color:red;" />
+									<space width="10px" />
+									<button id="btnPrintAccounting"
+										height="24px" label="${c:l('label_Print')}"
+										tooltiptext="${c:l('btnPrintAccounting.tooltiptext')}" />
+								</toolbar>
+								<listbox id="listBoxFinAccountings"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									width="100%" multiple="false">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_Acc_DebitOrCredit"
+											label="${c:l('listheader_Acc_DebitOrCredit.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_Acc_EntryDesc"
+											label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_TranCode"
+											label="${c:l('listheader_Acc_TranCode.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_RevTranCode"
+											label="${c:l('listheader_Acc_RevTranCode.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_Acc_AccountType"
+											label="${c:l('listheader_Acc_AccountType.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_Acc_AccountNo"
+											label="${c:l('listheader_Acc_AccountNo.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_Amount"
+											label="${c:l('listheader_Acc_Amount.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Acc_Error"
+											label="${c:l('listheader_Acc_Error.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+
+							<tabpanel id="stageAccountingTabPanel"
+								style="overflow:auto">
+								<div id="stageAccountingDiv" />
+								<toolbar align="start"
+									style="border-style: none;" width="100%">
+									<button
+										label="${c:l('label_RuleExecute.label')}"
+										id="btnStageAccounting"
+										tooltiptext="${c:l('btnAccounting.tooltiptext')}"
+										height="24px" />
+									<label
+										id="label_StageAccountingSummaryVal"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_FCSummary.label')}" />
+									<space width="2px" />
+									<label id="label_StageAccountingCr"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_TotalCr.label')}" />
+									<space width="2px" />
+									<label
+										id="label_StageAccountingCrVal"
+										style="font-weight:bold;font-size:11px;text-align:right;color:green;" />
+									<space width="2px" />
+									<label id="label_StageAccountingDr"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_TotalDr.label')}" />
+									<space width="2px" />
+									<label
+										id="label_StageAccountingDrVal"
+										style="font-weight:bold;font-size:11px;text-align:right;color:red;" />
+									<space width="10px" />
+									<label
+										id="label_StageAccountingDisbSummaryVal"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_DisbSummary.label')}" />
+									<space width="2px" />
+									<label
+										id="label_StageAccountingDisbCr"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_TotalCr.label')}" />
+									<space width="2px" />
+									<label
+										id="label_StageAccountingDisbCrVal"
+										style="font-weight:bold;font-size:11px;text-align:right;color:green;" />
+									<space width="2px" />
+									<label
+										id="label_StageAccountingDisbDr"
+										style="font-weight:bold;font-size:11px;text-align:right;"
+										value="${c:l('label_TotalDr.label')}" />
+									<space width="2px" />
+									<label
+										id="label_StageAccountingDisbDrVal"
+										style="font-weight:bold;font-size:11px;text-align:right;color:red;" />
+									<space width="10px" />
+									<button id="btnPrintStageAccounting"
+										height="24px" label="${c:l('label_Print')}"
+										tooltiptext="${c:l('btnPrintAccounting.tooltiptext')}" />
+								</toolbar>
+								<listbox id="listBoxFinStageAccountings"
+									fixedLayout="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									width="100%" multiple="false">
+									<listhead sizable="false">
+										<listheader
+											id="listheader_Stage_DebitOrCredit"
+											label="${c:l('listheader_Acc_DebitOrCredit.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_Stage_EntryDesc"
+											label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Stage_TranCode"
+											label="${c:l('listheader_Acc_TranCode.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Stage_RevTranCode"
+											label="${c:l('listheader_Acc_RevTranCode.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_Stage_AccountType"
+											label="${c:l('listheader_Acc_AccountType.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_Stage_AccountNo"
+											label="${c:l('listheader_Acc_AccountNo.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Stage_Amount"
+											label="${c:l('listheader_Acc_Amount.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_Stage_Error"
+											label="${c:l('listheader_Acc_Error.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</center>
+				<south height="48px" border="none"
+					style="padding:5px;">
+					<groupbox id="groupboxWf" width="98%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label
+								id="label_FinanceMainDialog_RecordStatus"
+								value="${c:l('label_FinanceMainDialog_RecordStatus.value')} :"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_ExtendedFieldDetailSearch"
+		title="${c:l('window_ExtendedFieldDetailSearch.title')}" border="none"
+		apply="${extendedFieldDetailSearchCtrl}" closable="true" width="600px"
+		height="550px" sizable="true">
+
+		<borderlayout>
+			<north></north>
+			<center flex="true">
+				<panel>
+					<panelchildren style="padding: 5px">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column width="100%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_ModuleId" value="${c:l('label_ExtendedFieldDetailSearch_ModuleId.value')}" />
+									<listbox id="sortOperator_moduleId" width="43px" mold="select" rows="1" />
+									 <textbox id="moduleId" width="90px" maxlength="10" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldName" value="${c:l('label_ExtendedFieldDetailSearch_FieldName.value')}" />
+									<listbox id="sortOperator_fieldName" width="43px" mold="select" rows="1" />
+									 <textbox id="fieldName" width="162px" maxlength="18" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldType" value="${c:l('label_ExtendedFieldDetailSearch_FieldType.value')}" />
+									<listbox id="sortOperator_fieldType" width="43px" mold="select" rows="1" />
+									 <textbox id="fieldType" width="250px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldLength" value="${c:l('label_ExtendedFieldDetailSearch_FieldLength.value')}" />
+									<listbox id="sortOperator_fieldLength" width="43px" mold="select" rows="1" />
+											<intbox id="fieldLength" width="90px" maxlength="10" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldPrec" value="${c:l('label_ExtendedFieldDetailSearch_FieldPrec.value')}" />
+									<listbox id="sortOperator_fieldPrec" width="43px" mold="select" rows="1" />
+											<intbox id="fieldPrec" width="90px" maxlength="10" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldLabel" value="${c:l('label_ExtendedFieldDetailSearch_FieldLabel.value')}" />
+									<listbox id="sortOperator_fieldLabel" width="43px" mold="select" rows="1" />
+									 <textbox id="fieldLabel" width="250px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldMandatory" value="${c:l('label_ExtendedFieldDetailSearch_FieldMandatory.value')}" />
+									<listbox id="sortOperator_fieldMandatory" width="43px" mold="select" rows="1" />
+										<checkbox id="fieldMandatory" checked="false"/>
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldConstraint" value="${c:l('label_ExtendedFieldDetailSearch_FieldConstraint.value')}" />
+									<listbox id="sortOperator_fieldConstraint" width="43px" mold="select" rows="1" />
+									 <textbox id="fieldConstraint" width="250px" maxlength="2000" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldSeqOrder" value="${c:l('label_ExtendedFieldDetailSearch_FieldSeqOrder.value')}" />
+									<listbox id="sortOperator_fieldSeqOrder" width="43px" mold="select" rows="1" />
+											<intbox id="fieldSeqOrder" width="90px" maxlength="10" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldColumn" value="${c:l('label_ExtendedFieldDetailSearch_FieldColumn.value')}" />
+									<listbox id="sortOperator_fieldColumn" width="43px" mold="select" rows="1" />
+											<intbox id="fieldColumn" width="90px" maxlength="10" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldList" value="${c:l('label_ExtendedFieldDetailSearch_FieldList.value')}" />
+									<listbox id="sortOperator_fieldList" width="43px" mold="select" rows="1" />
+									 <textbox id="fieldList" width="250px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldDefaultValue" value="${c:l('label_ExtendedFieldDetailSearch_FieldDefaultValue.value')}" />
+									<listbox id="sortOperator_fieldDefaultValue" width="43px" mold="select" rows="1" />
+									 <textbox id="fieldDefaultValue" width="250px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldMinValue" value="${c:l('label_ExtendedFieldDetailSearch_FieldMinValue.value')}" />
+									<listbox id="sortOperator_fieldMinValue" width="43px" mold="select" rows="1" />
+							<longbox id = "fieldMinValue" width="171px"  maxlength="26" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldMaxValue" value="${c:l('label_ExtendedFieldDetailSearch_FieldMaxValue.value')}" />
+									<listbox id="sortOperator_fieldMaxValue" width="43px" mold="select" rows="1" />
+							<longbox id = "fieldMaxValue" width="171px"  maxlength="26" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldUnique" value="${c:l('label_ExtendedFieldDetailSearch_FieldUnique.value')}" />
+									<listbox id="sortOperator_fieldUnique" width="43px" mold="select" rows="1" />
+										<checkbox id="fieldUnique" checked="false"/>
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_FieldExternalScript" value="${c:l('label_ExtendedFieldDetailSearch_FieldExternalScript.value')}" />
+									<listbox id="sortOperator_fieldExternalScript" width="43px" mold="select" rows="1" />
+									 <textbox id="fieldExternalScript" width="250px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_RecordStatus" value="${c:l('label_ExtendedFieldDetailSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_ExtendedFieldDetailSearch_RecordType" value="${c:l('label_ExtendedFieldDetailSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+					</panelchildren>
+				</panel>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouthExtendedFieldDetail" align="left" width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20"
+										label="${c:l('btnSearch.label')}"
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+									<button id="btnClose" height="20"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<label
+										id="label_ExtendedFieldDetailSearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

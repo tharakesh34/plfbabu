@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CarLoanDetailDialog"
+		title="${c:l('window_CarLoanDetailDialog.title')}" border="none"
+		apply="${carLoanDetailDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<div id="toolbar" sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					style="float:left; border-style: none;">
+					<button id="btnNew" height="24px"
+						tooltiptext="${c:l('btnNew.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnEdit" height="24px"
+						tooltiptext="${c:l('btnEdit.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnDelete" height="24px"
+						tooltiptext="${c:l('btnDelete.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnSave" height="24px"
+						tooltiptext="${c:l('btnSave.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnCancel" height="24px"
+						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+					<button id="btnNotes" height="24px"
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+				</toolbar>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					style="float:left; border-style: none;">
+					<hbox align="center" style="padding: 2px"></hbox>
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					style="float:right; border-style: none;">
+					<button id="btnHelp" height="24px"
+						label = "${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnClose" height="24px"
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderlayoutCarLoanDetail" >
+			<center border="none" >
+
+				<groupbox id="gb_basicDetails" >
+				<caption id="caption_carLoan" label="${c:l('CarLoanDetail')}"  visible="false"/>
+					<grid id="grid_carLoanDetails"
+						sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="150px" />
+							<column />
+							<column width="150px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="false">
+								<label
+									id="label_CarLoanDetailDialog_LoanRefNumber"
+									value="${c:l('label_CarLoanDetailDialog_LoanRefNumber.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="loanRefNumber"
+										width="171px" maxlength="26" readonly="true" />
+								</hbox>
+							</row>
+							<row visible="false">
+								<label
+									id="label_CarLoanDetailDialog_LoanRefType"
+									value="${c:l('label_CarLoanDetailDialog_LoanRefType.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<checkbox id="loanRefType"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CarLoanDetailDialog_CarLoanFor"
+									value="${c:l('label_CarLoanDetailDialog_CarLoanFor.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="carLoanFor"
+										width="171px" visible="false" />
+									<textbox id="lovDescCarLoanForName"
+										width="171px" readonly="true" />
+									<button id="btnSearchCarLoanFor"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_CarLoanDetailDialog_CarUsage"
+									value="${c:l('label_CarLoanDetailDialog_CarUsage.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="carUsage" width="171px"
+										visible="false" />
+									<textbox id="lovDescCarUsageName"
+										width="171px" readonly="true" />
+									<button id="btnSearchCarUsage"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CarLoanDetailDialog_CarManufacturer"
+									value="${c:l('label_CarLoanDetailDialog_CarManufacturer.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="carManufacturer"
+										width="171px" visible="false" />
+									<textbox
+										id="lovDescCarManufacturerName" width="171px" readonly="true" />
+									<button
+										id="btnSearchCarManufacturer"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_CarLoanDetailDialog_CarModel"
+									value="${c:l('label_CarLoanDetailDialog_CarModel.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="carModel" width="171px"
+										visible="false" />
+									<textbox id="lovDescCarModelName"
+										width="171px" readonly="true" />
+									<button id="btnSearchCarModel"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label
+									id="label_CarLoanDetailDialog_CarVersion"
+									value="${c:l('label_CarLoanDetailDialog_CarVersion.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="carVersion"
+										width="171px" visible="false" />
+									<textbox id="lovDescCarVersionName"
+										width="171px" readonly="true" />
+									<button id="btnSearchCarVersion"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+								<label
+									id="label_CarLoanDetailDialog_CarMakeYear"
+									value="${c:l('label_CarLoanDetailDialog_CarMakeYear.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<intbox id="carMakeYear"
+										width="90px" maxlength="4" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CarLoanDetailDialog_CarCapacity"
+									value="${c:l('label_CarLoanDetailDialog_CarCapacity.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<intbox id="carCapacity"
+										width="90px" maxlength="2"/>
+								</hbox>
+                                <label
+                                    id="label_CarLoanDetailDialog_CarCc"
+                                    value="${c:l('label_CarLoanDetailDialog_CarCc.value')}" />
+                                <hbox>
+                                    <space spacing="2px"
+                                        sclass="mandatory" />
+                                    <intbox id="carCc"  width="90px" maxlength="5" />
+                                </hbox>
+                            </row>
+							<row visible="true">
+								<label
+									id="label_CarLoanDetailDialog_CarDealer"
+									value="${c:l('label_CarLoanDetailDialog_CarDealer.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<longbox id="carDealer"
+										width="171px" visible="false" />
+									<textbox id="lovDescCarDealerName"
+										width="171px" readonly="true" />
+									<button id="btnSearchCarDealer"
+										image="/images/icons/LOVSearch.png" height="24px" />
+								</hbox>
+                                <label
+                                    id="label_CarLoanDetailDialog_CarChasisNo"
+                                    value="${c:l('label_CarLoanDetailDialog_CarChasisNo.value')}" />
+                                <hbox>
+                                    <space spacing="2px" />
+                                    <textbox id="carChasisNo" width="171px" />
+                                </hbox>
+                            </row>
+                            <row visible="true">
+                                <label
+                                    id="label_CarLoanDetailDialog_CarInsuranceNo"
+                                    value="${c:l('label_CarLoanDetailDialog_CarInsuranceNo.value')}" />
+                                <hbox>
+                                    <space spacing="2px" />
+                                    <textbox id="carInsuranceNo" width="171px" />
+                                </hbox>
+                                <label
+                                    id="label_CarLoanDetailDialog_CarRegNo"
+                                    value="${c:l('label_CarLoanDetailDialog_CarRegNo.value')}" />
+                                <hbox>
+                                    <space spacing="2px" />
+                                    <textbox id="carRegNo" width="171px" />
+                                </hbox>
+                            </row>
+                            <row visible="true">
+                                <label
+                                    id="label_CarLoanDetailDialog_CarColor"
+                                    value="${c:l('label_CarLoanDetailDialog_CarColor.value')}" />
+                                <hbox>
+                                    <space spacing="2px"
+                                        sclass="mandatory" />
+                                    <combobox id="cbCarColor"
+                                    	width="171px" readonly="true" />
+                                </hbox>
+                            </row>
+							<row id="statusRow">
+								<label
+									id="label_CarLoanDetailDialog_RecordStatus"
+									value="${c:l('label_CarLoanDetailDialog_RecordStatus.value')}" />
+								<label id="recordStatus" />
+							</row>
+							<row spans="2">
+								<label value="   " />
+							</row>
+							<row spans="2">
+								<label value="   " />
+							</row>
+							<row spans="2">
+								<groupbox id="groupboxWf" width="97%">
+									<caption label="${c:l('Action')}" />
+									<hbox>
+										<radiogroup id="userAction"
+											name="action" />
+									</hbox>
+								</groupbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+
+			</center>
+		</borderlayout>
+	</window>
+</zk>

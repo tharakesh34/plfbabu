@@ -1,0 +1,357 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  AccountsDAOImpl.java                                                   * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  02-01-2012    														*
+ *                                                                  						*
+ * Modified Date    :  02-01-2012    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 02-01-2012       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+*/
+
+package com.pennant.backend.dao.accounts.impl;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.accounts.AccountsDAO;
+import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.accounts.Accounts;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.WorkFlowUtil;
+
+/**
+ * DAO methods implementation for the <b>Accounts model</b> class.<br>
+ * 
+ */
+public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsDAO {
+
+	private static Logger logger = Logger.getLogger(AccountsDAOImpl.class);
+	
+	// Spring Named JDBC Template
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
+	/**
+	 * This method set the Work Flow id based on the module name and return the new Accounts 
+	 * @return Accounts
+	 */
+	@Override
+	public Accounts getAccounts() {
+		logger.debug("Entering");
+		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("Accounts");
+		Accounts accounts= new Accounts();
+		if (workFlowDetails!=null){
+			accounts.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		logger.debug("Leaving");
+		return accounts;
+	}
+
+	/**
+	 * This method get the module from method getAcounts() and 
+	 * set the new record flag as true and return Accounts()   
+	 * @return Accounts
+	 */
+	@Override
+	public Accounts getNewAccounts() {
+		logger.debug("Entering");
+		Accounts accounts = getAccounts();
+		accounts.setNewRecord(true);
+		logger.debug("Leaving");
+		return accounts;
+	}
+
+	/**
+	 * Fetch the Record  Account Details details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return Accounts
+	 */
+	@Override
+	public Accounts getAccountsById(final String id, String type) {
+		logger.debug("Entering");
+		Accounts accounts = getAccounts();
+		
+		accounts.setAccountId(id);
+		
+		StringBuilder selectSql = new StringBuilder("Select AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, ");
+		selectSql.append("AcShortName, AcPurpose, InternalAc, CustSysAc, AcPrvDayBal, AcTodayDr, AcTodayCr, AcTodayNet,");
+		selectSql.append("AcAccrualBal, AcTodayBal, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive, AcBlocked,"); 
+		selectSql.append(" AcClosed, HostAcNumber");
+		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(",lovDescCustCIF,lovDescBranchCodeName,lovDescCurrency,lovDescAccTypeDesc, lovDescFinFormatter");
+		}
+		selectSql.append(" From Accounts");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where AccountId =:AccountId");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
+		RowMapper<Accounts> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Accounts.class);
+		
+		try{
+			accounts = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			accounts = null;
+		}
+		logger.debug("Leaving");
+		return accounts;
+	}
+	
+	/**
+	 * Fetch the Record  Account Details List by key field
+	 * 
+	 * @param AcPurpose (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return List<Accounts>
+	 */
+	@Override
+	public List<Accounts> getAccountsByAcPurpose(final String acPurpose, String type) {
+		logger.debug("Entering");
+		Accounts accounts = getAccounts();
+		
+		accounts.setAcPurpose(acPurpose);
+		
+		StringBuilder selectSql = new StringBuilder("Select AcType ");
+		selectSql.append(" From RMTAccountTypes");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where AcPurpose =:AcPurpose");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
+		RowMapper<Accounts> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Accounts.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+	
+	/**
+	 * This method initialise the Record.
+	 * @param Accounts (accounts)
+ 	 * @return Accounts
+	 */
+	@Override
+	public void initialize(Accounts accounts) {
+		super.initialize(accounts);
+	}
+	/**
+	 * This method refresh the Record.
+	 * @param Accounts (accounts)
+ 	 * @return void
+	 */
+	@Override
+	public void refresh(Accounts accounts) {
+		
+	}
+	
+	/**
+	 * To Set  dataSource
+	 * @param dataSource
+	 */
+	
+	public void setDataSource(DataSource dataSource) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+	
+	/**
+	 * This method Deletes the Record from the Accounts or Accounts_Temp.
+	 * if Record not deleted then throws DataAccessException with  error  41003.
+	 * delete Account Details by key AccointId
+	 * 
+	 * @param Account Details (accounts)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public void delete(Accounts accounts,String type) {
+		logger.debug("Entering");
+		int recordCount = 0;
+		
+		StringBuilder deleteSql = new StringBuilder("Delete From Accounts");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where AccountId =:AccountId");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
+		try{
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			if (recordCount <= 0) {
+				ErrorDetails errorDetails= getError("41003",accounts.getAccountId() ,accounts.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) {};
+			}
+		}catch(DataAccessException e){
+			logger.error(e);
+			ErrorDetails errorDetails= getError("41006",accounts.getAccountId() ,accounts.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * This method insert new Records into Accounts or Accounts_Temp.
+	 *
+	 * save Account Details 
+	 * 
+	 * @param Account Details (accounts)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	
+	@Override
+	public String save(Accounts accounts,String type) {
+		logger.debug("Entering");
+		
+		StringBuilder insertSql =new StringBuilder("Insert Into Accounts");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, AcShortName");
+		insertSql.append(", AcPurpose, InternalAc, CustSysAc, AcPrvDayBal, AcTodayDr, AcTodayCr, AcTodayNet");
+		insertSql.append(", AcAccrualBal, AcTodayBal, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
+		insertSql.append(", AcBlocked, AcClosed, HostAcNumber");
+		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode" );
+		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName" );
+		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc, :AcPrvDayBal, :AcTodayDr, :AcTodayCr");
+		insertSql.append(", :AcTodayNet, :AcAccrualBal, :AcTodayBal, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
+		insertSql.append(", :AcActive, :AcBlocked, :AcClosed, :HostAcNumber");
+		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
+		insertSql.append(", :NextTaskId, :RecordType, :WorkflowId)");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+		return accounts.getAccountId();
+	}
+	
+	/**
+	 * This method updates the Record Accounts or Accounts_Temp.
+	 * if Record not updated then throws DataAccessException with  error  41004.
+	 * update Account Details by key AccointId and Version
+	 * 
+	 * @param Account Details (accounts)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	
+	@SuppressWarnings("serial")
+	@Override
+	public void update(Accounts accounts,String type) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		StringBuilder	updateSql =new StringBuilder("Update Accounts");
+		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(" Set AccountId = :AccountId, AcCcy = :AcCcy, AcType = :AcType" ); 
+		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName" ); 
+		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc" ); 
+		updateSql.append(", CustSysAc = :CustSysAc, AcPrvDayBal = :AcPrvDayBal, AcTodayDr = :AcTodayDr" ); 
+	    updateSql.append(", AcTodayCr = :AcTodayCr, AcTodayNet = :AcTodayNet, AcAccrualBal = :AcAccrualBal" ); 
+		updateSql.append(", AcTodayBal = :AcTodayBal, AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate" ); 
+		updateSql.append(", AcLastSysTrnDate = :AcLastSysTrnDate, AcActive = :AcActive, AcBlocked = :AcBlocked" ); 
+		updateSql.append(", AcClosed = :AcClosed, HostAcNumber = :HostAcNumber, Version = :Version , LastMntBy = :LastMntBy");
+		updateSql.append(", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode" ); 
+		updateSql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Where AccountId =:AccountId");
+		
+		if (!type.endsWith("_TEMP")){
+			updateSql.append("  AND Version= :Version-1");
+		}
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError("41004",accounts.getAccountId() ,accounts.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");
+	}
+	
+    @Override
+    public void updateAccrualBalance() {
+		logger.debug("Entering");
+		
+		Accounts accounts = getAccounts();
+		accounts.setAcAccrualBal(new BigDecimal(0));
+		
+		StringBuilder	updateSql =new StringBuilder("Update Accounts");
+		updateSql.append(" Set AcAccrualBal = :AcAccrualBal ");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+    }
+	
+	private ErrorDetails  getError(String errorId, String AccointId, String userLanguage){
+		String[][] parms= new String[2][1];
+		parms[1][0] = AccointId;
+		parms[0][0] = PennantJavaUtil.getLabel("label_AccountId")+ ":" + parms[1][0];
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+	}
+
+}

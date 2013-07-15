@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+    <window id="window_CustomerPhoneNumDialog"
+        title="${c:l('window_CustomerPhoneNumberDialog.title')}" border="normal"
+        apply="${customerPhoneNumDlgCtrl}" width="800px" height="60%"
+        sizable="true">
+        <div sclass="z-toolbar" style="padding:0">
+            <hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+                width="100%">
+
+                <!-- COMMON BUTTONS -->
+                <toolbar align="start"
+                    style="float:left; border-style: none;">
+
+                    <button id="btnNew" height="24px"
+                        tooltiptext="${c:l('btnNew.tooltiptext')}" />
+                    <!-- label="${c:l('btnNew.label')}"  -->
+                    <button id="btnEdit" height="24px"
+                        tooltiptext="${c:l('btnEdit.tooltiptext')}" />
+                    <button id="btnDelete" height="24px"
+                        tooltiptext="${c:l('btnDelete.tooltiptext')}" />
+                    <button id="btnSave" height="24px"
+                        tooltiptext="${c:l('btnSave.tooltiptext')}" />
+                    <button id="btnCancel" height="24px"
+                        tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+                    <button id="btnNotes" height="24px"
+                        tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+                </toolbar>
+                <!-- SEARCH AREA -->
+                <toolbar align="center"
+                    style="float:left; border-style: none;">
+                    <hbox align="center" style="padding: 2px"></hbox>
+                </toolbar>
+
+                <!-- CRUD BUTTONS -->
+                <toolbar align="end"
+                    style="float:right; border-style: none;">
+                    <button id="btnHelp" height="24px"
+                        label = "${c:l('label_Help')}"
+                        tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+                    <button id="btnClose" height="24px"
+                        tooltiptext="${c:l('btnClose.tooltiptext')}" />
+                </toolbar>
+            </hbox>
+        </div>
+        <borderlayout id="borderlayoutCustomerPhoneNumber">
+        <center border="none" autoscroll="true">
+            <columnlayout>
+                <columnchildren width="100%" style="padding: 5px">
+
+            <panel border="none">
+                <panelchildren>
+                    <groupbox id="gb_basicDetails" mold="3d">
+                        <grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+                            <columns>
+                                <column width="150px" />
+                                <column />
+                            </columns>
+                            <rows>
+                                <row visible="false">
+                                    <label id = "label_CustomerPhoneNumberDialog_PhoneCustID" value="${c:l('label_CustomerPhoneNumberDialog_PhoneCustID.value')}" />
+                                <hbox>
+                                <space spacing="2px" sclass="mandatory"/>
+
+                                <longbox id="phoneCustID" width="100px" readonly="true"></longbox>
+                                    <space spacing="4px"/>
+                                    <label id="CustomerSname"  width="90px" value=""></label>
+                                    <space spacing="50px" />
+                                    <button id ="btnSearchPRCustid"  image="/images/icons/LOVSearch.png" height="24px" > </button>
+                                </hbox>
+                                </row>
+                                <row visible="true">
+                                    <label id = "label_CustomerPhoneNumberDialog_PhoneTypeCode" value="${c:l('label_CustomerPhoneNumberDialog_PhoneTypeCode.value')}" />
+                                <hbox>
+                                <space spacing="2px" sclass="mandatory"/>
+
+                                    <hbox>
+                                        <textbox id = "phoneTypeCode" width="72px" visible="false" ></textbox>
+                                        <textbox id = "lovDescPhoneTypeCodeName" width="250px"  readonly="true"/>
+                                        <button id ="btnSearchPhoneTypeCode"  image="/images/icons/LOVSearch.png" height="24px" > </button>
+                                    </hbox> 
+                                </hbox>
+                                </row>
+                                <row visible="true">
+                                    <label id = "label_CustomerPhoneNumberDialog_PhoneCountryCode" value="${c:l('label_CustomerPhoneNumberDialog_PhoneCountryCode.value')}" />
+                                <hbox>
+                                <space spacing="2px" sclass="mandatory"/>
+                                   <hbox>
+                                     <textbox
+                                         id="phoneCountryCode" width="200px"
+                                         style="overflow: hidden;" visible="false">
+                                     </textbox>
+                                     <textbox
+                                         id="lovDescPhoneCountryName"
+                                         style="overflow: hidden;" width="250px"
+                                         readonly="true" />
+                                     <button
+                                         id="btnSearchCustPhoneCountryCode"
+                                         image="/images/icons/LOVSearch.png" height="24px">
+                                     </button>
+                                    </hbox>
+                                </hbox>
+                                </row>
+                                <row visible="true">
+                                    <label id = "label_CustomerPhoneNumberDialog_PhoneAreaCode" value="${c:l('label_CustomerPhoneNumberDialog_PhoneAreaCode.value')}" />
+                                <hbox>
+                                <space spacing="2px"/>
+
+                                    <textbox id = "phoneAreaCode" maxlength="8" 
+                                    width="250px" 
+                                    />
+                                </hbox>
+                                </row>
+                                <row visible="true">
+                                    <label id = "label_CustomerPhoneNumberDialog_PhoneNumber" value="${c:l('label_CustomerPhoneNumberDialog_PhoneNumber.value')}" />
+                                <hbox>
+                                <space spacing="2px" sclass="mandatory"/>
+
+                                    <textbox id = "phoneNumber" maxlength="12" 
+                                    width="250px" 
+                                    />
+                                </hbox>
+                                </row>
+                                <row id="statusRow">
+                                    <label id = "label_CustomerPhoneNumberDialog_RecordStatus" value="${c:l('label_CustomerPhoneNumberDialog_RecordStatus.value')}" />
+                                    <label id = "recordStatus" />
+                                </row>
+                                <row spans="2">
+                                    <label value="   " />
+                                </row>
+                                <row spans="2">
+                                    <label value="   " />
+                                </row>
+                                <row spans="2">
+                                    <groupbox id = "gb" width="97%">
+                                        <caption label = "${c:l('Action')}" />
+                                        <hbox>
+                                            <radiogroup id = "userAction" name="action" />
+                                        </hbox>
+                                    </groupbox>
+                                </row>
+                            </rows>
+                        </grid>
+                    </groupbox>
+                </panelchildren>
+            </panel>
+        </columnchildren>
+        <columnchildren width="50%" style="padding: 5px">
+        </columnchildren>
+    </columnlayout>
+    </center>
+    </borderlayout>
+    </window>
+</zk>

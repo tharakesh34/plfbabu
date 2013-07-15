@@ -1,0 +1,5990 @@
+/**
+
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *                       																	*
+ * FileName      :  FinanceTypeDialogCtrl.java                                              *    
+ *                                                                          				*
+ * Author        :  PENNANT TECHONOLOGIES                       							*
+ *                                                                        					*
+ * Creation Date    :  30-06-2011                  											*
+ *                                                                        					*
+ * Modified Date    :  30-06-2011                  											*
+ *                                                                        					*
+ * Description   :                                                    						*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 30-06-2011       Pennant                  0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+*/
+
+package com.pennant.webui.rmtmasters.financetype;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataAccessException;
+import org.zkoss.spring.SpringUtil;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Radiogroup;
+import org.zkoss.zul.SimpleConstraint;
+import org.zkoss.zul.Space;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
+
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.model.RateDetail;
+import com.pennant.app.util.RateUtil;
+import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.BaseRateCode;
+import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.applicationmaster.SplRateCode;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.Product;
+import com.pennant.backend.model.rmtmasters.AccountType;
+import com.pennant.backend.model.rmtmasters.AccountingSet;
+import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.ProductAsset;
+import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.component.Uppercasebox;
+import com.pennant.search.Filter;
+import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PercentageValidator;
+import com.pennant.util.Constraint.RateValidator;
+import com.pennant.webui.util.ButtonStatusCtrl;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+
+/**
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
+ * This is the controller class for the 
+ * /WEB-INF/pages/SolutionFactory/FinanceType/financeTypeDialog.zul file. <br>
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
+ */
+public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
+
+	private static final long serialVersionUID = 4493449538614654801L;
+	private final static Logger logger = Logger.getLogger(FinanceTypeDialogCtrl.class);
+	
+	/*
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+	 * All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file 
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer. 
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 */
+	
+	protected Window 				window_FinanceTypeDialog; 			// autoWired
+	
+	//Basic Details Tab
+	protected Uppercasebox 			finType; 							// autoWired
+	protected Textbox 				finTypeDesc; 						// autoWired
+	protected Textbox 				finCcy; 							// autoWired
+	protected Textbox 				lovDescFinCcyName;					// autoWired
+	protected Button 				btnSearchFinCcy; 					// autoWired
+	protected Combobox 				cbfinDaysCalType; 					// autoWired
+	protected Textbox 				finAcType; 							// autoWired
+	protected Textbox 				lovDescFinAcTypeName; 				// autoWired
+	protected Button				btnSearchFinAcType; 				// autoWired
+	protected Checkbox 				finIsOpenNewFinAc; 					// autoWired
+	protected Decimalbox 			finMinAmount; 						// autoWired
+	protected Decimalbox 			finMaxAmount;	 					// autoWired
+	protected Combobox 				cbfinProductType; 					// autoWired
+	protected Combobox 				cbfinAssetType; 					// autoWired
+	protected Checkbox 				finIsDwPayRequired; 				// autoWired
+	protected Decimalbox 			finMinDownPayAmount; 				// autoWired
+	protected Checkbox 				finIsGenRef; 						// autoWired
+	protected Checkbox 				fInIsAlwGrace; 						// autoWired
+	protected Checkbox 				finIsAlwMD; 						// autoWired
+	protected Checkbox 				finDepreciationReq; 				// autoWired
+	protected Checkbox 				finCommitmentReq; 					// autoWired
+	protected Checkbox 				finCommitmentOvrride; 				// autoWired   
+	protected Checkbox 				limitRequired; 						// autoWired
+	protected Checkbox 				overrideLimit; 						// autoWired
+	protected Checkbox 				allowRIAInvestment; 				// autoWired
+	protected Checkbox 				allowParllelFinance; 				// autoWired	
+	protected Checkbox 				finIsActive; 						// autoWired
+	
+	//Grace Period Schedule Details Tab  
+	protected Combobox 				cbfinGrcRateType; 					// autoWired
+	protected Decimalbox 			finGrcIntRate; 						// autoWired
+	protected Textbox 				finGrcBaseRate; 					// autoWired
+	protected Textbox 				lovDescFinGrcBaseRateName;			// autoWired
+	protected Button 				btnSearchFinGrcBaseRate; 			// autoWired
+	protected Textbox 				finGrcSplRate; 						// autoWired
+	protected Textbox 				lovDescFinGrcSplRateName;			// autoWired
+	protected Button 				btnSearchFinGrcSplRate; 			// autoWired
+	protected Decimalbox 			finGrcMargin; 						// autoWired
+	protected Label 				labe_GrcEffectiveRate; 				// autoWired
+	protected Textbox 				finGrcDftIntFrq; 					// autoWired
+	protected Combobox 				cbfinGrcDftIntFrqCode; 				// autoWired
+	protected Combobox 				cbfinGrcDftIntFrqMth; 				// autoWired
+	protected Combobox 				cbfinGrcDftIntFrqDays; 				// autoWired
+	protected Checkbox 				finIsAlwGrcRepay; 					// autoWired
+	protected Combobox 				finGrcSchdMthd; 					// autoWired
+	protected Checkbox 				finGrcIsIntCpz; 					// autoWired
+	protected Textbox 				finGrcCpzFrq; 						// autoWired
+	protected Combobox 				cbfinGrcCpzFrqCode; 				// autoWired
+	protected Combobox 				cbfinGrcCpzFrqMth; 					// autoWired
+	protected Combobox 				cbfinGrcCpzFrqDays; 				// autoWired
+	protected Checkbox 				finGrcIsRvwAlw; 					// autoWired
+	protected Textbox 				finGrcRvwFrq; 						// autoWired
+	protected Combobox 				cbfinGrcRvwFrqCode; 				// autoWired
+	protected Combobox 				cbfinGrcRvwFrqMth; 					// autoWired
+	protected Combobox 				cbfinGrcRvwFrqDays; 				// autoWired
+	protected Combobox 				cbfinGrcRvwRateApplFor; 			// autoWired
+	private Checkbox 				finGrcAlwIndRate; 					// autoWired
+	private Textbox 				finGrcIndBaseRate; 					// autoWired
+	protected Textbox 				lovDescFinGrcIndBaseRateName;		// autoWired
+	protected Button 				btnSearchFinGrcIndBaseRate; 		// autoWired
+	protected Checkbox 				finIsIntCpzAtGrcEnd; 				// autoWired
+
+	//Repay Schedule Details Tab 
+	protected Combobox 				cbfinRateType; 						// autoWired
+	protected Decimalbox 			finIntRate; 						// autoWired
+	protected Textbox 				finBaseRate; 						// autoWired
+	protected Textbox 				lovDescFinBaseRateName;				// autoWired
+	protected Button 				btnSearchFinBaseRate; 				// autoWired
+	protected Textbox 				finSplRate; 						// autoWired
+	protected Textbox 				lovDescFinSplRateName;				// autoWired
+	protected Button 				btnSearchFinSplRate; 				// autoWired
+	protected Decimalbox 			finMargin; 							// autoWired
+	protected Label 				labe_EffectiveRate; 				// autoWired
+	protected Checkbox 				finFrqrepayment;					// autoWired
+	protected Textbox 				finDftIntFrq; 						// autoWired
+	protected Combobox 				cbfinDftIntFrqCode; 				// autoWired
+	protected Combobox 				cbfinDftIntFrqMth; 					// autoWired
+	protected Combobox 				cbfinDftIntFrqDays; 				// autoWired
+	protected Checkbox 				finRepayPftOnFrq; 					// autoWired
+	protected Textbox 				finRpyFrq; 							// autoWired
+	protected Combobox 				cbfinRpyFrqCode; 					// autoWired
+	protected Combobox 				cbfinRpyFrqMth; 					// autoWired
+	protected Combobox 				cbfinRpyFrqDays; 					// autoWired
+	protected Combobox 				cbfinSchdMthd; 						// autoWired
+	protected Checkbox 				finIsIntCpz; 						// autoWired
+	protected Textbox 				finCpzFrq; 							// autoWired
+	protected Combobox 				cbfinCpzFrqCode; 					// autoWired
+	protected Combobox 				cbfinCpzFrqMth; 					// autoWired
+	protected Combobox 				cbfinCpzFrqDays; 					// autoWired
+	protected Checkbox 				finIsRvwAlw; 						// autoWired
+	protected Textbox 				finRvwFrq; 							// autoWired
+	protected Combobox 				cbfinRvwFrqCode; 					// autoWired
+	protected Combobox 				cbfinRvwFrqMth; 					// autoWired
+	protected Combobox 				cbfinRvwFrqDays; 					// autoWired
+	protected Combobox 				cbfinRvwRateApplFor; 				// autoWired
+	protected Combobox 				cbfinSchCalCodeOnRvw; 				// autoWired
+	private Checkbox 				finAlwIndRate; 						// autoWired
+	private Textbox 				finIndBaseRate; 					// autoWired
+	protected Textbox 				lovDescFinIndBaseRateName;			// autoWired
+	protected Button 				btnSearchFinIndBaseRate; 			// autoWired
+	protected Intbox 				finMinTerm; 						// autoWired
+	protected Intbox 				finMaxTerm; 						// autoWired
+	protected Intbox 				finDftTerms;	 					// autoWired
+	protected Combobox 				cbfinRepayMethod; 					// autoWired
+	protected Checkbox 				finIsAlwPartialRpy; 				// autoWired
+	protected Intbox 				finODRpyTries; 						// autoWired
+	protected Checkbox 				finIsAlwDifferment; 				// autoWired
+	protected Intbox 				finMaxDifferment; 					// autoWired
+	protected Checkbox 				finIsAlwFrqDifferment; 				// autoWired
+	protected Intbox 				finMaxFrqDifferment; 				// autoWired	
+	protected Combobox 				cbFinScheduleOn; 					// autoWired
+	protected Checkbox 				finPftUnChanged; 					// autoWired
+	
+	//Accounting SetUp Details Tab 
+	protected Textbox 				finAEAddDsbOD; 						// autoWired
+	protected Textbox 				lovDescFinAEAddDsbODName;			// autoWired
+	protected Button 				btnSearchFinAEAddDsbOD; 			// autoWired
+	
+	protected Textbox 				finAEAddDsbFD; 						// autoWired
+	protected Textbox 				lovDescFinAEAddDsbFDName;			// autoWired
+	protected Button 				btnSearchFinAEAddDsbFD; 			// autoWired
+	
+	protected Textbox 				finAEAddDsbFDA; 					// autoWired
+	protected Textbox 				lovDescFinAEAddDsbFDAName;			// autoWired
+	protected Button 				btnSearchFinAEAddDsbFDA; 			// autoWired
+	
+	protected Textbox 				finAEAmzNorm; 						// autoWired
+	protected Textbox 				lovDescFinAEAmzNormName;			// autoWired
+	protected Button 				btnSearchFinAEAmzNorm; 				// autoWired
+	
+	protected Textbox 				finAEAmzSusp; 						// autoWired
+	protected Textbox 				lovDescFinAEAmzSuspName; 			// autoWired
+	protected Button 				btnSearchFinAEAmzSusp; 				// autoWired
+	
+	protected Textbox 				finAEToNoAmz; 						// autoWired
+	protected Textbox 				lovDescFinAEToNoAmzName;			// autoWired
+	protected Button 				btnSearchFinAEToNoAmz; 				// autoWired
+	
+	protected Textbox 				finToAmz; 							// autoWired
+	protected Textbox 				lovDescFinToAmzName;				// autoWired
+	protected Button 				btnSearchFinToAmz; 					// autoWired
+	
+	protected Textbox 				finAERateChg; 						// autoWired
+	protected Textbox 				lovDescFinAERateChgName;			// autoWired
+	protected Button 				btnSearchFinAERateChg; 				// autoWired
+	
+	protected Textbox 				finAERepay; 						// autoWired
+	protected Textbox 				lovDescFinAERepayName;				// autoWired
+	protected Button 				btnSearchFinAERepay; 				// autoWired
+	
+	protected Textbox 				finLatePayRule; 					// autoWired
+	protected Textbox 				lovDescFinLatePayRuleName; 			// autoWired
+	protected Button 				btnSearchFinLatePayRule; 			// autoWired
+	
+	protected Textbox 				finInstDate; 						// autoWired
+	protected Button 				btnSearchFinInstDate; 				// autoWired
+	protected Textbox 				lovDescFinInstDateName;				// autoWired
+	
+	protected Textbox 				finAEWriteOff; 						// autoWired
+	protected Textbox 				lovDescFinAEWriteOffName;			// autoWired
+	protected Button 				btnSearchFinAEWriteOff; 			// autoWired
+	
+	protected Textbox 				finProvision; 						// autoWired
+	protected Textbox 				lovDescFinProvisionName;			// autoWired
+	protected Button 				btnSearchFinProvision; 				// autoWired
+	
+	protected Textbox 				finSchdChange; 						// autoWired
+	protected Textbox 				lovDescfinSchdChangeName;			// autoWired
+	protected Button 				btnSearchFinSchdChange; 			// autoWired
+	
+	protected Textbox 				finDepreciationRule; 				// autoWired
+	protected Textbox 				lovDescFinDepreciationName; 		// autoWired
+	protected Button 				btnSearchFinDepreciation; 			// autoWired
+	
+	protected Textbox 				finDeffreq; 						// autoWired
+	protected Textbox 				lovDescFinDeffreqName;				// autoWired
+	protected Button 				btnSearchFinDeffreq; 				// autoWired
+	
+	protected Textbox 				finDefRepay; 						// autoWired
+	protected Textbox 				lovDescFinDefRepayName;				// autoWired
+	protected Button 				btnSearchFinDefRepay; 				// autoWired
+	
+	protected Textbox 				finAECapitalize; 					// autoWired
+	protected Textbox 				lovDescFinAECapitalizeName;			// autoWired
+	protected Button 				btnSearchFinAECapitalize;			// autoWired
+	
+	protected Textbox 				finAEProgClaim; 					// autoWired
+	protected Textbox 				lovDescFinAEProgClaimName;			// autoWired
+	protected Button 				btnSearchFinAEProgClaim;			// autoWired
+	
+	protected Textbox 				finAEMaturity; 						// autoWired
+	protected Textbox 				lovDescFinAEMaturityName;			// autoWired
+	protected Button 				btnSearchFinAEMaturity;				// autoWired
+
+	//Other
+	protected Label 				recordStatus; 						// autoWired
+	protected Radiogroup 			userAction;							// autoWired
+	protected Groupbox 				groupboxWf;							// autoWired
+
+	protected Space 				space_FinRvwRateApplFor; 			// autoWired
+	protected Space 				space_FinGrcRvwRateApplFor; 		// autoWired
+	protected Space 				space_cbfinSchCalCodeOnRvw; 		// autoWired
+	protected Space 				space_FinMinDownPayAmount; 			// autoWired
+	protected Space 				space_finGrcSchdMthd; 				// autoWired
+	protected Space 				space_finGrcIndBaseRate; 			// autoWired
+	protected Space 				space_finIndBaseRate; 				// autoWired
+	protected Space 				space_finDefRepay; 					// autoWired
+	protected Space 				space_finDeffreq; 					// autoWired
+	protected Space	 				space_finDepreciationRule; 			// autoWired
+	protected Space 				space_finAEProgClaim; 				// autoWired
+	
+	// ========= Hidden Fields
+	protected Textbox 				pftPayAcType; 						// autoWired
+	protected Textbox 				finBankContingentAcType; 			// autoWired
+	protected Textbox 				finContingentAcType; 				// autoWired
+	protected Textbox 				finProvisionAcType; 				// autoWired
+	protected Checkbox 				finIsOpenPftPayAcc; 				// autoWired
+	protected Textbox 				finDftStmtFrq; 						// autoWired
+	protected Combobox 				cbfinDftStmtFrqCode; 				// autoWired
+	protected Combobox 				cbfinDftStmtFrqMth; 				// autoWired
+	protected Combobox 				cbfinDftStmtFrqDays; 				// autoWired
+	protected Intbox 				finHistRetension; 					// autoWired
+	protected Checkbox 				finCollateralReq; 					// autoWired
+	protected Textbox 				finDepreciationFrq; 				// autoWired
+	protected Combobox 				cbfinDepreciationCode; 				// autoWired
+	protected Combobox 				cbfinDepreciationMth; 				// autoWired
+	protected Combobox 				cbfinDepreciationDays; 				// autoWired
+	protected Checkbox 				finCollateralOvrride; 				// autoWired
+	protected Decimalbox 			fInGrcMinRate; 						// autoWired
+	protected Decimalbox 			finGrcMaxRate; 						// autoWired
+	protected Combobox 				cbFinGrcScheduleOn; 				// autoWired
+	protected Checkbox 				finGrcAlwRateChgAnyDate; 			// autoWired
+	protected Decimalbox 			fInMinRate; 						// autoWired
+	protected Decimalbox 			finMaxRate; 						// autoWired
+	protected Checkbox 				finAlwRateChangeAnyDate; 			// autoWired
+	protected Checkbox 				finIsAlwEarlyRpy; 					// autoWired
+	protected Checkbox 				finIsAlwEarlySettle; 				// autoWired
+	protected Textbox 				finAEEarlyPay; 						// autoWired
+	protected Textbox 				lovDescFinAEEarlyPayName;			// autoWired
+	protected Textbox 				finAEEarlySettle; 					// autoWired
+	protected Textbox 				lovDescFinAEEarlySettleName;		// autoWired
+	protected Button 				btnSearchFinAEEarlySettle; 			// autoWired
+	protected Button 				btnSearchPftPayAcType; 				// autoWired
+	protected Textbox 				lovDescPftPayAcTypeName;			// autoWired
+	protected Button 				btnSearchFinBankContingentAcType; 	// autoWired
+	protected Textbox 				lovDescFinBankContingentAcTypeName;	// autoWired
+	protected Button 				btnSearchFinContingentAcType; 		// autoWired
+	protected Textbox 				lovDescFinContingentAcTypeName;		// autoWired
+	protected Button 				btnSearchFinProvisionAcType; 		// autoWired
+	protected Textbox 				lovDescFinProvisionAcTypeName;		// autoWired
+	
+	//==============
+
+	/*
+	 * overHanded per parameters old value Var's for edit mode. that we can
+	 * check if something on the values are edited since the last initialized.
+	 */
+	//Basic Details Tab  
+	private transient String 		oldVar_finType;
+	private transient String 		oldVar_finTypeDesc;
+	private transient String 		oldVar_finCcy;
+	private transient String 		oldVar_lovDescFinCcyName;
+	private transient int 			oldVar_finDaysCalType;
+	private transient String 		oldVar_finAcType;
+	private transient String 		oldVar_lovDescFinAcTypeName;
+	private transient boolean 		oldVar_finIsOpenNewFinAc;
+	private transient BigDecimal 	oldVar_finMinAmount;
+	private transient BigDecimal 	oldVar_finMaxAmount;
+	private transient boolean 		oldVar_finIsDwPayRequired;
+	private transient BigDecimal 	oldVar_finMinDownPayAmount;
+	private transient boolean 		oldVar_finIsGenRef;
+	private transient boolean 		oldVar_fInIsAlwGrace;
+	private transient boolean 		oldVar_finIsAlwMD;
+	private transient boolean 		oldVar_finDepreciationReq;
+	private transient boolean 		oldVar_finCommitmentReq;
+	private transient boolean 		oldVar_finCommitmentOvrride;
+	private transient boolean 		oldVar_limitRequired;
+	private transient boolean 		oldVar_overrideLimit;
+	private transient boolean 		oldVar_allowRIAInvestment;
+	private transient boolean 		oldVar_allowParllelFinance;
+	private transient boolean 		oldVar_finIsActive;
+
+	//Grace Period Details Tab  
+	private transient int 			oldVar_finGrcRateType;
+	private transient BigDecimal 	oldVar_finGrcIntRate;
+	private transient String 		oldVar_finGrcBaseRate;
+	private transient String 		oldVar_lovDescFinGrcBaseRateName;
+	private transient String 		oldVar_finGrcSplRate;
+	private transient String 		oldVar_lovDescFinGrcSplRateName;
+	private transient BigDecimal 	oldVar_finGrcMargin;
+	private transient String 		oldVar_finGrcDftIntFrq;
+	private transient boolean 		oldVar_finIsAlwGrcRepay;
+	private transient int 			oldVar_finGrcSchdMthd;
+	private transient boolean 		oldVar_finGrcIsIntCpz;
+	private transient String 		oldVar_finGrcCpzFrq;
+	private transient boolean 		oldVar_finGrcIsRvwAlw;
+	private transient String 		oldVar_finGrcRvwFrq;
+	private transient boolean 		oldVar_FinGrcAlwIndRate;
+	private transient String 		oldVar_lovDescFinGrcIndBaseRateName;
+	private transient boolean 		oldVar_finIsIntCpzAtGrcEnd;
+
+	//Repay Period Details Tab 
+	private transient int 			oldVar_finRateType;
+	private transient BigDecimal 	oldVar_finIntRate;
+	private transient String 		oldVar_finBaseRate;
+	private transient String 		oldVar_lovDescFinBaseRateName;
+	private transient String 		oldVar_finSplRate;
+	private transient String 		oldVar_lovDescFinSplRateName;
+	private transient BigDecimal 	oldVar_finMargin;
+	private transient String 		oldVar_finDftIntFrq;
+	private transient boolean 		oldVar_finRepayPftOnFrq;
+	private transient String 		oldVar_finRpyFrq;
+	private transient int 			oldVar_finSchdMthd;
+	private transient boolean 		oldVar_finIsIntCpz;
+	private transient String 		oldVar_finCpzFrq;
+	private transient boolean 		oldVar_finIsRvwAlw;
+	private transient String 		oldVar_finRvwFrq;
+	private transient int 			oldVar_finSchCalCodeOnRvw;
+	private transient boolean 		oldVar_FinAlwIndRate;
+	private transient String 		oldVar_lovDescFinIndBaseRateName;
+	private transient int 			oldVar_finMinTerm;
+	private transient int 			oldVar_finMaxTerm;
+	private transient int 			oldVar_finDftTerms;
+	private transient int 			oldVar_finRepayMethod;
+	private transient boolean 		oldVar_finIsAlwPartialRpy;
+	private transient int 			oldVar_finODRpyTries;
+	private transient boolean 		oldVar_finIsAlwDifferment;
+	private transient int 			oldVar_finMaxDifferment;
+	private transient boolean 		oldVar_finIsAlwFrqDifferment;
+	private transient int 			oldVar_finMaxFrqDifferment;
+	private transient boolean 		oldVar_finPftUnChanged;
+
+	//Accounting Set Details Tab  
+	private transient String 		oldVar_finAEAddDsbOD;
+	private transient String 		oldVar_lovDescFinAEAddDsbODName;
+	private transient String 		oldVar_finAEAddDsbFD;
+	private transient String 		oldVar_lovDescFinAEAddDsbFDName;
+	private transient String 		oldVar_finAEAddDsbFDA;
+	private transient String 		oldVar_lovDescFinAEAddDsbFDAName;
+	private transient String 		oldVar_finAEAmzNorm;
+	private transient String 		oldVar_lovDescFinAEAmzNormName;
+	private transient String 		oldVar_finAEAmzSusp;
+	private transient String 		oldVar_lovDescFinAEAmzSuspName;
+	private transient String 		oldVar_finAEToNoAmz;
+	private transient String 		oldVar_lovDescFinAEToNoAmzName;
+	private transient String 		oldVar_finToAmz;
+	private transient String 		oldVar_lovDescFinToAmzName;
+	private transient String 		oldVar_finAERateChg;
+	private transient String 		oldVar_lovDescFinAERateChghName;
+	private transient String 		oldVar_finAERepay;
+	private transient String 		oldVar_lovDescFinAERepayName;
+	private transient String 		oldVar_finLatePayRule;
+	private transient String 		oldVar_lovDescFinLatePayRuleName;
+	private transient String 		oldVar_FinInstDateName;
+	private transient String 		oldVar_finAEWriteOff;
+	private transient String 		oldVar_lovDescFinAEWriteOffName;
+	private transient String 		oldVar_FinProvisionName;
+	private transient String 		oldVar_FinSchdChange;
+	private transient String 		oldVar_finDeffreq;
+	private transient String 		oldVar_finDefRepay;
+	private transient String 		oldVar_FinAECapitalize;
+	private transient String 		oldVar_FinAEProgClaim;
+	private transient String 		oldVar_FinAEMaturity;
+
+	//other	
+	private transient String 		oldVar_recordStatus;
+
+	//Hidden
+	private transient boolean 		oldVar_finCollateralReq;
+	private transient String 		oldVar_finDepreciationFrq;
+	private transient BigDecimal 	oldVar_finGrcMaxRate;
+	private transient BigDecimal 	oldVar_fInGrcMinRate;
+	private transient int 			oldVar_finHistRetension;
+	private transient String 		oldVar_pftPayAcType;
+	private transient String 		oldVar_finContingentAcType;
+	private transient String 		oldVar_finProvisionAcType;
+	private transient String 		oldVar_finBankContingentAcType;
+	private transient String 		oldVar_lovDescFinContingentAcTypeName;
+	private transient String 		oldVar_lovDescFinBankCtngAcTypeName;
+	private transient String 		oldVar_lovDescPftPayAcTypeName;
+	private transient String 		oldVar_lovDescFinProvisionAcTypeName;
+	private transient BigDecimal 	oldVar_fInMinRate;
+	private transient BigDecimal 	oldVar_finMaxRate;
+	private transient String 		oldVar_finDftStmtFrq;
+	private transient boolean 		oldVar_finCollateralOvrride;
+	private transient boolean 		oldVar_finIsOpenPftPayAcc;
+	private transient boolean 		oldVar_finIsAlwEarlyRpy;
+	private transient boolean 		oldVar_finIsAlwEarlySettle;
+	private transient String 		oldVar_finAEEarlySettle;
+	private transient String 		oldVar_finAEEarlyPay;
+	private transient String		oldVar_lovDescFinAEEarlyPayName;
+	private transient String 		oldVar_lovDescFinAEEarlySettleName;
+	private transient boolean 		oldVar_finAlwRateChangeAnyDate;
+	private transient boolean 		oldVar_finGrcAlwRateChgAnyDate;
+	//==============
+
+	// not auto wired Var's
+	private FinanceType financeType; // overHanded per parameters
+	private transient FinanceTypeListCtrl financeTypeListCtrl;
+	// new Variables
+	private int countRows = PennantConstants.listGridSize;
+	private transient boolean validationOn;
+	private boolean notes_Entered = false;
+	private boolean validate = false;
+	protected boolean isCopyProcess = false;
+	Calendar calender = Calendar.getInstance();
+	private transient AccountingSet accSet = new AccountingSet();
+
+	// Button controller for the CRUD buttons
+	private transient final String btnCtroller_ClassPrefix = "button_FinanceTypeDialog_"; // autoWire
+	private transient ButtonStatusCtrl btnCtrl;
+	protected Button btnNew; // autoWire
+	protected Button btnEdit; // autoWire
+	protected Button btnDelete; // autoWire
+	protected Button btnSave; // autoWire
+	protected Button btnCancel; // autoWire
+	protected Button btnClose; // autoWire
+	protected Button btnHelp; // autoWire
+	protected Button btnNotes; // autoWire
+	protected Button btnCopyTo;
+
+	// ServiceDAOs / Domain Classes
+	private transient FinanceTypeService financeTypeService;
+	private transient PagedListService pagedListService;
+
+	private Tab basicDetails; // autoWired
+	private Tab gracePeriod; // autoWired
+	private Tab repayment; // autoWired
+	private Tab accountingEvent; // autoWired
+
+	private final List<ValueLabel> pftDays = PennantAppUtil.getProfitDaysBasis();
+	private final List<ValueLabel> RvwRateAppPeriods = PennantAppUtil.getReviewRateAppliedPeriods();
+	private final List<ValueLabel> schMthds = PennantAppUtil.getScheduleMethod();
+	private final List<ValueLabel> schPftRateType = PennantAppUtil.getProfitRateTypes();
+	private final List<ValueLabel> rpyMthd = PennantAppUtil.getRepayMethods();
+	private final List<ValueLabel> scCalCode = PennantAppUtil.getSchCalCodes();
+	private final List<ValueLabel> scheduleOn = PennantAppUtil.getScheduleOn();
+
+	/** default constructor.<br> */
+	public FinanceTypeDialogCtrl() {
+		super();
+	}
+
+	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
+	// +++++++++++++++ Component Events ++++++++++++++++ //
+	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+	/**
+	 * Before binding the data and calling the dialog window we check, if the
+	 * zul-file is called with a parameter for a selected FinanceType object in
+	 * a Map.
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onCreate$window_FinanceTypeDialog(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		/* set components visible dependent of the users rights */
+		doCheckRights();
+
+		/* create the Button Controller. Disable not used buttons during working */
+		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew, this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel,
+		        this.btnClose, this.btnNotes);
+
+		/* get the params map that are overHanded by creation. */
+		final Map<String, Object> args = getCreationArgsMap(event);
+
+		/* READ OVERHANDED params ! */
+		if (args.containsKey("financeType")) {
+			this.financeType = (FinanceType) args.get("financeType");
+			FinanceType befImage = new FinanceType("");
+			BeanUtils.copyProperties(this.financeType, befImage);
+			this.financeType.setBefImage(befImage);
+			setFinanceType(this.financeType);
+		} else {
+			setFinanceType(null);
+		}
+		if (args.containsKey("isCopyProcess")) {
+			this.isCopyProcess = (Boolean) args.get("isCopyProcess");
+		}
+		doLoadWorkFlow(this.financeType.isWorkflow(), this.financeType.getWorkflowId(), this.financeType.getNextTaskId());
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
+			getUserWorkspace().alocateRoleAuthorities(getRole(), "FinanceTypeDialog");
+		}
+		/*
+		 * READ OVERHANDED params ! we get the financeTypeListWindow controller. So we have access to it and can
+		 * synchronize the shown data when we do insert, edit or delete financeType here.
+		 */
+		if (args.containsKey("financeTypeListCtrl")) {
+			setFinanceTypeListCtrl((FinanceTypeListCtrl) args.get("financeTypeListCtrl"));
+		} else {
+			setFinanceTypeListCtrl(null);
+		}
+		// set Field Properties
+		doSetFieldProperties();
+		doShowDialog(getFinanceType());
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/** Set the properties of the fields, like maxLength.<br> */
+	private void doSetFieldProperties() {
+		logger.debug("Entering");
+		this.finType.setMaxlength(8);
+		this.finTypeDesc.setMaxlength(50);
+		this.finCcy.setMaxlength(3);
+		this.finAcType.setMaxlength(8);
+		this.pftPayAcType.setMaxlength(8);
+		this.finContingentAcType.setMaxlength(8);
+		this.finBankContingentAcType.setMaxlength(8);
+		this.finProvisionAcType.setMaxlength(8);
+		this.finMaxAmount.setMaxlength(18);
+		this.finMaxAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+		this.finMinAmount.setMaxlength(18);
+		this.finMinAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+		this.finHistRetension.setMaxlength(3);
+
+		this.finBaseRate.setMaxlength(8);
+		this.finSplRate.setMaxlength(8);
+		this.finIntRate.setMaxlength(13);
+		this.finIntRate.setFormat(PennantConstants.rateFormate9);
+		this.finIntRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finIntRate.setScale(9);
+		this.fInMinRate.setMaxlength(13);
+		this.fInMinRate.setFormat(PennantConstants.rateFormate9);
+		this.fInMinRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.fInMinRate.setScale(9);
+		this.finMaxRate.setMaxlength(13);
+		this.finMaxRate.setFormat(PennantConstants.rateFormate9);
+		this.finMaxRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finMaxRate.setScale(9);
+		this.finGrcBaseRate.setMaxlength(8);
+		this.finGrcSplRate.setMaxlength(8);
+		this.finGrcIntRate.setMaxlength(13);
+		this.finGrcIntRate.setFormat(PennantConstants.rateFormate9);
+		this.finGrcIntRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finGrcIntRate.setScale(9);
+		this.fInGrcMinRate.setMaxlength(13);
+		this.fInGrcMinRate.setFormat(PennantConstants.rateFormate9);
+		this.fInGrcMinRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.fInGrcMinRate.setScale(9);
+		this.finGrcMaxRate.setMaxlength(13);
+		this.finGrcMaxRate.setFormat(PennantConstants.rateFormate9);
+		this.finGrcMaxRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.finGrcMaxRate.setScale(9);
+		this.finMinTerm.setMaxlength(3);
+		this.finMaxTerm.setMaxlength(3);
+		this.finDftTerms.setMaxlength(3);
+		this.finODRpyTries.setMaxlength(3);
+		this.finAEAddDsbOD.setMaxlength(8);
+		this.finAEAddDsbFD.setMaxlength(8);
+		this.finAEAddDsbFDA.setMaxlength(8);
+		this.finAEAmzNorm.setMaxlength(8);
+		this.finAEAmzSusp.setMaxlength(8);
+		this.finAEToNoAmz.setMaxlength(8);
+		this.finToAmz.setMaxlength(8);
+		this.finAERateChg.setMaxlength(8);
+		this.finAERepay.setMaxlength(8);
+		this.finAEEarlyPay.setMaxlength(8);
+		this.finAEEarlySettle.setMaxlength(8);
+		this.finAEWriteOff.setMaxlength(8);
+		this.finProvision.setMaxlength(8);
+		this.finInstDate.setMaxlength(8);
+		this.finSchdChange.setMaxlength(8);
+		this.finAECapitalize.setMaxlength(8);
+		this.finAEProgClaim.setMaxlength(8);
+		this.finAEMaturity.setMaxlength(8);
+		this.finIndBaseRate.setMaxlength(8);
+		this.finGrcIndBaseRate.setMaxlength(8);
+		if (isWorkFlowEnabled()) {
+			this.groupboxWf.setVisible(true);
+		} else {
+			this.groupboxWf.setVisible(false);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * User rights check. <br>
+	 * Only components are set visible=true if the logged-in <br>
+	 * user have the right for it. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 */
+	private void doCheckRights() {
+		logger.debug("Entering");
+		getUserWorkspace().alocateAuthorities("FinanceTypeDialog");
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnSave"));
+		this.btnCancel.setVisible(false);
+		this.btnCopyTo.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnCopyTo"));
+		logger.debug("Leaving");
+	}
+
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// +++++++++++++++++++++++ Components events +++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	/**
+	 * If we close the dialog window. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClose$window_FinanceTypeDialog(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		doClose();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "save" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnSave(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		doSave();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "edit" button is clicked. <br>
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnEdit(Event event) {
+		logger.debug("Entering" + event.toString());
+		doEdit();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "help" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnHelp(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		PTMessageUtils.showHelpWindow(event, window_FinanceTypeDialog);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "new" button is clicked. <br>
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnNew(Event event) {
+		logger.debug("Entering" + event.toString());
+		doNew();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "delete" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnDelete(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		doDelete();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "cancel" button is clicked. <br>
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnCancel(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCancel();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "close" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnClose(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		try {
+			doClose();
+		} catch (final WrongValueException e) {
+			logger.error(e);
+			throw e;
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	/**
+	 * Closes the dialog window. <br>
+	 * <br>
+	 * Before closing we check if there are unsaved changes in <br>
+	 * the components and ask the user if saving the modifications. <br>
+	 * 
+	 * @throws InterruptedException
+	 */
+	private void doClose() throws InterruptedException {
+		doClearErrMessages();
+		logger.debug("Entering doClose()");
+		boolean close = true;
+		if (isDataChanged()) {
+			logger.debug("Data Changed(): True");
+			// Show a confirm box
+			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
+			final String title = Labels.getLabel("message.Information");
+			MultiLineMessageBox.doSetTemplate();
+			int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
+			if (conf == MultiLineMessageBox.YES) {
+				logger.debug("doClose: Yes");
+				doSave();
+				close = false;
+			} else {
+				logger.debug("doClose: No");
+			}
+		} else {
+			logger.debug("Data Changed(): false");
+		}
+		if (close) {
+			closeDialog(this.window_FinanceTypeDialog, "FinanceType");
+		}
+		logger.debug("Leaving doClose()");
+	}
+
+	/**
+	 * Cancel the actual operation. <br>
+	 * <br>
+	 * Resets to the original status.<br>
+	 */
+	private void doCancel() {
+		logger.debug("Entering doCancel()");
+		doResetInitValues();
+		doClearErrMessages();
+		doReadOnly();
+		this.btnCtrl.setInitEdit();
+		logger.debug("Leaving doCancel()");
+	}
+
+	/**
+	 * Writes the bean data to the components.<br>
+	 * 
+	 * @param aFinanceType
+	 *            FinanceType
+	 */
+
+	public void doWriteBeanToComponents(FinanceType aFinanceType) {
+		logger.debug("Entering");
+		//================= Tab 1	
+		this.finType.setValue(aFinanceType.getFinType());
+		this.finTypeDesc.setValue(aFinanceType.getFinTypeDesc());
+		this.finCcy.setValue(aFinanceType.getFinCcy());
+		if (aFinanceType.getLovDescFinCcyName() != null) {
+			this.lovDescFinCcyName.setValue(aFinanceType.getFinCcy() + "-" + aFinanceType.getLovDescFinCcyName());
+		}
+		fillComboBox(this.cbfinDaysCalType, aFinanceType.getFinDaysCalType(), pftDays, "");
+		this.finAcType.setValue(aFinanceType.getFinAcType());
+		if (aFinanceType.getLovDescFinAcTypeName() != null) {
+			this.lovDescFinAcTypeName.setValue(aFinanceType.getFinAcType() + "-" + aFinanceType.getLovDescFinAcTypeName());
+		}
+		this.finIsOpenNewFinAc.setChecked(aFinanceType.isFinIsOpenNewFinAc());
+		//+++++++++++++++++++++++++++++   Hidden     ++++++++++++++++++++++++//
+		this.finBankContingentAcType.setValue(aFinanceType.getFinBankContingentAcType());
+		if (aFinanceType.getLovDescFinBankContingentAcTypeName() != null) {
+			this.lovDescFinBankContingentAcTypeName.setValue(aFinanceType.getFinBankContingentAcType() + "-" + aFinanceType.getLovDescFinBankContingentAcTypeName());
+		}
+		this.finContingentAcType.setValue(aFinanceType.getFinContingentAcType());
+		if (aFinanceType.getLovDescFinContingentAcTypeName() != null) {
+			this.lovDescFinContingentAcTypeName.setValue(aFinanceType.getFinContingentAcType() + "-" + aFinanceType.getLovDescFinContingentAcTypeName());
+		}
+		this.finProvisionAcType.setValue(aFinanceType.getFinProvisionAcType());
+		if (aFinanceType.getLovDescFinProvisionAcTypeName() != null) {
+			this.lovDescFinProvisionAcTypeName.setValue(aFinanceType.getFinProvisionAcType() + "-" + aFinanceType.getLovDescFinProvisionAcTypeName());
+		}
+		this.finIsOpenPftPayAcc.setChecked(aFinanceType.isFinIsOpenPftPayAcc());
+		//+++++++++++++++++++++++++++++++++++++++++++++++++++++//
+		this.finMinAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMinAmount(), getFinanceType().getLovDescFinFormetter()));
+		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMaxAmount(), getFinanceType().getLovDescFinFormetter()));
+		doFillProductType(this.cbfinProductType, aFinanceType.getLovDescProductCodeName());
+		doFillAssestType(this.cbfinAssetType, String.valueOf(aFinanceType.getFinAssetType()), aFinanceType.getLovDescProductCodeName());
+		this.finIsDwPayRequired.setChecked(aFinanceType.isFinIsDwPayRequired());
+		this.finMinDownPayAmount.setValue(aFinanceType.getFinMinDownPayAmount());
+		this.finIsGenRef.setChecked(aFinanceType.isFinIsGenRef());
+		this.fInIsAlwGrace.setChecked(aFinanceType.isFInIsAlwGrace());
+		this.finIsAlwMD.setChecked(aFinanceType.isFinIsAlwMD());
+		this.finDepreciationReq.setChecked(aFinanceType.isFinDepreciationReq());
+		this.finCommitmentReq.setChecked(aFinanceType.isFinCommitmentReq());
+		this.finCommitmentOvrride.setChecked(aFinanceType.isFinCommitmentOvrride());
+		doCheckBoxChecked(this.finCommitmentReq.isChecked(), this.finCommitmentOvrride);
+		this.limitRequired.setChecked(aFinanceType.isLimitRequired());
+		this.overrideLimit.setChecked(aFinanceType.isOverrideLimit());
+		doCheckBoxChecked(this.limitRequired.isChecked(), this.overrideLimit);
+		this.allowRIAInvestment.setChecked(aFinanceType.isAllowRIAInvestment());
+		this.allowParllelFinance.setChecked(aFinanceType.isAllowParllelFinance());
+		this.finIsActive.setChecked(aFinanceType.isFinIsActive());
+
+		doCheckRIA(aFinanceType.getLovDescProductCodeName());
+		doCheckFinAEProgClaim(aFinanceType.getLovDescProductCodeName());
+		doCheckFinAEMaturity(aFinanceType.getLovDescProductCodeName());
+		checkFinisDownPayreq();
+		//================= Tab 2
+		fillComboBox(this.cbfinGrcRateType, aFinanceType.getFinGrcRateType(), schPftRateType, "");
+		this.finGrcIntRate.setValue(aFinanceType.getFinGrcIntRate());
+		this.finGrcBaseRate.setValue(aFinanceType.getFinGrcBaseRate());
+		if (aFinanceType.getLovDescFinBaseRateName() != null) {
+			this.lovDescFinBaseRateName.setValue(aFinanceType.getFinBaseRate() + "-" + aFinanceType.getLovDescFinBaseRateName());
+		}
+		this.finGrcSplRate.setValue(aFinanceType.getFinGrcSplRate());
+		if (aFinanceType.getLovDescFinSplRateName() != null) {
+			this.lovDescFinSplRateName.setValue(aFinanceType.getFinSplRate() + "-" + aFinanceType.getLovDescFinSplRateName());
+		}
+		this.finGrcMargin.setValue(aFinanceType.getFinGrcMargin());
+		this.finGrcDftIntFrq.setValue(aFinanceType.getFinGrcDftIntFrq());
+		fillFrqCode(this.cbfinGrcDftIntFrqCode, aFinanceType.getFinGrcDftIntFrq(), isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		fillFrqMth(this.cbfinGrcDftIntFrqMth, aFinanceType.getFinGrcDftIntFrq(), isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		fillFrqDay(this.cbfinGrcDftIntFrqDays, aFinanceType.getFinGrcDftIntFrq(), isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		this.finIsAlwGrcRepay.setChecked(aFinanceType.isFinIsAlwGrcRepay());
+		fillComboBox(this.finGrcSchdMthd, aFinanceType.getFinGrcSchdMthd(), schMthds, ",EQUAL,PRI,PRI_PFT,");
+		this.finGrcIsIntCpz.setChecked(aFinanceType.isFinGrcIsIntCpz());
+		this.finGrcCpzFrq.setValue(aFinanceType.getFinGrcCpzFrq());
+		fillFrqCode(this.cbfinGrcCpzFrqCode, aFinanceType.getFinGrcCpzFrq(), isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		fillFrqMth(this.cbfinGrcCpzFrqMth, aFinanceType.getFinGrcCpzFrq(), isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		fillFrqDay(this.cbfinGrcCpzFrqDays, aFinanceType.getFinGrcCpzFrq(), isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		this.finGrcIsRvwAlw.setChecked(aFinanceType.isFinGrcIsRvwAlw());
+		this.finGrcRvwFrq.setValue(aFinanceType.getFinGrcRvwFrq());
+		fillFrqCode(this.cbfinGrcRvwFrqCode, aFinanceType.getFinGrcRvwFrq(), isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		fillFrqMth(this.cbfinGrcRvwFrqMth, aFinanceType.getFinGrcRvwFrq(), isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		fillFrqDay(this.cbfinGrcRvwFrqDays, aFinanceType.getFinGrcRvwFrq(), isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		fillComboBox(this.cbfinGrcRvwRateApplFor, aFinanceType.getFinGrcRvwRateApplFor(), RvwRateAppPeriods, "");
+		this.finGrcAlwIndRate.setChecked(aFinanceType.isFinGrcAlwIndRate());
+		this.finGrcIndBaseRate.setValue(aFinanceType.getFinGrcIndBaseRate());
+		this.finIsIntCpzAtGrcEnd.setChecked(aFinanceType.isFinIsIntCpzAtGrcEnd());
+
+		doCheckGraceReview();
+		doCheckGrcPftCpzFrq();
+		doDisableGrcSchdMtd();
+		doCheckRateType(cbfinGrcRateType, true);
+
+		if (aFinanceType.getLovDescFinGrcIndBaseRateName() != null) {
+			this.lovDescFinGrcIndBaseRateName.setValue(aFinanceType.getFinGrcIndBaseRate() + "-" + aFinanceType.getLovDescFinGrcIndBaseRateName());
+		}
+		//================= Tab 3
+		fillComboBox(this.cbfinRateType, aFinanceType.getFinRateType(), schPftRateType, "");
+		this.finIntRate.setValue(aFinanceType.getFinIntRate());
+		this.finBaseRate.setValue(aFinanceType.getFinBaseRate());
+		if (aFinanceType.getLovDescFinGrcBaseRateName() != null) {
+			this.lovDescFinGrcBaseRateName.setValue(aFinanceType.getFinGrcBaseRate() + "-" + aFinanceType.getLovDescFinGrcBaseRateName());
+		}
+		this.finSplRate.setValue(aFinanceType.getFinSplRate());
+		if (aFinanceType.getLovDescFinGrcSplRateName() != null) {
+			this.lovDescFinGrcSplRateName.setValue(aFinanceType.getFinGrcSplRate() + "-" + aFinanceType.getLovDescFinGrcSplRateName());
+		}
+		this.finMargin.setValue(aFinanceType.getFinMargin());
+		this.finFrqrepayment.setChecked(aFinanceType.isFinFrEqrepayment());
+		this.finDftIntFrq.setValue(aFinanceType.getFinDftIntFrq());
+		fillFrqCode(this.cbfinDftIntFrqCode, aFinanceType.getFinDftIntFrq(), isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		fillFrqMth(this.cbfinDftIntFrqMth, aFinanceType.getFinDftIntFrq(), isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		fillFrqDay(this.cbfinDftIntFrqDays, aFinanceType.getFinDftIntFrq(), isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		this.finRepayPftOnFrq.setChecked(aFinanceType.isFinRepayPftOnFrq());
+		this.finRpyFrq.setValue(aFinanceType.getFinRpyFrq());
+		fillFrqCode(this.cbfinRpyFrqCode, aFinanceType.getFinRpyFrq(), isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		fillFrqMth(this.cbfinRpyFrqMth, aFinanceType.getFinRpyFrq(), isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		fillFrqDay(this.cbfinRpyFrqDays, aFinanceType.getFinRpyFrq(), isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		fillComboBox(this.cbfinSchdMthd, aFinanceType.getFinSchdMthd(), schMthds, "");
+		this.finIsIntCpz.setChecked(aFinanceType.isFinIsIntCpz());
+		this.finCpzFrq.setValue(aFinanceType.getFinCpzFrq());
+		fillFrqCode(this.cbfinCpzFrqCode, aFinanceType.getFinCpzFrq(), isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		fillFrqMth(this.cbfinCpzFrqMth, aFinanceType.getFinCpzFrq(), isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		fillFrqDay(this.cbfinCpzFrqDays, aFinanceType.getFinCpzFrq(), isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		this.finIsRvwAlw.setChecked(aFinanceType.isFinIsRvwAlw());
+		this.finRvwFrq.setValue(aFinanceType.getFinRvwFrq());
+		fillFrqCode(this.cbfinRvwFrqCode, aFinanceType.getFinRvwFrq(), isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		fillFrqMth(this.cbfinRvwFrqMth, aFinanceType.getFinRvwFrq(), isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		fillFrqDay(this.cbfinRvwFrqDays, aFinanceType.getFinRvwFrq(), isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		fillComboBox(this.cbfinRvwRateApplFor, aFinanceType.getFinRvwRateApplFor(), RvwRateAppPeriods, "");
+		fillComboBox(this.cbfinSchCalCodeOnRvw, aFinanceType.getFinSchCalCodeOnRvw(), scCalCode, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+		this.finAlwIndRate.setChecked(aFinanceType.isFinAlwIndRate());
+		this.finIndBaseRate.setValue(aFinanceType.getFinIndBaseRate());
+		this.finMinTerm.setValue(aFinanceType.getFinMinTerm());
+		this.finMaxTerm.setValue(aFinanceType.getFinMaxTerm());
+		this.finDftTerms.setValue(aFinanceType.getFinDftTerms());
+		fillComboBox(this.cbfinRepayMethod, aFinanceType.getFInRepayMethod(), rpyMthd, "");
+		this.finIsAlwPartialRpy.setChecked(aFinanceType.isFinIsAlwPartialRpy());
+		this.finODRpyTries.setValue(aFinanceType.getFinODRpyTries());
+		this.finIsAlwDifferment.setChecked(aFinanceType.isFinIsAlwDifferment());
+		this.finMaxDifferment.setValue(aFinanceType.getFinMaxDifferment());
+		doDisableOrEnableDifferments(aFinanceType.isFinIsAlwDifferment(), this.finMaxDifferment, isReadOnly("FinanceTypeDialog_finMaxDifferment"));
+		this.finIsAlwFrqDifferment.setChecked(aFinanceType.isFinIsAlwFrqDifferment());
+		this.finMaxFrqDifferment.setValue(aFinanceType.getFinMaxFrqDifferment());
+		doDisableOrEnableDifferments(aFinanceType.isFinIsAlwFrqDifferment(), this.finMaxFrqDifferment, isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
+		fillComboBox(this.cbFinScheduleOn, aFinanceType.getFinScheduleOn(), scheduleOn, "");
+		this.finPftUnChanged.setChecked(aFinanceType.isFinPftUnChanged());
+		doCheckPftCpzFrq();
+		doCheckRpyDefferment();
+		doCheckFrqDefferment();
+		doCheckRateType(cbfinRateType, false);
+		this.finAlwIndRate.setChecked(aFinanceType.isFinAlwIndRate());
+		doCheckRepayIndRate();
+
+		if (aFinanceType.getLovDescFinIndBaseRateName() != null) {
+			this.lovDescFinIndBaseRateName.setValue(aFinanceType.getFinIndBaseRate() + "-" + aFinanceType.getLovDescFinIndBaseRateName());
+		}
+		//================= Tab 4
+		this.finAEAddDsbOD.setValue(aFinanceType.getFinAEAddDsbOD());
+		if (aFinanceType.getLovDescFinAEAddDsbODName() != null) {
+			this.lovDescFinAEAddDsbODName.setValue(aFinanceType.getLovDescEVFinAEAddDsbODName() + "-" + aFinanceType.getLovDescFinAEAddDsbODName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("ADDDBSP")) {
+				accSet = aFinanceType.getLovDescAERule().get("ADDDBSP");
+				this.finAEAddDsbOD.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAddDsbODName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAEAddDsbFD.setValue(aFinanceType.getFinAEAddDsbFD());
+		if (aFinanceType.getLovDescFinAEAddDsbFDName() != null) {
+			this.lovDescFinAEAddDsbFDName.setValue(aFinanceType.getLovDescEVFinAEAddDsbFDName() + "-" + aFinanceType.getLovDescFinAEAddDsbFDName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("ADDDBSF")) {
+				accSet = aFinanceType.getLovDescAERule().get("ADDDBSF");
+				this.finAEAddDsbFD.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAddDsbFDName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAEAddDsbFDA.setValue(aFinanceType.getFinAEAddDsbFDA());
+		if (aFinanceType.getLovDescFinAEAddDsbFDAName() != null) {
+			this.lovDescFinAEAddDsbFDAName.setValue(aFinanceType.getLovDescEVFinAEAddDsbFDAName() + "-" + aFinanceType.getLovDescFinAEAddDsbFDAName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("ADDDBSN")) {
+				accSet = aFinanceType.getLovDescAERule().get("ADDDBSN");
+				this.finAEAddDsbFDA.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAddDsbFDAName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAEAmzNorm.setValue(aFinanceType.getFinAEAmzNorm());
+		if (aFinanceType.getLovDescFinAEAmzNormName() != null) {
+			this.lovDescFinAEAmzNormName.setValue(aFinanceType.getLovDescEVFinAEAmzNormName() + "-" + aFinanceType.getLovDescFinAEAmzNormName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("AMZ")) {
+				accSet = aFinanceType.getLovDescAERule().get("AMZ");
+				this.finAEAmzNorm.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAmzNormName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAEAmzSusp.setValue(aFinanceType.getFinAEAmzSusp());
+		if (aFinanceType.getLovDescFinAEAmzSuspName() != null) {
+			this.lovDescFinAEAmzSuspName.setValue(aFinanceType.getLovDescEVFinAEAmzSuspName() + "-" + aFinanceType.getLovDescFinAEAmzSuspName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("AMZSUSP")) {
+				accSet = aFinanceType.getLovDescAERule().get("AMZSUSP");
+				this.finAEAmzSusp.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAmzSuspName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAEToNoAmz.setValue(aFinanceType.getFinAEToNoAmz());
+		if (aFinanceType.getLovDescFinAEAmzSuspName() != null) {
+			this.lovDescFinAEToNoAmzName.setValue(aFinanceType.getLovDescEVFinAEToNoAmzName() + "-" + aFinanceType.getLovDescFinAEAmzSuspName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("M_NONAMZ")) {
+				accSet = aFinanceType.getLovDescAERule().get("M_NONAMZ");
+				this.finAEToNoAmz.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEToNoAmzName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+
+		this.finToAmz.setValue(aFinanceType.getFinToAmz());
+		if (aFinanceType.getLovDescFinToAmzName() != null) {
+			this.lovDescFinToAmzName.setValue(aFinanceType.getLovDescEVFinToAmzName() + "-" + aFinanceType.getLovDescFinToAmzName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("M_AMZ")) {
+				accSet = aFinanceType.getLovDescAERule().get("M_AMZ");
+				this.finToAmz.setValue(accSet.getStringaERuleId());
+				this.lovDescFinToAmzName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAERateChg.setValue(aFinanceType.getFinAERateChg());
+		if (aFinanceType.getLovDescFinAERateChgName() != null) {
+			this.lovDescFinAERateChgName.setValue(aFinanceType.getLovDescEVFinAERateChgName() + "-" + aFinanceType.getLovDescFinAERateChgName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("RATCHG")) {
+				accSet = aFinanceType.getLovDescAERule().get("RATCHG");
+				this.finAERateChg.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAERateChgName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAERepay.setValue(aFinanceType.getFinAERepay());
+		if (aFinanceType.getLovDescFinAERepayName() != null) {
+			this.lovDescFinAERepayName.setValue(aFinanceType.getLovDescEVFinAERepayName() + "-" + aFinanceType.getLovDescFinAERepayName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("REPAY")) {
+				accSet = aFinanceType.getLovDescAERule().get("REPAY");
+				this.finAERepay.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAERepayName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+
+		this.finLatePayRule.setValue(aFinanceType.getFinLatePayRule());
+		if (aFinanceType.getLovDescFinLatePayRuleName() != null) {
+			this.lovDescFinLatePayRuleName.setValue(aFinanceType.getLovDescFinLatePayRuleName() + "-" + aFinanceType.getLovDescEVFinLatePayRuleName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("LATEPAY")) {
+				accSet = aFinanceType.getLovDescAERule().get("LATEPAY");
+				this.finLatePayRule.setValue(accSet.getStringaERuleId());
+				this.lovDescFinLatePayRuleName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finInstDate.setValue(aFinanceType.getFinInstDate());
+		if (aFinanceType.getLovDescEVFinInstDateName() != null) {
+			this.lovDescFinInstDateName.setValue(aFinanceType.getLovDescFinInstDateName() + "-" + aFinanceType.getLovDescEVFinInstDateName());
+		} else {
+			if (getFinanceType().getLovDescAERule().containsKey("INSTDATE")) {
+				accSet = getFinanceType().getLovDescAERule().get("INSTDATE");
+				this.finInstDate.setValue(accSet.getStringaERuleId());
+				this.lovDescFinInstDateName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAEWriteOff.setValue(aFinanceType.getFinAEWriteOff());
+		if (aFinanceType.getLovDescFinAEWriteOffName() != null) {
+			this.lovDescFinAEWriteOffName.setValue(aFinanceType.getLovDescEVFinAEWriteOffName() + "-" + aFinanceType.getLovDescFinAEWriteOffName());
+		} else {
+
+			if (aFinanceType.getLovDescAERule().containsKey("WRITEOFF")) {
+				accSet = aFinanceType.getLovDescAERule().get("WRITEOFF");
+				this.finAEWriteOff.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEWriteOffName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finProvision.setValue(aFinanceType.getFinProvision());
+		if (aFinanceType.getLovDescEVFinProvisionName() != null) {
+			this.lovDescFinProvisionName.setValue(aFinanceType.getLovDescFinProvisionName() + "-" + aFinanceType.getLovDescEVFinProvisionName());
+		} else {
+			if (getFinanceType().getLovDescAERule().containsKey("PROVSN")) {
+				accSet = getFinanceType().getLovDescAERule().get("PROVSN");
+				this.finProvision.setValue(accSet.getStringaERuleId());
+				this.lovDescFinProvisionName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finSchdChange.setValue(aFinanceType.getFinSchdChange());
+		if (aFinanceType.getLovDescEVFinSchdChangeName() != null) {
+			this.lovDescfinSchdChangeName.setValue(aFinanceType.getLovDescFinSchdChangeName() + "-" + aFinanceType.getLovDescEVFinSchdChangeName());
+		} else {
+			if (getFinanceType().getLovDescAERule().containsKey("SCDCHG")) {
+				accSet = getFinanceType().getLovDescAERule().get("SCDCHG");
+				this.finSchdChange.setValue(accSet.getStringaERuleId());
+				this.lovDescfinSchdChangeName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finDepreciationRule.setValue(aFinanceType.getFinDepreciationRule());
+		if (aFinanceType.getLovDescEVFinDepreciationRuleName() != null) {
+			this.lovDescFinDepreciationName.setValue(aFinanceType.getLovDescFinDepreciationRuleName() + "-" + aFinanceType.getLovDescEVFinDepreciationRuleName());
+		} else {
+			if (getFinanceType().getLovDescAERule().containsKey("DPRCIATE")) {
+				accSet = getFinanceType().getLovDescAERule().get("DPRCIATE");
+				this.finDepreciationRule.setValue(accSet.getStringaERuleId());
+				this.lovDescFinDepreciationName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finDeffreq.setValue(aFinanceType.getFinDeffreq());
+		if (aFinanceType.getLovDescFinDeffreqName() != null) {
+			this.lovDescFinDeffreqName.setValue(aFinanceType.getLovDescFinDeffreqName() + "-" + aFinanceType.getLovDescEVFinDeffreqName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("DEFFRQ")) {
+				accSet = aFinanceType.getLovDescAERule().get("DEFFRQ");
+				this.finDeffreq.setValue(accSet.getStringaERuleId());
+				this.lovDescFinDeffreqName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finDefRepay.setValue(aFinanceType.getFinDefRepay());
+		if (aFinanceType.getLovDescFinDefRepayName() != null) {
+			this.lovDescFinDefRepayName.setValue(aFinanceType.getLovDescFinDefRepayName() + "-" + aFinanceType.getLovDescEVFinDefRepayName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("DEFRPY")) {
+				accSet = aFinanceType.getLovDescAERule().get("DEFRPY");
+				this.finDefRepay.setValue(accSet.getStringaERuleId());
+				this.lovDescFinDefRepayName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAECapitalize.setValue(aFinanceType.getFinAECapitalize());
+		if (aFinanceType.getLovDescEVFinAECapitalizeName() != null) {
+			this.lovDescFinAECapitalizeName.setValue(aFinanceType.getLovDescFinAECapitalizeName() + "-" + aFinanceType.getLovDescEVFinAECapitalizeName());
+		} else {
+			if (getFinanceType().getLovDescAERule().containsKey("COMPOUND")) {
+				accSet = getFinanceType().getLovDescAERule().get("COMPOUND");
+				this.finAECapitalize.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAECapitalizeName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		this.finAEProgClaim.setValue(aFinanceType.getFinAEProgClaim());
+		if (aFinanceType.getLovDescEVFinAEProgClaimName() != null) {
+			this.lovDescFinAEProgClaimName.setValue(aFinanceType.getLovDescFinAEProgClaimName() + "-" + aFinanceType.getLovDescEVFinAEProgClaimName());
+		} else {
+			if (getFinanceType().getLovDescAERule().containsKey("PRGCLAIM")) {
+				accSet = getFinanceType().getLovDescAERule().get("PRGCLAIM");
+				this.finAEProgClaim.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEProgClaimName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		
+		this.finAEMaturity.setValue(aFinanceType.getFinAEMaturity());
+		if (aFinanceType.getLovDescEVFinAEMaturityName() != null) {
+			this.lovDescFinAEMaturityName.setValue(aFinanceType.getLovDescFinAEMaturityName() + "-" + aFinanceType.getLovDescEVFinAEMaturityName());
+		} else {
+			if (getFinanceType().getLovDescAERule().containsKey("MATURITY")) {
+				accSet = getFinanceType().getLovDescAERule().get("MATURITY");
+				this.finAEMaturity.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEMaturityName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		//======================  Hidden Fields
+		this.pftPayAcType.setValue(aFinanceType.getPftPayAcType());
+		if (aFinanceType.getLovDescPftPayAcTypeName() != null) {
+			this.lovDescPftPayAcTypeName.setValue(aFinanceType.getPftPayAcType() + "-" + aFinanceType.getLovDescPftPayAcTypeName());
+		}
+		this.finDftStmtFrq.setValue(aFinanceType.getFinDftStmtFrq());
+		fillFrqCode(this.cbfinDftStmtFrqCode, aFinanceType.getFinDftStmtFrq(), isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+		fillFrqMth(this.cbfinDftStmtFrqMth, aFinanceType.getFinDftStmtFrq(), isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+		fillFrqDay(this.cbfinDftStmtFrqDays, aFinanceType.getFinDftStmtFrq(), isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+		this.finAlwRateChangeAnyDate.setChecked(aFinanceType.isFinAlwRateChangeAnyDate());
+		this.finGrcAlwRateChgAnyDate.setChecked(aFinanceType.isFinGrcAlwRateChgAnyDate());
+		this.fInMinRate.setValue(aFinanceType.getFInMinRate());
+		this.finMaxRate.setValue(aFinanceType.getFinMaxRate());
+		fillComboBox(this.cbFinGrcScheduleOn, aFinanceType.getFinGrcScheduleOn(), scheduleOn, "");
+	
+		this.fInGrcMinRate.setValue(aFinanceType.getFInGrcMinRate());
+		this.finGrcMaxRate.setValue(aFinanceType.getFinGrcMaxRate());
+		this.finCollateralReq.setChecked(aFinanceType.isFinCollateralReq());
+		this.finCollateralOvrride.setChecked(aFinanceType.isFinCollateralOvrride());
+		doCheckBoxChecked(this.finCollateralReq.isChecked(), this.finCollateralOvrride);
+		this.finIsAlwEarlyRpy.setChecked(aFinanceType.isFinIsAlwEarlyRpy());
+		this.finIsAlwEarlySettle.setChecked(aFinanceType.isFinIsAlwEarlySettle());
+		this.finDepreciationFrq.setValue(aFinanceType.getFinDepreciationFrq());
+		fillFrqCode(this.cbfinDepreciationCode, aFinanceType.getFinDepreciationFrq(), isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		fillFrqMth(this.cbfinDepreciationMth, aFinanceType.getFinDepreciationFrq(), isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		fillFrqDay(this.cbfinDepreciationDays, aFinanceType.getFinDepreciationFrq(), isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		this.finHistRetension.setValue(aFinanceType.getFinHistRetension());
+		this.finAEEarlyPay.setValue(aFinanceType.getFinAEEarlyPay());
+		this.finAEEarlySettle.setValue(aFinanceType.getFinAEEarlySettle());
+		if (aFinanceType.getLovDescFinAEEarlyPayName() != null) {
+			this.lovDescFinAEEarlyPayName.setValue(aFinanceType.getLovDescEVFinAEEarlyPayName() + "-" + aFinanceType.getLovDescFinAEEarlyPayName());
+		}
+		if (aFinanceType.getLovDescFinAEEarlySettleName() != null) {
+			this.lovDescFinAEEarlySettleName.setValue(aFinanceType.getLovDescEVFinAEEarlySettleName() + "-" + aFinanceType.getLovDescFinAEEarlySettleName());
+		} else {
+			if (aFinanceType.getLovDescAERule().containsKey("EARLYSTL")) {
+				accSet = aFinanceType.getLovDescAERule().get("EARLYSTL");
+				this.finAEEarlySettle.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEEarlySettleName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			}
+		}
+		if (aFinanceType.isNewRecord()) {
+			// Select manual repay by default.
+			this.cbfinRepayMethod.setSelectedIndex(2);
+			this.finIsActive.setChecked(true);
+			this.finIsOpenNewFinAc.setChecked(true);
+			this.finIsAlwPartialRpy.setChecked(true);
+			if (isCopyProcess) {
+				setRateLabels(aFinanceType);
+			}
+		} else {
+			setRateLabels(aFinanceType);
+
+		}
+		this.recordStatus.setValue(aFinanceType.getRecordStatus());
+
+		logger.debug("Leaving doWriteBeanToComponents()");
+	}
+
+	private void setRateLabels(FinanceType aFinanceType) {
+		// To Set Default Values in new mode
+		this.finSplRate.setValue(aFinanceType.getFinSplRate());
+		if (aFinanceType.getFinBaseRate() != null || aFinanceType.getFinSplRate() != null) {
+			this.labe_EffectiveRate.setValue(String.valueOf(rates(aFinanceType.getFinBaseRate(), aFinanceType.getFinSplRate(), aFinanceType.getFinMargin())));
+
+		}
+		this.finGrcSplRate.setValue(aFinanceType.getFinGrcSplRate());
+		if (aFinanceType.getFinGrcBaseRate() != null || aFinanceType.getFinGrcSplRate() != null) {
+			this.labe_GrcEffectiveRate.setValue(String.valueOf(rates(aFinanceType.getFinGrcBaseRate(), aFinanceType.getFinGrcSplRate(), aFinanceType.getFinGrcMargin())));
+		}
+	}
+
+	/**
+	 * Writes the components values to the bean.<br>
+	 * 
+	 * @param aFinanceType
+	 */
+
+	public void doWriteComponentsToBean(FinanceType aFinanceType) {
+		logger.debug("Entering doWriteComponentsToBean()");
+
+		doSetLOVValidation();
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		// +++++++++++++ Start of  tab 1 ++++++++++++//
+		try {
+			aFinanceType.setFinType(this.finType.getValue().toUpperCase());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinTypeDesc(this.finTypeDesc.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinCcyName(this.lovDescFinCcyName.getValue());
+			aFinanceType.setFinCcy(this.finCcy.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (validate && getCbSlctVal(this.cbfinDaysCalType).equals("#")) {
+				throw new WrongValueException(this.cbfinDaysCalType, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDaysCalType.value") }));
+			}
+			aFinanceType.setFinDaysCalType(getCbSlctVal(this.cbfinDaysCalType));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setLovDescFinAcTypeName(this.lovDescFinAcTypeName.getValue());
+			aFinanceType.setFinAcType(this.finAcType.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsOpenNewFinAc(this.finIsOpenNewFinAc.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinMaxAmount(PennantAppUtil.unFormateAmount(this.finMaxAmount.getValue(), getFinanceType().getLovDescFinFormetter()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinMinAmount(PennantAppUtil.unFormateAmount(this.finMinAmount.getValue(), getFinanceType().getLovDescFinFormetter()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (validate && (this.cbfinProductType.getSelectedItem() == null || this.cbfinProductType.getSelectedItem().getValue().equals("#"))) {
+				throw new WrongValueException(this.cbfinProductType, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinProductType.Value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.cbfinAssetType.getSelectedItem() != null && !this.cbfinAssetType.getSelectedItem().getValue().equals("#")) {
+				aFinanceType.setFinAssetType(Long.parseLong(this.cbfinAssetType.getSelectedItem().getValue().toString()));
+			} else if (validate) {
+				throw new WrongValueException(this.cbfinAssetType,
+				        Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAssetType.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsDwPayRequired(this.finIsDwPayRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinMinDownPayAmount(this.finMinDownPayAmount.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsGenRef(this.finIsGenRef.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setFInIsAlwGrace(this.fInIsAlwGrace.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsAlwMD(this.finIsAlwMD.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinDepreciationReq(this.finDepreciationReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinCommitmentReq(this.finCommitmentReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinCommitmentOvrride(this.finCommitmentOvrride.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLimitRequired(this.limitRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setOverrideLimit(this.overrideLimit.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setAllowRIAInvestment(this.allowRIAInvestment.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setAllowParllelFinance(this.allowParllelFinance.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setFinIsActive(this.finIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// To check finMaxAmount has higher value than the finMinAmount
+		try {
+			mustBeHigher(finMaxAmount, finMinAmount, "label_FinanceTypeDialog_FinMaxAmount.value", "label_FinanceTypeDialog_FinMinAmount.value");
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		showErrorDetails(wve, basicDetails);
+
+		// +++++++++++ End of tab 1 +++++++++++++++++//
+
+		// ++++++++++++++++ Start of  tab 2 +++++++++++++++++//
+		if (!this.gracePeriod.isDisabled()) {
+			try {
+				// Field is foreign key so it should be non empty
+				if (validate && getCbSlctVal(this.cbfinGrcRateType).equals("#")) {
+					throw new WrongValueException(this.cbfinGrcRateType, Labels.getLabel("STATIC_INVALID",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcRateType.value") }));
+				}
+				aFinanceType.setFinGrcRateType(getCbSlctVal(this.cbfinGrcRateType));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				/*
+				 * to check mutually exclusive values i.e Grace base rate code and Grace profit rate
+				 */
+				if (this.finGrcIntRate.getValue() != null) {
+					if ((this.finGrcIntRate.getValue().intValue() > 0) && (!this.lovDescFinGrcBaseRateName.getValue().equals(""))) {
+						throw new WrongValueException(this.finGrcIntRate, Labels.getLabel("EITHER_OR",
+						        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcBaseRate.value"), Labels.getLabel("label_FinanceTypeDialog_FinGrcIntRate.value") }));
+					}
+					aFinanceType.setFinGrcIntRate(this.finGrcIntRate.getValue());
+				} else {
+					aFinanceType.setFinGrcIntRate(new BigDecimal(0));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				// Field is foreign key and not a mandatory value so it should be either null or non empty
+				aFinanceType.setLovDescFinGrcBaseRateName(this.lovDescFinGrcBaseRateName.getValue());
+				aFinanceType.setFinGrcBaseRate(this.finGrcBaseRate.getValue().equals("") ? null : this.finGrcBaseRate.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				//Field is foreign key and not a mandatory value so it should be either null or non empty
+				aFinanceType.setLovDescFinGrcSplRateName(this.lovDescFinGrcSplRateName.getValue());
+				aFinanceType.setFinGrcSplRate(this.finGrcSplRate.getValue().equals("") ? null : this.finGrcSplRate.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aFinanceType.setFinGrcMargin(this.finGrcMargin.getValue() == null ? new BigDecimal(0) : this.finGrcMargin.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				// to Check frequency code and frequency month
+				if (!getCbSlctVal(this.cbfinGrcDftIntFrqCode).equals("#") && getCbSlctVal(this.cbfinGrcDftIntFrqMth).equals("#")) {
+					throw new WrongValueException(this.cbfinGrcDftIntFrqMth, Labels.getLabel("FIELD_NO_EMPTY",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcDftIntFrqMth.value") }));
+				}
+				aFinanceType.setFinGrcDftIntFrq(this.finGrcDftIntFrq.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				// to Check frequency month and frequency day
+				if (!getCbSlctVal(this.cbfinGrcDftIntFrqMth).equals("#") && getCbSlctVal(this.cbfinGrcDftIntFrqDays).equals("#") && !this.cbfinGrcDftIntFrqDays.isDisabled()) {
+					throw new WrongValueException(this.cbfinGrcDftIntFrqDays, Labels.getLabel("FIELD_NO_EMPTY",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcDftIntFrqDay.value") }));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aFinanceType.setFinIsAlwGrcRepay(this.finIsAlwGrcRepay.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				if (this.finIsAlwGrcRepay.isChecked() && getCbSlctVal(this.finGrcSchdMthd).equals("#")) {
+					throw new WrongValueException(this.finGrcSchdMthd, Labels.getLabel("STATIC_INVALID",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FFinGrcSchdMthd.value") }));
+				}
+				aFinanceType.setFinGrcSchdMthd(getCbSlctVal(this.finGrcSchdMthd));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aFinanceType.setFinGrcIsIntCpz(this.finGrcIsIntCpz.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				// to Check frequency code and frequency month
+				if (!getCbSlctVal(this.cbfinGrcCpzFrqCode).equals("#") && getCbSlctVal(this.cbfinGrcCpzFrqMth).equals("#")) {
+					throw new WrongValueException(this.cbfinGrcCpzFrqMth, Labels.getLabel("FIELD_NO_EMPTY",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcCpzFrqMth.value") }));
+				}
+				aFinanceType.setFinGrcCpzFrq(this.finGrcCpzFrq.getValue() == null ? "" : this.finGrcCpzFrq.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				// to Check frequency month and frequency day
+				if (!getCbSlctVal(this.cbfinGrcCpzFrqMth).equals("#") && getCbSlctVal(this.cbfinGrcCpzFrqDays).equals("#") && !this.cbfinGrcCpzFrqDays.isDisabled()) {
+					throw new WrongValueException(this.cbfinGrcCpzFrqDays, Labels.getLabel("FIELD_NO_EMPTY",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcCpzFrqDay.value") }));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aFinanceType.setFinGrcIsRvwAlw(this.finGrcIsRvwAlw.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				// to Check frequency code and frequency month
+				if (!getCbSlctVal(this.cbfinGrcRvwFrqCode).equals("#") && getCbSlctVal(this.cbfinGrcRvwFrqMth).equals("#")) {
+					throw new WrongValueException(this.cbfinGrcRvwFrqMth, Labels.getLabel("FIELD_NO_EMPTY",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcRvwFrqMth.value") }));
+				}
+				aFinanceType.setFinGrcRvwFrq(this.finGrcRvwFrq.getValue() == null ? "" : this.finGrcRvwFrq.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				// to Check frequency month and frequency day
+				if (!getCbSlctVal(this.cbfinGrcRvwFrqMth).equals("#") && getCbSlctVal(this.cbfinGrcRvwFrqDays).equals("#") && !this.cbfinGrcRvwFrqDays.isDisabled()) {
+					throw new WrongValueException(this.cbfinGrcRvwFrqDays, Labels.getLabel("FIELD_NO_EMPTY",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcRvwFrqDay.value") }));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				this.cbfinGrcRvwRateApplFor.clearErrorMessage();
+				if (validate && this.finGrcIsRvwAlw.isChecked() && getCbSlctVal(this.cbfinGrcRvwRateApplFor).equals("#")) {
+					throw new WrongValueException(this.cbfinGrcRvwRateApplFor, Labels.getLabel("STATIC_INVALID",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcRvwRateApplFor.value") }));
+				}
+				aFinanceType.setFinGrcRvwRateApplFor(getCbSlctVal(this.cbfinGrcRvwRateApplFor));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aFinanceType.setFinGrcAlwIndRate(this.finGrcAlwIndRate.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				//Field is foreign key and not a mandatory value so it should be either null or non empty
+				aFinanceType.setLovDescFinGrcIndBaseRateName(this.lovDescFinGrcIndBaseRateName.getValue());
+				aFinanceType.setFinGrcIndBaseRate(this.finGrcIndBaseRate.getValue().equals("") ? null : this.finGrcIndBaseRate.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				aFinanceType.setFinIsIntCpzAtGrcEnd(this.finIsIntCpzAtGrcEnd.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (!this.gracePeriod.isDisabled()) {
+					mustBeHigher(finGrcMaxRate, fInGrcMinRate, "label_FinanceTypeDialog_FinGrcMaxRate.value", "label_FinanceTypeDialog_FInGrcMinRate.value");
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+		}
+		showErrorDetails(wve, gracePeriod);
+
+		// ++++++++++++++++++ End of tab 2 ++++++++++++++++++++//
+
+		// +++++++++++ Start tab 3+++++++++++++++++//
+		try {
+			// Field is foreign key so it should be non empty
+			if (validate && getCbSlctVal(this.cbfinRateType).equals("#")) {
+				throw new WrongValueException(this.cbfinRateType, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinRateType.value") }));
+			} else {
+				aFinanceType.setFinRateType(getCbSlctVal(this.cbfinRateType));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			// To check mutually exclusive values i.e base rate code and profit rate
+			if (this.finIntRate.getValue() != null) {
+				if ((this.finIntRate.getValue().intValue() > 0) && (!this.lovDescFinBaseRateName.getValue().equals(""))) {
+					throw new WrongValueException(this.finIntRate, Labels.getLabel("EITHER_OR",
+					        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinBaseRate.value"), Labels.getLabel("label_FinanceTypeDialog_FinIntRate.value") }));
+				}
+				aFinanceType.setFinIntRate(this.finIntRate.getValue());
+			} else {
+				aFinanceType.setFinIntRate(new BigDecimal(0));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			// Field is foreign key and not a mandatory value so it should be either null or non empty
+			aFinanceType.setLovDescFinBaseRateName(this.lovDescFinBaseRateName.getValue());
+			aFinanceType.setFinBaseRate(this.finBaseRate.getValue().equals("") ? null : this.finBaseRate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// Field is foreign key and not a mandatory value so it should be either null or non empty
+			aFinanceType.setLovDescFinSplRateName(this.lovDescFinSplRateName.getValue());
+			aFinanceType.setFinSplRate(this.finSplRate.getValue().equals("") ? null : this.finSplRate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinMargin(this.finMargin.getValue() == null ? new BigDecimal(0) : this.finMargin.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinFrEqrepayment(this.finFrqrepayment.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency code and frequency month
+			if ((!getCbSlctVal(this.cbfinDftIntFrqCode).equals("#")) && (getCbSlctVal(this.cbfinDftIntFrqMth).equals("#"))) {
+				throw new WrongValueException(this.cbfinDftIntFrqMth, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDftIntFrqMth.value") }));
+			}
+			aFinanceType.setFinDftIntFrq(this.finDftIntFrq.getValue() == null ? "" : this.finDftIntFrq.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency month and frequency day
+			if ((!getCbSlctVal(this.cbfinDftIntFrqMth).equals("#")) && (getCbSlctVal(this.cbfinDftIntFrqDays).equals("#")) && !this.cbfinDftIntFrqDays.isDisabled()) {
+				throw new WrongValueException(this.cbfinDftIntFrqDays, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDftIntFrqDay.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinRepayPftOnFrq(this.finRepayPftOnFrq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency code and frequency month
+			if (!getCbSlctVal(this.cbfinRpyFrqCode).equals("#") && getCbSlctVal(this.cbfinRpyFrqMth).equals("#")) {
+				throw new WrongValueException(this.cbfinRpyFrqMth,
+				        Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinRpyFrqMth.value") }));
+			}
+			aFinanceType.setFinRpyFrq(this.finRpyFrq.getValue() == null ? "" : this.finRpyFrq.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency month and frequency day
+			if (!getCbSlctVal(this.cbfinRpyFrqMth).equals("#") && getCbSlctVal(this.cbfinRpyFrqDays).equals("#") && !this.cbfinRpyFrqDays.isDisabled()) {
+				throw new WrongValueException(this.cbfinRpyFrqDays, Labels.getLabel("FIELD_NO_EMPTY",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinRpyFrqDay.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (validate && getCbSlctVal(this.cbfinSchdMthd).equals("#")) {
+				throw new WrongValueException(this.cbfinSchdMthd, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinSchdMthd.value") }));
+			}
+			aFinanceType.setFinSchdMthd(getCbSlctVal(this.cbfinSchdMthd));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsIntCpz(this.finIsIntCpz.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			// to Check frequency code and frequency month
+			if ((!getCbSlctVal(this.cbfinCpzFrqCode).equals("#")) && (getCbSlctVal(this.cbfinCpzFrqMth).equals("#"))) {
+				throw new WrongValueException(this.cbfinCpzFrqMth,
+				        Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinCpzFrqMth.value") }));
+			}
+			aFinanceType.setFinCpzFrq(this.finCpzFrq.getValue() == null ? "" : this.finCpzFrq.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency month and frequency day
+			if ((!getCbSlctVal(this.cbfinCpzFrqMth).equals("#")) && (getCbSlctVal(this.cbfinCpzFrqDays).equals("#")) && !this.cbfinCpzFrqDays.isDisabled()) {
+				throw new WrongValueException(this.cbfinCpzFrqDays, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinCpzFrqDay.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsRvwAlw(this.finIsRvwAlw.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency code and frequency month
+			if (!getCbSlctVal(this.cbfinRvwFrqCode).equals("#") && getCbSlctVal(this.cbfinRvwFrqMth).equals("#")) {
+				throw new WrongValueException(this.cbfinRvwFrqMth,
+				        Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinRvwFrqMth.value") }));
+			}
+			aFinanceType.setFinRvwFrq(this.finRvwFrq.getValue() == null ? "" : this.finRvwFrq.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency month and frequency day
+			if (!getCbSlctVal(this.cbfinRvwFrqMth).equals("#") && getCbSlctVal(this.cbfinRvwFrqDays).equals("#") && !this.cbfinRvwFrqDays.isDisabled()) {
+				throw new WrongValueException(this.cbfinRvwFrqDays, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinRvwFrqDay.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			this.cbfinRvwRateApplFor.clearErrorMessage();
+			if (validate && this.finIsRvwAlw.isChecked() && getCbSlctVal(this.cbfinRvwRateApplFor).equals("#")) {
+				throw new WrongValueException(this.cbfinRvwRateApplFor, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinRvwRateApplFor.value") }));
+			}
+			aFinanceType.setFinRvwRateApplFor(getCbSlctVal(this.cbfinRvwRateApplFor));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			this.cbfinSchCalCodeOnRvw.clearErrorMessage();
+			if (validate && aFinanceType.isFinIsRvwAlw() && getCbSlctVal(this.cbfinSchCalCodeOnRvw).equals("#")) {
+				throw new WrongValueException(this.cbfinSchCalCodeOnRvw, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinSchCalCodeOnRvw.value") }));
+			}
+			aFinanceType.setFinSchCalCodeOnRvw(getCbSlctVal(this.cbfinSchCalCodeOnRvw));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinAlwIndRate(this.finAlwIndRate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			//Field is foreign key and not a mandatory value so it should be either null or non empty
+			aFinanceType.setLovDescFinIndBaseRateName(this.lovDescFinIndBaseRateName.getValue());
+			aFinanceType.setFinIndBaseRate(this.finIndBaseRate.getValue().equals("") ? null : this.finIndBaseRate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinMinTerm(this.finMinTerm.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinMaxTerm(this.finMaxTerm.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinDftTerms(this.finDftTerms.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (validate && getCbSlctVal(this.cbfinRepayMethod).equals("#")) {
+				aFinanceType.setFInRepayMethod(getCbSlctVal(this.cbfinRepayMethod));
+			} else {
+				aFinanceType.setFInRepayMethod(getCbSlctVal(this.cbfinRepayMethod));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsAlwPartialRpy(this.finIsAlwPartialRpy.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinODRpyTries(this.finODRpyTries.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setFinIsAlwDifferment(this.finIsAlwDifferment.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.finIsAlwDifferment.isChecked() && (this.finMaxDifferment.getValue() == null || this.finMaxDifferment.getValue() <= 0)) {
+				throw new WrongValueException(this.finMaxDifferment, Labels.getLabel("FIELD_IS_GREATER",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinIsMaxDifferment.value"), "0" }));
+			}
+			aFinanceType.setFinMaxDifferment(this.finMaxDifferment.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsAlwFrqDifferment(this.finIsAlwFrqDifferment.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.finIsAlwFrqDifferment.isChecked() && (this.finMaxFrqDifferment.getValue() == null || this.finMaxFrqDifferment.getValue() <= 0)) {
+				throw new WrongValueException(this.finMaxFrqDifferment, Labels.getLabel("FIELD_IS_GREATER",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinIsMaxFrqDifferment.value"), "0" }));
+			}
+			aFinanceType.setFinMaxFrqDifferment(this.finMaxFrqDifferment.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// To check finMaxTerms has higher value than the finMinTerms
+		try {
+			if (aFinanceType.getFinMinTerm() != 0 && aFinanceType.getFinMaxTerm() <= aFinanceType.getFinMinTerm()) {
+				throw new WrongValueException(this.finMaxTerm, Labels.getLabel("FIELD_IS_GREATER", new String[] { Labels.getLabel("label_FinanceTypeSearch_FinMaxTerm.value"),
+				        Labels.getLabel("label_FinanceTypeSearch_FinMinTerm.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (validate && getCbSlctVal(this.cbFinScheduleOn).equals("#")) {
+				throw new WrongValueException(this.cbFinScheduleOn, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinScheduleOn.value") }));
+			}
+			aFinanceType.setFinScheduleOn(getCbSlctVal(this.cbFinScheduleOn));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			//aFinanceType.setFinPftUnChanged(this.finPftUnChanged.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		
+		//showErrorDetails(wve, scheduleProfit);
+		showErrorDetails(wve, repayment);
+
+		// ++++++++++++++++ End of Tab 3 ++++++++++++++++++++//
+
+		// ++++++++++++++++ Start of Tab 4 ++++++++++++//
+
+		try {
+			aFinanceType.setLovDescFinAEAddDsbODName(this.lovDescFinAEAddDsbODName.getValue());
+			aFinanceType.setFinAEAddDsbOD(this.finAEAddDsbOD.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinAEAddDsbFDName(this.lovDescFinAEAddDsbFDName.getValue());//
+			aFinanceType.setFinAEAddDsbFD(this.finAEAddDsbFD.getValue());//
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinAEAddDsbFDAName(this.lovDescFinAEAddDsbFDAName.getValue());
+			aFinanceType.setFinAEAddDsbFDA(this.finAEAddDsbFDA.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setLovDescFinAEAmzNormName(this.lovDescFinAEAmzNormName.getValue());
+			aFinanceType.setFinAEAmzNorm(this.finAEAmzNorm.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinAEAmzSuspName(this.lovDescFinAEAmzSuspName.getValue());
+			aFinanceType.setFinAEAmzSusp(this.finAEAmzSusp.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setLovDescFinAEToNoAmzName(this.lovDescFinAEToNoAmzName.getValue());
+			aFinanceType.setFinAEToNoAmz(this.finAEToNoAmz.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setLovDescFinToAmzName(this.lovDescFinToAmzName.getValue());
+			aFinanceType.setFinToAmz(this.finToAmz.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setLovDescFinAERateChgName(this.lovDescFinAERateChgName.getValue());
+			aFinanceType.setFinAERateChg(this.finAERateChg.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setLovDescFinAERepayName(this.lovDescFinAERepayName.getValue());
+			aFinanceType.setFinAERepay(this.finAERepay.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setLovDescFinLatePayRuleName(this.lovDescFinLatePayRuleName.getValue());
+			aFinanceType.setFinLatePayRule(this.finLatePayRule.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setLovDescFinInstDateName(this.lovDescFinInstDateName.getValue());
+			aFinanceType.setFinInstDate(this.finInstDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinAEWriteOffName(this.lovDescFinAEWriteOffName.getValue());
+			aFinanceType.setFinAEWriteOff(this.finAEWriteOff.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setLovDescFinProvisionName(this.lovDescFinProvisionName.getValue());
+			aFinanceType.setFinProvision(this.finProvision.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinSchdChangeName(this.lovDescfinSchdChangeName.getValue());
+			aFinanceType.setFinSchdChange(this.finSchdChange.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinDepreciationRuleName(this.lovDescFinDepreciationName.getValue());
+			aFinanceType.setFinDepreciationRule(this.finDepreciationRule.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinDeffreqName(this.lovDescFinDeffreqName.getValue());
+			aFinanceType.setFinDeffreq(this.finDeffreq.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinDefRepayName(this.lovDescFinDefRepayName.getValue());
+			aFinanceType.setFinDefRepay(this.finDefRepay.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinAECapitalizeName(this.lovDescFinAECapitalizeName.getValue());
+			aFinanceType.setFinAECapitalize(this.finAECapitalize.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinAEProgClaimName(this.lovDescFinAEProgClaimName.getValue());
+			aFinanceType.setFinAEProgClaim(this.finAEProgClaim.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinAEMaturityName(this.lovDescFinAEMaturityName.getValue());
+			aFinanceType.setFinAEMaturity(this.finAEMaturity.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		showErrorDetails(wve, accountingEvent);
+
+		// ++++++++++++++ End of Tab 4 +++++++++++++++++++//
+
+		//Not visible fields		
+
+		try {
+			aFinanceType.setLovDescPftPayAcTypeName(this.lovDescPftPayAcTypeName.getValue());
+			aFinanceType.setPftPayAcType(this.pftPayAcType.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinBankContingentAcTypeName(this.lovDescFinBankContingentAcTypeName.getValue());
+			aFinanceType.setFinBankContingentAcType(this.finBankContingentAcType.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinContingentAcTypeName(this.lovDescFinContingentAcTypeName.getValue());
+			aFinanceType.setFinContingentAcType(this.finContingentAcType.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinProvisionAcTypeName(this.lovDescFinProvisionAcTypeName.getValue());
+			aFinanceType.setFinProvisionAcType(this.finProvisionAcType.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsOpenPftPayAcc(this.finIsOpenPftPayAcc.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency code and frequency month
+			if ((!getCbSlctVal(this.cbfinDftStmtFrqCode).equals("#")) && (getCbSlctVal(this.cbfinDftStmtFrqMth).equals("#"))) {
+				throw new WrongValueException(this.cbfinDftStmtFrqMth, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_finDftStmtFrqMth.value") }));
+			}
+			aFinanceType.setFinDftStmtFrq(this.finDftStmtFrq.getValue() == null ? "" : this.finDftStmtFrq.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency month and frequency day
+			if ((!getCbSlctVal(this.cbfinDftStmtFrqMth).equals("#")) && (getCbSlctVal(this.cbfinDftStmtFrqDays).equals("#") && !this.cbfinDftStmtFrqDays.isDisabled())) {
+				throw new WrongValueException(this.cbfinDftStmtFrqDays, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDftStmtFrqDay.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setFinHistRetension(this.finHistRetension.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setFinCollateralReq(this.finCollateralReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinCollateralOvrride(this.finCollateralOvrride.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (this.finDepreciationReq.isChecked() && getCbSlctVal(this.cbfinDepreciationCode).equals("#")) {
+				throw new WrongValueException(this.cbfinDepreciationCode, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDftStmtFrq.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency code and frequency month
+			if ((!getCbSlctVal(this.cbfinDepreciationCode).equals("#")) && (getCbSlctVal(this.cbfinDepreciationMth).equals("#"))) {
+				throw new WrongValueException(this.cbfinDepreciationMth, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_finDftStmtFrqMth.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			// to Check frequency month and frequency day
+			if ((!getCbSlctVal(this.cbfinDepreciationMth).equals("#")) && (getCbSlctVal(this.cbfinDepreciationDays).equals("#") && !this.cbfinDftStmtFrqDays.isDisabled())) {
+				throw new WrongValueException(this.cbfinDepreciationDays, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDftStmtFrqDay.value") }));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinDepreciationFrq(this.finDepreciationFrq.getValue() == null ? "" : this.finDepreciationFrq.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//NON VISIBLE FILEDS
+
+		try {
+			aFinanceType.setFInGrcMinRate(this.fInGrcMinRate.getValue() == null ? new BigDecimal(0) : this.fInGrcMinRate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinGrcMaxRate(this.finGrcMaxRate.getValue() == null ? new BigDecimal(0) : this.finGrcMaxRate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (getCbSlctVal(this.cbFinGrcScheduleOn).equals("#")) {
+				throw new WrongValueException(this.cbFinGrcScheduleOn, Labels.getLabel("STATIC_INVALID",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcScheduleOn.value") }));
+			}
+			aFinanceType.setFinGrcScheduleOn(getCbSlctVal(this.cbFinGrcScheduleOn));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinGrcAlwRateChgAnyDate(this.finGrcAlwRateChgAnyDate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		//Not visible Fields
+	
+		try {
+			aFinanceType.setFInMinRate(this.fInMinRate.getValue() == null ? new BigDecimal(0) : this.fInMinRate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinMaxRate(this.finMaxRate.getValue() == null ? new BigDecimal(0) : this.finMaxRate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			mustBeHigher(finMaxRate, fInMinRate, "label_FinanceTypeDialog_FinMaxRate.value", "label_FinanceTypeDialog_FInMinRate.value");
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setFinAlwRateChangeAnyDate(this.finAlwRateChangeAnyDate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsAlwEarlyRpy(this.finIsAlwEarlyRpy.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setFinIsAlwEarlySettle(this.finIsAlwEarlySettle.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Non Visible Fields
+		try {
+			aFinanceType.setLovDescFinAEEarlyPayName(this.lovDescFinAEEarlyPayName.getValue());
+			aFinanceType.setFinAEEarlyPay(this.finAEEarlyPay.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setLovDescFinAEEarlySettleName(this.lovDescFinAEEarlySettleName.getValue());
+			aFinanceType.setFinAEEarlySettle(this.finAEEarlySettle.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+		doRemoveLOVValidation();
+		aFinanceType.setRecordStatus(this.recordStatus.getValue());
+		logger.debug("Leaving");
+
+	}
+
+	// For Tab Wise validations
+	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+		logger.debug("Entering");
+		if (wve.size() > 0) {
+			tab.setSelected(true);
+			doRemoveValidation();
+			doRemoveLOVValidation();
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		logger.debug("Leaving");
+
+	}
+
+	/**
+	 * Opens the Dialog window modal. It checks if the dialog opens with a new or existing object and set the readOnly
+	 * mode accordingly.
+	 * 
+	 * @param aFinanceType
+	 * @throws InterruptedException
+	 */
+	public void doShowDialog(FinanceType aFinanceType) throws InterruptedException {
+		logger.debug("Entering");
+
+		/*
+		 * if aFinanceType == null then we opened the Dialog without arguments
+		 * for a given entity, so we get a new Object().
+		 */
+		if (aFinanceType == null) {
+			aFinanceType = getFinanceTypeService().getNewFinanceType();
+			setFinanceType(aFinanceType);
+		} else {
+			setFinanceType(aFinanceType);
+		}
+
+		// set ReadOnly mode accordingly if the object is new or not.
+		if (aFinanceType.isNew()) {
+			this.btnCtrl.setInitNew();
+			doEdit();
+			// setFocus
+			this.finType.focus();
+		} else {
+			this.finTypeDesc.focus();
+			if (isWorkFlowEnabled()) {
+				this.btnNotes.setVisible(true);
+				doEdit();
+			} else {
+				this.btnCtrl.setInitEdit();
+				doReadOnly();
+				btnCancel.setVisible(false);
+			}
+		}
+
+		try {
+			// fill the components with the data
+			doWriteBeanToComponents(aFinanceType);
+			doStoreInitValues();
+			dodisableGracePeriod();
+			doDisableDepreciationDFrq(aFinanceType.isFinDepreciationReq(), isReadOnly("FinanceTypeDialog_FinDepreciationFrq"));
+			if (getFinanceType().isNewRecord() || getFinanceType().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				this.finIsActive.setChecked(true);
+				this.finIsActive.setDisabled(true);
+			}
+			if (getFinanceType().isNewRecord()) {
+				this.finODRpyTries.setValue(-1);
+				setDefaultValues();
+			}
+			doStoreInitValues();
+			setDialog(this.window_FinanceTypeDialog);
+
+		} catch (final Exception e) {
+			logger.error(e);
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving");
+	}
+
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	/** Stores the init values in member Var's. <br> */
+	private void doStoreInitValues() {
+		logger.debug("Entering");
+
+		this.oldVar_finType = this.finType.getValue();
+		this.oldVar_finTypeDesc = this.finTypeDesc.getValue();
+		this.oldVar_finCcy = this.finCcy.getValue();
+		this.oldVar_lovDescFinCcyName = this.lovDescFinCcyName.getValue();
+		this.oldVar_finAcType = this.finAcType.getValue();
+		this.oldVar_pftPayAcType = this.pftPayAcType.getValue();
+		this.oldVar_lovDescFinAcTypeName = this.lovDescFinAcTypeName.getValue();
+		this.oldVar_lovDescPftPayAcTypeName = this.lovDescPftPayAcTypeName.getValue();
+		this.oldVar_finContingentAcType = this.finContingentAcType.getValue();
+		this.oldVar_lovDescFinContingentAcTypeName = this.lovDescFinContingentAcTypeName.getValue();
+		this.oldVar_finBankContingentAcType = this.finBankContingentAcType.getValue();
+		this.oldVar_lovDescFinBankCtngAcTypeName = this.lovDescFinBankContingentAcTypeName.getValue();
+		this.oldVar_finProvisionAcType = this.finProvisionAcType.getValue();
+		this.oldVar_lovDescFinProvisionAcTypeName = this.lovDescFinProvisionAcTypeName.getValue();
+		this.oldVar_finIsGenRef = this.finIsGenRef.isChecked();
+		this.oldVar_finMaxAmount = this.finMaxAmount.getValue();
+		this.oldVar_finMinAmount = this.finMinAmount.getValue();
+		this.oldVar_finIsOpenNewFinAc = this.finIsOpenNewFinAc.isChecked();
+		this.oldVar_finDftStmtFrq = this.finDftStmtFrq.getValue();
+		this.oldVar_finIsAlwMD = this.finIsAlwMD.isChecked();
+		this.oldVar_finIsOpenPftPayAcc = this.finIsOpenPftPayAcc.isChecked();
+		this.oldVar_finSchdMthd = this.cbfinSchdMthd.getSelectedIndex();
+		this.oldVar_finDaysCalType = this.cbfinDaysCalType.getSelectedIndex();
+		this.oldVar_finRateType = this.cbfinRateType.getSelectedIndex();
+		this.oldVar_finGrcRateType = this.cbfinGrcRateType.getSelectedIndex();
+		this.oldVar_finRepayMethod = this.cbfinRepayMethod.getSelectedIndex();
+		this.oldVar_finSchCalCodeOnRvw = this.cbfinSchCalCodeOnRvw.getSelectedIndex();
+		this.oldVar_fInIsAlwGrace = this.fInIsAlwGrace.isChecked();
+		this.oldVar_finHistRetension = this.finHistRetension.intValue();
+		this.oldVar_finBaseRate = this.finBaseRate.getValue();
+		this.oldVar_lovDescFinBaseRateName = this.lovDescFinBaseRateName.getValue();
+		this.oldVar_finSplRate = this.finSplRate.getValue();
+		this.oldVar_lovDescFinSplRateName = this.lovDescFinSplRateName.getValue();
+		this.oldVar_finAlwRateChangeAnyDate = this.finAlwRateChangeAnyDate.isChecked();
+		this.oldVar_finGrcAlwRateChgAnyDate = this.finGrcAlwRateChgAnyDate.isChecked();
+		this.oldVar_finIsIntCpzAtGrcEnd = this.finIsIntCpzAtGrcEnd.isChecked();
+		this.oldVar_finIsDwPayRequired = this.finIsDwPayRequired.isChecked();
+		this.oldVar_finMinDownPayAmount = this.finMinDownPayAmount.getValue();
+		this.oldVar_finDeffreq = this.finDeffreq.getValue();
+		this.oldVar_finDefRepay = this.finDefRepay.getValue();
+		this.oldVar_finIntRate = this.finIntRate.getValue();
+		this.oldVar_fInMinRate = this.fInMinRate.getValue();
+		this.oldVar_finMaxRate = this.finMaxRate.getValue();
+		this.oldVar_finDftIntFrq = this.finDftIntFrq.getValue();
+		this.oldVar_finIsIntCpz = this.finIsIntCpz.isChecked();
+		this.oldVar_finCpzFrq = this.finCpzFrq.getValue();
+		this.oldVar_finIsRvwAlw = this.finIsRvwAlw.isChecked();
+		this.oldVar_finRepayPftOnFrq = this.finRepayPftOnFrq.isChecked();
+		this.oldVar_finRvwFrq = this.finRvwFrq.getValue();
+		this.oldVar_finGrcBaseRate = this.finGrcBaseRate.getValue();
+		this.oldVar_lovDescFinGrcBaseRateName = this.lovDescFinGrcBaseRateName.getValue();
+		this.oldVar_finGrcSplRate = this.finGrcSplRate.getValue();
+		this.oldVar_lovDescFinGrcSplRateName = this.lovDescFinGrcSplRateName.getValue();
+		this.oldVar_finGrcIntRate = this.finGrcIntRate.getValue();
+		this.oldVar_fInGrcMinRate = this.fInGrcMinRate.getValue();
+		this.oldVar_finGrcMaxRate = this.finGrcMaxRate.getValue();
+		this.oldVar_finGrcDftIntFrq = this.finGrcDftIntFrq.getValue();
+		this.oldVar_finGrcIsIntCpz = this.finGrcIsIntCpz.isChecked();
+		this.oldVar_finGrcCpzFrq = this.finGrcCpzFrq.getValue();
+		this.oldVar_finGrcIsRvwAlw = this.finGrcIsRvwAlw.isChecked();
+		this.oldVar_finGrcRvwFrq = this.finGrcRvwFrq.getValue();
+		this.oldVar_finMinTerm = this.finMinTerm.intValue();
+		this.oldVar_finMaxTerm = this.finMaxTerm.intValue();
+		this.oldVar_finDftTerms = this.finDftTerms.intValue();
+		this.oldVar_finRpyFrq = this.finRpyFrq.getValue();
+		this.oldVar_finIsAlwPartialRpy = this.finIsAlwPartialRpy.isChecked();
+		this.oldVar_finIsAlwDifferment = this.finIsAlwDifferment.isChecked();
+		this.oldVar_finMaxDifferment = this.finMaxDifferment.getValue();
+		this.oldVar_finIsAlwFrqDifferment = this.finIsAlwFrqDifferment.isChecked();
+		this.oldVar_finPftUnChanged = this.finPftUnChanged.isChecked();
+		this.oldVar_finMaxFrqDifferment = this.finMaxFrqDifferment.getValue();
+		this.oldVar_finIsAlwEarlyRpy = this.finIsAlwEarlyRpy.isChecked();
+		this.oldVar_finIsAlwEarlySettle = this.finIsAlwEarlySettle.isChecked();
+		this.oldVar_finODRpyTries = this.finODRpyTries.intValue();
+		this.oldVar_finAEAddDsbOD = this.finAEAddDsbOD.getValue();
+		this.oldVar_lovDescFinAEAddDsbODName = this.lovDescFinAEAddDsbODName.getValue();
+		this.oldVar_finAEAddDsbFD = this.finAEAddDsbFD.getValue();
+		this.oldVar_lovDescFinAEAddDsbFDName = this.lovDescFinAEAddDsbFDName.getValue();
+		this.oldVar_finAEAddDsbFDA = this.finAEAddDsbFDA.getValue();
+		this.oldVar_lovDescFinAEAddDsbFDAName = this.lovDescFinAEAddDsbFDAName.getValue();
+		this.oldVar_finAEAmzNorm = this.finAEAmzNorm.getValue();
+		this.oldVar_lovDescFinAEAmzNormName = this.lovDescFinAEAmzNormName.getValue();
+		this.oldVar_finAEAmzSusp = this.finAEAmzSusp.getValue();
+		this.oldVar_lovDescFinAEAmzSuspName = this.lovDescFinAEAmzSuspName.getValue();
+		this.oldVar_finAEToNoAmz = this.finAEToNoAmz.getValue();
+		this.oldVar_lovDescFinAEToNoAmzName = this.lovDescFinAEToNoAmzName.getValue();
+		this.oldVar_finToAmz = this.finToAmz.getValue();
+		this.oldVar_lovDescFinToAmzName = this.lovDescFinToAmzName.getValue();
+		this.oldVar_finAERateChg = this.finAERateChg.getValue();
+		this.oldVar_lovDescFinAERateChghName = this.lovDescFinAERateChgName.getValue();
+		this.oldVar_finAERepay = this.finAERepay.getValue();
+		this.oldVar_lovDescFinAERepayName = this.lovDescFinAERepayName.getValue();
+		this.oldVar_finLatePayRule = this.finLatePayRule.getValue();
+		this.oldVar_lovDescFinLatePayRuleName = this.lovDescFinLatePayRuleName.getValue();
+		this.oldVar_finAEEarlyPay = this.finAEEarlyPay.getValue();
+		this.oldVar_lovDescFinAEEarlyPayName = this.lovDescFinAEEarlyPayName.getValue();
+		this.oldVar_finAEEarlySettle = this.finAEEarlySettle.getValue();
+		this.oldVar_lovDescFinAEEarlySettleName = this.lovDescFinAEEarlySettleName.getValue();
+		this.oldVar_finAEWriteOff = this.finAEWriteOff.getValue();
+		this.oldVar_FinProvisionName = this.finProvision.getValue();
+		this.oldVar_FinInstDateName = this.finInstDate.getValue();
+		this.oldVar_FinSchdChange = this.finSchdChange.getValue();
+		this.oldVar_FinAECapitalize = this.finAECapitalize.getValue();
+		this.oldVar_FinAEProgClaim = this.finAEProgClaim.getValue();
+		this.oldVar_FinAEMaturity = this.finAEMaturity.getValue();
+		this.oldVar_lovDescFinAEWriteOffName = this.lovDescFinAEWriteOffName.getValue();
+		this.oldVar_finIsActive = this.finIsActive.isChecked();
+		this.oldVar_allowRIAInvestment = this.allowRIAInvestment.isChecked();
+		this.oldVar_allowParllelFinance = this.allowParllelFinance.isChecked();
+		this.oldVar_overrideLimit = this.overrideLimit.isChecked();
+		this.oldVar_finCollateralOvrride = this.finCollateralOvrride.isChecked();
+		this.oldVar_finCommitmentOvrride = this.finCommitmentOvrride.isChecked();
+		this.oldVar_limitRequired = this.limitRequired.isChecked();
+		this.oldVar_recordStatus = this.recordStatus.getValue();
+		this.oldVar_finMargin = this.finMargin.getValue();
+		this.oldVar_finGrcMargin = this.finGrcMargin.getValue();
+		this.oldVar_finGrcSchdMthd = this.finGrcSchdMthd.getSelectedIndex();
+		this.oldVar_finIsAlwGrcRepay = this.finIsAlwGrcRepay.isChecked();
+		this.oldVar_finCommitmentReq = this.finCommitmentReq.isChecked();
+		this.oldVar_finCollateralReq = this.finCollateralReq.isChecked();
+		this.oldVar_finDepreciationReq = this.finDepreciationReq.isChecked();
+		this.oldVar_finDepreciationFrq = this.finDepreciationFrq.getValue();
+		this.oldVar_lovDescFinGrcIndBaseRateName = this.lovDescFinGrcIndBaseRateName.getValue();
+		this.oldVar_lovDescFinIndBaseRateName = this.lovDescFinIndBaseRateName.getValue();
+		this.oldVar_FinAlwIndRate = this.finAlwIndRate.isChecked();
+		this.oldVar_FinGrcAlwIndRate = this.finGrcAlwIndRate.isChecked();
+		logger.debug("Leaving");
+	}
+
+	/** Resets the init values from member Var's. <br> */
+	private void doResetInitValues() {
+		logger.debug("Entering");
+		this.finType.setValue(this.oldVar_finType);
+		this.finTypeDesc.setValue(this.oldVar_finTypeDesc);
+		this.finCcy.setValue(this.oldVar_finCcy);
+		this.lovDescFinCcyName.setValue(this.oldVar_lovDescFinCcyName);
+		this.finAcType.setValue(this.oldVar_finAcType);
+		this.lovDescFinAcTypeName.setValue(this.oldVar_lovDescFinAcTypeName);
+		this.pftPayAcType.setValue(this.oldVar_pftPayAcType);
+		this.lovDescPftPayAcTypeName.setValue(this.oldVar_lovDescPftPayAcTypeName);
+		this.finContingentAcType.setValue(this.oldVar_finContingentAcType);
+		this.lovDescFinContingentAcTypeName.setValue(this.oldVar_lovDescFinContingentAcTypeName);
+		this.finBankContingentAcType.setValue(this.oldVar_finBankContingentAcType);
+		this.lovDescFinBankContingentAcTypeName.setValue(this.oldVar_lovDescFinBankCtngAcTypeName);
+		this.finProvisionAcType.setValue(this.oldVar_finProvisionAcType);
+		this.lovDescFinProvisionAcTypeName.setValue(this.oldVar_lovDescFinProvisionAcTypeName);
+		this.finIsGenRef.setChecked(this.oldVar_finIsGenRef);
+		this.finMaxAmount.setValue(this.oldVar_finMaxAmount);
+		this.finMinAmount.setValue(this.oldVar_finMinAmount);
+		this.finIsOpenNewFinAc.setChecked(this.oldVar_finIsOpenNewFinAc);
+		this.finDftStmtFrq.setValue(this.oldVar_finDftStmtFrq);
+		this.finIsAlwMD.setChecked(this.oldVar_finIsAlwMD);
+		this.finIsOpenPftPayAcc.setChecked(this.oldVar_finIsOpenPftPayAcc);
+		this.fInIsAlwGrace.setChecked(this.oldVar_fInIsAlwGrace);
+		this.finHistRetension.setValue(this.oldVar_finHistRetension);
+		this.finBaseRate.setValue(this.oldVar_finBaseRate);
+		this.lovDescFinBaseRateName.setValue(this.oldVar_lovDescFinBaseRateName);
+		this.finSplRate.setValue(this.oldVar_finSplRate);
+		this.lovDescFinSplRateName.setValue(this.oldVar_lovDescFinSplRateName);
+		this.finAlwRateChangeAnyDate.setChecked(this.oldVar_finAlwRateChangeAnyDate);
+		this.finGrcAlwRateChgAnyDate.setChecked(this.oldVar_finGrcAlwRateChgAnyDate);
+		this.finIsIntCpzAtGrcEnd.setChecked(this.oldVar_finIsIntCpzAtGrcEnd);
+		this.finIsDwPayRequired.setChecked(this.oldVar_finIsDwPayRequired);
+		this.finMinDownPayAmount.setValue(this.oldVar_finMinDownPayAmount);
+		this.cbfinSchdMthd.setSelectedIndex(this.oldVar_finSchdMthd);
+		this.cbfinDaysCalType.setSelectedIndex(this.oldVar_finDaysCalType);
+		this.cbfinGrcRateType.setSelectedIndex(this.oldVar_finGrcRateType);
+		this.cbfinRateType.setSelectedIndex(this.oldVar_finRateType);
+		this.cbfinRepayMethod.setSelectedIndex(this.oldVar_finRepayMethod);
+		this.cbfinSchCalCodeOnRvw.setSelectedIndex(this.oldVar_finSchCalCodeOnRvw);
+		this.finIntRate.setValue(this.oldVar_finIntRate);
+		this.fInMinRate.setValue(this.oldVar_fInMinRate);
+		this.finMaxRate.setValue(this.oldVar_finMaxRate);
+		this.finDftIntFrq.setValue(this.oldVar_finDftIntFrq);
+		this.finIsIntCpz.setChecked(this.oldVar_finIsIntCpz);
+		this.finCpzFrq.setValue(this.oldVar_finCpzFrq);
+		this.finIsRvwAlw.setChecked(this.oldVar_finIsRvwAlw);
+		this.finRepayPftOnFrq.setChecked(this.oldVar_finRepayPftOnFrq);
+		this.finRvwFrq.setValue(this.oldVar_finRvwFrq);
+		this.finGrcBaseRate.setValue(this.oldVar_finGrcBaseRate);
+		this.lovDescFinGrcBaseRateName.setValue(this.oldVar_lovDescFinGrcBaseRateName);
+		this.finGrcSplRate.setValue(this.oldVar_finGrcSplRate);
+		this.lovDescFinGrcSplRateName.setValue(this.oldVar_lovDescFinGrcSplRateName);
+		this.finGrcIntRate.setValue(this.oldVar_finGrcIntRate);
+		this.fInGrcMinRate.setValue(this.oldVar_fInGrcMinRate);
+		this.finGrcMaxRate.setValue(this.oldVar_finGrcMaxRate);
+		this.finGrcDftIntFrq.setValue(this.oldVar_finGrcDftIntFrq);
+		this.finGrcIsIntCpz.setChecked(this.oldVar_finGrcIsIntCpz);
+		this.finGrcCpzFrq.setValue(this.oldVar_finGrcCpzFrq);
+		this.finGrcIsRvwAlw.setChecked(this.oldVar_finGrcIsRvwAlw);
+		this.finGrcRvwFrq.setValue(this.oldVar_finGrcRvwFrq);
+		this.finMinTerm.setValue(this.oldVar_finMinTerm);
+		this.finMaxTerm.setValue(this.oldVar_finMaxTerm);
+		this.finDftTerms.setValue(this.oldVar_finDftTerms);
+		this.finRpyFrq.setValue(this.oldVar_finRpyFrq);
+		this.finIsAlwPartialRpy.setChecked(this.oldVar_finIsAlwPartialRpy);
+		this.finIsAlwDifferment.setChecked(this.oldVar_finIsAlwDifferment);
+		this.finMaxDifferment.setValue(this.oldVar_finMaxDifferment);
+		this.finIsAlwFrqDifferment.setChecked(this.oldVar_finIsAlwFrqDifferment);
+		this.finPftUnChanged.setChecked(this.oldVar_finPftUnChanged);
+		this.finMaxFrqDifferment.setValue(this.oldVar_finMaxFrqDifferment);
+		this.finIsAlwEarlyRpy.setChecked(this.oldVar_finIsAlwEarlyRpy);
+		this.finIsAlwEarlySettle.setChecked(this.oldVar_finIsAlwEarlySettle);
+		this.finODRpyTries.setValue(this.oldVar_finODRpyTries);
+		this.finAEAddDsbOD.setValue(this.oldVar_finAEAddDsbOD);
+		this.lovDescFinAEAddDsbODName.setValue(this.oldVar_lovDescFinAEAddDsbODName);
+		this.finAEAddDsbFD.setValue(this.oldVar_finAEAddDsbFD);
+		this.lovDescFinAEAddDsbFDName.setValue(this.oldVar_lovDescFinAEAddDsbFDName);
+		this.finAEAddDsbFDA.setValue(this.oldVar_finAEAddDsbFDA);
+		this.lovDescFinAEAddDsbFDAName.setValue(this.oldVar_lovDescFinAEAddDsbFDAName);
+		this.finAEAmzNorm.setValue(this.oldVar_finAEAmzNorm);
+		this.lovDescFinAEAmzNormName.setValue(this.oldVar_lovDescFinAEAmzNormName);
+		this.finAEAmzSusp.setValue(this.oldVar_finAEAmzSusp);
+		this.lovDescFinAEAmzSuspName.setValue(this.oldVar_lovDescFinAEAmzSuspName);
+		this.finAEToNoAmz.setValue(this.oldVar_finAEToNoAmz);
+		this.lovDescFinAEToNoAmzName.setValue(this.oldVar_lovDescFinAEToNoAmzName);
+		this.finToAmz.setValue(this.oldVar_finToAmz);
+		this.lovDescFinToAmzName.setValue(this.oldVar_lovDescFinToAmzName);
+		this.finAERateChg.setValue(this.oldVar_finAERateChg);
+		this.lovDescFinAERateChgName.setValue(this.oldVar_lovDescFinAERateChghName);
+		this.finLatePayRule.setValue(this.oldVar_finLatePayRule);
+		this.lovDescFinLatePayRuleName.setValue(this.oldVar_lovDescFinLatePayRuleName);
+		this.finAERepay.setValue(this.oldVar_finAERepay);
+		this.lovDescFinAERepayName.setValue(this.oldVar_lovDescFinAERepayName);
+		this.finAEEarlyPay.setValue(this.oldVar_finAEEarlyPay);
+		this.lovDescFinAEEarlyPayName.setValue(this.oldVar_lovDescFinAEEarlyPayName);
+		this.finAEEarlySettle.setValue(this.oldVar_finAEEarlySettle);
+		this.lovDescFinAEEarlySettleName.setValue(this.oldVar_lovDescFinAEEarlySettleName);
+		this.finAEWriteOff.setValue(this.oldVar_finAEWriteOff);
+		this.finProvision.setValue(this.oldVar_FinProvisionName);
+		this.finInstDate.setValue(this.oldVar_FinInstDateName);
+		this.finSchdChange.setValue(this.oldVar_FinSchdChange);
+		this.finAECapitalize.setValue(this.oldVar_FinAECapitalize);
+		this.finAEProgClaim.setValue(this.oldVar_FinAEProgClaim);
+		this.finAEMaturity.setValue(this.oldVar_FinAEMaturity);
+		this.lovDescFinAEWriteOffName.setValue(this.oldVar_lovDescFinAEWriteOffName);
+		this.finIsActive.setChecked(this.oldVar_finIsActive);
+		this.allowRIAInvestment.setChecked(this.oldVar_allowRIAInvestment);
+		this.allowParllelFinance.setChecked(this.oldVar_allowParllelFinance);
+		this.overrideLimit.setChecked(this.oldVar_overrideLimit);
+		this.finCollateralOvrride.setChecked(this.oldVar_finCollateralOvrride);
+		this.finCommitmentOvrride.setChecked(this.oldVar_finCommitmentOvrride);
+		this.limitRequired.setChecked(this.oldVar_limitRequired);
+		this.recordStatus.setValue(this.oldVar_recordStatus);
+		this.finDeffreq.setValue(this.oldVar_finDeffreq);
+		this.finDefRepay.setValue(this.oldVar_finDefRepay);
+		this.finGrcSchdMthd.setSelectedIndex(this.oldVar_finGrcSchdMthd);
+		this.finIsAlwGrcRepay.setChecked(this.oldVar_finIsAlwGrcRepay);
+		this.lovDescFinGrcIndBaseRateName.setValue(this.oldVar_lovDescFinGrcIndBaseRateName);
+		this.lovDescFinIndBaseRateName.setValue(this.oldVar_lovDescFinIndBaseRateName);
+		this.finGrcAlwIndRate.setChecked(this.oldVar_FinGrcAlwIndRate);
+		this.finAlwIndRate.setChecked(this.oldVar_FinAlwIndRate);
+		this.finMargin.setValue(this.oldVar_finMargin);
+		this.finGrcMargin.setValue(this.oldVar_finGrcMargin);
+		this.finCommitmentReq.setChecked(this.oldVar_finCommitmentReq);
+		this.finCollateralReq.setChecked(this.oldVar_finCollateralReq);
+		this.finDepreciationReq.setChecked(this.oldVar_finDepreciationReq);
+		this.finDepreciationFrq.setValue(this.oldVar_finDepreciationFrq);
+
+		if (isWorkFlowEnabled()) {
+			this.userAction.setSelectedIndex(0);
+		}
+		logger.debug("Leaving");
+
+	}
+
+	/**
+	 * Checks, if data are changed since the last call of <br>
+	 * doStoreInitData() . <br>
+	 * 
+	 * @return true, if data are changed, otherwise false
+	 */
+	private boolean isDataChanged() {
+
+		// To clear the Error Messages
+		doClearMessage();
+
+		if (this.oldVar_finType != this.finType.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finTypeDesc != this.finTypeDesc.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finCcy != this.finCcy.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAcType != this.finAcType.getValue()) {
+			return true;
+		}
+		if (this.oldVar_pftPayAcType != this.pftPayAcType.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finContingentAcType != this.finContingentAcType.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finBankContingentAcType != this.finBankContingentAcType.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finProvisionAcType != this.finProvisionAcType.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finIsGenRef != this.finIsGenRef.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finMaxAmount != this.finMaxAmount.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finMinAmount != this.finMinAmount.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finIsOpenNewFinAc != this.finIsOpenNewFinAc.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finDftStmtFrq != this.finDftStmtFrq.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finIsAlwMD != this.finIsAlwMD.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finIsOpenPftPayAcc != this.finIsOpenPftPayAcc.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_fInIsAlwGrace != this.fInIsAlwGrace.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finHistRetension != this.finHistRetension.intValue()) {
+			return true;
+		}
+		if (this.oldVar_finRateType != this.cbfinRateType.getSelectedIndex()) {
+			return true;
+		}
+		if (this.oldVar_finBaseRate != this.finBaseRate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finSplRate != this.finSplRate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAlwRateChangeAnyDate != this.finAlwRateChangeAnyDate.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finGrcAlwRateChgAnyDate != this.finGrcAlwRateChgAnyDate.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finIsIntCpzAtGrcEnd != this.finIsIntCpzAtGrcEnd.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finIntRate != this.finIntRate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_fInMinRate != this.fInMinRate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finMaxRate != this.finMaxRate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finDftIntFrq != this.finDftIntFrq.getValue()) {
+			return true;
+		}
+
+		if (this.oldVar_finIsIntCpz != this.finIsIntCpz.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finCpzFrq != this.finCpzFrq.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finIsRvwAlw != this.finIsRvwAlw.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finRepayPftOnFrq != this.finRepayPftOnFrq.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finRvwFrq != this.finRvwFrq.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finMargin != this.finMargin.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finGrcMargin != this.finGrcMargin.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finGrcRateType != this.cbfinGrcRateType.getSelectedIndex()) {
+			return true;
+		}
+		if (this.oldVar_finGrcBaseRate != this.finGrcBaseRate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finGrcSplRate != this.finGrcSplRate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finGrcDftIntFrq != this.finGrcDftIntFrq.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finGrcIsIntCpz != this.finGrcIsIntCpz.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finGrcCpzFrq != this.finGrcCpzFrq.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finGrcIsRvwAlw != this.finGrcIsRvwAlw.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finGrcRvwFrq != this.finGrcRvwFrq.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finMinTerm != this.finMinTerm.intValue()) {
+			return true;
+		}
+		if (this.oldVar_finMaxTerm != this.finMaxTerm.intValue()) {
+			return true;
+		}
+		if (this.oldVar_finDftTerms != this.finDftTerms.intValue()) {
+			return true;
+		}
+		if (this.oldVar_finRpyFrq != this.finRpyFrq.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finRepayMethod != this.cbfinRepayMethod.getSelectedIndex()) {
+			return true;
+		}
+		if (this.oldVar_finIsAlwPartialRpy != this.finIsAlwPartialRpy.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finIsAlwDifferment != this.finIsAlwDifferment.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finMaxDifferment != (this.finMaxDifferment.getValue() == null ? 0 : this.finMaxDifferment.getValue())) {
+			return true;
+		}
+		if (this.oldVar_finIsAlwFrqDifferment != this.finIsAlwFrqDifferment.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finPftUnChanged != this.finPftUnChanged.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finMaxFrqDifferment != (this.finMaxFrqDifferment.getValue() == null ? 0 : this.finMaxFrqDifferment.getValue())) {
+			return true;
+		}
+		if (this.oldVar_finIsAlwEarlyRpy != this.finIsAlwEarlyRpy.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finIsAlwEarlySettle != this.finIsAlwEarlySettle.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finLatePayRule != this.finLatePayRule.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAEAddDsbOD != this.finAEAddDsbOD.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAEAddDsbFD != this.finAEAddDsbFD.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAEAddDsbFDA != this.finAEAddDsbFDA.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAEAmzNorm != this.finAEAmzNorm.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAEAmzSusp != this.finAEAmzSusp.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAEToNoAmz != this.finAEToNoAmz.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finToAmz != this.finToAmz.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAERateChg != this.finAERateChg.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAERepay != this.finAERepay.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAEEarlyPay != this.finAEEarlyPay.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAEEarlySettle != this.finAEEarlySettle.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finAEWriteOff != this.finAEWriteOff.getValue()) {
+			return true;
+		}
+		if (this.oldVar_FinProvisionName != this.finProvision.getValue()) {
+			return true;
+		}
+		if (this.oldVar_FinInstDateName != this.finInstDate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_FinSchdChange != this.finSchdChange.getValue()) {
+			return true;
+		}
+		if (this.oldVar_FinAECapitalize != this.finAECapitalize.getValue()) {
+			return true;
+		}
+		if (this.oldVar_FinAEProgClaim != this.finAEProgClaim.getValue()) {
+			return true;
+		}
+		if (this.oldVar_FinAEMaturity != this.finAEMaturity.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finDeffreq != this.finDeffreq.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finDefRepay != this.finDefRepay.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finGrcSchdMthd != this.finGrcSchdMthd.getSelectedIndex()) {
+			return true;
+		}
+		if (this.oldVar_finIsAlwGrcRepay != this.finIsAlwGrcRepay.isChecked()) {
+			return true;
+		}
+		if (!getFinanceType().isNewRecord()) {
+			if (this.oldVar_finIsActive != this.finIsActive.isChecked()) {
+				return true;
+			}
+			if (this.oldVar_finGrcIntRate != this.finGrcIntRate.getValue()) {
+				return true;
+			}
+			if (this.oldVar_fInGrcMinRate != this.fInGrcMinRate.getValue()) {
+				return true;
+			}
+			if (this.oldVar_finGrcMaxRate != this.finGrcMaxRate.getValue()) {
+				return true;
+			}
+			if (this.oldVar_finODRpyTries != this.finODRpyTries.intValue()) {
+				return true;
+			}
+		}
+		// Fee Charges list comparison
+
+		if (oldVar_finIsDwPayRequired != this.finIsDwPayRequired.isChecked()) {
+			return true;
+		}
+		if (oldVar_finMinDownPayAmount != this.finMinDownPayAmount.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finSchdMthd != this.cbfinSchdMthd.getSelectedIndex()) {
+			return true;
+		}
+		if (this.oldVar_finDaysCalType != this.cbfinDaysCalType.getSelectedIndex()) {
+			return true;
+		}
+		if (this.oldVar_finSchCalCodeOnRvw != this.cbfinSchCalCodeOnRvw.getSelectedIndex()) {
+			return true;
+		}
+		if (this.oldVar_finCommitmentReq != this.finCommitmentReq.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finCollateralReq != this.finCollateralReq.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finDepreciationReq != this.finDepreciationReq.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finDepreciationFrq != this.finDepreciationFrq.getValue()) {
+			return true;
+		}
+		if (this.oldVar_lovDescFinIndBaseRateName != this.lovDescFinIndBaseRateName.getValue()) {
+			return true;
+		}
+		if (this.oldVar_lovDescFinGrcIndBaseRateName != this.lovDescFinGrcIndBaseRateName.getValue()) {
+			return true;
+		}
+		if (this.oldVar_allowRIAInvestment != this.allowRIAInvestment.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_allowParllelFinance != this.allowParllelFinance.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_overrideLimit != this.overrideLimit.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finCollateralOvrride != this.finCollateralOvrride.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_finCommitmentOvrride != this.finCommitmentOvrride.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_limitRequired != this.limitRequired.isChecked()) {
+			return true;
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+
+	private void doSetValidation() {
+		logger.debug("Entering");
+		setValidationOn(true);
+
+		// ++++++++++++ Basic Details tab +++++++++++++++++++//
+		if (!this.finType.isReadonly()) {
+			this.finType.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel("FIELD_NO_EMPTY",
+			        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinType.value") })));
+		}
+		if (!this.finMinDownPayAmount.isDisabled() && this.finIsDwPayRequired.isChecked()) {
+			this.finMinDownPayAmount.setConstraint(new PercentageValidator(5, 2, Labels.getLabel("label_FinanceTypeDialog_FinMinDownPayAmount.value"), true));
+		}
+
+		/*
+		 * To Check Whether it is save or submit if save no validation else it should validate
+		 */
+		// ++++++ Schedule Profit tab ++++++++++++++//
+		if (!this.finIntRate.isReadonly()) {
+			this.finIntRate.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_FinanceTypeDialog_FinIntRate.value")));
+		}
+		if (!this.fInMinRate.isReadonly()) {
+			this.fInMinRate.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_FinanceTypeDialog_FInMinRate.value")));
+		}
+		if (!this.finMaxRate.isReadonly()) {
+			this.finMaxRate.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_FinanceTypeDialog_FinMaxRate.value")));
+		}
+
+		if (!this.finMargin.isReadonly()) {
+			this.finMargin.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_FinanceTypeDialog_FinMargin.value")));
+		}
+
+		// +++++++++ Grace Period tab+++++++++++++++//
+		// TO Check whether the tab is Not Disable
+		if (!this.gracePeriod.isDisabled()) {
+
+			if (!this.finGrcIntRate.isReadonly()) {
+				this.finGrcIntRate.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_FinanceTypeDialog_FinGrcIntRate.value")));
+			}
+			if (!this.fInGrcMinRate.isReadonly()) {
+				this.fInGrcMinRate.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_FinanceTypeDialog_FInGrcMinRate.value")));
+			}
+			if (!this.finGrcMaxRate.isReadonly()) {
+				this.finGrcMaxRate.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_FinanceTypeDialog_FinGrcMaxRate.value")));
+			}
+			if (!this.finGrcMargin.isReadonly()) {
+				this.finGrcMargin.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_FinanceTypeDialog_FinGrcMargin.value")));
+			}
+
+		}
+		if (validate) {
+
+			if (!this.finTypeDesc.isReadonly()) {
+				this.finTypeDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinTypeDesc.value") }));
+			}
+			if (!this.finMaxAmount.isReadonly() && this.finMaxAmount.getValue() != null && this.finMaxAmount.getValue().intValue() != 0) {
+				this.finMaxAmount.setConstraint(new AmountValidator(18, 0, Labels.getLabel("label_FinanceTypeDialog_FinMaxAmount.value")));
+			}
+			if (!this.finMinAmount.isReadonly() && this.finMinAmount.getValue() != null && this.finMinAmount.getValue().intValue() != 0) {
+				this.finMinAmount.setConstraint(new AmountValidator(18, 0, Labels.getLabel("label_FinanceTypeDialog_FinMinAmount.value")));
+			}
+			if (!this.finHistRetension.isReadonly()) {
+				this.finHistRetension.setConstraint(new IntValidator(3, Labels.getLabel("label_FinanceTypeDialog_FinHistRetension.value")));
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/** Disables the Validation by setting empty constraints. */
+	private void doRemoveValidation() {
+		logger.debug("Entering");
+		setValidationOn(false);
+		this.finType.setConstraint("");
+		this.finTypeDesc.setConstraint("");
+		this.finMaxAmount.setConstraint("");
+		this.finMinAmount.setConstraint("");
+		this.finDftStmtFrq.setConstraint("");
+		this.finHistRetension.setConstraint("");
+		this.finIntRate.setConstraint("");
+		this.fInMinRate.setConstraint("");
+		this.finMaxRate.setConstraint("");
+		this.finDftIntFrq.setConstraint("");
+		this.finCpzFrq.setConstraint("");
+		this.finRvwFrq.setConstraint("");
+		this.finGrcIntRate.setConstraint("");
+		this.fInGrcMinRate.setConstraint("");
+		this.finGrcMaxRate.setConstraint("");
+		this.finGrcDftIntFrq.setConstraint("");
+		this.finGrcCpzFrq.setConstraint("");
+		this.finGrcRvwFrq.setConstraint("");
+		this.finMinTerm.setConstraint("");
+		this.finMaxTerm.setConstraint("");
+		this.finDftTerms.setConstraint("");
+		this.finRpyFrq.setConstraint("");
+		this.finODRpyTries.setConstraint("");
+		logger.debug("Leaving");
+	}
+
+	/** Set Validations for LOV Fields */
+	private void doSetLOVValidation() {
+		logger.debug("Entering");
+
+		// +++++++ Basic Details Tab +++++++++++++//
+
+		this.lovDescFinCcyName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinCcy.value") }));
+
+		if (validate) {
+
+			this.lovDescFinAcTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAcType.value") }));
+
+			/*this.lovDescPftPayAcTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
+					new String[] { Labels.getLabel("label_FinanceTypeDialog_PftPayAcType.value") }));
+
+			this.lovDescFinContingentAcTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
+					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinContingentAcType.value") }));
+			
+			this.lovDescFinBankContingentAcTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinBankContingentAcType.value") }));
+			
+			this.lovDescFinProvisionAcTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinProvisionAcType.value") }));*/
+
+			/*this.lovDescFinInstDateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinInstDate.value") }));*/
+
+			// ++++++++++ Accounting Event tab ++++++++++++++//
+
+			this.lovDescFinAEAddDsbODName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbOD.value") }));
+
+			this.lovDescFinAEAddDsbFDName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbFD.value") }));
+
+			this.lovDescFinAEAddDsbFDAName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbFDA.value") }));
+
+			this.lovDescFinAEAmzNormName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEAmzNorm.value") }));
+
+			this.lovDescFinAEAmzSuspName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEAmzSusp.value") }));
+
+			this.lovDescFinAEToNoAmzName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEToNoAmz.value") }));
+
+			this.lovDescFinToAmzName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinToAmz.value") }));
+
+			this.lovDescFinAERateChgName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEIncPft.value") }));
+
+			this.lovDescFinAERepayName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAERepay.value") }));
+
+			/*this.lovDescFinAEEarlyPayName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
+					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEEarlyPay.value") }));
+			
+			this.lovDescFinAEEarlySettleName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
+					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEEarlySettle.value") }));*/
+
+			this.lovDescFinAEWriteOffName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEWriteOff.value") }));
+
+			this.lovDescFinLatePayRuleName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeSearch_FinLatePayRule.value") }));
+
+			if (!this.btnSearchFinDeffreq.isDisabled()) {
+				this.lovDescFinDeffreqName.setConstraint("NO EMPTY:"
+				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDeffreq.value") }));
+			}
+
+			this.lovDescFinAECapitalizeName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeSearch_FinCapitalize.value") }));
+
+			if (!this.btnSearchFinAEProgClaim.isDisabled()) {
+				this.lovDescFinAEProgClaimName.setConstraint("NO EMPTY:"
+				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEProgClaim.value") }));
+			}
+			this.lovDescfinSchdChangeName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinSchdChange.value") }));
+
+			this.lovDescFinProvisionName.setConstraint("NO EMPTY:"
+			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinProvision.value") }));
+
+			if (!this.btnSearchFinDepreciation.isDisabled()) {
+				this.lovDescFinDepreciationName.setConstraint("NO EMPTY:"
+				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDepreciationRule.value") }));
+			}
+
+			if (!this.btnSearchFinDefRepay.isDisabled()) {
+				this.lovDescFinDefRepayName.setConstraint("NO EMPTY:"
+				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDefRepay.value") }));
+			}
+
+			//Indicative rates
+			if (this.finGrcAlwIndRate.isChecked() && !this.btnSearchFinGrcIndBaseRate.isDisabled()) {
+				this.lovDescFinGrcIndBaseRateName.setConstraint("NO EMPTY:"
+				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinGrcIndBaseRate.value") }));
+			}
+			if (this.finAlwIndRate.isChecked() && !this.btnSearchFinIndBaseRate.isDisabled()) {
+				this.lovDescFinIndBaseRateName.setConstraint("NO EMPTY:"
+				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinIndBaseRate.value") }));
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	/** Remove validations for LOV Fields */
+	private void doRemoveLOVValidation() {
+		logger.debug("Entering");
+		this.lovDescFinCcyName.setConstraint("");
+		this.lovDescFinAcTypeName.setConstraint("");
+		this.lovDescPftPayAcTypeName.setConstraint("");
+		this.lovDescFinContingentAcTypeName.setConstraint("");
+		this.lovDescFinBankContingentAcTypeName.setConstraint("");
+		this.lovDescFinProvisionAcTypeName.setConstraint("");
+		this.lovDescFinInstDateName.setConstraint("");
+		this.lovDescFinBaseRateName.setConstraint("");
+		this.lovDescFinSplRateName.setConstraint("");
+		this.lovDescFinGrcBaseRateName.setConstraint("");
+		this.lovDescFinGrcSplRateName.setConstraint("");
+		this.lovDescFinAEAddDsbODName.setConstraint("");
+		this.lovDescFinAEAddDsbFDName.setConstraint("");
+		this.lovDescFinAEAddDsbFDAName.setConstraint("");
+		this.lovDescFinAEAmzNormName.setConstraint("");
+		this.lovDescFinAEAmzSuspName.setConstraint("");
+		this.lovDescFinAEToNoAmzName.setConstraint("");
+		this.lovDescFinToAmzName.setConstraint("");
+		this.lovDescFinAERateChgName.setConstraint("");
+		this.lovDescFinAERepayName.setConstraint("");
+		this.lovDescFinAEEarlyPayName.setConstraint("");
+		this.lovDescFinAEEarlySettleName.setConstraint("");
+		this.lovDescFinAEWriteOffName.setConstraint("");
+		this.lovDescFinGrcIndBaseRateName.setConstraint("");
+		this.lovDescFinIndBaseRateName.setConstraint("");
+		this.lovDescFinDepreciationName.setErrorMessage("");
+
+		this.lovDescFinDefRepayName.setConstraint("");
+		this.lovDescFinDeffreqName.setConstraint("");
+		this.lovDescFinLatePayRuleName.setConstraint("");
+		this.lovDescfinSchdChangeName.setConstraint("");
+		this.lovDescFinProvisionName.setConstraint("");
+		this.lovDescFinAECapitalizeName.setConstraint("");
+		this.lovDescFinAEProgClaimName.setConstraint("");
+		logger.debug("Leaving");
+	}
+
+	/** Remove Error Messages for Fields */
+	private void doClearMessage() {
+		logger.debug("Entering");
+		this.finType.setConstraint("");
+		this.finTypeDesc.setErrorMessage("");
+		this.finMaxAmount.setErrorMessage("");
+		this.finMinAmount.setErrorMessage("");
+		this.finDftStmtFrq.setErrorMessage("");
+		this.finHistRetension.setErrorMessage("");
+		this.finIntRate.setErrorMessage("");
+		this.fInMinRate.setErrorMessage("");
+		this.finMaxRate.setErrorMessage("");
+		this.finDftIntFrq.setErrorMessage("");
+		this.finCpzFrq.setErrorMessage("");
+		this.finRvwFrq.setErrorMessage("");
+		this.finGrcIntRate.setErrorMessage("");
+		this.fInGrcMinRate.setErrorMessage("");
+		this.finGrcMaxRate.setErrorMessage("");
+		this.finGrcDftIntFrq.setErrorMessage("");
+		this.finGrcCpzFrq.setErrorMessage("");
+		this.finGrcRvwFrq.setErrorMessage("");
+		this.finMinTerm.setErrorMessage("");
+		this.finMaxTerm.setErrorMessage("");
+		this.finDftTerms.setErrorMessage("");
+		this.finRpyFrq.setErrorMessage("");
+		this.finODRpyTries.setErrorMessage("");
+		this.lovDescFinDefRepayName.setErrorMessage("");
+		this.lovDescFinDeffreqName.setErrorMessage("");
+		this.lovDescFinLatePayRuleName.setErrorMessage("");
+		this.lovDescfinSchdChangeName.setErrorMessage("");
+		this.lovDescFinDepreciationName.setErrorMessage("");
+		this.lovDescFinProvisionName.setErrorMessage("");
+		this.lovDescFinAECapitalizeName.setErrorMessage("");
+		this.lovDescFinAEProgClaimName.setErrorMessage("");
+		logger.debug("Leaving");
+	}
+
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// +++++++++++++++++++++++++ CRUD operations +++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	/**
+	 * Deletes a FinanceType object from database.<br>
+	 * 
+	 * @throws InterruptedException
+	 */
+	private void doDelete() throws InterruptedException {
+		logger.debug("Entering");
+		final FinanceType aFinanceType = new FinanceType("");
+		BeanUtils.copyProperties(getFinanceType(), aFinanceType);
+		int prvselc = this.userAction.getSelectedIndex();
+		for (int i = 0; i < this.userAction.getItems().size(); i++) {
+			Radio radio = (Radio) this.userAction.getItems().get(i);
+			if (radio.getLabel().trim().equalsIgnoreCase("Submit")) {
+				radio.setSelected(true);
+			}
+		}
+		String tranType = PennantConstants.TRAN_WF;
+		// Show a confirm box
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFinanceType.getFinType();
+		final String title = Labels.getLabel("message.Deleting.Record");
+		MultiLineMessageBox.doSetTemplate();
+
+		int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true));
+
+		if (conf == MultiLineMessageBox.YES) {
+			logger.debug("doDelete: Yes");
+
+			if (StringUtils.trimToEmpty(aFinanceType.getRecordType()).equals("")) {
+				aFinanceType.setVersion(aFinanceType.getVersion() + 1);
+				aFinanceType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+				if (isWorkFlowEnabled()) {
+					aFinanceType.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+			}
+
+			try {
+				if (doProcess(aFinanceType, tranType)) {
+					refreshList();
+					closeDialog(this.window_FinanceTypeDialog, "FinanceType");
+				}
+
+			} catch (DataAccessException e) {
+				logger.error(e);
+				showMessage(e);
+			}
+
+		} else {
+			this.userAction.setSelectedIndex(prvselc);
+		}
+		logger.debug("Leaving");
+	}
+
+	/** Create a new FinanceType object. <br> */
+	private void doNew() {
+		logger.debug("Entering doNew()");
+
+		// remember the old Var's
+		doStoreInitValues();
+		/** !!! DO NOT BREAK THE TIERS !!! */
+		/*
+		 * we don't create a new FinanceType() in the frontEnd. we get it from the backEnd.
+		 */
+		final FinanceType aFinanceType = getFinanceTypeService().getNewFinanceType();
+		aFinanceType.setNewRecord(true);
+		setFinanceType(aFinanceType);
+		doClear(); // clear all components
+		doEdit(); // edit mode
+		this.btnCtrl.setBtnStatus_New();
+
+		// setFocus
+		this.finType.focus();
+		logger.debug("Leaving doNew()");
+	}
+
+	/**
+	 * Set the components for edit mode. <br>
+	 * MSTGRP1_MAKER
+	 */
+	private void doEdit() {
+		logger.debug("Entering");
+
+		if (getFinanceType().isNewRecord()) {
+			this.finType.setReadonly(false);
+			this.btnCancel.setVisible(false);
+			this.finIsOpenNewFinAc.setChecked(true);
+
+			this.finHistRetension.setValue(12);
+			this.btnCopyTo.setDisabled(true);
+			this.btnCopyTo.setVisible(false);
+		} else {
+			this.finType.setReadonly(true);
+			this.btnCancel.setVisible(true);
+		}
+		//Tab 1
+		this.finTypeDesc.setReadonly(isReadOnly("FinanceTypeDialog_finTypeDesc"));
+		this.btnSearchFinCcy.setDisabled(isReadOnly("FinanceTypeDialog_finCcy"));
+		this.cbfinDaysCalType.setDisabled(isReadOnly("FinanceTypeDialog_finDaysCalType"));
+		this.btnSearchFinAcType.setDisabled(isReadOnly("FinanceTypeDialog_finAcType"));
+		this.finIsOpenNewFinAc.setDisabled(isReadOnly("FinanceTypeDialog_finIsOpenNewFinAc"));
+		this.finMinAmount.setReadonly(isReadOnly("FinanceTypeDialog_finMinAmount"));
+		this.finMaxAmount.setReadonly(isReadOnly("FinanceTypeDialog_finMaxAmount"));
+
+		this.finIsDwPayRequired.setDisabled(isReadOnly("FinanceTypeDialog_finIsDwPayRequired"));
+		this.finMinDownPayAmount.setDisabled(isReadOnly("FinanceTypeDialog_finMinDownPayAmount"));
+		this.finIsGenRef.setDisabled(isReadOnly("FinanceTypeDialog_finIsGenRef"));
+		this.fInIsAlwGrace.setDisabled(isReadOnly("FinanceTypeDialog_fInIsAlwGrace"));
+		this.finIsAlwMD.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwMD"));
+		this.finDepreciationReq.setDisabled(isReadOnly("FinanceTypeDialog_FinDepreciationReq"));
+		this.finCommitmentReq.setDisabled(isReadOnly("FinanceTypeDialog_FinCommitmentReq"));
+		this.finCommitmentOvrride.setDisabled(isReadOnly("FinanceTypeDialog_finCommitmentOvrride"));
+		this.limitRequired.setDisabled(isReadOnly("FinanceTypeDialog_limitRequired"));
+		this.overrideLimit.setDisabled(isReadOnly("FinanceTypeDialog_overrideLimit"));
+		this.allowRIAInvestment.setDisabled(isReadOnly("FinanceTypeDialog_allowRIAInvestment"));
+		this.allowParllelFinance.setDisabled(isReadOnly("FinanceTypeDialog_allowParllelFinance"));
+		this.finIsActive.setDisabled(isReadOnly("FinanceTypeDialog_finIsActive"));
+
+		//Hidden
+		this.btnSearchPftPayAcType.setDisabled(isReadOnly("FinanceTypeDialog_pftPayAcType"));
+		this.btnSearchFinContingentAcType.setDisabled(isReadOnly("FinanceTypeDialog_finContingentAcType"));
+		this.btnSearchFinBankContingentAcType.setDisabled(isReadOnly("FinanceTypeDialog_finBankContingentAcType"));
+		this.btnSearchFinProvisionAcType.setDisabled(isReadOnly("FinanceTypeDialog_finProvisionAcType"));
+		//Tab 2
+		this.cbfinGrcRateType.setDisabled(isReadOnly("FinanceTypeDialog_finGrcRateType"));
+		this.finGrcIntRate.setReadonly(isReadOnly("FinanceTypeDialog_finGrcIntRate"));
+		this.btnSearchFinGrcBaseRate.setDisabled(isReadOnly("FinanceTypeDialog_finGrcBaseRate"));
+		this.btnSearchFinGrcSplRate.setDisabled(isReadOnly("FinanceTypeDialog_finGrcSplRate"));
+		this.finMargin.setDisabled(isReadOnly("FinanceTypeDialog_FinMargin"));
+		this.finGrcDftIntFrq.setDisabled(isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		this.cbfinGrcDftIntFrqCode.setDisabled(isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		this.cbfinGrcDftIntFrqMth.setDisabled(isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		this.cbfinGrcDftIntFrqDays.setDisabled(isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		this.finIsAlwGrcRepay.setDisabled(isReadOnly("FinanceTypeDialog_FinIsAlwGrcRepay"));
+		this.finGrcSchdMthd.setDisabled(isReadOnly("FinanceTypeDialog_FinGrcSchdMthd"));
+		this.finGrcIsIntCpz.setDisabled(isReadOnly("FinanceTypeDialog_finGrcIsIntCpz"));
+		this.finGrcCpzFrq.setDisabled(isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		this.cbfinGrcCpzFrqCode.setDisabled(isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		this.cbfinGrcCpzFrqMth.setDisabled(isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		this.cbfinGrcCpzFrqDays.setDisabled(isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		this.finGrcIsRvwAlw.setDisabled(isReadOnly("FinanceTypeDialog_finGrcIsRvwAlw"));
+		this.finGrcRvwFrq.setDisabled(isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		this.cbfinGrcRvwFrqCode.setDisabled(isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		this.cbfinGrcRvwFrqMth.setDisabled(isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		this.cbfinGrcRvwFrqDays.setDisabled(isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		this.cbfinGrcRvwRateApplFor.setDisabled(isReadOnly("FinanceTypeDialog_finGrcRvwRateApplFor"));
+		//Tab 3
+		this.cbFinScheduleOn.setDisabled(isReadOnly("FinanceTypeDialog_FinScheduleOn"));
+		this.finPftUnChanged.setDisabled(isReadOnly("FinanceTypeDialog_FinPftUnChanged"));
+		//======================
+		this.finDftStmtFrq.setDisabled(isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+
+		this.finIsOpenPftPayAcc.setDisabled(isReadOnly("FinanceTypeDialog_finIsOpenPftPayAcc"));
+		this.cbfinSchdMthd.setDisabled(isReadOnly("FinanceTypeDialog_finSchdMthd"));
+		this.cbfinSchCalCodeOnRvw.setDisabled(isReadOnly("FinanceTypeDialog_finSchCalCodeOnRvw"));
+		this.finHistRetension.setReadonly(isReadOnly("FinanceTypeDialog_finHistRetension"));
+		this.cbfinRateType.setDisabled(isReadOnly("FinanceTypeDialog_finRateType"));
+		this.btnSearchFinBaseRate.setDisabled(isReadOnly("FinanceTypeDialog_finBaseRate"));
+		this.btnSearchFinSplRate.setDisabled(isReadOnly("FinanceTypeDialog_finSplRate"));
+		this.cbfinRvwRateApplFor.setDisabled(isReadOnly("FinanceTypeDialog_finRvwRateApplFor"));
+
+		this.finAlwRateChangeAnyDate.setDisabled(isReadOnly("FinanceTypeDialog_finAlwRateChangeAnyDate"));
+		this.finGrcAlwRateChgAnyDate.setDisabled(isReadOnly("FinanceTypeDialog_finGrcAlwRateChgAnyDate"));
+		this.finIsIntCpzAtGrcEnd.setDisabled(isReadOnly("FinanceTypeDialog_finIsIntCpzAtGrcEnd"));
+		this.finIntRate.setReadonly(isReadOnly("FinanceTypeDialog_finIntRate"));
+		this.fInMinRate.setReadonly(isReadOnly("FinanceTypeDialog_fInMinRate"));
+		this.finMaxRate.setReadonly(isReadOnly("FinanceTypeDialog_finMaxRate"));
+		this.finDftIntFrq.setDisabled(isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		this.finIsIntCpz.setDisabled(isReadOnly("FinanceTypeDialog_finIsIntCpz"));
+		this.finCpzFrq.setDisabled(isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		this.finIsRvwAlw.setDisabled(isReadOnly("FinanceTypeDialog_finIsRvwAlw"));
+		this.finRepayPftOnFrq.setDisabled(isReadOnly("FinanceTypeDialog_finRepayPftOnFrq"));
+		this.finRvwFrq.setDisabled(isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		this.fInGrcMinRate.setReadonly(isReadOnly("FinanceTypeDialog_fInGrcMinRate"));
+		this.finGrcMaxRate.setReadonly(isReadOnly("FinanceTypeDialog_finGrcMaxRate"));
+
+		this.finMinTerm.setReadonly(isReadOnly("FinanceTypeDialog_finMinTerm"));
+		this.finMaxTerm.setReadonly(isReadOnly("FinanceTypeDialog_finMaxTerm"));
+		this.finDftTerms.setReadonly(isReadOnly("FinanceTypeDialog_finDftTerms"));
+		this.finRpyFrq.setDisabled(isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		this.cbfinRepayMethod.setDisabled(isReadOnly("FinanceTypeDialog_fInRepayMethod"));
+		this.finIsAlwPartialRpy.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwPartialRpy"));
+		this.finIsAlwDifferment.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwDifferment"));
+		this.finMaxDifferment.setDisabled(isReadOnly("FinanceTypeDialog_finMaxDifferment"));
+		this.finIsAlwFrqDifferment.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwFrqDifferment"));
+		this.finMaxFrqDifferment.setDisabled(isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
+		this.finIsAlwEarlyRpy.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwEarlyRpy"));
+		this.finIsAlwEarlySettle.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwEarlySettle"));
+		this.finODRpyTries.setReadonly(isReadOnly("FinanceTypeDialog_finODRpyTries"));
+		this.btnSearchFinAEAddDsbOD.setDisabled(isReadOnly("FinanceTypeDialog_finAEAddDsbOD"));
+		this.btnSearchFinAEAddDsbFD.setDisabled(isReadOnly("FinanceTypeDialog_finAEAddDsbFD"));
+		this.btnSearchFinAEAddDsbFDA.setDisabled(isReadOnly("FinanceTypeDialog_finAEAddDsbFDA"));
+		this.btnSearchFinAEAmzNorm.setDisabled(isReadOnly("FinanceTypeDialog_finAEAmzNorm"));
+		this.btnSearchFinAEAmzSusp.setDisabled(isReadOnly("FinanceTypeDialog_finAEAmzSusp"));
+		this.btnSearchFinAEToNoAmz.setDisabled(isReadOnly("FinanceTypeDialog_finAEToNoAmz"));
+		this.btnSearchFinToAmz.setDisabled(isReadOnly("FinanceTypeDialog_finToAmz"));
+		this.btnSearchFinAERateChg.setDisabled(isReadOnly("FinanceTypeDialog_finAEIncPft"));
+		this.btnSearchFinAERepay.setDisabled(isReadOnly("FinanceTypeDialog_finAERepay"));
+		this.btnSearchFinAEEarlySettle.setDisabled(isReadOnly("FinanceTypeDialog_finAEEarlySettle"));
+		this.btnSearchFinAEWriteOff.setDisabled(isReadOnly("FinanceTypeDialog_finAEWriteOff"));
+		this.btnSearchFinSchdChange.setDisabled(isReadOnly("FinanceTypeDialog_finSchdChange"));
+		this.btnSearchFinProvision.setDisabled(isReadOnly("FinanceTypeDialog_finProvision"));
+		this.btnSearchFinAECapitalize.setDisabled(isReadOnly("FinanceTypeDialog_finAECapitalize"));
+		this.btnSearchFinAEProgClaim.setDisabled(isReadOnly("FinanceTypeDialog_finAEProgClaim"));
+		this.btnSearchFinAEMaturity.setDisabled(isReadOnly("FinanceTypeDialog_finAEMaturity"));
+		this.finCollateralOvrride.setDisabled(isReadOnly("FinanceTypeDialog_finCollateralOvrride"));
+
+		this.cbfinDftStmtFrqCode.setDisabled(isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+		this.cbfinDftStmtFrqMth.setDisabled(isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+		this.cbfinDftStmtFrqDays.setDisabled(isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+
+		this.cbfinDftIntFrqCode.setDisabled(isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		this.cbfinDftIntFrqMth.setDisabled(isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		this.cbfinDftIntFrqDays.setDisabled(isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+
+		this.cbfinCpzFrqCode.setDisabled(isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		this.cbfinCpzFrqMth.setDisabled(isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		this.cbfinCpzFrqDays.setDisabled(isReadOnly("FinanceTypeDialog_finCpzFrq"));
+
+		this.cbfinRvwFrqCode.setDisabled(isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		this.cbfinRvwFrqMth.setDisabled(isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		this.cbfinRvwFrqDays.setDisabled(isReadOnly("FinanceTypeDialog_finRvwFrq"));
+
+		this.cbfinRpyFrqCode.setDisabled(isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		this.cbfinRpyFrqMth.setDisabled(isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		this.cbfinRpyFrqDays.setDisabled(isReadOnly("FinanceTypeDialog_finRpyFrq"));
+
+		this.finFrqrepayment.setDisabled(isReadOnly("FinanceTypeDialog_finFrEqrepayment"));
+
+		this.cbfinAssetType.setDisabled(isReadOnly("FinanceTypeDialog_finAssetType"));
+		this.cbfinProductType.setDisabled(isReadOnly("FinanceTypeDialog_finAssetType"));
+
+		this.btnSearchFinDeffreq.setDisabled(isReadOnly("FinanceTypeDialog_FinDeffreq"));
+		this.btnSearchFinDefRepay.setDisabled(isReadOnly("FinanceTypeDialog_FinDefRepay"));
+		this.btnSearchFinLatePayRule.setDisabled(isReadOnly("FinanceTypeDialog_finLatePayRule"));
+		this.btnSearchFinDepreciation.setDisabled(isReadOnly("FinanceTypeDialog_finDepreciation"));
+
+		this.finGrcMargin.setDisabled(isReadOnly("FinanceTypeDialog_FinGrcMargin"));
+		this.cbFinGrcScheduleOn.setDisabled(isReadOnly("FinanceTypeDialog_FinGrcScheduleOn"));
+
+
+		this.finCollateralReq.setDisabled(isReadOnly("FinanceTypeDialog_FinCollateralReq"));
+
+		this.btnSearchFinInstDate.setDisabled(isReadOnly("FinanceTypeDialog_finInstDate"));
+
+		this.cbfinDepreciationCode.setDisabled(isReadOnly("FinanceTypeDialog_FinDepreciationFrq"));
+		this.cbfinDepreciationMth.setDisabled(isReadOnly("FinanceTypeDialog_FinDepreciationFrq"));
+		this.cbfinDepreciationDays.setDisabled(isReadOnly("FinanceTypeDialog_FinDepreciationFrq"));
+		this.finGrcAlwIndRate.setDisabled(isReadOnly("FinanceTypeDialog_FinAlwIndRate"));
+		this.btnSearchFinGrcIndBaseRate.setDisabled(isReadOnly("FinanceTypeDialog_FinGrcIndRate"));
+		this.finAlwIndRate.setDisabled(isReadOnly("FinanceTypeDialog_FinGrcAlwIndRate"));
+		this.btnSearchFinIndBaseRate.setDisabled(isReadOnly("FinanceTypeDialog_FinIndRate"));
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.financeType.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
+			btnCancel.setVisible(true);
+		}
+		logger.debug("Leaving");
+	}
+
+	// Method for refreshing the list after successful updation
+	private void refreshList() {
+		logger.debug("Entering");
+		getFinanceTypeListCtrl().findSearchObject();
+		if (getFinanceTypeListCtrl().listBoxFinanceType != null) {
+			getFinanceTypeListCtrl().listBoxFinanceType.getListModel();
+		}
+		logger.debug("Leaving");
+	}
+
+	/** Set the components to ReadOnly. <br> */
+	public void doReadOnly() {
+		logger.debug("Entering");
+		this.finType.setReadonly(true);
+		this.finTypeDesc.setReadonly(true);
+		this.btnSearchFinCcy.setDisabled(true);
+		this.btnSearchFinAcType.setDisabled(true);
+		this.btnSearchPftPayAcType.setDisabled(true);
+		this.btnSearchFinContingentAcType.setDisabled(true);
+		this.finIsGenRef.setDisabled(true);
+		this.finMaxAmount.setReadonly(true);
+		this.finMinAmount.setReadonly(true);
+		this.finIsOpenNewFinAc.setDisabled(true);
+		this.finDftStmtFrq.setDisabled(true);
+		this.finIsAlwMD.setDisabled(true);
+		this.fInIsAlwGrace.setDisabled(true);
+		this.finHistRetension.setReadonly(true);
+		this.cbfinRateType.setDisabled(true);
+		this.btnSearchFinBaseRate.setDisabled(true);
+		this.btnSearchFinSplRate.setDisabled(true);
+		this.cbfinRvwRateApplFor.setDisabled(true);
+		this.cbfinGrcRvwRateApplFor.setDisabled(true);
+		this.finAlwRateChangeAnyDate.setDisabled(true);
+		this.finGrcAlwRateChgAnyDate.setDisabled(true);
+		this.finIsIntCpzAtGrcEnd.setDisabled(true);
+		this.finMinDownPayAmount.setDisabled(true);
+		this.cbfinSchdMthd.setDisabled(true);
+		this.cbfinDaysCalType.setDisabled(true);
+		this.cbfinGrcRateType.setDisabled(true);
+		this.cbfinSchCalCodeOnRvw.setDisabled(true);
+		this.finIntRate.setReadonly(true);
+		this.fInMinRate.setReadonly(true);
+		this.finMaxRate.setReadonly(true);
+		this.finDftIntFrq.setDisabled(true);
+		this.finIsIntCpz.setDisabled(true);
+		this.finCpzFrq.setDisabled(true);
+		this.finIsRvwAlw.setDisabled(true);
+		this.finRepayPftOnFrq.setDisabled(true);
+		this.finRvwFrq.setDisabled(true);
+		this.btnSearchFinGrcBaseRate.setDisabled(true);
+		this.btnSearchFinGrcSplRate.setDisabled(true);
+		this.finGrcIntRate.setReadonly(true);
+		this.fInGrcMinRate.setReadonly(true);
+		this.finGrcMaxRate.setReadonly(true);
+		this.finGrcDftIntFrq.setDisabled(true);
+		this.finGrcIsIntCpz.setDisabled(true);
+		this.finGrcCpzFrq.setDisabled(true);
+		this.finGrcIsRvwAlw.setDisabled(true);
+		this.finGrcRvwFrq.setDisabled(true);
+		this.finMinTerm.setReadonly(true);
+		this.finMaxTerm.setReadonly(true);
+		this.finDftTerms.setReadonly(true);
+		this.finRpyFrq.setDisabled(true);
+		this.cbfinRepayMethod.setDisabled(true);
+		this.finIsAlwPartialRpy.setDisabled(true);
+		this.finIsAlwDifferment.setDisabled(true);
+		this.finMaxDifferment.setDisabled(true);
+		this.finIsAlwFrqDifferment.setDisabled(true);
+		this.finMaxFrqDifferment.setDisabled(true);
+		this.finPftUnChanged.setDisabled(true);
+		this.finIsAlwEarlyRpy.setDisabled(true);
+		this.finIsAlwEarlySettle.setDisabled(true);
+		this.finODRpyTries.setReadonly(true);
+		this.btnSearchFinAEAddDsbOD.setDisabled(true);
+		this.btnSearchFinAEAddDsbFD.setDisabled(true);
+		this.btnSearchFinAEAddDsbFDA.setDisabled(true);
+		this.btnSearchFinAEAmzNorm.setDisabled(true);
+		this.btnSearchFinAEAmzSusp.setDisabled(true);
+		this.btnSearchFinAEToNoAmz.setDisabled(true);
+		this.btnSearchFinToAmz.setDisabled(true);
+		this.btnSearchFinAERateChg.setDisabled(true);
+
+		this.btnSearchFinAERepay.setDisabled(true);
+		this.btnSearchFinAEEarlySettle.setDisabled(true);
+		this.btnSearchFinAEWriteOff.setDisabled(true);
+		this.finIsActive.setDisabled(true);
+		this.allowRIAInvestment.setDisabled(true);
+		this.allowParllelFinance.setDisabled(true);
+		this.overrideLimit.setDisabled(true);
+
+		this.finCollateralOvrride.setDisabled(true);
+		this.finCommitmentOvrride.setDisabled(true);
+		this.limitRequired.setDisabled(true);
+
+		this.cbfinDftStmtFrqCode.setDisabled(true);
+		this.cbfinDftStmtFrqMth.setDisabled(true);
+		this.cbfinDftStmtFrqDays.setDisabled(true);
+		this.cbfinDftIntFrqCode.setDisabled(true);
+		this.cbfinDftIntFrqMth.setDisabled(true);
+		this.cbfinDftIntFrqDays.setDisabled(true);
+		this.cbfinCpzFrqCode.setDisabled(true);
+		this.cbfinCpzFrqMth.setDisabled(true);
+		this.cbfinCpzFrqDays.setDisabled(true);
+		this.cbfinRvwFrqCode.setDisabled(true);
+		this.cbfinRvwFrqMth.setDisabled(true);
+		this.cbfinRvwFrqDays.setDisabled(true);
+		this.cbfinGrcDftIntFrqCode.setDisabled(true);
+		this.cbfinGrcDftIntFrqMth.setDisabled(true);
+		this.cbfinGrcDftIntFrqDays.setDisabled(true);
+		this.cbfinGrcCpzFrqCode.setDisabled(true);
+		this.cbfinGrcCpzFrqMth.setDisabled(true);
+		this.cbfinGrcCpzFrqDays.setDisabled(true);
+		this.cbfinGrcRvwFrqCode.setDisabled(true);
+		this.cbfinGrcRvwFrqMth.setDisabled(true);
+		this.cbfinGrcRvwFrqDays.setDisabled(true);
+		this.cbfinRpyFrqCode.setDisabled(true);
+		this.cbfinRpyFrqMth.setDisabled(true);
+		this.cbfinRpyFrqDays.setDisabled(true);
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+		}
+		if (isWorkFlowEnabled()) {
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
+		}
+		logger.debug("Leaving");
+	}
+
+	/** Clears the components values. <br> */
+	public void doClear() {
+		logger.debug("Entering");
+
+		// remove validation, if there are a save before
+		this.finType.setValue("");
+		this.finTypeDesc.setValue("");
+		this.finCcy.setValue("");
+		this.lovDescFinCcyName.setValue("");
+		this.finAcType.setValue("");
+		this.lovDescFinAcTypeName.setValue("");
+		this.pftPayAcType.setValue("");
+		this.lovDescPftPayAcTypeName.setValue("");
+		this.finContingentAcType.setValue("");
+		this.lovDescFinContingentAcTypeName.setValue("");
+		this.finBankContingentAcType.setValue("");
+		this.lovDescFinBankContingentAcTypeName.setValue("");
+		this.finProvisionAcType.setValue("");
+		this.lovDescFinProvisionAcTypeName.setValue("");
+		this.finIsGenRef.setChecked(false);
+		this.finMaxAmount.setValue("");
+		this.finMinAmount.setValue("");
+		this.finDftStmtFrq.setValue("");
+		this.finIsAlwMD.setChecked(false);
+		this.finIsOpenPftPayAcc.setChecked(false);
+		this.fInIsAlwGrace.setChecked(false);
+		this.finHistRetension.setText("");
+		this.finBaseRate.setValue("");
+		this.lovDescFinBaseRateName.setValue("");
+		this.finAlwRateChangeAnyDate.setChecked(false);
+		this.finGrcAlwRateChgAnyDate.setChecked(false);
+		this.finIsIntCpzAtGrcEnd.setChecked(false);
+		this.finMinDownPayAmount.setValue("");
+		this.cbfinSchdMthd.setSelectedIndex(0);
+		this.cbfinDaysCalType.setSelectedIndex(0);
+		this.cbfinGrcRateType.setSelectedIndex(0);
+		this.cbfinRateType.setSelectedIndex(0);
+		this.cbfinSchCalCodeOnRvw.setSelectedIndex(0);
+		this.finSplRate.setValue("");
+		this.finIntRate.setValue("");
+		this.fInMinRate.setValue("");
+		this.finMaxRate.setValue("");
+		this.finDftIntFrq.setValue("");
+		this.finIsIntCpz.setChecked(false);
+		this.finCpzFrq.setValue("");
+		this.finIsRvwAlw.setChecked(false);
+		this.finRepayPftOnFrq.setChecked(false);
+		this.finRvwFrq.setValue("");
+		this.finGrcBaseRate.setValue("");
+		this.lovDescFinGrcBaseRateName.setValue("");
+		this.finGrcSplRate.setValue("");
+		this.lovDescFinGrcSplRateName.setValue("");
+		this.finGrcIntRate.setValue("");
+		this.fInGrcMinRate.setValue("");
+		this.finGrcMaxRate.setValue("");
+		this.finGrcDftIntFrq.setValue("");
+		this.finGrcIsIntCpz.setChecked(false);
+		this.finGrcCpzFrq.setValue("");
+		this.finGrcIsRvwAlw.setChecked(false);
+		this.finGrcRvwFrq.setValue("");
+		this.finMinTerm.setText("");
+		this.finMaxTerm.setText("");
+		this.finDftTerms.setText("");
+		this.finRpyFrq.setValue("");
+		this.cbfinRepayMethod.setSelectedIndex(0);
+		this.finIsAlwDifferment.setChecked(false);
+		this.finMaxDifferment.setValue(0);
+		this.finIsAlwFrqDifferment.setChecked(false);
+		this.finPftUnChanged.setChecked(false);
+		this.finMaxFrqDifferment.setValue(0);
+		this.finIsAlwEarlyRpy.setChecked(false);
+		this.finIsAlwEarlySettle.setChecked(false);
+		this.finODRpyTries.setText("");
+		this.finAEAddDsbOD.setValue("");
+		this.lovDescFinAEAddDsbODName.setValue("");
+		this.finAEAddDsbFD.setValue("");
+		this.lovDescFinAEAddDsbFDName.setValue("");
+		this.finAEAddDsbFDA.setValue("");
+		this.lovDescFinAEAddDsbFDAName.setValue("");
+		this.finAEAmzNorm.setValue("");
+		this.lovDescFinAEAmzNormName.setValue("");
+		this.finAEAmzSusp.setValue("");
+		this.lovDescFinAEAmzSuspName.setValue("");
+		this.finAEToNoAmz.setValue("");
+		this.lovDescFinAEToNoAmzName.setValue("");
+		this.finToAmz.setValue("");
+		this.lovDescFinToAmzName.setValue("");
+		this.finAERateChg.setValue("");
+		this.lovDescFinAERateChgName.setValue("");
+		this.finAERepay.setValue("");
+		this.lovDescFinAERepayName.setValue("");
+		this.finAEEarlyPay.setValue("");
+		this.lovDescFinAEEarlyPayName.setValue("");
+		this.finAEEarlySettle.setValue("");
+		this.lovDescFinAEEarlySettleName.setValue("");
+		this.finAEWriteOff.setValue("");
+		this.finProvision.setValue("");
+		this.finInstDate.setValue("");
+		this.finSchdChange.setValue("");
+		this.finAECapitalize.setValue("");
+		this.finAEProgClaim.setValue("");
+		this.finAEMaturity.setValue("");
+		this.lovDescFinAEWriteOffName.setValue("");
+		logger.debug("Leaving");
+
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 * 
+	 * @throws InterruptedException
+	 */
+	public void doSave() throws InterruptedException {
+		logger.debug("Entering");
+		doClearErrMessages();
+		final FinanceType aFinanceType = new FinanceType("");
+		BeanUtils.copyProperties(getFinanceType(), aFinanceType);
+		boolean isNew = false;
+		if ("Submit".equals(userAction.getSelectedItem().getLabel())) {
+			validate = true;// Stop validations in save mode
+		} else {
+			validate = false;// Stop validations in save mode
+		}
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		// force validation, if on, than execute by component.getValue()
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		doSetValidation();
+		// fill the FinanceType object with the components data
+		doWriteComponentsToBean(aFinanceType);
+
+		isNew = aFinanceType.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.trimToEmpty(aFinanceType.getRecordType()).equals("")) {
+				aFinanceType.setVersion(aFinanceType.getVersion() + 1);
+				if (isNew) {
+					aFinanceType.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aFinanceType.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aFinanceType.setNewRecord(true);
+				}
+			}
+		} else {
+			aFinanceType.setVersion(aFinanceType.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+		// save it to database
+		try {
+			if (doProcess(aFinanceType, tranType)) {
+				refreshList();
+				// Close the Existing Dialog
+				closeDialog(this.window_FinanceTypeDialog, "FinanceType");
+			}
+		} catch (final DataAccessException e) {
+			logger.error(e);
+			showMessage(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aFinanceType
+	 *            (FinanceType)
+	 * @param tranType
+	 *            (String)
+	 * @return boolean
+	 */
+	private boolean doProcess(FinanceType aFinanceType, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aFinanceType.setLastMntBy(getUserWorkspace().getLoginUserDetails().getLoginUsrID());
+		aFinanceType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aFinanceType.setUserDetails(getUserWorkspace().getLoginUserDetails());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getWorkFlow().getTaskId(getRole());
+			String nextTaskId = "";
+			//Upgraded to ZK-6.5.1.1 Added casting to String 	
+			aFinanceType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aFinanceType.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getWorkFlow().getNextTaskIds(taskId, aFinanceType);
+				}
+
+				if (PennantConstants.WF_Audit_Notes.equals(getWorkFlow().getAuditingReq(taskId, aFinanceType))) {
+					try {
+						if (!isNotes_Entered()) {
+							PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
+							return false;
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			if (StringUtils.trimToEmpty(nextTaskId).equals("")) {
+				nextRoleCode = getWorkFlow().firstTask.owner;
+			} else {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode + ",";
+						}
+						nextRoleCode = getWorkFlow().getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getWorkFlow().getTaskOwner(nextTaskId);
+				}
+			}
+
+			aFinanceType.setTaskId(taskId);
+			aFinanceType.setNextTaskId(nextTaskId);
+			aFinanceType.setRoleCode(getRole());
+			aFinanceType.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aFinanceType, tranType);
+
+			String operationRefs = getWorkFlow().getOperationRefs(taskId, aFinanceType);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aFinanceType, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+
+			auditHeader = getAuditHeader(aFinanceType, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param auditHeader
+	 *            (AuditHeader)
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 */
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		FinanceType afinanceType = (FinanceType) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+			while (retValue == PennantConstants.porcessOVERIDE) {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getFinanceTypeService().delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = getFinanceTypeService().saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getFinanceTypeService().doApprove(auditHeader);
+						if (afinanceType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getFinanceTypeService().doReject(auditHeader);
+						if (afinanceType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
+						}
+					} else {
+
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_FinanceTypeDialog, auditHeader);
+						return processCompleted;
+
+					}
+				}
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_FinanceTypeDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+					if (deleteNotes) {
+						deleteNotes(getNotes(), true);
+					}
+				}
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
+			}
+			setOverideMap(auditHeader.getOverideMap());
+		} catch (InterruptedException e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * To get the currency LOV List From RMTCurrencies Table And Amount is formatted based on the currency
+	 */
+
+	public void onClick$btnSearchFinCcy(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "Currency");
+		if (dataObject instanceof String) {
+			this.finCcy.setValue(dataObject.toString());
+			this.lovDescFinCcyName.setValue("");
+		} else {
+			Currency details = (Currency) dataObject;
+			if (details != null) {
+				this.finCcy.setValue(details.getCcyCode());
+				this.lovDescFinCcyName.setValue(details.getCcyCode() + "-" + details.getCcyDesc());
+				fillComboBox(this.cbfinDaysCalType, details.getCcyDrRateBasisCode(), pftDays, "");
+				// To Format Amount based on the currency
+				getFinanceType().setLovDescFinFormetter(details.getCcyEditField());
+				this.finMaxAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+				this.finMinAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get non internal account and it's
+	 * purpose is movement
+	 */
+
+	public void onClick$btnSearchFinAcType(Event event) {
+		logger.debug("Entering" + event.toString());
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("AcPurpose", "F", Filter.OP_EQUAL);
+		filters[1] = new Filter("InternalAc", "0", Filter.OP_EQUAL);
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountType", filters);
+		if (dataObject instanceof String) {
+			this.finAcType.setValue(dataObject.toString());
+			this.lovDescFinAcTypeName.setValue("");
+		} else {
+			AccountType details = (AccountType) dataObject;
+			if (details != null) {
+				this.finAcType.setValue(details.getAcType());
+				this.lovDescFinAcTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get non internal account and it's
+	 * purpose is movement
+	 */
+
+	public void onClick$btnSearchPftPayAcType(Event event) {
+		logger.debug("Entering" + event.toString());
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("AcPurpose", "O", Filter.OP_EQUAL);
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountType", filters);
+		if (dataObject instanceof String) {
+			this.pftPayAcType.setValue(dataObject.toString());
+			this.lovDescPftPayAcTypeName.setValue("");
+		} else {
+			AccountType details = (AccountType) dataObject;
+			if (details != null) {
+				this.pftPayAcType.setValue(details.getAcType());
+				this.lovDescPftPayAcTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get only an internal account and
+	 * it's purpose is movement and it is a Contingent account
+	 */
+
+	public void onClick$btnSearchFinContingentAcType(Event event) {
+		logger.debug("Entering" + event.toString());
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("AcPurpose", "C", Filter.OP_EQUAL);
+		filters[1] = new Filter("CustSysAc", "1", Filter.OP_EQUAL);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountType", filters);
+		if (dataObject instanceof String) {
+			this.finContingentAcType.setValue(dataObject.toString());
+			this.lovDescFinContingentAcTypeName.setValue("");
+		} else {
+			AccountType details = (AccountType) dataObject;
+			if (details != null) {
+				this.finContingentAcType.setValue(details.getAcType());
+				this.lovDescFinContingentAcTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get only an internal account and
+	 * it's purpose is movement and it is a Contingent account
+	 */
+
+	public void onClick$btnSearchFinBankContingentAcType(Event event) {
+		logger.debug("Entering" + event.toString());
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("AcPurpose", "C", Filter.OP_EQUAL);
+		filters[1] = new Filter("internalAc", "1", Filter.OP_EQUAL);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountType", filters);
+		if (dataObject instanceof String) {
+			this.finBankContingentAcType.setValue(dataObject.toString());
+			this.lovDescFinBankContingentAcTypeName.setValue("");
+		} else {
+			AccountType details = (AccountType) dataObject;
+			if (details != null) {
+				this.finBankContingentAcType.setValue(details.getAcType());
+				this.lovDescFinBankContingentAcTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get only an internal account and
+	 * it's purpose is movement and it is a Contingent account
+	 */
+
+	public void onClick$btnSearchFinProvisionAcType(Event event) {
+		logger.debug("Entering" + event.toString());
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("AcPurpose", "G", Filter.OP_EQUAL);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountType", filters);
+		if (dataObject instanceof String) {
+			this.finProvisionAcType.setValue(dataObject.toString());
+			this.lovDescFinProvisionAcTypeName.setValue("");
+		} else {
+			AccountType details = (AccountType) dataObject;
+			if (details != null) {
+				this.finProvisionAcType.setValue(details.getAcType());
+				this.lovDescFinProvisionAcTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/** To get the BaseRateCode LOV List From RMTBaseRateCodes Table */
+	public void onClick$btnSearchFinBaseRate(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "BaseRateCode");
+		if (dataObject instanceof String) {
+			this.finBaseRate.setValue(dataObject.toString());
+			this.lovDescFinBaseRateName.setValue("");
+			this.labe_EffectiveRate.setValue("");
+		} else {
+			BaseRateCode details = (BaseRateCode) dataObject;
+			if (details != null) {
+				this.finBaseRate.setValue(details.getBRType());
+				this.lovDescFinBaseRateName.setValue(details.getBRType() + "-" + details.getBRTypeDesc());
+			}
+			this.labe_EffectiveRate.setValue(String.valueOf(rates(this.finBaseRate.getValue(), this.finSplRate.getValue(), getDCBValue(this.finMargin))));
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the SplRateCode LOV List From RMTSplRateCodes Table
+	 * 
+	 * @throws ParseException
+	 */
+
+	public void onClick$btnSearchFinSplRate(Event event) throws ParseException {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "SplRateCode");
+		if (dataObject instanceof String) {
+			this.finSplRate.setValue(dataObject.toString());
+			this.lovDescFinSplRateName.setValue("");
+			this.labe_EffectiveRate.setValue("");
+		} else {
+			SplRateCode details = (SplRateCode) dataObject;
+			if (details != null) {
+				this.finSplRate.setValue(details.getSRType());
+				this.lovDescFinSplRateName.setValue(details.getSRType() + "-" + details.getSRTypeDesc());
+			}
+
+		}
+		if (!this.lovDescFinBaseRateName.getValue().equals("")) {
+			this.labe_EffectiveRate.setValue(String.valueOf(rates(this.finBaseRate.getValue(), this.finSplRate.getValue(), getDCBValue(this.finMargin))));
+
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/** To get the BaseRateCode LOV List From RMTBaseRateCodes Table */
+	public void onClick$btnSearchFinGrcBaseRate(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "BaseRateCode");
+		if (dataObject instanceof String) {
+			this.finGrcBaseRate.setValue(dataObject.toString());
+			this.lovDescFinGrcBaseRateName.setValue("");
+			this.labe_GrcEffectiveRate.setValue("");
+		} else {
+			BaseRateCode details = (BaseRateCode) dataObject;
+			if (details != null) {
+				this.finGrcBaseRate.setValue(details.getBRType());
+				this.lovDescFinGrcBaseRateName.setValue(details.getBRType() + "-" + details.getBRTypeDesc());
+			}
+			this.labe_GrcEffectiveRate.setValue(String.valueOf(rates(this.finGrcBaseRate.getValue(), this.finGrcSplRate.getValue(), getDCBValue(this.finGrcMargin))));
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/** To get the SplRateCode LOV List From RMTSplRateCodes Table */
+	public void onClick$btnSearchFinGrcSplRate(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "SplRateCode");
+		if (dataObject instanceof String) {
+			this.finGrcSplRate.setValue(dataObject.toString());
+			this.lovDescFinGrcSplRateName.setValue("");
+			this.labe_GrcEffectiveRate.setValue("");
+		} else {
+			SplRateCode details = (SplRateCode) dataObject;
+			if (details != null) {
+				this.finGrcSplRate.setValue(details.getSRType());
+				this.lovDescFinGrcSplRateName.setValue(details.getSRType() + "-" + details.getSRTypeDesc());
+
+			}
+		}
+		if (!this.lovDescFinGrcBaseRateName.getValue().equals("")) {
+			this.labe_GrcEffectiveRate.setValue(String.valueOf(rates(this.finGrcBaseRate.getValue(), this.finGrcSplRate.getValue(), getDCBValue(this.finGrcMargin))));
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private Filter[] getFiltersByCheckingRIA(String property, Object value, int operator){
+		Filter[] filter =  new Filter[2];
+		if (this.allowRIAInvestment.isChecked()) {
+			filter[0] = new Filter(property,value,operator);
+			filter[1] = new Filter("EntryByInvestment", "1", Filter.OP_EQUAL);
+        }else{
+        	filter[0] = new Filter(property,value,operator);
+			filter[1] = new Filter("EntryByInvestment", "1", Filter.OP_NOT_EQUAL);
+        }
+		return filter;
+	}
+	
+	
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=ADDDBSP
+	 */
+
+	public void onClick$btnSearchFinAEAddDsbOD(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet", getFiltersByCheckingRIA("EventCode", "ADDDBSP", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("ADDDBSP")) {
+				accSet = getFinanceType().getLovDescAERule().get("ADDDBSP");
+				this.finAEAddDsbOD.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAddDsbODName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEAddDsbOD.setValue(null);
+				this.lovDescFinAEAddDsbODName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEAddDsbOD.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEAddDsbODName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=ADDDBSF
+	 */
+	public void onClick$btnSearchFinAEAddDsbFD(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "ADDDBSF", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("ADDDBSF")) {
+				accSet = getFinanceType().getLovDescAERule().get("ADDDBSF");
+				this.finAEAddDsbFD.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAddDsbFDName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEAddDsbFD.setValue(null);
+				this.lovDescFinAEAddDsbFDName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEAddDsbFD.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEAddDsbFDName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=ADDDBSN
+	 */
+
+	public void onClick$btnSearchFinAEAddDsbFDA(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "ADDDBSN", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("ADDDBSN")) {
+				accSet = getFinanceType().getLovDescAERule().get("ADDDBSN");
+				this.finAEAddDsbFDA.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAddDsbFDAName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEAddDsbFDA.setValue(null);
+				this.lovDescFinAEAddDsbFDAName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEAddDsbFDA.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEAddDsbFDAName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=AMZ
+	 */
+
+	public void onClick$btnSearchFinAEAmzNorm(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "AMZ", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("AMZ")) {
+				accSet = getFinanceType().getLovDescAERule().get("AMZ");
+				this.finAEAmzNorm.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAmzNormName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEAmzNorm.setValue(null);
+				this.lovDescFinAEAmzNormName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEAmzNorm.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEAmzNormName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=AMZSUSP
+	 */
+
+	public void onClick$btnSearchFinAEAmzSusp(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "AMZSUSP", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("AMZSUSP")) {
+				accSet = getFinanceType().getLovDescAERule().get("AMZSUSP");
+				this.finAEAmzSusp.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEAmzSuspName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEAmzSusp.setValue(null);
+				this.lovDescFinAEAmzSuspName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEAmzSusp.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEAmzSuspName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where
+	 * EventCode=M_NONAMZ
+	 */
+
+	public void onClick$btnSearchFinAEToNoAmz(Event event) {
+		logger.debug("Entering" + event.toString());
+		logger.debug(event.toString());
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "M_NONAMZ", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("M_NONAMZ")) {
+				accSet = getFinanceType().getLovDescAERule().get("M_NONAMZ");
+				this.finAEToNoAmz.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEToNoAmzName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEToNoAmz.setValue(null);
+				this.lovDescFinAEToNoAmzName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEToNoAmz.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEToNoAmzName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=M_AMZ
+	 */
+
+	public void onClick$btnSearchFinToAmz(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "M_AMZ", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("M_AMZ")) {
+				accSet = getFinanceType().getLovDescAERule().get("M_AMZ");
+				this.finToAmz.setValue(accSet.getStringaERuleId());
+				this.lovDescFinToAmzName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finToAmz.setValue(null);
+				this.lovDescFinToAmzName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finToAmz.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinToAmzName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=INCPFT
+	 */
+	public void onClick$btnSearchFinAERateChg(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "RATCHG", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("RATCHG")) {
+				accSet = getFinanceType().getLovDescAERule().get("RATCHG");
+				this.finAERateChg.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAERateChgName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAERateChg.setValue(null);
+				this.lovDescFinAERateChgName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAERateChg.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAERateChgName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=REPAY
+	 */
+
+	public void onClick$btnSearchFinAERepay(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "REPAY", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("REPAY")) {
+				accSet = getFinanceType().getLovDescAERule().get("REPAY");
+				this.finAERepay.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAERepayName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAERepay.setValue(null);
+				this.lovDescFinAERepayName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAERepay.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAERepayName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=ADDDBSP
+	 */
+
+	public void onClick$btnSearchFinLatePayRule(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "LATEPAY", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("LATEPAY")) {
+				accSet = getFinanceType().getLovDescAERule().get("LATEPAY");
+				this.finLatePayRule.setValue(accSet.getStringaERuleId());
+				this.lovDescFinLatePayRuleName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finLatePayRule.setValue(null);
+				this.lovDescFinLatePayRuleName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finLatePayRule.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinLatePayRuleName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where
+	 * EventCode=EARLYSTL
+	 */
+
+	public void onClick$btnSearchFinAEEarlySettle(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "EARLYSTL", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("EARLYSTL")) {
+				accSet = getFinanceType().getLovDescAERule().get("EARLYSTL");
+				this.finAEEarlySettle.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEEarlySettleName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEEarlySettle.setValue(null);
+				this.lovDescFinAEEarlySettleName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEEarlySettle.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEEarlySettleName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where
+	 * EventCode=WRITEOFF
+	 */
+
+	public void onClick$btnSearchFinAEWriteOff(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "WRITEOFF", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("WRITEOFF")) {
+				accSet = getFinanceType().getLovDescAERule().get("WRITEOFF");
+				this.finAEWriteOff.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEWriteOffName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEWriteOff.setValue(null);
+				this.lovDescFinAEWriteOffName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEWriteOff.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEWriteOffName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where
+	 * EventCode=WRITEOFF
+	 */
+	public void onClick$btnSearchFinSchdChange(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "SCDCHG", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("SCDCHG")) {
+				accSet = getFinanceType().getLovDescAERule().get("SCDCHG");
+				this.finSchdChange.setValue(accSet.getStringaERuleId());
+				this.lovDescfinSchdChangeName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finSchdChange.setValue(null);
+				this.lovDescfinSchdChangeName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finSchdChange.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescfinSchdChangeName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where
+	 * EventCode=WRITEOFF
+	 */
+	public void onClick$btnSearchFinProvision(Event event) {
+		logger.debug("Entering" + event.toString());
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("EventCode", "PROVSN", Filter.OP_LIKE);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  filter);
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("SCDCHG")) {
+				accSet = getFinanceType().getLovDescAERule().get("SCDCHG");
+				this.finProvision.setValue(accSet.getStringaERuleId());
+				this.lovDescFinProvisionName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finProvision.setValue(null);
+				this.lovDescFinProvisionName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finProvision.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinProvisionName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onClick$btnSearchFinAECapitalize(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "COMPOUND", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("COMPOUND")) {
+				accSet = getFinanceType().getLovDescAERule().get("COMPOUND");
+				this.finAECapitalize.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAECapitalizeName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAECapitalize.setValue(null);
+				this.lovDescFinAECapitalizeName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAECapitalize.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAECapitalizeName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onClick$btnSearchFinAEProgClaim(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "PRGCLAIM", Filter.OP_EQUAL));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("PRGCLAIM")) {
+				accSet = getFinanceType().getLovDescAERule().get("PRGCLAIM");
+				this.finAEProgClaim.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEProgClaimName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEProgClaim.setValue(null);
+				this.lovDescFinAEProgClaimName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEProgClaim.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEProgClaimName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onClick$btnSearchFinAEMaturity(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "MATURITY", Filter.OP_EQUAL));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("MATURITY")) {
+				accSet = getFinanceType().getLovDescAERule().get("MATURITY");
+				this.finAEMaturity.setValue(accSet.getStringaERuleId());
+				this.lovDescFinAEMaturityName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finAEMaturity.setValue(null);
+				this.lovDescFinAEMaturityName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finAEMaturity.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinAEMaturityName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onClick$btnSearchFinDepreciation(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "DPRCIATE", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("DPRCIATE")) {
+				accSet = getFinanceType().getLovDescAERule().get("DPRCIATE");
+				this.finDepreciationRule.setValue(accSet.getStringaERuleId());
+				this.lovDescFinDepreciationName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finDepreciationRule.setValue(null);
+				this.lovDescFinDepreciationName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finDepreciationRule.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinDepreciationName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where
+	 * EventCode=WRITEOFF
+	 */
+
+	public void onClick$btnSearchFinDeffreq(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "DEFFRQ", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("DEFFRQ")) {
+				accSet = getFinanceType().getLovDescAERule().get("DEFFRQ");
+				this.finDeffreq.setValue(accSet.getStringaERuleId());
+				this.lovDescFinDeffreqName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finDeffreq.setValue(null);
+				this.lovDescFinDeffreqName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finDeffreq.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinDeffreqName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where
+	 * EventCode=WRITEOFF
+	 */
+
+	public void onClick$btnSearchFinDefRepay(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "DEFRPY", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("DEFRPY")) {
+				accSet = getFinanceType().getLovDescAERule().get("DEFRPY");
+				this.finDefRepay.setValue(accSet.getStringaERuleId());
+				this.lovDescFinDefRepayName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finDefRepay.setValue(null);
+				this.lovDescFinDefRepayName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finDefRepay.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinDefRepayName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where
+	 * EventCode=WRITEOFF
+	 */
+
+	public void onClick$btnSearchFinInstDate(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "AccountingSet",  getFiltersByCheckingRIA("EventCode", "INSTDATE", Filter.OP_LIKE));
+		if (dataObject instanceof String) {
+			if (getFinanceType().getLovDescAERule().containsKey("INSTDATE")) {
+				accSet = getFinanceType().getLovDescAERule().get("INSTDATE");
+				this.finInstDate.setValue(accSet.getStringaERuleId());
+				this.lovDescFinInstDateName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			} else {
+				this.finInstDate.setValue(null);
+				this.lovDescFinInstDateName.setValue("");
+			}
+		} else {
+			AccountingSet details = (AccountingSet) dataObject;
+			if (details != null) {
+				this.finInstDate.setValue(String.valueOf(details.getAccountSetid()));
+				this.lovDescFinInstDateName.setValue(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/** To get the BaseRateCode LOV List From RMTBaseRateCodes Table */
+	public void onClick$btnSearchFinGrcIndBaseRate(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "BaseRateCode");
+		if (dataObject instanceof String) {
+			this.finGrcIndBaseRate.setValue(dataObject.toString());
+			this.lovDescFinGrcIndBaseRateName.setValue("");
+		} else {
+			BaseRateCode details = (BaseRateCode) dataObject;
+			if (details != null) {
+				this.finGrcIndBaseRate.setValue(details.getBRType());
+				this.lovDescFinGrcIndBaseRateName.setValue(details.getBRType() + "-" + details.getBRTypeDesc());
+			}
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/** To get the BaseRateCode LOV List From RMTBaseRateCodes Table */
+	public void onClick$btnSearchFinIndBaseRate(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceTypeDialog, "BaseRateCode");
+		if (dataObject instanceof String) {
+			this.finIndBaseRate.setValue(dataObject.toString());
+			this.lovDescFinIndBaseRateName.setValue("");
+		} else {
+			BaseRateCode details = (BaseRateCode) dataObject;
+			if (details != null) {
+				this.finIndBaseRate.setValue(details.getBRType());
+				this.lovDescFinIndBaseRateName.setValue(details.getBRType() + "-" + details.getBRTypeDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	//	++++++++++++++++++++++++++++++
+	//	++++++++++ Tab 1++++++++++++
+	//	+++++++++++++++++++++++++++++
+
+	public void onCheck$fInIsAlwGrace(Event event) {
+		logger.debug("Entering" + event.toString());
+		dodisableGracePeriod();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onChange$cbfinProductType(Event event) {
+		if (this.cbfinProductType.getSelectedItem() != null) {
+			doFillAssestType(this.cbfinAssetType, "", cbfinProductType.getSelectedItem().getValue().toString());
+			doCheckRIA(cbfinProductType.getSelectedItem().getValue().toString());
+			doCheckFinAEProgClaim(cbfinProductType.getSelectedItem().getValue().toString());
+			doCheckFinAEMaturity(cbfinProductType.getSelectedItem().getValue().toString());
+		}
+	}
+
+	public void onCheck$finDepreciationReq() {
+		doDisableDepreciationDFrq(this.finDepreciationReq.isChecked(), isReadOnly("FinanceTypeDialog_FinDepreciationFrq"));
+		this.cbfinDepreciationCode.setSelectedIndex(0);
+		this.cbfinDepreciationMth.setSelectedIndex(0);
+		this.cbfinDepreciationDays.setSelectedIndex(0);
+		this.finDepreciationFrq.setValue("");
+
+		if (getFinanceType().getLovDescAERule().containsKey("DPRCIATE")) {
+			accSet = getFinanceType().getLovDescAERule().get("DPRCIATE");
+			this.finDepreciationRule.setValue(accSet.getStringaERuleId());
+			this.lovDescFinDepreciationName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+		} else {
+			this.finDepreciationRule.setValue("");
+			this.lovDescFinDepreciationName.setValue("");
+		}
+	}
+
+	public void onCheck$finIsDwPayRequired(Event event) {
+		logger.debug("Entering" + event.toString());
+		checkFinisDownPayreq();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onCheck$finCommitmentReq(Event event) {
+		logger.debug("Entering");
+		doCheckBoxChecked(this.finCommitmentReq.isChecked(), this.finCommitmentOvrride);
+		logger.debug("Leaving");
+	}
+
+	public void onCheck$limitRequired(Event event) {
+		logger.debug("Entering");
+		doCheckBoxChecked(this.limitRequired.isChecked(), this.overrideLimit);
+		logger.debug("Leaving");
+	}
+
+	private void checkFinisDownPayreq() {
+		logger.debug("Entering");
+
+		if (this.finIsDwPayRequired.isChecked()) {
+			this.finMinDownPayAmount.setDisabled(isReadOnly("FinanceTypeDialog_finIsDwPayRequired"));
+			this.finMinDownPayAmount.setValue(this.oldVar_finMinDownPayAmount);
+			this.space_FinMinDownPayAmount.setStyle("background-color:red");
+		} else {
+			this.finMinDownPayAmount.clearErrorMessage();
+			this.finMinDownPayAmount.setConstraint("");
+			this.finMinDownPayAmount.setValue(new BigDecimal(0));
+			this.finMinDownPayAmount.setDisabled(true);
+			this.space_FinMinDownPayAmount.setStyle("background-color:white");
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * To disable Grace period tab Used twice in the page onCreatedWindow and onCheck Events. a boolean if condition is
+	 * applied on doSetValidations and doWriteComponentstoBean to Stop validation when Disabled
+	 */
+	private void dodisableGracePeriod() {
+		logger.debug("Leaving ");
+		if (this.fInIsAlwGrace.isChecked()) {
+			this.cbfinGrcRateType.setSelectedIndex(this.oldVar_finGrcRateType);
+			this.finGrcBaseRate.setValue(this.oldVar_finGrcBaseRate);
+			this.lovDescFinGrcBaseRateName.setValue(this.oldVar_lovDescFinGrcBaseRateName);
+			this.finGrcSplRate.setValue(this.oldVar_finGrcSplRate);
+			this.lovDescFinGrcSplRateName.setValue(this.oldVar_lovDescFinGrcSplRateName);
+			this.finGrcIntRate.setValue(this.oldVar_finGrcIntRate);
+			this.fInGrcMinRate.setValue(this.oldVar_fInGrcMinRate);
+			this.finGrcMaxRate.setValue(this.oldVar_finGrcMaxRate);
+			this.gracePeriod.setDisabled(false);
+			this.finIsAlwGrcRepay.setChecked(this.oldVar_finIsAlwGrcRepay);
+			//this.gracePeriod.setVisible(true);
+		} else {
+			this.cbfinGrcRateType.setSelectedIndex(0);
+			this.finGrcBaseRate.setValue(null);
+			this.lovDescFinGrcBaseRateName.setValue("");
+			this.finGrcSplRate.setValue(null);
+			this.lovDescFinGrcSplRateName.setValue("");
+			this.finGrcIntRate.setValue("0");
+			this.fInGrcMinRate.setValue("0");
+			this.finGrcMaxRate.setValue("0");
+			this.finIsAlwGrcRepay.setChecked(false);
+			this.finGrcSchdMthd.setSelectedIndex(0);
+			this.gracePeriod.setDisabled(true);
+			//this.gracePeriod.setVisible(false);
+		}
+		logger.debug("Leaving ");
+	}
+
+	private void doFillProductType(Combobox codeCombobox, String value) {
+		logger.debug("Entering");
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<Product> searchObject = new JdbcSearchObject<Product>(Product.class);
+		searchObject.addSort("ProductCode", false);
+		List<Product> appList = pagedListService.getBySearchObject(searchObject);
+		codeCombobox.getChildren().clear();
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue("#");
+		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+		codeCombobox.appendChild(comboitem);
+		codeCombobox.setSelectedItem(comboitem);
+		for (Product product : appList) {
+			comboitem = new Comboitem();
+			comboitem.setValue(product.getProductCode());
+			comboitem.setLabel(product.getProductDesc());
+			codeCombobox.appendChild(comboitem);
+			if (StringUtils.trimToEmpty(value).equals(StringUtils.trim(product.getProductCode()))) {
+				codeCombobox.setSelectedItem(comboitem);
+			}
+		}
+		logger.debug("Leaving");
+
+	}
+
+	private void doFillAssestType(Combobox codeCombobox, String value, String Product) {
+		logger.debug("Entering");
+		JdbcSearchObject<ProductAsset> searchObject = new JdbcSearchObject<ProductAsset>(ProductAsset.class);
+		searchObject.addFilter(new Filter("ProductCode", Product, Filter.OP_EQUAL));
+		searchObject.addSort("AssetCode", false);
+		List<ProductAsset> appList = getPagedListService().getBySearchObject(searchObject);
+		codeCombobox.getChildren().clear();
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue("#");
+		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+		codeCombobox.appendChild(comboitem);
+		codeCombobox.setSelectedItem(comboitem);
+		for (ProductAsset productAsset : appList) {
+			comboitem = new Comboitem();
+			comboitem.setValue(productAsset.getAssetID());
+			comboitem.setLabel(productAsset.getAssetCode());
+			codeCombobox.appendChild(comboitem);
+			if (StringUtils.trimToEmpty(value).equals(String.valueOf(productAsset.getAssetID()))) {
+				codeCombobox.setSelectedItem(comboitem);
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	private void doDisableDepreciationDFrq(boolean isChecked, boolean isallowed) {
+		if (isChecked && !isallowed) {
+			this.cbfinDepreciationCode.setDisabled(false);
+			this.cbfinDepreciationMth.setDisabled(false);
+			this.cbfinDepreciationDays.setDisabled(false);
+		} else {
+			this.cbfinDepreciationCode.setDisabled(true);
+			this.cbfinDepreciationMth.setDisabled(true);
+			this.cbfinDepreciationDays.setDisabled(true);
+		}
+		if (this.finDepreciationReq.isChecked()) {
+			this.space_finDepreciationRule.setStyle("background-color:red");
+			this.btnSearchFinDepreciation.setDisabled(isReadOnly("FinanceTypeDialog_finDepreciation"));
+		} else {
+			this.space_finDepreciationRule.setStyle("background-color:white");
+			this.btnSearchFinDepreciation.setDisabled(true);
+		}
+	}
+
+	private void doCheckRIA(String value) {
+		this.allowRIAInvestment.setDisabled(true);
+		this.allowParllelFinance.setDisabled(true);
+		if (!StringUtils.trimToEmpty(value).equals("")) {
+			if (PennantConstants.FINANCE_PRODUCT_MUDARABA.equals(value)) {
+				this.allowRIAInvestment.setChecked(true);
+				this.allowParllelFinance.setDisabled(true);
+			} else if (PennantConstants.FINANCE_PRODUCT_SALAM.equals(value) || PennantConstants.FINANCE_PRODUCT_ISTISNA.equals(value)) {
+				this.allowParllelFinance.setDisabled(isReadOnly("FinanceTypeDialog_allowParllelFinance"));
+				this.allowRIAInvestment.setChecked(false);
+				this.space_finAEProgClaim.setStyle("background-color:red");
+				this.space_finAEProgClaim.setStyle("background-color:white");
+			} else {
+				this.allowRIAInvestment.setChecked(false);
+				this.allowParllelFinance.setChecked(false);
+			}
+		}
+	}
+
+	private void doCheckFinAEProgClaim(String value) {
+		if (!StringUtils.trimToEmpty(value).equals("") && PennantConstants.FINANCE_PRODUCT_ISTISNA.equals(value)) {
+			this.space_finAEProgClaim.setStyle("background-color:red");
+			this.btnSearchFinAEProgClaim.setDisabled(isReadOnly("FinanceTypeDialog_finAEProgClaim"));
+		} else {
+			this.space_finAEProgClaim.setStyle("background-color:white");
+			this.btnSearchFinAEProgClaim.setDisabled(true);
+		}
+	}
+	
+	private void doCheckFinAEMaturity(String value) {
+		if (!StringUtils.trimToEmpty(value).equals("") && PennantConstants.FINANCE_PRODUCT_ISTISNA.equals(value)) {
+			this.btnSearchFinAEMaturity.setDisabled(isReadOnly("FinanceTypeDialog_finAEMaturity"));
+		} else {
+			this.btnSearchFinAEMaturity.setDisabled(true);
+		}
+	}
+
+	//	++++++++++++++++++++++++++++++
+	//	++++++++++ Tab 2++++++++++++
+	//	+++++++++++++++++++++++++++++
+	public void onChange$finGrcMargin(Event event) {
+		logger.debug("Entering onChange$finGrcMargin()");
+		logger.debug("Entering" + event.toString());
+		this.labe_GrcEffectiveRate.setValue(String.valueOf(rates(this.finGrcBaseRate.getValue(), this.finGrcSplRate.getValue(), getDCBValue(this.finGrcMargin))));
+		logger.debug("Leaving onChange$finGrcMargin()");
+	}
+
+	public void onCheck$finGrcIsIntCpz(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCheckGrcPftCpzFrq();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onChange$cbfinGrcRateType(Event event) {
+		if (this.cbfinGrcRateType.getSelectedItem() != null) {
+			doCheckRateType(this.cbfinGrcRateType, true);
+		}
+	}
+
+	public void onChange$cbfinRateType(Event event) {
+		if (this.cbfinRateType.getSelectedItem() != null) {
+			doCheckRateType(this.cbfinRateType, false);
+		}
+	}
+
+	public void onCheck$finIsIntCpz(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCheckPftCpzFrq();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onCheck$finIsRvwAlw(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCheckRpeayReview();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onCheck$finAlwIndRate(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCheckRepayIndRate();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onChange$cbfinSchdMthd(Event event) {
+		logger.debug("Entering" + event.toString());
+		if (!getCbSlctVal(cbfinRateType).equals("M")) {
+			this.finIndBaseRate.setValue("");
+			this.lovDescFinIndBaseRateName.setValue("");
+			this.btnSearchFinIndBaseRate.setDisabled(true);
+			if (!getCbSlctVal(this.cbfinSchdMthd).equals(CalculationConstants.PFT)) {
+				this.finAlwIndRate.setDisabled(true);
+				this.finAlwIndRate.setChecked(false);
+			} else if (this.finIsRvwAlw.isChecked()) {
+				this.finAlwIndRate.setDisabled(false);
+			}
+			if (this.finIsRvwAlw.isChecked()) {
+				if (getCbSlctVal(this.cbfinSchdMthd).equals(CalculationConstants.PRI_PFT) || getCbSlctVal(this.cbfinSchdMthd).equals(CalculationConstants.PFT)) {
+					// Schedule Calculation Codes
+					fillComboBox(this.cbfinSchCalCodeOnRvw, "TILLMDT", scCalCode, "");
+					this.cbfinSchCalCodeOnRvw.setDisabled(true);
+				} else {
+					// Schedule Calculation Codes
+					fillComboBox(this.cbfinSchCalCodeOnRvw, "", scCalCode, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+					this.cbfinSchCalCodeOnRvw.setDisabled(false);
+				}
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/** To Enable or Disable GracePeriod Tab Profit Capitalize Frequency. */
+	private void doCheckGrcPftCpzFrq() {
+		logger.debug("Entering ");
+		if (this.finGrcIsIntCpz.isChecked()) {
+			if (!isReadOnly("FinanceTypeDialog_finGrcIsIntCpz")) {
+				this.cbfinGrcCpzFrqCode.setDisabled(false);
+				this.cbfinGrcCpzFrqDays.setDisabled(false);
+				this.cbfinGrcCpzFrqMth.setDisabled(false);
+			}
+		} else {
+			this.finGrcCpzFrq.setValue("");
+			this.cbfinGrcCpzFrqCode.setSelectedIndex(0);
+			this.cbfinGrcCpzFrqCode.setDisabled(true);
+			this.cbfinGrcCpzFrqDays.setSelectedIndex(0);
+			this.cbfinGrcCpzFrqDays.setDisabled(true);
+			this.cbfinGrcCpzFrqMth.setSelectedIndex(0);
+			this.cbfinGrcCpzFrqMth.setDisabled(true);
+
+		}
+		logger.debug("Leaving");
+	}
+
+	/** To Enable or Disable Schedule Tab Review Frequency. */
+	private void doCheckRpeayReview() {
+		logger.debug("Entering");
+		if (this.finIsRvwAlw.isChecked()) {
+			if (!isReadOnly("FinanceTypeDialog_finIsRvwAlw")) {
+				this.cbfinRvwFrqCode.setDisabled(false);
+				this.cbfinRvwFrqMth.setDisabled(false);
+				this.cbfinRvwFrqDays.setDisabled(false);
+				this.cbfinRvwRateApplFor.setDisabled(false);
+				this.cbfinSchCalCodeOnRvw.setDisabled(false);
+				this.space_cbfinSchCalCodeOnRvw.setStyle("background-color:red");
+				if (this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.PRI_PFT)
+				        || this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.PFT)) {
+					fillComboBox(this.cbfinSchCalCodeOnRvw, "TILLMDT", scCalCode, "");
+					this.cbfinSchCalCodeOnRvw.setDisabled(true);
+					this.space_cbfinSchCalCodeOnRvw.setStyle("background-color:white");
+				}
+				this.space_FinRvwRateApplFor.setStyle("background-color:red");
+
+				if (getCbSlctVal(this.cbfinSchdMthd).equals(CalculationConstants.PFT)) {
+					this.finAlwIndRate.setDisabled(false);
+				} else {
+					this.finAlwIndRate.setDisabled(true);
+				}
+			}
+		} else {
+			this.finRvwFrq.setValue("");
+			this.space_FinRvwRateApplFor.setStyle("background-color:white");
+			this.space_cbfinSchCalCodeOnRvw.setStyle("background-color:white");
+			this.cbfinRvwFrqCode.setSelectedIndex(0);
+			this.cbfinRvwFrqCode.setDisabled(true);
+			this.cbfinRvwFrqMth.setSelectedIndex(0);
+			this.cbfinRvwFrqMth.setDisabled(true);
+			this.cbfinRvwFrqDays.setSelectedIndex(0);
+			this.cbfinRvwFrqDays.setDisabled(true);
+			this.cbfinRvwRateApplFor.setSelectedIndex(0);
+			this.cbfinRvwRateApplFor.setDisabled(true);
+			this.cbfinSchCalCodeOnRvw.setSelectedIndex(0);
+			this.cbfinSchCalCodeOnRvw.setDisabled(true);
+			this.finAlwIndRate.setDisabled(true);
+			this.finAlwIndRate.setChecked(false);
+			this.finIndBaseRate.setValue("");
+			this.lovDescFinIndBaseRateName.setValue("");
+			this.btnSearchFinIndBaseRate.setDisabled(true);
+		}
+		this.space_finIndBaseRate.setStyle("background-color:white");
+		logger.debug("Leaving");
+	}
+
+	private void doCheckRepayIndRate() {
+		if (this.finAlwIndRate.isChecked()) {
+			this.space_finIndBaseRate.setStyle("background:red;");
+			this.btnSearchFinIndBaseRate.setDisabled(false);
+		} else {
+			this.finIndBaseRate.setValue("");
+			this.space_finIndBaseRate.setStyle("background:white;");
+			this.lovDescFinIndBaseRateName.setValue("");
+			this.btnSearchFinIndBaseRate.setDisabled(true);
+		}
+	}
+
+	/** To Enable or Disable Schedule Tab Profit Capitalize Frequency. */
+	private void doCheckPftCpzFrq() {
+		logger.debug("Entering");
+		if (this.finIsIntCpz.isChecked()) {
+			if (!isReadOnly("FinanceTypeDialog_finGrcIsIntCpz")) {
+				this.cbfinCpzFrqCode.setDisabled(false);
+				this.cbfinCpzFrqMth.setDisabled(false);
+				this.cbfinCpzFrqDays.setDisabled(false);
+			}
+		} else {
+			this.cbfinCpzFrqCode.setSelectedIndex(0);
+			this.cbfinCpzFrqCode.setDisabled(true);
+			this.cbfinCpzFrqMth.setSelectedIndex(0);
+			this.cbfinCpzFrqMth.setDisabled(true);
+			this.cbfinCpzFrqDays.setSelectedIndex(0);
+			this.cbfinCpzFrqDays.setDisabled(true);
+			this.finCpzFrq.setValue("");
+		}
+		logger.debug("Leaving");
+	}
+
+	private void doCheckRateType(Combobox combobox, boolean isGrc) {
+		logger.debug("Entering");
+		String value = getCbSlctVal(combobox);
+		//grace
+		if (isGrc) {
+			if ("R".equals(value)) {
+				this.btnSearchFinGrcBaseRate.setDisabled(isReadOnly("FinanceTypeDialog_finGrcBaseRate"));
+				this.btnSearchFinGrcSplRate.setDisabled(isReadOnly("FinanceTypeDialog_finGrcSplRate"));
+
+				this.finGrcIntRate.setReadonly(isReadOnly("FinanceTypeDialog_finGrcIntRate"));
+				this.finGrcMargin.setReadonly(isReadOnly("FinanceTypeDialog_FinGrcMargin"));
+
+				// Rate review
+				this.finGrcIsRvwAlw.setDisabled(false);
+				doCheckGraceReview();
+
+				//Indicative rate is mandatory
+				this.finGrcAlwIndRate.setChecked(false);
+				doCheckGrcAlwIndRate();
+
+			} else if ("F".equals(value) || "C".equals(value)) {
+				this.btnSearchFinGrcBaseRate.setDisabled(true);
+				this.lovDescFinGrcBaseRateName.setValue("");
+				this.btnSearchFinGrcSplRate.setDisabled(true);
+				this.lovDescFinGrcSplRateName.setValue("");
+				this.labe_GrcEffectiveRate.setValue("");
+
+				this.finGrcIntRate.setReadonly(isReadOnly("FinanceTypeDialog_finGrcIntRate"));
+				this.finGrcMargin.setReadonly(true);
+
+				// Rate review
+				this.finGrcIsRvwAlw.setDisabled(false);
+				doCheckGraceReview();
+
+				//Indicative rate is mandatory
+				this.finGrcAlwIndRate.setChecked(false);
+				doCheckGrcAlwIndRate();
+
+			} else {
+				this.btnSearchFinGrcBaseRate.setDisabled(true);
+				this.lovDescFinGrcBaseRateName.setValue("");
+				this.btnSearchFinGrcSplRate.setDisabled(true);
+				this.lovDescFinGrcSplRateName.setValue("");
+				this.labe_GrcEffectiveRate.setValue("");
+
+				this.finGrcIntRate.setReadonly(true);
+				this.finGrcMargin.setReadonly(true);
+
+				//No Rate review
+				this.finGrcIsRvwAlw.setChecked(false);
+				doCheckGraceReview();
+				this.finGrcIsRvwAlw.setDisabled(true);
+				//Indicative rate is mandatory
+				this.finGrcAlwIndRate.setChecked(true);
+				doCheckGrcAlwIndRate();
+			}
+
+		} else {
+			//repayment
+			if ("R".equals(value)) {
+				this.btnSearchFinBaseRate.setDisabled(isReadOnly("FinanceTypeDialog_finBaseRate"));
+				this.btnSearchFinSplRate.setDisabled(isReadOnly("FinanceTypeDialog_finSplRate"));
+				this.finIntRate.setReadonly(isReadOnly("FinanceTypeDialog_finIntRate"));
+				this.finMargin.setReadonly(isReadOnly("FinanceTypeDialog_FinMargin"));
+				//No Rate review
+				this.finIsRvwAlw.setDisabled(false);
+				doCheckRpeayReview();
+				//Indicative rate is mandatory
+				this.finAlwIndRate.setChecked(false);
+				doCheckRepayIndRate();
+
+			} else if ("F".equals(value) || "C".equals(value)) {
+				this.btnSearchFinBaseRate.setDisabled(true);
+				this.lovDescFinBaseRateName.setValue("");
+				this.btnSearchFinSplRate.setDisabled(true);
+				this.lovDescFinSplRateName.setValue("");
+				this.labe_EffectiveRate.setValue("");
+
+				this.finIntRate.setReadonly(isReadOnly("FinanceTypeDialog_finIntRate"));
+				this.finMargin.setReadonly(true);
+
+				//No Rate review
+				this.finIsRvwAlw.setDisabled(false);
+				doCheckRpeayReview();
+				//Indicative rate is mandatory
+				this.finAlwIndRate.setChecked(false);
+				doCheckRepayIndRate();
+
+			} else {
+				this.btnSearchFinBaseRate.setDisabled(true);
+				this.lovDescFinBaseRateName.setValue("");
+				this.btnSearchFinSplRate.setDisabled(true);
+				this.lovDescFinSplRateName.setValue("");
+				this.labe_EffectiveRate.setValue("");
+
+				this.finIntRate.setReadonly(true);
+				this.finMargin.setReadonly(true);
+
+				//No Rate review
+				this.finIsRvwAlw.setChecked(false);
+				doCheckRpeayReview();
+				this.finIsRvwAlw.setDisabled(true);
+				//Indicative rate is mandatory
+				this.finAlwIndRate.setChecked(true);
+				doCheckRepayIndRate();
+
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
+	}
+
+	public boolean isValidationOn() {
+		return this.validationOn;
+	}
+
+	public FinanceType getFinanceType() {
+		return this.financeType;
+	}
+
+	public void setFinanceType(FinanceType financeType) {
+		this.financeType = financeType;
+	}
+
+	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
+		this.financeTypeService = financeTypeService;
+	}
+
+	public FinanceTypeService getFinanceTypeService() {
+		return this.financeTypeService;
+	}
+
+	public void setFinanceTypeListCtrl(FinanceTypeListCtrl financeTypeListCtrl) {
+		this.financeTypeListCtrl = financeTypeListCtrl;
+	}
+
+	public FinanceTypeListCtrl getFinanceTypeListCtrl() {
+		return this.financeTypeListCtrl;
+	}
+
+	public PagedListService getPagedListService() {
+		pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		return pagedListService;
+	}
+
+	public void setPagedListService(PagedListService pagedListService) {
+		this.pagedListService = pagedListService;
+	}
+
+	/**
+	 * Get Audit Header Details
+	 * 
+	 * @param aFinanceType
+	 *            (FinanceType)
+	 * @param tranType
+	 *            (String)
+	 * @return auditHeader
+	 */
+	private AuditHeader getAuditHeader(FinanceType aFinanceType, String tranType) {
+		logger.debug("Entering getAuditHeader()");
+
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceType.getBefImage(), aFinanceType);
+		logger.debug("Leaving getAuditHeader()");
+		return new AuditHeader(String.valueOf(aFinanceType.getId()), null, null, null, auditDetail, aFinanceType.getUserDetails(), getOverideMap());
+
+	}
+
+	// To Show Error messages
+	private void showMessage(Exception e) {
+		logger.debug("Entering showMessage()");
+		AuditHeader auditHeader = new AuditHeader();
+		try {
+			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_FinanceTypeDialog, auditHeader);
+		} catch (Exception exp) {
+			logger.error(exp);
+		}
+		logger.debug("Leaving showMessage()");
+	}
+
+	public boolean isNotes_Entered() {
+		return notes_Entered;
+	}
+
+	public void setNotes_Entered(boolean notes_Entered) {
+		this.notes_Entered = notes_Entered;
+	}
+
+	/** To get Note Dialog on clicking the button note */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void onClick$btnNotes(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		final HashMap map = new HashMap();
+		map.put("notes", getNotes());
+		map.put("control", this);
+		// call the zul-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void setNotes_entered(String notes) {
+		if (!isNotes_Entered()) {
+			if (org.apache.commons.lang.StringUtils.trimToEmpty(notes).equalsIgnoreCase("Y")) {
+				setNotes_Entered(true);
+			} else {
+				setNotes_Entered(false);
+			}
+		}
+	}
+
+	private Notes getNotes() {
+		logger.debug("Entering");
+		Notes notes = new Notes();
+		notes.setModuleName("FinanceType");
+		notes.setReference(getFinanceType().getFinType());
+		notes.setVersion(getFinanceType().getVersion());
+		logger.debug("Leaving");
+		return notes;
+	}
+
+	public int getCountRows() {
+		return countRows;
+	}
+
+	public void setCountRows(int countRows) {
+		this.countRows = countRows;
+	}
+
+	public void onChange$finMargin(Event event) {
+		logger.debug("Entering onChange$finMargin()");
+		logger.debug("Entering" + event.toString());
+		this.labe_EffectiveRate.setValue(String.valueOf(rates(this.finBaseRate.getValue(), this.finSplRate.getValue(), getDCBValue(this.finMargin))));
+		logger.debug("Leaving onChange$finMargin()");
+	}
+
+	public void onCheck$finGrcIsRvwAlw(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCheckGraceReview();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/** To Disable Grace Period Tab Profit Review Frequency Used Twice */
+	private void doCheckGraceReview() {
+		logger.debug("Entering doDisableGrcRVFrequency()");
+		if (this.finGrcIsRvwAlw.isChecked()) {
+			if (!isReadOnly("FinanceTypeDialog_finGrcIsRvwAlw")) {
+				this.cbfinGrcRvwFrqCode.setDisabled(false);
+				this.cbfinGrcRvwFrqMth.setDisabled(false);
+				this.cbfinGrcRvwFrqDays.setDisabled(false);
+				this.cbfinGrcRvwRateApplFor.setDisabled(false);
+				this.space_FinGrcRvwRateApplFor.setStyle("background-color:red");
+				this.finGrcAlwIndRate.setDisabled(false);
+			}
+		} else {
+			this.finGrcRvwFrq.setValue("");
+			this.space_FinGrcRvwRateApplFor.setStyle("background-color:white");
+			this.cbfinGrcRvwFrqCode.setSelectedIndex(0);
+			this.cbfinGrcRvwFrqCode.setDisabled(true);
+			this.cbfinGrcRvwFrqMth.setSelectedIndex(0);
+			this.cbfinGrcRvwFrqMth.setDisabled(true);
+			this.cbfinGrcRvwFrqDays.setSelectedIndex(0);
+			this.cbfinGrcRvwFrqDays.setDisabled(true);
+			this.cbfinGrcRvwRateApplFor.setSelectedIndex(0);
+			this.cbfinGrcRvwRateApplFor.setDisabled(true);
+			this.finGrcAlwIndRate.setChecked(false);
+			this.finGrcAlwIndRate.setDisabled(true);
+			this.finGrcIndBaseRate.setValue("");
+			this.lovDescFinGrcIndBaseRateName.setValue("");
+			this.btnSearchFinGrcIndBaseRate.setDisabled(true);
+		}
+		this.space_finGrcIndBaseRate.setStyle("background-color:white");
+		logger.debug("Leaving doDisableGrcRVFrequency()");
+	}
+
+	public void onCheck$finGrcAlwIndRate(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCheckGrcAlwIndRate();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private void doCheckGrcAlwIndRate() {
+		if (this.finGrcAlwIndRate.isChecked()) {
+			this.space_finGrcIndBaseRate.setStyle("background:red;");
+			this.btnSearchFinGrcIndBaseRate.setDisabled(false);
+		} else {
+			this.finGrcIndBaseRate.setValue("");
+			this.lovDescFinGrcIndBaseRateName.setValue("");
+			this.space_finGrcIndBaseRate.setStyle("background:white;");
+			this.btnSearchFinGrcIndBaseRate.setDisabled(true);
+		}
+	}
+
+	public void onCheck$finIsAlwGrcRepay(Event event) {
+		logger.debug("Entering" + event.toString());
+		this.finGrcSchdMthd.setSelectedIndex(0);
+		doDisableGrcSchdMtd();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private void doDisableGrcSchdMtd() {
+		if (this.finIsAlwGrcRepay.isChecked()) {
+			this.space_finGrcSchdMthd.setStyle("background:red;");
+			this.finGrcSchdMthd.setDisabled(isReadOnly("FinanceTypeDialog_FinGrcSchdMthd"));
+		} else {
+			this.space_finGrcSchdMthd.setStyle("background:white;");
+			this.finGrcSchdMthd.setDisabled(true);
+		}
+	}
+
+	/** method to check rate type in grace tab */
+
+	public void onCheck$finIsAlwDifferment(Event event) {
+		logger.debug("Entering onCheck$finIsAlwDifferment()");
+		doDisableOrEnableDifferments(this.finIsAlwDifferment.isChecked(), this.finMaxDifferment, isReadOnly("FinanceTypeDialog_finMaxDifferment"));
+
+		if (getFinanceType().getLovDescAERule().containsKey("DEFRPY")) {
+			accSet = getFinanceType().getLovDescAERule().get("DEFRPY");
+			this.finDefRepay.setValue(accSet.getStringaERuleId());
+			this.lovDescFinDefRepayName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+		} else {
+			this.finDefRepay.setValue("");
+			this.lovDescFinDefRepayName.setValue("");
+		}
+		doCheckRpyDefferment();
+		logger.debug("Leaving onCheck$finIsAlwDifferment()");
+
+	}
+
+	public void onCheck$finIsAlwFrqDifferment(Event event) {
+		logger.debug("Entering onCheck$finIsAlwDifferment()");
+		doDisableOrEnableDifferments(this.finIsAlwFrqDifferment.isChecked(), this.finMaxFrqDifferment, isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
+
+		if (getFinanceType().getLovDescAERule().containsKey("DEFFRQ")) {
+			accSet = getFinanceType().getLovDescAERule().get("DEFFRQ");
+			this.finDeffreq.setValue(accSet.getStringaERuleId());
+			this.lovDescFinDeffreqName.setValue(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+		} else {
+			this.finDeffreq.setValue("");
+			this.lovDescFinDeffreqName.setValue("");
+		}
+		doCheckFrqDefferment();
+		logger.debug("Leaving onCheck$finIsAlwDifferment()");
+	}
+
+	private void doCheckFrqDefferment() {
+		if (this.finIsAlwFrqDifferment.isChecked()) {
+			this.space_finDeffreq.setStyle("background-color:red");
+			this.btnSearchFinDeffreq.setDisabled(isReadOnly("FinanceTypeDialog_FinDeffreq"));
+		} else {
+			this.space_finDeffreq.setStyle("background-color:white");
+			this.btnSearchFinDeffreq.setDisabled(true);
+		}
+	}
+
+	private void doCheckRpyDefferment() {
+		if (this.finIsAlwDifferment.isChecked()) {
+			this.space_finDefRepay.setStyle("background-color:red");
+			this.btnSearchFinDefRepay.setDisabled(isReadOnly("FinanceTypeDialog_FinDefRepay"));
+		} else {
+			this.space_finDefRepay.setStyle("background-color:white");
+			this.btnSearchFinDefRepay.setDisabled(true);
+		}
+	}
+
+	private void doDisableOrEnableDifferments(boolean value, Intbox intbox, boolean isAllowed) {
+		logger.debug("Entering");
+		if (!isAllowed) {
+			if (value) {
+				intbox.setDisabled(false);
+			} else {
+				intbox.setValue(0);
+				intbox.setDisabled(true);
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	/** To Check the user action based on the result removes the error messages; */
+	public void onCheck$userAction(Event event) {
+		logger.debug("Entering" + event.toString());
+		if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+			doClearErrMessages();
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/** TO clear all error messages */
+	private void doClearErrMessages() {
+		logger.debug("Entering");
+		// Basic Tab
+		this.finType.clearErrorMessage();
+		this.finTypeDesc.clearErrorMessage();
+		this.lovDescFinCcyName.clearErrorMessage();
+		this.cbfinDaysCalType.clearErrorMessage();
+		this.lovDescFinAcTypeName.clearErrorMessage();
+		this.lovDescPftPayAcTypeName.clearErrorMessage();
+		this.lovDescFinContingentAcTypeName.clearErrorMessage();
+		this.finMaxAmount.clearErrorMessage();
+		this.finMinAmount.clearErrorMessage();
+		this.cbfinDftStmtFrqCode.clearErrorMessage();
+		this.finDftStmtFrq.clearErrorMessage();
+		this.cbfinDftStmtFrqMth.clearErrorMessage();
+		this.cbfinDftStmtFrqDays.clearErrorMessage();
+		this.finHistRetension.clearErrorMessage();
+		this.cbfinDftStmtFrqCode.clearErrorMessage();
+		this.cbfinDftStmtFrqMth.clearErrorMessage();
+		this.cbfinDftStmtFrqDays.clearErrorMessage();
+		this.cbfinSchdMthd.clearErrorMessage();
+		// Scheduling Tab
+		this.cbfinRateType.clearErrorMessage();
+		this.lovDescFinBaseRateName.clearErrorMessage();
+		this.lovDescFinSplRateName.clearErrorMessage();
+		this.finIntRate.clearErrorMessage();
+		this.fInMinRate.clearErrorMessage();
+		this.finMaxRate.clearErrorMessage();
+		this.cbfinDftIntFrqCode.clearErrorMessage();
+		this.cbfinDftIntFrqMth.clearErrorMessage();
+		this.cbfinDftIntFrqDays.clearErrorMessage();
+		this.cbfinCpzFrqCode.clearErrorMessage();
+		this.cbfinCpzFrqMth.clearErrorMessage();
+		this.cbfinCpzFrqDays.clearErrorMessage();
+		this.cbfinRvwFrqCode.clearErrorMessage();
+		this.cbfinRvwFrqMth.clearErrorMessage();
+		this.finMargin.clearErrorMessage();
+		this.cbfinRvwFrqDays.clearErrorMessage();
+		// Grace Tab
+		this.cbfinGrcRateType.clearErrorMessage();
+		this.lovDescFinGrcBaseRateName.clearErrorMessage();
+		this.lovDescFinGrcSplRateName.clearErrorMessage();
+		this.finGrcIntRate.clearErrorMessage();
+		this.fInGrcMinRate.clearErrorMessage();
+		this.finGrcMaxRate.clearErrorMessage();
+		this.cbfinGrcDftIntFrqCode.clearErrorMessage();
+		this.cbfinGrcDftIntFrqMth.clearErrorMessage();
+		this.cbfinGrcDftIntFrqDays.clearErrorMessage();
+		this.cbfinGrcCpzFrqCode.clearErrorMessage();
+		this.cbfinGrcCpzFrqMth.clearErrorMessage();
+		this.cbfinGrcCpzFrqDays.clearErrorMessage();
+		this.cbfinGrcRvwFrqCode.clearErrorMessage();
+		this.cbfinGrcRvwFrqMth.clearErrorMessage();
+		this.cbfinGrcRvwFrqDays.clearErrorMessage();
+		this.finGrcMargin.clearErrorMessage();
+		// Repayments Tab
+		this.finMinTerm.clearErrorMessage();
+		this.finMaxTerm.clearErrorMessage();
+		this.finDftTerms.clearErrorMessage();
+		this.cbfinRpyFrqCode.clearErrorMessage();
+		this.cbfinRpyFrqMth.clearErrorMessage();
+		this.cbfinRpyFrqDays.clearErrorMessage();
+		this.cbfinRepayMethod.clearErrorMessage();
+		this.finODRpyTries.clearErrorMessage();
+		// Accounting Tab
+		this.lovDescFinAEAddDsbODName.clearErrorMessage();
+		this.lovDescFinAEAddDsbFDName.clearErrorMessage();
+		this.lovDescFinAEAddDsbFDAName.clearErrorMessage();
+		this.lovDescFinAEAmzNormName.clearErrorMessage();
+		this.lovDescFinAEAmzSuspName.clearErrorMessage();
+		this.lovDescFinAEToNoAmzName.clearErrorMessage();
+		this.lovDescFinToAmzName.clearErrorMessage();
+		this.lovDescFinAERateChgName.clearErrorMessage();
+		this.lovDescFinAERepayName.clearErrorMessage();
+		this.lovDescFinAEEarlyPayName.clearErrorMessage();
+		this.lovDescFinAEEarlySettleName.clearErrorMessage();
+		this.lovDescFinAEWriteOffName.clearErrorMessage();
+		this.lovDescFinDepreciationName.clearErrorMessage();
+		this.lovDescFinDeffreqName.clearErrorMessage();
+		this.lovDescFinDefRepayName.clearErrorMessage();
+		this.finMinDownPayAmount.clearErrorMessage();
+		logger.debug("Leaving");
+	}
+
+	public void onClick$btnCopyTo(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		doClose();
+		Events.postEvent("onClick$button_FinanceTypeList_NewFinanceType", financeTypeListCtrl.window_FinanceTypeList, getFinanceType());
+		logger.debug("Leaving" + event.toString());
+	}
+
+	// ====================//
+	// ====Utilities=======//
+	// ====================//
+
+	/**
+	 * To check the higher of the give two decimal boxes
+	 * 
+	 * @param Decimalbox
+	 *            ,Decimal box,String,String
+	 * @throws WrongValueException
+	 */
+	private void mustBeHigher(Decimalbox maxvalue, Decimalbox minvalue, String maxlabel, String minlabel) {
+		logger.debug("Entering");
+		if ((maxvalue.getValue() != null) && (minvalue.getValue() != null) && (maxvalue.getValue().compareTo(new BigDecimal(0)) != 0)) {
+			if (maxvalue.getValue().compareTo(minvalue.getValue()) != 1) {
+				throw new WrongValueException(maxvalue, Labels.getLabel("FIELD_IS_GREATER", new String[] { Labels.getLabel(maxlabel), Labels.getLabel(minlabel) }));
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * To avoid null from getting the value of decimal box
+	 *  <br> IN PaymentDialogCtrl.java
+	 * @param decimalbox
+	 * @return  BigDecimal 
+	 */
+	private BigDecimal getDCBValue(Decimalbox decimalbox) {
+		if (decimalbox.getValue() != null) {
+			return decimalbox.getValue();
+		}
+		return new BigDecimal(0);
+	}
+
+	private BigDecimal rates(String baseRateCode, String splRateCode, BigDecimal margin) {
+		logger.debug("Entering");
+		RateDetail rate = new RateDetail();
+		rate.setBaseRateCode(baseRateCode);
+		rate.setSplRateCode(splRateCode);
+		rate.setMargin(margin);
+		rate.setValueDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+		RateDetail rateDetail = RateUtil.getRefRate(rate);
+		if (rateDetail != null && rateDetail.getNetRefRateLoan() != null) {
+			logger.debug("Leaving");
+			return rateDetail.getNetRefRateLoan();
+		} else {
+			logger.debug("Leaving");
+			return new BigDecimal(0);
+		}
+	}
+
+	private void doCheckBoxChecked(boolean checked, Checkbox checkbox) {
+		if (checked) {
+			checkbox.setDisabled(false);
+		} else {
+			checkbox.setDisabled(true);
+			checkbox.setChecked(false);
+		}
+	}
+
+	/**
+	 * To set Default values when new record
+	 *  <br> IN FinanceTypeDialogCtrl.java  
+	 */
+	private void setDefaultValues() {
+		logger.debug("Entering");
+		this.pftPayAcType.setValue("");
+		this.finBankContingentAcType.setValue("");
+		this.finContingentAcType.setValue("");
+		this.finProvisionAcType.setValue("");
+		this.finIsOpenPftPayAcc.setValue(false);
+		this.finDftStmtFrq.setValue("Y1231");
+		this.finHistRetension.setValue(12);
+		this.finCollateralReq.setValue(false);
+		this.finCollateralOvrride.setValue(false);
+		this.finDepreciationFrq.setValue("M0031");
+		this.fInGrcMinRate.setValue(BigDecimal.ZERO);
+		this.finGrcMaxRate.setValue(BigDecimal.ZERO);
+		this.cbFinGrcScheduleOn.setSelectedIndex(2);
+		this.finGrcAlwRateChgAnyDate.setValue(false);
+		this.finGrcAlwIndRate.setValue(false);
+		this.finGrcIndBaseRate.setValue("");
+		this.fInMinRate.setValue(BigDecimal.ZERO);
+		this.finMaxRate.setValue(BigDecimal.ZERO);
+		this.finAlwRateChangeAnyDate.setValue(false);
+		this.finIsAlwEarlyRpy.setValue(true);
+		this.finIsAlwEarlySettle.setValue(true);
+		this.finAEEarlyPay.setValue("");
+		this.finAEEarlySettle.setValue("");
+		logger.debug("Leaving ");
+	}
+
+	//============================================================= Frequencies ============================================//	
+	/* Tab 2 */
+	public void onSelect$cbfinGrcDftIntFrqCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinGrcDftIntFrqCode);
+		onSelectFrqCode(StmtFrqCode, this.cbfinGrcDftIntFrqCode, this.cbfinGrcDftIntFrqMth, this.cbfinGrcDftIntFrqDays, this.finGrcDftIntFrq,
+		        isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinGrcDftIntFrqMth(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinGrcDftIntFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinGrcDftIntFrqMth);
+		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinDftIntFrqMth, this.cbfinGrcDftIntFrqDays, this.finGrcDftIntFrq, isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinGrcDftIntFrqDays(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinGrcDftIntFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinGrcDftIntFrqMth);
+		String StmtFrqday = getCbSlctVal(this.cbfinGrcDftIntFrqDays);
+
+		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, this.finGrcDftIntFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinGrcCpzFrqCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinGrcCpzFrqCode);
+		onSelectFrqCode(StmtFrqCode, this.cbfinGrcCpzFrqCode, this.cbfinGrcCpzFrqMth, this.cbfinGrcCpzFrqDays, this.finGrcCpzFrq, isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinGrcCpzFrqMth(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinGrcCpzFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinGrcCpzFrqMth);
+		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinGrcCpzFrqMth, this.cbfinGrcCpzFrqDays, this.finGrcCpzFrq, isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinGrcCpzFrqDays(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinGrcCpzFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinGrcCpzFrqMth);
+		String StmtFrqday = getCbSlctVal(this.cbfinGrcCpzFrqDays);
+		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, this.finGrcCpzFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinGrcRvwFrqCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinGrcRvwFrqCode);
+		onSelectFrqCode(StmtFrqCode, this.cbfinGrcRvwFrqCode, this.cbfinGrcRvwFrqMth, this.cbfinGrcRvwFrqDays, this.finGrcRvwFrq, isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinGrcRvwFrqMth(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinGrcRvwFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinGrcRvwFrqMth);
+		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinGrcRvwFrqMth, this.cbfinGrcRvwFrqDays, this.finGrcRvwFrq, isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinGrcRvwFrqDays(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinGrcRvwFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinGrcRvwFrqMth);
+		String StmtFrqday = getCbSlctVal(this.cbfinGrcRvwFrqDays);
+		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, this.finGrcRvwFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/* Tab 3 */
+	public void onSelect$cbfinDftIntFrqCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinDftIntFrqCode);
+		onSelectFrqCode(StmtFrqCode, this.cbfinDftIntFrqCode, this.cbfinDftIntFrqMth, this.cbfinDftIntFrqDays, this.finDftIntFrq, isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinDftIntFrqMth(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinDftIntFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinDftIntFrqMth);
+		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinDftIntFrqMth, this.cbfinDftIntFrqDays, this.finDftIntFrq, isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinDftIntFrqDays(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinDftIntFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinDftIntFrqMth);
+		String StmtFrqday = getCbSlctVal(this.cbfinDftIntFrqDays);
+		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, this.finDftIntFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinRpyFrqCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinRpyFrqCode);
+		onSelectFrqCode(StmtFrqCode, this.cbfinRpyFrqCode, this.cbfinRpyFrqMth, this.cbfinRpyFrqDays, this.finRpyFrq, isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinRpyFrqMth(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinRpyFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinRpyFrqMth);
+		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinRpyFrqMth, this.cbfinRpyFrqDays, this.finRpyFrq, isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinRpyFrqDays(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinRpyFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinRpyFrqMth);
+		String StmtFrqday = getCbSlctVal(this.cbfinRpyFrqDays);
+		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, this.finRpyFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinCpzFrqCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinCpzFrqCode);
+		onSelectFrqCode(StmtFrqCode, this.cbfinCpzFrqCode, this.cbfinCpzFrqMth, this.cbfinCpzFrqDays, this.finCpzFrq, isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinCpzFrqMth(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinCpzFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinCpzFrqMth);
+		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinCpzFrqMth, this.cbfinCpzFrqDays, this.finCpzFrq, isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinCpzFrqDays(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqday = getCbSlctVal(this.cbfinCpzFrqDays);
+		String StmtFrqCode = getCbSlctVal(this.cbfinCpzFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinCpzFrqMth);
+		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, this.finCpzFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinRvwFrqCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinRvwFrqCode);
+		onSelectFrqCode(StmtFrqCode, this.cbfinRvwFrqCode, this.cbfinRvwFrqMth, this.cbfinRvwFrqDays, this.finRvwFrq, isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinRvwFrqMth(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinRvwFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinRvwFrqMth);
+		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinRvwFrqMth, this.cbfinRvwFrqDays, this.finRvwFrq, isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinRvwFrqDays(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinRvwFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinRvwFrqMth);
+		String StmtFrqday = getCbSlctVal(this.cbfinRvwFrqDays);
+		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, this.finRvwFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	//=============================================== Hidden =========================================================//
+	public void onSelect$cbfinDftStmtFrqCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinDftStmtFrqCode);
+		onSelectFrqCode(StmtFrqCode, this.cbfinDftStmtFrqCode, this.cbfinDftStmtFrqMth, this.cbfinDftStmtFrqDays, this.finDftStmtFrq, isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinDftStmtFrqMth(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinDftStmtFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinDftStmtFrqMth);
+		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinDftStmtFrqMth, this.cbfinDftStmtFrqDays, this.finDftStmtFrq, isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinDftStmtFrqDays(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinDftStmtFrqCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinDftStmtFrqMth);
+		String StmtFrqday = getCbSlctVal(this.cbfinDftStmtFrqDays);
+		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, finDftStmtFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinDepreciationCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinDepreciationCode);
+		onSelectFrqCode(StmtFrqCode, this.cbfinDepreciationCode, this.cbfinDepreciationMth, this.cbfinDepreciationDays, this.finDepreciationFrq,
+		        isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinDepreciationMth(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinDepreciationCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinDepreciationMth);
+		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinDepreciationMth, this.cbfinDepreciationDays, this.finDepreciationFrq, isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$cbfinDepreciationDays(Event event) {
+		logger.debug("Entering" + event.toString());
+		String StmtFrqCode = getCbSlctVal(this.cbfinDepreciationCode);
+		String StmtFrqMonth = getCbSlctVal(this.cbfinDepreciationMth);
+		String StmtFrqday = getCbSlctVal(this.cbfinDepreciationDays);
+		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, this.finDepreciationFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onCheck$finCollateralReq(Event event) {
+		logger.debug("Entering");
+		doCheckBoxChecked(this.finCollateralReq.isChecked(), this.finCollateralOvrride);
+		logger.debug("Leaving");
+	}
+}

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_DiaryNotesSearch"
+		title="${c:l('window_DiaryNotesSearch.title')}" border="none"
+		apply="${diaryNotesSearchCtrl}" closable="true" width="450px"
+		height="430px" sizable="true">
+
+		<borderlayout>
+			<north></north>
+			<center flex="true" autoscroll= "true">
+				<panel>
+					<panelchildren style="padding: 5px">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column width="70%" />
+							</columns>
+							<rows>
+								<row visible="false">
+									<label id="label_DiaryNotesSearch_SeqNo" value="${c:l('label_DiaryNotesSearch_SeqNo.value')}" />
+									<listbox id="sortOperator_seqNo" width="43px" mold="select" rows="1" />
+										<textbox id="seqNo" width="90px" maxlength="10" />
+								</row>
+								<row>
+									<label id="label_DiaryNotesSearch_DnType" value="${c:l('label_DiaryNotesSearch_DnType.value')}" />
+									<listbox id="sortOperator_dnType" width="43px" mold="select" rows="1" />
+										<textbox id="dnType" width="90px" maxlength="10" />
+								</row>
+								<row>
+									<label id="label_DiaryNotesSearch_DnCreatedNo" value="${c:l('label_DiaryNotesSearch_DnCreatedNo.value')}" />
+									<listbox id="sortOperator_dnCreatedNo" width="43px" mold="select" rows="1" />
+										<textbox id="dnCreatedNo" width="117px" maxlength="13" />
+								</row>
+								<row>
+									<label id="label_DiaryNotesSearch_DnCreatedName" value="${c:l('label_DiaryNotesSearch_DnCreatedName.value')}" />
+									<listbox id="sortOperator_dnCreatedName" width="43px" mold="select" rows="1" />
+										<textbox id="dnCreatedName" width="200px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_DiaryNotesSearch_FrqCode" value="${c:l('label_DiaryNotesSearch_FrqCode.value')}" />
+									<listbox id="sortOperator_frqCode" width="43px" mold="select" rows="1" />
+										<textbox id="frqCode" width="72px" maxlength="8" />
+								</row>
+								<row visible="false">
+									<label id="label_DiaryNotesSearch_FirstActionDate" value="${c:l('label_DiaryNotesSearch_FirstActionDate.value')}" />
+									<listbox id="sortOperator_firstActionDate" width="43px" mold="select" rows="1" />										
+										<textbox id = "firstActionDate" width="100px" ></textbox>
+								</row>
+								<row>
+									<label id="label_DiaryNotesSearch_NextActionDate" value="${c:l('label_DiaryNotesSearch_NextActionDate.value')}" />
+									<listbox id="sortOperator_nextActionDate" width="43px" mold="select" rows="1" />										
+										<textbox id = "nextActionDate" width="100px" ></textbox>
+								</row>
+								<row visible= "false">
+									<label id="label_DiaryNotesSearch_LastActionDate" value="${c:l('label_DiaryNotesSearch_LastActionDate.value')}" />
+									<listbox id="sortOperator_lastActionDate" width="43px" mold="select" rows="1" />
+										<textbox id="lastActionDate" width="100px" maxlength="23" />
+								</row>
+								<row>
+									<label id="label_DiaryNotesSearch_FinalActionDate" value="${c:l('label_DiaryNotesSearch_FinalActionDate.value')}" />
+									<listbox id="sortOperator_finalActionDate" width="43px" mold="select" rows="1" />										
+										<textbox id = "finalActionDate" width="100px"></textbox>
+								</row>
+								<row>
+									<label id="label_DiaryNotesSearch_Suspend" value="${c:l('label_DiaryNotesSearch_Suspend.value')}" />
+									<listbox id="sortOperator_suspend" width="43px" mold="select" rows="1" />
+										<checkbox id="suspend" checked="false"/>
+								</row>
+								<row visible="false">
+									<label id="label_DiaryNotesSearch_SuspendStartDate" value="${c:l('label_DiaryNotesSearch_SuspendStartDate.value')}" />
+									<listbox id="sortOperator_suspendStartDate" width="43px" mold="select" rows="1" />
+										<textbox id="suspendStartDate" width="100px" maxlength="23" ></textbox>
+								</row>
+								<row visible="false">
+									<label id="label_DiaryNotesSearch_SuspendEndDate" value="${c:l('label_DiaryNotesSearch_SuspendEndDate.value')}" />
+									<listbox id="sortOperator_suspendEndDate" width="43px" mold="select" rows="1" />
+										<textbox id="suspendEndDate" width="100px" maxlength="23" ></textbox>
+								</row>
+								<row visible="false">
+									<label id="label_DiaryNotesSearch_RecordDeleted" value="${c:l('label_DiaryNotesSearch_RecordDeleted.value')}" />
+									<listbox id="sortOperator_recordDeleted" width="43px" mold="select" rows="1" />
+										<checkbox id="recordDeleted" checked="false"/>
+								</row>
+								<row visible="false">
+									<label id="label_DiaryNotesSearch_Narration" value="${c:l('label_DiaryNotesSearch_Narration.value')}" />
+									<listbox id="sortOperator_narration" width="43px" mold="select" rows="1" />
+										<textbox id="narration" width="4,500px" maxlength="500" />
+								</row>
+								<row>
+									<label id="label_DiaryNotesSearch_RecordStatus" value="${c:l('label_DiaryNotesSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_DiaryNotesSearch_RecordType" value="${c:l('label_DiaryNotesSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+					</panelchildren>
+				</panel>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouthDiaryNotes" align="left" width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20"
+										label="${c:l('btnSearch.label')}"
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+									<button id="btnClose" height="20"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<label
+										id="label_DiaryNotesSearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

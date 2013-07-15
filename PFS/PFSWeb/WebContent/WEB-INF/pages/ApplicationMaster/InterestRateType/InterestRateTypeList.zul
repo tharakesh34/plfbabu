@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_InterestRateTypeList"
+			apply="${interestRateTypeListCtrl}" border="none" width="100%">
+
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center"
+						style="border-style: none;">
+						<button
+							id="button_InterestRateTypeList_InterestRateTypeSearchDialog"
+							height="24px" label = "${c:l('label_Filter')}"
+							autodisable="button_InterestRateTypeList_InterestRateTypeSearchDialog,button_InterestRateTypeList_PrintList,button_InterestRateTypeList_NewInterestRateType,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_InterestRateTypeList_InterestRateTypeSearchDialog.tooltiptext')}" />
+						<button
+							id="button_InterestRateTypeList_PrintList" height="24px"
+							label = "${c:l('label_Print')}"
+							autodisable="button_InterestRateTypeList_InterestRateTypeSearchDialog,button_InterestRateTypeList_PrintList,button_InterestRateTypeList_NewInterestRateType,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_InterestRateTypeList_PrintList.tooltiptext')}" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" style="border-style: none;">
+						<button
+							id="button_InterestRateTypeList_NewInterestRateType"
+							height="24px" label = "${c:l('label_New')}"
+							tooltiptext="${c:l('button_InterestRateTypeList_NewInterestRateType.tooltiptext')}" />
+						<button id="btnRefresh" height="24px"
+							label = "${c:l('label_Refresh')}"
+							autodisable="button_InterestRateTypeList_InterestRateTypeSearchDialog,button_InterestRateTypeList_PrintList,button_InterestRateTypeList_NewInterestRateType,btnRefresh,btnHelp"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						<button id="btnHelp" height="24px"
+							label = "${c:l('label_Help')}"
+							autodisable="button_InterestRateTypeList_InterestRateTypeSearchDialog,button_InterestRateTypeList_PrintList,button_InterestRateTypeList_NewInterestRateType,btnRefresh,btnHelp"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderLayout_InterestRateTypeList">
+
+				<north border="none" />
+				<center border="none">
+
+					<listbox id="listBoxInterestRateType" vflex="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
+						<listhead sizable="true">
+							<listheader id="listheader_IntRateTypeCode"
+								label="${c:l('listheader_IntRateTypeCode.label')}" sort="auto"
+								width="15%" />
+							<listheader id="listheader_IntRateTypeDesc"
+								label="${c:l('listheader_IntRateTypeDesc.label')}" sort="auto"
+								width="55%" />
+							<listheader
+								id="listheader_IntRateTypeIsActive"
+								label="${c:l('listheader_IntRateTypeIsActive.label')}"
+								sort="auto" width="10%" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								width="10%" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								width="10%" />
+						</listhead>
+					</listbox>
+
+				</center>
+				<south border="none">
+					<paging id="pagingInterestRateTypeList" />
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>

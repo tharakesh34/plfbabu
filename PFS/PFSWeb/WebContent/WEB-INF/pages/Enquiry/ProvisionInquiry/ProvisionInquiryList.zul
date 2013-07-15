@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_ProvisionList" apply="${provisionListCtrl}"
+			border="none" width="100%">
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center"
+						style="border-style: none;">
+						<button
+							id="button_ProvisionList_ProvisionSearchDialog" height="24px" visible="false"
+							label = "${c:l('label_Filter')}"
+							autodisable="button_ProvisionList_ProvisionSearchDialog,button_ProvisionList_PrintList,button_ProvisionList_NewProvision,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_ProvisionList_ProvisionSearchDialog.tooltiptext')}" />
+						<button id="button_ProvisionList_PrintList"
+							height="24px" label = "${c:l('label_Print')}"
+							autodisable="button_ProvisionList_ProvisionSearchDialog,button_ProvisionList_PrintList,button_ProvisionList_NewProvision,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_ProvisionList_PrintList.tooltiptext')}" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" style="border-style: none;">
+						<button id="button_ProvisionList_NewProvision"
+							height="24px" label = "${c:l('label_New')}"
+							autodisable="button_ProvisionList_ProvisionSearchDialog,button_ProvisionList_PrintList,button_ProvisionList_NewProvision,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_ProvisionList_NewProvision.tooltiptext')}" />
+						<button id="btnRefresh" height="24px"
+							label = "${c:l('label_Refresh')}"
+							autodisable="button_ProvisionList_ProvisionSearchDialog,button_ProvisionList_PrintList,button_ProvisionList_NewProvision,btnRefresh,btnHelp"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						<button id="btnHelp" height="24px"
+							label = "${c:l('label_Help')}"
+							autodisable="button_ProvisionList_ProvisionSearchDialog,button_ProvisionList_PrintList,button_ProvisionList_NewProvision,btnRefresh,btnHelp"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderLayout_ProvisionList">
+				<north border="none">
+					<textbox id="moduleName" value="PROVENQ"
+						visible="false" />
+				</north>
+
+				<center border="none">
+
+					<vlayout style="padding:4px;">
+						<groupbox id="gb_basicDetails" mold="3d">
+							<grid id="grid_enquiryDetails"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px">
+								<columns>
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label
+											id="label_FinanceEnquiryList_CustCIF"
+											value="${c:l('label_FinanceEnquiryList_CustCIF.value')}" />
+										<listbox
+											id="sortOperator_custCIF" width="43px" mold="select"
+											rows="1" />
+										<hbox>
+											<uppercasebox id="custCIF"
+												width="150px" />
+											<button
+												id="btnSearchCustCIF"
+												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchCustCIF.tooltiptext')}"
+												image="/images/icons/LOVSearch.png" height="24px" />
+										</hbox>
+										<label
+											id="label_FinanceEnquiryList_Branch"
+											value="${c:l('label_FinanceEnquiryList_Branch.value')}" />
+										<listbox
+											id="sortOperator_Branch" width="43px" mold="select" rows="1" />
+										<hbox>
+											<textbox id="branchCode"
+												width="150px" />
+											<button id="btnSearchBranch"
+												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchBranch.tooltiptext')}"
+												image="/images/icons/LOVSearch.png" height="24px" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinanceEnquiryList_StartDate"
+											value="${c:l('label_FinanceEnquiryList_StartDate.value')}" />
+										<listbox
+											id="sortOperator_StartDate" width="43px" mold="select"
+											rows="1" />
+										<hbox>
+											<datebox id="startDate_one"
+												width="100px" format="dd/MM/yyyy" />
+											<label id="label_startDate"
+												value="To" style="font-weight:bold;font-size:10px;"
+												visible="false" />
+											<datebox id="startDate_two"
+												width="100px" format="dd/MM/yyyy" visible="false" />
+										</hbox>
+										<label
+											id="label_FinanceEnquiryList_MaturityDate"
+											value="${c:l('label_FinanceEnquiryList_MaturityDate.value')}" />
+										<listbox
+											id="sortOperator_MaturityDate" width="43px" mold="select"
+											rows="1" />
+										<hbox>
+											<datebox
+												id="maturityDate_one" width="100px" format="dd/MM/yyyy" />
+											<label
+												id="label_maturityDate" value="To"
+												style="font-weight:bold;font-size:10px;" visible="false" />
+											<datebox
+												id="maturityDate_two" width="100px" format="dd/MM/yyyy"
+												visible="false" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinanceEnquiryList_FinProduct"
+											value="${c:l('label_FinanceEnquiryList_FinProduct.value')}" />
+										<listbox
+											id="sortOperator_FinProduct" width="43px" mold="select"
+											rows="1" />
+										<hbox>
+											<uppercasebox
+												id="finProduct" width="150px" />
+											<button
+												id="btnSearchFinProduct"
+												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchFinProduct.tooltiptext')}"
+												image="/images/icons/LOVSearch.png" height="24px" />
+										</hbox>
+										<label
+											id="label_FinanceEnquiryList_FinType"
+											value="${c:l('label_FinanceEnquiryList_FinType.value')}" />
+										<listbox
+											id="sortOperator_FinType" width="43px" mold="select"
+											rows="1" />
+										<hbox>
+											<uppercasebox id="finType"
+												width="150px" />
+											<button
+												id="btnSearchFinType"
+												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchFinType.tooltiptext')}"
+												image="/images/icons/LOVSearch.png" height="24px" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinanceEnquiryList_FinRef"
+											value="${c:l('label_FinanceEnquiryList_FinRef.value')}" />
+										<listbox
+											id="sortOperator_FinRef" width="43px" mold="select" rows="1" />
+										<hbox>
+											<uppercasebox id="finRef"
+												width="150px" />
+											<button id="btnSearchFinRef"
+												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchFinRef.tooltiptext')}"
+												image="/images/icons/LOVSearch.png" height="24px" />
+										</hbox>
+										<label
+											id="label_FinanceEnquiryList_FinCcy"
+											value="${c:l('label_FinanceEnquiryList_FinCcy.value')}" />
+										<listbox
+											id="sortOperator_FinCcy" width="43px" mold="select" rows="1" />
+										<hbox>
+											<uppercasebox id="finCcy"
+												width="150px" />
+											<button id="btnSearchFinCcy"
+												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchFinCcy.tooltiptext')}"
+												image="/images/icons/LOVSearch.png" height="24px" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<toolbar align="center"
+							style="border-style: none;">
+							<button id="button_Search"
+								label="${c:l('label_FinanceEnquiryList_Search.value')}"
+								tooltiptext="${c:l('label_FinanceEnquiryList_button_Search.tooltiptext')}"
+								height="24px"   />
+							<button height="24px" id="button_Reset"
+								label="${c:l('label_FinanceEnquiryList_Reset.value')}"
+								tooltiptext="${c:l('button_FinanceEnquiryList_ResetList.tooltiptext')}" />
+						</toolbar>
+
+						<listbox id="listBoxProvision" vflex="true" emptyMessage="No Records Found"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
+							<listhead sizable="true">
+								<listheader id="listheader_FinReference"
+									label="${c:l('listheader_FinReference.label')}" sort="auto"
+									width="20%" />
+								<listheader id="listheader_CustID"
+									label="${c:l('listheader_CustID.label')}" sort="auto"
+									width="15%" />
+								<listheader
+									id="listheader_ProvisionCalDate"
+									label="${c:l('listheader_ProvisionCalDate.label')}" sort="auto"
+									width="13%" />
+								<listheader id="listheader_ProvisionDue"
+									label="${c:l('listheader_ProvisionDue.label')}" sort="auto"
+									width="16%" />
+								<listheader id="listheader_UseNFProv"
+									label="${c:l('listheader_UseNFProv.label')}" sort="auto"
+									width="10%" />
+								<listheader id="listheader_DueFromDate"
+									label="${c:l('listheader_DueFromDate.label')}" sort="auto"
+									width="13%" />
+								<listheader
+									id="listheader_LastFullyPaidDate"
+									label="${c:l('listheader_LastFullyPaidDate.label')}"
+									sort="auto" width="13%" />
+							</listhead>
+						</listbox>
+					</vlayout>
+				</center>
+				<south border="none">
+					<paging id="pagingProvisionList" />
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>

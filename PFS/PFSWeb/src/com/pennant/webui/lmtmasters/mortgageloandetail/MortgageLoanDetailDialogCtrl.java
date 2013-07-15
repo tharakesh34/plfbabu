@@ -1,0 +1,1785 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  MortgageLoanDetailDialogCtrl.java                                                   * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  14-10-2011    														*
+ *                                                                  						*
+ * Modified Date    :  19-10-2011    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 19-10-2011       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+ */
+
+package com.pennant.webui.lmtmasters.mortgageloandetail;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataAccessException;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Caption;
+import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Div;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Radiogroup;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.SimpleConstraint;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
+
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.amtmasters.PropertyDetail;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
+import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
+import com.pennant.backend.model.systemmasters.Province;
+import com.pennant.backend.service.lmtmasters.MortgageLoanDetailService;
+import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.search.Filter;
+import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
+import com.pennant.webui.util.ButtonStatusCtrl;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+
+/**
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
+ * This is the controller class for the
+ * /WEB-INF/pages/LMTMasters/MortgageLoanDetail/mortgageLoanDetailDialog.zul file. <br>
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
+ */
+public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable {
+
+	private static final long serialVersionUID = 5115034606502184903L;
+	private final static Logger logger = Logger.getLogger(MortgageLoanDetailDialogCtrl.class);
+
+	/*
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting auto wired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 */
+	protected Window     window_MortgageLoanDetailDialog;            // autoWired
+	protected Longbox    mortgProperty;                              // autoWired
+	protected Decimalbox mortgCurrentValue;                          // autoWired
+	protected Textbox    mortgPurposeOfLoan;                         // autoWired
+	protected Longbox    mortgPropertyRelation;                      // autoWired
+	protected Longbox    mortgOwnership;                             // autoWired
+	protected Textbox    mortgAddrHNbr;                              // autoWired
+	protected Textbox    mortgAddrFlatNbr;                           // autoWired
+	protected Textbox    mortgAddrStreet;                            // autoWired
+	protected Textbox    mortgAddrLane1;                             // autoWired
+	protected Textbox    mortgAddrLane2;                             // autoWired
+	protected Textbox    mortgAddrPOBox;                             // autoWired
+	protected Textbox    mortgAddrCountry;                           // autoWired
+	protected Textbox    mortgAddrProvince;                          // autoWired
+	protected Textbox    mortgAddrCity;                              // autoWired
+	protected Textbox    mortgAddrZIP;                               // autoWired
+	protected Textbox    mortgAddrPhone;                             // autoWired
+	
+	protected Label      recordStatus;                               // autoWired
+	protected Radiogroup userAction;                                 // autoWired
+	protected Groupbox   groupboxWf;                                 // autoWired
+	protected Row        statusRow;                                  // autoWired
+	
+	// not auto wired variables
+	private MortgageLoanDetail                  mortgageLoanDetail;          // over handed per parameters
+	private transient MortgageLoanDetailListCtrl mortgageLoanDetailListCtrl; // over handed per parameters
+
+	// old value variables for edit mode. that we can check if something
+	// on the values are edited since the last initialization.
+	private transient long  		oldVar_mortgProperty;
+	private transient BigDecimal  	oldVar_mortgCurrentValue;
+	private transient String  		oldVar_mortgPurposeOfLoan;
+	private transient long  		oldVar_mortgPropertyRelation;
+	private transient long  		oldVar_mortgOwnership;
+	private transient String  		oldVar_mortgAddrHNbr;
+	private transient String  		oldVar_mortgAddrFlatNbr;
+	private transient String  		oldVar_mortgAddrStreet;
+	private transient String  		oldVar_mortgAddrLane1;
+	private transient String  		oldVar_mortgAddrLane2;
+	private transient String  		oldVar_mortgAddrPOBox;
+	private transient String  		oldVar_mortgAddrCountry;
+	private transient String  		oldVar_mortgAddrProvince;
+	private transient String  		oldVar_mortgAddrCity;
+	private transient String  		oldVar_mortgAddrZIP;
+	private transient String  		oldVar_mortgAddrPhone;
+	private transient String        oldVar_recordStatus;
+	private transient boolean       validationOn;
+	private boolean                 notes_Entered=false;
+	private transient boolean       newFinance;
+	private transient int   ccyFormatter = 0;
+	
+	// Button controller for the CRUD buttons
+	private transient final String btnCtroller_ClassPrefix = "button_MortgageLoanDetailDialog_";
+	private transient ButtonStatusCtrl btnCtrl;
+	protected Button     btnNew;                                     // autoWired
+	protected Button     btnEdit;                                    // autoWired
+	protected Button     btnDelete;                                  // autoWired
+	protected Button     btnSave;                                    // autoWired
+	protected Button     btnCancel;                                  // autoWired
+	protected Button     btnClose;                                   // autoWired
+	protected Button     btnHelp;                                    // autoWired
+	protected Button     btnNotes;                                   // autoWired
+	
+	//Search Button declarations
+	protected Button     btnSearchMortgPropertyRelation;             // autoWired
+	protected Textbox    lovDescMortgPropertyRelationName;           // autoWired
+	private transient String 		oldVar_lovDescMortgPropertyRelationName;
+	
+	protected Button     btnSearchMortgProperty;                     // autoWired
+	protected Textbox    lovDescMortgPropertyName;                   // autoWired
+	private transient String 		oldVar_lovDescMortgPropertyName;
+	
+	protected Button     btnSearchMortgOwnership;                    // autoWired
+	protected Textbox    lovDescMortgOwnershipName;                  // autoWired
+	private transient String 		oldVar_lovDescMortgOwnershipName;
+	
+	protected Button     btnSearchMortgAddrCountry;                  // autoWired
+	protected Textbox    lovDescMortgAddrCountryName;                // autoWired
+	private transient String 		oldVar_lovDescMortgAddrCountryName;
+	
+	protected Button     btnSearchMortgAddrProvince;                 // autoWired
+	protected Textbox    lovDescMortgAddrProvinceName;               // autoWired
+	private transient String 		oldVar_lovDescMortgAddrProvinceName;
+	
+	protected Button     btnSearchMortgAddrCity;                     // autoWired
+	protected Textbox    lovDescMortgAddrCityName;					 // autoWired
+	private transient String 		oldVar_lovDescMortgAddrCityName;
+	
+	// ServiceDAOs / Domain Classes
+	private transient MortgageLoanDetailService mortgageLoanDetailService;
+	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+
+	//For Dynamically calling of this Controller
+	private Div toolbar;
+	private FinanceMainDialogCtrl financeMainDialogCtrl;
+	private Tabpanel panel = null;
+	private Grid grid_mortgageLoanDetails;
+	protected Caption		caption_mortLoan;
+
+	/**
+	 * default constructor.<br>
+	 */
+	public MortgageLoanDetailDialogCtrl() {
+		super();
+	}
+
+	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
+	// +++++++++++++++ Component Events ++++++++++++++++ //
+	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+	/**
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected MortgageLoanDetail object in a
+	 * Map.
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onCreate$window_MortgageLoanDetailDialog(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		/* set components visible dependent of the users rights */
+		doCheckRights();
+		
+		if(event.getTarget().getParent() != null){
+			panel = (Tabpanel) event.getTarget().getParent();
+		}
+
+		/* create the Button Controller. Disable not used buttons during working */
+		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix,
+				true, this.btnNew, this.btnEdit, this.btnDelete, this.btnSave,
+				this.btnCancel, this.btnClose,this.btnNotes);
+
+		// get the params map that are over handed by creation.
+		final Map<String, Object> args = getCreationArgsMap(event);
+
+		// READ OVERHANDED params !
+		if (args.containsKey("mortgageLoanDetail")) {
+			this.mortgageLoanDetail = (MortgageLoanDetail) args.get("mortgageLoanDetail");
+			MortgageLoanDetail befImage =new MortgageLoanDetail();
+			BeanUtils.copyProperties(this.mortgageLoanDetail, befImage);
+			this.mortgageLoanDetail.setBefImage(befImage);
+			setMortgageLoanDetail(this.mortgageLoanDetail);
+		} else {
+			setMortgageLoanDetail(null);
+		}
+		
+		if(args.containsKey("financeMainDialogCtrl")){
+			this.financeMainDialogCtrl = (FinanceMainDialogCtrl) args.get("financeMainDialogCtrl");
+			setNewFinance(true);
+			this.mortgageLoanDetail.setWorkflowId(0);
+			this.window_MortgageLoanDetailDialog.setTitle("");
+			this.caption_mortLoan.setVisible(true);
+		}
+		
+		if(args.containsKey("financeMainDialogCtrl")){
+			this.financeMainDialogCtrl = (FinanceMainDialogCtrl) args.get("financeMainDialogCtrl");
+			setNewFinance(true);
+			this.mortgageLoanDetail.setWorkflowId(0);
+		}
+		
+		if(args.containsKey("ccyFormatter")){
+			this.ccyFormatter = (Integer)args.get("ccyFormatter");
+		}
+
+		doLoadWorkFlow(this.mortgageLoanDetail.isWorkflow(),
+				this.mortgageLoanDetail.getWorkflowId(),this.mortgageLoanDetail.getNextTaskId());
+
+		if (isWorkFlowEnabled() && !isNewFinance()){
+			this.userAction	= setListRecordStatus(this.userAction);
+			getUserWorkspace().alocateRoleAuthorities(getRole(), "MortgageLoanDetailDialog");
+		}
+
+		// READ OVERHANDED params !
+		// we get the mortgageLoanDetailListWindow controller. So we have access
+		// to it and can synchronize the shown data when we do insert, edit or
+		// delete mortgageLoanDetail here.
+		if (args.containsKey("mortgageLoanDetailListCtrl")) {
+			setMortgageLoanDetailListCtrl((MortgageLoanDetailListCtrl) args.get("mortgageLoanDetailListCtrl"));
+		} else {
+			setMortgageLoanDetailListCtrl(null);
+		}
+
+		// set Field Properties
+		doSetFieldProperties();
+		doShowDialog(getMortgageLoanDetail());
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * User rights check. <br>
+	 * Only components are set visible=true if the logged-in <br>
+	 * user have the right for it. <br>
+	 * 
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
+	 */
+	private void doCheckRights() {
+		logger.debug("Entering") ;
+
+		getUserWorkspace().alocateAuthorities("MortgageLoanDetailDialog");
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_MortgageLoanDetailDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_MortgageLoanDetailDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_MortgageLoanDetailDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_MortgageLoanDetailDialog_btnSave"));
+		this.btnCancel.setVisible(false);
+
+		logger.debug("Leaving") ;
+	}
+
+	/**
+	 * If we close the dialog window. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClose$window_MortgageLoanDetailDialog(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		doClose();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "save" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnSave(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		doSave();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "edit" button is clicked. <br>
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnEdit(Event event) {
+		logger.debug("Entering" + event.toString());
+		doEdit();
+		// remember the old variables
+		doStoreInitValues();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "help" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnHelp(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		PTMessageUtils.showHelpWindow(event, window_MortgageLoanDetailDialog);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "new" button is clicked. <br>
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnNew(Event event) {
+		logger.debug("Entering" + event.toString());
+		doNew();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "delete" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnDelete(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		doDelete();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "cancel" button is clicked. <br>
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnCancel(Event event) {
+		logger.debug("Entering" + event.toString());
+		doCancel();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "close" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnClose(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+
+		try {
+			doClose();
+		} catch (final WrongValuesException e) {
+			logger.error(e);
+			throw e;
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onAssetValidation(Event event){
+		logger.debug("Entering" + event.toString());
+		
+		String userAction = "";
+		Map<String,Object> map = new HashMap<String,Object>();
+		if(event.getData() != null){
+			map = (Map<String, Object>) event.getData();
+		}
+	
+		if(map.containsKey("userAction")){
+			userAction = (String) map.get("userAction");
+		}
+		doClearMessage();
+		if("Submit".equalsIgnoreCase(userAction)){
+			doSetValidation();
+			doSetLOVValidation();
+		}
+		
+		doWriteComponentsToBean(getMortgageLoanDetail());
+		if(StringUtils.trimToEmpty(getMortgageLoanDetail().getRecordType()).equals("")){
+			getMortgageLoanDetail().setVersion(getMortgageLoanDetail().getVersion() + 1);
+			getMortgageLoanDetail().setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			getMortgageLoanDetail().setNewRecord(true);
+		}
+		this.financeMainDialogCtrl.getFinanceDetail().setMortgageLoanDetail(getMortgageLoanDetail());
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Method for checking whethter data has been changed before closing
+	 * @param event
+	 * @return 
+	 * */
+	public void onAssetClose(Event event){
+		logger.debug("Entering" + event.toString());
+		this.financeMainDialogCtrl.setAssetDataChanged(isDataChanged());
+		logger.debug("Leaving" + event.toString());
+	}
+
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++ Search Button Component Events+++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	public void onClick$btnSearchMortgProperty(Event event){
+		logger.debug("Entering" + event.toString());
+		
+		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,"PropertyDetail");
+		if (dataObject instanceof String){
+			this.mortgProperty.setText("");
+			this.lovDescMortgPropertyName.setValue("");
+		}else{
+			PropertyDetail details= (PropertyDetail) dataObject;
+			if (details != null) {
+				this.mortgProperty.setValue(details.getPropertyDetailId());
+				this.lovDescMortgPropertyName.setValue(details.getPropertyDetailId()+"-"+
+						details.getPropertyDetailDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onClick$btnSearchMortgPropertyRelation(Event event){
+		logger.debug("Entering" + event.toString());
+		
+	/*	Filter[] filters = new Filter[1] ;
+		filters[0]= new Filter("FieldCode", "PROPREL", Filter.OP_EQUAL);
+*/
+		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,"PropertyRelation");
+		if (dataObject instanceof String){
+			this.mortgPropertyRelation.setText("");
+			this.lovDescMortgPropertyRelationName.setValue("");
+		}else{
+			LovFieldDetail details= (LovFieldDetail) dataObject;
+			if (details != null) {
+				this.mortgPropertyRelation.setValue(details.getFieldCodeId());
+				this.lovDescMortgPropertyRelationName.setValue(details.getFieldCode()+"-"+details.getFieldCodeValue());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onClick$btnSearchMortgOwnership(Event event){
+		logger.debug("Entering" + event.toString());
+		
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,
+				"Ownership");
+		if (dataObject instanceof String){
+			this.mortgOwnership.setText("");
+			this.lovDescMortgOwnershipName.setValue("");
+		}else{
+			LovFieldDetail details= (LovFieldDetail) dataObject;
+			if (details != null) {
+				this.mortgOwnership.setValue(details.getFieldCodeId());
+				this.lovDescMortgOwnershipName.setValue(details.getFieldCode()+"-"+
+						details.getFieldCodeValue());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onClick$btnSearchMortgAddrCountry(Event event){
+		logger.debug("Entering" + event.toString());
+		
+		String sMortgAddrCountry= this.mortgAddrCountry.getValue();
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,"Country");
+		if (dataObject instanceof String){
+			this.mortgAddrCountry.setValue(dataObject.toString());
+			this.lovDescMortgAddrCountryName.setValue("");
+		}else{
+			Country details= (Country) dataObject;
+			if (details != null) {
+				this.mortgAddrCountry.setValue(details.getCountryCode());
+				this.lovDescMortgAddrCountryName.setValue(details.getCountryCode()+"-"+
+						details.getCountryDesc());
+			}
+		}
+		if (!StringUtils.trimToEmpty(sMortgAddrCountry).equals(this.mortgAddrCountry.getValue())){
+			this.mortgAddrProvince.setValue("");
+			this.lovDescMortgAddrProvinceName.setValue("");
+			this.mortgAddrCity.setValue("");
+			this.lovDescMortgAddrCityName.setValue("");
+		}
+		if(!StringUtils.trimToEmpty(this.mortgAddrCountry.getValue()).equals("")){
+			this.btnSearchMortgAddrProvince.setVisible(true);
+		}else{
+			this.btnSearchMortgAddrProvince.setVisible(false);
+			this.btnSearchMortgAddrCity.setVisible(false);		   
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onClick$btnSearchMortgAddrProvince(Event event){
+		logger.debug("Entering" + event.toString());
+		
+		String sMortgAddrProvince= this.mortgAddrProvince.getValue();
+
+		Filter[] filters = new Filter[1] ;
+		filters[0]= new Filter("CPCountry", this.mortgAddrCountry.getValue(), Filter.OP_EQUAL);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,
+				"Province",filters);
+		if (dataObject instanceof String){
+			this.mortgAddrProvince.setValue(dataObject.toString());
+			this.lovDescMortgAddrProvinceName.setValue("");
+		}else{
+			Province details= (Province) dataObject;
+			if (details != null) {
+				this.mortgAddrProvince.setValue(details.getCPProvince());
+				this.lovDescMortgAddrProvinceName.setValue(details.getCPProvince()+"-"+
+						details.getCPProvinceName());
+			}
+		}
+
+		if (!StringUtils.trimToEmpty(sMortgAddrProvince).equals(this.mortgAddrProvince.getValue())){
+			this.mortgAddrCity.setValue("");
+			this.lovDescMortgAddrCityName.setValue("");   
+		}
+		if(!StringUtils.trimToEmpty(this.mortgAddrProvince.getValue()).equals("")){
+			this.btnSearchMortgAddrCity.setVisible(true);		   
+		}else{
+			this.btnSearchMortgAddrCity.setVisible(false);		   
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onClick$btnSearchMortgAddrCity(Event event){
+		logger.debug("Entering" + event.toString());
+		
+		Filter[] filters = new Filter[1] ;
+		filters[0]= new Filter("PCProvince", this.mortgAddrProvince.getValue(), Filter.OP_EQUAL);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,"City",filters);
+		if (dataObject instanceof String){
+			this.mortgAddrCity.setValue(dataObject.toString());
+			this.lovDescMortgAddrCityName.setValue("");
+		}else{
+			City details= (City) dataObject;
+			if (details != null) {
+				this.mortgAddrCity.setValue(details.getPCCity());
+				this.lovDescMortgAddrCityName.setValue(details.getPCCity()+"-"+details.getPCCityName());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// +++++++++++++++++++++++ GUI Process +++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	/**
+	 * Set the properties of the fields, like maxLength.<br>
+	 */
+	private void doSetFieldProperties() {
+		logger.debug("Entering") ;
+		//Empty sent any required attributes
+		this.mortgProperty.setMaxlength(19);
+		this.mortgCurrentValue.setMaxlength(18);
+		this.mortgCurrentValue.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		this.mortgPurposeOfLoan.setMaxlength(100);
+		this.mortgPropertyRelation.setMaxlength(19);
+		this.mortgOwnership.setMaxlength(19);
+		this.mortgAddrHNbr.setMaxlength(50);
+		this.mortgAddrFlatNbr.setMaxlength(50);
+		this.mortgAddrStreet.setMaxlength(50);
+		this.mortgAddrLane1.setMaxlength(50);
+		this.mortgAddrLane2.setMaxlength(50);
+		this.mortgAddrPOBox.setMaxlength(8);
+		this.mortgAddrCountry.setMaxlength(2);
+		this.mortgAddrProvince.setMaxlength(8);
+		this.mortgAddrCity.setMaxlength(8);
+		this.mortgAddrZIP.setMaxlength(10);
+		this.mortgAddrPhone.setMaxlength(50);
+		this.btnSearchMortgAddrProvince.setVisible(false);
+		this.btnSearchMortgAddrCity.setVisible(false);
+
+		if (isWorkFlowEnabled()){
+			this.groupboxWf.setVisible(true);
+			this.statusRow.setVisible(true);
+		}else{
+			this.groupboxWf.setVisible(false);
+			this.statusRow.setVisible(false);
+		}
+
+		logger.debug("Leaving") ;
+	}
+
+	/**
+	 * Closes the dialog window. <br>
+	 * <br>
+	 * Before closing we check if there are unsaved changes in <br>
+	 * the components and ask the user if saving the modifications. <br>
+	 * 
+	 * @throws InterruptedException
+	 * 
+	 */
+	private void doClose() throws InterruptedException {
+		logger.debug("Entering");
+		boolean close=true;
+		if (isDataChanged()) {
+			logger.debug("isDataChanged : true");
+
+			// Show a confirm box
+			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
+			final String title = Labels.getLabel("message.Information");
+
+			MultiLineMessageBox.doSetTemplate();
+			int conf = MultiLineMessageBox.show(msg, title,
+					MultiLineMessageBox.YES| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION,true);
+
+			if (conf==MultiLineMessageBox.YES){
+				logger.debug("doClose: Yes");
+				doSave();
+				close=false;
+			}else{
+				logger.debug("doClose: No");
+			}
+		}else{
+			logger.debug("isDataChanged : false");
+		}
+
+		if(close){
+			closeDialog(this.window_MortgageLoanDetailDialog, "MortgageLoanDetail");	
+		}
+
+		logger.debug("Leaving") ;
+	}
+
+	/**
+	 * Cancel the actual operation. <br>
+	 * <br>
+	 * Resets to the original status.<br>
+	 * 
+	 */
+	private void doCancel() {
+		logger.debug("Entering") ;
+		doResetInitValues();
+		doReadOnly();
+		this.btnCtrl.setInitEdit();
+		logger.debug("Leaving") ;
+	}
+
+	/**
+	 * Writes the bean data to the components.<br>
+	 * 
+	 * @param aMortgageLoanDetail
+	 *            MortgageLoanDetail
+	 */
+	public void doWriteBeanToComponents(MortgageLoanDetail aMortgageLoanDetail) {
+		logger.debug("Entering") ;
+		this.mortgProperty.setValue(aMortgageLoanDetail.getMortgProperty());
+		this.mortgCurrentValue.setValue(PennantAppUtil.formateAmount(
+				aMortgageLoanDetail.getMortgCurrentValue(),this.ccyFormatter));
+		this.mortgPurposeOfLoan.setValue(aMortgageLoanDetail.getMortgPurposeOfLoan());
+		this.mortgPropertyRelation.setValue(aMortgageLoanDetail.getMortgPropertyRelation());
+		this.mortgOwnership.setValue(aMortgageLoanDetail.getMortgOwnership());
+		this.mortgAddrHNbr.setValue(aMortgageLoanDetail.getMortgAddrHNbr());
+		this.mortgAddrFlatNbr.setValue(aMortgageLoanDetail.getMortgAddrFlatNbr());
+		this.mortgAddrStreet.setValue(aMortgageLoanDetail.getMortgAddrStreet());
+		this.mortgAddrLane1.setValue(aMortgageLoanDetail.getMortgAddrLane1());
+		this.mortgAddrLane2.setValue(aMortgageLoanDetail.getMortgAddrLane2());
+		this.mortgAddrPOBox.setValue(aMortgageLoanDetail.getMortgAddrPOBox());
+		this.mortgAddrCountry.setValue(aMortgageLoanDetail.getMortgAddrCountry());
+		this.mortgAddrProvince.setValue(aMortgageLoanDetail.getMortgAddrProvince());
+		this.mortgAddrCity.setValue(aMortgageLoanDetail.getMortgAddrCity());
+		this.mortgAddrZIP.setValue((aMortgageLoanDetail.getMortgAddrZIP()==null)?"":
+			aMortgageLoanDetail.getMortgAddrZIP().trim());
+		this.mortgAddrPhone.setValue(aMortgageLoanDetail.getMortgAddrPhone());
+
+		if (aMortgageLoanDetail.isNewRecord()){
+			this.lovDescMortgPropertyName.setValue("");
+			this.lovDescMortgPropertyRelationName.setValue("");
+			this.lovDescMortgOwnershipName.setValue("");
+			this.lovDescMortgAddrCountryName.setValue("");
+			this.lovDescMortgAddrProvinceName.setValue("");
+			this.lovDescMortgAddrCityName.setValue("");
+		}else{
+			this.lovDescMortgPropertyName.setValue(aMortgageLoanDetail.getMortgProperty()+"-"+
+					aMortgageLoanDetail.getLovDescMortgPropertyName());
+			this.lovDescMortgPropertyRelationName.setValue(aMortgageLoanDetail.getMortgPropertyRelation()+
+					"-"+aMortgageLoanDetail.getLovDescMortgPropertyRelationName());
+			this.lovDescMortgOwnershipName.setValue(aMortgageLoanDetail.getMortgOwnership()+
+					"-"+aMortgageLoanDetail.getLovDescMortgOwnershipName());
+			this.lovDescMortgAddrCountryName.setValue(aMortgageLoanDetail.getMortgAddrCountry()+
+					"-"+aMortgageLoanDetail.getLovDescMortgAddrCountryName());
+			this.lovDescMortgAddrProvinceName.setValue(aMortgageLoanDetail.getMortgAddrProvince()+
+					"-"+aMortgageLoanDetail.getLovDescMortgAddrProvinceName());
+			this.lovDescMortgAddrCityName.setValue(aMortgageLoanDetail.getMortgAddrCity()+
+					"-"+aMortgageLoanDetail.getLovDescMortgAddrCityName());
+		}
+		this.recordStatus.setValue(aMortgageLoanDetail.getRecordStatus());
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Writes the components values to the bean.<br>
+	 * 
+	 * @param aMortgageLoanDetail
+	 */
+	public void doWriteComponentsToBean(MortgageLoanDetail aMortgageLoanDetail) {
+		logger.debug("Entering") ;
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		try {
+			aMortgageLoanDetail.setLovDescMortgPropertyName(this.lovDescMortgPropertyName.getValue());
+			aMortgageLoanDetail.setMortgProperty(this.mortgProperty.getValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			if(this.mortgCurrentValue.getValue()!=null){
+				aMortgageLoanDetail.setMortgCurrentValue(PennantAppUtil.unFormateAmount(
+						this.mortgCurrentValue.getValue(), this.ccyFormatter));
+			}
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortgPurposeOfLoan(this.mortgPurposeOfLoan.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setLovDescMortgPropertyRelationName(
+					this.lovDescMortgPropertyRelationName.getValue());
+			aMortgageLoanDetail.setMortgPropertyRelation(this.mortgPropertyRelation.getValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setLovDescMortgOwnershipName(this.lovDescMortgOwnershipName.getValue());
+			aMortgageLoanDetail.setMortgOwnership(this.mortgOwnership.getValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortgAddrHNbr(this.mortgAddrHNbr.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortgAddrFlatNbr(this.mortgAddrFlatNbr.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortgAddrStreet(this.mortgAddrStreet.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortgAddrLane1(this.mortgAddrLane1.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortgAddrLane2(this.mortgAddrLane2.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortgAddrPOBox(this.mortgAddrPOBox.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setLovDescMortgAddrCountryName(this.lovDescMortgAddrCountryName.getValue());
+			aMortgageLoanDetail.setMortgAddrCountry(this.mortgAddrCountry.getValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setLovDescMortgAddrProvinceName(this.lovDescMortgAddrProvinceName.getValue());
+			aMortgageLoanDetail.setMortgAddrProvince(this.mortgAddrProvince.getValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setLovDescMortgAddrCityName(this.lovDescMortgAddrCityName.getValue());
+			aMortgageLoanDetail.setMortgAddrCity(this.mortgAddrCity.getValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortgAddrZIP(this.mortgAddrZIP.getValue().trim());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortgAddrPhone(this.mortgAddrPhone.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+		doRemoveLOVValidation();
+
+		if (wve.size()>0) {
+			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			if(panel != null){
+				((Tab)panel.getParent().getParent().getFellowIfAny("loanAssetTab")).setSelected(true);
+			}
+			throw new WrongValuesException(wvea);
+		}
+
+		aMortgageLoanDetail.setRecordStatus(this.recordStatus.getValue());
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Opens the Dialog window modal.
+	 * 
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
+	 * 
+	 * @param aMortgageLoanDetail
+	 * @throws InterruptedException
+	 */
+	public void doShowDialog(MortgageLoanDetail aMortgageLoanDetail) throws InterruptedException {
+		logger.debug("Entering") ;
+
+		// if aMortgageLoanDetail == null then we opened the Dialog without
+		// arguments for a given entity, so we get a new Object().
+		if (aMortgageLoanDetail == null) {
+			/** !!! DO NOT BREAK THE TIERS !!! */
+			// We don't create a new DomainObject() in the frontEnd.
+			// We GET it from the backEnd.
+			aMortgageLoanDetail = getMortgageLoanDetailService().getNewMortgageLoanDetail();
+			setMortgageLoanDetail(aMortgageLoanDetail);
+		} else {
+			setMortgageLoanDetail(aMortgageLoanDetail);
+		}
+
+		// set ReadOnly mode accordingly if the object is new or not.
+		if (aMortgageLoanDetail.isNew()) {
+			this.btnCtrl.setInitNew();
+			doEdit();
+			// setFocus
+			this.mortgProperty.focus();
+		} else {
+			this.mortgProperty.focus();
+			if(isNewFinance()){
+				doEdit();
+			}else if (isWorkFlowEnabled()){
+				this.btnNotes.setVisible(true);
+				doEdit();
+			}else{
+				this.btnCtrl.setInitEdit();
+				doReadOnly();
+				btnCancel.setVisible(false);
+			}
+		}
+
+		try {
+			// fill the components with the data
+			doWriteBeanToComponents(aMortgageLoanDetail);
+
+			// stores the initial data for comparing if they are changed
+			// during user action.
+			doStoreInitValues();
+			if(panel != null){
+				this.toolbar.setVisible(false);
+				this.groupboxWf.setVisible(false);
+				this.statusRow.setVisible(false);
+				this.window_MortgageLoanDetailDialog.setHeight(grid_mortgageLoanDetails.getRows().getVisibleItemCount()*20+80+"px");
+				//panel.setHeight(grid_mortgageLoanDetails.getRows().getVisibleItemCount()*20+180+"px");
+				panel.appendChild(this.window_MortgageLoanDetailDialog);
+			}else{
+				setDialog(this.window_MortgageLoanDetailDialog);
+			}
+		} catch (final Exception e) {
+			logger.error(e);
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving") ;
+	}
+
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	/**
+	 * Stores the initial values in member vars. <br>
+	 */
+	private void doStoreInitValues() {
+		logger.debug("Entering");
+		this.oldVar_mortgProperty = this.mortgProperty.longValue();
+		this.oldVar_lovDescMortgPropertyName = this.lovDescMortgPropertyName.getValue();
+		this.oldVar_mortgCurrentValue = this.mortgCurrentValue.getValue();
+		this.oldVar_mortgPurposeOfLoan = this.mortgPurposeOfLoan.getValue();
+		this.oldVar_mortgPropertyRelation = this.mortgPropertyRelation.longValue();
+		this.oldVar_lovDescMortgPropertyRelationName = this.lovDescMortgPropertyRelationName.getValue();
+		this.oldVar_mortgOwnership = this.mortgOwnership.longValue();
+		this.oldVar_lovDescMortgOwnershipName = this.lovDescMortgOwnershipName.getValue();
+		this.oldVar_mortgAddrHNbr = this.mortgAddrHNbr.getValue();
+		this.oldVar_mortgAddrFlatNbr = this.mortgAddrFlatNbr.getValue();
+		this.oldVar_mortgAddrStreet = this.mortgAddrStreet.getValue();
+		this.oldVar_mortgAddrLane1 = this.mortgAddrLane1.getValue();
+		this.oldVar_mortgAddrLane2 = this.mortgAddrLane2.getValue();
+		this.oldVar_mortgAddrPOBox = this.mortgAddrPOBox.getValue();
+		this.oldVar_mortgAddrCountry = this.mortgAddrCountry.getValue();
+		this.oldVar_lovDescMortgAddrCountryName = this.lovDescMortgAddrCountryName.getValue();
+		this.oldVar_mortgAddrProvince = this.mortgAddrProvince.getValue();
+		this.oldVar_lovDescMortgAddrProvinceName = this.lovDescMortgAddrProvinceName.getValue();
+		this.oldVar_mortgAddrCity = this.mortgAddrCity.getValue();
+		this.oldVar_lovDescMortgAddrCityName = this.lovDescMortgAddrCityName.getValue();
+		this.oldVar_mortgAddrZIP = this.mortgAddrZIP.getValue();
+		this.oldVar_mortgAddrPhone = this.mortgAddrPhone.getValue();
+		this.oldVar_recordStatus = this.recordStatus.getValue();
+		logger.debug("Leaving") ;
+	}
+
+	/**
+	 * Resets the initial values from member vars. <br>
+	 */
+	private void doResetInitValues() {
+		logger.debug("Entering");
+		this.mortgProperty.setValue(this.oldVar_mortgProperty);
+		this.lovDescMortgPropertyName.setValue(this.oldVar_lovDescMortgPropertyName);
+		this.mortgCurrentValue.setValue(this.oldVar_mortgCurrentValue);
+		this.mortgPurposeOfLoan.setValue(this.oldVar_mortgPurposeOfLoan);
+		this.mortgPropertyRelation.setValue(this.oldVar_mortgPropertyRelation);
+		this.lovDescMortgPropertyRelationName.setValue(this.oldVar_lovDescMortgPropertyRelationName);
+		this.mortgOwnership.setValue(this.oldVar_mortgOwnership);
+		this.lovDescMortgOwnershipName.setValue(this.oldVar_lovDescMortgOwnershipName);
+		this.mortgAddrHNbr.setValue(this.oldVar_mortgAddrHNbr);
+		this.mortgAddrFlatNbr.setValue(this.oldVar_mortgAddrFlatNbr);
+		this.mortgAddrStreet.setValue(this.oldVar_mortgAddrStreet);
+		this.mortgAddrLane1.setValue(this.oldVar_mortgAddrLane1);
+		this.mortgAddrLane2.setValue(this.oldVar_mortgAddrLane2);
+		this.mortgAddrPOBox.setValue(this.oldVar_mortgAddrPOBox);
+		this.mortgAddrCountry.setValue(this.oldVar_mortgAddrCountry);
+		this.lovDescMortgAddrCountryName.setValue(this.oldVar_lovDescMortgAddrCountryName);
+		this.mortgAddrProvince.setValue(this.oldVar_mortgAddrProvince);
+		this.lovDescMortgAddrProvinceName.setValue(this.oldVar_lovDescMortgAddrProvinceName);
+		this.mortgAddrCity.setValue(this.oldVar_mortgAddrCity);
+		this.lovDescMortgAddrCityName.setValue(this.oldVar_lovDescMortgAddrCityName);
+		this.mortgAddrZIP.setValue(this.oldVar_mortgAddrZIP);
+		this.mortgAddrPhone.setValue(this.oldVar_mortgAddrPhone);
+		this.recordStatus.setValue(this.oldVar_recordStatus);
+
+		if(isWorkFlowEnabled()){
+			this.userAction.setSelectedIndex(0);	
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Checks, if data are changed since the last call of <br>
+	 * doStoreInitData() . <br>
+	 * 
+	 * @return true, if data are changed, otherwise false
+	 */
+	private boolean isDataChanged() {
+
+		//To clear the Error Messages
+		doClearMessage();
+		
+		if (this.oldVar_mortgProperty != this.mortgProperty.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgCurrentValue != this.mortgCurrentValue.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgPurposeOfLoan != this.mortgPurposeOfLoan.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgPropertyRelation != this.mortgPropertyRelation.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgOwnership != this.mortgOwnership.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrHNbr != this.mortgAddrHNbr.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrFlatNbr != this.mortgAddrFlatNbr.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrStreet != this.mortgAddrStreet.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrLane1 != this.mortgAddrLane1.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrLane2 != this.mortgAddrLane2.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrPOBox != this.mortgAddrPOBox.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrCountry != this.mortgAddrCountry.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrProvince != this.mortgAddrProvince.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrCity != this.mortgAddrCity.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrZIP != this.mortgAddrZIP.getValue()) {
+			return true;
+		}
+		if (this.oldVar_mortgAddrPhone != this.mortgAddrPhone.getValue()) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+	private void doSetValidation() {
+		logger.debug("Entering");
+		setValidationOn(true);
+		if (!this.mortgCurrentValue.isReadonly()){
+			this.mortgCurrentValue.setConstraint(new AmountValidator(18,0,
+					Labels.getLabel("label_MortgageLoanDetailDialog_MortgCurrentValue.value")));
+		}	
+		if (!this.mortgPurposeOfLoan.isReadonly()){
+			this.mortgPurposeOfLoan.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgPurposeOfLoan.value")}));
+		}	
+		if (!this.mortgAddrHNbr.isReadonly()){
+			this.mortgAddrHNbr.setConstraint(new SimpleConstraint(PennantConstants.HNO_FNO_REGEX, 
+				Labels.getLabel("MAND_FIELD_ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
+						"label_MortgageLoanDetailDialog_MortgAddrHNbr.value")})));
+		}	
+		if (!this.mortgAddrFlatNbr.isReadonly()){
+			this.mortgAddrFlatNbr.setConstraint(new SimpleConstraint(PennantConstants.HNO_FNO_REGEX, 
+					Labels.getLabel("MAND_FIELD_ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
+							"label_MortgageLoanDetailDialog_MortgAddrFlatNbr.value")})));
+		}	
+		if (!this.mortgAddrStreet.isReadonly()){
+
+			this.mortgAddrStreet.setConstraint(new SimpleConstraint(PennantConstants.ADDRESS_LINE1_REGEX, 
+					Labels.getLabel("MAND_FIELD_CHAR_NUMBER",new String[]{Labels.getLabel(
+							"label_MortgageLoanDetailDialog_MortgAddrStreet.value")})));
+		}	
+	
+		if (!this.mortgAddrPOBox.isReadonly()){
+			this.mortgAddrPOBox.setConstraint(new SimpleConstraint(PennantConstants.NUM_REGEX, 
+					Labels.getLabel("FIELD_NUMBER",new String[]{Labels.getLabel(
+							"label_MortgageLoanDetailDialog_MortgAddrPOBox.value")})));
+		}	
+		if (!this.mortgAddrZIP.isReadonly()){
+			this.mortgAddrZIP.setConstraint(new SimpleConstraint(PennantConstants.ZIP_REGEX, 
+					Labels.getLabel("FIELD_NUMBER",new String[]{Labels.getLabel(
+							"label_MortgageLoanDetailDialog_MortgAddrZIP.value")})));
+
+		}	
+		if (!this.mortgAddrPhone.isReadonly()){
+			this.mortgAddrPhone.setConstraint(new SimpleConstraint(PennantConstants.PH_REGEX,
+					Labels.getLabel("MAND_FIELD_PHONENUM",new String[]{Labels.getLabel(
+							"label_MortgageLoanDetailDialog_MortgAddrPhone.value")})));
+		}	
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Disables the Validation by setting empty constraints.
+	 */
+	private void doRemoveValidation() {
+		logger.debug("Entering");
+		setValidationOn(false);
+		this.mortgCurrentValue.setConstraint("");
+		this.mortgPurposeOfLoan.setConstraint("");
+		this.mortgAddrHNbr.setConstraint("");
+		this.mortgAddrFlatNbr.setConstraint("");
+		this.mortgAddrStreet.setConstraint("");
+		this.mortgAddrPOBox.setConstraint("");
+		this.mortgAddrZIP.setConstraint("");
+		this.mortgAddrPhone.setConstraint("");
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * This method sets the validation for lovFields 
+	 */
+	private void doSetLOVValidation() {
+		logger.debug("Entering");
+		this.lovDescMortgPropertyName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgProperty.value")}));
+		
+		this.lovDescMortgPropertyRelationName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgPropertyRelation.value")}));
+		
+		this.lovDescMortgOwnershipName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgOwnership.value")}));
+		
+		this.lovDescMortgAddrCountryName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCountry.value")}));
+		
+		this.lovDescMortgAddrProvinceName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrProvince.value")}));
+		
+		this.lovDescMortgAddrCityName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCity.value")}));
+		logger.debug("Leaving");
+	}
+	/**
+	 * this method removes the validation for lovFields 
+	 */
+	private void doRemoveLOVValidation() {
+		logger.debug("Entering");
+		this.lovDescMortgPropertyName.setConstraint("");
+		this.lovDescMortgPropertyRelationName.setConstraint("");
+		this.lovDescMortgOwnershipName.setConstraint("");
+		this.lovDescMortgAddrCountryName.setConstraint("");
+		this.lovDescMortgAddrProvinceName.setConstraint("");
+		this.lovDescMortgAddrCityName.setConstraint("");
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Remove Error Messages for Fields
+	 */
+	private void doClearMessage() {
+		logger.debug("Entering");
+		this.lovDescMortgPropertyName.setErrorMessage("");
+		this.mortgCurrentValue.setErrorMessage("");
+		this.mortgPurposeOfLoan.setErrorMessage("");
+		this.lovDescMortgPropertyRelationName.setErrorMessage("");
+		this.lovDescMortgOwnershipName.setErrorMessage("");
+		this.mortgAddrHNbr.setErrorMessage("");
+		this.mortgAddrFlatNbr.setErrorMessage("");
+		this.mortgAddrStreet.setErrorMessage("");
+		this.mortgAddrPOBox.setErrorMessage("");
+		this.lovDescMortgAddrCountryName.setErrorMessage("");
+		this.lovDescMortgAddrProvinceName.setErrorMessage("");
+		this.lovDescMortgAddrCityName.setErrorMessage("");
+		this.mortgAddrZIP.setErrorMessage("");
+		this.mortgAddrPhone.setErrorMessage("");
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for refreshing the list after successful update
+	 */
+	private void refreshList(){
+		logger.debug("Entering");
+		final JdbcSearchObject<MortgageLoanDetail> soMortgageLoanDetail = getMortgageLoanDetailListCtrl().getSearchObj();
+		getMortgageLoanDetailListCtrl().pagingMortgageLoanDetailList.setActivePage(0);
+		getMortgageLoanDetailListCtrl().getPagedListWrapper().setSearchObject(soMortgageLoanDetail);
+		if(getMortgageLoanDetailListCtrl().listBoxMortgageLoanDetail!=null){
+			getMortgageLoanDetailListCtrl().listBoxMortgageLoanDetail.getListModel();
+		}
+		logger.debug("Leaving");
+	} 
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// +++++++++++++++++++++++++ CRUD operations +++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	/**
+	 * Deletes a MortgageLoanDetail object from database.<br>
+	 * 
+	 * @throws InterruptedException
+	 */
+	private void doDelete() throws InterruptedException {
+		logger.debug("Entering");	
+		final MortgageLoanDetail aMortgageLoanDetail = new MortgageLoanDetail();
+		BeanUtils.copyProperties(getMortgageLoanDetail(), aMortgageLoanDetail);
+		String tranType=PennantConstants.TRAN_WF;
+
+		// Show a confirm box
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + 
+								"\n\n --> " + aMortgageLoanDetail.getId();
+		final String title = Labels.getLabel("message.Deleting.Record");
+		MultiLineMessageBox.doSetTemplate();
+
+		int conf =  (MultiLineMessageBox.show(msg, title, 
+				MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true));
+
+		if (conf==MultiLineMessageBox.YES){
+			logger.debug("doDelete: Yes");
+
+			if (StringUtils.trimToEmpty(aMortgageLoanDetail.getRecordType()).equals("")){
+				aMortgageLoanDetail.setVersion(aMortgageLoanDetail.getVersion()+1);
+				aMortgageLoanDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+				if (isWorkFlowEnabled()){
+					aMortgageLoanDetail.setNewRecord(true);
+					tranType=PennantConstants.TRAN_WF;
+				}else{
+					tranType=PennantConstants.TRAN_DEL;
+				}
+			}
+
+			try {
+				if(doProcess(aMortgageLoanDetail,tranType)){
+					refreshList();
+					closeDialog(this.window_MortgageLoanDetailDialog, "MortgageLoanDetail"); 
+				}
+			}catch (DataAccessException e){
+				logger.error("doDelete " + e);
+				showMessage(e);
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Create a new MortgageLoanDetail object. <br>
+	 */
+	private void doNew() {
+		logger.debug("Entering");
+
+		// remember the old vars
+		doStoreInitValues();
+		final MortgageLoanDetail aMortgageLoanDetail = getMortgageLoanDetailService().getNewMortgageLoanDetail();
+		setMortgageLoanDetail(aMortgageLoanDetail);
+		doClear(); // clear all components
+		doEdit(); // edit mode
+		this.btnCtrl.setBtnStatus_New();
+
+		// setFocus
+		this.mortgProperty.focus();
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug("Entering");
+
+		if (getMortgageLoanDetail().isNewRecord()){
+			this.btnCancel.setVisible(false);
+		}else{
+			this.btnCancel.setVisible(true);
+		}
+		this.btnSearchMortgProperty.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgProperty"));
+		this.mortgCurrentValue.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgCurrentValue"));
+		this.mortgPurposeOfLoan.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgPurposeOfLoan"));
+		this.btnSearchMortgPropertyRelation.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgPropertyRelation"));
+		this.btnSearchMortgOwnership.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgOwnership"));
+		this.mortgAddrHNbr.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrHNbr"));
+		this.mortgAddrFlatNbr.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrFlatNbr"));
+		this.mortgAddrStreet.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrStreet"));
+		this.mortgAddrLane1.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrLane1"));
+		this.mortgAddrLane2.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrLane2"));
+		this.mortgAddrPOBox.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPOBox"));
+		this.btnSearchMortgAddrCountry.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgAddrCountry"));
+		this.btnSearchMortgAddrProvince.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgAddrProvince"));
+		this.btnSearchMortgAddrCity.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgAddrCity"));
+		this.mortgAddrZIP.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrZIP"));
+		this.mortgAddrPhone.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));
+
+		if (isWorkFlowEnabled()){
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+
+			if (this.mortgageLoanDetail.isNewRecord()){
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			}else{
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		}else{
+			this.btnCtrl.setBtnStatus_Edit();
+			btnCancel.setVisible(true);
+		}
+		logger.debug("Leaving");
+	}
+	
+	public boolean isReadOnly(String componentName){
+		if (isWorkFlowEnabled() || isNewFinance()){
+			return getUserWorkspace().isReadOnly(componentName);
+		}
+		return false;
+	}
+
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug("Entering");
+		this.btnSearchMortgProperty.setDisabled(true);
+		this.mortgCurrentValue.setReadonly(true);
+		this.mortgPurposeOfLoan.setReadonly(true);
+		this.btnSearchMortgPropertyRelation.setDisabled(true);
+		this.btnSearchMortgOwnership.setDisabled(true);
+		this.mortgAddrHNbr.setReadonly(true);
+		this.mortgAddrFlatNbr.setReadonly(true);
+		this.mortgAddrStreet.setReadonly(true);
+		this.mortgAddrLane1.setReadonly(true);
+		this.mortgAddrLane2.setReadonly(true);
+		this.mortgAddrPOBox.setReadonly(true);
+		this.btnSearchMortgAddrCountry.setDisabled(true);
+		this.btnSearchMortgAddrProvince.setDisabled(true);
+		this.btnSearchMortgAddrCity.setDisabled(true);
+		this.mortgAddrZIP.setReadonly(true);
+		this.mortgAddrPhone.setReadonly(true);
+
+		if(isWorkFlowEnabled()){
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+		}
+
+		if(isWorkFlowEnabled()){
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		// remove validation, if there are a save before
+		this.mortgProperty.setText("");
+		this.lovDescMortgPropertyName.setValue("");
+		this.mortgCurrentValue.setValue("");
+		this.mortgPurposeOfLoan.setValue("");
+		this.mortgPropertyRelation.setText("");
+		this.lovDescMortgPropertyRelationName.setValue("");
+		this.mortgOwnership.setText("");
+		this.lovDescMortgOwnershipName.setValue("");
+		this.mortgAddrHNbr.setValue("");
+		this.mortgAddrFlatNbr.setValue("");
+		this.mortgAddrStreet.setValue("");
+		this.mortgAddrLane1.setValue("");
+		this.mortgAddrLane2.setValue("");
+		this.mortgAddrPOBox.setValue("");
+		this.mortgAddrCountry.setValue("");
+		this.lovDescMortgAddrCountryName.setValue("");
+		this.mortgAddrProvince.setValue("");
+		this.lovDescMortgAddrProvinceName.setValue("");
+		this.mortgAddrCity.setValue("");
+		this.lovDescMortgAddrCityName.setValue("");
+		this.mortgAddrZIP.setValue("");
+		this.mortgAddrPhone.setValue("");
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 * 
+	 * @throws InterruptedException
+	 */
+	public void doSave() throws InterruptedException {
+		logger.debug("Entering");
+		final MortgageLoanDetail aMortgageLoanDetail = new MortgageLoanDetail();
+		BeanUtils.copyProperties(getMortgageLoanDetail(), aMortgageLoanDetail);
+		boolean isNew = false;
+
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		// force validation, if on, than execute by component.getValue()
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		doSetValidation();
+		// fill the MortgageLoanDetail object with the components data
+		doWriteComponentsToBean(aMortgageLoanDetail);
+
+		// Write the additional validations as per below example
+		// get the selected branch object from the listBox
+		// Do data level validations here
+
+		isNew = aMortgageLoanDetail.isNew();
+		String tranType="";
+
+		if(isWorkFlowEnabled()){
+			tranType =PennantConstants.TRAN_WF;
+			if (StringUtils.trimToEmpty(aMortgageLoanDetail.getRecordType()).equals("")){
+				aMortgageLoanDetail.setVersion(aMortgageLoanDetail.getVersion()+1);
+				if(isNew){
+					aMortgageLoanDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else{
+					aMortgageLoanDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aMortgageLoanDetail.setNewRecord(true);
+				}
+			}
+		}else{
+			aMortgageLoanDetail.setVersion(aMortgageLoanDetail.getVersion()+1);
+			if(isNew){
+				tranType =PennantConstants.TRAN_ADD;
+			}else{
+				tranType =PennantConstants.TRAN_UPD;
+			}
+		}
+
+		// save it to database
+		try {
+			if(doProcess(aMortgageLoanDetail,tranType)){
+				doWriteBeanToComponents(aMortgageLoanDetail);
+				refreshList();
+				closeDialog(this.window_MortgageLoanDetailDialog, "MortgageLoanDetail");
+			}
+		} catch (final DataAccessException e) {
+			logger.error(e);
+			showMessage(e);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Set the workFlow Details List to Object
+	 * @param aMortgageLoanDetail (MortgageLoanDetail)
+	 * @param tranType (String)
+	 * @return boolean
+	 */
+	private boolean doProcess(MortgageLoanDetail aMortgageLoanDetail,String tranType){
+		logger.debug("Entering");
+		boolean processCompleted=false;
+		AuditHeader auditHeader =  null;
+		String nextRoleCode="";
+
+		aMortgageLoanDetail.setLastMntBy(getUserWorkspace().getLoginUserDetails().getLoginUsrID());
+		aMortgageLoanDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aMortgageLoanDetail.setUserDetails(getUserWorkspace().getLoginUserDetails());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getWorkFlow().getTaskId(getRole());
+			String nextTaskId = "";
+			//Upgraded to ZK-6.5.1.1 Added casting to String
+			aMortgageLoanDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aMortgageLoanDetail.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getWorkFlow().getNextTaskIds(taskId, aMortgageLoanDetail);
+				}
+
+				if (PennantConstants.WF_Audit_Notes.equals(getWorkFlow().getAuditingReq(
+						taskId,aMortgageLoanDetail))) {
+					try {
+						if (!isNotes_Entered()){
+							PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
+							return false;
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			if (StringUtils.trimToEmpty(nextTaskId).equals("")) {
+				nextRoleCode= getWorkFlow().firstTask.owner;
+			} else {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks!=null && nextTasks.length>0){
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if(nextRoleCode.length()>1){
+							nextRoleCode =nextRoleCode+",";
+						}
+						nextRoleCode= getWorkFlow().getTaskOwner(nextTasks[i]);
+					}
+				}else{
+					nextRoleCode= getWorkFlow().getTaskOwner(nextTaskId);
+				}
+			}
+
+			aMortgageLoanDetail.setTaskId(taskId);
+			aMortgageLoanDetail.setNextTaskId(nextTaskId);
+			aMortgageLoanDetail.setRoleCode(getRole());
+			aMortgageLoanDetail.setNextRoleCode(nextRoleCode);
+
+			auditHeader =  getAuditHeader(aMortgageLoanDetail, tranType);
+			String operationRefs = getWorkFlow().getOperationRefs(taskId,aMortgageLoanDetail);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader,null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader =  getAuditHeader(aMortgageLoanDetail, PennantConstants.TRAN_WF);
+					processCompleted  = doSaveProcess(auditHeader, list[i]);
+					if(!processCompleted){
+						break;
+					}
+				}
+			}
+		}else{
+			auditHeader =  getAuditHeader(aMortgageLoanDetail, tranType);
+			processCompleted = doSaveProcess(auditHeader,null);
+		}
+		logger.debug("return value :"+processCompleted);
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+	
+	/**
+	 *  Get the result after processing DataBase Operations
+	 * @param auditHeader (AuditHeader)
+	 * @param method (String)
+	 * @return boolean
+	 */
+	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+		logger.debug("Entering");
+		boolean processCompleted=false;
+		int retValue=PennantConstants.porcessOVERIDE;
+		boolean deleteNotes=false;
+
+		MortgageLoanDetail aMortgageLoanDetail = (MortgageLoanDetail) auditHeader.getAuditDetail().
+																		getModelData();
+
+		try {
+			while(retValue==PennantConstants.porcessOVERIDE){
+
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")){
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+						auditHeader = getMortgageLoanDetailService().delete(auditHeader);
+						deleteNotes=true;
+					}else{
+						auditHeader = getMortgageLoanDetailService().saveOrUpdate(auditHeader);	
+					}
+				}else{
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+						auditHeader = getMortgageLoanDetailService().doApprove(auditHeader);
+
+						if(aMortgageLoanDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
+							deleteNotes=true;
+						}
+
+					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
+							PennantConstants.method_doReject)){
+						auditHeader = getMortgageLoanDetailService().doReject(auditHeader);
+						if(aMortgageLoanDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+							deleteNotes=true;
+						}
+
+					}else{
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_MortgageLoanDetailDialog,
+								auditHeader);
+						return processCompleted; 
+					}
+				}
+
+				auditHeader =	ErrorControl.showErrorDetails(this.window_MortgageLoanDetailDialog,
+						auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue==PennantConstants.porcessCONTINUE){
+					processCompleted=true;
+
+					if(deleteNotes){
+						deleteNotes(getNotes(),true);
+					}
+				}
+				if (retValue==PennantConstants.porcessOVERIDE){
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
+			}
+			setOverideMap(auditHeader.getOverideMap());
+		} catch (InterruptedException e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		logger.debug("return Value:" + processCompleted);
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+	/**
+	 * Get Audit Header Details
+	 * 
+	 * @param aAcademic
+	 * @param tranType
+	 * @return AuditHeader
+	 */
+	private AuditHeader getAuditHeader(MortgageLoanDetail aMortgageLoanDetail, String tranType){
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMortgageLoanDetail.getBefImage(),
+				aMortgageLoanDetail);   
+		return new AuditHeader(aMortgageLoanDetail.getId(),null,null,null,auditDetail,
+				aMortgageLoanDetail.getUserDetails(),getOverideMap());
+	}
+	
+	/**
+	 * Display Message in Error Box
+	 * 
+	 * @param e
+	 *            (Exception)
+	 */
+	private void showMessage(Exception e) {
+		logger.debug("Entering");
+		AuditHeader auditHeader = new AuditHeader();
+		try {
+			auditHeader.setErrorDetails(new ErrorDetails(
+					PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_MortgageLoanDetailDialog, auditHeader);
+		} catch (Exception exp) {
+			logger.error(exp);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
+	 * 
+	 * @throws Exception
+	 */
+	public void onClick$btnNotes(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		
+		final HashMap<String, Serializable> map = new HashMap<String, Serializable>();
+		map.put("notes", getNotes());
+		map.put("control", this);
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	// Check notes Entered or not
+	public void setNotes_entered(String notes) {
+		logger.debug("Entering");
+		if (!isNotes_Entered()){
+			if (org.apache.commons.lang.StringUtils.trimToEmpty(notes).equalsIgnoreCase("Y")){
+				setNotes_Entered(true);
+			}else{
+				setNotes_Entered(false);
+			}	
+		}
+		logger.debug("Leaving");
+	}	
+
+	// Get the notes entered for rejected reason
+	private Notes getNotes() {
+		logger.debug("Entering");
+		Notes notes = new Notes();
+		notes.setModuleName("MortgageLoanDetail");
+		notes.setReference(getMortgageLoanDetail().getId());
+		notes.setVersion(getMortgageLoanDetail().getVersion());
+		logger.debug("Leaving");
+		return notes;
+	}
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
+	}
+	public boolean isValidationOn() {
+		return this.validationOn;
+	}
+
+	public MortgageLoanDetail getMortgageLoanDetail() {
+		return this.mortgageLoanDetail;
+	}
+	public void setMortgageLoanDetail(MortgageLoanDetail mortgageLoanDetail) {
+		this.mortgageLoanDetail = mortgageLoanDetail;
+	}
+
+	public void setMortgageLoanDetailService(MortgageLoanDetailService mortgageLoanDetailService) {
+		this.mortgageLoanDetailService = mortgageLoanDetailService;
+	}
+	public MortgageLoanDetailService getMortgageLoanDetailService() {
+		return this.mortgageLoanDetailService;
+	}
+
+	public void setMortgageLoanDetailListCtrl(MortgageLoanDetailListCtrl mortgageLoanDetailListCtrl) {
+		this.mortgageLoanDetailListCtrl = mortgageLoanDetailListCtrl;
+	}
+	public MortgageLoanDetailListCtrl getMortgageLoanDetailListCtrl() {
+		return this.mortgageLoanDetailListCtrl;
+	}
+
+	public boolean isNotes_Entered() {
+		return notes_Entered;
+	}
+	public void setNotes_Entered(boolean notes_Entered) {
+		this.notes_Entered = notes_Entered;
+	}
+
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+		this.overideMap = overideMap;
+	}
+	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
+		return overideMap;
+	}
+	public boolean isNewFinance() {
+		return newFinance;
+	}
+
+	public void setNewFinance(boolean newFinance) {
+		this.newFinance = newFinance;
+	}
+
+}

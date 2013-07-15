@@ -1,0 +1,141 @@
+<?page id="indexPage" title="pennApps Finance Factory" cacheable="false" 
+	language="xul/html" zscriptLanguage="Java"?>
+<?meta content="text/html; charset=UTF-8" 	pageEncoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+ 
+	<window id="outerIndexWindow" apply="${indexCtrl}" border="none"
+		width="100%" height="100%" style="background-color:#FCFCFC;">
+
+		<!-- HIDDEN fields for storing the current desktop height and width -->
+		<intbox id="currentDesktopHeight" visible="false" />
+		<intbox id="currentDesktopWidth" visible="false" />
+		<!-- HIDDEN field for storing the initial menu type -->
+		<checkbox id="CBtreeMenu" checked="true" visible="false" />
+
+		<borderlayout id="borderlayoutMain" height="100%">
+			<north id="borderlayoutMainNorth" border="none"
+				height="50px" splittable="false"
+				style="background-color:#FCFCFC;">
+
+				<div id="div1">
+					<hbox pack="stretch" width="100%">
+						<div id="divNo" align="left"
+							style="padding: 1px; ">
+							<image
+								src="/images/Pennant/PLFSmallLogo.png" />
+						</div>
+
+						<div align="left" style="margin-top:8px;">
+							<label id="label_AppName"
+								style="font-size:22px; color: #FF4500;font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;">
+							</label>
+						</div>
+						<window id="winUserBar" apply="${userBarCtrl}"
+							border="none" width="100%" height="100%">
+							<div align="right" style="padding: 3px; ">
+								<hbox>
+									<vbox align="center" sclass="vbox_Userbar">
+										<label id="label_currentDate"
+											value="Date" sclass = "label_UserBar">
+										</label>
+										<label id="label_currentTime"
+											value="Time" sclass = "label_UserBar">
+										</label>
+									</vbox>
+
+									<vbox align="center" sclass ="vbox_Userbar">
+										<label
+											value=" Branch/Department"
+											sclass = "label_UserBar">
+										</label>
+										<label id="label_branch"
+											value="0005/ STD"
+											sclass = "label_UserBar">
+										</label>
+									</vbox>
+									<menubar vflex="2" sclass="menubar_userbar" autodrop="true" >
+										<menu id = "menu_user"  sclass="menu_Userbar" 
+											  label="Maker">
+											<menupopup >
+												<menuitem  id= "menuitem_changePasssword"
+													label="Change Password"   />
+												<menuitem id="menuitem_logout"
+													label="Log Out" image="/images/icons/logoff.png" />
+											</menupopup>
+										</menu>
+									</menubar>
+								</hbox>
+							</div>
+							<timer id="timer" delay="1000"
+								repeats="true">
+								<attribute name="onTimer">
+									Date date = new Date();
+									java.text.DateFormat dateFormat = new java.text.SimpleDateFormat(
+											"dd/MMM/yyyy");
+									label_currentDate.setValue(dateFormat.format(date));
+									dateFormat = new java.text.SimpleDateFormat("HH:mm:ss");
+									label_currentTime.setValue(dateFormat.format(date));
+								</attribute>
+							</timer>
+						</window>
+					</hbox>
+				</div>
+			</north>
+
+			<!-- MAIN MENU AREA -->
+			<west id="west" border="0" margins="2,0,0,1" size="240px"
+				collapsible="true" style="padding:5px" flex="false" minsize="110"
+				splittable="true" autoscroll="true">
+				<div id="divWest"
+					style="align:center;margin-left:70px;">
+					<image src="/images/Pennant/Loading.gif"
+						height="38px" />
+				</div>
+			</west>
+
+			<!-- MODULE CONTENT AREA -->
+			<center id="center" border="none" margins="2,0,0,1"
+				flex="true" autoscroll="false" style="padding: 5px">
+				<div id="divCenter">
+
+					<groupbox id="groupbox_menu" mold="3d" height="100%"
+						contentSclass="groupbox-cnt-noborder" >
+
+
+						<tabbox id="tabBoxIndexCenter" width="100%"
+							height="100%">
+							<tabs id="tabsIndexCenter"></tabs>
+						 
+							<tabpanels id="tabpanelsBoxIndexCenter">
+							</tabpanels>
+						</tabbox>
+					</groupbox>
+
+				</div>
+			</center>
+
+			<east border="none" margins="0,0,0,0" size="0%">
+				<div id="divEast">EAST</div>
+			</east>
+
+			<!-- STATUS BAR AREA -->
+					<south id="south" border="none" height="30px"
+				style="float: left; padding: 0px" splittable="false">
+				<div id="divSouth" style="float: left; padding: 0px"
+					width="100%">
+					<!-- The MessageBar. Comps are created in the Controller -->
+					<window id="winMessageBar" apply="${messageBarCtrl}"
+						border="none" width="100%" height="30px" />
+				</div>
+			</south>
+		</borderlayout>
+
+	</window>
+
+</zk>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns:w="client" xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<style>
+		.CodeMirror-line-numbers {
+			 width: 2.2em; 
+			 color: #aaa;
+			 background-color: #eee; 
+			 text-align: right; 
+			 padding-right: .3em;
+			 font-size: 10pt; 
+			 font-family: monospace; 
+			 padding-top: .4em;
+			 line-height: normal; 
+		}
+	</style>
+	<window>
+		<window id="window_RuleDialog"
+			border="normal" apply="${ruleDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+
+			<borderlayout id="borderlayoutRule">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew" height="24px"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnNew.tooltiptext')}" />
+								<button id="btnEdit" height="24px"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnEdit.tooltiptext')}" />
+								<button id="btnDelete" height="24px"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnDelete.tooltiptext')}" />
+								<button id="btnSave" height="24px"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnSave.tooltiptext')}" />
+								<button id="btnCancel" height="24px"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+								<button id="btnNotes" height="24px"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+								<button id="btnReadValues" height="24px"
+									image="/images/icons/import_16x16.gif"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnReadValues.tooltiptext')}" />
+								<button id="btnSimulation" height="24px"
+									image="/images/icons/gear_16.png"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnSimulation.tooltiptext')}" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label id="label_RuleTitle"
+									value="${c:l('window_RuleDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" height="24px"
+									label="${c:l('label_Help')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+								<button id="btnClose" height="24px"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnClose.tooltiptext')}" />
+							</toolbar>
+						</hbox>
+					</div>
+
+				</north>
+				<center border="none" autoscroll="false">
+					<div>
+						<groupbox width="100%" closable="false">
+							<caption label="Rule Details" />
+							<grid id="grid_basicDetail" sclass="GridLayoutNoBorder"
+								fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="130px" />
+									<column />
+									<column width="180px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label
+											value="${c:l('label_RuleDialog_ruleCode.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<uppercasebox id="ruleCode"
+												width="160px" mold="default" />
+										</hbox>
+										<label
+											value="${c:l('label_RuleDialog_ruleCodeDesc.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<textbox id="ruleCodeDesc"
+												width="250px" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											value="${c:l('label_RuleDialog_ruleModule.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="ruleModule"
+												width="270px" />
+										</hbox>
+										<label
+											value="${c:l('label_RuleDialog_ruleEvent.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<textbox id="ruleType"
+												width="165px" readonly="true" visible="false" />
+											<textbox id="ruleEvent"
+												width="165px" readonly="true" />
+										</hbox>
+									</row>
+									<row id="row_waiverDecider">
+										<label
+											value="${c:l('label_RuleDialog_waiverDecider.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="waiverDecider"
+												width="100px" readonly="true" />
+										</hbox>
+									</row>
+									<row id="row_waiver">
+										<label
+											value="${c:l('label_RuleDialog_waiver.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="waiver" />
+										</hbox>
+										<label
+											value="${c:l('label_RuleDialog_waiverPercentage.value')}" />
+										<hbox>
+											<space spacing="2px"
+												id="space_waiver" sclass="mandatory" />
+											<decimalbox
+												id="waiverPercentage" width="100px" />
+										</hbox>
+									</row>
+									<row id="row_feeCharge"
+										visible="false">
+										<label id="label_seqOrder"
+											value="${c:l('label_RuleDialog_seqOrder.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<intbox id="seqOrder"
+												width="45px" />
+										</hbox>
+										<label
+											id="label_RuleDialog_AddFeeCharges"
+											value="${c:l('label_RuleDialog_AddFeeCharges.value')}" />
+										<hbox id="hbox_AddFeeCharges">
+											<space spacing="2px" />
+											<checkbox id="addFeeCharges"
+												checked="false" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											value="${c:l('label_RuleDialog_returnType.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="returnType"
+												width="100px" readonly="true" />
+										</hbox>
+										<label
+											id="label_RuleDialog_GroupId"
+											value="${c:l('label_RuleDialog_GroupId.value')}"
+											visible="false" />
+										<hbox id="hbox_groupId"
+											visible="false">
+											<space spacing="2px"
+												sclass="mandatory" />
+											<longbox id="groupId"
+												width="27px" visible="false" />
+											<textbox
+												id="lovDescGroupName" width="250px" readonly="true" />
+											<button
+												id="btnSearchGroupId" image="/images/icons/LOVSearch.png"
+												height="24px" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<separator />
+						<tabbox id="tabBoxIndexCenter" width="98%" height="100%">
+							<tabs  id="tabsIndexCenter">
+								<tab id="tab_ruleDesign"
+									label="${c:l('label_RuleDialog_RuleDesign')}" />
+								<tab id="tab_textRule"
+									label="${c:l('label_RuleDialog_TextRule')}" />
+							</tabs>
+							<tabpanels id="tabpanelsBoxIndexCenter">
+								<tabpanel id="tabPanel_tree"
+									style="overflow:auto">
+									<groupbox width="99%" visible="true" 
+										closable="false">
+										<caption
+											label="${c:l('label_RuleDialog_RuleDesign')}" />
+										<tree id="tree" width="4000px" />
+									</groupbox>
+								</tabpanel>
+								<tabpanel id="tabPanel_RuleResult"
+									style="overflow:auto">
+									<groupbox width="99%" visible="true"  
+										closable="false">
+										<caption
+											label="${c:l('label_RuleDialog_TextRule')}" />
+										<codemirror id="sqlRule"
+											readonly="true" width="100%" config="lineNumbers:true" />
+									</groupbox>
+								</tabpanel>
+							</tabpanels>
+						</tabbox>
+					</div>
+				</center>
+
+				<south sclass="south-dialog">
+						<groupbox id="groupboxWf" width="99%"
+							height="100%">
+							<caption label="${c:l('Action')}" />
+							<hbox width="75%">
+								<radiogroup id="userAction"
+									name="action" />
+								<label id="label_RecordStatus"
+									value="${c:l('label_RuleDialog_RecordStatus.value')}"
+									sclass="label-status" />
+								<label id="recordStatus" />
+							</hbox>
+						</groupbox>
+					</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

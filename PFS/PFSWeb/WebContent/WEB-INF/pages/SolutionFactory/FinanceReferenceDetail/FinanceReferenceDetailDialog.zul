@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	
+	<window id="window_FinanceReferenceDetailDialog"
+		title="${c:l('window_FinanceReferenceDetailDialog.title')}"
+		border="normal" apply="${financeReferenceDetailDialogCtrl}"
+		width="100%" height="100%" sizable="false">
+		
+		<div sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					style="float:left; border-style: none;">
+					<button id="btnNew" height="24px"
+						tooltiptext="${c:l('btnNew.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnEdit" height="24px"
+						tooltiptext="${c:l('btnEdit.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnDelete" height="24px"
+						tooltiptext="${c:l('btnDelete.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnSave" height="24px"
+						tooltiptext="${c:l('btnSave.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnCancel" height="24px"
+						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+					<button id="btnNotes" height="24px"
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+				</toolbar>
+				
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					style="float:left; border-style: none;">
+					<hbox align="center" style="padding: 2px"></hbox>
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					style="float:right; border-style: none;">
+					<button id="btnHelp" height="24px"
+						label = "${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+					<button id="btnClose" height="24px"
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderlayoutFinanceReferenceDetail"
+			height="100%">
+			<center border="none" autoscroll="true">
+				<div>
+					<groupbox id="gb_basicDetails" mold="3d">
+						<grid id="grid_Basicdetails" sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="150px" />
+								<column width="200px" />
+								<column width="100px" />
+								<column />
+							</columns>
+							<rows>
+								<row visible="true">
+									<label
+										id="label_FinanceReferenceDetailDialog_FinType"
+										value="${c:l('label_FinanceReferenceDetailDialog_FinType.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="finType"
+											maxlength="8" width="72px" />
+									</hbox>
+									<label
+										id="label_FinanceReferenceDetailDialog_FinTypeDesc"
+										value="${c:l('label_FinanceReferenceDetailDialog_FinTypeDesc.value')}" />
+									<label id="lovDescFinTypeDescName"
+										value="" />
+								</row>
+								<row visible="false">
+									<label
+										id="label_FinanceReferenceDetailDialog_FinRefType"
+										value="${c:l('label_FinanceReferenceDetailDialog_FinRefType.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<intbox id="finRefType"
+											width="90px" maxlength="14" />
+									</hbox>
+								</row>
+								<row visible="false">
+									<label
+										id="label_FinanceReferenceDetailDialog_FinRefId"
+										value="${c:l('label_FinanceReferenceDetailDialog_FinRefId.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<longbox id="finRefId"
+											width="171px" maxlength="26" />
+									</hbox>
+								</row>
+								<row visible="false">
+									<label
+										id="label_FinanceReferenceDetailDialog_IsActive"
+										value="${c:l('label_FinanceReferenceDetailDialog_IsActive.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<checkbox id="isActive"
+											checked="false" />
+									</hbox>
+								</row>
+								<row visible="false">
+									<label
+										id="label_FinanceReferenceDetailDialog_ShowInStage"
+										value="${c:l('label_FinanceReferenceDetailDialog_ShowInStage.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="showInStage"
+											maxlength="200" multiline="true" rows="4" width="80%" />
+									</hbox>
+								</row>
+								<row visible="false">
+									<label
+										id="label_FinanceReferenceDetailDialog_MandInputInStage"
+										value="${c:l('label_FinanceReferenceDetailDialog_MandInputInStage.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="mandInputInStage"
+											maxlength="200" multiline="true" rows="4" width="80%" />
+									</hbox>
+								</row>
+								<row visible="false">
+									<label
+										id="label_FinanceReferenceDetailDialog_AllowInputInStage"
+										value="${c:l('label_FinanceReferenceDetailDialog_AllowInputInStage.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="allowInputInStage"
+											maxlength="200" multiline="true" rows="4" width="80%" />
+									</hbox>
+								</row>
+
+							</rows>
+						</grid>
+					</groupbox>
+			
+					<groupbox mold="3d" >
+					<tabbox>
+						<tabs>
+							<tab
+								label="${c:l('label_FinanceCheckList.title')}"
+								id="tabFinanceCheckList" />
+							<tab
+								label="${c:l('label_FinanceAgreement.title')}"
+								id="tabFinanceAgreement" />
+							<tab
+								label="${c:l('label_FinanceEligibility.title')}"
+								id="tabFinanceEligibility" />
+							<tab
+								label="${c:l('label_FinanceScoringGroup.title')}"
+								id="tabFinanceScoringGroup" />
+							<tab
+								label="${c:l('label_FinCorpScoringGroup.title')}"
+								id="tabFinCorpScoringGroup" />
+							<tab
+								label="${c:l('label_FinanceAccounting.title')}"
+								id="tabFinanceAccounting" />
+							<tab
+								label="${c:l('label_FinanceMailTemplates.title')}"
+								id="tabFinanceMailTemplate" />
+						</tabs>
+						<tabpanels>
+							<tabpanel >
+								<groupbox id="gb_FinanceCheckList"
+									mold="3d">
+									<div sclass="z-toolbar"
+										style="padding:0" height="24px">
+										<hbox pack="stretch"
+											sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+											style=" padding:0px;">
+
+											<!-- COMMON BUTTONS -->
+											<toolbar align="start"
+												style="float:left; border-style: none; padding:0px;"
+												width="300px" height="24px">
+												<hbox align="center"
+													style="padding: 0px">
+													<label
+														value="${c:l('label_FinanceCheckListList.title')}"
+														style="font-weight:bold; font-size: 11px;" />
+												</hbox>
+											</toolbar>
+
+											<!-- SEARCH AREA -->
+											<toolbar align="center"
+												style="float:left; border-style: none; padding:0px;"
+												height="24px">
+											</toolbar>
+
+											<!-- CRUD BUTTONS -->
+											<toolbar align="end"
+												style="float:right; border-style: none; padding:0px;"
+												height="24px">
+												<button
+													id="btnNew_FinanceCheckList" height="24px"
+													label = "${c:l('label_New')}"
+													autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNew_FinanceCheckList"
+													tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}" />
+											</toolbar>
+											<space width="2px" />
+										</hbox>
+									</div>
+
+									<listbox
+										id="listBoxFinanceCheckList" vflex="true"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+										multiple="false" >
+										<listhead sizable="true">
+											<listheader
+												id="listheader_FinanceCheckList_QuestionId"
+												label="${c:l('listheader_FinanceCheckList_QuestionId.label')}"
+												sort="false" width="20%" />
+											<listheader
+												id="listheader_FinanceCheckList_QuestionDesc"
+												label="${c:l('listheader_FinanceCheckList_QuestionDesc.label')}"
+												sort="false" width="70%" />
+											<listheader
+												id="listheader_FinanceCheckList_Active"
+												label="${c:l('listheader_FinanceCheckList_Active.label')}"
+												sort="false" width="10%" />
+											<listheader
+												id="listheader_FinanceCheckList_RecordStatus"
+												label="${c:l('listheader_FinanceCheckList_RecordStatus.label')}"
+												sort="false" width="10%" visible="false" />
+											<listheader
+												id="listheader_FinanceCheckList_RecordType"
+												label="${c:l('listheader_FinanceCheckList_RecordType.label')}"
+												sort="false" width="10%" visible="false" />
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+							<tabpanel >
+								<groupbox id="gb_FinanceAgreementLink"
+									mold="3d">
+									<div sclass="z-toolbar"
+										style="padding:0" height="24px">
+										<hbox pack="stretch"
+											sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+											style=" padding:0px;">
+											<toolbar align="start"
+												style="float:left; border-style: none; padding:0px;"
+												width="300px" height="24px">
+												<hbox align="center"
+													style="padding: 0px">
+													<label
+														value="${c:l('label_FinanceAgreementList.title')}"
+														style="font-weight:bold; font-size: 11px;" />
+												</hbox>
+											</toolbar>
+											<toolbar align="center"
+												style="float:left; border-style: none; padding:0px;"
+												height="24px">
+											</toolbar>
+											<toolbar align="end"
+												style="float:right; border-style: none; padding:0px;"
+												height="24px">
+												<button
+													id="btnNew_FinanceAgreementLink" height="24px"
+													label = "${c:l('label_New')}"
+													tooltiptext="${c:l('button_NewFinanceAgreementLink.tooltiptext')}" />
+											</toolbar>
+											<space width="2px" />
+										</hbox>
+									</div>
+									<listbox
+										id="listboxFinanceAgreementLink" multiple="false" width="100%">
+										<listhead sizable="true">
+											<listheader
+												id="listheader_AggId"
+												label="${c:l('listheader_AgreementDef_AggId.label')}"
+												sort="auto" width="12%" />
+											<listheader
+												id="listheader_AggCode"
+												label="${c:l('listheader_AgreementDef_AggCode.label')}"
+												sort="auto" width="20%" />
+											<listheader
+												id="listheader_AggName"
+												label="${c:l('listheader_AggName.label')}" sort="auto"
+												width="20%" />
+											<listheader
+												id="listheader_AggDesc"
+												label="${c:l('listheader_AggDesc.label')}" sort="auto"
+												width="40%" />
+											<listheader
+												id="listheader_FinanceAgreementActive"
+												label="${c:l('listheader_FinanceAgreementActive.label')}"
+												width="8%">
+											</listheader>
+											<listheader
+												id="listheader_AgreementRecordStatus"
+												label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+												width="10%" visible="false" />
+											<listheader
+												id="listheader_FinanceAgreementOperation"
+												label="${c:l('listheader_FinanceAgreementOperation.label')}"
+												width="10%" visible="false">
+											</listheader>
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+							<tabpanel >
+								<groupbox id="gb_FinanceEligibilityLink"
+									mold="3d">
+									<div sclass="z-toolbar"
+										style="padding:0" height="24px">
+										<hbox pack="stretch"
+											sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+											style=" padding:0px;">
+											<toolbar align="start"
+												style="float:left; border-style: none; padding:0px;"
+												width="300px" height="24px">
+												<hbox align="center"
+													style="padding: 0px">
+													<label
+														value="${c:l('label_FinanceEligibilityList.title')}"
+														style="font-weight:bold; font-size: 11px;" />
+												</hbox>
+											</toolbar>
+											<toolbar align="center"
+												style="float:left; border-style: none; padding:0px;"
+												height="24px">
+											</toolbar>
+											<toolbar align="end"
+												style="float:right; border-style: none; padding:0px;"
+												height="24px">
+												<button
+													id="btnNew_FinanceEligibilityLink" height="24px"
+													label = "${c:l('label_New')}"
+													tooltiptext="${c:l('button_NewFFinanceEligibilityLink.tooltiptext')}" />
+											</toolbar>
+											<space width="2px" />
+										</hbox>
+									</div>
+									<listbox
+										id="listBoxEligibilityRules" multiple="false" width="100%" >
+										<listhead sizable="true">
+											<listheader
+												id="listheader_ElgRuleId"
+												label="${c:l('listheader_ElgRuleId.label')}" sort="auto"
+												width="12%" />
+											<listheader
+												id="listheader_ElgRuleSource"
+												label="${c:l('listheader_ElgRuleSource.label')}" sort="auto"
+												width="10%" visible="false"/>
+											<listheader
+												id="listheader_ElgRuleCode"
+												label="${c:l('listheader_ElgRuleCode.label')}" sort="auto"
+												width="20%" />
+											<listheader
+												id="listheader_ElgRuleDesc"
+												label="${c:l('listheader_ElgRuleDesc.label')}" sort="auto"
+												width="60%" />
+											<listheader
+												id="listheader_FinanceEligibilityActive"
+												label="${c:l('listheader_FinanceAgreementActive.label')}"
+												width="8%">
+											</listheader>
+											<listheader
+												id="listheader_RecordStatus"
+												label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+												width="10%" visible="false" />
+											<listheader
+												id="listheader_RecordType"
+												label="${c:l('listheader_RecordType.label')}" sort="auto"
+												width="10%" visible="false" />
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+							<tabpanel>
+								<groupbox id="gb_FinanceScoringGroup"
+									mold="3d">
+									<div sclass="z-toolbar"
+										style="padding:0" height="24px">
+										<hbox pack="stretch"
+											sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+											style=" padding:0px;">
+											<toolbar align="start"
+												style="float:left; border-style: none; padding:0px;"
+												width="300px" height="24px">
+												<hbox align="center"
+													style="padding: 0px">
+													<label
+														value="${c:l('label_FinanceScoringGroupList.title')}"
+														style="font-weight:bold; font-size: 11px;" />
+												</hbox>
+											</toolbar>
+											<toolbar align="center"
+												style="float:left; border-style: none; padding:0px;"
+												height="24px">
+											</toolbar>
+											<toolbar align="end"
+												style="float:right; border-style: none; padding:0px;"
+												height="24px">
+												<button
+													id="btnNew_FinanceScoringGroup" height="24px"
+													label = "${c:l('label_New')}"
+													tooltiptext="${c:l('button_New_FinanceScoringGroup.tooltiptext')}" />
+											</toolbar>
+											<space width="2px" />
+										</hbox>
+									</div>
+									<listbox id="listBoxScoringGroup"
+										multiple="false" width="100%" >
+										<listhead sizable="true">
+											<listheader
+												id="label_ScoreGroupId" label="${c:l('label_ScoreGroupId')}"
+												sort="auto" width="15%" />
+											<listheader
+												id="listheader_ScoreGroupCode"
+												label="${c:l('listheader_ScoreGroupCode.label')}"
+												sort="auto" width="25%" />
+											<listheader
+												id="listheader_ScoreGroupName"
+												label="${c:l('listheader_ScoreGroupName.label')}"
+												sort="auto" width="52%" />
+											<listheader
+												id="listheader_MinScore"
+												label="${c:l('listheader_MinScore.label')}" sort="auto"
+												width="0%" visible="false" />
+											<listheader
+												id="listheader_FinanceScoringGroupActive"
+												label="${c:l('listheader_FinanceAgreementActive.label')}"
+												width="8%">
+											</listheader>
+											<listheader
+												id="listheader_sRecordStatus"
+												label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+												width="0%" visible="false" />
+											<listheader
+												id="listheader_sRecordType"
+												label="${c:l('listheader_RecordType.label')}" sort="auto"
+												width="0%" visible="false" />
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+							<tabpanel>
+								<groupbox id="gb_FinCorpScoringGroup"
+									mold="3d">
+									<div sclass="z-toolbar"
+										style="padding:0" height="24px">
+										<hbox pack="stretch"
+											sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+											style=" padding:0px;">
+											<toolbar align="start"
+												style="float:left; border-style: none; padding:0px;"
+												width="300px" height="24px">
+												<hbox align="center"
+													style="padding: 0px">
+													<label
+														value="${c:l('label_FinCorpScoringGroupList.title')}"
+														style="font-weight:bold; font-size: 11px;" />
+												</hbox>
+											</toolbar>
+											<toolbar align="center"
+												style="float:left; border-style: none; padding:0px;"
+												height="24px">
+											</toolbar>
+											<toolbar align="end"
+												style="float:right; border-style: none; padding:0px;"
+												height="24px">
+												<button
+													id="btnNew_FinCorpScoringGroup" height="24px"
+													label = "${c:l('label_New')}"
+													tooltiptext="${c:l('button_New_FinanceScoringGroup.tooltiptext')}" />
+											</toolbar>
+											<space width="2px" />
+										</hbox>
+									</div>
+									<listbox id="listBoxCorpScoringGroup"
+										multiple="false" width="100%" >
+										<listhead sizable="true">
+											<listheader
+												id="label_CorpScoreGroupId" label="${c:l('label_ScoreGroupId')}"
+												sort="auto" width="15%" />
+											<listheader
+												id="listheader_CorpScoreGroupCode"
+												label="${c:l('listheader_ScoreGroupCode.label')}"
+												sort="auto" width="25%" />
+											<listheader
+												id="listheader_CorpScoreGroupName"
+												label="${c:l('listheader_ScoreGroupName.label')}"
+												sort="auto" width="52%" />
+											<listheader
+												id="listheader_CorpMinScore"
+												label="${c:l('listheader_MinScore.label')}" sort="auto"
+												width="0%" visible="false" />
+											<listheader
+												id="listheader_CorpFinanceScoringGroupActive"
+												label="${c:l('listheader_FinanceAgreementActive.label')}"
+												width="8%">
+											</listheader>
+											<listheader
+												id="listheader_csRecordStatus"
+												label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+												width="0%" visible="false" />
+											<listheader
+												id="listheader_csRecordType"
+												label="${c:l('listheader_RecordType.label')}" sort="auto"
+												width="0%" visible="false" />
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+							<tabpanel >
+								<groupbox id="gb_FinanceAdvanceAccounting"
+									mold="3d">
+									<div sclass="z-toolbar"
+										style="padding:0" height="24px">
+										<hbox pack="stretch"
+											sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+											style=" padding:0px;">
+											<toolbar align="start"
+												style="float:left; border-style: none; padding:0px;"
+												width="300px" height="24px">
+												<hbox align="center"
+													style="padding: 0px">
+													<label
+														value="${c:l('label_FinanceAdvanceAccountingList.title')}"
+														style="font-weight:bold; font-size: 11px;" />
+												</hbox>
+											</toolbar>
+											<toolbar align="center"
+												style="float:left; border-style: none; padding:0px;"
+												height="24px">
+											</toolbar>
+											<toolbar align="end"
+												style="float:right; border-style: none; padding:0px;"
+												height="24px">
+												<button
+													id="btnNew_FinanceAdvanceAccounting" height="24px"
+													label = "${c:l('label_New')}"
+													tooltiptext="${c:l('button_NewFinanceAdvanceAccountingLink.tooltiptext')}" />
+											</toolbar>
+											<space width="2px" />
+										</hbox>
+									</div>
+									<listbox
+										id="listBoxAccounts" multiple="false" width="100%" >
+										<listhead sizable="true">
+											<listheader
+												id="listheader_FinanceEventId"
+												label="${c:l('listheader_FinanceEventId.label')}" sort="auto"
+												width="10%" visible="false" />
+											<listheader
+												id="listheader_FinanceEventName"
+												label="${c:l('listheader_FinanceEventName.label')}" sort="auto"
+												width="10%" visible="false" />
+											<listheader
+												id="listheader_FinanceEventCode"
+												label="${c:l('listheader_FinanceEventCode.label')}" sort="auto"
+												width="30%" />
+											<listheader
+												id="listheader_FinanceEventDesc"
+												label="${c:l('listheader_FinanceEventDesc.label')}" sort="auto"
+												width="60%" />
+											<listheader
+												id="listheader_FinanceAccountActive" sort="auto"
+												label="${c:l('listheader_FinanceAccountActive.label')}"
+												width="10%" />
+											<listheader
+												id="listheader_aRecordStatus"
+												label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+												width="10%" visible="false" />
+											<listheader
+												id="listheader_aRecordType"
+												label="${c:l('listheader_RecordType.label')}" sort="auto"
+												width="10%" visible="false" />
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+						<tabpanel >
+								<groupbox id="gb_FinanceMailTemplate"
+									mold="3d">
+									<div sclass="z-toolbar"
+										style="padding:0" height="24px">
+										<hbox pack="stretch"
+											sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+											style=" padding:0px;">
+											<toolbar align="start"
+												style="float:left; border-style: none; padding:0px;"
+												width="300px" height="24px">
+												<hbox align="center"
+													style="padding: 0px">
+													<label
+														value="${c:l('label_FinanceMailTemplateList.title')}"
+														style="font-weight:bold; font-size: 11px;" />
+												</hbox>
+											</toolbar>
+											<toolbar align="center"
+												style="float:left; border-style: none; padding:0px;"
+												height="24px">
+											</toolbar>
+											<toolbar align="end"
+												style="float:right; border-style: none; padding:0px;"
+												height="24px">
+												<button
+													id="btnNew_FinanceMailTemplate" height="24px"
+													label = "${c:l('label_New')}"
+													tooltiptext="${c:l('button_NewFinanceMailTemplateLink.tooltiptext')}" />
+											</toolbar>
+											<space width="2px" />
+										</hbox>
+									</div>
+									<listbox
+										id="listBoxTemplates" multiple="false" width="100%" >
+										<listhead sizable="true">
+											<listheader
+												id="listheader_FinanceTemplateId"
+												label="${c:l('listheader_FinanceTemplateId.label')}" sort="auto"
+												width="10%" visible="false" />
+											<listheader
+												id="listheader_FinanceTemplateCode1"
+												label="${c:l('listheader_FinanceTemplateCode.label')}" sort="auto"
+												width="10%" visible="false" />
+											<listheader
+												id="listheader_FinanceTemplateCode"
+												label="${c:l('listheader_FinanceTemplateCode.label')}" sort="auto"
+												width="30%" />
+											<listheader
+												id="listheader_FinanceTemplateDesc"
+												label="${c:l('listheader_FinanceTemplateDesc.label')}" sort="auto"
+												width="60%" />
+											<listheader
+												id="listheader_FinanceTemplateActive" sort="auto"
+												label="${c:l('listheader_FinanceTemplateActive.label')}"
+												width="10%" />
+											<listheader
+												id="listheader_tRecordStatus"
+												label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+												width="10%" visible="false" />
+											<listheader
+												id="listheader_tRecordType"
+												label="${c:l('listheader_RecordType.label')}" sort="auto"
+												width="10%" visible="false" />
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				
+				</groupbox>
+					<grid visible="false">
+						<columns>
+							<column width="150px" />
+							<column />
+						</columns>
+						<rows>
+							<row id="statusRow">
+								<label
+									id="label_FinanceAgreementListDialog_RecordStatus"
+									value="${c:l('label_FinanceAgreementListDialog_RecordStatus.value')}" />
+								<label id="recordStatus" />
+							</row>
+							<row spans="2">
+								<groupbox id="groupboxWf" width="97%">
+									<caption label="${c:l('Action')}" />
+									<hbox>
+										<radiogroup id="userAction"
+											name="action" />
+									</hbox>
+								</groupbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</center>
+
+		</borderlayout>
+	</window>
+</zk>

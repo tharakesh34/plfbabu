@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CustomerLimitList" apply="${customerLimitListCtrl}"
+		border="none" width="100%">
+
+		<div sclass="z-toolbar" style="padding:0" height="28px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					style="float:left; border-style: none;" width="150px">
+					<hbox align="center" style="padding: 2px" />
+				</toolbar>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					style="float:left; border-style: none;">
+					<hbox align="center">
+						<button
+							id="button_CustomerLimitList_CustomerLimitSearchDialog" height="24px"
+							label = "${c:l('label_Filter')}"
+							tooltiptext="${c:l('button_CustomerLimitList_CustomerLimitSearchDialog.tooltiptext')}" />
+						<button id="button_CustomerLimitList_PrintList"
+							height="24px" label = "${c:l('label_Print')}"
+							tooltiptext="${c:l('button_CustomerLimitList_PrintList.tooltiptext')}" />
+					</hbox>
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					style="float:right; border-style: none;">
+					<button id="button_CustomerLimitList_NewCustomerLimit"
+						height="24px" label = "${c:l('label_New')}"
+						tooltiptext="${c:l('button_CustomerLimitList_NewCustomerLimit.tooltiptext')}" />
+					<button id="btnRefresh" height="24px"
+						label = "${c:l('label_Refresh')}"
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+					<button id="btnHelp" height="24px"
+						label = "${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderLayout_CustomerLimitList">
+			<north border="none" />
+
+			<center border="none">
+
+				<listbox id="listBoxCustomerLimit" vflex="true"
+					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+					height="100%" multiple="false">
+					<listhead sizable="true">
+						<listheader id="listheader_CustCIF"
+							label="${c:l('listheader_CustCIF.label')}" sort="auto"
+							width="20%" />
+						<listheader id="listheader_CustShrtName"
+							label="${c:l('listheader_CustShrtName.label')}" sort="auto"
+							width="20%" />
+						<listheader id="listheader_Country"
+							label="${c:l('listheader_Country.label')}" sort="auto"
+							width="20%" />
+						<listheader id="listheader_custGroupName"
+							label="${c:l('listheader_custGroupName.label')}" sort="auto"
+							width="20%" />
+						<listheader id="listheader_Currency"
+							label="${c:l('listheader_Currency.label')}" sort="auto"
+							width="20%" />
+					</listhead>
+
+				</listbox>
+			</center>
+			<south border="none">
+				<paging id="pagingCustomerLimitList" />
+			</south>
+
+		</borderlayout>
+	</window>
+</zk>

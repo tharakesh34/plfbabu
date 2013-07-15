@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language-addon>
+	<language-name>xul/html</language-name>
+
+	<!-- ====================================================== -->
+	<!-- Define the font size -->
+	<!-- ====================================================== -->
+	<library-property>
+		<name>org.zkoss.zul.theme.fontSizeM
+		</name>
+		<value>12px</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zul.theme.fontSizeS
+		</name>
+		<value>10px</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zul.theme.fontSizeXS
+		</name>
+		<value>9px</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zul.theme.fontSizeMS
+		</name>
+		<value>10px</value>
+	</library-property>
+
+	<!-- ====================================================== -->
+	<!-- Define properties for commonly used components -->
+	<!-- ====================================================== -->
+	<component>
+		<component-name>decimalbox</component-name>
+		<extends>decimalbox</extends>
+		<property>
+			<property-name>format</property-name>
+			<property-value>#,##0.00</property-value>
+		</property>
+	</component>
+	<component>
+		<component-name>uppercasebox</component-name>
+		<component-class>com.pennant.component.Uppercasebox</component-class>
+		<extends>textbox</extends>
+		<property>
+			<property-name>style</property-name>
+			<property-value>text-transform: uppercase;</property-value>
+		</property>
+	</component>
+	<component>
+		<component-name>currencyBox</component-name>
+		<component-class>com.pennant.CurrencyBox</component-class>
+		<extends>hbox</extends>
+	</component>
+	<component>
+		<component-name>extendedcombobox</component-name>
+		<component-class>com.pennant.ExtendedCombobox</component-class>
+		<extends>hbox</extends>
+	</component>
+	<stylesheet href="/css/zul/pennant.css.dsp" type="text/css" />
+</language-addon>

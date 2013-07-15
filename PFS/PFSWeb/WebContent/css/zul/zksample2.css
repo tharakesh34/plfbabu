@@ -1,0 +1,104 @@
+<?
+taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?> 
+<style type="text /css"> 
+
+/* body Bereich */
+	body {
+	padding: 0 0;
+	/* 0 padding on top and bottom and 0 padding on right and left */
+}
+
+
+/* ------------------- TOOLBAR -------------------- */
+	/* remove white strips between the toolbars */
+.hboxRemoveWhiteStrips td.z-hbox-sep {
+	width: 0;
+	padding: 0;
+}
+
+/* ------------------- TEXTBOX -------------------- */
+	/* Textbox: Disabled / readonly background color */
+.z-textbox-readonly,.z-textbox-text-disd {
+	background: #ECEAE4;
+}
+
+/* ------------------- DECIMALBOX -------------------- */
+	/* Decimalbox: Disabled / readonly background color */
+.z-decimalbox-readonly,.z-decimalbox-text-disd {
+	background: #ECEAE4;
+}
+
+/* ------------------- DOUBLEBOX -------------------- */
+	/* Doublebox: Disabled / readonly background color */
+.z-doublebox-readonly,.z-doublebox-text-disd {
+	background: #ECEAE4;
+}
+
+/* ------------------- INTBOX -------------------- */
+	/* intbox: Disabled / readonly background color */
+.z-intbox-readonly,.z-intbox-text-disd {
+	background: #ECEAE4;
+}
+
+/* ------------------- DATEBOX -------------------- */
+	/* Disabled datebox should have black font */
+.z-datebox {
+	font: #000000;
+}
+
+/* ------------------- GRID -------------------- */
+	/* cut the vertical borders in the rows of the GRID */
+tr.z-row td.z-row-inner {
+	border-right: 0px #CCC;
+}
+
+/* Make Plain Grid+smaller comps Padding */
+	/* "overflow:hidden ;" not working in Chrome/Safari */
+.GridLayoutNoBorder tr.z-row td.z-row-inner,tr.z-row,div.z-grid-body div.z-cell,div.z-grid
+	{
+	border: none;
+	zoom: 1;
+	background: white;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: none;
+	padding: 1px;
+}
+
+/* ------------------- GROUPBOX -------------------- */
+	/* Title in bold letters */
+.z-groupbox-hl .z-groupbox-header {
+	color: #000000;
+	font-weight: bold;
+}
+
+/* --------------------- TABS ---------------------- */ /* no border */
+.z-tabs-scroll {
+	border: 0px;
+}
+
+/* -------------------- TabPanel ------------------- */ /* no border */
+.z-tabpanel,.z-tabbox-ver .z-tabpanels-ver {
+	border-style: none;
+}
+
+.z-slider-sphere-hor,.z-slider-scale,.z-slider-hor,.z-slider-sphere-hor-center,.z-slider-scale-center,.z-slider-hor-center
+	{
+	background: transparent no-repeat 0 top;
+	background-image: url(${
+		                                                                  
+		 c :   
+		
+		  
+		         
+		                             
+		                     encodeURL('~./zul/img/slider/slider-bg.png')
+}
+
+.z-tabs-header {
+	width: 100%;
+}
+</
+style
+>

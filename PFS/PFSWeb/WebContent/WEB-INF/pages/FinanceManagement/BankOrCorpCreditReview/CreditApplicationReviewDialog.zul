@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CreditApplicationReviewDialog" border="normal"
+		apply="${creditApplicationReviewDialogCtrl}" width="100%"
+		height="100%" sizable="false">
+		<borderlayout id="borderlayout_CreditApplicationReview">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" height="24px"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnEdit" height="24px"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" height="24px"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnSave" height="24px"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel" height="24px"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+							<button id="btnNotes" height="24px"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCopyTo" height="24px"
+								image="/images/icons/copyto.png"
+								tooltiptext="${c:l('btnCopyTo.tooltiptext')}" visible="true" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_CreditApplicationReviewDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" height="24px"
+								label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnClose" height="24px"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						</toolbar>
+					</hbox>
+				</div>
+
+			</north>
+			<center border="none" autoscroll="true">
+				<vlayout>
+					<groupbox id="gb_basicDetails" height="100%"
+						sclass="gb-dialog" closable="false">
+						<caption
+							label="Credit Application/Review-Bank SpreadSheet" />
+						<grid id="creditApplicationReviewGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true" width="100%">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<!-- 	<row visible="true">									
+									<label
+									id="label_CreditApplicationReviewDialog_AppHead"/>
+									</row> -->
+								<row>
+									<label
+										id="label_CreditApplicationReviewDialog_CustID"
+										value="${c:l('label_CreditApplicationReviewDialog_CustId.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<longbox id="custID"
+											width="150px" maxlength="26" visible="false" />
+										<textbox id="custCIF"
+											width="150px" maxlength="150" style="overflow: hidden;"
+											readonly="true" />
+										<button id="btnSearchPRCustid"
+											image="/images/icons/LOVSearch.png" height="24px" />
+										<label id="custShrtName"
+											width="150px" />
+									</hbox>
+									<label
+										id="label_CreditApplicationReviewDialog_BankName"
+										value="${c:l('label_CreditApplicationReviewDialog_BankName.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="bankName" />
+									</hbox>
+								</row>
+								<row>
+									<label
+										id="label_CreditApplicationReviewDialog_Auditors"
+										value="${c:l('label_CreditApplicationReviewDialog_Auditors.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="auditors" />
+									</hbox>
+									<label
+										id="label_CreditApplicationReviewDialog_ConsolOrUnConsol"
+										value="${c:l('label_CreditApplicationReviewDialog_ConsolOrUnConsol.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="consolOrUnConsol" />
+									</hbox>
+								</row>
+								<row>
+									<label
+										id="label_CreditApplicationReviewDialog_Location"
+										value="${c:l('label_CreditApplicationReviewDialog_Location.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="location" />
+									</hbox>
+									<label
+										id="label_CreditApplicationReviewDialog_AuditedDate"
+										value="${c:l('label_CreditApplicationReviewDialog_AuditedDate.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<datebox id="auditedDate" />
+									</hbox>
+								</row>
+								<row>
+									<label
+										id="label_CreditApplicationReviewDialog_ConversionRate"
+										value="${c:l('label_CreditApplicationReviewDialog_ConversionRate.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<decimalbox id="conversionRate" />
+									</hbox>
+									<label
+										id="label_CreditApplicationReviewDialog_AuditedYear"
+										value="${c:l('label_CreditApplicationReviewDialog_AuditedYear.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="auditedYear"
+											maxlength="4" />
+									</hbox>
+								</row>
+								<row>
+									<label
+										id="label_CreditApplicationReviewDialog_NoOfShares"
+										value="${c:l('label_CreditApplicationReviewDialog_NoOfShares.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<intbox id="noOfShares" />
+									</hbox>
+									<label
+										id="label_CreditApplicationReviewDialog_MarketPrice"
+										value="${c:l('label_CreditApplicationReviewDialog_MarketPrice.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<decimalbox id="marketPrice" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_CreditReviwDetails">
+						<tabbox width="99%" id="tabBoxIndexCenter">
+							<tabs id="tabsIndexCenter" />
+							<tabpanels id="tabpanelsBoxIndexCenter" />
+						</tabbox>
+					</groupbox>
+				</vlayout>
+			</center>
+
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_CreditApplicationReviewDialog_RecordStatus"
+							value="${c:l('label_CreditApplicationReviewDialog_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+
+			</south>
+		</borderlayout>
+	</window>
+</zk>

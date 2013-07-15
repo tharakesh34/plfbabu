@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CustomerSearch"
+		title="${c:l('window_CustomerSearch.title')}" border="none"
+		apply="${customerSearchCtrl}" closable="true" width="400px"
+		height="430px" sizable="true">
+
+		<borderlayout>
+			<north></north>
+			<center flex="true">
+				<panel>
+					<panelchildren style="padding: 5px">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column width="100%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_CustomerSearch_CustID" value="${c:l('label_CustomerSearch_CustID.value')}" />
+									<listbox id="sortOperator_custID" width="43px" mold="select" rows="1" />
+										<textbox id="custID" width="108px" maxlength="19" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustCIF" value="${c:l('label_CustomerSearch_CustCIF.value')}" />
+									<listbox id="sortOperator_custCIF" width="43px" mold="select" rows="1" />
+										<textbox id="custCIF" width="108px" maxlength="19" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustCoreBank" value="${c:l('label_CustomerSearch_CustCoreBank.value')}" />
+									<listbox id="sortOperator_custCoreBank" width="43px" mold="select" rows="1" />
+										<textbox id="custCoreBank" width="171px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustCtgCode" value="${c:l('label_CustomerSearch_CustCtgCode.value')}" />
+									<listbox id="sortOperator_custCtgCode" width="43px" mold="select" rows="1" />
+										<textbox id="custCtgCode" width="171px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustTypeCode" value="${c:l('label_CustomerSearch_CustTypeCode.value')}" />
+									<listbox id="sortOperator_custTypeCode" width="43px" mold="select" rows="1" />
+										<textbox id="custTypeCode" width="171px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustSalutationCode" value="${c:l('label_CustomerSearch_CustSalutationCode.value')}" />
+									<listbox id="sortOperator_custSalutationCode" width="43px" mold="select" rows="1" />
+										<textbox id="custSalutationCode" width="171px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustFName" value="${c:l('label_CustomerSearch_CustFName.value')}" />
+									<listbox id="sortOperator_custFName" width="43px" mold="select" rows="1" />
+										<textbox id="custFName" width="171px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustMName" value="${c:l('label_CustomerSearch_CustMName.value')}" />
+									<listbox id="sortOperator_custMName" width="43px" mold="select" rows="1" />
+										<textbox id="custMName" width="171px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustLName" value="${c:l('label_CustomerSearch_CustLName.value')}" />
+									<listbox id="sortOperator_custLName" width="43px" mold="select" rows="1" />
+										<textbox id="custLName" width="171px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustShrtName" value="${c:l('label_CustomerSearch_CustShrtName.value')}" />
+									<listbox id="sortOperator_custShrtName" width="43px" mold="select" rows="1" />
+										<textbox id="custShrtName" width="171px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustDftBranch" value="${c:l('label_CustomerSearch_CustDftBranch.value')}" />
+									<listbox id="sortOperator_custDftBranch" width="43px" mold="select" rows="1" />
+										<textbox id="custDftBranch" width="108px" maxlength="19" />
+								</row>
+								<!--<row>
+									<label id="label_CustomerSearch_CustRO1" value="${c:l('label_CustomerSearch_CustRO1.value')}" />
+									<listbox id="sortOperator_custRO1" width="43px" mold="select" rows="1" />
+										<textbox id="custRO1" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustSts" value="${c:l('label_CustomerSearch_CustSts.value')}" />
+									<listbox id="sortOperator_custSts" width="43px" mold="select" rows="1" />
+										<textbox id="custSts" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustIsBlocked" value="${c:l('label_CustomerSearch_CustIsBlocked.value')}" />
+									<listbox id="sortOperator_custIsBlocked" width="43px" mold="select" rows="1" />
+										<checkbox id="custIsBlocked" checked="false"/>
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustIsActive" value="${c:l('label_CustomerSearch_CustIsActive.value')}" />
+									<listbox id="sortOperator_custIsActive" width="43px" mold="select" rows="1" />
+										<checkbox id="custIsActive" checked="false"/>
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustIsClosed" value="${c:l('label_CustomerSearch_CustIsClosed.value')}" />
+									<listbox id="sortOperator_custIsClosed" width="43px" mold="select" rows="1" />
+										<checkbox id="custIsClosed" checked="false"/>
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustInactiveReason" value="${c:l('label_CustomerSearch_CustInactiveReason.value')}" />
+									<listbox id="sortOperator_custInactiveReason" width="43px" mold="select" rows="1" />
+										<textbox id="custInactiveReason" width="1,800px" maxlength="200" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustIsTradeFinCust" value="${c:l('label_CustomerSearch_CustIsTradeFinCust.value')}" />
+									<listbox id="sortOperator_custIsTradeFinCust" width="43px" mold="select" rows="1" />
+										<checkbox id="custIsTradeFinCust" checked="false"/>
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustIsStaff" value="${c:l('label_CustomerSearch_CustIsStaff.value')}" />
+									<listbox id="sortOperator_custIsStaff" width="43px" mold="select" rows="1" />
+										<checkbox id="custIsStaff" checked="false"/>
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustStaffID" value="${c:l('label_CustomerSearch_CustStaffID.value')}" />
+									<listbox id="sortOperator_custStaffID" width="43px" mold="select" rows="1" />
+										<textbox id="custStaffID" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustIndustry" value="${c:l('label_CustomerSearch_CustIndustry.value')}" />
+									<listbox id="sortOperator_custIndustry" width="43px" mold="select" rows="1" />
+										<textbox id="custIndustry" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustSector" value="${c:l('label_CustomerSearch_CustSector.value')}" />
+									<listbox id="sortOperator_custSector" width="43px" mold="select" rows="1" />
+										<textbox id="custSector" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustSubSector" value="${c:l('label_CustomerSearch_CustSubSector.value')}" />
+									<listbox id="sortOperator_custSubSector" width="43px" mold="select" rows="1" />
+										<textbox id="custSubSector" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustProfession" value="${c:l('label_CustomerSearch_CustProfession.value')}" />
+									<listbox id="sortOperator_custProfession" width="43px" mold="select" rows="1" />
+										<textbox id="custProfession" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustTotalIncome" value="${c:l('label_CustomerSearch_CustTotalIncome.value')}" />
+									<listbox id="sortOperator_custTotalIncome" width="43px" mold="select" rows="1" />
+										<textbox id="custTotalIncome" width="162px" maxlength="18" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustMaritalSts" value="${c:l('label_CustomerSearch_CustMaritalSts.value')}" />
+									<listbox id="sortOperator_custMaritalSts" width="43px" mold="select" rows="1" />
+										<textbox id="custMaritalSts" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustEmpSts" value="${c:l('label_CustomerSearch_CustEmpSts.value')}" />
+									<listbox id="sortOperator_custEmpSts" width="43px" mold="select" rows="1" />
+										<textbox id="custEmpSts" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustSegment" value="${c:l('label_CustomerSearch_CustSegment.value')}" />
+									<listbox id="sortOperator_custSegment" width="43px" mold="select" rows="1" />
+										<textbox id="custSegment" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustSubSegment" value="${c:l('label_CustomerSearch_CustSubSegment.value')}" />
+									<listbox id="sortOperator_custSubSegment" width="43px" mold="select" rows="1" />
+										<textbox id="custSubSegment" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustIsBlackListed" value="${c:l('label_CustomerSearch_CustIsBlackListed.value')}" />
+									<listbox id="sortOperator_custIsBlackListed" width="43px" mold="select" rows="1" />
+										<checkbox id="custIsBlackListed" checked="false"/>
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustBLRsnCode" value="${c:l('label_CustomerSearch_CustBLRsnCode.value')}" />
+									<listbox id="sortOperator_custBLRsnCode" width="43px" mold="select" rows="1" />
+										<textbox id="custBLRsnCode" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustIsRejected" value="${c:l('label_CustomerSearch_CustIsRejected.value')}" />
+									<listbox id="sortOperator_custIsRejected" width="43px" mold="select" rows="1" />
+										<checkbox id="custIsRejected" checked="false"/>
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustRejectedRsn" value="${c:l('label_CustomerSearch_CustRejectedRsn.value')}" />
+									<listbox id="sortOperator_custRejectedRsn" width="43px" mold="select" rows="1" />
+										<textbox id="custRejectedRsn" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustBaseCcy" value="${c:l('label_CustomerSearch_CustBaseCcy.value')}" />
+									<listbox id="sortOperator_custBaseCcy" width="43px" mold="select" rows="1" />
+										<textbox id="custBaseCcy" width="27px" maxlength="3" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustLng" value="${c:l('label_CustomerSearch_CustLng.value')}" />
+									<listbox id="sortOperator_custLng" width="43px" mold="select" rows="1" />
+										<textbox id="custLng" width="18px" maxlength="2" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustParentCountry" value="${c:l('label_CustomerSearch_CustParentCountry.value')}" />
+									<listbox id="sortOperator_custParentCountry" width="43px" mold="select" rows="1" />
+										<textbox id="custParentCountry" width="18px" maxlength="2" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustResdCountry" value="${c:l('label_CustomerSearch_CustResdCountry.value')}" />
+									<listbox id="sortOperator_custResdCountry" width="43px" mold="select" rows="1" />
+										<textbox id="custResdCountry" width="18px" maxlength="2" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustRiskCountry" value="${c:l('label_CustomerSearch_CustRiskCountry.value')}" />
+									<listbox id="sortOperator_custRiskCountry" width="43px" mold="select" rows="1" />
+										<textbox id="custRiskCountry" width="18px" maxlength="2" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustNationality" value="${c:l('label_CustomerSearch_CustNationality.value')}" />
+									<listbox id="sortOperator_custNationality" width="43px" mold="select" rows="1" />
+										<textbox id="custNationality" width="18px" maxlength="2" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustClosedOn" value="${c:l('label_CustomerSearch_CustClosedOn.value')}" />
+									<listbox id="sortOperator_custClosedOn" width="43px" mold="select" rows="1" />
+										<textbox id="custClosedOn" width="144px" maxlength="16" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustStmtFrq" value="${c:l('label_CustomerSearch_CustStmtFrq.value')}" />
+									<listbox id="sortOperator_custStmtFrq" width="43px" mold="select" rows="1" />
+										<textbox id="custStmtFrq" width="72px" maxlength="8" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustStmtFrqDay" value="${c:l('label_CustomerSearch_CustStmtFrqDay.value')}" />
+									<listbox id="sortOperator_custStmtFrqDay" width="43px" mold="select" rows="1" />
+										<textbox id="custStmtFrqDay" width="18px" maxlength="2" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_CustIsStmtCombined" value="${c:l('label_CustomerSearch_CustIsStmtCombined.value')}" />
+									<listbox id="sortOperator_custIsStmtCombined" width="43px" mold="select" rows="1" />
+										<checkbox id="custIsStmtCombined" checked="false"/>
+								</row> -->
+								<row>
+									<label id="label_CustomerSearch_RecordStatus" value="${c:l('label_CustomerSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="108px" maxlength="19" />
+								</row>
+								<row>
+									<label id="label_CustomerSearch_RecordType" value="${c:l('label_CustomerSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="108px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+					</panelchildren>
+				</panel>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouthCustomer" align="left" width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20"
+										label="${c:l('btnSearch.label')}"
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+									<button id="btnClose" height="20"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<label
+										id="label_CustomerSearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

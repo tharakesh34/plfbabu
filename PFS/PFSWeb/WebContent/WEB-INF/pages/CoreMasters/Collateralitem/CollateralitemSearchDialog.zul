@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<window>	
+	<window id="window_CollateralitemSearch"
+		title="${c:l('window_CollateralitemSearch.title')}" border="none"
+		apply="${collateralitemSearchCtrl}" closable="true" width="400px"
+		height="284px" sizable="true">
+
+		<borderlayout>
+			<north></north>
+			<center flex="true">
+				<panel>
+					<panelchildren style="padding: 5px">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column width="100%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_CollateralitemSearch_HYCUS" value="${c:l('label_CollateralitemSearch_HYCUS.value')}" />
+									<listbox id="sortOperator_hYCUS" width="43px" mold="select" rows="1" />
+									 <textbox id="hYCUS" width="54px" maxlength="6" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYCLC" value="${c:l('label_CollateralitemSearch_HYCLC.value')}" />
+									<listbox id="sortOperator_hYCLC" width="43px" mold="select" rows="1" />
+									 <textbox id="hYCLC" width="27px" maxlength="3" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYDLP" value="${c:l('label_CollateralitemSearch_HYDLP.value')}" />
+									<listbox id="sortOperator_hYDLP" width="43px" mold="select" rows="1" />
+									 <textbox id="hYDLP" width="27px" maxlength="3" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYDLR" value="${c:l('label_CollateralitemSearch_HYDLR.value')}" />
+									<listbox id="sortOperator_hYDLR" width="43px" mold="select" rows="1" />
+									 <textbox id="hYDLR" width="117px" maxlength="13" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYDBNM" value="${c:l('label_CollateralitemSearch_HYDBNM.value')}" />
+									<listbox id="sortOperator_hYDBNM" width="43px" mold="select" rows="1" />
+									 <textbox id="hYDBNM" width="36px" maxlength="4" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYAB" value="${c:l('label_CollateralitemSearch_HYAB.value')}" />
+									<listbox id="sortOperator_hYAB" width="43px" mold="select" rows="1" />
+									 <textbox id="hYAB" width="36px" maxlength="4" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYAN" value="${c:l('label_CollateralitemSearch_HYAN.value')}" />
+									<listbox id="sortOperator_hYAN" width="43px" mold="select" rows="1" />
+									 <textbox id="hYAN" width="54px" maxlength="6" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYAS" value="${c:l('label_CollateralitemSearch_HYAS.value')}" />
+									<listbox id="sortOperator_hYAS" width="43px" mold="select" rows="1" />
+									 <textbox id="hYAS" width="27px" maxlength="3" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYCLP" value="${c:l('label_CollateralitemSearch_HYCLP.value')}" />
+									<listbox id="sortOperator_hYCLP" width="43px" mold="select" rows="1" />
+									 <textbox id="hYCLP" width="27px" maxlength="3" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYCLR" value="${c:l('label_CollateralitemSearch_HYCLR.value')}" />
+									<listbox id="sortOperator_hYCLR" width="43px" mold="select" rows="1" />
+									 <textbox id="hYCLR" width="315px" maxlength="35" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_HYCLO" value="${c:l('label_CollateralitemSearch_HYCLO.value')}" />
+									<listbox id="sortOperator_hYCLO" width="43px" mold="select" rows="1" />
+									 <textbox id="hYCLO" width="36px" maxlength="4" />
+								  
+										
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_RecordStatus" value="${c:l('label_CollateralitemSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_CollateralitemSearch_RecordType" value="${c:l('label_CollateralitemSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+					</panelchildren>
+				</panel>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouthCollateralitem" align="left" width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20"
+										label="${c:l('btnSearch.label')}"
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+									<button id="btnClose" height="20"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<label
+										id="label_CollateralitemSearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</window>
+</zk>
