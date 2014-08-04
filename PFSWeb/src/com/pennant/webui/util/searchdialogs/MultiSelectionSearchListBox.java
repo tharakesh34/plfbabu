@@ -105,12 +105,13 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	private Paging _paging;
 	private int pageSize = PennantConstants.searchGridSize;
 	private Listbox listbox;
+	@SuppressWarnings("rawtypes")
 	private ListModelList listModelList;
 	private final int _height = 410;
 	private int _width = 300;
 
 	private Object objClass = null;
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private JdbcSearchObject jdbcSearchObject;
 	private transient PagedListService pagedListService;
 	private String[] fieldString = null;
@@ -155,7 +156,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	/**
 	 * Creates the components, sets the model and show the window as modal.<br>
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
 	private void createBox() {
 		logger.debug("Entering Method createBox()"); 
 		
@@ -221,7 +222,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		
 		for (int i = 0; i < this.fieldString.length; i++) {
 			final Listheader listheader = new Listheader();
-			listheader.setSclass("BCMListHeader"+i);
+			listheader.setSclass("ListHeader"+i);
 			listheader.setParent(listhead);
 			listheader.setLabel(Labels.getLabel("label_"+this.fieldString[i]));
 		}
@@ -312,8 +313,8 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 				String fieldValue= "";
 				String fieldMethod= "get"+fieldString[i].substring(0,1).toUpperCase()+fieldString[i].substring(1);
 				
-				if (data.getClass().getMethod(fieldMethod,null).getReturnType().equals(String.class)) {
-					fieldValue  = (String) data.getClass().getMethod(fieldMethod,null).invoke(data,null);
+				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
+					fieldValue  = (String) data.getClass().getMethod(fieldMethod).invoke(data);
 				}else{
 					fieldValue="";
 				}
@@ -347,7 +348,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	 * Calls the method for refreshing the data with the new rowStart and
 	 * pageSize. <br>
 	 */
-	public final class OnPagingEventListener implements EventListener {
+	public final class OnPagingEventListener implements EventListener<Event> {
 		@Override
 		public void onEvent(Event event) throws Exception {
 
@@ -361,7 +362,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		}
 	}
 
-	public final class onCheckBoxCheked implements EventListener{
+	public final class onCheckBoxCheked implements EventListener<Event>{
 		
 		public void onEvent(Event event) throws Exception {
 			
@@ -376,7 +377,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void refreshModel(String searchText, int start) {
 		logger.debug("Entering Method refreshModel");
 		
@@ -407,7 +408,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	/**
 	 * Inner OnSearchListener class.<br>
 	 */
-	final class OnSearchListener implements EventListener {
+	final class OnSearchListener implements EventListener<Event> {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			final String searchText = MultiSelectionSearchListBox.this._textbox.getValue();
@@ -420,7 +421,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	/**
 	 * Inner OnCloseListener class.<br>
 	 */
-	final class OnCloseListener implements EventListener {
+	final class OnCloseListener implements EventListener<Event> {
 		@Override
 		public void onEvent(Event event) throws Exception {
 
@@ -460,10 +461,12 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		return this.pageSize;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void setListModelList(ListModelList listModelList) {
 		this.listModelList = listModelList;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public ListModelList getListModelList() {
 		return this.listModelList;
 	}
@@ -496,17 +499,18 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public JdbcSearchObject getJdbcSearchObject() {
 		return this.jdbcSearchObject;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setJdbcSearchObject(int start) {
 
 		this.jdbcSearchObject = new JdbcSearchObject (getModuleMapping().getModuleClass());
 		this.jdbcSearchObject.setFirstResult(start);
 		this.jdbcSearchObject.setMaxResults(getPageSize());
+		this.jdbcSearchObject.addTabelName(getModuleMapping().getLovDBObjectName());
 
 		if (this.filters!=null){
 			for (int i = 0; i < filters.length; i++) {

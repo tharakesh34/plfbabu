@@ -58,6 +58,7 @@ public class AccountEngineEvent implements java.io.Serializable {
 	
 	private String aEEventCode = null;
 	private String aEEventCodeDesc;
+	private boolean active=false;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -246,4 +247,12 @@ public class AccountEngineEvent implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public boolean isActive() {
+	    return active;
+    }
+
+	public void setActive(boolean active) {
+	    this.active = active;
+    }
 }

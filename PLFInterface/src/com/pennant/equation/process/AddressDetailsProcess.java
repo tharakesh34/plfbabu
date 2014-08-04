@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.exception.AddressNotFoundException;
 import com.pennant.coreinterface.vo.CorebankingAddres;
@@ -88,7 +89,10 @@ public class AddressDetailsProcess extends GenericProcess {
 				throw new AddressNotFoundException("Address not found");
 			}
 
-		}catch(Exception e)	{			
+		} catch (ConnectionPoolException e){
+			logger.error("Exception " + e);
+			throw new AddressNotFoundException("Host Connection Failed.. Please contact administrator ");
+		} catch(Exception e)	{			
 			logger.error("Exception " + e);
 			e.printStackTrace();
 			throw new AddressNotFoundException(e);

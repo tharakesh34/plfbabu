@@ -59,11 +59,14 @@ public class CustomerIncome implements java.io.Serializable {
 
 	private long custID =Long.MIN_VALUE;		
 	private String custIncomeType;
+	private String incomeExpense;
+	private String category;
+	private String lovDescCategoryName;
+	private BigDecimal margin;
 	private String lovDescCustIncomeTypeName;
 	private BigDecimal custIncome;
+	private boolean jointCust = false;
 	private int lovDescCcyEditField;
-	private String custIncomeCountry;
-	private String lovDescCustIncomeCountryName;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -149,19 +152,14 @@ public class CustomerIncome implements java.io.Serializable {
 		this.custIncome = custIncome;
 	}
 
-	public String getCustIncomeCountry() {
-		return custIncomeCountry;
-	}
-	public void setCustIncomeCountry(String custIncomeCountry) {
-		this.custIncomeCountry = custIncomeCountry;
-	}
 
-	public String getLovDescCustIncomeCountryName() {
-		return this.lovDescCustIncomeCountryName;
-	}
-	public void setLovDescCustIncomeCountryName(String lovDescCustIncomeCountryName) {
-		this.lovDescCustIncomeCountryName = lovDescCustIncomeCountryName;
-	}
+	public boolean isJointCust() {
+    	return jointCust;
+    }
+
+	public void setJointCust(boolean jointCust) {
+    	this.jointCust = jointCust;
+    }
 
 	public int getVersion() {
 		return version;
@@ -298,7 +296,7 @@ public class CustomerIncome implements java.io.Serializable {
 	public boolean equals(CustomerIncome customerIncome) {
 		if(getCustID()==customerIncome.getCustID() 
 				&& getCustIncomeType()==customerIncome.getCustIncomeType() 
-				&& getCustIncomeCountry()==customerIncome.getCustIncomeCountry()){
+				){
 			return true;
 		}
 		return false;
@@ -316,5 +314,37 @@ public class CustomerIncome implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public void setMargin(BigDecimal margin) {
+	    this.margin = margin;
+    }
+
+	public BigDecimal getMargin() {
+	    return margin;
+    }
+
+	public void setIncomeExpense(String incomeExpense) {
+	    this.incomeExpense = incomeExpense;
+    }
+
+	public String getIncomeExpense() {
+	    return incomeExpense;
+    }
+
+	public void setCategory(String category) {
+	    this.category = category;
+    }
+
+	public String getCategory() {
+	    return category;
+    }
+
+	public void setLovDescCategoryName(String lovDescCategoryName) {
+	    this.lovDescCategoryName = lovDescCategoryName;
+    }
+
+	public String getLovDescCategoryName() {
+	    return lovDescCategoryName;
+    }
 
 }

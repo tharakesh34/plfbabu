@@ -27,6 +27,7 @@ package com.pennant.backend.model.others;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +36,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
 
@@ -42,11 +44,21 @@ import com.pennant.backend.util.WorkFlowUtil;
  * Model class for the <b>JVPostingEntry table</b>.<br>
  * 
  */
-public class JVPostingEntry implements java.io.Serializable {
+public class JVPostingEntry implements java.io.Serializable, Entity {
 	private static final long serialVersionUID = 1L;
-	private String batchReference;
+	private String fileName;
+	private long batchReference;
+	private long txnReference;
+	private String hostSeqNo;
+	private int daySeqNo;
+	private Date daySeqDate;
+	private String branch;
+	private String base;
+	private String suffix;
+	private String drORcr;
 	private String account;
 	private String accountName;
+	private String txnEntry;
 	private String txnCCy;
 	private String txnCCyName;
 	private int txnCCyEditField;
@@ -54,19 +66,39 @@ public class JVPostingEntry implements java.io.Serializable {
 	private String accCCyName;
 	private int accCCyEditField;
 	private String txnCode;
-	private Timestamp postingDate;
-	private Timestamp valueDate;
+	private String txnDesc;
+	private Date postingDate;
+	private Date valueDate;
 	private BigDecimal txnAmount;
-	private String txnReference;
 	private String narrLine1;
 	private String narrLine2;
 	private String narrLine3;
 	private String narrLine4;
-	private BigDecimal exchRate_Batch;//TODO  Rename To Base
+	private BigDecimal exchRate_Batch;
 	private BigDecimal exchRate_Ac;
-	private BigDecimal txnAmount_Batch;//TODO Rename To base
+	private BigDecimal txnAmount_Batch;
 	private BigDecimal txnAmount_Ac;
 	private int version;
+
+	private String modifiedFlag;
+	private boolean deletedFlag;
+	private String validationStatus = "";
+	private String postingStatus = "";
+	private boolean rePostingModule = false;
+	private String acCcyNumber;
+	private String txnCcyNumber;
+	private String acType;
+	private String revTxnCode;
+	private boolean externalAccount = true;
+	private long acEntryRef = 1;
+	private	String 	finReference;
+	private	String 	finEvent;
+	private String  transOrderId;
+	private String 	custCIF;
+	private String 	createNew;
+	private String 	createIfNF;
+	private long linkedTranId = Long.MIN_VALUE;
+
 	@XmlTransient
 	private long lastMntBy;
 	private String lastMaintainedUser;
@@ -107,16 +139,39 @@ public class JVPostingEntry implements java.io.Serializable {
 		this.workflowId = WorkFlowUtil.getWorkFlowID("JVPostingEntry");
 	}
 
-	public JVPostingEntry(String id) {
+	public JVPostingEntry(long id) {
 		this.setId(id);
 	}
 
+	public JVPostingEntry(String id) {
+		
+	}
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("txnCCyName");
 		excludeFields.add("txnCCyEditField");
 		excludeFields.add("accCCyName");
+		excludeFields.add("txnCodeName");
 		excludeFields.add("accCCyEditField");
+		excludeFields.add("branch");
+		excludeFields.add("base");
+		excludeFields.add("suffix");
+		excludeFields.add("drORcr");
+		excludeFields.add("fileName");
+		excludeFields.add("txnDesc");
+		excludeFields.add("daySeqNo");
+		excludeFields.add("daySeqDate");
+		excludeFields.add("rePostingModule");
+		excludeFields.add("txnCcyNumber");
+		excludeFields.add("acCcyNumber");
+		excludeFields.add("finReference");
+		excludeFields.add("finEvent");
+		excludeFields.add("transOrderId");
+		excludeFields.add("custCIF");
+		excludeFields.add("createNew");
+		excludeFields.add("createIfNF");
+		excludeFields.add("internalAc");
+		excludeFields.add("revTxnCode");
 		return excludeFields;
 	}
 
@@ -125,19 +180,19 @@ public class JVPostingEntry implements java.io.Serializable {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 	@XmlTransient
-	public String getId() {
+	public long getId() {
 		return batchReference;
 	}
 
-	public void setId(String id) {
+	public void setId(long id) {
 		this.batchReference = id;
 	}
 
-	public String getBatchReference() {
+	public long getBatchReference() {
 		return batchReference;
 	}
 
-	public void setBatchReference(String batchReference) {
+	public void setBatchReference(long batchReference) {
 		this.batchReference = batchReference;
 	}
 
@@ -181,22 +236,6 @@ public class JVPostingEntry implements java.io.Serializable {
 		this.txnCode = txnCode;
 	}
 
-	public Timestamp getPostingDate() {
-		return postingDate;
-	}
-
-	public void setPostingDate(Timestamp postingDate) {
-		this.postingDate = postingDate;
-	}
-
-	public Timestamp getValueDate() {
-		return valueDate;
-	}
-
-	public void setValueDate(Timestamp valueDate) {
-		this.valueDate = valueDate;
-	}
-
 	public BigDecimal getTxnAmount() {
 		return txnAmount;
 	}
@@ -205,11 +244,11 @@ public class JVPostingEntry implements java.io.Serializable {
 		this.txnAmount = txnAmount;
 	}
 
-	public String getTxnReference() {
+	public long getTxnReference() {
 		return txnReference;
 	}
 
-	public void setTxnReference(String txnReference) {
+	public void setTxnReference(long txnReference) {
 		this.txnReference = txnReference;
 	}
 
@@ -467,26 +506,265 @@ public class JVPostingEntry implements java.io.Serializable {
 	}
 
 	public void setAccCCy(String accCCy) {
-	    this.accCCy = accCCy;
-    }
+		this.accCCy = accCCy;
+	}
 
 	public String getAccCCy() {
-	    return accCCy;
-    }
+		return accCCy;
+	}
 
 	public void setAccCCyName(String accCCyName) {
-	    this.accCCyName = accCCyName;
-    }
+		this.accCCyName = accCCyName;
+	}
 
 	public String getAccCCyName() {
-	    return accCCyName;
-    }
+		return accCCyName;
+	}
 
 	public void setAccCCyEditField(int accCCyEditField) {
-	    this.accCCyEditField = accCCyEditField;
-    }
+		this.accCCyEditField = accCCyEditField;
+	}
 
 	public int getAccCCyEditField() {
-	    return accCCyEditField;
+		return accCCyEditField;
+	}
+
+	public String getBranch() {
+		return branch;
+	}
+
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+
+	public String getBase() {
+		return base;
+	}
+
+	public void setBase(String base) {
+		this.base = base;
+	}
+
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
+
+	public String getDrORcr() {
+		return drORcr;
+	}
+
+	public void setDrORcr(String drORcr) {
+		this.drORcr = drORcr;
+	}
+
+	public String getTxnEntry() {
+		return txnEntry;
+	}
+
+	public void setTxnEntry(String txnEntry) {
+		this.txnEntry = txnEntry;
+	}
+
+	public String getModifiedFlag() {
+		return modifiedFlag;
+	}
+
+	public void setModifiedFlag(String modifiedFlag) {
+		this.modifiedFlag = modifiedFlag;
+	}
+
+	public boolean isDeletedFlag() {
+		return deletedFlag;
+	}
+
+	public void setDeletedFlag(boolean deletedFlag) {
+		this.deletedFlag = deletedFlag;
+	}
+
+	public String getValidationStatus() {
+		return validationStatus;
+	}
+
+	public void setValidationStatus(String validationStatus) {
+		this.validationStatus = validationStatus;
+	}
+
+	public String getTxnDesc() {
+		return txnDesc;
+	}
+
+	public void setTxnDesc(String txnDesc) {
+		this.txnDesc = txnDesc;
+	}
+
+	public int getDaySeqNo() {
+		return daySeqNo;
+	}
+
+	public void setDaySeqNo(int daySeqNo) {
+		this.daySeqNo = daySeqNo;
+	}
+
+	public Date getDaySeqDate() {
+		return daySeqDate;
+	}
+
+	public void setDaySeqDate(Date daySeqDate) {
+		this.daySeqDate = daySeqDate;
+	}
+
+	public String getHostSeqNo() {
+		return hostSeqNo;
+	}
+
+	public void setHostSeqNo(String hostSeqNo) {
+		this.hostSeqNo = hostSeqNo;
+	}
+
+	public String getPostingStatus() {
+		return postingStatus;
+	}
+
+	public void setPostingStatus(String postingStatus) {
+		this.postingStatus = postingStatus;
+	}
+
+	public Date getPostingDate() {
+		return postingDate;
+	}
+
+	public void setPostingDate(Date postingDate) {
+		this.postingDate = postingDate;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public boolean isRePostingModule() {
+	    return rePostingModule;
+    }
+
+	public void setRePostingModule(boolean rePostingModule) {
+	    this.rePostingModule = rePostingModule;
+    }
+
+	public String getAcCcyNumber() {
+		return acCcyNumber;
+	}
+
+	public void setAcCcyNumber(String acCcyNumber) {
+		this.acCcyNumber = acCcyNumber;
+	}
+
+	public String getTxnCcyNumber() {
+		return txnCcyNumber;
+	}
+
+	public void setTxnCcyNumber(String txnCcyNumber) {
+		this.txnCcyNumber = txnCcyNumber;
+	}
+
+	public String getAcType() {
+	    return acType;
+    }
+
+	public void setAcType(String acType) {
+	    this.acType = acType;
+    }
+
+	public String getRevTxnCode() {
+	    return revTxnCode;
+    }
+
+	public void setRevTxnCode(String revTxnCode) {
+	    this.revTxnCode = revTxnCode;
+    }
+
+	public boolean isExternalAccount() {
+	    return externalAccount;
+    }
+
+	public void setExternalAccount(boolean externalAccount) {
+	    this.externalAccount = externalAccount;
+    }
+
+	public long getAcEntryRef() {
+	    return acEntryRef;
+    }
+	public void setAcEntryRef(long acEntryRef) {
+	    this.acEntryRef = acEntryRef;
+    }
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public String getFinEvent() {
+		return finEvent;
+	}
+
+	public void setFinEvent(String finEvent) {
+		this.finEvent = finEvent;
+	}
+
+	public String getTransOrderId() {
+		return transOrderId;
+	}
+
+	public void setTransOrderId(String transOrderId) {
+		this.transOrderId = transOrderId;
+	}
+
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
+	}
+
+	public String getCreateNew() {
+		return createNew;
+	}
+
+	public void setCreateNew(String createNew) {
+		this.createNew = createNew;
+	}
+
+	public String getCreateIfNF() {
+		return createIfNF;
+	}
+
+	public void setCreateIfNF(String createIfNF) {
+		this.createIfNF = createIfNF;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public long getLinkedTranId() {
+	    return linkedTranId;
+    }
+
+	public void setLinkedTranId(long linkedTranId) {
+	    this.linkedTranId = linkedTranId;
     }
 }

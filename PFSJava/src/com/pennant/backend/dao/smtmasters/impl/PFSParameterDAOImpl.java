@@ -124,7 +124,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 	@Override
 	public PFSParameter getPFSParameterById(final String id, String type) {
 		logger.debug("Entering");
-		PFSParameter pFSParameter = getPFSParameter();
+		PFSParameter pFSParameter = new PFSParameter();
 		pFSParameter.setId(id);
 		
 		StringBuilder   selectSql = new StringBuilder  ("SELECT SysParmCode, SysParmDesc, " );
@@ -313,7 +313,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		selectSql.append(" SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, " );
 		selectSql.append(" SysParmList, SysParmValdMod, SysParmDescription, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn From SMTparameters");
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(getPFSParameter());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new PFSParameter());
 		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
@@ -324,7 +324,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 	 */
 	public List<GlobalVariable> getGlobaVariables(){
 		logger.debug("Entering");
-		StringBuilder selectQry = new StringBuilder("Select  varCode,varName,varValue " );
+		StringBuilder selectQry = new StringBuilder("Select  varCode,varName,varValue,varType " );
 		selectQry.append(" from GlobalVariable" );
 		logger.debug("selectSql: " + selectQry.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new GlobalVariable());

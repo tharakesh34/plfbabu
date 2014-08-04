@@ -65,11 +65,9 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>IncomeType</b>.<br>
  * 
  */
-public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
-		IncomeTypeService {
+public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements IncomeTypeService {
 
-	private static Logger logger = Logger
-			.getLogger(IncomeTypeServiceImpl.class);
+	private static Logger logger = Logger.getLogger(IncomeTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private IncomeTypeDAO incomeTypeDAO;
@@ -190,8 +188,8 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	 * @return IncomeType
 	 */
 	@Override
-	public IncomeType getIncomeTypeById(String id) {
-		return getIncomeTypeDAO().getIncomeTypeById(id, "_View");
+	public IncomeType getIncomeTypeById(String id, String incomeExpense, String category) {
+		return getIncomeTypeDAO().getIncomeTypeById(id,incomeExpense,category, "_View");
 	}
 
 	/**
@@ -203,8 +201,8 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	 *            (String)
 	 * @return IncomeType
 	 */
-	public IncomeType getApprovedIncomeTypeById(String id) {
-		return getIncomeTypeDAO().getIncomeTypeById(id, "_AView");
+	public IncomeType getApprovedIncomeTypeById(String id, String incomeExpense, String category) {
+		return getIncomeTypeDAO().getIncomeTypeById(id,incomeExpense ,category,"_AView");
 	}
 
 	/**
@@ -365,12 +363,10 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		IncomeType tempIncomeType = null;
 
 		if (incomeType.isWorkflow()) {
-			tempIncomeType = getIncomeTypeDAO().getIncomeTypeById(
-					incomeType.getId(), "_Temp");
+			tempIncomeType = getIncomeTypeDAO().getIncomeTypeById(incomeType.getId(),incomeType.getIncomeExpense(),incomeType.getCategory(), "_Temp");
 		}
 
-		IncomeType befIncomeType = getIncomeTypeDAO().getIncomeTypeById(
-				incomeType.getId(), "");
+		IncomeType befIncomeType = getIncomeTypeDAO().getIncomeTypeById(incomeType.getId(),incomeType.getIncomeExpense(),incomeType.getCategory(),"");
 		IncomeType old_IncomeType = incomeType.getBefImage();
 
 		String[] valueParm = new String[2];

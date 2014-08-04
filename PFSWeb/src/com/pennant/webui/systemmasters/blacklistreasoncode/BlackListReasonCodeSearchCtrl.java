@@ -64,6 +64,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.systemmasters.BlackListReasonCode;
 import com.pennant.backend.service.systemmasters.impl.BlackListReasonCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -159,19 +160,19 @@ public class BlackListReasonCodeSearchCtrl extends GFCBaseCtrl implements Serial
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_bLRsnCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_bLRsnCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_bLRsnCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
-		this.sortOperator_bLRsnDesc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_bLRsnDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_bLRsnDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
-		this.sortOperator_bLIsActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_bLIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_bLIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
@@ -304,6 +305,7 @@ public class BlackListReasonCodeSearchCtrl extends GFCBaseCtrl implements Serial
 		} else {
 			so.addTabelName("BMTBlackListRsnCodes_AView");
 		}
+		so.addFilter(new Filter("BLRsnCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
 
 		if (StringUtils.isNotEmpty(this.bLRsnCode.getValue())) {
 

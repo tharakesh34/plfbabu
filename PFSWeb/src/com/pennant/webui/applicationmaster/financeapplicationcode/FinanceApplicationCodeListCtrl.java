@@ -78,8 +78,7 @@ import com.pennant.webui.util.PTMessageUtils;
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/FinanceApplicationCode
- * /FinanceApplicationCodeList.zul file.<br>
+ * /WEB-INF/pages/ApplicationMaster/FinanceApplicationCode/FinanceApplicationCodeList.zul file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */

@@ -163,37 +163,37 @@ public class FinanceMainSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_finReference.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finCcy.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finCcy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_scheduleMethod.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_scheduleMethod.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_scheduleMethod.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_profitDaysBasis.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_profitDaysBasis.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_profitDaysBasis.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finStartDate.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finStartDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finStartDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finAmount.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finAmount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finAmount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_custID.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finIsActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_finIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_finIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{
@@ -338,13 +338,32 @@ public class FinanceMainSearchCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		
 		final JdbcSearchObject<FinanceMain> so = new JdbcSearchObject<FinanceMain>(FinanceMain.class);
+		so.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
 
 		if (isWorkFlowEnabled()){
-			so.addTabelName("FinanceMain_View");
-			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());	
+			so.addTabelName("FinanceMain_TView");
+
+			if (getUserWorkspace().getUserRoles() != null
+					&& getUserWorkspace().getUserRoles().size() > 0) {
+				String whereClause = "";
+				
+				for (int i = 0; i < getUserWorkspace().getUserRoles().size(); i++) {
+					if (i > 0) {
+						whereClause += " OR ";
+					}
+					
+					whereClause += "(',' + nextRoleCode + ',' LIKE '%," + getUserWorkspace().getUserRoles().get(i) + ",%')";
+				}
+				
+				if (!"".equals(whereClause)) {
+					so.addWhereClause(whereClause);
+				}
+			}
 		}else{
 			so.addTabelName("FinanceMain_AView");
 		}
+		
+		so.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
 		
 		if (StringUtils.isNotEmpty(this.finReference.getValue())) {
 
@@ -532,6 +551,10 @@ public class FinanceMainSearchCtrl extends GFCBaseCtrl implements Serializable {
 				}
 			}
 		}
+		
+		// Filtering added based on user branch and division
+		so.addWhereClause(getUsrFinAuthenticationQry(false));
+		
 		// Defualt Sort on the table
 		so.addSort("FinReference", false);
 

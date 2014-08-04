@@ -44,6 +44,7 @@
 package com.pennant.webui.finance.financemain.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -62,13 +63,11 @@ import com.pennant.util.PennantAppUtil;
  */
 public class FinanceMainListModelItemRenderer implements ListitemRenderer<FinanceMain>, Serializable {
 
-
 	private static final long serialVersionUID = -4562142056572229437L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+	
 	@Override
 	public void render(Listitem item, FinanceMain financeMain, int count) throws Exception {
 
-		//final FinanceMain financeMain = (FinanceMain) data;
 		Listcell lc;
 		lc = new Listcell();
 		
@@ -79,17 +78,23 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 			lc.setStyle("font-weight:bold;color:green;");
 		}
 		lc.setLabel(custCIF);
+		lc.setParent(item);		
+		lc = new Listcell(financeMain.getLovDescCustShrtName());
 		lc.setParent(item);
 	  	lc = new Listcell(financeMain.getFinReference());
+		lc.setParent(item);
+		lc = new Listcell(financeMain.getLovDescProductCodeName());
 		lc.setParent(item);
 	  	lc = new Listcell(financeMain.getFinType());
 		lc.setParent(item);
 	  	lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getScheduleMethod()==null?"":financeMain.getScheduleMethod());
+	  	lc = new Listcell(financeMain.getScheduleMethod() == null ? "" : financeMain.getScheduleMethod());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(),
-				financeMain.getLovDescFinFormatter()));
+		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(), financeMain.getLovDescFinFormatter()));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount().subtract(financeMain.getDownPayment()).add(financeMain.getFeeChargeAmt() == null ?BigDecimal.ZERO : financeMain.getFeeChargeAmt()), financeMain.getLovDescFinFormatter()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 	  	lc = new Listcell(financeMain.getRecordStatus());

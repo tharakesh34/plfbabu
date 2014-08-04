@@ -67,7 +67,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -81,8 +80,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -146,7 +148,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl implements Serializable 
 	// ServiceDAOs / Domain Classes
 	private transient SecurityRoleService  securityRoleService;
 	private transient PagedListService      pagedListService;
-	private List<ValueLabel>  listRoleApp = PennantAppUtil.getAppCodes(); 
+	private List<ValueLabel>  listRoleApp = PennantStaticListUtil.getAppCodes(); 
 
 	/**
 	 * default constructor.<br>
@@ -438,7 +440,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl implements Serializable 
 
 		}else{
 			this.roleApp.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(securityRole.getRoleApp()),PennantAppUtil.getAppCodes()));
+					String.valueOf(securityRole.getRoleApp()),PennantStaticListUtil.getAppCodes()));
 
 		}
 
@@ -651,15 +653,12 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}
 
 		if (!this.roleCd.isReadonly()){
-			this.roleCd.setConstraint(
-					new SimpleConstraint(PennantConstants.ALPHANUM_UNDERSCORE_REGEX, Labels.getLabel("MAND_ALPHANUM_UNDERSCORE"
-							,new String[]{Labels.getLabel("label_SecurityRoleDialog_RoleCd.value")})));
+			this.roleCd.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityRoleDialog_RoleCd.value"),PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 		}
 
 		if (!this.roleDesc.isReadonly()){
-			this.roleDesc.setConstraint(
-					new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel("MAND_FIELD_DESC"
-							,new String[]{Labels.getLabel("label_SecurityRoleDialog_RoleDesc.value")})));
+			this.roleDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityRoleDialog_RoleDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving ");

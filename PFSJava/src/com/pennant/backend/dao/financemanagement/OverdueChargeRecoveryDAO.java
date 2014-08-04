@@ -53,11 +53,19 @@ public interface OverdueChargeRecoveryDAO {
 	public OverdueChargeRecovery getOverdueChargeRecovery();
 	public OverdueChargeRecovery getNewOverdueChargeRecovery();
 	public OverdueChargeRecovery getOverdueChargeRecoveryById(String id,Date finSchDate, String finOdFor, String type);
-	public void update(OverdueChargeRecovery overdueChargeRecovery,String type);
+	public List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, String type);
+	public void update(OverdueChargeRecovery overdueChargeRecovery, String type);
 	public void delete(OverdueChargeRecovery overdueChargeRecovery,String type);
 	public String save(OverdueChargeRecovery overdueChargeRecovery,String type);
 	public void initialize(OverdueChargeRecovery overdueChargeRecovery);
 	public void refresh(OverdueChargeRecovery entity);
 	public BigDecimal getPendingODCAmount(String id);
 	public List<String> getOverDueFinanceList();
+	public OverdueChargeRecovery getMaxOverdueChargeRecoveryById(String finReference, Date SchdDate, String finODFor, String type);
+	public void deleteUnpaid(String finReference, Date finODSchdDate, String finODFor, String type);
+	public void updatePenaltyPaid(OverdueChargeRecovery recovery, String type);
+	public List<OverdueChargeRecovery> getFinancePenaltysByFinRef(String id, String type);
+	public BigDecimal getPaidPenaltiesbySchDates(String finReference, List<Date> pastSchDates);
+	public void saveODDeferHistory(String finReference, List<Date> pastSchDates);
+	public void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
 }

@@ -181,8 +181,8 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 	 * @return CustomerEmploymentDetail
 	 */
 	@Override
-	public CustomerEmploymentDetail getCustomerEmploymentDetailById(long id) {
-		return getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailByID(id,"_View");
+	public CustomerEmploymentDetail getCustomerEmploymentDetailById(long id,long custEmpName) {
+		return getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailByID(id,custEmpName,"_View");
 	}
 	
 	/**
@@ -191,8 +191,8 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 	 * @param id (String)
 	 * @return CustomerEmploymentDetail
 	 */
-	public CustomerEmploymentDetail getApprovedCustomerEmploymentDetailById(long id) {
-		return getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailByID(id,"_AView");
+	public CustomerEmploymentDetail getApprovedCustomerEmploymentDetailById(long id,long custEmpName) {
+		return getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailByID(id,custEmpName,"_AView");
 	}
 		
 	/**

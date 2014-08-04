@@ -44,8 +44,6 @@
 package com.pennant.backend.model.coremasters;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.math.BigDecimal;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;

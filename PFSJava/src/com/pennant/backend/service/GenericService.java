@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.util.PennantConstants;
 
 public abstract class GenericService<T> {
 	
@@ -58,6 +59,19 @@ public abstract class GenericService<T> {
 		}
 		
 		return false;
+	}
+	
+	public String getAuditTranType(String rcdType) {
+		String auditTranType;
+		if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			auditTranType = PennantConstants.TRAN_ADD;
+		} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+		        || rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			auditTranType = PennantConstants.TRAN_DEL;
+		} else {
+			auditTranType = PennantConstants.TRAN_UPD;
+		}
+		return auditTranType;
 	}
 	
 }

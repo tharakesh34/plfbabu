@@ -118,13 +118,14 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 	@Override
 	public FinanceWorkFlow getFinanceWorkFlowById(final String id, String type) {
 		logger.debug("Entering");
-		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlow();
+		FinanceWorkFlow financeWorkFlow = new FinanceWorkFlow();
 		financeWorkFlow.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder("Select FinType, ScreenCode, WorkFlowType");
+		StringBuilder selectSql = new StringBuilder("Select FinType, ScreenCode, WorkFlowType,ModuleName");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",lovDescFinTypeName,lovDescWorkFlowTypeName,LovDescWorkFlowRolesName, lovDescProductCodeName ");
+			selectSql.append(",lovDescFinTypeName,lovDescWorkFlowTypeName,LovDescWorkFlowRolesName, lovDescProductCodeName, LovDescFirstTaskOwner ");
+			selectSql.append(",lovDescFacilityTypeName ");
 		}
 		selectSql.append(" From LMTFinanceWorkFlowDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -227,10 +228,10 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into LMTFinanceWorkFlowDef");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinType, ScreenCode, WorkFlowType");
+		insertSql.append(" (FinType, ScreenCode, WorkFlowType,ModuleName");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" 	RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinType, :ScreenCode, :WorkFlowType");
+		insertSql.append(" Values(:FinType, :ScreenCode, :WorkFlowType,:ModuleName");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 		
@@ -261,7 +262,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		
 		StringBuilder	updateSql =new StringBuilder("Update LMTFinanceWorkFlowDef");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinType = :FinType, ScreenCode = :ScreenCode, WorkFlowType = :WorkFlowType");
+		updateSql.append(" Set FinType = :FinType, ScreenCode = :ScreenCode, WorkFlowType = :WorkFlowType, ModuleName=:ModuleName");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");

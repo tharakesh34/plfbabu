@@ -93,7 +93,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.smtmasters.HolidayMasterService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -241,7 +243,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 		
 		getBorderLayoutHeight();
 		grid_Basicdetails.getRows().getVisibleItemCount();
-		int dialogHeight =  grid_Basicdetails.getRows().getVisibleItemCount()* 20 + 100 +25; 
+		int dialogHeight =  grid_Basicdetails.getRows().getVisibleItemCount()* 20 + 140 ; 
 		int listboxHeight = borderLayoutHeight-dialogHeight;
 		listBoxHolidayDet.setHeight(listboxHeight+"px");
 		listRows = Math.round(listboxHeight/ 22);
@@ -871,18 +873,15 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 		setValidationOn(true);
 
 		if (!this.holidayCodeDesc.isReadonly()) {
-			this.holidayCode.setConstraint("NO EMPTY:"+ Labels.getLabel(
-								"FIELD_NO_EMPTY",new String[] { Labels.getLabel(
-									"label_HolidayMasterDialog_HolidayCode.value") }));
-			this.holidayCodeDesc.setConstraint("NO EMPTY:"+ Labels.getLabel(
-								"FIELD_NO_EMPTY",new String[] { Labels.getLabel(
-									"label_HolidayMasterDialog_HolidayCodeDesc.value") }));
+			this.holidayCode.setConstraint(new PTStringValidator(Labels.getLabel(
+									"label_HolidayMasterDialog_HolidayCode.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.holidayCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel(
+									"label_HolidayMasterDialog_HolidayCodeDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.holidayType.isReadonly()) {
-			this.holidayType.setConstraint("NO EMPTY:"+ Labels.getLabel(
-								"FIELD_NO_EMPTY",new String[] { Labels.getLabel(
-									"label_HolidayMasterDialog_HolidayType.value") }));
+			this.holidayType.setConstraint(new PTStringValidator(Labels.getLabel(
+									"label_HolidayMasterDialog_HolidayType.value"), null, true));
 		}
 
 		if (!this.holidayYear.isReadonly()) {
@@ -1150,7 +1149,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 			lc = new Listcell(holidayDetail.getHolidayYear().toString());
 			item.appendChild(lc);
 			lc = new Listcell(DateUtility.formatUtilDate(holidayDetail
-					.getHoliday().getTime(), PennantConstants.dateFormat));
+					.getHoliday().getTime(), PennantConstants.dateFormate));
 			item.appendChild(lc);
 			lc = new Listcell(holidayDetail.getHolidayDescription());
 			item.appendChild(lc);

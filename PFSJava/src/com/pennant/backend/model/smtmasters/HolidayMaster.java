@@ -296,12 +296,12 @@ public class HolidayMaster implements java.io.Serializable {
 
 	public List<HolidayDetail> getHolidayList(BigDecimal holidayYear) {
 		String[] holiday = null;
-		String[] holidayDesc = null;
+	//	String[] holidayDesc = null;
 		List<HolidayDetail> holidayList = null;
 
 		if (!StringUtils.trimToEmpty(holidays).equals("")) {
 			holiday = holidays.split(",");
-			holidayDesc = getHolidaysDesc().split(",");
+		//	holidayDesc = getHolidaysDesc().split(",");
 		}
 
 		if (holidayYear == null || holidayYear.intValue() == 0) {

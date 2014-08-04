@@ -39,11 +39,9 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.mail.impl;
-
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +55,6 @@ import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.mail.MailTemplate;
@@ -72,62 +69,46 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class MailTemplateServiceImpl extends GenericService<MailTemplate> implements MailTemplateService {
 	private final static Logger logger = Logger.getLogger(MailTemplateServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
-	
 	private MailTemplateDAO mailTemplateDAO;
 	private SecurityUserDAO securityUserDAO;
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	/**
-	 * @return the mailTemplateDAO
-	 */
+
 	public MailTemplateDAO getMailTemplateDAO() {
 		return mailTemplateDAO;
 	}
-	/**
-	 * @param mailTemplateDAO the mailTemplateDAO to set
-	 */
 	public void setMailTemplateDAO(MailTemplateDAO mailTemplateDAO) {
 		this.mailTemplateDAO = mailTemplateDAO;
 	}
-	
+
 	public SecurityUserDAO getSecurityUserDAO() {
 		return securityUserDAO;
 	}
-
 	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
 		this.securityUserDAO = securityUserDAO;
 	}
 
-	/**
-	 * @return the mailTemplate
-	 */
 	@Override
 	public MailTemplate getMailTemplate() {
 		return getMailTemplateDAO().getMailTemplate();
 	}
-	/**
-	 * @return the mailTemplate for New Record
-	 */
+
 	@Override
 	public MailTemplate getNewMailTemplate() {
 		return getMailTemplateDAO().getNewMailTemplate();
 	}
 
-	
 	/**
 	 * saveOrUpdate	method method do the following steps.
 	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
@@ -141,18 +122,19 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
 	 */
-
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");	
+
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+
 		String tableType="";
 		MailTemplate mailTemplate = (MailTemplate) auditHeader.getAuditDetail().getModelData();
-		
+
 		if (mailTemplate.isWorkflow()) {
 			tableType="_TEMP";
 		}
@@ -178,19 +160,19 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
 	 */
-
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
+
 		auditHeader = businessValidation(auditHeader,"delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		MailTemplate mailTemplate = (MailTemplate) auditHeader.getAuditDetail().getModelData();
 		getMailTemplateDAO().delete(mailTemplate,"");
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -203,39 +185,25 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * 			""/_Temp/_View          
 	 * @return MailTemplate
 	 */
-	
 	@Override
 	public MailTemplate getMailTemplateById(long id, String templateFor) {
 		return getMailTemplateDAO().getMailTemplateById(id,templateFor, "_View");
 	}
-	
-	/**
-	 * getMailTemplateById fetch the details by using SecurityDAO's getSecurityUsersByIds method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return MailTemplate
-	 */
-	
-	@Override
-	public List<SecurityUser> getSecurityUsersByIds(String userIds) {
-		return null; // TODO FIX LATER
-	}
+
 	/**
 	 * getApprovedMailTemplateById fetch the details by using MailTemplateDAO's getMailTemplateById method .
 	 * with parameter id and type as blank. it fetches the approved records from the Templates.
 	 * @param id (String)
 	 * @return MailTemplate
 	 */
-	
 	public MailTemplate getApprovedMailTemplateById(long id, String templateFor) {
 		return getMailTemplateDAO().getMailTemplateById(id, templateFor, "_AView");
 	}
-		
+
 	/**
 	 * This method refresh the Record.
 	 * @param MailTemplate (mailTemplate)
- 	 * @return mailTemplate
+	 * @return mailTemplate
 	 */
 	@Override
 	public MailTemplate refresh(MailTemplate mailTemplate) {
@@ -244,6 +212,16 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 		getMailTemplateDAO().initialize(mailTemplate);
 		logger.debug("Leaving");
 		return mailTemplate;
+	}
+
+	/**
+	 * getMailTemplates fetch the details by using MailTemplateDAO's getMailTemplates method .
+	 *  it fetches the approved records from the Templates.
+	 *
+	 * @return MailTemplateList
+	 */
+	public List<MailTemplate> getMailTemplates() {
+		return getMailTemplateDAO().getMailTemplates();
 	}
 
 	/**
@@ -260,9 +238,9 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
 	 */
-
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
+
 		String tranType="";
 		auditHeader = businessValidation(auditHeader,"doApprove");
 		if (!auditHeader.isNextProcess()) {
@@ -273,165 +251,159 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 		BeanUtils.copyProperties((MailTemplate) auditHeader.getAuditDetail().getModelData(), mailTemplate);
 
 		if (mailTemplate.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-				tranType=PennantConstants.TRAN_DEL;
+			tranType=PennantConstants.TRAN_DEL;
+			getMailTemplateDAO().delete(mailTemplate,"");
+		} else {
+			mailTemplate.setRoleCode("");
+			mailTemplate.setNextRoleCode("");
+			mailTemplate.setTaskId("");
+			mailTemplate.setNextTaskId("");
+			mailTemplate.setWorkflowId(0);
 
-				getMailTemplateDAO().delete(mailTemplate,"");
-				
+			if (mailTemplate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {	
+				tranType=PennantConstants.TRAN_ADD;
+				mailTemplate.setRecordType("");
+				getMailTemplateDAO().save(mailTemplate,"");
 			} else {
-				mailTemplate.setRoleCode("");
-				mailTemplate.setNextRoleCode("");
-				mailTemplate.setTaskId("");
-				mailTemplate.setNextTaskId("");
-				mailTemplate.setWorkflowId(0);
-				
-				if (mailTemplate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) 
-				{	
-					tranType=PennantConstants.TRAN_ADD;
-					mailTemplate.setRecordType("");
-					getMailTemplateDAO().save(mailTemplate,"");
-				} else {
-					tranType=PennantConstants.TRAN_UPD;
-					mailTemplate.setRecordType("");
-					getMailTemplateDAO().update(mailTemplate,"");
-				}
+				tranType=PennantConstants.TRAN_UPD;
+				mailTemplate.setRecordType("");
+				getMailTemplateDAO().update(mailTemplate,"");
 			}
-			
-			getMailTemplateDAO().delete(mailTemplate,"_TEMP");
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getAuditHeaderDAO().addAudit(auditHeader);
-
-			auditHeader.setAuditTranType(tranType);
-			auditHeader.getAuditDetail().setAuditTranType(tranType);
-			auditHeader.getAuditDetail().setModelData(mailTemplate);
-			
-			getAuditHeaderDAO().addAudit(auditHeader);
-			logger.debug("Leaving");		
-		
-			return auditHeader;
 		}
+
+		getMailTemplateDAO().delete(mailTemplate,"_TEMP");
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		auditHeader.setAuditTranType(tranType);
+		auditHeader.getAuditDetail().setAuditTranType(tranType);
+		auditHeader.getAuditDetail().setModelData(mailTemplate);
+		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		logger.debug("Leaving");		
+		return auditHeader;
+	}
 
 	/**
 	 * doReject method do the following steps.
 	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
 	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getMailTemplateDAO().delete with parameters mailTemplate,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtTemplates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 2)	Delete the record from the workFlow table by using getMailTemplateDAO().delete 
+	 * 		with parameters mailTemplate,"_Temp"
+	 * 3)	Audit the record in to AuditHeader and AdtTemplates by using auditHeaderDAO.addAudit(auditHeader) 
+	 * 		for Work flow
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
 	 */
-	
-		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.debug("Entering");
-			auditHeader = businessValidation(auditHeader,"doReject");
-			if (!auditHeader.isNextProcess()) {
-				logger.debug("Leaving");
-				return auditHeader;
-			}
-
-			MailTemplate mailTemplate = (MailTemplate) auditHeader.getAuditDetail().getModelData();
-			
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getMailTemplateDAO().delete(mailTemplate,"_TEMP");
-			
-			getAuditHeaderDAO().addAudit(auditHeader);
-			logger.debug("Leaving");
-			
-			return auditHeader;
-		}
-
-		/**
-		 * businessValidation method do the following steps.
-		 * 1)	get the details from the auditHeader. 
-		 * 2)	fetch the details from the tables
-		 * 3)	Validate the Record based on the record details. 
-		 * 4) 	Validate for any business validation.
-		 * 5)	for any mismatch conditions Fetch the error details from getMailTemplateDAO().getErrorDetail with Error ID and language as parameters.
-		 * 6)	if any error/Warnings  then assign the to auditHeader 
-		 * @param AuditHeader (auditHeader)    
-		 * @return auditHeader
-		 */
-
+	public AuditHeader  doReject(AuditHeader auditHeader) {
+		logger.debug("Entering");
 		
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
-			logger.debug("Entering");
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
-			auditHeader.setAuditDetail(auditDetail);
-			auditHeader.setErrorList(auditDetail.getErrorDetails());
-			auditHeader=nextProcess(auditHeader);
+		auditHeader = businessValidation(auditHeader,"doReject");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
-			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-			MailTemplate mailTemplate= (MailTemplate) auditDetail.getModelData();
-			
-			MailTemplate tempMailTemplate= null;
-			if (mailTemplate.isWorkflow()){
-				tempMailTemplate = getMailTemplateDAO().getMailTemplateById(mailTemplate.getId(), mailTemplate.getTemplateFor() ,"_Temp");
-			}
-			MailTemplate befMailTemplate= getMailTemplateDAO().getMailTemplateById(mailTemplate.getId(), mailTemplate.getTemplateFor(), "");
-			
-			MailTemplate old_MailTemplate= mailTemplate.getBefImage();
-			
-			
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=mailTemplate.getTemplateCode();
-			errParm[0]=PennantJavaUtil.getLabel("label_TemplateCode")+":"+valueParm[0];
-						
-			if (mailTemplate.isNew()){ // for New record or new record into work flow
-				
-				if (!mailTemplate.isWorkflow()){// With out Work flow only new records  
-					if (befMailTemplate !=null){	// Record Already Exists in the table then error  
+		MailTemplate mailTemplate = (MailTemplate) auditHeader.getAuditDetail().getModelData();
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getMailTemplateDAO().delete(mailTemplate,"_TEMP");
+		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	/**
+	 * businessValidation method do the following steps.
+	 * 1)	get the details from the auditHeader. 
+	 * 2)	fetch the details from the tables
+	 * 3)	Validate the Record based on the record details. 
+	 * 4) 	Validate for any business validation.
+	 * 5)	for any mismatch conditions Fetch the error details from getMailTemplateDAO().getErrorDetail 
+	 * 		with Error ID and language as parameters.
+	 * 6)	if any error/Warnings  then assign the to auditHeader 
+	 * @param AuditHeader (auditHeader)    
+	 * @return auditHeader
+	 */
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+		logger.debug("Entering");
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader=nextProcess(auditHeader);
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+		logger.debug("Entering");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		MailTemplate mailTemplate= (MailTemplate) auditDetail.getModelData();
+
+		MailTemplate tempMailTemplate= null;
+		if (mailTemplate.isWorkflow()){
+			tempMailTemplate = getMailTemplateDAO().getMailTemplateById(mailTemplate.getId(), mailTemplate.getTemplateFor() ,"_Temp");
+		}
+		MailTemplate befMailTemplate= getMailTemplateDAO().getMailTemplateById(mailTemplate.getId(), mailTemplate.getTemplateFor(), "");
+
+		MailTemplate old_MailTemplate= mailTemplate.getBefImage();
+
+		String[] errParm= new String[1];
+		String[] valueParm= new String[1];
+		valueParm[0]=mailTemplate.getTemplateCode();
+		errParm[0]=PennantJavaUtil.getLabel("label_TemplateCode")+":"+valueParm[0];
+
+		if (mailTemplate.isNew()){ // for New record or new record into work flow
+
+			if (!mailTemplate.isWorkflow()){// With out Work flow only new records  
+				if (befMailTemplate !=null){	// Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+				}	
+			}else{ // with work flow
+				if (mailTemplate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
+					if (befMailTemplate !=null || tempMailTemplate!=null ){ // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-					}	
-				}else{ // with work flow
-					if (mailTemplate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-						if (befMailTemplate !=null || tempMailTemplate!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-						}
-					}else{ // if records not exists in the Main flow table
-						if (befMailTemplate ==null || tempMailTemplate!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					}
+				}else{ // if records not exists in the Main flow table
+					if (befMailTemplate ==null || tempMailTemplate!=null ){
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					}
+				}
+			}
+		}else{
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!mailTemplate.isWorkflow()){	// With out Work flow for update and delete
+
+				if (befMailTemplate ==null){ // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+				}else{
+					if (old_MailTemplate!=null && !old_MailTemplate.getLastMntOn().equals(befMailTemplate.getLastMntOn())){
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+						}else{
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
 						}
 					}
 				}
 			}else{
-				// for work flow process records or (Record to update or Delete with out work flow)
-				if (!mailTemplate.isWorkflow()){	// With out Work flow for update and delete
-				
-					if (befMailTemplate ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-					}else{
-						if (old_MailTemplate!=null && !old_MailTemplate.getLastMntOn().equals(befMailTemplate.getLastMntOn())){
-							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
-							}
-						}
-					}
-				}else{
-				
-					if (tempMailTemplate==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
-					
-					if (old_MailTemplate!=null && !old_MailTemplate.getLastMntOn().equals(tempMailTemplate.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
+
+				if (tempMailTemplate==null ){ // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				}
+
+				if (old_MailTemplate!=null && !old_MailTemplate.getLastMntOn().equals(tempMailTemplate.getLastMntOn())){ 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
-
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			if(StringUtils.trimToEmpty(method).equals("doApprove") || !mailTemplate.isWorkflow()){
-				auditDetail.setBefImage(befMailTemplate);	
-			}
-
-			return auditDetail;
 		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		if(StringUtils.trimToEmpty(method).equals("doApprove") || !mailTemplate.isWorkflow()){
+			auditDetail.setBefImage(befMailTemplate);	
+		}
+		logger.debug("Leaving");
+		return auditDetail;
+	}
 
 }

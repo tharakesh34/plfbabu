@@ -137,6 +137,15 @@
 											<datebox id="finSuspDate"
 												width="100px" disabled="true" format="dd/MM/yyyy" />
 										</hbox>
+										<label
+											id="label_SuspenseEnquiryDialog_FinSuspTrfDate"
+											value="${c:l('label_SuspenseEnquiryDialog_FinSuspTrfDate.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<datebox id="finSuspTrfDate"
+												width="100px" disabled="true" format="dd/MM/yyyy" />
+										</hbox>
 									</row>
 									<row visible="true">
 										<label

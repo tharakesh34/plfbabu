@@ -353,7 +353,7 @@ public class VehicleManufacturerListCtrl extends GFCBaseListCtrl<VehicleManufact
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/AMTMaster/VehicleManufacturer/VehicleManufacturerSearchDialog.zul",null,map);
+			Executions.createComponents("/WEB-INF/pages/AMTMasters/VehicleManufacturer/VehicleManufacturerSearchDialog.zul",null,map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());

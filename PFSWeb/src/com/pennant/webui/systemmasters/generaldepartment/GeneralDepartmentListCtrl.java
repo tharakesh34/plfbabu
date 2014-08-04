@@ -82,8 +82,7 @@ import com.pennant.webui.util.PTMessageUtils;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class GeneralDepartmentListCtrl extends
-		GFCBaseListCtrl<GeneralDepartment> implements Serializable {
+public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment> implements Serializable {
 
 	private static final long serialVersionUID = -8782007567428187225L;
 	private final static Logger logger = Logger.getLogger(GeneralDepartmentListCtrl.class);

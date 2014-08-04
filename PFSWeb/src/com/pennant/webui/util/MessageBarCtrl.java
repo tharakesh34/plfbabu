@@ -132,6 +132,7 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 	}
 	/**
 	 * This method Automatically calls by ZK 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void doAfterCompose(Component window) throws Exception {
 		logger.debug("Entering");
@@ -145,7 +146,6 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 
 		// Listener for incoming messages ( scope=APPLICATION )
 		EventQueues.lookup("messagePopUpEventQueue", EventQueues.APPLICATION, true).subscribe(new EventListener<Event>() {
-			@SuppressWarnings({ "unchecked" })
 			@Override
 			public void onEvent(Event event) throws Exception {
 				final Object[] paramertsMap = (Object[]) event.getData();

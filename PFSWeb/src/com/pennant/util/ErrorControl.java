@@ -121,10 +121,21 @@ public class ErrorControl extends Messagebox implements Serializable {
 					ErrorDetails infoDetail = auditHeader.getInfoMessage().get(i);
 					showDetails(infoDetail);
 				} 
-			}
+			}/*else{
+				String nextRoleCode = "";
+				try {
+					if (auditHeader.getAuditDetail().getModelData().getClass().getMethod("getNextRoleCode") != null) {
+					nextRoleCode=	 auditHeader.getAuditDetail().getModelData().getClass().getMethod("getNextRoleCode").
+						invoke(auditHeader.getAuditDetail().getModelData()).toString();
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}  
+				
+				Clients.showNotification("Record can be opened by the users with the Role : " + nextRoleCode, true);
+			}*/
 		}
-		
-		
 		auditHeader.setProcessStatus(returnCode);
 		setAuditHeader(auditHeader);
 	}

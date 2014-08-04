@@ -163,28 +163,28 @@ public class CountrySearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_countryCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_countryCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_countryCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_countryDesc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_countryDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_countryDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_countryParentLimit.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_countryParentLimit.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_countryParentLimit.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_countryResidenceLimit.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_countryResidenceLimit.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_countryResidenceLimit.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_countryRiskLimit.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_countryRiskLimit.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_countryRiskLimit.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_countryIsActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_countryIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_countryIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {

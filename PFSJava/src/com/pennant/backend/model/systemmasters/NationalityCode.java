@@ -54,7 +54,6 @@ import com.pennant.backend.util.WorkFlowUtil;
  */
 public class NationalityCode implements java.io.Serializable {
 
-	
 	private static final long serialVersionUID = 6431173137706990656L;
 	
 	private String nationalityCode = null;

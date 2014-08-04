@@ -147,7 +147,7 @@ public class InputMessageTextBox extends Window {
 		Button btnSend = new Button();
 		btnSend.setLabel(Labels.getLabel("common.Send"));
 		btnSend.setParent(this);
-		btnSend.addEventListener("onClick", new EventListener() {
+		btnSend.addEventListener("onClick", new EventListener<Event>() {
 
 			@Override
 			public void onEvent(Event event) throws Exception {
@@ -173,7 +173,7 @@ public class InputMessageTextBox extends Window {
 		} //Upgraded to ZK-6.5.1.1 Removed interrupted exception
 	}
 
-	final class OnCloseListener implements EventListener {
+	final class OnCloseListener implements EventListener<Event> {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			onClose();

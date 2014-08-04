@@ -116,7 +116,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 	public FinContributorDetail getFinContributorDetailByID(final String finReference, long id,String type) {
 		logger.debug("Entering");
 		
-		FinContributorDetail contributorDetail = getFinContributorDetail();
+		FinContributorDetail contributorDetail = new FinContributorDetail();
 		contributorDetail.setFinReference(finReference);
 		contributorDetail.setContributorBaseNo(id);
 		
@@ -155,7 +155,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 	 */
 	public List<FinContributorDetail> getFinContributorDetailByFinRef(final String finReference,String type) {
 		logger.debug("Entering");
-		FinContributorDetail contributorDetail = getFinContributorDetail();
+		FinContributorDetail contributorDetail = new FinContributorDetail();
 		contributorDetail.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder();
@@ -251,7 +251,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 	 */
 	public void deleteByFinRef(final String finReference,String type) {
 		logger.debug("Entering");
-		FinContributorDetail contributorDetail = getFinContributorDetail();
+		FinContributorDetail contributorDetail = new FinContributorDetail();
 		contributorDetail.setFinReference(finReference);
 
 		StringBuilder deleteSql = new StringBuilder();

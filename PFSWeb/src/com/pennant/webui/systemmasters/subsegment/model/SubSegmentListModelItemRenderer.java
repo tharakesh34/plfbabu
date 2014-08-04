@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listItems in the listBox.
  * 
@@ -62,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class SubSegmentListModelItemRenderer implements ListitemRenderer<SubSegment>, Serializable {
 
 	private static final long serialVersionUID = 9032616208152658049L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, SubSegment subSegment, int count) throws Exception {
 
-		//final SubSegment subSegment = (SubSegment) data;
 		Listcell lc;
 		lc = new Listcell(subSegment.getSegmentCode());
 		lc.setParent(item);

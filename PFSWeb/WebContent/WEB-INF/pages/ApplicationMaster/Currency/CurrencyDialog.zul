@@ -169,7 +169,6 @@
 										id="lovDescCcyDrRateBasisCodeName" width="200px"
 										readonly="true" />
 									<button
-										label="${c:l('btnSearch.label')}"
 										id="btnSearchCcyDrRateBasisCode"
 										image="/images/icons/LOVSearch.png" height="24px" />
 								</hbox>
@@ -187,7 +186,6 @@
 										id="lovDescCcyCrRateBasisCodeName" width="200px"
 										readonly="true" />
 									<button
-										label="${c:l('btnSearch.label')}"
 										id="btnSearchCcyCrRateBasisCode"
 										image="/images/icons/LOVSearch.png" height="24px" />
 								</hbox>

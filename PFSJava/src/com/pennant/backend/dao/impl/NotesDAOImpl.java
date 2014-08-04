@@ -73,7 +73,7 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 	public List<Notes> getNotesByID(Notes notes) {
 		logger.debug("Entering");
 		StringBuilder   selectSql = new StringBuilder("Select NoteId, ModuleName, Reference,  " );
-		selectSql.append(" RemarkType, AlignType, Version, Remarks, InputBy, InputDate " );
+		selectSql.append(" RemarkType, AlignType, RoleCode, Version, Remarks, InputBy, InputDate " );
 		selectSql.append(" From Notes ");
 		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName and Version = :Version");
 		logger.debug("selectSql: " + selectSql.toString());
@@ -84,12 +84,89 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
-	public List<Notes> getNotesList(Notes notes){
+	public List<Notes> getNotesList(Notes notes, boolean isNotes){
 		logger.debug("Entering");
 		StringBuilder   selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, " );
-		selectSql.append(" RemarkType, AlignType, T1.Version, Remarks, InputBy, InputDate, T2.UsrLogin From Notes T1 "); 
+		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, " );
+		selectSql.append(" T2.UsrLogin, (RTRIM(T2.UsrFName+' '+T2.UsrMName)+' '+T2.UsrLName) as UsrName From Notes T1 "); 
 		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
-		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName ORDER BY InputDate Desc ");
+		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName " );
+		if(isNotes){
+			selectSql.append(" AND RemarkType IN('N', 'I') " );
+		}else{
+			selectSql.append(" AND RemarkType IN('R', 'C') " );
+		}
+		selectSql.append(" ORDER BY InputDate Desc ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
+		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+	
+	@Override
+	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes){
+		logger.debug("Entering");
+		StringBuilder   selectSql = new StringBuilder(" Select T1.NoteId, T1.ModuleName, T1.Reference,  T1.RemarkType, T1.AlignType, T1.RoleCode, T1.Version, " );
+		selectSql.append(" T1.Remarks, T1.InputBy, T1.InputDate, T2.UsrLogin,T3.RoleDesc  From Notes T1 "); 
+		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy LEFT OUTER JOIN SecRoles T3 on T1.RoleCode = T3.RoleCd  ");
+		selectSql.append(" Where T1.Reference = :Reference and T1.ModuleName = :ModuleName " );
+		selectSql.append(" AND T1.RemarkType ='R'" );
+		if (roleCodes!=null) {
+	        selectSql.append(" AND T1.RoleCode IN(" + getRolesWithFormat(roleCodes) + ")");
+        }
+		selectSql.append(" ORDER BY InputDate Desc ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
+		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+	
+	public String getRolesWithFormat(String[] roleCodes) {
+		String tempRoleCodes = "'";
+		if (roleCodes.length > 0) {
+			for (int i = 0; i < roleCodes.length; i++) {
+				if (tempRoleCodes.equals("'")) {
+					tempRoleCodes = tempRoleCodes + roleCodes[i] + "'";
+				} else {
+					tempRoleCodes = tempRoleCodes + ", '" + roleCodes[i] + "'";
+				}
+			}
+		}
+		return tempRoleCodes;
+	}
+	
+	public List<Notes> getNotesListAsc(Notes notes, boolean isNotes){
+		logger.debug("Entering");
+		StringBuilder   selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, " );
+		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, T2.UsrLogin From Notes T1 "); 
+		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
+		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName " );
+		if(isNotes){
+			selectSql.append(" AND RemarkType IN('N', 'I') " );
+		}else{
+			selectSql.append(" AND RemarkType IN('R', 'C') " );
+		}
+		selectSql.append(" ORDER BY InputDate Asc ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
+		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+	public List<Notes> getNotesListAsc(Notes notes){
+		logger.debug("Entering");
+		notes.setRemarkType("N");
+		StringBuilder   selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, " );
+		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, T2.UsrLogin From Notes T1 "); 
+		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
+		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName And RemarkType = :RemarkType " );
+		selectSql.append(" ORDER BY InputDate Asc ");
+		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
@@ -116,8 +193,8 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		notes.setId(getNextidviewDAO().getNextId("SeqNotes"));
 		
 		StringBuilder  insertSql = 	new StringBuilder(" INSERT INTO Notes (NoteId, ModuleName, Reference , " );
-		insertSql.append(" RemarkType, AlignType, Version, Remarks, InputBy, InputDate )");
-		insertSql.append(" Values( :NoteId, :ModuleName, :Reference, :RemarkType, :AlignType, " );
+		insertSql.append(" RemarkType, AlignType, RoleCode, Version, Remarks, InputBy, InputDate )");
+		insertSql.append(" Values( :NoteId, :ModuleName, :Reference, :RemarkType, :AlignType, :RoleCode, " );
 		insertSql.append(" :Version, :Remarks, :InputBy, :InputDate)");
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);

@@ -54,6 +54,7 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -66,10 +67,13 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.reports.ReportListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.systemmasters.academic.AcademicListCtrl;
 
 public class PTListReportUtils implements Serializable {
 
 	private static final long serialVersionUID = 8400638894656139790L;
+	private final static Logger logger = Logger.getLogger(AcademicListCtrl.class);
+	
 	JdbcSearchObject<ReportListDetail> searchObject;
 	private static ReportListService reportListService;
 
@@ -79,6 +83,8 @@ public class PTListReportUtils implements Serializable {
 
 	public PTListReportUtils (String module, JdbcSearchObject<?> searchObj,int size) throws InterruptedException{
 		super();
+		
+		logger.debug("Entering");
 		ReportListHeader header = new ReportListHeader();
 		searchObject = new JdbcSearchObject<ReportListDetail>(ReportListDetail.class);
 		setReportListService() ;
@@ -86,10 +92,11 @@ public class PTListReportUtils implements Serializable {
 		this.searchObject.setSorts(searchObj.getSorts());
 		this.searchObject.setFilters(searchObj.getFilters());
 		this.searchObject.addTabelName(searchObj.getTabelName());
-		ReportList reportList =getReportListDetails(module);
+		ReportList reportList = getReportListDetails(module);
 		searchObject.setMaxResults(size + 1);
 
 		if(reportList !=null){
+			
 			String[] fields = reportList.getValues();
 			String[] types = reportList.getType();
 
@@ -102,6 +109,15 @@ public class PTListReportUtils implements Serializable {
 			Map<String, Object> parameters = header.getReportListHeader(header);
 
 			parameters = reportList.getMainHeaderDetails(parameters);
+			
+			//Set Report Images to parameter Fields
+			if(PennantConstants.server_OperatingSystem.equals("LINUX")){
+				parameters.put("organizationLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_ORG_LOGO_PATH").toString());
+				parameters.put("productLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_PRODUCT_LOGO_PATH").toString());
+			}else{
+				parameters.put("organizationLogo",SystemParameterDetails.getSystemParameterValue("REPORTS_ORG_LOGO_PATH").toString());
+				parameters.put("productLogo",SystemParameterDetails.getSystemParameterValue("REPORTS_PRODUCT_LOGO_PATH").toString());
+			}
 
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
@@ -113,20 +129,20 @@ public class PTListReportUtils implements Serializable {
 			String reportSrc;
 			if(module.equals(Labels.getLabel("label_CheckList.value"))){
 
-				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_PATH").toString()+"/"+"CheckListReport.jasper";
+				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_LIST_PATH").toString()+"/"+"CheckListReport.jasper";
 				if(PennantConstants.server_OperatingSystem.equals("LINUX")){
 					reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_LIST_PATH").toString()+ "/" +"CheckListReport.jasper";
 				}
 				reportList.getLabels();
 			} else if(module.equals(Labels.getLabel("label_SecurityRole.value"))){
-				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_PATH").toString()+"/"+"SecRoles.jasper";
+				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_LIST_PATH").toString()+"/"+"SecRoles.jasper";
 				if(PennantConstants.server_OperatingSystem.equals("LINUX")){
 					reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_LIST_PATH").toString()+ "/" +"CheckListReport.jasper";
 				}
 				reportList.getLabels();
 			} else {
 
-				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_PATH").toString()+"/"+reportList.getReportFileName()+ ".jasper";
+				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_LIST_PATH").toString()+"/"+reportList.getReportFileName()+ ".jasper";
 				if(PennantConstants.server_OperatingSystem.equals("LINUX")){
 					reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_LIST_PATH").toString()+ "/" +reportList.getReportFileName()+ ".jasper";
 				}
@@ -153,6 +169,7 @@ public class PTListReportUtils implements Serializable {
 			// Display Error for Configuration
 			PTMessageUtils.showErrorMessage("Error in Configuring the " +module+ " report");
 		}
+		logger.debug("Leaving");
 	}
 
 	private ReportList getReportListDetails(String module){

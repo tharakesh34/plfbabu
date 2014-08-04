@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.customermasters.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -323,4 +325,9 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+	
+	@Override
+    public List<String> getCustEmailsByCustId(long custId) {
+	    return getCustomerEMailDAO().getCustEmailsByCustId(custId);
+    }
 }

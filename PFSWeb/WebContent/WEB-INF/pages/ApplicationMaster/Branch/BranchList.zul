@@ -53,35 +53,35 @@
 
 				<listbox id="listBoxBranch" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
+					height="100%" multiple="false" sizedByContent="true" span="true">
 					<listhead sizable="true">
 						<listheader id="listheader_BranchCode"
 							label="${c:l('listheader_BranchCode.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_BranchDesc"
 							label="${c:l('listheader_BranchDesc.label')}" sort="auto"
-							width="15%" />
+							hflex="min" />
 						<listheader id="listheader_BranchCountry"
 							label="${c:l('listheader_BranchCountry.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_BranchProvince"
 							label="${c:l('listheader_BranchProvince.label')}" sort="auto"
-							width="13%" />
+							hflex="min" />
 						<listheader id="listheader_BranchCity"
 							label="${c:l('listheader_BranchCity.label')}" sort="auto"
-							width="14%" />
+							hflex="min" />
 						<listheader id="listheader_BranchSwiftBankCde"
 							label="${c:l('listheader_BranchSwiftBankCde.label')}" sort="auto"
-							width="12%" />
+							hflex="min" />
 						<listheader id="listheader_BranchIsActive"
 							label="${c:l('listheader_BranchIsActive.label')}" sort="auto"
-							width="8%" />
+							hflex="min" />
 						<listheader id="listheader_RecordStatus"
 							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="8%" />
+							hflex="min" />
 						<listheader id="listheader_RecordType"
 							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 					</listhead>
 				</listbox>
 

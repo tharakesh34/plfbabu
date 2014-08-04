@@ -2,16 +2,20 @@ package com.pennant.Interface.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
-import com.pennant.coreinterface.exception.AccountNotFoundException;
-import com.pennant.coreinterface.vo.CoreBankAccountDetail;
+import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.coredb.process.AccountProcess;
+import com.pennant.coreinterface.exception.AccountNotFoundException;
+import com.pennant.coreinterface.exception.EquationInterfaceException;
+import com.pennant.coreinterface.vo.CoreBankAccountDetail;
 
 public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceService {
 	private static Logger logger = Logger.getLogger(AccountInterfaceServiceCoreDBImpl.class);
@@ -24,7 +28,7 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public List<IAccounts> fetchExistAccount(List<IAccounts> accountDetails, String createNow, boolean newConnection) throws AccountNotFoundException {
+	public List<IAccounts> fetchExistAccount(List<IAccounts> accountDetails, String createNow) throws AccountNotFoundException {
 		logger.debug("Entering");
 				
 		IAccounts iAccount = null;
@@ -53,7 +57,7 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 		}
 		
 		//Connecting to CoreBanking Interface
-		coreBankAccountDetails = accountProcess.fetchAccount(coreBankAccountDetails, createNow, newConnection);
+		coreBankAccountDetails = accountProcess.fetchAccount(coreBankAccountDetails, createNow);
 		
 		//Fill the Account data using Core Banking Object
 		List<IAccounts> accountResList = new ArrayList<IAccounts>(coreBankAccountDetails.size());
@@ -87,7 +91,7 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 		return accountResList;
 	}
 	
-	/**
+	 /**
 	 * Method for Fetch Account details list depends on Parameter key fields
 	 * @param processAccount
 	 * @returnList<IAccounts>
@@ -98,11 +102,12 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 		logger.debug("Entering");
 				
 		List<IAccounts> accountList = new ArrayList<IAccounts>();
-		IAccounts account = null;
+	/*	IAccounts account = null;
 		CoreBankAccountDetail coreAccount = new CoreBankAccountDetail();
 		coreAccount.setAcCcy(processAccount.getAcCcy());
 		coreAccount.setCustCIF(processAccount.getAcCustCIF());
 		coreAccount.setAcType(processAccount.getAcType());
+		coreAccount.setTranAc(processAccount.getTranAc());
 		
 		//Connecting to CoreBanking Interface
 		List<CoreBankAccountDetail> coreBankingAccountList = getAccountProcess().fetchAccountDetails(coreAccount);
@@ -112,13 +117,24 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 			account = new IAccounts();
 			account.setAccountId(coreBankingAccountList.get(i).getAccountNumber());
 			account.setAcType(coreBankingAccountList.get(i).getAcType());
+			account.setTranAc(coreBankingAccountList.get(i).getTranAc());
 			account.setAcShortName(coreBankingAccountList.get(i).getCustShrtName());
 			accountList.add(account);
-		}
+		} */
+		
+		IAccounts account = null;
+		account = new IAccounts();
+		account.setAccountId("0001100101048");
+		account.setAcType("CA");
+		account.setTranAc("");
+		account.setAcShortName("RAJAT BHATIA");
+		accountList.add(account);
+
 		
 		logger.debug("Leaving");
 		return accountList;
 	}
+	
 	
 	/**
 	 * Method for Fetch Funding Account Balance depends on Parameter key fields
@@ -127,16 +143,16 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 	 * 
 	 * @throws AccountNotFoundException
 	 */
-	public IAccounts fetchAccountAvailableBal(IAccounts processAccount,boolean newConnection) {
+	public IAccounts fetchAccountAvailableBal(String processAccount) {
 		logger.debug("Entering");
 
 		IAccounts account = null;
 		CoreBankAccountDetail coreBankAccountDetail = new CoreBankAccountDetail();
-		coreBankAccountDetail.setAccountNumber(processAccount.getAccountId());
+		coreBankAccountDetail.setAccountNumber(processAccount);
 
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetail = getAccountProcess().fetchAccountAvailableBal(coreBankAccountDetail, newConnection);
+			coreBankAccountDetail = getAccountProcess().fetchAccountAvailableBal(coreBankAccountDetail);
 		} catch (AccountNotFoundException e) {
 			//TODO ADD ERROR TO ERROR DETAILS
 		}
@@ -146,12 +162,38 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 		account.setAvailBalSign(coreBankAccountDetail.getAmountSign());
 		account.setAcAvailableBal(coreBankAccountDetail.getAcBal());
 		if(coreBankAccountDetail.getAmountSign().equals("-")){
-			account.setAcAvailableBal(new BigDecimal(0).subtract(account.getAcAvailableBal()));
+			account.setAcAvailableBal(BigDecimal.ZERO.subtract(account.getAcAvailableBal()));
 		}
 
 		logger.debug("Leaving");
 		return account;
 	}
+	
+	@Override
+    public BigDecimal getAccountAvailableBal(String AccountId) {
+
+		logger.debug("Entering");
+		BigDecimal acBalance=BigDecimal.ZERO;
+		CoreBankAccountDetail coreBankAccountDetail = new CoreBankAccountDetail();
+		coreBankAccountDetail.setAccountNumber(AccountId);
+
+		//Connecting to CoreBanking Interface
+		try {
+			coreBankAccountDetail = getAccountProcess().fetchAccountAvailableBal(coreBankAccountDetail);
+		} catch (AccountNotFoundException e) {
+			//TODO ADD ERROR TO ERROR DETAILS
+		}
+		if (coreBankAccountDetail!=null && coreBankAccountDetail.getAcBal()!=null) {
+			acBalance=coreBankAccountDetail.getAcBal();
+			if (coreBankAccountDetail.getAmountSign().equals("-")) {
+				acBalance=  BigDecimal.ZERO.subtract(coreBankAccountDetail.getAcBal());
+            }
+        }
+
+		logger.debug("Leaving");
+		return acBalance;
+	
+    }
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -165,29 +207,47 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
     }
 
 	@Override
-    public BigDecimal getAccountAvailableBal(String AccountId) {
+    public List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList)
+            throws AccountNotFoundException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 
-		logger.debug("Entering");
-		BigDecimal acBalance=BigDecimal.ZERO;
-		CoreBankAccountDetail coreBankAccountDetail = new CoreBankAccountDetail();
-		coreBankAccountDetail.setAccountNumber(AccountId);
+	public Map<String, IAccounts> getAccountsListAvailableBal(List<String> accountsList) {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 
-		//Connecting to CoreBanking Interface
-		try {
-			coreBankAccountDetail = getAccountProcess().fetchAccountAvailableBal(coreBankAccountDetail,false);
-		} catch (AccountNotFoundException e) {
-			//TODO ADD ERROR TO ERROR DETAILS
-		}
-		if (coreBankAccountDetail!=null && coreBankAccountDetail.getAcBal()!=null) {
-			acBalance=coreBankAccountDetail.getAcBal();
-			if (coreBankAccountDetail.getAmountSign().equals("-")) {
-				acBalance=  new BigDecimal(0).subtract(coreBankAccountDetail.getAcBal());
-            }
-        }
+	@Override
+    public Map<String, IAccounts> getAccountsAvailableBalMap(List<String> accountsList) {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 
-		logger.debug("Leaving");
-		return acBalance;
-	
+	@Override
+    public List<IAccounts> getAccountsAvailableBalList(List<IAccounts> accountsList) {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
+
+	@Override
+    public int removeAccountHolds() throws Exception {
+	    // TODO Auto-generated method stub
+	    return 0;
+    }
+
+	@Override
+    public List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst,
+            Date valueDate) throws EquationInterfaceException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
+
+	@Override
+    public Map<String, String> getAccountCurrencyMap(Map<String, String> accountCcyMap)
+            throws AccountNotFoundException {
+	    // TODO Auto-generated method stub
+	    return null;
     }
 	
 }

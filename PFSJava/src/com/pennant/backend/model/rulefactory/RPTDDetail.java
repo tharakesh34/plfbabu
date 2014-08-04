@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 public class RPTDDetail {
 
-	private BigDecimal rPPProfitCalc= new BigDecimal(0);
-	private BigDecimal rPPProfitSchd= new BigDecimal(0);
-	private BigDecimal rPPSchdPftPaid= new BigDecimal(0);
+	private BigDecimal rPPProfitCalc= BigDecimal.ZERO;
+	private BigDecimal rPPProfitSchd= BigDecimal.ZERO;
+	private BigDecimal rPPSchdPftPaid= BigDecimal.ZERO;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

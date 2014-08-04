@@ -112,18 +112,14 @@ public class UserContactsListDAOImpl implements UserContactsListDAO {
 	public void update(UserContactsList userContactsList) {
 		logger.debug("Entering");
 
-		int recordCount = 0;
-		logger.debug("Entering");
-
 		StringBuilder updateSql =new StringBuilder("Update SecRoles"); 
 		updateSql.append(" Set UsrID = :UsrID, Type = :Type, ContactsList = :ContactsList, GroupName = :GroupName");
 
 		logger.debug("updateSql:"+updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userContactsList);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
-
 
 	}
 

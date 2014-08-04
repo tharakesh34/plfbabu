@@ -4,15 +4,16 @@ import java.util.Comparator;
 
 import org.zkoss.zul.GroupsModelArray;
   
+@SuppressWarnings({ "rawtypes", "serial" })
 public class AdvancedGroupsModelArray extends GroupsModelArray { 
   
-    @SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public AdvancedGroupsModelArray(Object[] data, Comparator cmpr) { 
         super(data, cmpr); 
   
     } 
   
-    @SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public AdvancedGroupsModelArray(Object[] data, Comparator cmpr, int col) { 
         super(data, cmpr, col); 
     } 

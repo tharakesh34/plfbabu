@@ -61,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class RejectDetailListModelItemRenderer implements ListitemRenderer<RejectDetail>, Serializable {
 
 	private static final long serialVersionUID = 9099171990501035267L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, RejectDetail rejectDetail, int count) throws Exception {
 
-		//final RejectDetail rejectDetail = (RejectDetail) data;
 		Listcell lc;
 		lc = new Listcell(rejectDetail.getRejectCode());
 		lc.setParent(item);

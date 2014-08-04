@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
@@ -14,39 +14,39 @@
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 				width="100%">
 
-				<!-- COMMON BUTTONS -->
+				COMMON BUTTONS
 				<toolbar align="start"
 					style="float:left; border-style: none;" width="150px">
-					<hbox align="center" style="padding: 2px"></hbox>
+					<hbox align="center" style="padding: 2px"/>
 				</toolbar>
 
-				<!-- SEARCH AREA -->
+				SEARCH AREA
 				<toolbar align="center"
 					style="float:left; border-style: none;">
 					<hbox align="center">
 						<button
 							id="button_CustomerMaintenaceList_CustomerSearchDialog"
-							height="24px" label = "${c:l('label_Filter')}"
+							height="24px" label="${c:l('label_Filter')}"
 							tooltiptext="${c:l('button_CustomerMaintenaceList_CustomerSearchDialog.tooltiptext')}" />
 						<button
 							id="button_CustomerMaintenaceList_PrintList" height="24px"
-							label = "${c:l('label_Print')}"
+							label="${c:l('label_Print')}"
 							tooltiptext="${c:l('button_CustomerMaintenaceList_PrintList.tooltiptext')}" />
 					</hbox>
 				</toolbar>
 
-				<!-- CRUD BUTTONS -->
+				CRUD BUTTONS
 				<toolbar align="end"
 					style="float:right; border-style: none;">
 					<button
 						id="button_CustomerMaintenaceList_NewCustomer" height="24px"
-						label = "${c:l('label_New')}" visible="false"
+						label="${c:l('label_New')}" visible="false"
 						tooltiptext="${c:l('button_CustomerMaintenaceList_NewCustomer.tooltiptext')}" />
 					<button id="btnRefresh" height="24px"
-						label = "${c:l('label_Refresh')}"
+						label="${c:l('label_Refresh')}"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 					<button id="btnHelp" height="24px"
-						label = "${c:l('label_Help')}"
+						label="${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 				</toolbar>
 			</hbox>
@@ -58,33 +58,35 @@
 			<center border="none">
 
 				<listbox id="listBoxCustomer" vflex="true"
+					emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
+					span="true" height="100%" multiple="false" sizedByContent="true" hflex="true">
+					
 					<listhead sizable="true">
 						<listheader id="listheader_CustCIF"
 							label="${c:l('listheader_CustCIF.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_CustCoreBank"
 							label="${c:l('listheader_CustCoreBank.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_CustShrtName"
 							label="${c:l('listheader_CustShrtName.label')}" sort="auto"
-							width="15%" />
+							hflex="min" />
 						<listheader id="listheader_CustDftBranch"
 							label="${c:l('listheader_CustDftBranch.label')}" sort="auto"
-							width="12%" />
+							hflex="min" />
 						<listheader id="listheader_CustCtgCode"
 							label="${c:l('listheader_CustCtgCode.label')}" sort="auto"
-							width="20%" />
+							hflex="min" />
 						<listheader id="listheader_CustTypeCode"
 							label="${c:l('listheader_CustTypeCode.label')}" sort="auto"
-							width="13%" />
+							hflex="min" />
 						<listheader id="listheader_RecordStatus"
 							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_RecordType"
 							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 					</listhead>
 				</listbox>
 			</center>
@@ -94,4 +96,4 @@
 
 		</borderlayout>
 	</window>
-</zk>
+</zk> -->

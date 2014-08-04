@@ -62,11 +62,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class GroupStatusCodeListModelItemRenderer implements ListitemRenderer<GroupStatusCode>, Serializable {
 
 	private static final long serialVersionUID = 4629316685450548899L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, GroupStatusCode groupStatusCode, int count) throws Exception {
 		
-		//final GroupStatusCode groupStatusCode = (GroupStatusCode) data;
 		Listcell lc;
 	  	lc = new Listcell(groupStatusCode.getGrpStsCode());
 		lc.setParent(item);

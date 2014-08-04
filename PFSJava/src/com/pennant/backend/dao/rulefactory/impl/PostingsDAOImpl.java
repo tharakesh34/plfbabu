@@ -43,12 +43,14 @@
 
 package com.pennant.backend.dao.rulefactory.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -61,6 +63,7 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.PennantRuleConstants;
 
 /**
  * DAO methods implementation for the <b>ReturnDataSet model</b> class.<br>
@@ -91,9 +94,9 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
 		selectSql.append(" PostDate,ValueDate,TranCode, TranDesc, RevTranCode,DrOrCr,Account, ShadowPosting,");
-		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg,HostAccountNumber");
+		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy");
 		if(type.contains("View")){
-			selectSql.append(" ,LovDescEventCodeName " );
+			selectSql.append(" ,LovDescEventCodeName, Formatter " );
 		}
 		selectSql.append(" FROM Postings");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -115,13 +118,14 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		dataSet.setFinEvent(finEvent);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, PostAmount, ");
-		selectSql.append(" FinEvent, LovDescEventCodeName");
+		selectSql.append(" SELECT ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
+		selectSql.append(" FinEvent, LovDescEventCodeName, AcCcy, Formatter");
 		selectSql.append(" FROM Postings_View");
-		selectSql.append(" Where finReference =:finReference AND FinEvent IN ("+finEvent+")");
+		selectSql.append(" Where FinReference =:FinReference AND FinEvent IN ("+finEvent+")");
 		if(!showZeroBal){
-			selectSql.append(" AND PostAmount > 0");
+			selectSql.append(" AND PostAmount != 0");
 		}
+		selectSql.append(" ORDER BY ValueDate , PostRef");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
@@ -140,7 +144,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
 		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
-		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg,HostAccountNumber");
+		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where LinkedTranId =:LinkedTranId");
 		
@@ -151,28 +155,6 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	@Override
-	public long save(ReturnDataSet dataSet,  String type) {
-		logger.debug("Entering");
-		getLinkedTransId(dataSet);	
-		
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into Postings");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent,");
-		insertSql.append(" PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account,ShadowPosting,");
-		insertSql.append(" PostAmount, AmountType, PostStatus, ErrorId, ErrorMsg, HostAccountNumber)");
-		insertSql.append(" Values(:LinkedTranId, :Postref, :PostingId, :finReference, :FinEvent,");
-		insertSql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account, :ShadowPosting,");
-		insertSql.append(" :PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, :HostAccountNumber)");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return dataSet.getLinkedTranId();
-	}
-	
 	@Override
 	public long saveHeader(ReturnDataSet dataSet, String status, String type) {
 		logger.debug("Entering");
@@ -199,10 +181,14 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	 * @param isEODPostings
 	 */
 	@Override
-	public void saveEODBatch(List<ReturnDataSet> dataSetList, String type){
+	public void saveEODBatch(List<ReturnDataSet> dataSetList, String type, String isDummy){
 		logger.debug("Entering");
-		saveBatch(dataSetList, "", true);
-		saveBatch(dataSetList, "", false);
+	
+		if("N".equals(isDummy)) {
+			saveBatch(dataSetList, type, true);
+		}
+		
+		saveBatch(dataSetList, type, false);
 		logger.debug("Leaving");
 	}
 	
@@ -220,10 +206,10 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent,");
 		insertSql.append(" PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account,ShadowPosting,");
-		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, HostAccountNumber)");
+		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy)");
 		insertSql.append(" Values(:LinkedTranId, :Postref, :PostingId, :finReference, :FinEvent,");
 		insertSql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account, :ShadowPosting,");
-		insertSql.append(" :PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, :HostAccountNumber)");
+		insertSql.append(" :PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, :AcCcy)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dataSetList.toArray());
@@ -235,14 +221,18 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	 * Method for saving Fee charge Details list
 	 */
 	@Override
-	public void saveChargesBatch(List<FeeRule> chargeList, String tableType) {
+	public void saveChargesBatch(List<FeeRule> chargeList,boolean isWIF,  String tableType) {
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" INSERT INTO FinFeeCharges");
+		if(isWIF){
+			insertSql.append(" INSERT INTO WIFFinFeeCharges");
+		}else{
+			insertSql.append(" INSERT INTO FinFeeCharges");
+		}
 		insertSql.append(StringUtils.trimToEmpty(tableType));
-		insertSql.append(" (FinReference , SchDate , FeeCode , FeeCodeDesc , FeeOrder , FeeAmount) ");
-		insertSql.append(" VALUES (:FinReference , :SchDate , :FeeCode , :FeeCodeDesc , :FeeOrder , :FeeAmount) ");
+		insertSql.append(" (FinReference , SchDate , FeeCode , SeqNo, FeeCodeDesc , FeeOrder ,AddFeeCharges, AllowWaiver, WaiverPerc, FeeAmount, WaiverAmount, PaidAmount) ");
+		insertSql.append(" VALUES (:FinReference , :SchDate , :FeeCode , :SeqNo, :FeeCodeDesc , :FeeOrder ,:AddFeeCharges, :AllowWaiver, :WaiverPerc, :FeeAmount, :WaiverAmount, :PaidAmount) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(chargeList.toArray());
@@ -254,14 +244,18 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	 * Method for saving Fee charge Details list
 	 */
 	@Override
-	public void deleteChargesBatch(String finReference, String tableType) {
+	public void deleteChargesBatch(String finReference,boolean isWIF, String tableType) {
 		logger.debug("Entering");
 		
 		FeeRule feeRule = new FeeRule();
 		feeRule.setFinReference(finReference);
 		
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" DELETE FROM FinFeeCharges");
+		if(isWIF){
+			deleteSql.append(" DELETE FROM WIFFinFeeCharges");	
+		}else{
+			deleteSql.append(" DELETE FROM FinFeeCharges");
+		}
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" WHERE FinReference =:FinReference ");
 
@@ -274,17 +268,28 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	/**
 	 * Method for Fetching Fee charge Details list based upon Reference
 	 */
-	
 	@Override
-    public List<FeeRule> getFeeChargesByFinRef(String finReference, String tableType) {
+    public List<FeeRule> getFeeChargesByFinRef(String finReference, boolean isWIF, String tableType) {
+		logger.debug("Entering");
+		
 		FeeRule feeRule = new FeeRule();
 		feeRule.setFinReference(finReference);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FinReference , SchDate , FeeCode , FeeCodeDesc , FeeOrder , FeeAmount " );
-		selectSql.append(" FROM FinFeeCharges");
+		selectSql.append(" SELECT FinReference , SchDate , FeeCode , SeqNo, FeeCodeDesc , FeeOrder , AddFeeCharges, " );
+		selectSql.append(" AllowWaiver, WaiverPerc, FeeAmount, WaiverAmount, PaidAmount" );
+		if(isWIF){
+			selectSql.append(" FROM WIFFinFeeCharges");
+		}else {
+			
+			if(!tableType.equalsIgnoreCase("_VIEW") && !tableType.equalsIgnoreCase("_AVIEW")){
+				selectSql.append("	, ExcludeFromRpt ");  
+			}
+			selectSql.append(" FROM FinFeeCharges");
+		}
+		
 		selectSql.append(StringUtils.trimToEmpty(tableType));
-		selectSql.append(" WHERE  FinReference=:FinReference ORDER BY SchDate, FeeOrder");
+		selectSql.append(" WHERE  FinReference=:FinReference ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
@@ -292,7 +297,6 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
-	
 	/**
 	 * Generate Linked Transaction ID
 	 */
@@ -341,6 +345,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		logger.debug("Leaving");
 		return finSummary;
     }
+	
 	@Override
 	public void updateBatch(List<ReturnDataSet> dataSetList, String type) {
 		logger.debug("Entering");
@@ -353,4 +358,87 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public void deleteAll(String type) {
+		logger.debug("Entering");
+		StringBuilder deleteSql = new StringBuilder();
+		deleteSql.append("Truncate table Postings").append(type);
+
+		logger.debug("deleteSql: "+ deleteSql.toString());
+		SqlParameterSource beanParameters = null;
+		try{
+			beanParameters = new BeanPropertySqlParameterSource("");
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+
+		}catch(DataAccessException e){
+			logger.error(e);
+
+		} finally {
+			beanParameters = null;
+		}
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public FeeRule getTakafulFee(String finReference, String type) {
+		logger.debug("Entering");
+		
+		FeeRule feeRule = new FeeRule();
+		feeRule.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT SUM(FeeAmount) AS FeeAmount, SUM(WaiverAmount) AS WaiverAmount, SUM(PaidAmount) AS PaidAmount " );
+		selectSql.append(" FROM FinFeeCharges");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE FinReference=:FinReference AND FeeCode='" );
+		selectSql.append(PennantRuleConstants.TAKAFUL_FEE);
+		selectSql.append("' ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
+		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
+		
+		try {
+			feeRule = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (Exception e) {
+			logger.error(e);
+			feeRule = null;
+		}
+		
+		logger.debug("Leaving");
+		return feeRule;
+	}
+
+	/**
+	 * Method for Fetching Posted Amount On Particular Finance Event
+	 */
+	@Override
+    public BigDecimal getPostAmtByTranIdandEvent(String finReference, String finEvent , long linkedTranId) {
+		logger.debug("Entering");
+		
+		BigDecimal totalPostAmount = BigDecimal.ZERO;
+		
+		ReturnDataSet set = new ReturnDataSet();
+		set.setFinReference(finReference);
+		set.setFinEvent(finEvent);
+		set.setLinkedTranId(linkedTranId);
+
+		StringBuilder selectSql = new StringBuilder(" SELECT SUM(PostAmount) " );
+		selectSql.append(" FROM Postings");
+		selectSql.append(" WHERE FinReference=:FinReference AND LinkedTranId=:LinkedTranId AND FinEvent =:FinEvent " );
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(set);
+		
+		try {
+			totalPostAmount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+		} catch (Exception e) {
+			logger.error(e);
+			totalPostAmount = BigDecimal.ZERO;
+		}
+		
+		logger.debug("Leaving");
+		return totalPostAmount;
+    }
 }

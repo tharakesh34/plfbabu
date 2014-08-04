@@ -64,6 +64,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.systemmasters.GroupStatusCode;
 import com.pennant.backend.service.systemmasters.GroupStatusCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -155,17 +156,17 @@ public class GroupStatusCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_grpStsCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpStsCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_grpStsCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		this.sortOperator_grpStsDescription.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpStsDescription.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_grpStsDescription.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		this.sortOperator_grpStsIsActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_grpStsIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_grpStsIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
@@ -298,6 +299,7 @@ public class GroupStatusCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 		} else {
 			so.addTabelName("BMTGrpStatusCodes_AView");
 		}
+		so.addFilter(new Filter("GrpStsCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
 		if (StringUtils.isNotEmpty(this.grpStsCode.getValue())) {
 
 			// get the search operator

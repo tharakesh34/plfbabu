@@ -62,28 +62,28 @@
 
 					<listbox id="listBoxPhoneType" vflex="true"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
+						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_PhoneTypeCode"
 								label="${c:l('listheader_PhoneTypeCode_label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_PhoneTypeDesc"
 								label="${c:l('listheader_PhoneTypeDesc.label')}" sort="auto"
-								width="45%" />
+								hflex="min" />
 							<listheader
 								id="listheader_PhoneTypePriority"
 								label="${c:l('listheader_PhoneTypePriority.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader
 								id="listheader_PhoneTypeIsActive"
 								label="${c:l('listheader_PhoneTypeIsActive.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 						</listhead>
 					</listbox>
 

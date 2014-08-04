@@ -45,7 +45,6 @@ package com.pennant.webui.financemanagement.overduechargerecovery.model;
 
 import java.io.Serializable;
 
-import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
@@ -57,71 +56,80 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
  */
-public class OverdueChargeRecoveryListModelItemRenderer implements ListitemRenderer, Serializable {
+public class OverdueChargeRecoveryListModelItemRenderer implements ListitemRenderer<OverdueChargeRecovery>, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+	private static final long serialVersionUID = 3995133144435008423L;
+
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, OverdueChargeRecovery overdueChargeRecovery, int count) throws Exception {
 
 		if (item instanceof Listgroup) { 
-			Object groupData = (Object) data; 
-			final OverdueChargeRecovery overdueChargeRecovery = (OverdueChargeRecovery) groupData;
-			item.appendChild(new Listcell(String.valueOf(overdueChargeRecovery.getFinReference()))); 
+			item.appendChild(new Listcell("Overdue Term : "+
+					DateUtility.formatUtilDate(overdueChargeRecovery.getFinODSchdDate(),
+							PennantConstants.dateFormate)+"-"+overdueChargeRecovery.getFinODFor())); 
 		} else if (item instanceof Listgroupfoot) { 
 			Listcell cell = new Listcell("");
-			cell.setSpan(7);
+			cell.setSpan(10);
 			item.appendChild(cell);
 		} else {
-			final OverdueChargeRecovery overdueChargeRecovery = (OverdueChargeRecovery) data;
+			
 			Listcell lc;
-			lc = new Listcell(DateUtility.formatUtilDate(overdueChargeRecovery.getFinSchdDate(),
-							PennantConstants.dateFormate));
-			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatUtilDate(overdueChargeRecovery.getFinODDate(),
+			lc = new Listcell(DateUtility.formatUtilDate(overdueChargeRecovery.getMovementDate(),
 					PennantConstants.dateFormate));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinODPri(),
+			
+			lc = new Listcell(String.valueOf(overdueChargeRecovery.getODDays()));
+			lc.setParent(item);
+			
+			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinCurODPri(),
 					overdueChargeRecovery.getLovDescFinFormatter()));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinODPft(),
+			
+			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinCurODPft(),
 					overdueChargeRecovery.getLovDescFinFormatter()));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinODTot(),
+			
+			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinCurODAmt(),
 					overdueChargeRecovery.getLovDescFinFormatter()));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinODCPenalty(),
+			
+			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getPenalty(),
 					overdueChargeRecovery.getLovDescFinFormatter()));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinODCWaived(),
+			
+			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getWaivedAmt(),
 					overdueChargeRecovery.getLovDescFinFormatter()));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinODCPLPenalty(),
+			
+			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getPenaltyPaid(),
 					overdueChargeRecovery.getLovDescFinFormatter()));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinODCCPenalty(),
+			
+			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getPenaltyBal(),
 					overdueChargeRecovery.getLovDescFinFormatter()));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			lc = new Listcell(overdueChargeRecovery.getFinODCRecoverySts());
+			
+			lc = new Listcell(overdueChargeRecovery.isRcdCanDel() ? "Recovery" : "Collected");
+			if(overdueChargeRecovery.isRcdCanDel()){
+				lc.setStyle("font-weight:bold;color:red;");
+			}else{
+				lc.setStyle("font-weight:bold;color:green;");
+			}
 			lc.setParent(item);
-			/*lc = new Listcell(overdueChargeRecovery.getRecordStatus());
-			lc.setParent(item);
-			lc = new Listcell(PennantJavaUtil.getLabel(overdueChargeRecovery.getRecordType()));
-			lc.setParent(item);*/
-			item.setAttribute("data", data);
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onOverdueChargeRecoveryItemDoubleClicked");
+			
+			/*item.setAttribute("data", overdueChargeRecovery);
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onOverdueChargeRecoveryItemDoubleClicked");*/
 		}
 	}
 }

@@ -159,31 +159,31 @@ public class ProvisionSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_finReference.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finBranch.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finBranch.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_custID.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_custID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_custID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_provisionCalDate.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_provisionCalDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_provisionCalDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_provisionedAmt.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_provisionedAmt.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_provisionedAmt.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_nonFormulaProv.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_nonFormulaProv.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_nonFormulaProv.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_useNFProv.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_useNFProv.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_useNFProv.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_autoReleaseNFP.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_autoReleaseNFP.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_autoReleaseNFP.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		// ++++ Restore the search mask input definition ++++ //

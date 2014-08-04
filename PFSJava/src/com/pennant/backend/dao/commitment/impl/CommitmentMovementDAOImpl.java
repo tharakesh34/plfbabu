@@ -108,7 +108,7 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 	@Override
 	public CommitmentMovement getCommitmentMovementById(final String id, String type) {
 		logger.debug("Entering");
-		CommitmentMovement commitmentMovement = getCommitmentMovement();
+		CommitmentMovement commitmentMovement = new CommitmentMovement();
 		commitmentMovement.setCmtReference(id);
 
 		StringBuilder selectSql = new StringBuilder("Select CmtReference,FinReference,FinBranch");
@@ -216,6 +216,27 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 		}
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Delete Commitment Movement on Commitment Reference
+	 * @param cmtReference
+	 * @param type
+	 */
+	@Override
+	public void deleteByRef(String cmtReference, String type) {
+		logger.debug("Entering");
+		CommitmentMovement commitmentMovement = new CommitmentMovement();
+		commitmentMovement.setCmtReference(cmtReference);
+
+		StringBuilder deleteSql = new StringBuilder("Delete From CommitmentMovements");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where CmtReference =:CmtReference");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentMovement);
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * This method insert new Records into CommitmentMovements or Commitments_Temp.
@@ -267,7 +288,6 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@SuppressWarnings("serial")
 	@Override
 	public void update(CommitmentMovement commitmentMovement, String type) {
@@ -299,6 +319,26 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 		}
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Fetching Max Movement Order for particular Commitment Reference
+	 */
+	@Override
+    public int getMaxMovementOrderByRef(String cmtReference) {
+		logger.debug("Entering");
+		CommitmentMovement commitmentMovement = new CommitmentMovement();
+		commitmentMovement.setCmtReference(cmtReference);
+
+		StringBuilder selectSql = new StringBuilder("Select MAX(MovementOrder) ");
+		selectSql.append(" From CommitmentMovements");
+		selectSql.append(" Where CmtReference =:CmtReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentMovement);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForInt(selectSql.toString(), beanParameters);
+    }
 
 	private ErrorDetails getError(String errorId, String cmtReference, String userLanguage) {
 		String[][] parms = new String[2][1];
@@ -307,5 +347,6 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
 		        parms[0], parms[1]), userLanguage);
 	}
+
 
 }

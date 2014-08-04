@@ -560,7 +560,6 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 				isRcdType = true;
 			} else if (transactionEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				transactionEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
 			}
 
 			if (method.equals("saveOrUpdate") && (isRcdType == true)) {
@@ -624,22 +623,25 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 				transactionEntry.setNextTaskId("");
 			}
 			
-			if(transactionEntry.getRuleDecider().equalsIgnoreCase("FEES")){
-				String[] feeCodeList = transactionEntry.getAmountRule().split("[^a-zA-Z0-9]+");
-				String feeCode = "";
-				for (int k = 0; k < feeCodeList.length; k++) {
-					if(!(StringUtils.trimToEmpty(feeCodeList[k]).equals("") || feeCodeList[k].equalsIgnoreCase("Result"))){
-						if(!feeCode.contains(feeCodeList[k].trim())){
-							feeCode = feeCode+feeCodeList[k].trim()+",";
-						}
+			//Fee Rules Verification for existence Entry usage
+			String[] feeCodeList = transactionEntry.getAmountRule().split("[^a-zA-Z0-9_]+");
+			String feeCode = "";
+			for (int k = 0; k < feeCodeList.length; k++) {
+				if(!(StringUtils.trimToEmpty(feeCodeList[k]).equals("") || feeCodeList[k].equalsIgnoreCase("Result"))
+						&& (feeCodeList[k].trim().endsWith("_W") ||  feeCodeList[k].trim().endsWith("_C") ||
+								 feeCodeList[k].trim().endsWith("_P"))){
+					if(!feeCode.contains(feeCodeList[k].trim().substring(0, feeCodeList[k].trim().indexOf('_'))+",")){
+						feeCode = feeCode+feeCodeList[k].trim().substring(0, feeCodeList[k].trim().indexOf('_'))+",";
 					}
 				}
-				if(feeCode.endsWith(",")){
-					transactionEntry.setFeeCode(feeCode.substring(0, feeCode.length()-1));
-				}else{
-					transactionEntry.setFeeCode(feeCode);
-				}
 			}
+			
+			if(feeCode.endsWith(",")){
+				transactionEntry.setFeeCode(feeCode.substring(0, feeCode.length()-1));
+			}else{
+				transactionEntry.setFeeCode(feeCode);
+			}
+			
 			transactionEntry.setWorkflowId(0);
 
 			if (transactionEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {

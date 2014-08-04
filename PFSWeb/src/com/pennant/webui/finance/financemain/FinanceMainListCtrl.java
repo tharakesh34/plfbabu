@@ -47,9 +47,7 @@ package com.pennant.webui.finance.financemain;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -60,26 +58,22 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.finance.financemain.model.FinanceMainListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.PTReportUtils;
 
@@ -110,11 +104,14 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 	// List headers
 	protected Listheader listheader_CustomerCIF;                      // autoWired
+	protected Listheader listheader_CustomerName;                      // autoWired
 	protected Listheader listheader_FinReference;                     // autoWired
+	protected Listheader listheader_ProductName;                     // autoWired
 	protected Listheader listheader_FinType;                          // autoWired
 	protected Listheader listheader_FinCcy;                           // autoWired
 	protected Listheader listheader_ScheduleMethod;                   // autoWired
 	protected Listheader listheader_FinAmount;                   	  // autoWired
+	protected Listheader listheader_FinancingAmount;                  // autoWired
 	protected Listheader listheader_RecordStatus;                     // autoWired
 	protected Listheader listheader_RecordType;                       // autoWired
 
@@ -128,10 +125,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	protected JdbcSearchObject<FinanceMain> searchObj;
 
 	private transient FinanceDetailService financeDetailService;
-	private transient CustomerDetailsService customerDetailsService;
 	private transient WorkFlowDetails workFlowDetails=null;
 
 	private Textbox loanType;//Field for Maintain Different Finance Product Types
+	private String menuItemRightName = null;
 	
 	/**
 	 * default constructor.<br>
@@ -143,25 +140,20 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	public void onCreate$window_FinanceMainList(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		
-		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("FinanceMain");
-		//moduleMapping = PennantJavaUtil.getModuleMap("FinanceMaintenance");//TODO
-		
-		boolean wfAvailable=true;
-
-		if (moduleMapping.getWorkflowType()!=null){
-			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinanceMain");
-
-			if (workFlowDetails==null){
-				setWorkFlowEnabled(false);
-			}else{
-				setWorkFlowEnabled(true);
-				setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
-				setWorkFlowId(workFlowDetails.getId());
-			}	
-		}else{
-			wfAvailable=false;
+		//Getting Menu Item Right Name
+		if (event.getTarget() != null && event.getTarget().getParent() != null
+				&& event.getTarget().getParent().getParent()!=null && 
+				event.getTarget().getParent().getParent().getParent() != null && 
+				event.getTarget().getParent().getParent().getParent().getParent() != null) {
+			
+			String menuItemName = ((Tabbox)event.getTarget().getParent().getParent().getParent()).getSelectedTab().getId();
+			menuItemName = menuItemName.trim().replace("tab_", "menu_Item_");
+			
+			if(getUserWorkspace().getHasMenuRights().containsKey(menuItemName)){
+				menuItemRightName = getUserWorkspace().getHasMenuRights().get(menuItemName);
+			}
 		}
-
+		
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
@@ -171,61 +163,92 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.pagingFinanceMainList.setPageSize(getListRows());
 		this.pagingFinanceMainList.setDetailed(true);
 
-		this.listheader_CustomerCIF.setSortAscending(new FieldComparator("custID", true));
-		this.listheader_CustomerCIF.setSortDescending(new FieldComparator("custID", false));
+		this.listheader_CustomerCIF.setSortAscending(new FieldComparator("lovDescCustCIF", true));
+		this.listheader_CustomerCIF.setSortDescending(new FieldComparator("lovDescCustCIF", false));
+		this.listheader_CustomerName.setSortDescending(new FieldComparator("LovDescCustShrtName", true));
+		this.listheader_CustomerName.setSortAscending(new FieldComparator("LovDescCustShrtName", true));
 		this.listheader_FinReference.setSortAscending(new FieldComparator("finReference", true));
 		this.listheader_FinReference.setSortDescending(new FieldComparator("finReference", false));
+		this.listheader_ProductName.setSortAscending(new FieldComparator("lovDescProductCodeName", true));
+		this.listheader_ProductName.setSortDescending(new FieldComparator("lovDescProductCodeName", false));
 		this.listheader_FinType.setSortAscending(new FieldComparator("finType", true));
 		this.listheader_FinType.setSortDescending(new FieldComparator("finType", false));
 		this.listheader_FinCcy.setSortAscending(new FieldComparator("finCcy", true));
 		this.listheader_FinCcy.setSortDescending(new FieldComparator("finCcy", false));
 		this.listheader_FinAmount.setSortAscending(new FieldComparator("finAmount", true));
 		this.listheader_FinAmount.setSortDescending(new FieldComparator("finAmount", false));
-		this.listheader_ScheduleMethod.setSortAscending(new FieldComparator("scheduleMethod", true));
+/*		this.listheader_FinancingAmount.setSortAscending(new FieldComparator("lovDescFinancingAmount", true));
+		this.listheader_FinancingAmount.setSortDescending(new FieldComparator("lovDescFinancingAmount", false));
+*/		this.listheader_ScheduleMethod.setSortAscending(new FieldComparator("scheduleMethod", true));
 		this.listheader_ScheduleMethod.setSortDescending(new FieldComparator("scheduleMethod", false));
 
-		if (isWorkFlowEnabled()){
-			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
-			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
-			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
-			this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
-		}else{
-			this.listheader_RecordStatus.setVisible(false);
-			this.listheader_RecordType.setVisible(false);
-		}
+		this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
+		this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
+		this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
+		this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
 
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class,getListRows());
 		this.searchObj.addSort("FinReference", false);
-		if(!StringUtils.trimToEmpty(this.loanType.getValue()).equals("")){
+		
+		//Field Declarations for Fetching List Data
+		this.searchObj.addField("FinReference");
+		this.searchObj.addField("FinType");
+		this.searchObj.addField("FinCcy");
+		this.searchObj.addField("ScheduleMethod");
+		this.searchObj.addField("FinAmount");
+		this.searchObj.addField("DownPayment");
+		this.searchObj.addField("FeeChargeAmt");
+		this.searchObj.addField("LovDescCustCIF");
+		this.searchObj.addField("LovDescCustShrtName");
+		this.searchObj.addField("LovDescProductCodeName");
+		this.searchObj.addField("LovDescFinFormatter");
+		this.searchObj.addField("RecordStatus");
+		this.searchObj.addField("RecordType");
+		
+		this.searchObj.addSort("LovDescProductCodeName",false);
+		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
+		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
+	/*	if(!StringUtils.trimToEmpty(this.loanType.getValue()).equals("")){
 			this.searchObj.addFilter(new Filter("lovDescProductCodeName", this.loanType.getValue().trim(), Filter.OP_EQUAL));
 		}
-		// Work flow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("FinanceMain_View");
-			if (isFirstTask()) {
-				button_FinanceMainList_NewFinanceMain.setVisible(true);
-			} else {
-				button_FinanceMainList_NewFinanceMain.setVisible(false);
+		*/
+		
+		boolean accessToCreateNewFin = getFinanceDetailService().checkFirstTaskOwnerAccess(this.loanType.getValue().trim(), 
+				 getUserWorkspace().getLoginUserDetails().getLoginUsrID());
+		
+		this.searchObj.addTabelName("FinanceMain_TView");
+		if (accessToCreateNewFin) {
+			button_FinanceMainList_NewFinanceMain.setVisible(true);
+		} else {
+			button_FinanceMainList_NewFinanceMain.setVisible(false);
+		}
+		
+		if (getUserWorkspace().getUserRoles() != null
+				&& getUserWorkspace().getUserRoles().size() > 0) {
+			String whereClause = "";
+			
+			for (int i = 0; i < getUserWorkspace().getUserRoles().size(); i++) {
+				if (i > 0) {
+					whereClause += " OR ";
+				}
+				
+				whereClause += "(',' + nextRoleCode + ',' LIKE '%," + getUserWorkspace().getUserRoles().get(i) + ",%')";
 			}
-
-			this.searchObj.addFilterOrLike("nextRoleCode", getUserWorkspace().getUserRoles(),false);
-		}else{
-			this.searchObj.addTabelName("FinanceMain_AView");
+			
+			whereClause += " ) AND ( " +getUsrFinAuthenticationQry(false);
+			
+			if (!"".equals(whereClause)) {
+				this.searchObj.addWhereClause(whereClause);
+			}
 		}
 
 		setSearchObj(this.searchObj);
-		if (!isWorkFlowEnabled() && wfAvailable){
-			this.button_FinanceMainList_NewFinanceMain.setVisible(false);
-			this.button_FinanceMainList_FinanceMainSearchDialog.setVisible(false);
-			this.button_FinanceMainList_PrintList.setVisible(false);
-			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
-		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxFinanceMain,this.pagingFinanceMainList);
-			// set the itemRenderer
-			this.listBoxFinanceMain.setItemRenderer(new FinanceMainListModelItemRenderer());
-		}
+		
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxFinanceMain,this.pagingFinanceMainList);
+		// set the itemRenderer
+		this.listBoxFinanceMain.setItemRenderer(new FinanceMainListModelItemRenderer());
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -235,7 +258,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("FinanceMainList");
-
+	
 		this.button_FinanceMainList_NewFinanceMain.setVisible(getUserWorkspace().isAllowed("button_FinanceMainList_NewFinanceMain"));
 		this.button_FinanceMainList_FinanceMainSearchDialog.setVisible(getUserWorkspace().isAllowed("button_FinanceMainList_FinanceMainFindDialog"));
 		this.button_FinanceMainList_PrintList.setVisible(getUserWorkspace().isAllowed("button_FinanceMainList_PrintList"));
@@ -251,14 +274,14 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	 */
 
 	public void onFinanceMainItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Leaving " + event.toString());
+		logger.debug("Entering " + event.toString());
 
 		// get the selected FinanceMain object
 		final Listitem item = this.listBoxFinanceMain.getSelectedItem();
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
-			final FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailById(aFinanceMain.getId(),false,"");
+			final FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailById(aFinanceMain.getId(),false,"",false);
 	
 			if(financeDetail==null){
 				String[] errParm= new String[1];
@@ -270,22 +293,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 				, getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getError());
 			}else{
+				
 				//Setting Notes Count from the list View
 				financeDetail.getFinScheduleData().getFinanceMain().setLovDescNotes(aFinanceMain.getLovDescNotes());
-				//
-				if(isWorkFlowEnabled()){
-					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
-
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID()
-							, "FinanceMain", whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
-					if (userAcces){
-						showDetailView(financeDetail);
-					}else{
-						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
-					}
-				}else{
-					showDetailView(financeDetail);
-				}
+				showDetailView(financeDetail);
 			}	
 		}
 		logger.debug("Leaving " + event.toString());
@@ -297,10 +308,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	public void onClick$button_FinanceMainList_NewFinanceMain(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 
-
 		// create a new FinanceMain object, We GET it from the back end.
 		final FinanceDetail aFinanceDetail = getFinanceDetailService().getNewFinanceDetail(false);
-		aFinanceDetail.setWorkflowId(workFlowDetails.getId());
 		aFinanceDetail.setNewRecord(true);
 		
 		/*
@@ -315,6 +324,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		map.put("financeDetail", aFinanceDetail);
 		map.put("loanType", this.loanType.getValue());
 		map.put("role", getUserWorkspace().getUserRoles());
+		map.put("menuItemRightName", menuItemRightName);
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul",null,map);
@@ -334,12 +344,14 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	 */
 	protected void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
 		logger.debug("Entering");
+		
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		
 		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
 			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
@@ -353,52 +365,37 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		 * dialog when we do a delete, edit or insert a FinanceMain.
 		 */
 		map.put("financeMainListCtrl", this);
+		map.put("menuItemRightName", menuItemRightName);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			String screenPath="";
-			if(aFinanceMain.getNextRoleCode().startsWith("FINANCE_CRD_")){//TODO - Hard COde need to give a second look
-				screenPath="/WEB-INF/pages/Finance/FinanceMain/FinanceMainDialog.zul";
-			}else{
-				if(aFinanceMain.getCustID() == 0 || aFinanceMain.getCustID() == Long.MIN_VALUE){
-
-					// Show a confirm box
-					final String msg = Labels.getLabel("message_Data_Create_New_CustCIF_YesNo");
-					final String title = Labels.getLabel("message.Conformation");
-
-					MultiLineMessageBox.doSetTemplate();
-					int conf = MultiLineMessageBox.show(msg, title,
-							MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-							MultiLineMessageBox.QUESTION, true);
-
-					if (conf == MultiLineMessageBox.YES) {
-						CustomerDetails customerDetail = getCustomerDetailsService().getNewCustomer(true);
-						map.put("customerDetails", customerDetail);								
-						map.put("roleCode", getUserWorkspace().getUserRoles().get(0));								
-						screenPath="/WEB-INF/pages/CustomerMasters/Customer/CustomerQDEDialog.zul";
-					} else {
-						screenPath="/WEB-INF/pages/Finance/FinanceMain/FinanceMainDialog.zul";
-					}
-					
-				}else if(aFinanceMain.getCustID() != 0 && aFinanceMain.getCustID() != Long.MIN_VALUE &&
-						StringUtils.trimToEmpty(aFinanceMain.getLovDescCustCIF()).equals("")){
-
-					// Show a confirm box
-					final String msg = Labels.getLabel("message_Data_CustCIF_Request_Wait_Process");
-					final String title = Labels.getLabel("message.Information");
-
-					MultiLineMessageBox.doSetTemplate();
-					MultiLineMessageBox.show(msg, title,MultiLineMessageBox.OK,
-							MultiLineMessageBox.INFORMATION, true);
-					
-				}else{
-					screenPath="/WEB-INF/pages/Finance/FinanceMain/FinanceMainDialog.zul";
-				}
+			String productType = aFinanceMain.getLovDescProductCodeName();
+			productType = (productType.substring(0, 1)).toUpperCase()+(productType.substring(1)).toLowerCase();
+			
+			StringBuilder fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
+			if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_IJARAH)) {
+				fileLocaation.append("IjarahFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_ISTISNA)) {
+				fileLocaation.append("IstisnaFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_MUDARABA)) {
+				fileLocaation.append("MudarabaFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_MURABAHA)) {
+				fileLocaation.append("MurabahaFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_MUSHARAKA)) {
+				fileLocaation.append("MusharakFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_TAWARRUQ)) {
+				fileLocaation.append("TawarruqFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_SUKUK)) {
+				fileLocaation.append("SukukFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_SUKUKNRM)) {
+				fileLocaation.append("SukuknrmFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_ISTNORM)) {
+				fileLocaation.append("IstnormFinanceMainDialog.zul");
+			} else {
+				fileLocaation.append("FinanceMainDialog.zul");
 			}
 			
-			if(!StringUtils.trimToEmpty(screenPath).equals("")){
-				Executions.createComponents(screenPath,null,map);
-			}
+			Executions.createComponents(fileLocaation.toString(), this.window_FinanceMainList,map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -488,13 +485,5 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	}
 	public void setSearchObj(JdbcSearchObject<FinanceMain> searchObj) {
 		this.searchObj = searchObj;
-	}
-	
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-	public void setCustomerDetailsService(
-			CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
 	}
 }

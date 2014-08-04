@@ -45,6 +45,7 @@ package com.pennant.backend.service.customermasters;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 
 /**
  * Service declaration for methods that depends on <b>CustomerDocument</b>.<br>
@@ -61,4 +62,8 @@ public interface CustomerDocumentService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	DocumentDetails getCustDocByCustAndDocType(final long custId, String docType);
+	String getCustCRCPRById(long custId, String type);
+	
+
 }

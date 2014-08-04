@@ -51,12 +51,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.GroupsModelArray;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -66,11 +66,10 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.customermasters.customeremail.model.CustomerEmailComparater;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -150,19 +149,19 @@ public class CustomerEMailSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_custCIF.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custEMailTypeCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custEMailTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custEMailTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custEMailPriority.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_custEMailPriority.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_custEMailPriority.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
@@ -279,6 +278,7 @@ public class CustomerEMailSearchCtrl extends GFCBaseCtrl implements Serializable
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */
+	@SuppressWarnings("unchecked")
 	public void doSearch() {
 		logger.debug("Entering");
 
@@ -403,13 +403,14 @@ public class CustomerEMailSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		// set the model to the listBox with the initial resultSet get by the
 		// DAO method.
-		final SearchResult<CustomerEMail> searchResult = this.customerEMailCtrl.getPagedListService().
-											getSRBySearchObject(so);
-		this.customerEMailCtrl.listBoxCustomerEMail.setModel(new GroupsModelArray(
-				searchResult.getResult().toArray(), new CustomerEmailComparater()));
+		 final Listbox listBox = this.customerEMailCtrl.listBoxCustomerEMail;
+			final Paging paging = this.customerEMailCtrl.pagingCustomerEMailList;
+			
+			((PagedListWrapper<CustomerEMail>) listBox.getModel()).init(so, listBox, paging);
+			
 
 		this.label_CustomerEMailSearchResult.setValue(Labels.getLabel(
-				"label_CustomerEMailSearchResult.value")+ " "+ String.valueOf(searchResult.getTotalCount()));
+				"label_CustomerEMailSearchResult.value")+ " "+ String.valueOf(paging.getTotalSize()));
 
 		logger.debug("Leaving");
 	}

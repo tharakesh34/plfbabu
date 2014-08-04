@@ -55,7 +55,6 @@ import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for list items in the list box.
  * 
@@ -63,11 +62,10 @@ import com.pennant.util.PennantAppUtil;
 public class PhoneTypeListModelItemRenderer implements ListitemRenderer<PhoneType>, Serializable {
 
 	private static final long serialVersionUID = 478211645293947995L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, PhoneType phoneType, int count) throws Exception {
 		
-		//final PhoneType phoneType = (PhoneType) data;
 		Listcell lc;
 	  	lc = new Listcell(phoneType.getPhoneTypeCode());
 		lc.setParent(item);

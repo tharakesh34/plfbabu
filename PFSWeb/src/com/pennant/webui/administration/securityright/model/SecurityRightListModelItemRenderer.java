@@ -52,6 +52,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 
@@ -70,7 +71,8 @@ public class SecurityRightListModelItemRenderer implements ListitemRenderer<Secu
  
 		//final SecurityRight securityRight = (SecurityRight) data;
 		Listcell lc;
-		lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(securityRight.getRightType()),PennantAppUtil.getRightType()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(securityRight.getRightType()),
+				PennantStaticListUtil.getRightType()));
 		lc.setParent(item);
 	  	lc = new Listcell(securityRight.getRightName());
 		lc.setParent(item);

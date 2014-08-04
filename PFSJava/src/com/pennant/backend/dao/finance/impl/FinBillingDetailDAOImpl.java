@@ -118,7 +118,7 @@ public class FinBillingDetailDAOImpl extends BasisCodeDAO<FinBillingDetail> impl
 	public FinBillingDetail getFinBillingDetailByID(final String finReference, Date progClaimDate,String type) {
 		logger.debug("Entering");
 		
-		FinBillingDetail billingDetail = getFinBillingDetail();
+		FinBillingDetail billingDetail = new FinBillingDetail();
 		billingDetail.setFinReference(finReference);
 		billingDetail.setProgClaimDate(progClaimDate);
 		
@@ -153,7 +153,7 @@ public class FinBillingDetailDAOImpl extends BasisCodeDAO<FinBillingDetail> impl
 	 */
 	public List<FinBillingDetail> getFinBillingDetailByFinRef(final String finReference,String type) {
 		logger.debug("Entering");
-		FinBillingDetail billingDetail = getFinBillingDetail();
+		FinBillingDetail billingDetail = new FinBillingDetail();
 		billingDetail.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder();
@@ -247,7 +247,7 @@ public class FinBillingDetailDAOImpl extends BasisCodeDAO<FinBillingDetail> impl
 	 */
 	public void deleteByFinRef(final String finReference,String type) {
 		logger.debug("Entering");
-		FinBillingDetail billingDetail = getFinBillingDetail();
+		FinBillingDetail billingDetail = new FinBillingDetail();
 		billingDetail.setFinReference(finReference);
 
 		StringBuilder deleteSql = new StringBuilder();

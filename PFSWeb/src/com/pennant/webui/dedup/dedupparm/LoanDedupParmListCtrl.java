@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+*//*
 
 package com.pennant.webui.dedup.dedupparm;
 
@@ -76,13 +76,13 @@ import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.PTReportUtils;
 
 
-/**
+*//**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/DedupParm/DedupParmList.zul
  * file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
- */
+ *//*
 public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Serializable {
 
 	
@@ -90,13 +90,13 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 
 	private final static Logger logger = Logger.getLogger(LoanDedupParmListCtrl.class);
 
-	/*
+	
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the zul-file are getting autowired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 */
+	 
 	protected Window window_LoanDedupParmList; 				// autowired
 	protected Borderlayout borderLayout_DedupParmList; 	// autowired
 	protected Paging pagingDedupParmList; 				// autowired
@@ -121,9 +121,9 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 	private transient DedupParmService dedupParmService;
 	private transient WorkFlowDetails workFlowDetails=null;
 	
-	/**
+	*//**
 	 * default constructor.<br>
-	 */
+	 *//*
 	public LoanDedupParmListCtrl() {
 		super();
 	}
@@ -132,14 +132,14 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	/**
+	*//**
 	 * Before binding the data and calling the List window we check, if the
 	 * ZUL-file is called with a parameter for a selected DedupParam object in a
 	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onCreate$window_LoanDedupParmList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
@@ -161,7 +161,7 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 			wfAvailable = false;
 		}
 
-		/* set components visible dependent on the users rights */
+		 set components visible dependent on the users rights 
 		doCheckRights();
 
 		this.borderLayout_DedupParmList.setHeight(getBorderLayoutHeight());
@@ -233,9 +233,9 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * SetVisible for components by checking if there's a right for it.
-	 */
+	 *//*
 	private void doCheckRights() {
 		logger.debug("Entering ");
 		getUserWorkspace().alocateAuthorities("DedupParmList");
@@ -250,7 +250,7 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * This method is forwarded from the listboxes item renderer. <br>
 	 * see:
 	 * com.pennant.webui.dedup.dedupparm.model.DedupParmListModelItemRenderer
@@ -258,7 +258,7 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onDedupParmItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		// get the selected DedupParm object
@@ -306,9 +306,9 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * Call the DedupParm dialog with a new empty entry. <br>
-	 */
+	 *//*
 	public void onClick$button_DedupParmList_NewDedupParm(Event event)
 			throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -318,21 +318,21 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
 	 * @param DedupParm
 	 *            (aDedupParm)
 	 * @throws Exception
-	 */
+	 *//*
 	private void showDetailView(DedupParm aDedupParm) throws Exception {
 		logger.debug("Entering");
-		/*
+		
 		 * We can call our Dialog zul-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
-		 */
+		 
 
 		if (aDedupParm.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aDedupParm.setWorkflowId(workFlowDetails.getWorkFlowId());
@@ -341,12 +341,12 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("queryModule", PennantConstants.Deduploan);
 		map.put("dedupParm", aDedupParm);
-		/*
+		
 		 * we can additionally handed over the listBox or the controller self,
 		 * so we have in the dialog access to the list box List model. This is
 		 * fine for synchronizing the data in the DedupParmListbox from the
 		 * dialog when we do a delete, edit or insert a DedupParm.
-		 */
+		 
 		map.put("dedupParmListCtrl", this);
 
 		// call the zul-file with the parameters packed in a map
@@ -360,26 +360,26 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_LoanDedupParmList);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * when the "refresh" button is clicked. <br>
 	 * <br>
 	 * Refreshes the view by calling the onCreate event manually.
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		this.pagingDedupParmList.setActivePage(0);
@@ -388,19 +388,19 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/*
+	
 	 * call the DedupParm dialog
-	 */
+	 
 
 	public void onClick$button_DedupParmList_DedupParmSearchDialog(Event event)
 			throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
+		
 		 * we can call our DedupParmDialog zul-file with parameters. So we can
 		 * call them with a object of the selected DedupParm. For handed over
 		 * these parameter only a Map is accepted. So we put the DedupParm
 		 * object in a HashMap.
-		 */
+		 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("dedupParmCtrl", this);
 		map.put("searchObject", this.searchObj);
@@ -418,12 +418,12 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * When the dedupParm print button is clicked.
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$button_DedupParmList_PrintList(Event event)
 			throws InterruptedException {
 		logger.debug("Entering" + event.toString());
@@ -449,4 +449,4 @@ public class LoanDedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements
 	public void setSearchObj(JdbcSearchObject<DedupParm> searchObj) {
 		this.searchObj = searchObj;
 	}
-}
+}*/

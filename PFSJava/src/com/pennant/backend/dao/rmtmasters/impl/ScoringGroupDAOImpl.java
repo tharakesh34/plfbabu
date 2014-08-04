@@ -122,7 +122,7 @@ public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implem
 	@Override
 	public ScoringGroup getScoringGroupById(final long id, String type) {
 		logger.debug("Entering");
-		ScoringGroup scoringGroup = getScoringGroup();
+		ScoringGroup scoringGroup = new ScoringGroup();
 		
 		scoringGroup.setId(id);
 		

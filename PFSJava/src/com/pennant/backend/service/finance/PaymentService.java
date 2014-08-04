@@ -1,4 +1,4 @@
-package com.pennant.backend.service.finance;
+/*package com.pennant.backend.service.finance;
 
 import java.util.Date;
 import java.util.List;
@@ -20,10 +20,6 @@ public interface PaymentService {
 
 	public void updateScheduleDetails(FinanceScheduleDetail financeScheduleDetail);
 
-	public void delete(FinanceRepayments financeRepayments, String type);
-
-	public void deleteWorkByFinRef(String finref);
-
 	public PaymentDetails getPaymentDetails(String finref, Date date);
 
 	public void update(FinanceRepayments financeRepayments, String type);
@@ -31,3 +27,4 @@ public interface PaymentService {
 	public void updateMainScheduleDetails(FinanceScheduleDetail financeScheduleDetail);
 	public Map<Date,List<FinanceRepayments>> getFinanceRepaymentsByFinRef(String finRef,String type);
 }
+*/

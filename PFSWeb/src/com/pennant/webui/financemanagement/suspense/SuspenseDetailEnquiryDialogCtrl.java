@@ -116,6 +116,7 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceSusp
 	protected Decimalbox 	finSuspAmt; 			// autowired
 	protected Decimalbox 	finCurSuspAmt; 			// autowired
 	protected Datebox 		finSuspDate; 			// autowired
+	protected Datebox 		finSuspTrfDate; 		// autowired
 	private Tabpanel 		tabPanel_dialogWindow;
 
 	// checkRights
@@ -207,10 +208,11 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceSusp
 				this.window_SuspenseEnquiryDialog.setTitle("");
 
 				getBorderLayoutHeight();
-				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
-				listBoxSuspDetails.setHeight(this.borderLayoutHeight-rowsHeight-160+"px");
-				listBoxSuspPostings.setHeight(this.borderLayoutHeight-rowsHeight-190+"px");
-				this.window_SuspenseEnquiryDialog.setHeight(this.borderLayoutHeight-rowsHeight-45+"px");
+				int headerRowHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
+				int rowsHeight = headerRowHeight + this.grid_Basicdetails.getRows().getVisibleItemCount()*20 + 100;
+				this.listBoxSuspDetails.setHeight(this.borderLayoutHeight-rowsHeight + 20 +"px");
+				this.listBoxSuspPostings.setHeight(this.borderLayoutHeight-rowsHeight -10+"px");
+				this.window_SuspenseEnquiryDialog.setHeight(this.borderLayoutHeight-headerRowHeight+"px");
 				tabPanel_dialogWindow.appendChild(this.window_SuspenseEnquiryDialog);
 
 			}else{
@@ -253,6 +255,7 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceSusp
 			this.finCurSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinCurSuspAmt(),
 					aSuspHead.getLovDescFinFormatter()));
 			this.finSuspDate.setValue(aSuspHead.getFinSuspDate());
+			this.finSuspTrfDate.setValue(aSuspHead.getFinSuspTrfDate());
 
 			//Suspense Details List
 			doFilllistbox(aSuspHead.getSuspDetailsList(), aSuspHead.getLovDescFinFormatter());

@@ -67,7 +67,6 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -81,9 +80,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -525,6 +526,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving ");
 	}
 
@@ -570,7 +572,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	}
 		this.recordStatus.setValue(aCurrency.getRecordStatus());
 		
-		if(aCurrency.isNew() || aCurrency.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aCurrency.isNew() || (aCurrency.getRecordType() != null ? aCurrency.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.ccyIsActive.setChecked(true);
 			this.ccyIsActive.setDisabled(true);
 		}
@@ -948,24 +950,17 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 		
 		if (!this.ccyCode.isReadonly()){
-			this.ccyCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHA_CAPS_FL3_REGEX, 
-					Labels.getLabel("MAND_FIELD_ALLOWED_CHARS",new String[]{Labels.getLabel(
-							"label_CurrencyDialog_CcyCode.value"),"Characters(A-Z)","'3'"})));
+			this.ccyCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CurrencyDialog_CcyCode.value"),PennantRegularExpressions.REGEX_ALPHA_FL3, true));
 		}	
 		if (!this.ccyNumber.isReadonly()){
-			this.ccyNumber.setConstraint(new SimpleConstraint(PennantConstants.NUM_FL3_REGEX,
-					Labels.getLabel("MAND_FIELD_ALLOWED_CHARS",new String[]{Labels.getLabel(
-							"label_CurrencyDialog_CcyNumber.value"),"Numbers(0-9)","'3'"})));
+			this.ccyNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CurrencyDialog_CcyNumber.value"),PennantRegularExpressions.REGEX_NUMERIC_FL3, true));
 		}	
 		if (!this.ccyDesc.isReadonly()){
-			this.ccyDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX,
-					Labels.getLabel("MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_CurrencyDialog_CcyDesc.value")})));
+			this.ccyDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CurrencyDialog_CcyDesc.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}	
 		if (!this.ccySwiftCode.isReadonly()){
-			this.ccySwiftCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_FL3_REGEX,
-					Labels.getLabel("MAND_FIELD_ALLOWED_ALPHANUMERIC",new String[]{Labels.getLabel(
-							"label_CurrencyDialog_CcySwiftCode.value"),"'3'"})));
+			this.ccySwiftCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CurrencyDialog_CcySwiftCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL3, true));
 		}	
 		if (!this.ccyEditField.isReadonly()){
 			if(this.ccyEditField.getValue() !=0){
@@ -980,14 +975,12 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 					"label_CurrencyDialog_CcyMinorCcyUnits.value")})));
 		}	*/
 		if (!this.ccySymbol.isReadonly()){
-			this.ccySymbol.setConstraint("NO EMPTY:"+ Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[] { Labels
-						.getLabel("label_CurrencyDialog_CcySymbol.value") }));
+			this.ccySymbol.setConstraint(new PTStringValidator(Labels
+						.getLabel("label_CurrencyDialog_CcySymbol.value"), null, true));
 		}	
 		if (!this.ccyMinorCcyDesc.isReadonly()){
-			this.ccyMinorCcyDesc.setConstraint("NO EMPTY:"+ Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[] { Labels
-						.getLabel("label_CurrencyDialog_CcyMinorCcyDesc.value") }));
+			this.ccyMinorCcyDesc.setConstraint(new PTStringValidator(Labels
+						.getLabel("label_CurrencyDialog_CcyMinorCcyDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}	
 		if (!this.ccySpotRate.isReadonly()){
 			this.ccySpotRate.setConstraint(new RateValidator(15,9,
@@ -1030,12 +1023,10 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCcyDrRateBasisCodeName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-						"label_CurrencyDialog_CcyDrRateBasisCode.value")}));
-		this.lovDescCcyCrRateBasisCodeName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-						"label_CurrencyDialog_CcyCrRateBasisCode.value")}));
+		this.lovDescCcyDrRateBasisCodeName.setConstraint(new PTStringValidator(Labels.getLabel(
+						"label_CurrencyDialog_CcyDrRateBasisCode.value"), null, true));
+		this.lovDescCcyCrRateBasisCodeName.setConstraint(new PTStringValidator(Labels.getLabel(
+						"label_CurrencyDialog_CcyCrRateBasisCode.value"), null, true));
 		logger.debug("Leaving");
 	}
 	
@@ -1209,7 +1200,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving ");
 	}

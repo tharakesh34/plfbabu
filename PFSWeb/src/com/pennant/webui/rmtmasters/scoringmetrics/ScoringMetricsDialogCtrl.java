@@ -161,6 +161,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private RuleService ruleService;
 	 
 	private String categoryValue = "";
+	private String categoryType = "";
 
 	/**
 	 * default constructor.<br>
@@ -218,6 +219,10 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl implements Serializabl
 		
 		if (args.containsKey("categoryValue")) {
 			this.categoryValue = (String) args.get("categoryValue");
+		}
+		
+		if (args.containsKey("categoryType")) {
+			this.categoryType = (String) args.get("categoryType");
 		}
 		
 		if (args.containsKey("scoringGroupDialogCtrl")) {
@@ -588,8 +593,9 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void onClick$btnSearchFinScoringCode(Event event){
 		logger.debug("Entering" + event.toString());
 		
-		Filter[] filters=new Filter[1];
+		Filter[] filters=new Filter[2];
 		filters[0]=new Filter("CategoryType","F",Filter.OP_EQUAL);
+		filters[1]=new Filter("CustCategory",this.categoryType,Filter.OP_EQUAL);
 		Object dataObject = ExtendedSearchListBox.show(this.window_ScoringMetricsDialog,"CorpScoreGroupDetail",filters);
 		if (dataObject instanceof String){
 			this.scoringId.setValue(new Long(0));
@@ -602,7 +608,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl implements Serializabl
 				this.lovDescScoringCode.setValue(details.getGroupDesc());
 				this.lovDescScoringName.setValue(details.getGroupDesc());
 				
-				List<Rule> ruleList = getRuleService().getRulesByGroupId(details.getGroupId(), "SCORES", "FSCORE");
+				/*List<Rule> ruleList = getRuleService().getRulesByGroupId(details.getGroupId(), "SCORES", "FSCORE");
 				List<ScoringMetrics> subMetricList = new ArrayList<ScoringMetrics>();
 				ScoringMetrics metric = null;
 				BigDecimal totalSubGroupScore = BigDecimal.ZERO;
@@ -615,7 +621,22 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl implements Serializabl
 					metric.setLovDescMetricMaxPoints(maxRuleScore);
 					totalSubGroupScore = totalSubGroupScore.add(maxRuleScore);
 					subMetricList.add(metric);
+				}*/
+				
+				List<NFScoreRuleDetail> ruleList = getRuleService().getNFRulesByGroupId(details.getGroupId());
+				List<ScoringMetrics> subMetricList = new ArrayList<ScoringMetrics>();
+				ScoringMetrics metric = null;
+				BigDecimal totalSubGroupScore = BigDecimal.ZERO;
+				
+				for (NFScoreRuleDetail rule : ruleList) {
+					metric = new ScoringMetrics();
+					metric.setLovDescScoringCode(String.valueOf(rule.getNFRuleId()));
+					metric.setLovDescScoringCodeDesc(rule.getNFRuleDesc());
+					metric.setLovDescMetricMaxPoints(rule.getMaxScore());
+					totalSubGroupScore = totalSubGroupScore.add(rule.getMaxScore());
+					subMetricList.add(metric);
 				}
+				
 				this.metricMaxPoints.setValue(totalSubGroupScore);
 				if(getScoringGroupDialogCtrl().getFinScoreMap().containsKey(details.getGroupId())){
 					getScoringGroupDialogCtrl().getFinScoreMap().remove(details.getGroupId());
@@ -629,8 +650,9 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void onClick$btnSearchNFScoringCode(Event event){
 		logger.debug("Entering" + event.toString());
 		
-		Filter[] filters=new Filter[1];
+		Filter[] filters=new Filter[2];
 		filters[0]=new Filter("CategoryType","N",Filter.OP_EQUAL);
+		filters[1]=new Filter("CustCategory",this.categoryType,Filter.OP_EQUAL);
 		Object dataObject = ExtendedSearchListBox.show(this.window_ScoringMetricsDialog,"CorpScoreGroupDetail",filters);
 		if (dataObject instanceof String){
 			this.scoringId.setValue(new Long(0));
@@ -837,7 +859,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl implements Serializabl
 		final ScoringMetrics aScoringMetrics = new ScoringMetrics();
 		aScoringMetrics.setNewRecord(true);
 		setScoringMetrics(aScoringMetrics);
-		doClear(); // clear all commponents
+		doClear(); // clear all components
 		doEdit(); // edit mode
 		this.btnCtrl.setBtnStatus_New();
 		logger.debug("Leaving");

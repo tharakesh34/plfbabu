@@ -294,7 +294,7 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		}
 		this.button_ReportConfigurationList_PrintList.setVisible(getUserWorkspace().isAllowed("button_ReportConfigurationList_PrintList"));
 
-		this.button_ReportConfigurationList_NewReportConfiguration.setVisible(true);
+		//this.button_ReportConfigurationList_NewReportConfiguration.setVisible(true);
 		logger.debug("Leaving ");
 	}
 

@@ -14569,4 +14569,767 @@ update SeqPTMenuDetails set SeqNo = (SeqNo+1);
 
 update SeqSecGroups set SeqNo = (SeqNo+7);
 update SeqSecRights set SeqNo = (SeqNo+9+30);
+
+
+---------------
+--------------- Security SQL Scripts for EmployerDetail Module
+---------------
+
+INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'EMPLOYERDETAIL_VIEW', 'Allow to view Employer Detail', 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'EMPLOYERDETAIL_NEW', 'Allow create new Employer Detail', 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'EMPLOYERDETAIL_EDIT', 'Allow editing of Employer Detail', 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'EMPLOYERDETAIL_DELETE', 'Allow deleting of Employer Detail', 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'EMPLOYERDETAIL_MAKER', 'WF Maker for Employer Detail', 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'EMPLOYERDETAIL_VERIFIER', 'WF Verifier for Employer Detail', 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'EMPLOYERDETAIL_APPROVER', 'WF Approver for Employer Detail', 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+--INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuCat_SystemMaster',0,1000,'2013-07-31  12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+--INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menuCat_SystemMasterEnquiry',0,1000,'2013-07-31  12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_SystemMaster_EmployerDetail',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_SystemMaster_EmployerDetailEnquiry',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_EmployerDetailList_PrintList',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_EmployerDetailList_NewEmployerDetail',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_EmployerDetailDialog_btnNew',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_EmployerDetailDialog_btnEdit',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_EmployerDetailDialog_btnDelete',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_EmployerDetailDialog_btnSave',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'EmployerDetailDialog_EmployerId',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'EmployerDetailDialog_EmpIndustry',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'EmployerDetailDialog_EmpName',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'EmployerDetailDialog_EstablishDate',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'EmployerDetailDialog_EmpAddrHNbr',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+6) from SeqSecRights),3,'EmployerDetailDialog_EmpFlatNbr',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+7) from SeqSecRights),3,'EmployerDetailDialog_EmpAddrStreet',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+8) from SeqSecRights),3,'EmployerDetailDialog_EmpAddrLine1',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+9) from SeqSecRights),3,'EmployerDetailDialog_EmpAddrLine2',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+10) from SeqSecRights),3,'EmployerDetailDialog_EmpPOBox',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+11) from SeqSecRights),3,'EmployerDetailDialog_EmpCountry',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+12) from SeqSecRights),3,'EmployerDetailDialog_EmpProvince',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+13) from SeqSecRights),3,'EmployerDetailDialog_EmpCity',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+14) from SeqSecRights),3,'EmployerDetailDialog_EmpPhone',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+15) from SeqSecRights),3,'EmployerDetailDialog_EmpFax',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+16) from SeqSecRights),3,'EmployerDetailDialog_EmpTelexNo',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+17) from SeqSecRights),3,'EmployerDetailDialog_EmpEmailId',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+18) from SeqSecRights),3,'EmployerDetailDialog_EmpWebSite',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+19) from SeqSecRights),3,'EmployerDetailDialog_ContactPersonName',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+20) from SeqSecRights),3,'EmployerDetailDialog_ContactPersonNo',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+21) from SeqSecRights),3,'EmployerDetailDialog_EmpAlocationType',0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+-- for View
+--INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMasterEnquiry'),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- for New
+INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Edit
+INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Delete
+INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _MAKER
+INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+5) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+6) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+6) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+7) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+7) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+8) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+8) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+9) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+9) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+10) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+10) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+11) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+11) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+12) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+12) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+13) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+13) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+14) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+14) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+15) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+15) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+16) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+16) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+17) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+17) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+18) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+18) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+19) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+19) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+20) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+20) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+21) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+21) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+-- For _Verifier
+INSERT INTO SecGroupRights SELECT (select (SeqNo+21+21) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+22+21) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+23+21) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _Approver
+INSERT INTO SecGroupRights SELECT (select (SeqNo+24+21) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+25+21) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+26+21) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1005,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	
+update SeqSecGroupRights set SeqNo = (SeqNo+26+21);
+
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+1) from SeqSecGroups), 1001, 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), 1002, 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+3) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), 1003, 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+4) from SeqSecRoleGroups), (select (SeqNo+4) from SeqSecGroups), 1004, 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+5) from SeqSecRoleGroups), (select (SeqNo+5) from SeqSecGroups), 1005, 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+6) from SeqSecRoleGroups), (select (SeqNo+6) from SeqSecGroups), 1006, 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+7) from SeqSecRoleGroups), (select (SeqNo+7) from SeqSecGroups), 1007, 0,1000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+
+update SeqSecRoleGroups set SeqNo = (SeqNo+7);
+
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'EmployerDetail','menu_Item_EmployerDetail','/WEB-INF/pages/SystemMaster/EmployerDetail/EmployerDetailList.zul',0,10000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'EmployerDetailEnquiry','menu_Item_EmployerDetailEnquiry','/WEB-INF/pages/SystemMaster/EmployerDetail/EmployerDetailEnquiryList.zul',0,10000,'2013-07-31 12:36:58',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+update SeqPTMenuDetails set SeqNo = (SeqNo+2);
+
+update SeqSecGroups set SeqNo = (SeqNo+7);
+update SeqSecRights set SeqNo = (SeqNo+10+21);
+
+
+---------------
+--------------- Security SQL Scripts for DivisionDetail Module
+---------------
+
+INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'DIVISIONDETAIL_VIEW', 'Allow to view Division Detail', 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'DIVISIONDETAIL_NEW', 'Allow create new Division Detail', 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'DIVISIONDETAIL_EDIT', 'Allow editing of Division Detail', 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'DIVISIONDETAIL_DELETE', 'Allow deleting of Division Detail', 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'DIVISIONDETAIL_MAKER', 'WF Maker for Division Detail', 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'DIVISIONDETAIL_VERIFIER', 'WF Verifier for Division Detail', 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'DIVISIONDETAIL_APPROVER', 'WF Approver for Division Detail', 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+--INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuCat_SystemMaster',0,1000,'2013-08-02  12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+--INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menuCat_SystemMasterEnquiry',0,1000,'2013-08-02  12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_SystemMaster_DivisionDetail',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_SystemMaster_DivisionDetailEnquiry',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_DivisionDetailList_PrintList',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_DivisionDetailList_NewDivisionDetail',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_DivisionDetailDialog_btnNew',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_DivisionDetailDialog_btnEdit',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_DivisionDetailDialog_btnDelete',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_DivisionDetailDialog_btnSave',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'DivisionDetailDialog_DivisionCode',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'DivisionDetailDialog_DivisionCodeDesc',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'DivisionDetailDialog_Active',0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+-- for View
+--INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMasterEnquiry'),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- for New
+INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Edit
+INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Delete
+INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _MAKER
+INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+-- For _Verifier
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _Approver
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+6) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_SystemMaster'),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+7) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+8) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	
+update SeqSecGroupRights set SeqNo = (SeqNo+20+8);
+
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+1) from SeqSecGroups), 1001, 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), 1002, 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+3) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), 1003, 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+4) from SeqSecRoleGroups), (select (SeqNo+4) from SeqSecGroups), 1004, 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+5) from SeqSecRoleGroups), (select (SeqNo+5) from SeqSecGroups), 1005, 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+6) from SeqSecRoleGroups), (select (SeqNo+6) from SeqSecGroups), 1006, 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+7) from SeqSecRoleGroups), (select (SeqNo+7) from SeqSecGroups), 1007, 0,1000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+
+update SeqSecRoleGroups set SeqNo = (SeqNo+7);
+
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PLF'),'DivisionDetail','menu_Item_DivisionDetail','/WEB-INF/pages/SystemMaster/DivisionDetail/DivisionDetailList.zul',0,10000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+--INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PLF'),'DivisionDetailEnquiry','menu_Item_DivisionDetailEnquiry','/WEB-INF/pages/SystemMaster/DivisionDetail/DivisionDetailEnquiryList.zul',0,10000,'2013-08-02 12:55:03',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+update SeqPTMenuDetails set SeqNo = (SeqNo+1);
+
+update SeqSecGroups set SeqNo = (SeqNo+7);
+update SeqSecRights set SeqNo = (SeqNo+10+3);
+
+
+---------------
+--------------- Security SQL Scripts for GoodsLoanDetail Module
+---------------
+
+INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'GOODSLOANDETAIL_VIEW', 'Allow to view Goods Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'GOODSLOANDETAIL_NEW', 'Allow create new Goods Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'GOODSLOANDETAIL_EDIT', 'Allow editing of Goods Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'GOODSLOANDETAIL_DELETE', 'Allow deleting of Goods Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'GOODSLOANDETAIL_MAKER', 'WF Maker for Goods Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'GOODSLOANDETAIL_VERIFIER', 'WF Verifier for Goods Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'GOODSLOANDETAIL_APPROVER', 'WF Approver for Goods Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+--INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuCat_LMTMasters',0,1000,'2013-08-14  05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menuCat_LMTMastersEnquiry',0,1000,'2013-08-14  05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_LMTMasters_GoodsLoanDetail',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_LMTMasters_GoodsLoanDetailEnquiry',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_GoodsLoanDetailList_PrintList',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_GoodsLoanDetailList_NewGoodsLoanDetail',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_GoodsLoanDetailDialog_btnNew',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_GoodsLoanDetailDialog_btnEdit',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_GoodsLoanDetailDialog_btnDelete',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_GoodsLoanDetailDialog_btnSave',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'GoodsLoanDetailDialog_LoanRefNumber',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'GoodsLoanDetailDialog_ItemType',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'GoodsLoanDetailDialog_ItemNumber',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'GoodsLoanDetailDialog_ItemDescription',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'GoodsLoanDetailDialog_UnitPrice',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+6) from SeqSecRights),3,'GoodsLoanDetailDialog_Quantity',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+7) from SeqSecRights),3,'GoodsLoanDetailDialog_Addtional1',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+8) from SeqSecRights),3,'GoodsLoanDetailDialog_Addtional2',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+9) from SeqSecRights),3,'GoodsLoanDetailDialog_Addtional3',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+10) from SeqSecRights),3,'GoodsLoanDetailDialog_Addtional4',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+11) from SeqSecRights),3,'GoodsLoanDetailDialog_Addtional5',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+12) from SeqSecRights),3,'GoodsLoanDetailDialog_Addtional6',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+13) from SeqSecRights),3,'GoodsLoanDetailDialog_Addtional7',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+14) from SeqSecRights),3,'GoodsLoanDetailDialog_Addtional8',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+-- for View
+--INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMastersEnquiry'),0,10000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- for New
+INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Edit
+INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Delete
+INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _MAKER
+INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+5) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+6) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+6) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+7) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+7) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+8) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+8) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+9) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+9) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+10) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+11) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+11) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+12) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+12) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+13) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+13) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+14) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+14) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+-- For _Verifier
+INSERT INTO SecGroupRights SELECT (select (SeqNo+21+14) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+22+14) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+23+14) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _Approver
+INSERT INTO SecGroupRights SELECT (select (SeqNo+24+14) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+25+14) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+26+14) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	
+update SeqSecGroupRights set SeqNo = (SeqNo+26+14);
+
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+1) from SeqSecGroups), 1001, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), 1002, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+3) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), 1003, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+4) from SeqSecRoleGroups), (select (SeqNo+4) from SeqSecGroups), 1004, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+5) from SeqSecRoleGroups), (select (SeqNo+5) from SeqSecGroups), 1005, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+6) from SeqSecRoleGroups), (select (SeqNo+6) from SeqSecGroups), 1006, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+7) from SeqSecRoleGroups), (select (SeqNo+7) from SeqSecGroups), 1007, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+
+update SeqSecRoleGroups set SeqNo = (SeqNo+7);
+
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'GoodsLoanDetail','menu_Item_GoodsLoanDetail','/WEB-INF/pages/LMTMasters/GoodsLoanDetail/GoodsLoanDetailList.zul',0,10000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+--INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'GoodsLoanDetailEnquiry','menu_Item_GoodsLoanDetailEnquiry','/WEB-INF/pages/LMTMasters/GoodsLoanDetail/GoodsLoanDetailEnquiryList.zul',0,10000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+update SeqPTMenuDetails set SeqNo = (SeqNo+1);
+
+update SeqSecGroups set SeqNo = (SeqNo+7);
+update SeqSecRights set SeqNo = (SeqNo+10+14);
+
+
+---------------
+--------------- Security SQL Scripts for Authorization Module
+---------------
+
+INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'AUTHORIZATION_VIEW', 'Allow to view Authorization Details', 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'AUTHORIZATION_NEW', 'Allow create new Authorization Details', 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'AUTHORIZATION_EDIT', 'Allow editing of Authorization Details', 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'AUTHORIZATION_DELETE', 'Allow deleting of Authorization Details', 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'AUTHORIZATION_MAKER', 'WF Maker for Authorization Details', 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'AUTHORIZATION_VERIFIER', 'WF Verifier for Authorization Details', 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'AUTHORIZATION_APPROVER', 'WF Approver for Authorization Details', 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+--INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuCat_AMTMasters',0,1000,'2013-08-20  04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+--INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menuCat_AMTMastersEnquiry',0,1000,'2013-08-20  04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_AMTMasters_Authorization',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_AMTMasters_AuthorizationEnquiry',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_AuthorizationList_PrintList',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_AuthorizationList_NewAuthorization',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_AuthorizationDialog_btnNew',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_AuthorizationDialog_btnEdit',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_AuthorizationDialog_btnDelete',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_AuthorizationDialog_btnSave',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'AuthorizationDialog_AuthorizedId',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'AuthorizationDialog_AuthUserId',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'AuthorizationDialog_AuthType',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'AuthorizationDialog_AuthName',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'AuthorizationDialog_AuthDept',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+6) from SeqSecRights),3,'AuthorizationDialog_AuthDesig',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+7) from SeqSecRights),3,'AuthorizationDialog_AuthSignature',0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+-- for View
+--INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_AMTMastersEnquiry'),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+--INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- for New
+INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_AMTMasters'),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Edit
+INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_AMTMasters'),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Delete
+INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_AMTMasters'),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _MAKER
+INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_AMTMasters'),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+5) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+6) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+6) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+7) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+7) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+-- For _Verifier
+INSERT INTO SecGroupRights SELECT (select (SeqNo+21+7) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_AMTMasters'),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+22+7) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+23+7) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _Approver
+INSERT INTO SecGroupRights SELECT (select (SeqNo+24+7) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_AMTMasters'),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+25+7) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+26+7) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	
+update SeqSecGroupRights set SeqNo = (SeqNo+26+7);
+
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+1) from SeqSecGroups), 1001, 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), 1002, 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+3) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), 1003, 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+4) from SeqSecRoleGroups), (select (SeqNo+4) from SeqSecGroups), 1004, 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+5) from SeqSecRoleGroups), (select (SeqNo+5) from SeqSecGroups), 1005, 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+6) from SeqSecRoleGroups), (select (SeqNo+6) from SeqSecGroups), 1006, 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+7) from SeqSecRoleGroups), (select (SeqNo+7) from SeqSecGroups), 1007, 0,1000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+
+update SeqSecRoleGroups set SeqNo = (SeqNo+7);
+
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'Authorization','menu_Item_Authorization','/WEB-INF/pages/AMTMasters/Authorization/AuthorizationList.zul',0,10000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+--INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'AuthorizationEnquiry','menu_Item_AuthorizationEnquiry','/WEB-INF/pages/AMTMasters/Authorization/AuthorizationEnquiryList.zul',0,10000,'2013-08-20 04:28:30',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+update SeqPTMenuDetails set SeqNo = (SeqNo+1);
+
+update SeqSecGroups set SeqNo = (SeqNo+7);
+update SeqSecRights set SeqNo = (SeqNo+10+7);
+
+
+---------------
+--------------- Security SQL Scripts for CommidityLoanDetail Module
+---------------
+
+INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'COMMIDITYLOANDETAIL_VIEW', 'Allow to view Commidity Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'COMMIDITYLOANDETAIL_NEW', 'Allow create new Commidity Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'COMMIDITYLOANDETAIL_EDIT', 'Allow editing of Commidity Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'COMMIDITYLOANDETAIL_DELETE', 'Allow deleting of Commidity Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'COMMIDITYLOANDETAIL_MAKER', 'WF Maker for Commidity Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'COMMIDITYLOANDETAIL_VERIFIER', 'WF Verifier for Commidity Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'COMMIDITYLOANDETAIL_APPROVER', 'WF Approver for Commidity Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+--INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuCat_LMTMasters',0,1000,'2013-08-14  05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+--INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menuCat_LMTMastersEnquiry',0,1000,'2013-08-14  05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_LMTMasters_CommidityLoanDetail',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_LMTMasters_CommidityLoanDetailEnquiry',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_CommidityLoanDetailList_PrintList',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_CommidityLoanDetailList_NewCommidityLoanDetail',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_CommidityLoanDetailDialog_btnNew',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_CommidityLoanDetailDialog_btnEdit',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_CommidityLoanDetailDialog_btnDelete',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_CommidityLoanDetailDialog_btnSave',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'CommidityLoanDetailDialog_LoanRefNumber',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'CommidityLoanDetailDialog_ItemType',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'CommidityLoanDetailDialog_Quantity',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'CommidityLoanDetailDialog_UnitBuyPrice',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'CommidityLoanDetailDialog_BuyAmount',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+6) from SeqSecRights),3,'CommidityLoanDetailDialog_UnitSellPrice',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+7) from SeqSecRights),3,'CommidityLoanDetailDialog_SellAmount',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+-- for View
+--INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMastersEnquiry'),0,10000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- for New
+INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Edit
+INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Delete
+INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _MAKER
+INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+5) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+6) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+6) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+7) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+7) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _Verifier
+INSERT INTO SecGroupRights SELECT (select (SeqNo+21+14) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+22+14) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+23+14) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _Approver
+INSERT INTO SecGroupRights SELECT (select (SeqNo+24+14) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+25+14) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+26+14) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	
+update SeqSecGroupRights set SeqNo = (SeqNo+26+14);
+
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+1) from SeqSecGroups), 1001, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), 1002, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+3) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), 1003, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+4) from SeqSecRoleGroups), (select (SeqNo+4) from SeqSecGroups), 1004, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+5) from SeqSecRoleGroups), (select (SeqNo+5) from SeqSecGroups), 1005, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+6) from SeqSecRoleGroups), (select (SeqNo+6) from SeqSecGroups), 1006, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+7) from SeqSecRoleGroups), (select (SeqNo+7) from SeqSecGroups), 1007, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+
+update SeqSecRoleGroups set SeqNo = (SeqNo+7);
+
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'CommidityLoanDetail','menu_Item_CommidityLoanDetail','/WEB-INF/pages/LMTMasters/CommidityLoanDetail/CommidityLoanDetailList.zul',0,10000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+--INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'CommidityLoanDetailEnquiry','menu_Item_CommidityLoanDetailEnquiry','/WEB-INF/pages/LMTMasters/CommidityLoanDetail/CommidityLoanDetailEnquiryList.zul',0,10000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+update SeqPTMenuDetails set SeqNo = (SeqNo+1);
+
+update SeqSecGroups set SeqNo = (SeqNo+7);
+update SeqSecRights set SeqNo = (SeqNo+10+7);
+
+---------------
+--------------- Security SQL Scripts for Shares Module
+---------------
+
+INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'SHARESDETAIL_VIEW', 'Allow to view Shares Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'SHARESDETAIL_NEW', 'Allow create new Shares Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'SHARESDETAIL_EDIT', 'Allow editing of Shares Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'SHARESDETAIL_DELETE', 'Allow deleting of Shares Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'SHARESDETAIL_MAKER', 'WF Maker for Shares Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'SHARESDETAIL_VERIFIER', 'WF Verifier for Shares Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'SHARESDETAIL_APPROVER', 'WF Approver for Shares Details', 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+--INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuCat_LMTMasters',0,1000,'2013-08-14  05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+--INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menuCat_LMTMastersEnquiry',0,1000,'2013-08-14  05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_LMTMasters_SharesDetail',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_LMTMasters_SharesDetailEnquiry',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_SharesDetailList_PrintList',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_SharesDetailList_NewSharesDetail',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_SharesDetailDialog_btnNew',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_SharesDetailDialog_btnEdit',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_SharesDetailDialog_btnDelete',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_SharesDetailDialog_btnSave',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'SharesDetailDialog_RefNumber',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'SharesDetailDialog_CompanyName',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'SharesDetailDialog_Quantity',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'SharesDetailDialog_FaceVale',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'SharesDetailDialog_MarketValue',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+6) from SeqSecRights),3,'SharesDetailDialog_TotalFaceVale',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+7) from SeqSecRights),3,'SharesDetailDialog_TotalMarketValue',0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+-- for View
+--INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMastersEnquiry'),0,10000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- for New
+INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Edit
+INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For Delete
+INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _MAKER
+INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+5) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+6) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+6) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+7) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+7) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _Verifier
+INSERT INTO SecGroupRights SELECT (select (SeqNo+27+1) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+27+2) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+27+3) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+-- For _Approver
+INSERT INTO SecGroupRights SELECT (select (SeqNo+27+4) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select max(RightID) from SecRights where RightName='menuCat_LMTMasters'),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+27+5) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+27+6) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	
+update SeqSecGroupRights set SeqNo = (SeqNo+27+6);
+
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+1) from SeqSecGroups), 1001, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), 1002, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+3) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), 1003, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+4) from SeqSecRoleGroups), (select (SeqNo+4) from SeqSecGroups), 1004, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+5) from SeqSecRoleGroups), (select (SeqNo+5) from SeqSecGroups), 1005, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+6) from SeqSecRoleGroups), (select (SeqNo+6) from SeqSecGroups), 1006, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+7) from SeqSecRoleGroups), (select (SeqNo+7) from SeqSecGroups), 1007, 0,1000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+
+update SeqSecRoleGroups set SeqNo = (SeqNo+7);
+
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'SharesDetail','menu_Item_SharesDetail','/WEB-INF/pages/LMTMasters/SharesDetail/SharesDetailList.zul',0,10000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+--INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'SharesDetailEnquiry','menu_Item_SharesDetailEnquiry','/WEB-INF/pages/LMTMasters/SharesDetail/SharesDetailEnquiryList.zul',0,10000,'2013-08-14 05:55:22',' ',' ',' ',' ',' ',' ',0 FROM SeqPTMenuDetails WHERE 0=0;
+update SeqPTMenuDetails set SeqNo = (SeqNo+1);
+
+update SeqSecGroups set SeqNo = (SeqNo+7);
+update SeqSecRights set SeqNo = (SeqNo+10+7);
+
+--Update Disbursement Details Scripts
+Update SecRights set RightName = 'button_FinanceMainDialog_btnAddExpense' where RightName = 'button_FinanceDisbursementDialog_btnAddExpense'
+Update SecRights set RightName = 'button_FinanceMainDialog_btnAddContractAdv' where RightName = 'button_FinanceDisbursementDialog_btnAddContractAdv'
+Update SecRights set RightName = 'button_FinanceMainDialog_btnAddBilling' where RightName = 'button_FinanceDisbursementDialog_btnAddBilling'
+Update SecRights set RightName = 'button_FinanceMainDialog_btnAddConsultingF' where RightName = 'button_FinanceDisbursementDialog_btnAddConsultingF'
+
+--Update Sequences for rights & Group Rights
+update SeqSecRights set SeqNo = (select MAX(Rightid) from SecRights)
+update SeqSecGroupRights set SeqNo = (select MAX(GrpRightId) from SecGroupRights)
+update SeqSecGroups set SeqNo = (select MAX(GrpId) from SecGroups)
+
+insert into SecRights values((select SeqNo from SeqSecRights)+1, 2, 'button_FinanceMainDialog_btnAddContributor', 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecGroupRights values ((select MAX(GrpRightId) from SecGroupRights)+1, 933, (select rightid from SecRights where RightName ='button_FinanceMainDialog_btnAddContributor'), 1, 0, 10000, GETDATE(), '', '', '', '', '', '', 0)
+
+update SeqSecRights set SeqNo = (select MAX(Rightid) from SecRights)
+update SeqSecGroupRights set SeqNo = (select MAX(GrpRightId) from SecGroupRights)
+
+--Contractor Asset Details 
+--Buttons
+insert into SecRights values((select SeqNo from SeqSecRights)+1, 2, 'button_ContractorAssetDetailDialog_btnNew', 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecRights values((select SeqNo from SeqSecRights)+2, 2, 'button_ContractorAssetDetailDialog_btnEdit', 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecRights values((select SeqNo from SeqSecRights)+3, 2, 'button_ContractorAssetDetailDialog_btnDelete', 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecRights values((select SeqNo from SeqSecRights)+4, 2, 'button_ContractorAssetDetailDialog_btnSave', 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+
+--Fields
+insert into SecRights values((select SeqNo from SeqSecRights)+5, 3, 'ContractorAssetDetailDialog_custID', 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecRights values((select SeqNo from SeqSecRights)+6, 3, 'ContractorAssetDetailDialog_FinReference', 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecRights values((select SeqNo from SeqSecRights)+7, 3, 'ContractorAssetDetailDialog_AssetDesc', 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecRights values((select SeqNo from SeqSecRights)+8, 3, 'ContractorAssetDetailDialog_AssetValue', 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+--Groups
+INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'ContractorAsset_View', 'Allow to view Contractor Asset', 0,1000,'2011-05-03 12:00:31',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'ContractorAsset_New', 'Allow create new Contractor Asset', 0,1000,'2011-05-03 12:00:31',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'ContractorAsset_Edit', 'Allow editing of Contractor Asset', 0,1000,'2011-05-03 12:00:31',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'ContractorAsset_Delete', 'Allow deleting of Contractor Asset', 0,1000,'2011-05-03 12:00:31',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'CONTRACTORASSET_MAKER', 'WF Maker for Contractor Asset', 0,1000,'2011-05-03 12:00:31',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'CONTRACTORASSET_VERIFIER', 'WF Verifier for Contractor Asset', 0,1000,'2011-05-03 12:00:31',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'CONTRACTORASSET_APPROVER', 'WF Approver for Contractor Asset', 0,1000,'2011-05-03 12:00:31',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+--Group Rights
+
+insert into SecGroupRights values ((select MAX(GrpRightId) from SecGroupRights)+1,( select GrpID from SecGroups where GrpCode = 'CONTRACTORASSET_MAKER'), (select rightid from SecRights where RightName ='button_ContractorAssetDetailDialog_btnDelete'), 1, 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecGroupRights values ((select MAX(GrpRightId) from SecGroupRights)+1,( select GrpID from SecGroups where GrpCode = 'CONTRACTORASSET_MAKER'), (select rightid from SecRights where RightName ='button_ContractorAssetDetailDialog_btnSave'), 1, 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecGroupRights values ((select MAX(GrpRightId) from SecGroupRights)+1,( select GrpID from SecGroups where GrpCode = 'CONTRACTORASSET_MAKER'), (select rightid from SecRights where RightName ='ContractorAssetDetailDialog_custID'), 1, 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecGroupRights values ((select MAX(GrpRightId) from SecGroupRights)+1, (select GrpID from SecGroups where GrpCode = 'CONTRACTORASSET_MAKER'), (select rightid from SecRights where RightName ='ContractorAssetDetailDialog_FinReference'), 1, 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecGroupRights values ((select MAX(GrpRightId) from SecGroupRights)+1, (select GrpID from SecGroups where GrpCode = 'CONTRACTORASSET_MAKER'), (select rightid from SecRights where RightName ='ContractorAssetDetailDialog_AssetDesc'), 1, 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+insert into SecGroupRights values ((select MAX(GrpRightId) from SecGroupRights)+1, (select GrpID from SecGroups where GrpCode = 'CONTRACTORASSET_MAKER'), (select rightid from SecRights where RightName ='ContractorAssetDetailDialog_AssetValue'), 1, 0, 1000, GETDATE(), '', '', '', '', '', '', 0)
+
+
+--Update Sequences for rights & Group Rights
+update SeqSecRights set SeqNo = (select MAX(Rightid) from SecRights)
+update SeqSecGroupRights set SeqNo = (select MAX(GrpRightId) from SecGroupRights)
+update SeqSecGroups set SeqNo = (select MAX(GrpId) from SecGroups)
+
+update SeqSecRoleGroups set SeqNo = (select MAX(RoleGrpID) from SecRoleGroups)
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), 933, 1205, 0,1000,'2014-01-13 00:00:00',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select GrpID from SecGroups where GrpCode = 'CONTRACTORASSET_MAKER'), 1205, 0,1000,'2014-01-13 00:00:00',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+update SeqSecRoleGroups set SeqNo = (select MAX(RoleGrpID) from SecRoleGroups)
+
+
+--Max Sequences Updations
+UPDATE SeqSecRights set seqno= (Select MAX(RightID) From SecRights);
+UPDATE SeqSecGroups set SeqNo = (SELECT Max(GrpID) FROM SecGroups);
+UPDATE SeqSecGroupRights set SeqNo = (SELECT MAX(GrpRightID) From SecGroupRights)
+UPDATE SeqSecRoleGroups set SeqNo=(SELECT MAX(RoleGrpID) From SecRoleGroups)
+
+--Security Rights Scripts for Schedule Buttons on WhatIf
+
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 1) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnAddRvwRate',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;   
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 2) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnChangeRepay',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;  
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 3) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnAddDisb',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0; 
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 4) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnAddDeferment',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0; 
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 5) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnRmvDeferment',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 6) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnAddTerms',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 7) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnRmvTerms',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 8) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnRecalculate',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 9) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnBuildSubSchd',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 10) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnChangeProfit',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 11) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnValidate',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;    
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 12) FROM  SeqSecRights), 2, 'button_WIFFinanceMainDialog_btnBuildSchedule',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;  
+
+--Indicative Term Sheet Dialog Security Rights
+
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 13) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_rpsnName',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;    
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 14) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_rpsnDesg',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;  
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 15) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_custName',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0; 
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 16) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_custId',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0; 
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 17) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_facilityType',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 18) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_pricing',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 19) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_repayments',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 20) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_lCPeriod',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 21) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_usancePeriod',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 22) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_securityClean',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 23) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_securityName',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 24) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_utilization',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 25) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_commission',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 26) FROM  SeqSecRights), 3, 'IndicativeTermDetailDialog_purpose',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 27) FROM  SeqSecRights), 2, 'IndicativeTermDetailDialog_btnGenerateTermSheet',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+--Security Group Added for Indicative Term Sheet In WhatIf
+
+INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'INDICATIVETERMDETAILDIALOG_MAKER', 'WF Maker for What If IndicativeTermSheet Detail', 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+--Security Group Rights Scripts for Schedule Buttons on WhatIf
+
+INSERT INTO SecGroupRights values((SELECT (SeqNo+1) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnAddRvwRate'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+2) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnChangeRepay'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+3) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnAddDisb'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+4) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnAddDeferment'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+5) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnRmvDeferment'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+6) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnAddTerms'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+7) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnRmvTerms'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+8) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnRecalculate'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+9) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnBuildSubSchd'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+10) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnChangeProfit'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+11) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnValidate'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+12) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_MAKER'), (SELECT RightID FROM SecRights where RightName='button_WIFFinanceMainDialog_btnBuildSchedule'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+
+--Security Rights Assigning to Group for Indicative Term Sheet
+
+INSERT INTO SecGroupRights values((SELECT (SeqNo+13) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_rpsnName'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+14) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_rpsnDesg'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+15) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_custName'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+16) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_custId'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+17) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_facilityType'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+18) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_pricing'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+19) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_repayments'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+20) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_lCPeriod'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+21) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_usancePeriod'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+22) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_securityClean'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+23) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_securityName'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+24) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_utilization'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+25) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_commission'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+26) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_purpose'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+INSERT INTO SecGroupRights values((SELECT (SeqNo+27) FROM SeqSecGroupRights), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (SELECT RightID FROM SecRights where RightName='IndicativeTermDetailDialog_btnGenerateTermSheet'), 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0)
+
+--Assining "WIFFINANCEMAIN_APPROVER" Group To "MSTGRP1_Approver" Role
+INSERT INTO SecRoleGroups values((SELECT (SeqNo+1) FROM SeqSecRoleGroups), (select GrpID from SecGroups where GrpCode = 'WIFFINANCEMAIN_APPROVER'), (select RoleID from SecRoles where RoleCd = 'MSTGRP1_APPROVER'),0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0) 
+
+--Assining "INDICATIVETERMDETAILDIALOG_MAKER" Group To "MSTGRP1_MAKER" Role
+INSERT INTO SecRoleGroups values((SELECT (SeqNo+2) FROM SeqSecRoleGroups), (select GrpID from SecGroups where GrpCode = 'INDICATIVETERMDETAILDIALOG_MAKER'), (select RoleID from SecRoles where RoleCd = 'MSTGRP1_MAKER'),0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0) 
+
+--Reset Sequences After Scripts
+UPDATE SeqSecRights set seqno= (Select MAX(RightID) From SecRights);
+UPDATE SeqSecGroups set SeqNo = (SELECT Max(GrpID) FROM SecGroups);
+UPDATE SeqSecGroupRights set SeqNo = (SELECT MAX(GrpRightID) From SecGroupRights)
+UPDATE SeqSecRoleGroups set SeqNo=(SELECT MAX(RoleGrpID) From SecRoleGroups)
+
+
 <!--//APPEND AFTER THIS//-->

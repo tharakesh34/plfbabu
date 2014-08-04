@@ -52,6 +52,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.dedup.DedupFields;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 
@@ -70,7 +71,8 @@ public class DedupFieldsListModelItemRenderer implements ListitemRenderer<DedupF
 		Listcell lc;
 	  	lc = new Listcell(dedupFields.getFieldName());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(dedupFields.getFieldControl(),PennantAppUtil.getFieldTypeList()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(dedupFields.getFieldControl(),
+				PennantStaticListUtil.getFieldTypeList()));
 	  	lc.setParent(item);
 	  	lc = new Listcell(dedupFields.getRecordStatus());
 		lc.setParent(item);

@@ -81,7 +81,7 @@
 										<textbox id="lovDescSRTypeName"
 											width="250px" readonly="true" />
 										<button
-											label="${c:l('btnSearch.label')}" id="btnSearchSRType"
+											id="btnSearchSRType"
 											image="/images/icons/LOVSearch.png" height="24px" />
 									</hbox>
 								</hbox>

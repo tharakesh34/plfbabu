@@ -26,7 +26,7 @@
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel id="tabpanel_basicDetails"
 								style="overflow:auto">
-								<listbox id="listBoxSchedule" emptyMessage="No Records Found"
+								<listbox id="listBoxSchedule" emptyMessage="${c:l('listbox.emptyMessage')}"
 									vflex="true" width="99%" multiple="false">
 									<listhead sizable="false"
 										style="padding:0px;position:relative;">

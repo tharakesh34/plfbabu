@@ -15,7 +15,7 @@ public class FinanceSuspDetails implements Serializable{
 	private int finSuspSeq;
 	private Date finTrfDate;
 	private String finTrfMvt;
-	private BigDecimal finTrfAmt = new BigDecimal(0);
+	private BigDecimal finTrfAmt = BigDecimal.ZERO;
 	private Date finODDate;
 	private Date finTrfFromDate;
 	private long linkedTranId = Long.MIN_VALUE;

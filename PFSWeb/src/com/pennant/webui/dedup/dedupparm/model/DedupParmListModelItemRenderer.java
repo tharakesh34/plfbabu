@@ -53,6 +53,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 /**
@@ -62,18 +63,17 @@ import com.pennant.util.PennantAppUtil;
 public class DedupParmListModelItemRenderer implements ListitemRenderer<DedupParm>, Serializable {
 
 	private static final long serialVersionUID = 2857143548087995871L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, DedupParm dedupParm, int count) throws Exception {
 
-		//final DedupParm dedupParm = (DedupParm) data;
 		Listcell lc;
 		lc = new Listcell(dedupParm.getQueryCode());
 		lc.setParent(item);	
 		lc = new Listcell(dedupParm.getQueryDesc());
 		lc.setParent(item);
 		if (dedupParm.getQueryModule().equals(PennantConstants.DedupCust)) {
-			lc = new Listcell(PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantAppUtil.getCategoryType()));
+			lc = new Listcell(PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantStaticListUtil.getCategoryType()));
 			lc.setParent(item);
 		}else{
 			lc = new Listcell();

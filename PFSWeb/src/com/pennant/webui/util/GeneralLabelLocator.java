@@ -74,6 +74,7 @@ public class GeneralLabelLocator implements LabelLocator {
 	 * 
 	 * @see org.zkoss.util.resource.LabelLocator#locate(java.util.Locale)
 	 */
+	@SuppressWarnings("deprecation")
 	public URL locate(Locale locale) throws Exception {
 
 		String menu_res_filename = "";

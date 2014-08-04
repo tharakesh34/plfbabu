@@ -123,7 +123,7 @@ public class RepaymentMethodDAOImpl extends BasisCodeDAO<RepaymentMethod> implem
 	@Override
 	public RepaymentMethod getRepaymentMethodById(final String id, String type) {
 		logger.debug("Entering");
-		RepaymentMethod repaymentMethod = getRepaymentMethod();
+		RepaymentMethod repaymentMethod = new RepaymentMethod();
 		repaymentMethod.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

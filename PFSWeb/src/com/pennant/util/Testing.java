@@ -3,6 +3,8 @@ package com.pennant.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,8 +18,9 @@ public class Testing {
 	/**
 	 * @param args
 	 * @throws EquationInterfaceException 
+	 * @throws UnknownHostException 
 	 */
-	public static void main(String[] args) throws EquationInterfaceException {
+	public static void main(String[] args) throws EquationInterfaceException, UnknownHostException {
 		
 		List<String> list = new ArrayList<String>();
 		System.out.println("Date is"+ new Date());
@@ -26,8 +29,11 @@ public class Testing {
 		if(month == 11) {
 			month = month + 2;
 		}
-		System.out.println(DateUtility.getYearEndDate(new Date()));
-		System.out.println();
+		
+		System.out.println("Test");
+		//System.out.println(DateUtility.getYearEndDate(new Date()));
+		String ipAddress[] = InetAddress.getLocalHost().toString().split("/");
+		System.out.println(ipAddress[0]+"----"+ipAddress[1]);
 		/*list.add("noOfDays");
 		list.add("PRI");
 		list.add("PFTSB");

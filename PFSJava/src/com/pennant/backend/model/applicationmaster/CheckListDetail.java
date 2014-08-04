@@ -44,7 +44,9 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
@@ -65,7 +67,11 @@ public class CheckListDetail implements java.io.Serializable, Entity {
 	private String ansCond;
 	private boolean remarksMand;
 	private boolean remarksAllow;
+	private boolean docRequired;
+	private String docType;
+	private boolean DocIsCustDOC;
 	private int version;
+
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private boolean newRecord=false;
@@ -82,6 +88,8 @@ public class CheckListDetail implements java.io.Serializable, Entity {
 	private String userAction = "Save";
 	private long workflowId = 0;
 	private String lovDescCheckListDesc;
+	private long lovDescCheckMinCount;
+	private long lovDescCheckMaxCount;
 	private String lovDescRemarks;
 	private FinanceReferenceDetail lovDescFinRefDetail;
 	private String lovDescUserRole;
@@ -94,6 +102,11 @@ public class CheckListDetail implements java.io.Serializable, Entity {
 	public void setLovDescPrevAnsMap(
 			Map<String, FinanceCheckListReference> lovDescPrevAnsMap) {
 		this.lovDescPrevAnsMap = lovDescPrevAnsMap;
+	}
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("DocIsCustDOC");
+		return excludeFields;
 	}
 
 	public boolean isNew() {
@@ -272,6 +285,78 @@ public class CheckListDetail implements java.io.Serializable, Entity {
 		this.workflowId = workflowId;
 	}
 
+	public boolean isDocRequired() {
+    	return docRequired;
+    }
+
+	public void setDocRequired(boolean docRequired) {
+    	this.docRequired = docRequired;
+    }
+	
+	public void setLovDescCheckListDesc(String lovDescCheckListDesc) {
+		this.lovDescCheckListDesc = lovDescCheckListDesc;
+	}
+	public String getLovDescCheckListDesc() {
+		return lovDescCheckListDesc;
+	}
+
+	public void setLovDescFinRefDetail(FinanceReferenceDetail lovDescFinRefDetail) {
+		this.lovDescFinRefDetail = lovDescFinRefDetail;
+	}
+	public FinanceReferenceDetail getLovDescFinRefDetail() {
+		return lovDescFinRefDetail;
+	}
+
+	public void setLovDescUserRole(String lovDescUserRole) {
+		this.lovDescUserRole = lovDescUserRole;
+	}
+	public String getLovDescUserRole() {
+		return lovDescUserRole;
+	}
+
+	public void setLovDescRemarks(String lovDescRemarks) {
+		this.lovDescRemarks = lovDescRemarks;
+	}
+	public String getLovDescRemarks() {
+		return lovDescRemarks;
+	}
+
+	public void setAnsCond(String ansCond) {
+		this.ansCond = ansCond;
+	}
+	public String getAnsCond() {
+		return ansCond;
+	}
+
+	public void setRemarksMand(boolean remarksMand) {
+		this.remarksMand = remarksMand;
+	}
+	public boolean isRemarksMand() {
+		return remarksMand;
+	}
+
+	public void setRemarksAllow(boolean remarksAllow) {
+		this.remarksAllow = remarksAllow;
+	}
+	public boolean isRemarksAllow() {
+		return remarksAllow;
+	}
+
+	public void setDocType(String docType) {
+	    this.docType = docType;
+    }
+	public String getDocType() {
+	    return docType;
+    }
+	
+	public boolean isDocIsCustDOC() {
+    	return DocIsCustDOC;
+    }
+
+	public void setDocIsCustDOC(boolean docIsCustDOC) {
+    	DocIsCustDOC = docIsCustDOC;
+    }
+
 	// Overidden Equals method to handle the comparision
 	public boolean equals(CheckListDetail checkListDetail) {
 		return getId() == checkListDetail.getId();
@@ -290,59 +375,30 @@ public class CheckListDetail implements java.io.Serializable, Entity {
 		return false;
 	}
 
-	public void setLovDescCheckListDesc(String lovDescCheckListDesc) {
-		this.lovDescCheckListDesc = lovDescCheckListDesc;
-	}
+	public void setLovDescCheckMinCount(long lovDescCheckMinCount) {
+	    this.lovDescCheckMinCount = lovDescCheckMinCount;
+    }
 
-	public String getLovDescCheckListDesc() {
-		return lovDescCheckListDesc;
-	}
+	public long getLovDescCheckMinCount() {
+	    return lovDescCheckMinCount;
+    }
 
-	public void setLovDescFinRefDetail(FinanceReferenceDetail lovDescFinRefDetail) {
-		this.lovDescFinRefDetail = lovDescFinRefDetail;
-	}
+	public void setLovDescCheckMaxCount(long lovDescCheckMaxCount) {
+	    this.lovDescCheckMaxCount = lovDescCheckMaxCount;
+    }
 
-	public FinanceReferenceDetail getLovDescFinRefDetail() {
-		return lovDescFinRefDetail;
-	}
+	public long getLovDescCheckMaxCount() {
+	    return lovDescCheckMaxCount;
+    }
 
-	public void setLovDescUserRole(String lovDescUserRole) {
-		this.lovDescUserRole = lovDescUserRole;
-	}
+	private long lovDescFinRefId;
 
-	public String getLovDescUserRole() {
-		return lovDescUserRole;
-	}
+	public long getLovDescFinRefId() {
+    	return lovDescFinRefId;
+    }
 
-	public void setLovDescRemarks(String lovDescRemarks) {
-		this.lovDescRemarks = lovDescRemarks;
-	}
-
-	public String getLovDescRemarks() {
-		return lovDescRemarks;
-	}
-
-	public void setAnsCond(String ansCond) {
-		this.ansCond = ansCond;
-	}
-
-	public String getAnsCond() {
-		return ansCond;
-	}
-
-	public void setRemarksMand(boolean remarksMand) {
-		this.remarksMand = remarksMand;
-	}
-
-	public boolean isRemarksMand() {
-		return remarksMand;
-	}
-
-	public void setRemarksAllow(boolean remarksAllow) {
-		this.remarksAllow = remarksAllow;
-	}
-
-	public boolean isRemarksAllow() {
-		return remarksAllow;
-	}
+	public void setLovDescFinRefId(long lovDescFinRefId) {
+    	this.lovDescFinRefId = lovDescFinRefId;
+    }
+	
 }

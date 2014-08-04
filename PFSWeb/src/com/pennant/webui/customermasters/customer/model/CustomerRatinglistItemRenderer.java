@@ -20,6 +20,7 @@ package com.pennant.webui.customermasters.customer.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -42,20 +43,16 @@ public class CustomerRatinglistItemRenderer implements ListitemRenderer<Customer
 
 		//final CustomerRating rating = (CustomerRating) data;
 		Listcell lc;
-		if(rating.getRecordType().equals(PennantConstants.RCD_ADD) 
-				|| rating.getRecordType().equals(PennantConstants.RCD_UPD)){
-			
+		if(rating.getRecordType().equals(PennantConstants.RCD_ADD) || rating.getRecordType().equals(PennantConstants.RCD_UPD)){
 			lc = new Listcell(rating.getLovDescCustRatingTypeName());
 			lc.setParent(item);
-			lc = new Listcell(rating.getLovDescCustRatingCodeName());
-			lc.setParent(item);
 		}else{
-			lc = new Listcell(rating.getCustRatingType()+"-"+rating.getLovDescCustRatingTypeName());
-			lc.setParent(item);
-			lc = new Listcell(rating.getCustRatingCode()+"-"+rating.getLovDescCustRatingCodeName());
+			lc = new Listcell(rating.getCustRatingType());
 			lc.setParent(item);
 		}
-		lc = new Listcell(rating.getCustRating());
+		lc = new Listcell(rating.getCustRatingCode() + (StringUtils.trimToEmpty(rating.getLovDesccustRatingCodeDesc()).equals("")?"":"-" + rating.getLovDesccustRatingCodeDesc()));
+		lc.setParent(item);
+		lc = new Listcell(rating.getCustRating() + (StringUtils.trimToEmpty(rating.getLovDescCustRatingName()).equals("")?"":"-" + rating.getLovDescCustRatingName()));
 		lc.setParent(item);
 		lc = new Listcell(rating.getRecordStatus());
 		lc.setParent(item);

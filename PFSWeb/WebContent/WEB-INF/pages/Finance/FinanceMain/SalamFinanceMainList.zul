@@ -55,39 +55,24 @@
 					<textbox id="loanType" value="SALAM"
 						visible="false" />
 				</north>
-
 				<center border="none">
-
-					<listbox id="listBoxFinanceMain" vflex="true"
+					<listbox id="listBoxFinanceMain" 
+						fixedLayout="true" vflex="true" span="true"
+						emptyMessage="${c:l('listbox.emptyMessage')}"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 						height="100%" multiple="false">
-						<listhead sizable="true">
-							<listheader id="listheader_CustomerCIF"
-								label="${c:l('listheader_CustomerCIF.label')}" sort="auto"
-								width="11%" />
-							<listheader id="listheader_FinReference"
-								label="${c:l('listheader_FinReference.label')}" sort="auto"
-								width="22%" />
-							<listheader id="listheader_FinType"
-								label="${c:l('listheader_FinType.label')}" sort="auto"
-								width="11%" />
-							<listheader id="listheader_FinCcy"
-								label="${c:l('listheader_FinCcy.label')}" sort="auto"
-								width="9%" />
-							<listheader id="listheader_ScheduleMethod"
-								label="${c:l('listheader_ScheduleMethod.label')}" sort="auto"
-								width="14%" />
-							<listheader id="listheader_FinAmount"
-								label="${c:l('listheader_Amount.label')}" sort="auto"
-								width="15%" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="9%" />
+						<listhead sizable="false">
+						    <listheader id="listheader_CustomerCIF" label="${c:l('listheader_CustomerCIF.label')}" sort="auto" hflex="min"/>
+						    <listheader id="listheader_CustomerName" label="${c:l('listheader_CustomerName.label')}" sort="auto" hflex="min"/>
+							<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" sort="auto" hflex="min" />
+							<listheader id="listheader_FinType" label="${c:l('listheader_FinType.label')}" sort="auto" hflex="min" />
+							<listheader id="listheader_FinCcy" label="${c:l('listheader_FinCcy.label')}" sort="auto"  hflex="min"/>
+							<listheader id="listheader_ScheduleMethod" label="${c:l('listheader_ScheduleMethod.label')}" sort="auto"  hflex="min" />
+							<listheader id="listheader_FinAmount" label="${c:l('listheader_Amount.label')}" sort="auto"  hflex="min" />
+							<listheader id="listheader_FinancingAmount" label="${c:l('listheader_FinancingAmount.label')}" sort="auto" hflex="min"/>
+							<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min"/>
+							<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min"/>
 						</listhead>
-
 					</listbox>
 				</center>
 				<south border="none">

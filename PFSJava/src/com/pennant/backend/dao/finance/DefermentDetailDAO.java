@@ -53,13 +53,16 @@ public interface DefermentDetailDAO {
 	public DefermentDetail getNewDefermentDetail(boolean isWIF);
 	public DefermentDetail getDefermentDetailById(String finReference, Date schdDate,String type,boolean isWIF);
 	public void update(DefermentDetail defermentDetail,String type,boolean isWIF);
-	public void deleteByFinReference(String id,String type,boolean isWIF);
+	public void deleteByFinReference(String id,String type,boolean isWIF, long logKey);
 	public String save(DefermentDetail defermentDetail,String type,boolean isWIF);
 	public void initialize(DefermentDetail defermentDetail);
 	public void refresh(DefermentDetail entity);
-	List<DefermentDetail> getDefermentDetails(String id, String type,boolean isWIF);
+	public List<DefermentDetail> getDefermentDetails(String id, String type,boolean isWIF);
+	public List<DefermentDetail> getDefermentDetails(String id, String type,boolean isWIF, long logKey);
 	public void delete(DefermentDetail defermentDetail,String type,boolean isWIF);
 	public void saveList(List<DefermentDetail> defermentDetail, String type,boolean isWIF);
 	public int getFinReferenceCount(String finReference, Date defSchdDate, Date defRpyDate);
 	public void updateList(List<DefermentDetail> defermentDetail, String type, boolean isWIF);
+	public void updateBatch(DefermentDetail defermentDetail);
+	public DefermentDetail getDefermentDetailForBatch(String id, Date schdDate);
 }

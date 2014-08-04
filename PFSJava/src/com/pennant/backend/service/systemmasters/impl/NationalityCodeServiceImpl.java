@@ -65,8 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>NationalityCode</b>.<br>
  * 
  */
-public class NationalityCodeServiceImpl extends
-GenericService<NationalityCode> implements NationalityCodeService {
+public class NationalityCodeServiceImpl extends GenericService<NationalityCode> implements NationalityCodeService {
 
 	private static Logger logger = Logger.getLogger(NationalityCodeServiceImpl.class);
 

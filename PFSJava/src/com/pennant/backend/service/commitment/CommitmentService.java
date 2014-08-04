@@ -48,6 +48,8 @@ import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
+import com.pennant.backend.model.commitment.CommitmentSummary;
+import com.pennant.backend.model.reports.AvailCommitment;
 import com.pennant.backend.model.rulefactory.Rule;
 
 public interface CommitmentService {
@@ -66,4 +68,6 @@ public interface CommitmentService {
 	public int getUtilizedAmountTotal(long custID);
 	List<Rule> getRuleByModuleAndEvent(String module, String event);
 	public Map<String, Object> getAmountSummary(long custID);
+	List<AvailCommitment> getCommitmentListByCustId(long custId);
+	List<CommitmentSummary> getCommitmentSummary(long custID);
 }

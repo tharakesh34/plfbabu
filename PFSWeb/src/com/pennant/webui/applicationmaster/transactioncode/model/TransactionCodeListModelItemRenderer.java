@@ -53,6 +53,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 /**
@@ -62,18 +63,17 @@ import com.pennant.util.PennantAppUtil;
 public class TransactionCodeListModelItemRenderer implements ListitemRenderer<TransactionCode>, Serializable {
 
 	private static final long serialVersionUID = 2146337993294728738L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, TransactionCode transactionCode, int count) throws Exception {
 
-		//final TransactionCode transactionCode = (TransactionCode) data;
 		Listcell lc;
 	  	lc = new Listcell(transactionCode.getTranCode());
 		lc.setParent(item);
 	  	lc = new Listcell(transactionCode.getTranDesc());
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(transactionCode.getTranType(),
-				PennantAppUtil.getTranType()));
+				PennantStaticListUtil.getTranType()));
 	  	lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbTranIsActive = new Checkbox();

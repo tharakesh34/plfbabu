@@ -121,7 +121,7 @@ public class IndustryDAOImpl extends BasisCodeDAO<Industry> implements IndustryD
 	@Override
 	public Industry getIndustryById(final String id, String type) {
 		logger.debug("Entering");
-		Industry industry = getIndustry();
+		Industry industry = new Industry();
 		industry.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

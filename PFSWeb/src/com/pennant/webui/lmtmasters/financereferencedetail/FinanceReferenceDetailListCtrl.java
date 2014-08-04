@@ -45,7 +45,9 @@ package com.pennant.webui.lmtmasters.financereferencedetail;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -53,10 +55,12 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -77,6 +81,8 @@ import com.pennant.webui.lmtmasters.financereferencedetail.model.FinanceReferenc
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -102,6 +108,11 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	protected Paging 		pagingFinanceReferenceDetailList; 			// auto wired
 	protected Listbox 		listBoxFinanceReferenceDetail; 				// auto wired
 
+	protected Textbox  finType;
+	protected Listbox  sortOperator_finType;
+	protected Textbox  finTypeDesc;
+	protected Listbox  sortOperator_finTypeDesc;
+	
 	// List headers
 	protected Listheader listheader_FinanceType; 		// auto wired
 	protected Listheader listheader_FinanceTypeDesc; 	// auto wired
@@ -157,6 +168,13 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 			wfAvailable=false;
 		}
 		
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_finTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 		
@@ -193,7 +211,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_FinanceReferenceDetailList_NewFinanceReferenceDetail.setVisible(false);
-			this.button_FinanceReferenceDetailList_FinanceReferenceDetailSearchDialog.setVisible(false);
+			//this.button_FinanceReferenceDetailList_FinanceReferenceDetailSearchDialog.setVisible(false);
 			this.button_FinanceReferenceDetailList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
@@ -215,8 +233,8 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 		/*this.button_FinanceReferenceDetailList_NewFinanceReferenceDetail.setVisible(
 				getUserWorkspace().isAllowed("button_FinanceReferenceDetailList_NewFinanceReferenceDetail"));*/
 		this.button_FinanceReferenceDetailList_NewFinanceReferenceDetail.setVisible(false);
-		this.button_FinanceReferenceDetailList_FinanceReferenceDetailSearchDialog.setVisible(
-				getUserWorkspace().isAllowed("button_FinanceReferenceDetailList_FinanceReferenceDetailFindDialog"));
+		/*this.button_FinanceReferenceDetailList_FinanceReferenceDetailSearchDialog.setVisible(
+				getUserWorkspace().isAllowed("button_FinanceReferenceDetailList_FinanceReferenceDetailFindDialog"));*/
 		this.button_FinanceReferenceDetailList_PrintList.setVisible(
 				getUserWorkspace().isAllowed("button_FinanceReferenceDetailList_PrintList"));
 		logger.debug("Leaving");
@@ -334,6 +352,10 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
+		this.sortOperator_finType.setSelectedIndex(0);
+		this.finType.setValue("");
+		this.sortOperator_finTypeDesc.setSelectedIndex(0);
+		this.finTypeDesc.setValue("");
 		this.pagingFinanceReferenceDetailList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_FinanceReferenceDetailList, event);
 		this.window_FinanceReferenceDetailList.invalidate();
@@ -347,27 +369,50 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	 */
 	public void onClick$button_FinanceReferenceDetailList_FinanceReferenceDetailSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our FinanceReferenceDetailDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected FinanceReferenceDetail. For handed over
-		 * these parameter only a Map is accepted. So we put the FinanceReferenceDetail object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("financeReferenceDetailCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
+	
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and initialize sorting ++//
+		this.searchObj = new JdbcSearchObject<FinanceType>(FinanceType.class,getListRows());
+		this.searchObj.addSort("FinType", false);
+		this.searchObj.addSort("FinTypeDesc", false);
+		this.searchObj.addTabelName("RMTFinanceTypes_AView");
+	
+			
+		//Finance Type
+		if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finType.getSelectedItem(), this.finType.getValue(), "finType");
+		}
+		
+		// Finance Type Desc
+		if (!StringUtils.trimToEmpty(this.finTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finTypeDesc.getSelectedItem(), this.finTypeDesc.getValue(), "finTypeDesc");
+		}
+		
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
 
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxFinanceReferenceDetail,this.pagingFinanceReferenceDetailList);
+		logger.debug("Leaving" );
+	}
+}
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * When the financeReferenceDetail print button is clicked.
 	 * 

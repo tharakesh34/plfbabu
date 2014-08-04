@@ -55,5 +55,5 @@ public interface ProvisionDAO {
 	public String save(Provision provision,String type);
 	public void initialize(Provision provision);
 	public void refresh(Provision entity);
-	void updateProvAmt(ProvisionMovement provisionMovement, String type);
+	public void updateProvAmt(ProvisionMovement provisionMovement, String type);
 }

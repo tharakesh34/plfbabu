@@ -121,7 +121,7 @@ public class FinanceMarginSlabDAOImpl extends BasisCodeDAO<FinanceMarginSlab> im
 	@Override
 	public FinanceMarginSlab getFinanceMarginSlabById(final String id, String type) {
 		logger.debug("Entering");
-		FinanceMarginSlab financeMarginSlab = getFinanceMarginSlab();
+		FinanceMarginSlab financeMarginSlab = new FinanceMarginSlab();
 		
 		financeMarginSlab.setId(id);
 		
@@ -159,7 +159,7 @@ public class FinanceMarginSlabDAOImpl extends BasisCodeDAO<FinanceMarginSlab> im
 	@Override
 	public List<FinanceMarginSlab> getFinanceMarginSlabByFinType(final String finType, String type) {
 		logger.debug("Entering");
-		FinanceMarginSlab financeMarginSlab = getFinanceMarginSlab();
+		FinanceMarginSlab financeMarginSlab = new FinanceMarginSlab();
 		
 		financeMarginSlab.setId(finType);
 		

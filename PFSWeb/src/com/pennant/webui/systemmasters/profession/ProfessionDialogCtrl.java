@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,11 +76,14 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.ProfessionService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
+
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -107,7 +109,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Textbox 		professionCode; 				// autoWired
 	protected Textbox 		professionDesc; 				// autoWired
 	protected Checkbox 		professionIsActive; 			// autoWired
-
+	protected Checkbox      professionSelfEmployee;         // autoWired
 	protected Label 		recordStatus; 					// autoWired
 	protected Radiogroup 	userAction;
 	protected Groupbox 		groupboxWf;
@@ -123,6 +125,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient String 	oldVar_professionCode;
 	private transient String 	oldVar_professionDesc;
 	private transient boolean 	oldVar_professionIsActive;
+	private transient boolean 	oldVar_professionSelfEmployee;
 	private transient String 	oldVar_recordStatus;
 
 	private transient boolean validationOn;
@@ -407,6 +410,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -421,11 +425,13 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.professionCode.setValue(aProfession.getProfessionCode());
 		this.professionDesc.setValue(aProfession.getProfessionDesc());
 		this.professionIsActive.setChecked(aProfession.isProfessionIsActive());
+		this.professionSelfEmployee.setChecked(aProfession.isSelfEmployee());
 		this.recordStatus.setValue(aProfession.getRecordStatus());
 		
-		if(aProfession.isNew() || aProfession.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aProfession.isNew() || (aProfession.getRecordType() != null ? aProfession.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.professionIsActive.setChecked(true);
 			this.professionIsActive.setDisabled(true);
+			
 		}
 		logger.debug("Leaving");
 	}
@@ -453,6 +459,11 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		try {
 			aProfession.setProfessionIsActive(this.professionIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aProfession.setSelfEmployee(this.professionSelfEmployee.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -544,6 +555,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.oldVar_professionCode = this.professionCode.getValue();
 		this.oldVar_professionDesc = this.professionDesc.getValue();
 		this.oldVar_professionIsActive = this.professionIsActive.isChecked();
+		this.oldVar_professionSelfEmployee = this.professionSelfEmployee.isChecked();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
 	}
@@ -556,6 +568,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.professionCode.setValue(this.oldVar_professionCode);
 		this.professionDesc.setValue(this.oldVar_professionDesc);
 		this.professionIsActive.setChecked(this.oldVar_professionIsActive);
+		this.professionSelfEmployee.setChecked(this.oldVar_professionSelfEmployee);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
 		if (isWorkFlowEnabled()) {
@@ -583,6 +596,9 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.oldVar_professionIsActive != this.professionIsActive.isChecked()) {
 			return true;
 		}
+		if (this.oldVar_professionSelfEmployee != this.professionSelfEmployee.isChecked()) {
+			return true;
+		}
 		return false;
 	}
 
@@ -594,15 +610,12 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		setValidationOn(true);
 		if (!this.professionCode.isReadonly()){
-			this.professionCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_ProfessionDialog_ProfessionCode.value")})));
+			this.professionCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfessionDialog_ProfessionCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 
 		if (!this.professionDesc.isReadonly()){
-			this.professionDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_ProfessionDialog_ProfessionDesc.value")})));
+			this.professionDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfessionDialog_ProfessionDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -733,6 +746,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		this.professionDesc.setReadonly(isReadOnly("ProfessionDialog_professionDesc"));
 		this.professionIsActive.setDisabled(isReadOnly("ProfessionDialog_professionIsActive"));
+		this.professionSelfEmployee.setDisabled(isReadOnly("ProfessionDialog_ProfessionSelfEmployee"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -746,7 +760,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -760,6 +774,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.professionCode.setReadonly(true);
 		this.professionDesc.setReadonly(true);
 		this.professionIsActive.setDisabled(true);
+		this.professionSelfEmployee.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -783,6 +798,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.professionCode.setValue("");
 		this.professionDesc.setValue("");
 		this.professionIsActive.setChecked(false);
+		this.professionSelfEmployee.setChecked(false);
 		logger.debug("Leaving");
 	}
 

@@ -62,11 +62,9 @@ import com.pennant.util.PennantAppUtil;
 public class AddressTypeListModelItemRenderer implements ListitemRenderer<AddressType>, Serializable {
 
 	private static final long serialVersionUID = 6352065299727172054L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
 	public void render(Listitem item, AddressType addressType, int count) throws Exception {
 
-	//	final AddressType addressType = (AddressType) data;
 		Listcell lc;
 		lc = new Listcell(addressType.getAddrTypeCode());
 		lc.setParent(item);

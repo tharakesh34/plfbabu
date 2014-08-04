@@ -82,9 +82,9 @@ public interface SecurityRightDAO {
 
 	public List<SecurityRight> getMenuRightsByUser(SecurityUser user);
 
-	public List<SecurityRight> getPageRights(SecurityRight secRight);
+	public List<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName);
 
-	public List<SecurityRight> getRoleRights(SecurityRight secRight);
+	public List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName);
 
 	public void initialize(SecurityRight secRight);
 

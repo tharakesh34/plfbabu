@@ -284,7 +284,7 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
 				overdueChargeRecovery.setRecordType("");
-				getOverdueChargeRecoveryDAO().update(overdueChargeRecovery,"");
+				getOverdueChargeRecoveryDAO().update(overdueChargeRecovery, "");
 			}
 		}
 
@@ -360,12 +360,12 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 		if (overdueChargeRecovery.isWorkflow()){
 			tempOverdueChargeRecovery = getOverdueChargeRecoveryDAO().
 			getOverdueChargeRecoveryById(overdueChargeRecovery.getId(),
-					overdueChargeRecovery.getFinSchdDate(),
+					overdueChargeRecovery.getFinODSchdDate(),
 					overdueChargeRecovery.getFinODFor(), "_Temp");
 		}
 		OverdueChargeRecovery befOverdueChargeRecovery= getOverdueChargeRecoveryDAO().
 		getOverdueChargeRecoveryById(overdueChargeRecovery.getId(),
-				overdueChargeRecovery.getFinSchdDate(),
+				overdueChargeRecovery.getFinODSchdDate(),
 				overdueChargeRecovery.getFinODFor(), "");
 
 		OverdueChargeRecovery old_OverdueChargeRecovery= overdueChargeRecovery.getBefImage();

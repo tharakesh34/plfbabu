@@ -18,30 +18,13 @@
 					<tabbox width="99%" height="100%"
 						id="tabBoxIndexCenter">
 						<tabs id="tabsIndexCenter">
-							<tab id="agrDetailsTab"
-								label="Agreement Details" />
-							<tab id="docDetailsTab"
+								<tab id="docDetailsTab"
 								label="Document Details" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
-							<tabpanel id="tabpanel_AgrDetails"
-								style="overflow:auto">
-								<listbox id="listBoxAgreement" emptyMessage="No Records Found"
-									vflex="true" width="99%" multiple="false">
-									<listhead sizable="false"
-										style="padding:0px;position:relative;">
-										<listheader 
-											label="${c:l('listheader_AgreementId.label')}" width="20%" />
-										<listheader
-											label="${c:l('listheader_AgreementName.label')}" width="50%" />
-										<listheader
-											label="${c:l('listheader_ViewAgr.label')}" width="30%" />
-									</listhead>
-								</listbox>
-							</tabpanel>
 							<tabpanel id="tabpanel_DocDetails"
 								style="overflow:auto">
-								<listbox id="listBoxDocument" emptyMessage="No Records Found"
+								<listbox id="listBoxDocument" emptyMessage="${c:l('listbox.emptyMessage')}"
 									vflex="true" width="99%" multiple="false">
 									<listhead sizable="false"
 										style="padding:0px;position:relative;">

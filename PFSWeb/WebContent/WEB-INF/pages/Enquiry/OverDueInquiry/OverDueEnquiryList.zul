@@ -191,54 +191,56 @@
 								tooltiptext="${c:l('button_FinanceEnquiryList_ResetList.tooltiptext')}" />
 						</toolbar>
 
-						<listbox id="listBoxEnquiryResult" vflex="true"
+						<listbox id="listBoxEnquiryResult" 
+						    emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+							vflex="true" span="true"
 							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-							height="98%" multiple="false">
+							height="100%" multiple="false">
 
-							<listhead sizable="true">
+								<listhead sizable="true">
 								<listheader id="listheader_FinType"
 									sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_FinType.label')}"
-									width="9%" />
+									hflex="min" />
 								<listheader id="listheader_FinProduct"
 									sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_FinProduct.label')}"
-									width="9%" />
+									hflex="min" />
 								<listheader id="listheader_CustCIF"
 									sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_CustCIF.label')}"
-									width="8%" />
+									hflex="min" />
 								<listheader id="listheader_FinRef"
 									sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_FinRef.label')}"
-									width="10%" />
+									hflex="min" />
 								<listheader id="listheader_FinBranch"
 									sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_FinBranch.label')}"
-									width="8%" />
+									hflex="min" />
 								<listheader id="listheader_FinStartDate"
 									sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_FinStartDate.label')}"
-									width="10%" />
+									hflex="min" />
 								<listheader
 									id="listheader_NumberOfTerms" sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_NumberOfTerms.label')}"
-									width="6%" />
+									hflex="min" />
 								<listheader id="listheader_MaturityDate"
 									sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_MaturityDate.label')}"
-									width="10%" />
+									hflex="min" />
 								<listheader id="listheader_FinCcy"
 									sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_FinCcy.label')}"
-									width="6%" />
+									hflex="min" />
 								<listheader id="listheader_FinAmount"
 									sort="auto"
 									label="${c:l('listheader_FinanceEnquiryList_FinAmount.label')}"
-									width="12%" />
+									hflex="min" />
 								<listheader id="listheader_CurFinAmount"
 									label="${c:l('listheader_FinanceEnquiryList_CurFinAmount.label')}"
-									sort="auto" width="12%" />
+									sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</vlayout>

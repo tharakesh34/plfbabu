@@ -102,7 +102,7 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 	protected Listbox 		listBoxCity; 			// autoWired
 
 	// List headers
-	protected Listheader 	listheader_PCCounty; 		// autoWired
+	protected Listheader 	listheader_PCCountry; 		// autoWired
     protected Listheader 	listheader_PCProvince; 		// autoWired
 	protected Listheader 	listheader_PCCity; 			// autoWired
 	protected Listheader 	listheader_PCCityName; 		// autoWired
@@ -174,10 +174,10 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 		this.pagingCityList.setDetailed(true);
 		
 		//Apply sorting for getting List in the ListBox 
-		this.listheader_PCCounty.setSortAscending(
-				new FieldComparator("pCCounty", true));
-		this.listheader_PCCounty.setSortDescending(
-				new FieldComparator("pCCounty", false));
+		this.listheader_PCCountry.setSortAscending(
+				new FieldComparator("pCCountry", true));
+		this.listheader_PCCountry.setSortDescending(
+				new FieldComparator("pCCountry", false));
 		this.listheader_PCProvince.setSortAscending(
 				new FieldComparator("pCProvince", true));
 		this.listheader_PCProvince.setSortDescending(
@@ -207,7 +207,7 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<City>(City.class, getListRows());
-		this.searchObj.addSort("PCCounty", false);
+		this.searchObj.addSort("PCCountry", false);
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -274,18 +274,18 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final City aCity = (City) item.getAttribute("data");
-			final City city = getCityService().getCityById(aCity.getPCCounty(),
+			final City city = getCityService().getCityById(aCity.getPCCountry(),
 					aCity.getPCProvince(), aCity.getPCCity());
 
 			if(city==null){
 				String[] valueParm = new String[3];
 				String[] errParm= new String[3];
 
-				valueParm[0] = aCity.getPCCounty();
+				valueParm[0] = aCity.getPCCountry();
 				valueParm[1] = aCity.getPCProvince();
 				valueParm[2] = aCity.getPCCity();
 				
-				errParm[0]=PennantJavaUtil.getLabel("label_PCCounty")+":"+valueParm[0];
+				errParm[0]=PennantJavaUtil.getLabel("label_PCCountry")+":"+valueParm[0];
 				errParm[1]=PennantJavaUtil.getLabel("label_PCProvince")+":"+valueParm[1];
 				errParm[2]=PennantJavaUtil.getLabel("label_PCCity")+":"+valueParm[2];
 				
@@ -296,7 +296,7 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 			}else{
 				if (isWorkFlowEnabled()) {
 					
-					String whereCond = " AND PCCounty='" + city.getPCCounty()
+					String whereCond = " AND PCCountry='" + city.getPCCountry()
 					+ "'AND PCProvince='" + city.getPCProvince()
 					+ "' AND PCCity='" + city.getPCCity() + "'  AND version="
 					+ city.getVersion() + " ";

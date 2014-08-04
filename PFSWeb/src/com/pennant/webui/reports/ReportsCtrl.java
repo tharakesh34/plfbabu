@@ -1,7 +1,5 @@
 package com.pennant.webui.reports;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -23,6 +21,13 @@ public class ReportsCtrl extends GFCBaseCtrl {
 	public byte[] buf = null;
 	Window dialogWindow = null;
 
+	Window parentWindow = null;
+	Window window_FinEnqHeaderDialog ;
+
+	private boolean isAgreement = false;
+	private String reportName = "PFSReport.pdf";
+
+
 	public void onCreate$window_Report(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		final Map<String, Object> args = getCreationArgsMap(event);
@@ -42,32 +47,36 @@ public class ReportsCtrl extends GFCBaseCtrl {
 			tabbox = (Tabbox) args.get("tabbox");
 		}
 		
-		final InputStream mediais = new ByteArrayInputStream(buf);
-		final AMedia amedia = new AMedia("PFSReport.pdf", "pdf",
-				"application/pdf", mediais);
-
-		report.setContent(amedia);
-		if (dialogWindow != null) {
-			this.dialogWindow.setVisible(false);
+		if (args.containsKey("reportName")) {
+			reportName = (String) args.get("reportName");
 		}
 
-		setDialog(window_Report);
+		if (args.containsKey("isAgreement")) {
+			isAgreement = (Boolean) args.get("isAgreement");
+		}
+		
+		AMedia amedia = null;
+		if(isAgreement){
+			amedia = new AMedia(reportName, "msword", "application/msword", buf);
+			report.setContent(amedia);
+		}else{
+			amedia = new AMedia(reportName, "pdf", "application/pdf", buf);
+			report.setContent(amedia);
+			if (dialogWindow != null) {
+				this.dialogWindow.setVisible(false);
+				this.report.setHeight(getBorderLayoutHeight());
+			}
+			setDialog(window_Report);
+		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onClick$btnClose(Event event) {
-		closeDialog(window_Report, "");
 		if (dialogWindow != null) {
 			this.dialogWindow.setVisible(true);
-			setDialog(dialogWindow);
+			setDialog2(dialogWindow);
 		}
-		if (window_parent != null) {
-			window_parent.onClose();
-		}
-		if(tabbox!=null){
-			tabbox.getSelectedTab().close();
-		}
-		
-		
+		closeDialog2(window_Report, "");
 	}
 }

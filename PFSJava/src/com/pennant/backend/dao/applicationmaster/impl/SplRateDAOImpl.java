@@ -125,7 +125,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 	@Override
 	public SplRate getSplRateById(final String id,Date date, String type) {
 		logger.debug("Entering");
-		SplRate splRate = getSplRate();
+		SplRate splRate = new SplRate();
 		splRate.setId(id);
 		splRate.setSREffDate(date);
 
@@ -313,7 +313,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 	 */
 	public boolean getSplRateListById(String sRType, Date sREffDate, String type) {
 		logger.debug("Entering");
-		SplRate splRate = getSplRate();
+		SplRate splRate = new SplRate();
 		splRate.setSRType(sRType);
 		splRate.setSREffDate(sREffDate);
 
@@ -342,7 +342,7 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 	 */
 	private List<SplRate> getSplRateByType(final String id, Date date,String type) {
 		logger.debug("Entering");
-		SplRate splRate = getSplRate();
+		SplRate splRate = new SplRate();
 		splRate.setId(id);
 		splRate.setSREffDate(date);
 

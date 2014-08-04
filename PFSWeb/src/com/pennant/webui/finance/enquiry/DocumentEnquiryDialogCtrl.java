@@ -55,6 +55,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -63,7 +64,9 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAgreementDetail;
+import com.pennant.backend.service.finance.AgreementDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 
@@ -85,16 +88,15 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window 		window_DocumentEnquiryDialog; 		// autoWired
-	protected Listbox 		listBoxAgreement; 					// autoWired
 	protected Listbox 		listBoxDocument; 					// autoWired
 	protected Borderlayout  borderlayoutDocumentEnquiry;		// autoWired
 	private Tabpanel 		tabPanel_dialogWindow;
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
-	private List<FinAgreementDetail> finAgreements;
 	private List<DocumentDetails> finDocuments;
 	
 	private FinanceDetailService financeDetailService;
+	private AgreementDetailService agreementDetailService;
 	
 	/**
 	 * default constructor.<br>
@@ -126,12 +128,6 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 		// get the parameters map that are over handed by creation.
 		final Map<String, Object> args = getCreationArgsMap(event);
 
-		// READ OVERHANDED parameters !
-		if (args.containsKey("finAgreements")) {
-			this.finAgreements = (List<FinAgreementDetail>) args.get("finAgreements");
-		}else{
-			this.finAgreements = null;
-		}
 		if (args.containsKey("finDocuments")) {
 			this.finDocuments = (List<DocumentDetails>) args.get("finDocuments");
 		}else{
@@ -164,14 +160,12 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 		try {
 			
 			// fill the components with the data
-			doFillAgrList(this.finAgreements);
 			doFillDocList(this.finDocuments);
 			
 			if(tabPanel_dialogWindow != null){
 				
 				getBorderLayoutHeight();
 				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
-				this.listBoxAgreement.setHeight(this.borderLayoutHeight-rowsHeight-200+"px");
 				this.listBoxDocument.setHeight(this.borderLayoutHeight-rowsHeight-200+"px");
 				this.window_DocumentEnquiryDialog.setHeight(this.borderLayoutHeight-rowsHeight-30+"px");
 				tabPanel_dialogWindow.appendChild(this.window_DocumentEnquiryDialog);
@@ -184,36 +178,6 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 		logger.debug("Leaving");
 	}
 
-
-	/**
-	 * Method to fill the Finance Agreement Details List
-	 * @param agrDetails
-	 */
-	public void doFillAgrList(List<FinAgreementDetail> agrDetails) {
-		logger.debug("Entering");
-		Listitem listitem = null;
-		Listcell lc = null;
-		for (FinAgreementDetail agrDetail : agrDetails) {
-			
-			listitem = new Listitem();
-			lc = new Listcell(String.valueOf(agrDetail.getAgrId()));
-			listitem.appendChild(lc);
-			
-			lc = new Listcell(agrDetail.getLovDescAgrName() + " - " +agrDetail.getAgrName());
-			listitem.appendChild(lc);
-			
-			lc = new Listcell();
-			Button viewBtn = new Button("View");
-			viewBtn.addForward("onClick",window_DocumentEnquiryDialog,"onAgrViewButtonClicked",agrDetail.getAgrId());
-			lc.appendChild(viewBtn);
-			viewBtn.setStyle("font-weight:bold;");
-			listitem.appendChild(lc);
-			
-			this.listBoxAgreement.appendChild(listitem);
-		}
-		logger.debug("Leaving");
-	}
-	
 	/**
 	 * Method to fill the Finance Document Details List
 	 * @param docDetails
@@ -239,6 +203,9 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 			
 			lc = new Listcell();
 			Button viewBtn = new Button("View");
+			if (StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)) {
+				viewBtn.setLabel("Download");
+			}
 			viewBtn.addForward("onClick",window_DocumentEnquiryDialog,"onDocViewButtonClicked",doc.getDocId());
 			lc.appendChild(viewBtn);
 			viewBtn.setStyle("font-weight:bold;");
@@ -247,29 +214,6 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 			this.listBoxDocument.appendChild(listitem);
 		}
 		logger.debug("Leaving");
-	}
-	
-	public void onAgrViewButtonClicked(Event event) throws Exception{
-		logger.debug("Entering" + event.toString());
-		
-		long agrId  = Long.valueOf(event.getData().toString());
-		FinAgreementDetail detail = getFinanceDetailService().getFinAgrDetailByAgrId(
-				this.financeEnquiryHeaderDialogCtrl.finReference_header.getValue() , agrId);
-
-		if(!StringUtils.trimToEmpty(detail.getAgrName()).equals("") && 
-				!StringUtils.trimToEmpty(detail.getAgrContent().toString()).equals("")){
-
-			try {
-				HashMap<String, Object> map = new HashMap<String, Object>();
-				map.put("FinAgreementDetail", detail);
-				Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
-			} catch (Exception e) {
-				logger.debug(e);
-			}
-		}else{
-			PTMessageUtils.showErrorMessage("Agreement Details not Found.");
-		}
-		logger.debug("Leaving" + event.toString());
 	}
 	
 	public void onDocViewButtonClicked(Event event) throws Exception{
@@ -282,9 +226,13 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 				!StringUtils.trimToEmpty(detail.getDocImage().toString()).equals("")){
 
 			try {
-				HashMap<String, Object> map = new HashMap<String, Object>();
-				map.put("FinDocumentDetail", detail);
-				Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
+				if (StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)) {
+					Filedownload.save(detail.getDocImage(), "application/msword", detail.getDocName());
+				} else {
+					HashMap<String, Object> map = new HashMap<String, Object>();
+					map.put("FinDocumentDetail", detail);
+					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
+				}
 			} catch (Exception e) {
 				logger.debug(e);
 			}
@@ -303,6 +251,14 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 	}
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
+	}
+
+	public void setAgreementDetailService(AgreementDetailService agreementDetailService) {
+		this.agreementDetailService = agreementDetailService;
+	}
+
+	public AgreementDetailService getAgreementDetailService() {
+		return agreementDetailService;
 	}
 	
 }

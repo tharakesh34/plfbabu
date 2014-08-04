@@ -104,7 +104,7 @@
 						</rows>
 					</grid>
 				</groupbox>
-
+             </center>
 				<south sclass="south-dialog">
 					<groupbox id="groupboxWf" width="99%">
 						<caption label="${c:l('Action')}" />

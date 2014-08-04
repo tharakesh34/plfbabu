@@ -88,13 +88,13 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 
 	@Override
 	public DiaryNotes getDiaryNotes() {
-		logger.debug("Entering  getDiaryNotes()");
+		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("DiaryNotes");
 		DiaryNotes diaryNotes= new DiaryNotes();
 		if (workFlowDetails!=null){
 			diaryNotes.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving  getDiaryNotes()");
+		logger.debug("Leaving");
 		return diaryNotes;
 	}
 
@@ -107,10 +107,10 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 
 	@Override
 	public DiaryNotes getNewDiaryNotes() {
-		logger.debug("Entering  getNewDiaryNotes()");
+		logger.debug("Entering");
 		DiaryNotes diaryNotes = getDiaryNotes();
 		diaryNotes.setNewRecord(true);
-		logger.debug("Leaving getNewDiaryNotes()");
+		logger.debug("Leaving");
 		return diaryNotes;
 	}
 
@@ -125,7 +125,7 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 	@Override
 	public DiaryNotes getDiaryNotesById(final long id, String type) {
 		logger.debug("Entering");
-		DiaryNotes diaryNotes = getDiaryNotes();
+		DiaryNotes diaryNotes = new DiaryNotes();
 		diaryNotes.setId(id);
 		
 		StringBuilder   selectSql = new StringBuilder  ("Select SeqNo, DnType, DnCreatedNo, DnCreatedName, FrqCode, FirstActionDate, NextActionDate, ");
@@ -149,7 +149,7 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 		}catch (EmptyResultDataAccessException e) {
 			diaryNotes = null;
 		}
-		logger.debug("Leaving getDiaryNotesByID()");
+		logger.debug("Leaving");
 		return diaryNotes;
 	}
 	
@@ -195,7 +195,7 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 	 */
 	@SuppressWarnings("serial")
 	public void delete(DiaryNotes diaryNotes,String type) {
-		logger.debug("Entering delete Method");
+		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql= new StringBuilder();
 		
@@ -216,11 +216,11 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 				throw new DataAccessException(errorDetail.getError()) {};
 			}
 		}catch(DataAccessException e){
-			logger.debug("Error delete Method");
+			logger.debug("Error");
 			logger.error(e);
 			throw e;
 		}
-		logger.debug("Leaving delete Method");
+		logger.debug("Leaving");
 	}
 	
 	/**
@@ -240,7 +240,7 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 	@SuppressWarnings("unused")
 	@Override
 	public long save(DiaryNotes diaryNotes,String type) {
-		logger.debug("Entering Save Method");
+		logger.debug("Entering");
 		if (diaryNotes.getId()==Long.MIN_VALUE){
 			diaryNotes.setId(getNextidviewDAO().getNextId("SeqDiaryNotes"));
 			logger.debug("get NextID:"+diaryNotes.getId());
@@ -269,7 +269,7 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(diaryNotes);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		
-		logger.debug("Leaving save Method");
+		logger.debug("Leaving");
 		return diaryNotes.getId();
 	}
 	
@@ -290,7 +290,7 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 	@Override
 	public void update(DiaryNotes diaryNotes,String type) {
 		int recordCount = 0;
-		logger.debug("Entering Update Method");
+		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update DiaryNotes");
 		updateSql.append(StringUtils.trimToEmpty(type));
@@ -322,15 +322,12 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 			ErrorDetails errorDetail= getError("41004", diaryNotes.getId(), diaryNotes.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetail.getError()) {};
 		}
-		logger.debug("Leaving Update Method");
+		logger.debug("Leaving");
 	}
-
 	
-	
-	@SuppressWarnings("serial")
 	public void updateForScheduled(DiaryNotes diaryNotes) {
 		int recordCount = 0;
-		logger.debug("Entering Update Method");
+		logger.debug("Entering");
 		
 		String updateSql = 	"Update DiaryNotes_Temp"+ 
 							" Set NextActionDate = :NextActionDate, LastActionDate = :LastActionDate" +
@@ -345,23 +342,23 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 			//ErrorDetails errorDetails= getErrorDetailsDAO().getErrorDetail("41004", diaryNotes.getUserDetails().getUsrLanguage(),errParm);
 			//throw new DataAccessException(errorDetails.getError()) {};
 		}
-		logger.debug("Leaving Update Method");
+		logger.debug("Leaving");
 	}
 	
 	
 	public void updateForSuspend() {
-		logger.debug("Entering updateForSuspend Method");
+		logger.debug("Entering");
 			DiaryNotes diaryNotes = new DiaryNotes();
 			String updateSql = 	"update diarynotes_temp set SUSPEND = 'N',suspendstartdate = NULL,suspendenddate=null  "+ 
 								" where SUSPEND='1' AND	SUSPENDENDDATE = CURRENT_TIMESTAMP AND RECORDDELETED <> 'Y' ";
 			
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(diaryNotes);
 			this.namedParameterJdbcTemplate.update(updateSql, beanParameters);
-		logger.debug("Leaving updateForSuspend Method");
+		logger.debug("Leaving");
 	}
 	
 	public void updateForDelete() {
-		logger.debug("Entering updateForDelete Method");
+		logger.debug("Entering");
 			DiaryNotes diaryNotes = new DiaryNotes();
 			
 			String updateSql = 	"update diarynotes_temp set RECORDDELETED = 1 where FinalActionDate < CURRENT_TIMESTAMP ";
@@ -374,7 +371,7 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 	
 	@SuppressWarnings({ "rawtypes", "unused" })
 	public List getDiaryNoteRecord() {		
-		logger.debug("Entering getDiaryNoteRecord Method");
+		logger.debug("Entering");
 			DiaryNotes diaryNotes = new DiaryNotes();
 			List rowTypes = null;
 			String fetchListSql = 	"Select SeqNo, DnType, DnCreatedNo, DnCreatedName, FrqCode, FirstActionDate, NextActionDate, LastActionDate, FinalActionDate " +		
@@ -391,7 +388,7 @@ public class DiaryNotesDAOImpl extends BasisNextidDaoImpl<DiaryNotes> implements
 			    }catch(Exception e){
 			    	e.printStackTrace();
 			    }
-			logger.debug("Leaving getDiaryNoteRecord Method");
+			logger.debug("Leaving");
 	   return rowTypes;
 	}
 

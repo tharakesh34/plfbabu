@@ -44,28 +44,43 @@ Copyright 2011 - Pennant Technologies
 package com.pennant.webui.rmtmasters.financetype;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.BigDecimalConverter;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.GroupsModelArray;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
@@ -75,11 +90,14 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.search.SearchResult;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.rmtmasters.financetype.model.FinanceTypeComparator;
 import com.pennant.webui.rmtmasters.financetype.model.FinanceTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,7 +117,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	 */
 	protected Window window_FinanceTypeList; // autoWired
 	protected Borderlayout borderLayout_FinanceTypeList; // autoWired
-	protected Paging pagingFinanceTypeList; // autoWired
 	protected Listbox listBoxFinanceType; // autoWired
 
 	// List headers
@@ -110,13 +127,43 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	protected Listheader listheader_FinAcType; // autoWired
 	protected Listheader listheader_RecordStatus; // autoWired
 	protected Listheader listheader_RecordType;
-	
+
 	protected Listheader listheader_ProductType; // autoWired
 	protected Listheader listheader_SchdMthd; // autoWired
 	protected Listheader listheader_AlwGrace; // autoWired
-	protected Listheader listheader_AssetType; // autoWired
+	protected Listheader listheader_FinDivision;
 	protected Textbox finCategory;
 
+	// Filtering Fields
+	protected  Listbox   sortOperator_finType;
+	protected  Textbox   finType;
+	protected  Listbox   sortOperator_finTypeDesc;
+	protected  Textbox   finTypeDesc;
+	protected  Listbox   sortOperator_finCcy;
+	protected  Textbox   finCcy;
+	protected  Listbox   sortOperator_finDaysCalType;
+	protected  Combobox   finDaysCalType;
+	protected  Listbox   sortOperator_finSchdMthd;
+	protected  Combobox   finSchdMthd;
+	protected  Listbox  sortOperator_finIsAlwGrace;
+	protected  Checkbox finIsAlwGrace;
+	protected  Listbox  sortOperator_finDivision;
+	protected  Textbox  finDivision;
+	protected  Listbox  sortOperator_recordStatus;
+	protected  Textbox  recordStatus;
+	protected  Listbox  sortOperator_recordType;
+	protected  Listbox  recordType;
+
+	protected Label label_FinanceTypeSearch_RecordType; 	// autowired
+	protected Label label_FinanceTypeSearch_RecordStatus; 		// autowired
+
+	private Grid 			searchGrid;							// autowired
+	protected Textbox 		moduleType; 						// autowired
+	protected Radio			fromApproved;
+	protected Radio			fromWorkFlow;
+	protected Row			workFlowFrom;
+
+	private transient boolean  approvedList=false; 
 	// checkRights
 	protected Button btnHelp; // autoWired
 	protected Button button_FinanceTypeList_NewFinanceType; // autoWired
@@ -128,6 +175,9 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	private transient PagedListService pagedListService;
 	private transient FinanceTypeService financeTypeService;
 	private transient WorkFlowDetails workFlowDetails = null;
+
+	private List<ValueLabel>           listProfitDaysBasis=PennantAppUtil.getProfitDaysBasis();
+	private List<ValueLabel>           listScheduleMethod=PennantAppUtil.getScheduleMethod();
 
 	/**
 	 * default constructor.<br>
@@ -166,6 +216,45 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 			wfAvailable = false;
 		}
 
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_finTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_finCcy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_finDaysCalType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finDaysCalType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_finSchdMthd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finSchdMthd.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_finIsAlwGrace.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_finIsAlwGrace.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_finDivision.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finDivision.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = PennantAppUtil.setRecordType(this.recordType);
+		} else {
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_FinanceTypeSearch_RecordStatus.setVisible(false);
+			this.label_FinanceTypeSearch_RecordType.setVisible(false);
+		}
+
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -174,11 +263,10 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		 * from the index.zul that are filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_FinanceTypeList.setHeight(getBorderLayoutHeight());
+		this.listBoxFinanceType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
-		this.pagingFinanceTypeList.setPageSize(getListRows());
-		this.pagingFinanceTypeList.setDetailed(true);
-		
+
 		this.listheader_FinType.setSortAscending(new FieldComparator("finType", true));
 		this.listheader_FinType.setSortDescending(new FieldComparator("finType", false));
 		this.listheader_FinTypeDesc.setSortAscending(new FieldComparator("finTypeDesc", true));
@@ -189,17 +277,22 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		this.listheader_FinBasicType.setSortDescending(new FieldComparator("finDaysCalType", false));
 		this.listheader_FinAcType.setSortAscending(new FieldComparator("finAcType", true));
 		this.listheader_FinAcType.setSortDescending(new FieldComparator("finAcType", false));
-		
+
 		this.listheader_SchdMthd.setSortAscending(new FieldComparator("finSchdMthd", true));
 		this.listheader_SchdMthd.setSortDescending(new FieldComparator("finSchdMthd", false));
-		
+
 		this.listheader_AlwGrace.setSortAscending(new FieldComparator("fInIsAlwGrace", true));
 		this.listheader_AlwGrace.setSortDescending(new FieldComparator("fInIsAlwGrace", false));
-		
-		this.listheader_AssetType.setSortAscending(new FieldComparator("lovDescAssetCodeName", true));
-		this.listheader_AssetType.setSortDescending(new FieldComparator("lovDescAssetCodeName", false));
+
+		this.listheader_FinDivision.setSortAscending(new FieldComparator("finDivision", true));
+		this.listheader_FinDivision.setSortDescending(new FieldComparator("finDivision", false));
 
 		if (isWorkFlowEnabled()) {
+			if (isFirstTask()) {
+				button_FinanceTypeList_NewFinanceType.setVisible(true);
+			} else {
+				button_FinanceTypeList_NewFinanceType.setVisible(false);
+			}
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
 			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
@@ -209,36 +302,53 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 			this.listheader_RecordType.setVisible(false);
 		}
 
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<FinanceType>(FinanceType.class, getListRows());
-		this.searchObj.addSort("FinType", false);
-		this.searchObj.addFilter(new Filter("FinCategory", this.finCategory.getValue(), Filter.OP_EQUAL));
-		// WorkFlow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("RMTFinanceTypes_View");
-			if (isFirstTask()) {
-				button_FinanceTypeList_NewFinanceType.setVisible(true);
-			} else {
-				button_FinanceTypeList_NewFinanceType.setVisible(false);
-			}
+		// set the itemRenderer
+		this.listBoxFinanceType.setItemRenderer(new FinanceTypeListModelItemRenderer());
 
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-		} else {
-			this.searchObj.addTabelName("RMTFinanceTypes_AView");
-		}
-
-		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_FinanceTypeList_NewFinanceType.setVisible(false);
 			this.button_FinanceTypeList_FinanceTypeSearchDialog.setVisible(false);
 			this.button_FinanceTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
-		} else {
-			// Set the ListModel for the articles.
-			findSearchObject();
-			this.listBoxFinanceType.setItemRenderer(new FinanceTypeListModelItemRenderer());
+		} else{
+			doSearch();
+			if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
+		setProfitDaysCalType();
+		setScheduleMethod();
 		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * This method sets all rightsTypes as ComboItems for ComboBox
+	 */
+	private void setProfitDaysCalType() {
+		logger.debug("Entering ");
+		Comboitem comboitem;
+		for (int i = 0; i < listProfitDaysBasis.size(); i++) {
+			comboitem = new Comboitem();
+			comboitem.setLabel(listProfitDaysBasis.get(i).getLabel());
+			comboitem.setValue(listProfitDaysBasis.get(i).getValue());
+			this.finDaysCalType.appendChild(comboitem);
+		}
+		logger.debug("Leaving ");
+	}
+	/**
+	 * This method sets all rightsTypes as ComboItems for ComboBox
+	 */
+	private void setScheduleMethod() {
+		logger.debug("Entering ");
+		Comboitem comboitem;
+		for (int i = 0; i < listScheduleMethod.size(); i++) {
+			comboitem = new Comboitem();
+			comboitem.setLabel(listScheduleMethod.get(i).getLabel());
+			comboitem.setValue(listScheduleMethod.get(i).getValue());
+			this.finSchdMthd.appendChild(comboitem);
+		}
+		logger.debug("Leaving ");
 	}
 	
 	/**
@@ -253,7 +363,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 				searchResult.getResult().toArray(),new FinanceTypeComparator()));
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * SetVisible for components by checking if there's a right for it.
@@ -327,11 +436,39 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		logger.debug("Entering" + event.toString());
 		// create a new FinanceType object, We GET it from the backEnd.
 		final FinanceType aFinanceType = getFinanceTypeService().getNewFinanceType();
-		aFinanceType.setFinScheduleOn("");
+		//aFinanceType.setFinScheduleOn("");
 		boolean isCopyProcess = false;
 		if (event.getData() != null) {
-			copyDATA(aFinanceType, event.getData());
+			BigDecimalConverter bigDecimalConverter = new BigDecimalConverter(null);
+			ConvertUtils.register(bigDecimalConverter, BigDecimal.class);
+			FinanceType sourceFin = (FinanceType) event.getData();
+			BeanUtils.copyProperties(aFinanceType, sourceFin);
+			aFinanceType.setFinType("");
+			aFinanceType.setFinTypeDesc("");
+			aFinanceType.setNewRecord(true);
 			isCopyProcess = true;
+			List<FinTypeAccount> list = sourceFin.getFinTypeAccounts();
+			if (list!=null && !list.isEmpty()) {
+				aFinanceType.setFinTypeAccounts(new ArrayList<FinTypeAccount>());
+				for (FinTypeAccount finTypeAccount : list) {
+				 FinTypeAccount aFinTypeAccount = getFinanceTypeService().getNewFinTypeAccount();
+				 aFinTypeAccount.setFinType(finTypeAccount.getFinType());
+				 aFinTypeAccount.setFinCcy(finTypeAccount.getFinCcy());
+				 aFinTypeAccount.setFinCcyName(finTypeAccount.getFinCcyName());
+				 aFinTypeAccount.setFinFormatter(finTypeAccount.getFinFormatter());
+				 aFinTypeAccount.setEvent(finTypeAccount.getEvent());
+				 aFinTypeAccount.setAlwManualEntry(finTypeAccount.isAlwManualEntry());
+				 aFinTypeAccount.setAlwCustomerAccount(finTypeAccount.isAlwCustomerAccount());
+				 aFinTypeAccount.setAccountReceivable(finTypeAccount.getAccountReceivable());
+				 aFinTypeAccount.setCustAccountTypes(finTypeAccount.getCustAccountTypes());
+				 aFinTypeAccount.setVersion(1);
+				 aFinTypeAccount.setRecordType(PennantConstants.RCD_ADD);
+				 aFinanceType.getFinTypeAccounts().add(aFinTypeAccount);
+				}
+			}
+			
+			
+			
 		}
 		showDetailView(aFinanceType,isCopyProcess);
 		logger.debug("Leaving" + event.toString());
@@ -397,12 +534,28 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		//FinanceRateReviewUtil.recalRateReview();	
-		//FinanceDateRollOverUtil.doDateRollOver();
-		this.pagingFinanceTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_FinanceTypeList, event);
-		this.window_FinanceTypeList.invalidate();
+		this.sortOperator_finDivision.setSelectedIndex(0);
+		this.finDivision.setValue("");
+		this.sortOperator_finCcy.setSelectedIndex(0);
+		this.finCcy.setValue("");
+		this.sortOperator_finDaysCalType.setSelectedIndex(0);
+		this.finDaysCalType.setValue("");
+		this.sortOperator_finIsAlwGrace.setSelectedIndex(0);
+		this.finIsAlwGrace.setChecked(false);
+		this.sortOperator_finSchdMthd.setSelectedIndex(0);
+		this.finSchdMthd.setValue("");
+		this.sortOperator_finType.setSelectedIndex(0);
+		this.finType.setValue("");
+		this.sortOperator_finTypeDesc.setSelectedIndex(0);
+		this.finTypeDesc.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
 
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -412,28 +565,9 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	 * @param event
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public void onClick$button_FinanceTypeList_FinanceTypeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our FinanceTypeDialog ZUL-file with parameters. So we can call them with a object of the selected
-		 * FinanceType. For handed over these parameter only a Map is accepted. So we put the FinanceType object in a
-		 * HashMap.
-		 */
-		@SuppressWarnings("rawtypes")
-		final HashMap map = new HashMap();
-		map.put("financeTypeList", this);
-		map.put("searchObject", this.searchObj);
-		map.put("listBoxFinanceType", this.listBoxFinanceType);
-		map.put("pagingFinanceTypeList", this.pagingFinanceTypeList);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -446,8 +580,118 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	@SuppressWarnings("unused")
 	public void onClick$button_FinanceTypeList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTListReportUtils reportUtils = new PTListReportUtils("FinanceType", getSearchObj(),this.pagingFinanceTypeList.getTotalSize()+1);
+		PTListReportUtils reportUtils = new PTListReportUtils("FinanceType", getSearchObj(),-1);
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doSearch(){
+
+		logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<FinanceType>(FinanceType.class,-1);
+
+		// Defualt Sort on the table
+		this.searchObj.addSort("FinType", false);
+
+		this.searchObj.addField("FinType");
+		this.searchObj.addField("FinTypeDesc");
+		this.searchObj.addField("FinCcy");
+		this.searchObj.addField("FinDaysCalType");
+		this.searchObj.addField("FinAcType");
+		this.searchObj.addField("FinSchdMthd");
+		this.searchObj.addField("FInIsAlwGrace");
+		this.searchObj.addField("FinDivision");
+		this.searchObj.addField("LovDescProductCodeDesc");
+		this.searchObj.addField("LovDescProductCodeName");
+		this.searchObj.addField("RecordStatus");
+		this.searchObj.addField("RecordType");
+		this.searchObj.addField("FinCategory");
+		
+		// Workflow
+		if (isWorkFlowEnabled()) {
+			this.searchObj.addTabelName("RMTFinanceTypes_View");
+
+			if(this.moduleType==null){
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+				approvedList=false;
+
+			}else{
+				if(this.fromApproved.isSelected()){
+					approvedList=true;
+				}else{
+					approvedList=false;
+				}
+			}
+		}else{
+			approvedList=true;
+		}
+		if(approvedList){
+			this.searchObj.addTabelName("RMTFinanceTypes_AView");
+		}else{
+			this.searchObj.addTabelName("RMTFinanceTypes_View");
+		}
+
+		//Finance Assets 
+		if (!StringUtils.trimToEmpty(this.finDivision.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finDivision.getSelectedItem(), this.finDivision.getValue() , "finDivision");
+		}
+		//Finance Category
+		if (!StringUtils.trimToEmpty(this.finCcy.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finCcy.getSelectedItem(), this.finCategory.getValue() , "finCategory");
+		}
+		//Finance Days Calculation Type
+		if (null !=this.finDaysCalType.getSelectedItem() && !StringUtils.trimToEmpty(this.finDaysCalType.getSelectedItem().getValue().toString()).equals("")){
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finDaysCalType.getSelectedItem(), this.finDaysCalType.getSelectedItem().getValue().toString(), "finDaysCalType");
+		}
+
+		//Finance is General Reference
+		if (this.finIsAlwGrace.isChecked()) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finIsAlwGrace.getSelectedItem(), 1 , "finIsAlwGrace");
+		}else{
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finIsAlwGrace.getSelectedItem(), 0 , "finIsAlwGrace");
+		}
+
+		//Finance Schedule Method
+		if (null !=this.finSchdMthd.getSelectedItem() && !StringUtils.trimToEmpty(this.finSchdMthd.getSelectedItem().getValue().toString()).equals("")){
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finSchdMthd.getSelectedItem(), this.finSchdMthd.getSelectedItem().getValue().toString(), "finSchdMthd");
+		}
+		//Finance Finance Type
+		if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finType.getSelectedItem(), this.finType.getValue() , "finType");
+		}
+		//Finance Type Description
+		if (!StringUtils.trimToEmpty(this.finTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finTypeDesc.getSelectedItem(), this.finTypeDesc.getValue() , "finTypeDesc");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		
+		// Set the ListModel for the articles.
+		findSearchObject();
+
+		logger.debug("Leaving");
+
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -467,182 +711,12 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	public void setSearchObj(JdbcSearchObject<FinanceType> searchObj) {
 		this.searchObj = searchObj;
 	}
-	
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
 	public PagedListService getPagedListService() {
 		return pagedListService;
-	}
-
-	private FinanceType copyDATA(FinanceType newFin, Object data) {
-		
-		//Basic Details Tab
-		FinanceType sourceFin = (FinanceType) data;
-		newFin.setFinCcy(sourceFin.getFinCcy());
-		newFin.setLovDescFinCcyName(sourceFin.getLovDescFinCcyName());
-		newFin.setFinDaysCalType(sourceFin.getFinDaysCalType());
-		newFin.setFinAcType(sourceFin.getFinAcType());
-		newFin.setLovDescFinAcTypeName(sourceFin.getLovDescFinAcTypeName());
-		newFin.setFinContingentAcType(sourceFin.getFinContingentAcType());
-		newFin.setLovDescFinContingentAcTypeName(sourceFin.getLovDescFinContingentAcTypeName());
-		newFin.setFinIsGenRef(sourceFin.isFinIsGenRef());
-		newFin.setFinIsOpenNewFinAc(sourceFin.isFinIsOpenNewFinAc());
-		newFin.setFinMinAmount(sourceFin.getFinMinAmount());
-		newFin.setFinMaxAmount(sourceFin.getFinMaxAmount());
-		newFin.setFinDftStmtFrq(sourceFin.getFinDftStmtFrq());
-		newFin.setFinIsAlwMD(sourceFin.isFinIsAlwMD());
-		newFin.setFinSchdMthd(sourceFin.getFinSchdMthd());
-		newFin.setFInIsAlwGrace(sourceFin.isFInIsAlwGrace());
-		newFin.setFinHistRetension(sourceFin.getFinHistRetension());
-		newFin.setFinFrEqrepayment(sourceFin.isFinFrEqrepayment());
-		newFin.setFinSchCalCodeOnRvw(sourceFin.getFinSchCalCodeOnRvw());
-		newFin.setFinIsActive(sourceFin.isFinIsActive());
-		newFin.setFinAssetType(sourceFin.getFinAssetType());
-		newFin.setPftPayAcType(sourceFin.getPftPayAcType());
-		newFin.setFinIsOpenPftPayAcc(sourceFin.isFinIsOpenPftPayAcc());
-		newFin.setLovDescProductCodeName(sourceFin.getLovDescProductCodeName());
-		newFin.setLovDescPftPayAcTypeName(sourceFin.getLovDescPftPayAcTypeName());	
-		newFin.setFinBankContingentAcType(sourceFin.getFinBankContingentAcType());
-		newFin.setLovDescFinBankContingentAcTypeName(sourceFin.getLovDescFinBankContingentAcTypeName());
-		newFin.setFinProvisionAcType(sourceFin.getFinProvisionAcType());
-		newFin.setLovDescFinProvisionAcTypeName(sourceFin.getLovDescFinProvisionAcTypeName());
-		newFin.setFinDepreciationReq(sourceFin.isFinDepreciationReq());
-		newFin.setFinDepreciationFrq(sourceFin.getFinDepreciationFrq());
-		newFin.setFinIsDwPayRequired(sourceFin.isFinIsDwPayRequired());
-		newFin.setFinMinDownPayAmount(sourceFin.getFinMinDownPayAmount());
-		
-		//Grace period Details Tab
-		newFin.setFinGrcRateType(sourceFin.getFinGrcRateType());
-		newFin.setFinGrcBaseRate(sourceFin.getFinGrcBaseRate());
-		newFin.setLovDescFinGrcBaseRateName(sourceFin.getLovDescFinGrcBaseRateName());
-		newFin.setFinGrcSplRate(sourceFin.getFinGrcSplRate());
-		newFin.setLovDescFinGrcSplRateName(sourceFin.getLovDescFinGrcSplRateName());
-		newFin.setFinGrcIntRate(sourceFin.getFinGrcIntRate());
-		newFin.setFInGrcMinRate(sourceFin.getFInGrcMinRate());
-		newFin.setFinGrcMaxRate(sourceFin.getFinGrcMaxRate());
-		newFin.setFinGrcDftIntFrq(sourceFin.getFinGrcDftIntFrq());
-		newFin.setFinGrcIsIntCpz(sourceFin.isFinGrcIsIntCpz());
-		newFin.setFinGrcCpzFrq(sourceFin.getFinGrcCpzFrq());
-		newFin.setFinGrcAlwRateChgAnyDate(sourceFin.isFinGrcAlwRateChgAnyDate());
-		newFin.setFinGrcIsRvwAlw(sourceFin.isFinGrcIsRvwAlw());
-		newFin.setFinGrcRvwFrq(sourceFin.getFinGrcRvwFrq());
-		newFin.setFinGrcScheduleOn(sourceFin.getFinGrcScheduleOn());
-		newFin.setFinGrcRvwRateApplFor(sourceFin.getFinGrcRvwRateApplFor());
-		newFin.setFinIsIntCpzAtGrcEnd(sourceFin.isFinIsIntCpzAtGrcEnd());
-		newFin.setFinIsAlwGrcRepay(sourceFin.isFinIsAlwGrcRepay());
-		newFin.setFinGrcSchdMthd(sourceFin.getFinGrcSchdMthd());
-		newFin.setFinGrcMargin(sourceFin.getFinGrcMargin());
-		
-		//Schedule Details Tab
-		newFin.setFinRateType(sourceFin.getFinRateType());
-		newFin.setFinBaseRate(sourceFin.getFinBaseRate());
-		newFin.setLovDescFinBaseRateName(sourceFin.getLovDescFinBaseRateName());
-		newFin.setFinSplRate(sourceFin.getFinSplRate());
-		newFin.setLovDescFinSplRateName(sourceFin.getLovDescFinSplRateName());
-		newFin.setFinIntRate(sourceFin.getFinIntRate());
-		newFin.setFInMinRate(sourceFin.getFInMinRate());
-		newFin.setFinMaxRate(sourceFin.getFinMaxRate());
-		newFin.setFinDftIntFrq(sourceFin.getFinDftIntFrq());
-		newFin.setFinIsIntCpz(sourceFin.isFinIsIntCpz());
-		newFin.setFinCpzFrq(sourceFin.getFinCpzFrq());
-		newFin.setFinAlwRateChangeAnyDate(sourceFin.isFinAlwRateChangeAnyDate());
-		newFin.setFinIsRvwAlw(sourceFin.isFinIsRvwAlw());
-		newFin.setFinRvwFrq(sourceFin.getFinRvwFrq());
-		newFin.setFinRvwRateApplFor(sourceFin.getFinRvwRateApplFor());
-		newFin.setFinSchdMthd(sourceFin.getFinSchdMthd());
-		newFin.setFinMargin(sourceFin.getFinMargin());
-		newFin.setFinScheduleOn(sourceFin.getFinScheduleOn());
-		
-		//Repay Period Details Tab
-		newFin.setFinMinTerm(sourceFin.getFinMinTerm());
-		newFin.setFinMaxTerm(sourceFin.getFinMaxTerm());
-		newFin.setFinDftTerms(sourceFin.getFinDftTerms());
-		newFin.setFinRpyFrq(sourceFin.getFinRpyFrq());
-		newFin.setFInRepayMethod(sourceFin.getFInRepayMethod());
-		newFin.setFinIsAlwPartialRpy(sourceFin.isFinIsAlwPartialRpy());
-		newFin.setFinODRpyTries(sourceFin.getFinODRpyTries());
-		newFin.setFinMaxDifferment(sourceFin.getFinMaxDifferment());
-		newFin.setFinIsAlwEarlyRpy(sourceFin.isFinIsAlwEarlyRpy());		
-		newFin.setFinIsAlwEarlySettle(sourceFin.isFinIsAlwEarlySettle());
-		newFin.setFinIsAlwDifferment(sourceFin.isFinIsAlwDifferment());
-		newFin.setFinMaxFrqDifferment(sourceFin.getFinMaxFrqDifferment());
-		newFin.setFinIsAlwFrqDifferment(sourceFin.isFinIsAlwFrqDifferment());
-		
-		//Accounting Events Details Tab
-		newFin.setFinAEAddDsbOD(sourceFin.getFinAEAddDsbOD());
-		newFin.setLovDescFinAEAddDsbODName(sourceFin.getLovDescFinAEAddDsbODName());
-		newFin.setLovDescEVFinAEAddDsbODName(sourceFin.getLovDescEVFinAEAddDsbODName());
-
-		newFin.setFinAEAddDsbFD(sourceFin.getFinAEAddDsbFD());
-		newFin.setLovDescFinAEAddDsbFDName(sourceFin.getLovDescFinAEAddDsbFDName());
-		newFin.setLovDescEVFinAEAddDsbFDName(sourceFin.getLovDescEVFinAEAddDsbFDName());
-
-		newFin.setFinAEAddDsbFDA(sourceFin.getFinAEAddDsbFDA());
-		newFin.setLovDescFinAEAddDsbFDAName(sourceFin.getLovDescFinAEAddDsbFDAName());
-		newFin.setLovDescEVFinAEAddDsbFDAName(sourceFin.getLovDescEVFinAEAddDsbFDAName());
-
-		newFin.setFinAEAmzNorm(sourceFin.getFinAEAmzNorm());
-		newFin.setLovDescFinAEAmzNormName(sourceFin.getLovDescFinAEAmzNormName());
-		newFin.setLovDescEVFinAEAmzNormName(sourceFin.getLovDescEVFinAEAmzNormName());
-
-		newFin.setFinAEAmzSusp(sourceFin.getFinAEAmzSusp());
-		newFin.setLovDescFinAEAmzSuspName(sourceFin.getLovDescFinAEAmzSuspName());
-		newFin.setLovDescEVFinAEAmzSuspName(sourceFin.getLovDescEVFinAEAmzSuspName());
-
-		newFin.setFinAEToNoAmz(sourceFin.getFinAEToNoAmz());
-		newFin.setLovDescFinAEToNoAmzName(sourceFin.getLovDescFinAEToNoAmzName());
-		newFin.setLovDescEVFinAEToNoAmzName(sourceFin.getLovDescEVFinAEToNoAmzName());
-
-		newFin.setFinToAmz(sourceFin.getFinToAmz());
-		newFin.setLovDescFinToAmzName(sourceFin.getLovDescFinToAmzName());
-		newFin.setLovDescEVFinToAmzName(sourceFin.getLovDescEVFinToAmzName());
-
-		newFin.setFinAERateChg(sourceFin.getFinAERateChg());
-		newFin.setLovDescFinAERateChgName(sourceFin.getLovDescFinAERateChgName());
-		newFin.setLovDescEVFinAERateChgName(sourceFin.getLovDescEVFinAERateChgName());
-
-		newFin.setFinAERepay(sourceFin.getFinAERepay());
-		newFin.setLovDescFinAERepayName(sourceFin.getLovDescFinAERepayName());
-		newFin.setLovDescEVFinAERepayName(sourceFin.getLovDescEVFinAERepayName());
-
-		newFin.setFinAEEarlyPay(sourceFin.getFinAEEarlyPay());
-		newFin.setLovDescFinAEEarlyPayName(sourceFin.getLovDescFinAEEarlyPayName());
-		newFin.setLovDescEVFinAEEarlyPayName(sourceFin.getLovDescEVFinAEEarlyPayName());
-
-		newFin.setFinAEEarlySettle(sourceFin.getFinAEEarlySettle());
-		newFin.setLovDescFinAEEarlySettleName(sourceFin.getLovDescFinAEEarlySettleName());
-		newFin.setLovDescEVFinAEEarlySettleName(sourceFin.getLovDescEVFinAEEarlySettleName());
-		
-		newFin.setFinLatePayRule(sourceFin.getFinLatePayRule());
-		newFin.setLovDescFinLatePayRuleName(sourceFin.getLovDescFinLatePayRuleName());
-		newFin.setLovDescEVFinLatePayRuleName(sourceFin.getLovDescEVFinLatePayRuleName());
-
-		newFin.setFinAEWriteOff(sourceFin.getFinAEWriteOff());
-		newFin.setLovDescFinAEWriteOffName(sourceFin.getLovDescFinAEWriteOffName());
-		newFin.setLovDescEVFinAEWriteOffName(sourceFin.getLovDescEVFinAEWriteOffName());
-		
-		newFin.setFinProvision(sourceFin.getFinProvision());
-		newFin.setLovDescFinProvisionName(sourceFin.getLovDescFinProvisionName());
-		newFin.setLovDescEVFinProvisionName(sourceFin.getLovDescEVFinProvisionName());
-
-		newFin.setFinSchdChange(sourceFin.getFinSchdChange());
-		newFin.setLovDescFinSchdChangeName(sourceFin.getLovDescFinSchdChangeName());
-		newFin.setLovDescEVFinSchdChangeName(sourceFin.getLovDescEVFinSchdChangeName());
-		
-		newFin.setFinAECapitalize(sourceFin.getFinAECapitalize());
-		newFin.setLovDescFinAECapitalizeName(sourceFin.getLovDescFinAECapitalizeName());
-		newFin.setLovDescEVFinAECapitalizeName(sourceFin.getLovDescEVFinAECapitalizeName());
-		
-		newFin.setFinDepreciationRule(sourceFin.getFinDepreciationRule());
-		newFin.setLovDescFinDepreciationRuleName(sourceFin.getLovDescFinDepreciationRuleName());
-		newFin.setLovDescEVFinDepreciationRuleName(sourceFin.getLovDescEVFinDepreciationRuleName());
-		
-		newFin.setFinProvision(sourceFin.getFinProvision());
-		newFin.setLovDescFinProvisionName(sourceFin.getLovDescFinProvisionName());
-		
-		return newFin;
-
 	}
 
 }

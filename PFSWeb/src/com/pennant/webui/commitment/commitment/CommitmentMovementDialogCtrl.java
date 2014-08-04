@@ -7,11 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.zk.ui.event.Event;
 
-import com.pennant.backend.model.applicationmaster.CheckListDetail;
-import com.pennant.backend.model.bmtmasters.CheckList;
 import com.pennant.backend.model.commitment.CommitmentMovement;
-import com.pennant.webui.applicationmaster.checklist.CheckListDialogCtrl;
-import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 
 public class CommitmentMovementDialogCtrl extends GFCBaseCtrl implements Serializable {

@@ -57,10 +57,11 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -68,11 +69,11 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -94,10 +95,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window       window_SelectFinanceTypeDialog;            // autoWired
-	protected Textbox      finType;                                   // autoWired
-	protected Textbox      wIfFinaceRef;                              // autoWired
-	protected Textbox      lovDescFinTypeName;                        // autoWired
-	protected Button       btnSearchWIFFinaceRef;                     // autoWired
+	protected ExtendedCombobox      finType;                                   // autoWired
+	protected ExtendedCombobox      wIfFinaceRef;                              // autoWired
 	protected Button       btnProceed;                                // autoWired
 	protected FinanceMainListCtrl               financeMainListCtrl;  //over handed parameter
 	protected transient FinanceWorkFlow         financeWorkFlow;
@@ -105,7 +104,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	private FinanceDetail financeDetail =null;
 	private FinanceType financeType =null;
 	private List<String> userRoleCodeList = new ArrayList<String>();
-	private String userRoleCode =null;
+	//private String userRoleCode =null;
 	private String screenCode =null;
 	private String loanType = "";
 	
@@ -113,6 +112,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	private transient   FinanceWorkFlowService  financeWorkFlowService;
 	private transient   FinanceDetailService    financeDetailService;   
 
+    private String tempFinType="";	
+    private String menuItemRightName= null;	
 	/**
 	 * default constructor.<br>
 	 */
@@ -160,20 +161,61 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		if (args.containsKey("loanType")) {
 			this.loanType = (String) args.get("loanType");
 		}
+		if (args.containsKey("menuItemRightName")) {
+			this.menuItemRightName = (String) args.get("menuItemRightName");
+		}
 		
 		if (args.containsKey("role")) {
 			userRoleCodeList = (ArrayList<String>) args.get("role");
-			this.userRoleCode = userRoleCodeList.get(0);//FIXME--Temperary purpose
-			if(this.userRoleCode.startsWith("FINANCE_QDE_")){//TODO - Hard COde need to give a second look
+			//this.userRoleCode = userRoleCodeList.get(0);//FIXME--Temporary purpose
+			/*if(this.userRoleCode.startsWith("FINANCE_QDE_")){
 				this.screenCode = "QDE";
 			}else{
 				this.screenCode = "DDE";
-			}
+			}*/
+			this.screenCode = "DDE";
 		}
+		doSetFieldProperties();
 		showSelectFinanceTypeDialog();
 		logger.debug("Leaving " + event.toString());
 	}
 
+	
+	/**
+	 * Set the properties of the fields, like maxLength.<br>
+	 */
+	private void doSetFieldProperties() {
+		logger.debug("Entering");
+		// Empty sent any required attributes
+		this.finType.setMaxlength(8);
+		this.finType.setMandatoryStyle(true);
+		this.finType.setModuleName("FinanceWorkFlow");
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("LovDescFinTypeName");
+		this.finType.setValidateColumns(new String[] { "FinType" });
+		Filter[] filters = new Filter[4];
+		filters[0]= new Filter("ScreenCode", this.screenCode, Filter.OP_EQUAL);
+		filters[1]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		filters[2]= new Filter("WorkFlowType", "TSR_FIN_PROCESS", Filter.OP_NOT_EQUAL);
+		filters[3]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
+		//filters[2]= new Filter("lovDescFinDivisionName", PennantConstants.FIN_DIVISION_TREASURY, Filter.OP_NOT_EQUAL);
+		/*		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
+					filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
+				}*/
+		this.finType.setFilters(filters);
+
+		this.wIfFinaceRef.setModuleName("WIFFinanceMain");
+		this.wIfFinaceRef.setValueColumn("FinReference");
+		//this.wIfFinaceRef.setDescColumn("FinAmount");
+		this.wIfFinaceRef.setValidateColumns(new String[] { "FinReference" });
+		Filter[] filters1 = new Filter[1];
+		filters1[0]= new Filter("RecordType", "", Filter.OP_EQUAL);
+		this.wIfFinaceRef.setFilters(filters1);
+  
+
+		logger.debug("Leaving");
+	}
+	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++ Components events +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -182,77 +224,66 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 * When user clicks on button "SearchFinType" button
 	 * @param event
 	 */
-	public void onClick$btnSearchFinType(Event event){
+	public void onFulfill$finType(Event event){
 		logger.debug("Entering " + event.toString());
-		String finType=this.finType.getValue();
-		Filter[] filters;
-		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
-			filters = new Filter[3] ;
-		}else{
-			filters = new Filter[2] ;
-		}
-		filters[0]= new Filter("ScreenCode", this.screenCode, Filter.OP_EQUAL);
-		filters[1]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
-		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
-			filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
-		}
-		Object dataObject = ExtendedSearchListBox.show(this.window_SelectFinanceTypeDialog,"FinanceWorkFlow",filters);
+		Object dataObject = this.finType.getObject();
 		if (dataObject instanceof String){
 			this.finType.setValue(dataObject.toString());
-			this.lovDescFinTypeName.setValue("");
+			this.finType.setDescription("");
 		}else{
 			FinanceWorkFlow details= (FinanceWorkFlow) dataObject;
 			/*Set FinanceWorkFloe object*/
 			setFinanceWorkFlow(details);
 			if (details != null) {
+				this.loanType = details.getLovDescProductCodeName();
 				this.finType.setValue(details.getFinType());
-				this.lovDescFinTypeName.setValue(details.getFinType()+"-"+details.getLovDescFinTypeName());
+				this.finType.setDescription(details.getLovDescFinTypeName());
 			}
 		}
-		if (!StringUtils.trimToEmpty(finType).equals(this.finType.getValue())) {
+		if (!StringUtils.trimToEmpty(tempFinType).equals(this.finType.getValue())) {
 			this.wIfFinaceRef.setValue("");
 		}
-		logger.debug("Leaving " + event.toString());
-	}
-	/**
-	 * When user clicks on button "btnSearchWIFFinaceRef" button
-	 * @param event
-	 */
-	public void onClick$btnSearchWIFFinaceRef(Event event) {
-		logger.debug("Entering " + event.toString());
+		tempFinType = this.finType.getValue();
+		
 		Filter[] filters;
 		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
 			filters = new Filter[3] ;
 		}else{
 			filters = new Filter[2] ;
 		}
-		Object dataObject;
 		if(!this.finType.getValue().trim().equals("")){
 			filters[0]= new Filter("FinType", this.finType.getValue(), Filter.OP_EQUAL);
 			filters[1]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
 			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
 				filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
 			}
-			dataObject = ExtendedSearchListBox.show(this.window_SelectFinanceTypeDialog,"WIFFinanceMain",filters);
 		}else{
 			filters[0]= new Filter("lovDescScreenCode", this.screenCode, Filter.OP_EQUAL);
 			filters[1]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
 			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
 				filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
 			}
-			dataObject = ExtendedSearchListBox.show(this.window_SelectFinanceTypeDialog,"WIFFinanceMain",filters);
 		}
-
+		this.wIfFinaceRef.setFilters(filters);
+		logger.debug("Leaving " + event.toString());
+	}
+	/**
+	 * When user clicks on button "btnSearchWIFFinaceRef" button
+	 * @param event
+	 */
+	public void onFulfill$wIfFinaceRef(Event event) {
+		logger.debug("Entering " + event.toString());
+		Object dataObject = this.wIfFinaceRef.getObject();
 		if (dataObject instanceof String){
 			this.finType.setValue(dataObject.toString());
-			this.lovDescFinTypeName.setValue("");
+			this.finType.setDescription("");
 		}else{
 			FinanceMain details= (FinanceMain) dataObject;
-
 			if (details != null) {
-				this.wIfFinaceRef.setValue(details.getFinReference());	
+				this.loanType = details.getLovDescProductCodeName();
+				this.wIfFinaceRef.setValue(details.getFinReference());
 				if(StringUtils.trimToEmpty(this.finType.getValue()).equals("")){
-					FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getFinanceWorkFlowById(details.getFinType());
+					FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(details.getFinType());
 					setFinanceWorkFlow(financeWorkFlow);
 				}
 			}
@@ -267,25 +298,51 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		
-		String screenPath="";
+		
 		doFieldValidation();
 		this.window_SelectFinanceTypeDialog.onClose();
 		
 		if(!this.wIfFinaceRef.getValue().trim().equals("")){
-			financeDetail = getFinanceDetailService().getFinanceDetailById(this.wIfFinaceRef.getValue().trim(), true,"");
+			financeDetail = getFinanceDetailService().getFinanceDetailById(this.wIfFinaceRef.getValue().trim(), true,"",false);
+			financeDetail.getFinScheduleData().getFinanceMain().setCurDisbursementAmt(
+					financeDetail.getFinScheduleData().getFinanceMain().getFinAmount());
 			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
 			financeDetail.getFinScheduleData().getFinanceMain().setRecordType("");
 			financeDetail.getFinScheduleData().getFinanceMain().setVersion(0);
+			
+			//overdue Penalty Details
+			if(financeDetail.getFinScheduleData().getFinODPenaltyRate() == null){
+				financeDetail.getFinScheduleData().setFinODPenaltyRate(new FinODPenaltyRate());
+			}
+			
+			financeType = financeDetail.getFinScheduleData().getFinanceType();
+			financeDetail.getFinScheduleData().getFinODPenaltyRate().setApplyODPenalty(financeType.isApplyODPenalty());
+			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODIncGrcDays(financeType.isODIncGrcDays());
+			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODChargeCalOn(financeType.getODChargeCalOn());
+			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODGraceDays(financeType.getODGraceDays());
+			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODChargeType(financeType.getODChargeType());
+			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
+			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODAllowWaiver(financeType.isODAllowWaiver());
+			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
+
 		}else{
 			financeType = getFinanceTypeService().getApprovedFinanceTypeById(this.finType.getValue().trim());
 			financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain(), financeType);
 			financeDetail.getFinScheduleData().setFinanceType(financeType);
 		}
 		
-		financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, 
-				getFinanceWorkFlow().getLovDescFirstTaskOwner(),getFinanceWorkFlow().getScreenCode(),"");
-		financeDetail.setNewRecord(true);
-
+		try {
+			//Fetch & set Default statuses f
+			if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
+				financeDetail.getFinScheduleData().getFinanceMain().setFinStsReason(PennantConstants.FINSTSRSN_SYSTEM);
+				financeDetail.getFinScheduleData().getFinanceMain().setFinStatus(getFinanceDetailService().getCustStatusByMinDueDays());
+			}
+		} catch (Exception e) {
+			logger.debug(e);
+		}
+		
+		//Workflow Details Setup
+		
 		if(getFinanceWorkFlow()!=null){
 			workFlowDetails = WorkFlowUtil.getDetailsByType(getFinanceWorkFlow().getWorkFlowType());
 		}
@@ -300,27 +357,61 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 			financeDetail.getFinScheduleData().getFinanceMain().setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 
+		//Fetching Finance Reference Detail
+		financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, 
+				getFinanceWorkFlow().getLovDescFirstTaskOwner(),getFinanceWorkFlow().getScreenCode(),"");
+		financeDetail.setNewRecord(true);
+
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
 		if(getFinanceWorkFlow()!=null){
+			StringBuilder fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
+			/*
+			 * if screen code is quick data entry (QDE) navigate to QDE screen
+			 * otherwise navigate to Detail data entry screen
+			 */
+			if (getFinanceWorkFlow().getScreenCode().trim().equals("QDE")) {
+				fileLocaation.append("FinanceMainQDEDialog.zul");
+			} else {
+				String productType = StringUtils.trimToEmpty(this.loanType);
 
-			/*if screen code is quick data entry (QDE) navigate to QDE screen otherwise navigate to  Detail data entry screen */
-			if(getFinanceWorkFlow().getScreenCode().trim().equals("QDE")){
-				screenPath="/WEB-INF/pages/Finance/FinanceMain/FinanceMainQDEDialog.zul";
-			} else{		
-				screenPath="/WEB-INF/pages/Finance/FinanceMain/FinanceMainDialog.zul";
+				if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_IJARAH)) {
+					fileLocaation.append("IjarahFinanceMainDialog.zul");
+				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_ISTISNA)) {
+					fileLocaation.append("IstisnaFinanceMainDialog.zul");
+				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_MUDARABA)) {
+					fileLocaation.append("MudarabaFinanceMainDialog.zul");
+				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_MURABAHA)) {
+					fileLocaation.append("MurabahaFinanceMainDialog.zul");
+				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_MUSHARAKA)) {
+					fileLocaation.append("MusharakFinanceMainDialog.zul");
+				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_TAWARRUQ)) {
+					fileLocaation.append("TawarruqFinanceMainDialog.zul");
+				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_SUKUK)) {
+					fileLocaation.append("SukukFinanceMainDialog.zul");
+				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_SUKUKNRM)) {
+					fileLocaation.append("SukuknrmFinanceMainDialog.zul");
+				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_ISTNORM)) {
+					fileLocaation.append("IstnormFinanceMainDialog.zul"); 
+				} else {
+					PTMessageUtils.showErrorMessage(Labels.getLabel("message.error.productNotFound", 
+							new String[]{productType}));	
+					return;
+				}
 			}
 
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("financeDetail", financeDetail);
 			map.put("financeMainListCtrl", 	this.financeMainListCtrl);
 			map.put("financeType", financeType);
+			map.put("menuItemRightName", menuItemRightName);
+			
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				Executions.createComponents(screenPath,null,map);
+				Executions.createComponents(fileLocaation.toString(),null,map);
 			} catch (final Exception e) {
 				logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 				PTMessageUtils.showErrorMessage(e.toString());
@@ -356,9 +447,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 */
 	private void doFieldValidation() {
 		logger.debug("Entering ");
-		if(StringUtils.trimToEmpty(this.lovDescFinTypeName.getValue()).equals("")
+		if(StringUtils.trimToEmpty(this.finType.getValue()).equals("")
 				&& StringUtils.trimToEmpty(this.wIfFinaceRef.getValue()).equals("")){
-			throw new WrongValueException(this.lovDescFinTypeName,Labels.getLabel("CHECK_NO_EMPTY_IN_TWO"
+			throw new WrongValueException(this.finType,Labels.getLabel("CHECK_NO_EMPTY_IN_TWO"
 					,new String[]{Labels.getLabel("label_SelectFinanceTypeDialog_FinType.value")
 							,Labels.getLabel("label_FinanceMainQDEDialog_WIFFinaceRef.value")})); 
 		}
@@ -370,25 +461,16 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	// +++++++++++++++ Getters and Setters ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-
 	public FinanceMainListCtrl getFinanceMainListCtrl() {
 		return financeMainListCtrl;
 	}
-
 	public void setFinanceMainListCtrl(FinanceMainListCtrl financeMainListCtrl) {
 		this.financeMainListCtrl = financeMainListCtrl;
 	}
 
-	/**
-	 * @return the financeDetail
-	 */
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
-
-	/**
-	 * @param financeDetail the financeDetail to set
-	 */
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -396,35 +478,27 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
-
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
+	
 	public FinanceWorkFlow getFinanceWorkFlow() {
 		return financeWorkFlow;
 	}
-
 	public void setFinanceWorkFlow(FinanceWorkFlow financeWorkFlow) {
 		this.financeWorkFlow = financeWorkFlow;
 	}
+	
 	public FinanceTypeService getFinanceTypeService() {
 		return financeTypeService;
 	}
-
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
 	}
 
-	/**
-	 * @return the financeDetailService
-	 */
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
-
-	/**
-	 * @param financeDetailService the financeDetailService to set
-	 */
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}

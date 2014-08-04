@@ -44,6 +44,9 @@
 package com.pennant.backend.model.lmtmasters;
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -64,9 +67,9 @@ public class CarLoanDetail implements java.io.Serializable {
 	private long carUsage;
 	private String lovDescCarUsageName;
 	private String lovDescCarUsageValue;
-	private long lovDescVehicleModelId;
+	private long vehicleModelId;
 	private String lovDescModelDesc;
-	private long lovDescManufacturerId;
+	private long manufacturerId;
 	private String lovDescManufacturerName;
 	private long carVersion;
 	private String lovDescCarVersionName;
@@ -75,6 +78,8 @@ public class CarLoanDetail implements java.io.Serializable {
 	private int carCapacity;
 	private long carDealer;
 	private String lovDescCarDealerName;
+	private String lovDescCarDealerPhone;
+	private String lovDescCarDealerFax;
 	private int carCc;
 	private String carChasisNo;
 	private String carInsuranceNo;
@@ -88,7 +93,17 @@ public class CarLoanDetail implements java.io.Serializable {
 	private String lovValue;
 	private CarLoanDetail befImage;
 	private LoginUserDetails userDetails;
-
+	
+	private String engineNumber;
+	private String insuranceType;
+	private String insuranceDesc;
+	private String paymentMode;
+	private String purchageOdrNumber;
+	private String quoationNbr;
+	private Date quoationDate;
+	private String dealerPhone;
+	private Date purchaseDate;
+	
 	private String recordStatus;
 	private String roleCode="";
 	private String nextRoleCode= "";
@@ -104,6 +119,12 @@ public class CarLoanDetail implements java.io.Serializable {
 
 	public CarLoanDetail() {
 		this.workflowId = WorkFlowUtil.getWorkFlowID("CarLoanDetail");
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		
+		return excludeFields;
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -143,13 +164,6 @@ public class CarLoanDetail implements java.io.Serializable {
 		this.lovDescCarLoanForName = lovDescCarLoanForName;
 	}
 	
-	public long getLovDescVehicleModelId() {
-		return lovDescVehicleModelId;
-	}
-	public void setLovDescVehicleModelId(long lovDescVehicleModelId) {
-		this.lovDescVehicleModelId = lovDescVehicleModelId;
-	}
-
 	public String getLovDescLoanForValue() {
 		return lovDescLoanForValue;
 	}
@@ -280,13 +294,6 @@ public class CarLoanDetail implements java.io.Serializable {
 	}
 	public void setLovDescModelDesc(String lovDescModelDesc) {
 		this.lovDescModelDesc = lovDescModelDesc;
-	}
-
-	public long getLovDescManufacturerId() {
-		return lovDescManufacturerId;
-	}
-	public void setLovDescManufacturerId(long lovDescManufacturerId) {
-		this.lovDescManufacturerId = lovDescManufacturerId;
 	}
 
 	public String getLovDescManufacturerName() {
@@ -430,5 +437,109 @@ public class CarLoanDetail implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public String getEngineNumber() {
+    	return engineNumber;
+    }
+
+	public void setEngineNumber(String engineNumber) {
+    	this.engineNumber = engineNumber;
+    }
+
+	public String getInsuranceType() {
+    	return insuranceType;
+    }
+
+	public void setInsuranceType(String insuranceType) {
+    	this.insuranceType = insuranceType;
+    }
+
+	public String getInsuranceDesc() {
+    	return insuranceDesc;
+    }
+
+	public void setInsuranceDesc(String insuranceDesc) {
+    	this.insuranceDesc = insuranceDesc;
+    }
+
+	public String getPaymentMode() {
+    	return paymentMode;
+    }
+
+	public void setPaymentMode(String paymentMode) {
+    	this.paymentMode = paymentMode;
+    }
+
+	public String getPurchageOdrNumber() {
+    	return purchageOdrNumber;
+    }
+
+	public void setPurchageOdrNumber(String purchageOdrNumber) {
+    	this.purchageOdrNumber = purchageOdrNumber;
+    }
+
+	public String getQuoationNbr() {
+    	return quoationNbr;
+    }
+
+	public void setQuoationNbr(String quoationNbr) {
+    	this.quoationNbr = quoationNbr;
+    }
+
+	public Date getQuoationDate() {
+    	return quoationDate;
+    }
+
+	public void setQuoationDate(Date quoationDate) {
+    	this.quoationDate = quoationDate;
+    }
+	
+	public String getDealerPhone() {
+    	return dealerPhone;
+    }
+
+	public void setDealerPhone(String dealerPhone) {
+    	this.dealerPhone = dealerPhone;
+    }
+
+	public Date getPurchaseDate() {
+    	return purchaseDate;
+    }
+
+	public long getVehicleModelId() {
+    	return vehicleModelId;
+    }
+
+	public void setVehicleModelId(long vehicleModelId) {
+    	this.vehicleModelId = vehicleModelId;
+    }
+
+	public void setPurchaseDate(Date purchaseDate) {
+    	this.purchaseDate = purchaseDate;
+    }
+	
+	public long getManufacturerId() {
+    	return manufacturerId;
+    }
+
+	public void setManufacturerId(long manufacturerId) {
+    	this.manufacturerId = manufacturerId;
+    }
+
+	public void setLovDescCarDealerPhone(String lovDescCarDealerPhone) {
+	    this.lovDescCarDealerPhone = lovDescCarDealerPhone;
+    }
+
+	public String getLovDescCarDealerPhone() {
+	    return lovDescCarDealerPhone;
+    }
+
+	public void setLovDescCarDealerFax(String lovDescCarDealerFax) {
+	    this.lovDescCarDealerFax = lovDescCarDealerFax;
+    }
+
+	public String getLovDescCarDealerFax() {
+	    return lovDescCarDealerFax;
+    }
 	
 }

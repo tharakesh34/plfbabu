@@ -765,7 +765,7 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 
 			try {
-				if (getCbSlctVal(this.hYFRQCode).equals("#")) {
+				if (getComboboxValue(this.hYFRQCode).equals("#")) {
 					throw new WrongValueException(this.hYFRQCode, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CollateralitemDialog_HYFRQCode.value") }));
 				}
@@ -774,7 +774,7 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 			try {
 				// to Check frequency code and frequency month
-				if ((!getCbSlctVal(this.hYFRQCode).equals("#")) && (getCbSlctVal(this.hYFRQMth).equals("#"))) {
+				if ((!getComboboxValue(this.hYFRQCode).equals("#")) && (getComboboxValue(this.hYFRQMth).equals("#"))) {
 					throw new WrongValueException(this.hYFRQMth, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CollateralitemDialog_HYFRQMnth.value") }));
 				}
@@ -783,7 +783,7 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 			try {
 				// to Check frequency month and frequency day
-				if ((!getCbSlctVal(this.hYFRQMth).equals("#")) && (getCbSlctVal(this.hYFRQDay).equals("#"))) {
+				if ((!getComboboxValue(this.hYFRQMth).equals("#")) && (getComboboxValue(this.hYFRQDay).equals("#"))) {
 					throw new WrongValueException(this.hYFRQDay, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CollateralitemDialog_HYFRQDay.value") }));
 				}
@@ -2225,23 +2225,11 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	public void onSelect$hYFRQDay(Event event) {
 		logger.debug("Entering" + event.toString());
-		String frqCode = getComboboxValue(this.hYFRQCode);
-		String frqMth = getComboboxValue(this.hYFRQMth);
-		String frqDay = getComboboxValue(this.hYFRQDay);
-		onSelectFrqDay(frqCode, frqMth, frqDay, this.hYFRQ);
+ 		onSelectFrqDay(hYFRQCode, hYFRQMth, hYFRQDay, this.hYFRQ);
 		//this.nextGrcPftDate.setText("");
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	private String getComboboxValue(Combobox combobox) {
-		String comboValue = "";
-		if (combobox.getSelectedItem() != null) {
-			comboValue = combobox.getSelectedItem().getValue().toString();
-		} else {
-			combobox.setSelectedIndex(0);
-		}
-		return comboValue;
-	}
+ 
 	
 	public void onChange$hYNOU(Event event) {
 		logger.debug("Entering" + event.toString());

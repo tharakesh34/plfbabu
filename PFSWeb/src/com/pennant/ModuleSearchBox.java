@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+ *//*
 
 package com.pennant;
 
@@ -73,6 +73,7 @@ public class ModuleSearchBox extends Hbox {
 	private Filter[]	        				filters;
 	// the returned bean object
 	private Object 								object 				= 		null;
+	@SuppressWarnings("rawtypes")
 	private JdbcSearchObject 					jdbcSearchObject;
 	private transient PagedListService 			pagedListService;
 	private ModuleMapping 						moduleMapping		=		null;
@@ -88,10 +89,10 @@ public class ModuleSearchBox extends Hbox {
 	private boolean								isdisplayError = true;	
 	private boolean								inputAllowed = true;
   	
-	/**
+	*//**
 	 * Module Search box 
 	 * 
-	 */	
+	 *//*	
 	public ModuleSearchBox() {
 		logger.debug("Entering ExtenedBox()");
 		space = new Space();
@@ -120,10 +121,10 @@ public class ModuleSearchBox extends Hbox {
 		logger.debug("Leaving ExtenedBox()");
 	}
 	
-	/**
+	*//**
 	 * Called when changing the value of the text box
 	 * @param event
-	 */
+	 *//*
 	public void onChangeTextbox(Event event){
 		logger.debug("Entering on changing Event");
 
@@ -142,10 +143,10 @@ public class ModuleSearchBox extends Hbox {
 		logger.debug("Leaving on changing Event");
 	}
 	
-	/**
+	*//**
 	 * 
 	 * @return
-	 */
+	 *//*
 	public PagedListService getPagedListService() {
 		if (this.pagedListService==null){
 			this.pagedListService= (PagedListService) SpringUtil.getBean("pagedListService");	
@@ -153,10 +154,10 @@ public class ModuleSearchBox extends Hbox {
 		return pagedListService;
 	}
 	
-	/**
+	*//**
 	 * 
 	 * @param event
-	 */
+	 *//*
 	public void onButtonClick(Event event) {
 		logger.debug("Entering onButtonClick()");
 		setErrorMessage("");
@@ -183,19 +184,19 @@ public class ModuleSearchBox extends Hbox {
 		}
 	}
 	
-	/**
+	*//**
 	 * 
-	 */
+	 *//*
 	private void doClear() {
 		this.textbox.setValue("");
 		this.label.setValue("");
 		this.textbox.setAttribute("data", null);
 	}
 	
-	/**
+	*//**
 	 * 
 	 * @throws Exception
-	 */
+	 *//*
 	private void doWrite() throws Exception {
 		String valueMethod = "get" + getValueColumn();
 		String value = this.object.getClass().getMethod(valueMethod, null).invoke(object, null).toString();
@@ -212,9 +213,10 @@ public class ModuleSearchBox extends Hbox {
 		}
 	}
 	
-	/**
+	*//**
 	 * 
-	 */
+	 *//*
+	@SuppressWarnings("unchecked")
 	public void setJdbcSearchObject() {
 		setModuleMapping(PennantJavaUtil.getModuleMap(moduleName));
 		this.jdbcSearchObject = new JdbcSearchObject (getModuleMapping().getModuleClass());
@@ -248,11 +250,11 @@ public class ModuleSearchBox extends Hbox {
 		}
 	}
 	
-	/**
+	*//**
 	 * 
 	 * @param value
 	 * @param desc
-	 */
+	 *//*
 	public void setValue(String value, String desc) {
 		if (getDisplayStyle() == 2) {
 			this.textbox.setValue(value + "-" + desc);
@@ -263,10 +265,11 @@ public class ModuleSearchBox extends Hbox {
 		}
 	}
 	
-	/**
+	*//**
 	 * 
 	 * @param showError
-	 */
+	 *//*
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void validateValue(boolean showError){
 		this.object = null;
  		setJdbcSearchObject();
@@ -282,10 +285,10 @@ public class ModuleSearchBox extends Hbox {
 		}
 	}
  
-	/**
+	*//**
 	 * Get the value from the text box
 	 * @return String
-	 */
+	 *//*
 	public String getValue() {
 		validateValue(true);
 		if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
@@ -300,10 +303,10 @@ public class ModuleSearchBox extends Hbox {
 
 	}
 	
-	/**
+	*//**
 	 * Get the description from the text box
 	 * @return String
-	 */
+	 *//*
 	public String getDescription() {
 		if (getDisplayStyle() == 2) {
 			if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
@@ -469,3 +472,4 @@ public class ModuleSearchBox extends Hbox {
 	}
  
 }
+*/

@@ -61,17 +61,15 @@ import com.pennant.util.PennantAppUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CustomerPRelationListModelItemRenderer implements ListitemRenderer, Serializable {
+public class CustomerPRelationListModelItemRenderer implements ListitemRenderer<CustomerPRelation>, Serializable {
 
 	private static final long serialVersionUID = -4384335745555359611L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, CustomerPRelation customerPRelation, int count) throws Exception {
 
 		if (item instanceof Listgroup) { 
-			Object groupData = (Object) data; 
-			final CustomerPRelation CustomerPRelation= (CustomerPRelation)groupData;
-			item.appendChild(new Listcell(CustomerPRelation.getLovDescCustCIF())); 
+			item.appendChild(new Listcell(customerPRelation.getLovDescCustCIF())); 
 		}
 		else if (item instanceof Listgroupfoot) { 
 			Listcell cell = new Listcell("");
@@ -79,8 +77,9 @@ public class CustomerPRelationListModelItemRenderer implements ListitemRenderer,
 			item.appendChild(cell); 
 		} else { 
 
-			final CustomerPRelation customerPRelation = (CustomerPRelation) data;
 			Listcell lc;
+			lc = new Listcell(customerPRelation.getLovDescCustCIF());
+			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.formateInt(customerPRelation.getPRCustPRSNo()));
 			lc.setParent(item);
 			lc = new Listcell(customerPRelation.getPRRelationCode()+"-"+customerPRelation.getLovDescPRRelationCodeName());
@@ -99,7 +98,7 @@ public class CustomerPRelationListModelItemRenderer implements ListitemRenderer,
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(customerPRelation.getRecordType()));
 			lc.setParent(item);
-			item.setAttribute("data", data);
+			item.setAttribute("data", customerPRelation);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPRelationItemDoubleClicked");
 		}
 	}

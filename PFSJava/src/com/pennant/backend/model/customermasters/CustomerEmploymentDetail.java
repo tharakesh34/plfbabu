@@ -58,29 +58,17 @@ public class CustomerEmploymentDetail implements java.io.Serializable {
 	private static final long serialVersionUID = -5317225672461108680L;
 	
 	private long custID;
-	private String custEmpName;
+	private long custEmpName;
+	private String lovDesccustEmpName;
 	private Date custEmpFrom;
+	private Date custEmpTo;
+	private boolean currentEmployer;
 	private String custEmpDesg;
 	private String lovDescCustEmpDesgName;
 	private String custEmpDept;
 	private String lovDescCustEmpDeptName;
-	private String custEmpID;
 	private String custEmpType;
 	private String lovDescCustEmpTypeName;
-	private String custEmpHNbr;
-	private String custEMpFlatNbr;
-	private String custEmpAddrStreet;
-	private String custEMpAddrLine1;
-	private String custEMpAddrLine2;
-	private String custEmpPOBox;
-	private String custEmpAddrCity;
-	private String lovDescCustEmpAddrCityName;
-	private String custEmpAddrProvince;
-	private String lovDescCustEmpAddrProvinceName;
-	private String custEmpAddrCountry;
-	private String lovDescCustEmpAddrCountryName;
-	private String custEmpAddrZIP;
-	private String custEmpAddrPhone;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -132,10 +120,10 @@ public class CustomerEmploymentDetail implements java.io.Serializable {
 		this.custID = custID;
 	}
 	
-	public String getCustEmpName() {
+	public long getCustEmpName() {
 		return custEmpName;
 	}
-	public void setCustEmpName(String custEmpName) {
+	public void setCustEmpName(long custEmpName) {
 		this.custEmpName = custEmpName;
 	}
 
@@ -174,13 +162,6 @@ public class CustomerEmploymentDetail implements java.io.Serializable {
 		this.lovDescCustEmpDeptName = lovDescCustEmpDeptName;
 	}
 	
-	public String getCustEmpID() {
-		return custEmpID;
-	}
-	public void setCustEmpID(String custEmpID) {
-		this.custEmpID = custEmpID;
-	}
-	
 	public String getCustEmpType() {
 		return custEmpType;
 	}
@@ -195,103 +176,6 @@ public class CustomerEmploymentDetail implements java.io.Serializable {
 		this.lovDescCustEmpTypeName = lovDescCustEmpTypeName;
 	}
 
-	public String getCustEmpHNbr() {
-		return custEmpHNbr;
-	}
-	public void setCustEmpHNbr(String custEmpHNbr) {
-		this.custEmpHNbr = custEmpHNbr;
-	}
-	
-	public String getCustEMpFlatNbr() {
-		return custEMpFlatNbr;
-	}
-	public void setCustEMpFlatNbr(String custEMpFlatNbr) {
-		this.custEMpFlatNbr = custEMpFlatNbr;
-	}
-	
-	public String getCustEmpAddrStreet() {
-		return custEmpAddrStreet;
-	}
-	public void setCustEmpAddrStreet(String custEmpAddrStreet) {
-		this.custEmpAddrStreet = custEmpAddrStreet;
-	}
-	
-	public String getCustEMpAddrLine1() {
-		return custEMpAddrLine1;
-	}
-	public void setCustEMpAddrLine1(String custEMpAddrLine1) {
-		this.custEMpAddrLine1 = custEMpAddrLine1;
-	}
-	
-	public String getCustEMpAddrLine2() {
-		return custEMpAddrLine2;
-	}
-	public void setCustEMpAddrLine2(String custEMpAddrLine2) {
-		this.custEMpAddrLine2 = custEMpAddrLine2;
-	}
-	
-	public String getCustEmpPOBox() {
-		return custEmpPOBox;
-	}
-	public void setCustEmpPOBox(String custEmpPOBox) {
-		this.custEmpPOBox = custEmpPOBox;
-	}
-	
-	public String getCustEmpAddrCity() {
-		return custEmpAddrCity;
-	}
-	public void setCustEmpAddrCity(String custEmpAddrCity) {
-		this.custEmpAddrCity = custEmpAddrCity;
-	}
-
-	public String getLovDescCustEmpAddrCityName() {
-		return this.lovDescCustEmpAddrCityName;
-	}
-	public void setLovDescCustEmpAddrCityName(String lovDescCustEmpAddrCityName) {
-		this.lovDescCustEmpAddrCityName = lovDescCustEmpAddrCityName;
-	}
-
-	public String getCustEmpAddrProvince() {
-		return custEmpAddrProvince;
-	}
-	public void setCustEmpAddrProvince(String custEmpAddrProvince) {
-		this.custEmpAddrProvince = custEmpAddrProvince;
-	}
-
-	public String getLovDescCustEmpAddrProvinceName() {
-		return this.lovDescCustEmpAddrProvinceName;
-	}
-	public void setLovDescCustEmpAddrProvinceName(String lovDescCustEmpAddrProvinceName) {
-		this.lovDescCustEmpAddrProvinceName = lovDescCustEmpAddrProvinceName;
-	}
-	
-	public String getCustEmpAddrCountry() {
-		return custEmpAddrCountry;
-	}
-	public void setCustEmpAddrCountry(String custEmpAddrCountry) {
-		this.custEmpAddrCountry = custEmpAddrCountry;
-	}
-	
-	public String getLovDescCustEmpAddrCountryName() {
-		return this.lovDescCustEmpAddrCountryName;
-	}
-	public void setLovDescCustEmpAddrCountryName(String lovDescCustEmpAddrCountryName) {
-		this.lovDescCustEmpAddrCountryName = lovDescCustEmpAddrCountryName;
-	}
-	
-	public String getCustEmpAddrZIP() {
-		return custEmpAddrZIP;
-	}
-	public void setCustEmpAddrZIP(String custEmpAddrZIP) {
-		this.custEmpAddrZIP = custEmpAddrZIP;
-	}
-	
-	public String getCustEmpAddrPhone() {
-		return custEmpAddrPhone;
-	}
-	public void setCustEmpAddrPhone(String custEmpAddrPhone) {
-		this.custEmpAddrPhone = custEmpAddrPhone;
-	}
 	
 	public int getVersion() {
 		return version;
@@ -453,4 +337,28 @@ public class CustomerEmploymentDetail implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public void setCustEmpTo(Date custEmpTo) {
+	    this.custEmpTo = custEmpTo;
+    }
+
+	public Date getCustEmpTo() {
+	    return custEmpTo;
+    }
+
+	public void setLovDesccustEmpName(String lovDesccustEmpName) {
+	    this.lovDesccustEmpName = lovDesccustEmpName;
+    }
+
+	public String getLovDesccustEmpName() {
+	    return lovDesccustEmpName;
+    }
+
+	public void setCurrentEmployer(boolean currentEmployer) {
+	    this.currentEmployer = currentEmployer;
+    }
+
+	public boolean isCurrentEmployer() {
+	    return currentEmployer;
+    }
 }

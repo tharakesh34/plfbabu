@@ -121,7 +121,7 @@ public class GeneralDesignationDAOImpl extends BasisCodeDAO<GeneralDesignation>
 	@Override
 	public GeneralDesignation getGeneralDesignationById(final String id, String type) {
 		logger.debug("Entering");
-		GeneralDesignation generalDesignation = getGeneralDesignation();
+		GeneralDesignation generalDesignation = new GeneralDesignation();
 		generalDesignation.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select GenDesignation, GenDesgDesc," );

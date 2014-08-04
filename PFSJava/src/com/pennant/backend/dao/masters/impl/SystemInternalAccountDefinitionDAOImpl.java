@@ -44,6 +44,8 @@
 package com.pennant.backend.dao.masters.impl;
 
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,6 +62,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.masters.SystemInternalAccountDefinitionDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 import com.pennant.backend.util.PennantConstants;
@@ -122,7 +125,7 @@ public class SystemInternalAccountDefinitionDAOImpl extends BasisCodeDAO<SystemI
 	@Override
 	public SystemInternalAccountDefinition getSystemInternalAccountDefinitionById(final String id, String type) {
 		logger.debug("Entering");
-		SystemInternalAccountDefinition systemInternalAccountDefinition = getSystemInternalAccountDefinition();
+		SystemInternalAccountDefinition systemInternalAccountDefinition = new SystemInternalAccountDefinition();
 		
 		systemInternalAccountDefinition.setId(id);
 		
@@ -147,6 +150,64 @@ public class SystemInternalAccountDefinitionDAOImpl extends BasisCodeDAO<SystemI
 		}
 		logger.debug("Leaving");
 		return systemInternalAccountDefinition;
+	}
+	
+	/**
+	 * Fetch the Record  System Internal Account Definition details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return SystemInternalAccountDefinition
+	 */
+	@Override
+	public String getSysIntAccNum(final String sIACode) {
+		logger.debug("Entering");
+		
+		String sIANum = "";
+		SystemInternalAccountDefinition systemInternalAccountDefinition = new SystemInternalAccountDefinition();
+		systemInternalAccountDefinition.setId(sIACode);
+		
+		StringBuilder selectSql = new StringBuilder("Select SIANumber From SystemInternalAccountDef");
+		selectSql.append(" Where SIACode =:SIACode");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(systemInternalAccountDefinition);
+		
+		try{
+			sIANum = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);	
+		}catch (EmptyResultDataAccessException e) {
+			sIANum = "";
+		}finally {
+			systemInternalAccountDefinition = null;
+			beanParameters = null;
+		}
+		logger.debug("Leaving");
+		return sIANum;
+	}
+	
+	/**
+	 * Fetch the Record  System Internal Account Definition details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return SystemInternalAccountDefinition
+	 */
+	@Override
+	public List<ValueLabel> getEntrySIANumDetails() {
+		logger.debug("Entering");
+		
+		StringBuilder selectSql = new StringBuilder("Select SIACode AS Label , SIANumber AS Value From SystemInternalAccountDef");
+		/*selectSql.append(" where SIACode in (select Distinct AccountType from RMTTransactionEntry where Account = '" );
+		selectSql.append(PennantConstants.GLNPL);
+		selectSql.append("')");*/
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);	
 	}
 	
 	/**

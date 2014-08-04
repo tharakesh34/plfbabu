@@ -63,14 +63,14 @@ public class Provision implements java.io.Serializable {
 	private String finType;
 	private long custID;
 	private Date provisionCalDate;
-	private BigDecimal provisionedAmt = new BigDecimal(0);
-	private BigDecimal provisionAmtCal = new BigDecimal(0);
-	private BigDecimal provisionDue = new BigDecimal(0);
-	private BigDecimal nonFormulaProv = new BigDecimal(0);
+	private BigDecimal provisionedAmt = BigDecimal.ZERO;
+	private BigDecimal provisionAmtCal = BigDecimal.ZERO;
+	private BigDecimal provisionDue = BigDecimal.ZERO;
+	private BigDecimal nonFormulaProv = BigDecimal.ZERO;
 	private boolean useNFProv;
 	private boolean autoReleaseNFP;
-	private BigDecimal principalDue = new BigDecimal(0);
-	private BigDecimal profitDue  = new BigDecimal(0);
+	private BigDecimal principalDue = BigDecimal.ZERO;
+	private BigDecimal profitDue  = BigDecimal.ZERO;
 	private Date dueFromDate;
 	private Date lastFullyPaidDate;
 	private int version;
@@ -183,18 +183,12 @@ public class Provision implements java.io.Serializable {
 		this.nonFormulaProv = nonFormulaProv;
 	}
 	
-	
-		
-	
 	public boolean isUseNFProv() {
 		return useNFProv;
 	}
 	public void setUseNFProv(boolean useNFProv) {
 		this.useNFProv = useNFProv;
 	}
-	
-	
-		
 	
 	public boolean isAutoReleaseNFP() {
 		return autoReleaseNFP;
@@ -203,18 +197,12 @@ public class Provision implements java.io.Serializable {
 		this.autoReleaseNFP = autoReleaseNFP;
 	}
 	
-	
-		
-	
 	public BigDecimal getPrincipalDue() {
 		return principalDue;
 	}
 	public void setPrincipalDue(BigDecimal principalDue) {
 		this.principalDue = principalDue;
 	}
-	
-	
-		
 	
 	public BigDecimal getProfitDue() {
 		return profitDue;
@@ -223,18 +211,12 @@ public class Provision implements java.io.Serializable {
 		this.profitDue = profitDue;
 	}
 	
-	
-		
-	
 	public Date getDueFromDate() {
 		return dueFromDate;
 	}
 	public void setDueFromDate(Date dueFromDate) {
 		this.dueFromDate = dueFromDate;
 	}
-	
-	
-		
 	
 	public Date getLastFullyPaidDate() {
 		return lastFullyPaidDate;
@@ -243,13 +225,9 @@ public class Provision implements java.io.Serializable {
 		this.lastFullyPaidDate = lastFullyPaidDate;
 	}
 	
-	
-		
-	
 	public int getVersion() {
 		return version;
 	}
-	
 	public void setVersion(int version) {
 		this.version = version;
 	}
@@ -257,7 +235,6 @@ public class Provision implements java.io.Serializable {
 	public long getLastMntBy() {
 		return lastMntBy;
 	}
-	
 	public void setLastMntBy(long lastMntBy) {
 		this.lastMntBy = lastMntBy;
 	}
@@ -265,7 +242,6 @@ public class Provision implements java.io.Serializable {
 	public Timestamp getLastMntOn() {
 		return lastMntOn;
 	}
-
 	public void setLastMntOn(Timestamp lastMntON) {
 		this.lastMntOn = lastMntON;
 	}
@@ -273,7 +249,6 @@ public class Provision implements java.io.Serializable {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
-
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -281,7 +256,6 @@ public class Provision implements java.io.Serializable {
 	public String getLovValue() {
 		return lovValue;
 	}
-
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -289,7 +263,6 @@ public class Provision implements java.io.Serializable {
 	public Provision getBefImage(){
 		return this.befImage;
 	}
-	
 	public void setBefImage(Provision beforeImage){
 		this.befImage=beforeImage;
 	}
@@ -297,7 +270,6 @@ public class Provision implements java.io.Serializable {
 	public LoginUserDetails getUserDetails() {
 		return userDetails;
 	}
-
 	public void setUserDetails(LoginUserDetails userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -305,7 +277,6 @@ public class Provision implements java.io.Serializable {
 	public String getRecordStatus() {
 		return recordStatus;
 	}
-	
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
 	}
@@ -313,7 +284,6 @@ public class Provision implements java.io.Serializable {
 	public String getRoleCode() {
 		return roleCode;
 	}
-	
 	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
 	}
@@ -321,7 +291,6 @@ public class Provision implements java.io.Serializable {
 	public String getNextRoleCode() {
 		return nextRoleCode;
 	}
-	
 	public void setNextRoleCode(String nextRoleCode) {
 		this.nextRoleCode = nextRoleCode;
 	}
@@ -329,7 +298,6 @@ public class Provision implements java.io.Serializable {
 	public String getTaskId() {
 		return taskId;
 	}
-	
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
 	}
@@ -337,7 +305,6 @@ public class Provision implements java.io.Serializable {
 	public String getNextTaskId() {
 		return nextTaskId;
 	}
-	
 	public void setNextTaskId(String nextTaskId) {
 		this.nextTaskId = nextTaskId;
 	}
@@ -345,7 +312,6 @@ public class Provision implements java.io.Serializable {
 	public String getRecordType() {
 		return recordType;
 	}
-
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
 	}
@@ -353,7 +319,6 @@ public class Provision implements java.io.Serializable {
 	public String getUserAction() {
 		return userAction;
 	}
-
 	public void setUserAction(String userAction) {
 		this.userAction = userAction;
 	}
@@ -368,7 +333,6 @@ public class Provision implements java.io.Serializable {
 	public long getWorkflowId() {
 		return workflowId;
 	}
-
 	public void setWorkflowId(long workflowId) {
 		this.workflowId = workflowId;
 	}

@@ -818,10 +818,15 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl implements Serializa
 
 	// Method for refreshing the list after successful updating
 	private void refreshList() {
-		getCustomerIdentityListCtrl().findSearchObject();
+		logger.debug("Entering");
+		final JdbcSearchObject<CustomerIdentity> soCustomerIdentity = getCustomerIdentityListCtrl().getSearchObj();
+		getCustomerIdentityListCtrl().pagingCustomerIdentityList.setActivePage(0);
+		getCustomerIdentityListCtrl().getPagedListWrapper().setSearchObject(soCustomerIdentity);
 		if (getCustomerIdentityListCtrl().listBoxCustomerIdentity != null) {
 			getCustomerIdentityListCtrl().listBoxCustomerIdentity.getListModel();
 		}
+		logger.debug("Leaving");
+		
 	}
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++ CRUD operations +++++++++++++++++++++++

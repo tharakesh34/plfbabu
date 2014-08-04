@@ -66,6 +66,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -119,7 +120,7 @@ public class AccountTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 	private transient AccountTypeListCtrl 	accountTypeCtrl; // over handed per parameter
 	private transient WorkFlowDetails 		workFlowDetails = WorkFlowUtil
 	.getWorkFlowDetails("AccountType");
-	private List<ValueLabel>           listAccPurposeType = PennantAppUtil.getAccountPurpose();
+	private List<ValueLabel>           listAccPurposeType = PennantStaticListUtil.getAccountPurpose();
 	/**
 	 * constructor
 	 */

@@ -65,8 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>Industry</b>.<br>
  * 
  */
-public class IndustryServiceImpl extends GenericService<Industry> implements
-IndustryService {
+public class IndustryServiceImpl extends GenericService<Industry> implements IndustryService {
 
 	private static Logger logger = Logger.getLogger(IndustryServiceImpl.class);
 

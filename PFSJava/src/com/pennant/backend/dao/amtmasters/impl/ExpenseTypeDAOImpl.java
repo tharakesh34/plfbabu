@@ -118,11 +118,11 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 	@Override
 	public ExpenseType getExpenseTypeById(final long id, String type) {
 		logger.debug("Entering");
-		ExpenseType expenseType = getExpenseType();
+		ExpenseType expenseType = new ExpenseType();
 		expenseType.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select ExpenceTypeId, ExpenceTypeName,");
+		selectSql.append("Select ExpenceTypeId, ExpenceTypeName, ExpenseFor, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From AMTExpenseType"+ StringUtils.trimToEmpty(type));
@@ -237,10 +237,10 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into AMTExpenseType");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ExpenceTypeId, ExpenceTypeName,");
+		insertSql.append(" (ExpenceTypeId, ExpenceTypeName, ExpenseFor, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:ExpenceTypeId, :ExpenceTypeName,");
+		insertSql.append(" Values(:ExpenceTypeId, :ExpenceTypeName, :ExpenseFor, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -273,7 +273,7 @@ public class ExpenseTypeDAOImpl extends BasisNextidDaoImpl<ExpenseType> implemen
 
 		updateSql.append("Update AMTExpenseType");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ExpenceTypeId = :ExpenceTypeId, ExpenceTypeName = :ExpenceTypeName,");
+		updateSql.append(" Set ExpenceTypeId = :ExpenceTypeId, ExpenceTypeName = :ExpenceTypeName, ExpenseFor = :ExpenseFor, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, " );

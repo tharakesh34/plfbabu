@@ -61,26 +61,32 @@
 
 				<center border="none">
 
-					<listbox id="listBoxProfession" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
+					<listbox id="listBoxProfession" 
+					        emptyMessage="${c:l('listbox.emptyMessage')}"
+							fixedLayout="true" vflex="true" 
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_ProfessionCode"
 								label="${c:l('listheader_ProfessionCode.label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_ProfessionDesc"
 								label="${c:l('listheader_ProfessionDesc.label')}" sort="auto"
-								width="55%" />
+								hflex="min" />
+							<listheader
+								id="listheader_ProfessionSelfEmployee"
+								label="${c:l('listheader_ProfessionSelfEmployee.label')}" sort="auto"
+								 hflex="min" />
 							<listheader
 								id="listheader_ProfessionIsActive"
-								label="${c:l('listheader_ProfessionIsActive.label')}"
-								sort="auto" width="10%" />
+								label="${c:l('listheader_ProfessionIsActive.label')}" sort="auto"
+								 hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 						</listhead>
 					</listbox>
 

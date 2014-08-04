@@ -70,6 +70,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.educationalloan.model.EducationalLoanListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
@@ -196,12 +197,13 @@ public class EducationalLoanListCtrl extends GFCBaseListCtrl<EducationalLoan> im
 		
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<EducationalLoan>(EducationalLoan.class,getListRows());
+		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("LMTEducationLoanDetail_View");
 			if (isFirstTask()) {
-				button_EducationalLoanList_NewEducationalLoan.setVisible(true);
+				button_EducationalLoanList_NewEducationalLoan.setVisible(false);
 			} else {
 				button_EducationalLoanList_NewEducationalLoan.setVisible(false);
 			}
@@ -233,8 +235,7 @@ public class EducationalLoanListCtrl extends GFCBaseListCtrl<EducationalLoan> im
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("EducationalLoanList");
 		
-		this.button_EducationalLoanList_NewEducationalLoan.setVisible(getUserWorkspace().
-				isAllowed("button_EducationalLoanList_NewEducationalLoan"));
+		this.button_EducationalLoanList_NewEducationalLoan.setVisible(false);//getUserWorkspace().isAllowed("button_EducationalLoanList_NewEducationalLoan")
 		this.button_EducationalLoanList_EducationalLoanSearchDialog.setVisible(getUserWorkspace().
 				isAllowed("button_EducationalLoanList_EducationalLoanFindDialog"));
 		this.button_EducationalLoanList_PrintList.setVisible(getUserWorkspace().

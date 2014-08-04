@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.coremasters;
 import com.pennant.backend.model.coremasters.Collateralitem;
-import com.pennant.backend.model.ErrorDetails;
 
 public interface CollateralitemDAO {
 

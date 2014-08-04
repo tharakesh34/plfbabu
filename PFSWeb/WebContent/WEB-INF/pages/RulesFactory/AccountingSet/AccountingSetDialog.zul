@@ -18,25 +18,25 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" height="24px"
+							<button id="btnNew"
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnEdit" height="24px"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
+							<button id="btnEdit"
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnDelete" height="24px"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
+							<button id="btnDelete"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnSave" height="24px"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
+							<button id="btnSave"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnCancel" height="24px"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
+							<button id="btnCancel"
 								tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-							<button id="btnNotes" height="24px"
+							<button id="btnNotes"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnCopyTo" height="24px"
-								image="/images/icons/copyto.png"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
+							<button id="btnCopyTo"
+								label="${c:l('label_Copy')}"
 								tooltiptext="${c:l('btnCopyTo.tooltiptext')}" visible="true" />
 						</toolbar>
 
@@ -50,13 +50,13 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" height="24px"
+							<button id="btnHelp"
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnClose" height="24px"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
+							<button id="btnClose"
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -167,37 +167,39 @@
 							</hbox>
 						</div>
 						<listbox id="listBoxTransactionEntry"
-							vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-							width="100%" height="300px" multiple="false">
+							emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+							vflex="true" span="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
 							<listhead sizable="true">
 								<listheader id="listheader_TransOrder"
 									label="${c:l('listheader_TransOrder.label')}" sort="false"
-									width="8%" />
+									hflex="min" />
 								<listheader id="listheader_TransDesc"
 									label="${c:l('listheader_TransDesc.label')}" sort="false"
-									width="30%" />
+									hflex="min" />
 								<listheader id="listheader_ByInvestor"
 									label="${c:l('listheader_ByInvestor.label')}" sort="false"
-									width="10%" />
+									hflex="min" />
 								<listheader id="listheader_Debitcredit"
 									label="${c:l('listheader_Debitcredit.label')}" sort="false"
-									width="8%" />
+									hflex="min" />
 								<listheader id="listheader_Account"
 									label="${c:l('listheader_Account.label')}" sort="false"
-									width="8%" />
+									hflex="min" />
 								<listheader
 									id="listheader_TranscationCode"
 									label="${c:l('listheader_TranscationCode.label')}" sort="false"
-									width="10%" />
-								<listheader id="listheader_FeeOrCalAmt"
+									hflex="min" />
+								<!-- <listheader id="listheader_FeeOrCalAmt"
 									label="${c:l('listheader_FeeOrCalAmt.label')}" sort="false"
-									width="10%" />
+									hflex="min" /> -->
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="false"
-									width="8%" />
+									hflex="min" />
 								<listheader id="listheader_RecordType"
 									label="${c:l('listheader_RecordType.label')}" sort="false"
-									width="8%" />
+									hflex="min" />
 							</listhead>
 						</listbox>
 						<paging id="pagingTransactionEntryList" />

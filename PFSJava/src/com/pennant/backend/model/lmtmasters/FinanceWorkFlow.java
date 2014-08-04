@@ -58,9 +58,12 @@ public class FinanceWorkFlow implements java.io.Serializable {
 	private static final long serialVersionUID = 6176092273862848126L;
 	private String finType = null;
 	private String lovDescFinTypeName;
+	private String lovDescFacilityTypeName;
+	private String lovDescFinDivisionName;
 	private String lovDescProductCodeName;
 	private String screenCode = PennantConstants.defaultScreenCode;
 	private String workFlowType;
+	private String moduleName;
 	private String lovDescWorkFlowTypeName;
 	private String lovDescWorkFlowRolesName;
 	private String lovDescFirstTaskOwner;
@@ -138,6 +141,14 @@ public class FinanceWorkFlow implements java.io.Serializable {
 	public void setWorkFlowType(String workFlowType) {
 		this.workFlowType = workFlowType;
 	}
+
+	public String getModuleName() {
+    	return moduleName;
+    }
+
+	public void setModuleName(String moduleName) {
+    	this.moduleName = moduleName;
+    }
 
 	public String getLovDescWorkFlowTypeName() {
 		return this.lovDescWorkFlowTypeName;
@@ -268,10 +279,23 @@ public class FinanceWorkFlow implements java.io.Serializable {
 	public long getWorkflowId() {
 		return workflowId;
 	}
-
 	public void setWorkflowId(long workflowId) {
 		this.workflowId = workflowId;
 	}
+	
+	public String getLovDescFacilityTypeName() {
+    	return lovDescFacilityTypeName;
+    }
+	public void setLovDescFacilityTypeName(String lovDescFacilityTypeName) {
+    	this.lovDescFacilityTypeName = lovDescFacilityTypeName;
+    }
+	
+	public void setLovDescFinDivisionName(String lovDescFinDivisionName) {
+	    this.lovDescFinDivisionName = lovDescFinDivisionName;
+    }
+	public String getLovDescFinDivisionName() {
+	    return lovDescFinDivisionName;
+    }
 
 	// Overridden Equals method to handle the comparison
 	public boolean equals(FinanceWorkFlow financeWorkFlow) {
@@ -295,4 +319,5 @@ public class FinanceWorkFlow implements java.io.Serializable {
 		}
 		return false;
 	}
+
 }

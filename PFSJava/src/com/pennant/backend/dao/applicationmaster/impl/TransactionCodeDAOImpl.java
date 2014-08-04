@@ -70,8 +70,7 @@ import com.pennant.backend.util.WorkFlowUtil;
  * DAO methods implementation for the <b>TransactionCode model</b> class.<br>
  * 
  */
-public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode> 
-						implements TransactionCodeDAO {
+public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode>  implements TransactionCodeDAO {
 
 	private static Logger logger = Logger.getLogger(TransactionCodeDAOImpl.class);
 	
@@ -120,7 +119,7 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode>
 	@Override
 	public TransactionCode getTransactionCodeById(final String id, String type) {
 		logger.debug("Entering");
-		TransactionCode transactionCode = getTransactionCode();
+		TransactionCode transactionCode = new TransactionCode();
 		
 		transactionCode.setId(id);
 		

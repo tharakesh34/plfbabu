@@ -64,7 +64,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.bmtmasters.AccountEngineEventService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -576,15 +577,12 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl implements Seriali
 		setValidationOn(true);
 
 		if (!this.aEEventCode.isReadonly()){
-			this.aEEventCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_AccountEngineEventDialog_AEEventCode.value")})));
+			this.aEEventCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountEngineEventDialog_AEEventCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 
 		if (!this.aEEventCodeDesc.isReadonly()){
-			this.aEEventCodeDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_AccountEngineEventDialog_AEEventCodeDesc.value")})));
+			this.aEEventCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountEngineEventDialog_AEEventCodeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");

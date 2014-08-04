@@ -68,6 +68,7 @@ import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.fusioncharts.ChartSetElement;
@@ -106,7 +107,6 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private FinScheduleData finScheduleData;
 	private FinScheduleListItemRenderer finRender;
-	private boolean lastRec;
 	private FinanceScheduleDetail prvSchDetail;
 	private int formatter;
 	
@@ -208,7 +208,6 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 	public void doFillScheduleList(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
-		lastRec = false;
 		finRender = new FinScheduleListItemRenderer();
 		if (finScheduleData.getFinanceScheduleDetails() != null) {
 			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
@@ -250,6 +249,24 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 					}
 				}
 			}
+			
+			// Find Out Finance Repayment Details on Schedule
+			Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap = null;
+			if(finScheduleData.getPenaltyDetails() != null && finScheduleData.getPenaltyDetails().size() > 0){
+				penaltyDetailsMap = new HashMap<Date, ArrayList<OverdueChargeRecovery>>();
+
+				for (OverdueChargeRecovery penaltyDetail : finScheduleData.getPenaltyDetails()) {
+					if(penaltyDetailsMap.containsKey(penaltyDetail.getFinODSchdDate())){
+						ArrayList<OverdueChargeRecovery> penaltyDetailList = penaltyDetailsMap.get(penaltyDetail.getFinODSchdDate());
+						penaltyDetailList.add(penaltyDetail);
+						penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
+					}else{
+						ArrayList<OverdueChargeRecovery> penaltyDetailList = new ArrayList<OverdueChargeRecovery>();
+						penaltyDetailList.add(penaltyDetail);
+						penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
+					}
+				}
+			}
 
 			for (int i = 0; i < sdSize; i++) {
 				FinanceScheduleDetail aScheduleDetail = finScheduleData.getFinanceScheduleDetails().get(i);
@@ -273,12 +290,13 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 				}
 				map.put("financeScheduleDetail", aScheduleDetail);
 				map.put("paymentDetailsMap", rpyDetailsMap);
+				map.put("penaltyDetailsMap", penaltyDetailsMap);
+				map.put("accrueValue", finScheduleData.getAccrueValue());
 				map.put("window", this.window_ScheduleEnquiryDialog);
-				finRender.render(map, prvSchDetail, lastRec, false,true, feeChargesMap, showRate);
+				finRender.render(map, prvSchDetail, false, false,true, feeChargesMap, showRate);
 
 				if(i == sdSize-1){						
-					lastRec = true;
-					finRender.render(map, prvSchDetail, lastRec, false,true, feeChargesMap, showRate);				
+					finRender.render(map, prvSchDetail, true, false,true, feeChargesMap, showRate);				
 					break;
 				}
 			}

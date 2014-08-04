@@ -5,18 +5,18 @@ import java.math.BigDecimal;
 public class CPDetail {
 
 	private int cPNoOfDays=0;
-	private BigDecimal cPProfitCalc= new BigDecimal(0);
-	private BigDecimal cPProfitSchd= new BigDecimal(0);
-	private BigDecimal cPPrincipalSchd= new BigDecimal(0);
-	private BigDecimal cPRepayAmount= new BigDecimal(0);
-	private BigDecimal cPDisbAmount= new BigDecimal(0);
-	private BigDecimal cPDownPaymentAmount= new BigDecimal(0);
-	private BigDecimal cPCpzAmount= new BigDecimal(0);
-	private BigDecimal cPDefRepaySchd= new BigDecimal(0);
-	private BigDecimal cPDefProfitSchd= new BigDecimal(0);
-	private BigDecimal cPDefPrincipalSchd= new BigDecimal(0);
-	private BigDecimal cPSchdPftPaid= new BigDecimal(0);
-	private BigDecimal cPSchdPriPaid= new BigDecimal(0);
+	private BigDecimal cPProfitCalc= BigDecimal.ZERO;
+	private BigDecimal cPProfitSchd= BigDecimal.ZERO;
+	private BigDecimal cPPrincipalSchd= BigDecimal.ZERO;
+	private BigDecimal cPRepayAmount= BigDecimal.ZERO;
+	private BigDecimal cPDisbAmount= BigDecimal.ZERO;
+	private BigDecimal cPDownPaymentAmount= BigDecimal.ZERO;
+	private BigDecimal cPCpzAmount= BigDecimal.ZERO;
+	private BigDecimal cPDefRepaySchd= BigDecimal.ZERO;
+	private BigDecimal cPDefProfitSchd= BigDecimal.ZERO;
+	private BigDecimal cPDefPrincipalSchd= BigDecimal.ZERO;
+	private BigDecimal cPSchdPftPaid= BigDecimal.ZERO;
+	private BigDecimal cPSchdPriPaid= BigDecimal.ZERO;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

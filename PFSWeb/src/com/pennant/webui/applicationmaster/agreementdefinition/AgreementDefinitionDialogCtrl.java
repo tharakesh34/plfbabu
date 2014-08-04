@@ -43,47 +43,39 @@
 
 package com.pennant.webui.applicationmaster.agreementdefinition;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
-import org.zkoss.util.media.AMedia;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.Window;
 
-import com.aspose.words.Document;
-import com.aspose.words.SaveFormat;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -91,7 +83,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -121,12 +116,16 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	protected Textbox 	aggName; 							// autoWired
 	protected Textbox 	aggDesc; 							// autoWired
 	protected Textbox 	aggReportName; 						// autoWired
-	protected Textbox 	aggReportPath; 						// autoWired
+//	protected Textbox 	aggReportPath; 						// autoWired
 	protected Checkbox 	aggIsActive; 						// autoWired
-	protected Button    brwAgreementDoc;					// autoWired
-	protected Div	    signCopyPdf;						// autoWired
+	protected Checkbox 	AggCheck_SelectAll; 						// autoWired
+
+	protected Vlayout 	AgreementDetails; 						// autoWired
+
+	//	protected Button    brwAgreementDoc;					// autoWired
+//	protected Div	    signCopyPdf;						// autoWired
 	protected Div	    orgDetailTabDiv;
-	protected Iframe    agreementDocView;					// autoWired
+//	protected Iframe    agreementDocView;					// autoWired
 	public int	         borderLayoutHeight	     = 0;	
 	
 
@@ -136,6 +135,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	
 
 	// not auto wired variables
+	private String aggImage=null;
 	private AgreementDefinition agreementDefinition; // overHanded per parameter
 	private AgreementDefinition prvAgreementDefinition; // overHanded per parameter
 	private transient AgreementDefinitionListCtrl agreementDefinitionListCtrl; // overHanded per parameter
@@ -146,7 +146,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	private transient String  		oldVar_aggName;
 	private transient String  		oldVar_aggDesc;
 	private transient String  		oldVar_aggReportName;
-	private transient String  		oldVar_aggReportPath;
+//	private transient String  		oldVar_aggReportPath;
 	private transient boolean  		oldVar_aggIsActive;
 	private transient String oldVar_recordStatus;
 
@@ -170,7 +170,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	private transient AgreementDefinitionService agreementDefinitionService;
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
-
+	static final List<ValueLabel> agreementDetailsList = PennantStaticListUtil.getAggDetails();
 
 	/**
 	 * default constructor.<br>
@@ -224,8 +224,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		}
 		
 		this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
-		this.orgDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52 + "px");// 425px
-		this.signCopyPdf.setHeight(this.borderLayoutHeight - 80 + "px");
+		this.orgDetailTabDiv.setHeight(this.borderLayoutHeight - 70  + "px");// 425px
+	//	this.signCopyPdf.setHeight(this.borderLayoutHeight - 80 + "px"); 
 
 		// READ OVERHANDED parameters !
 		// we get the agreementDefinitionListWindow controller. So we have access
@@ -253,7 +253,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setMaxlength(100);
 		this.aggDesc.setMaxlength(50);
 		this.aggReportName.setMaxlength(100);
-		this.aggReportPath.setMaxlength(100);
+//		this.aggReportPath.setMaxlength(100);
 
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
@@ -281,7 +281,6 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_AgreementDefinitionDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_AgreementDefinitionDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-
 		logger.debug("Leaving") ;
 	}
 
@@ -310,6 +309,26 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug(event.toString());
 		doSave();
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * when the selectAll CheckBox is checked . <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onCheck$AggCheck_SelectAll(Event event) throws InterruptedException {
+		logger.debug(event.toString());
+		
+			for(int i=0;i<agreementDetailsList.size();i++){
+			 Checkbox checkBox=(Checkbox)AgreementDetails.getChildren().get(i);
+			 if(AggCheck_SelectAll.isChecked()){
+			    checkBox.setChecked(true);
+			}else{
+				checkBox.setChecked(false);
+			}
+		}
 		logger.debug("Leaving");
 	}
 
@@ -443,6 +462,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving") ;
 	}
 
@@ -458,15 +478,18 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setValue(aAgreementDefinition.getAggName());
 		this.aggDesc.setValue(aAgreementDefinition.getAggDesc());
 		this.aggReportName.setValue(aAgreementDefinition.getAggReportName());
-		this.aggReportPath.setValue(aAgreementDefinition.getAggReportPath());
+//		this.aggReportPath.setValue(aAgreementDefinition.getAggReportPath());
 		this.aggIsActive.setChecked(aAgreementDefinition.isAggIsActive());
 		this.recordStatus.setValue(aAgreementDefinition.getRecordStatus());
 		
-		if(aAgreementDefinition.isNew() || aAgreementDefinition.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aAgreementDefinition.isNew() || (aAgreementDefinition.getRecordType() != null ? aAgreementDefinition.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.aggIsActive.setChecked(true);
 			this.aggIsActive.setDisabled(true);
 		}
+		this.aggImage= aAgreementDefinition.getAggImage();
+		doFillAggDetailsList(aAgreementDefinition);
 		
+		/*
 		AMedia amedia = null;
 		String docType = aAgreementDefinition.getAggtype();
 		if (aAgreementDefinition.getAggImage() != null) {
@@ -505,11 +528,10 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 				e.printStackTrace();
 			}
 			agreementDocView.setContent(amedia);
-				
-			
-	
-			
 		}
+*/				
+			
+		
 		logger.debug("Leaving");
 	}
 
@@ -544,20 +566,24 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		try {
+		/*try {
 			aAgreementDefinition.setAggReportPath(this.aggReportPath.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
-		}
-		
-	
-		
+		}*/
 		try {
 			aAgreementDefinition.setAggIsActive(this.aggIsActive.isChecked());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-
+		
+		try {
+			doSaveAggDetailsList(aAgreementDefinition);
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -573,6 +599,43 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		logger.debug("Leaving");
 	}
 
+	
+	/**
+	 * This method Fills Agreement Details in Listbox
+	 */
+	private void doFillAggDetailsList(AgreementDefinition aAgreementDefinition){
+		logger.debug("Entering");
+		String aggDetail1 =aAgreementDefinition.getAggImage()==null ? "": aAgreementDefinition.getAggImage();
+		if(agreementDetailsList!=null){
+			for (ValueLabel agreementDetail : agreementDetailsList) {
+				if(!agreementDetail.getValue().equals("")){
+					Checkbox checkbox=new Checkbox(); 
+					checkbox.setId(agreementDetail.getValue());
+					checkbox.setLabel(agreementDetail.getLabel());
+					checkbox.setDisabled(isReadOnly("AgreementDefinitionDialog_aggDesc"));
+					if(aggDetail1.contains(agreementDetail.getValue())){	
+						checkbox.setChecked(true);
+					}
+					this.AgreementDetails.appendChild(checkbox);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	private void doSaveAggDetailsList(AgreementDefinition aAgreementDefinition)
+	{
+		String aggImageTemp="";
+		List<Component> components = AgreementDetails.getChildren();
+		for (Component component : components) {
+			Checkbox checkBox=(Checkbox)component;
+			if(checkBox.isChecked()){
+				aggImageTemp =  aggImageTemp + checkBox.getId()+ ",";
+			}
+		}
+		aAgreementDefinition.setAggImage(aggImageTemp);
+	}
+	
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -628,6 +691,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 			setDialog(this.window_AgreementDefinitionDialog);
 		} catch (final Exception e) {
 			logger.error(e);
+			e.printStackTrace();
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
 		logger.debug("Leaving") ;
@@ -646,7 +710,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.oldVar_aggName = this.aggName.getValue();
 		this.oldVar_aggDesc = this.aggDesc.getValue();
 		this.oldVar_aggReportName = this.aggReportName.getValue();
-		this.oldVar_aggReportPath = this.aggReportPath.getValue();
+//		this.oldVar_aggReportPath = this.aggReportPath.getValue();
 		this.oldVar_aggIsActive = this.aggIsActive.isChecked();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving") ;
@@ -661,7 +725,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setValue(this.oldVar_aggName);
 		this.aggDesc.setValue(this.oldVar_aggDesc);
 		this.aggReportName.setValue(this.oldVar_aggReportName);
-		this.aggReportPath.setValue(this.oldVar_aggReportPath);
+//		this.aggReportPath.setValue(this.oldVar_aggReportPath);
 		this.aggIsActive.setChecked(this.oldVar_aggIsActive);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -694,9 +758,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		if (this.oldVar_aggReportName != this.aggReportName.getValue()) {
 			return true;
 		}
-		if (this.oldVar_aggReportPath != this.aggReportPath.getValue()) {
+		/*if (this.oldVar_aggReportPath != this.aggReportPath.getValue()) {
 			return true;
-		}
+		}*/
 		logger.debug("Leaving"); 
 		return false;
 	}
@@ -709,32 +773,24 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		setValidationOn(true);
 
 		if (!this.aggCode.isReadonly()){
-			this.aggCode.setConstraint(new SimpleConstraint(
-				PennantConstants.HNO_FNO_REGEX, Labels.getLabel(
-					"MAND_FIELD_ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
-						"label_AgreementDefinitionDialog_AggCode.value")})));
+			this.aggCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AgreementDefinitionDialog_AggCode.value"),
+					PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
 		
 		if (!this.aggName.isReadonly()){
-			this.aggName.setConstraint(new SimpleConstraint(
-				PennantConstants.NM_NAME_REGEX, Labels.getLabel(
-					"FIELD_CHAR_NUMBERS",new String[]{Labels.getLabel(
-						"label_AgreementDefinitionDialog_AggName.value")})));
+			this.aggName.setConstraint(new PTStringValidator(Labels.getLabel("label_AgreementDefinitionDialog_AggName.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
 		
 		if (!this.aggReportName.isReadonly()){
-			this.aggReportName.setConstraint(new SimpleConstraint(
-				PennantConstants.NM_NAME_REGEX, Labels.getLabel(
-					"MAND_FIELD_ALPHANUMERIC_SPECIALCHARS",new String[]{Labels.getLabel(
-						"label_AgreementDefinitionDialog_AggReportName.value")})));
+			this.aggReportName.setConstraint(new PTStringValidator(Labels.getLabel("label_AgreementDefinitionDialog_AggReportName.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
 		
-		if (!this.aggReportPath.isReadonly()){
+		/*if (!this.aggReportPath.isReadonly()){
 			this.aggReportPath.setConstraint(new SimpleConstraint(
 				PennantConstants.PATH_REGEX, Labels.getLabel(
 					"MAND_FIELD_ALPHANUMERIC_SPECIALCHARS",new String[]{Labels.getLabel(
 						"label_AgreementDefinitionDialog_AggReportPath.value")})));
-		}
+		}*/
 		logger.debug("Leaving");
 	}
 
@@ -748,7 +804,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setConstraint("");
 		this.aggDesc.setConstraint("");
 		this.aggReportName.setConstraint("");
-		this.aggReportPath.setConstraint("");
+//		this.aggReportPath.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -773,7 +829,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setErrorMessage("");
 		this.aggDesc.setErrorMessage("");
 		this.aggReportName.setErrorMessage("");
-		this.aggReportPath.setErrorMessage("");
+//		this.aggReportPath.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -867,9 +923,10 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setReadonly(isReadOnly("AgreementDefinitionDialog_aggName"));
 		this.aggDesc.setReadonly(isReadOnly("AgreementDefinitionDialog_aggDesc"));
 		this.aggReportName.setReadonly(isReadOnly("AgreementDefinitionDialog_aggReportName"));
-		this.aggReportPath.setReadonly(isReadOnly("AgreementDefinitionDialog_aggReportPath"));
+//		this.aggReportPath.setReadonly(isReadOnly("AgreementDefinitionDialog_aggReportPath"));
 		this.aggIsActive.setDisabled(isReadOnly("AgreementDefinitionDialog_aggIsActive"));
-
+		this.AggCheck_SelectAll.setDisabled(isReadOnly("AgreementDefinitionDialog_aggDesc"));
+		this.AggCheck_SelectAll.setVisible(!isReadOnly("AgreementDefinitionDialog_aggDesc"));
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -883,7 +940,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 			}
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			//btnCancel.setVisible(true);
 		}
 		// remember the old variables
 		doStoreInitValues();
@@ -899,7 +956,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setReadonly(true);
 		this.aggDesc.setReadonly(true);
 		this.aggReportName.setReadonly(true);
-		this.aggReportPath.setReadonly(true);
+//		this.aggReportPath.setReadonly(true);
 		this.aggIsActive.setDisabled(true);
 
 		if(isWorkFlowEnabled()){
@@ -926,7 +983,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setValue("");
 		this.aggDesc.setValue("");
 		this.aggReportName.setValue("");
-		this.aggReportPath.setValue("");
+//		this.aggReportPath.setValue("");
 		this.aggIsActive.setChecked(false);
 		logger.debug("Leaving");
 	}
@@ -980,7 +1037,6 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		try {
 
 			if(doProcess(aAgreementDefinition,tranType)){
-				doWriteBeanToComponents(aAgreementDefinition);
 				refreshList();
 				closeDialog(this.window_AgreementDefinitionDialog, "AgreementDefinition");
 			}
@@ -1259,24 +1315,22 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		}
 	} 
 	
-	public void onUpload$brwAgreementDoc(UploadEvent event) {
+	/*public void onUpload$brwAgreementDoc(UploadEvent event) {
 		logger.debug(event.toString());
 		Media media = event.getMedia();
 		
 		browseDoc(media, getAgreementDefinition());
 		logger.debug("Leaving");
-	}
+	}*/
 
 	
-	private void browseDoc(Media media, AgreementDefinition agreementDefinition) {
+/*	private void browseDoc(Media media, AgreementDefinition agreementDefinition) {
 		logger.debug("Entering");
 		try {
 			boolean isSupported = true;
 			String docType = "";	
 			String fileName = media.getName();
-			
 			String mediaDocType = media.getContentType();			
-										
 			if (mediaDocType.equals("image/gif")) {
 				docType = "GIF";
 			} else  if (mediaDocType.equals("image/png")) {
@@ -1293,53 +1347,38 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 				isSupported = false;
 				PTMessageUtils.showErrorMessage("Un Supported Format.only "+PennantConstants.AGREEMENT_DEFINITION_DOCS+" are allowed");
 			}
-			
-			
 			if (isSupported) {
-				
 				byte[] imageData = null;
-				
 				if(media.isBinary()) {
 					imageData = IOUtils.toByteArray(media.getStreamData());
 				} else {
 					imageData =  IOUtils.toByteArray(media.getReaderData());
 				}
-				
 				agreementDefinition.setAggImage(imageData);
 				agreementDefinition.setAggtype(docType);
-				this.aggReportPath.setValue(fileName);	
-				
+				this.aggReportName.setValue(fileName);
+//				this.aggReportPath.setValue(fileName);	
 				if(docType.equals("WORD")) {			
-
 					FileOutputStream out = new FileOutputStream(fileName); 
 					out.write(imageData);
 					out.close();
-
 					Document doc = new Document(fileName);
-
 					String pdfFileName = fileName.substring(0, media.getName().lastIndexOf("."));
 					pdfFileName = pdfFileName +".pdf";
-
 					doc.save(pdfFileName, SaveFormat.PDF);		
-
 					imageData =  IOUtils.toByteArray(new FileInputStream(pdfFileName));				 			 
-
 				}
-				
-						
 				if("JPEG".equals(docType)){
-					this.agreementDocView.setContent(new AMedia("document.jpg", "image/jpeg", mediaDocType, new ByteArrayInputStream(imageData)));
+					this.agreementDocView.setContent(new AMedia("document.jpg", "image/jpeg", mediaDocType, imageData));
 				} else if("PNG".equals(docType)){
-					this.agreementDocView.setContent(new AMedia("document.png", "image/png", mediaDocType, new ByteArrayInputStream(imageData)));
+					this.agreementDocView.setContent(new AMedia("document.png", "image/png", mediaDocType, imageData));
 				} else if("GIF".equals(docType)){
-					this.agreementDocView.setContent(new AMedia("document.gif", "image/gif", mediaDocType, new ByteArrayInputStream(imageData)));
-				} else if("PDF".equals(docType)){
-					this.agreementDocView.setContent(new AMedia("document.pdf", "pdf", "application/pdf", new ByteArrayInputStream(imageData)));
+					this.agreementDocView.setContent(new AMedia("document.gif", "image/gif", mediaDocType, imageData));
+				} else if("PDF".equals(docType) || "WORD".equals(docType)){
+					this.agreementDocView.setContent(new AMedia("document.pdf", "pdf", "application/pdf", imageData));
 				} else if("TEXT".equals(docType)){
-					this.agreementDocView.setContent(new AMedia("document.txt", "txt", "text/plain", new ByteArrayInputStream(imageData)));
-				} else if("WORD".equals(docType)) {
-					this.agreementDocView.setContent(new AMedia("document.pdf", "pdf", "application/pdf", new ByteArrayInputStream(imageData)));
-				}
+					this.agreementDocView.setContent(new AMedia("document.txt", "txt", "text/plain", imageData));
+				} 
 				
 			}
 		
@@ -1348,7 +1387,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 			e.printStackTrace();
 		}
 		logger.debug("Leaving");
-	}
+	}*/
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

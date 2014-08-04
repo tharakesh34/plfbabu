@@ -45,7 +45,6 @@ package com.pennant.webui.applicationmaster.baseratecode.model;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -54,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listItems in the listBox.
  * 
@@ -62,13 +60,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class BaseRateCodeListModelItemRenderer implements ListitemRenderer<BaseRateCode>, Serializable {
 
 	private static final long serialVersionUID = -8176701674841176336L;
-	private final static Logger logger = Logger.getLogger(BaseRateCodeListModelItemRenderer.class);
 
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
 	public void render(Listitem item, BaseRateCode baseRateCode, int count) throws Exception {
-		logger.debug("Entering");
-		//final BaseRateCode baseRateCode = (BaseRateCode) data;
+
 		Listcell lc;
 	  	lc = new Listcell(baseRateCode.getBRType());
 		lc.setParent(item);
@@ -80,6 +75,5 @@ public class BaseRateCodeListModelItemRenderer implements ListitemRenderer<BaseR
 		lc.setParent(item);
 		item.setAttribute("data", baseRateCode);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onBaseRateCodeItemDoubleClicked");
-		logger.debug("Leaving");
 	}
 }

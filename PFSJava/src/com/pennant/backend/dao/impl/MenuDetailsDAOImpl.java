@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -53,6 +54,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.util.StoredProcedureUtil;
 import com.pennant.backend.dao.MenuDetailsDAO;
 import com.pennant.backend.model.MenuDetails;
 
@@ -67,9 +69,11 @@ public class MenuDetailsDAOImpl extends BasisNextidDaoImpl<MenuDetails> implemen
 
 	// Spring JDBC Templates
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private DataSource dataSource;
 
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.dataSource = dataSource;
 	}
 
 	public List<MenuDetails> getMenuDetailsByApp(String appCode) {
@@ -84,6 +88,21 @@ public class MenuDetailsDAOImpl extends BasisNextidDaoImpl<MenuDetails> implemen
 		return this.namedParameterJdbcTemplate.query(selectListSql, namedParameters,typeRowMapper);
 		
 	}
+	
+	/**
+	 * This method for getting the error details
+	 * @param errorId (String)
+	 * @param procedureName (String)
+	 * @param userLogin (String)
+	 * @param inputParamMap (Map)
+	 * @param outputParamMap (Map)
+	 * @param userLanguage (String)
+	 * @return Map
+	 */
+    @Override
+    public Map<String, Object> getLastLoginInfo(String procedureName, String usrLogin,  Map<String, Object> inputParamMap, Map<String, Object> outputParamMap) {
+	  return new StoredProcedureUtil(this.dataSource, procedureName, inputParamMap, outputParamMap).execute(usrLogin);    
+    }
 		
 }		
 

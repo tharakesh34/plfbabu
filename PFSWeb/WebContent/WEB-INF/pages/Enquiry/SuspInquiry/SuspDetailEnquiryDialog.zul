@@ -22,17 +22,17 @@
 					<toolbar align="start"
 						style="float:left; border-style: none;">
 					</toolbar>
+
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
 						style="float:left; border-style: none;">
-						<hbox align="center" style="padding: 2px"></hbox>
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end"
 						style="float:right; border-style: none;">
 						<button id="btnHelp" height="24px"
-							label = "${c:l('label_Help')}"
+							label="${c:l('label_Help')}"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							autodisable="btnSave,btnHelp,btnClose" />
 						<button id="btnClose" height="24px"
@@ -50,9 +50,9 @@
 							sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="border:0px;padding-left:20px;padding-top:0px;">
 							<columns>
-								<column width="170px" />
+								<column width="190px" />
 								<column />
-								<column width="170px" />
+								<column width="190px" />
 								<column />
 							</columns>
 							<rows>
@@ -60,52 +60,41 @@
 									<label
 										id="label_SuspenseEnquiryDialog_FinIsInSusp"
 										value="${c:l('label_SuspenseEnquiryDialog_FinIsInSusp.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="finIsInSusp"
-											disabled="true" />
-									</hbox>
+									<checkbox id="finIsInSusp"
+										disabled="true" />
 									<label
 										id="label_SuspenseEnquiryDialog_ManualSusp"
 										value="${c:l('label_SuspenseEnquiryDialog_ManualSusp.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="manualSusp"
-											disabled="true" />
-									</hbox>
+									<checkbox id="manualSusp"
+										disabled="true" />
 								</row>
 								<row visible="true">
 									<label
 										id="label_SuspenseEnquiryDialog_FinSuspDate"
 										value="${c:l('label_SuspenseEnquiryDialog_FinSuspDate.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<datebox id="finSuspDate"
-											width="100px" disabled="true" format="dd/MM/yyyy" />
-									</hbox>
+									<datebox id="finSuspDate"
+										width="100px" disabled="true" format="dd/MM/yyyy" />
+									<label
+										id="label_SuspenseEnquiryDialog_FinSuspTrfDate"
+										value="${c:l('label_SuspenseEnquiryDialog_FinSuspTrfDate.value')}" />
+									<datebox id="finSuspTrfDate"
+										width="100px" disabled="true" format="dd/MM/yyyy" />
 								</row>
 								<row visible="true">
 									<label
 										id="label_SuspenseEnquiryDialog_FinSuspAmt"
 										value="${c:l('label_SuspenseEnquiryDialog_FinSuspAmt.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<decimalbox id="finSuspAmt"
-											disabled="true" width="162px" maxlength="18" />
-									</hbox>
+									<decimalbox id="finSuspAmt"
+										disabled="true" width="162px" maxlength="18" />
 									<label
 										id="label_SuspenseEnquiryDialog_FinCurSuspAmt"
 										value="${c:l('label_SuspenseEnquiryDialog_FinCurSuspAmt.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<decimalbox id="finCurSuspAmt"
-											disabled="true" width="162px" maxlength="18" />
-									</hbox>
+									<decimalbox id="finCurSuspAmt"
+										disabled="true" width="162px" maxlength="18" />
 								</row>
-
 							</rows>
 						</grid>
-						<tabbox width="auto" height="100%" 
+						<tabbox width="auto" height="100%"
 							id="tabBoxIndexCenter">
 							<tabs id="tabsIndexCenter">
 								<tab id="suspDetailsTab"
@@ -115,55 +104,58 @@
 							</tabs>
 							<tabpanels id="tabpanelsBoxIndexCenter">
 								<tabpanel style="overflow:auto">
-									<listbox id="listBoxSuspDetails" emptyMessage="No Records Found"
-										vflex="true" tooltiptext="" width="100%" multiple="false">
+									<listbox id="listBoxSuspDetails"
+										fixedLayout="true" span="true"
+										emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+										width="100%" multiple="false">
 										<listhead sizable="false"
 											style="padding:0px;position:relative;">
 											<listheader visible="true"
-												label="${c:l('listheader_FinTrfDate.label')}" width="15%" />
+												label="${c:l('listheader_FinTrfDate.label')}" hflex="min" />
 											<listheader
-												label="${c:l('listheader_FinTrfMvt.label')}" width="20%" />
+												label="${c:l('listheader_FinTrfMvt.label')}" hflex="min" />
 											<listheader
-												label="${c:l('listheader_FinSeq.label')}" width="10%" />
+												label="${c:l('listheader_FinSeq.label')}" hflex="min" />
 											<listheader
-												label="${c:l('listheader_FinTrfAmt.label')}" width="20%" />
+												label="${c:l('listheader_FinTrfAmt.label')}" hflex="min" />
 											<listheader
-												label="${c:l('listheader_FinODDate.label')}" width="15%" />
+												label="${c:l('listheader_FinODDate.label')}" hflex="min" />
 											<listheader
 												label="${c:l('listheader_FinTrfFromDate.label')}"
-												width="20%" />
+												hflex="min" />
 										</listhead>
 									</listbox>
 								</tabpanel>
 								<tabpanel style="overflow:auto">
-									<listbox id="listBoxSuspPostings" emptyMessage="No Records Found"
-										vflex="true" tooltiptext="" width="100%"
-										multiple="false">
+									<listbox id="listBoxSuspPostings"
+										fixedLayout="true" span="true"
+										emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+										width="100%" multiple="false">
 										<listhead sizable="true">
 											<listheader
 												id="listheader_Acc_ValueDate"
 												label="${c:l('listheader_Acc_ValueDate.label')}"
-												sort="false" width="20%" />
+												sort="false" hflex="min" />
 											<listheader
 												id="listheader_Acc_DebitOrCredit"
 												label="${c:l('listheader_Acc_DebitOrCredit.label')}"
-												sort="false" width="10%" />
+												sort="false" hflex="min" />
 											<listheader
 												id="listheader_Acc_TranCode"
 												label="${c:l('listheader_Acc_TranCode.label')}" sort="false"
-												width="15%" />
+												hflex="min" />
 											<listheader
 												id="listheader_Acc_RevTranCode"
 												label="${c:l('listheader_Acc_RevTranCode.label')}"
-												sort="false" width="15%" />
+												sort="false" hflex="min" />
 											<listheader
 												id="listheader_Acc_AccountNo"
 												label="${c:l('listheader_Acc_AccountNo.label')}"
-												sort="false" width="20%" />
+												sort="false" hflex="min" />
 											<listheader
 												id="listheader_Acc_Amount"
 												label="${c:l('listheader_Acc_Amount.label')}" sort="false"
-												width="20%" />
+												hflex="min" />
 										</listhead>
 									</listbox>
 								</tabpanel>

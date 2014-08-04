@@ -121,7 +121,7 @@ public class InterestRateBasisCodeDAOImpl extends BasisCodeDAO<InterestRateBasis
 	@Override
 	public InterestRateBasisCode getInterestRateBasisCodeById(final String id,String type) {
 		logger.debug("Entering");
-		InterestRateBasisCode interestRateBasisCode = getInterestRateBasisCode();
+		InterestRateBasisCode interestRateBasisCode = new InterestRateBasisCode();
 		interestRateBasisCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

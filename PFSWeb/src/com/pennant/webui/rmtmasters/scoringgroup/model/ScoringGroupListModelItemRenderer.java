@@ -53,6 +53,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 
@@ -74,7 +75,7 @@ public class ScoringGroupListModelItemRenderer implements ListitemRenderer<Scori
 	  	lc = new Listcell(scoringGroup.getScoreGroupName());
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(scoringGroup.getCategoryType(), 
-				PennantAppUtil.getCategoryType()));
+				PennantStaticListUtil.getCategoryType()));
 		lc.setParent(item);
 	  	lc = new Listcell(PennantAppUtil.formateInt(scoringGroup.getMinScore()));
 		lc.setStyle("text-align:right;");

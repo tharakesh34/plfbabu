@@ -1,6 +1,7 @@
 package com.pennant.Interface.service.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -49,7 +50,7 @@ public class CalendarInterfaceServiceEquationImpl implements CalendarInterfaceSe
 					weekendMaster = getWeekendMasterDAO().getWeekendMasterByCode("GEN");
 					if (weekendMaster == null) {
 						weekendMaster = new WeekendMaster();
-						weekendMaster.setWeekend("1,7");
+						weekendMaster.setWeekend("6,7");
 					}
 				}
 				Calendar calendar = Calendar.getInstance();
@@ -63,6 +64,7 @@ public class CalendarInterfaceServiceEquationImpl implements CalendarInterfaceSe
 					char[] dayStatus = calendarDays.toCharArray();
 
 					for (int j = 0; j < dayStatus.length; j++) {
+						
 						if (String.valueOf(dayStatus[j]).equals("N")) {
 
 							// if Days are equal to WeekendDays add to Normal Days else add to Perminent days
@@ -75,6 +77,7 @@ public class CalendarInterfaceServiceEquationImpl implements CalendarInterfaceSe
 								}
 							}
 						}
+						calendar.add(Calendar.DATE, 1);
 					}
 					if (normalHolidays.endsWith(",")) {
 						normalHolidays = normalHolidays.substring(0,normalHolidays.length() - 1);
@@ -90,7 +93,18 @@ public class CalendarInterfaceServiceEquationImpl implements CalendarInterfaceSe
 				if (holidayMaster != null) {
 					holidayMaster.setHolidays(normalHolidays);
 					getHolidayMasterDAO().update(holidayMaster, "");
-					isUpdated = true;
+				}else{
+					if(!normalHolidays.equals("")){
+						holidayMaster = new HolidayMaster();
+						holidayMaster.setHolidayYear(new BigDecimal(yearList.get(i)));
+						holidayMaster.setHolidayType("N");
+						holidayMaster.setHolidays(normalHolidays);
+						holidayMaster.setHolidayDesc1("Holidays");
+						holidayMaster.setVersion(1);
+						holidayMaster.setLastMntBy(1000);
+						holidayMaster.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						getHolidayMasterDAO().save(holidayMaster, "");
+					}
 				}
 
 				// Perminent Holiday details updation
@@ -99,8 +113,20 @@ public class CalendarInterfaceServiceEquationImpl implements CalendarInterfaceSe
 				if (holidayMaster != null) {
 					holidayMaster.setHolidays(perminentHoliDays);
 					getHolidayMasterDAO().update(holidayMaster, "");
-					isUpdated = true;
+				}else{
+					if(!perminentHoliDays.equals("")){
+						holidayMaster = new HolidayMaster();
+						holidayMaster.setHolidayYear(new BigDecimal(yearList.get(i)));
+						holidayMaster.setHolidayType("P");
+						holidayMaster.setHolidays(perminentHoliDays);
+						holidayMaster.setHolidayDesc1("Holidays");
+						holidayMaster.setVersion(1);
+						holidayMaster.setLastMntBy(1000);
+						holidayMaster.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						getHolidayMasterDAO().save(holidayMaster, "");
+					}
 				}
+				isUpdated = true;
 			}
 		}
 		logger.debug("Leaving");

@@ -67,7 +67,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -81,8 +80,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityRightService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -143,7 +145,7 @@ public class SecurityRightDialogCtrl extends GFCBaseCtrl implements Serializable
 	// ServiceDAOs / Domain Classes
 	private transient SecurityRightService  securityRightService;
 	private transient PagedListService pagedListService;
-	private List<ValueLabel>           listRightType = PennantAppUtil.getRightType(); 
+	private List<ValueLabel>           listRightType = PennantStaticListUtil.getRightType(); 
 
 	/**
 	 * default constructor.<br>
@@ -218,7 +220,7 @@ public class SecurityRightDialogCtrl extends GFCBaseCtrl implements Serializable
 	private void doSetFieldProperties() {
 		logger.debug("Entering ");
 		// Empty sent any required attributes
-		this.rightName.setMaxlength(50);
+		this.rightName.setMaxlength(100);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -429,7 +431,7 @@ public class SecurityRightDialogCtrl extends GFCBaseCtrl implements Serializable
 
 		}else{
 			this.rightType.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(securityRight.getRightType()),PennantAppUtil.getRightType()));
+					String.valueOf(securityRight.getRightType()),PennantStaticListUtil.getRightType()));
 		}
 		this.rightName.setValue(aSecurityRight.getRightName());
 		this.recordStatus.setValue(aSecurityRight.getRecordStatus());
@@ -618,9 +620,7 @@ public class SecurityRightDialogCtrl extends GFCBaseCtrl implements Serializable
 		}
 
 		if (!this.rightName.isReadonly()){
-			this.rightName.setConstraint(
-					new SimpleConstraint(PennantConstants.ALPHA_SPACE_UNDERSCORE_REGEX, Labels.getLabel("MAND_FIELD_CHARACTER_SPECIALCHAR"
-							,new String[]{Labels.getLabel("label_SecurityRightDialog_RightName.value")})));
+			this.rightName.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityRightDialog_RightName.value"),PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 		}
 		logger.debug("Leaving ");
 	}

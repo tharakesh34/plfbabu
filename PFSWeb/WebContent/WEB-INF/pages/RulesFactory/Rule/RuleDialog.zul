@@ -8,21 +8,14 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<style>
-		.CodeMirror-line-numbers {
-			 width: 2.2em; 
-			 color: #aaa;
-			 background-color: #eee; 
-			 text-align: right; 
-			 padding-right: .3em;
-			 font-size: 10pt; 
-			 font-family: monospace; 
-			 padding-top: .4em;
-			 line-height: normal; 
-		}
+		.CodeMirror-line-numbers { width: 2.2em; color: #aaa;
+		background-color: #eee; text-align: right; padding-right: .3em;
+		font-size: 10pt; font-family: monospace; padding-top: .4em;
+		line-height: normal; }
 	</style>
 	<window>
-		<window id="window_RuleDialog"
-			border="normal" apply="${ruleDialogCtrl}" width="100%" height="100%"
+		<window id="window_RuleDialog" border="normal"
+			apply="${ruleDialogCtrl}" width="100%" height="100%"
 			sizable="false">
 
 			<borderlayout id="borderlayoutRule">
@@ -35,30 +28,30 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
 								sclass="toolbar-start">
-								<button id="btnNew" height="24px"
+								<button id="btnNew"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnNew.tooltiptext')}" />
-								<button id="btnEdit" height="24px"
+								<button id="btnEdit"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnEdit.tooltiptext')}" />
-								<button id="btnDelete" height="24px"
+								<button id="btnDelete"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnDelete.tooltiptext')}" />
-								<button id="btnSave" height="24px"
+								<button id="btnSave"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnSave.tooltiptext')}" />
-								<button id="btnCancel" height="24px"
+								<button id="btnCancel"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-								<button id="btnNotes" height="24px"
+								<button id="btnNotes"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
-								<button id="btnReadValues" height="24px"
-									image="/images/icons/import_16x16.gif"
+								<button id="btnReadValues"
+									label="${c:l('label_Generate')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnReadValues.tooltiptext')}" />
-								<button id="btnSimulation" height="24px"
-									image="/images/icons/gear_16.png"
+								<button id="btnSimulation"
+									label="${c:l('label_Simulate')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnSimulation.tooltiptext')}" />
 							</toolbar>
@@ -72,11 +65,11 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" height="24px"
+								<button id="btnHelp"
 									label="${c:l('label_Help')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-								<button id="btnClose" height="24px"
+								<button id="btnClose"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
 									tooltiptext="${c:l('btnClose.tooltiptext')}" />
 							</toolbar>
@@ -88,8 +81,9 @@
 					<div>
 						<groupbox width="100%" closable="false">
 							<caption label="Rule Details" />
-							<grid id="grid_basicDetail" sclass="GridLayoutNoBorder"
-								fixedLayout="true" style="border:0px">
+							<grid id="grid_basicDetail"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px">
 								<columns>
 									<column width="130px" />
 									<column />
@@ -202,8 +196,7 @@
 											<textbox
 												id="lovDescGroupName" width="250px" readonly="true" />
 											<button
-												id="btnSearchGroupId" image="/images/icons/LOVSearch.png"
-												height="24px" />
+												id="btnSearchGroupId" image="/images/icons/LOVSearch.png" />
 										</hbox>
 									</row>
 								</rows>
@@ -211,8 +204,9 @@
 						</groupbox>
 
 						<separator />
-						<tabbox id="tabBoxIndexCenter" width="98%" height="100%">
-							<tabs  id="tabsIndexCenter">
+						<tabbox id="tabBoxIndexCenter" width="98%"
+							height="100%">
+							<tabs id="tabsIndexCenter">
 								<tab id="tab_ruleDesign"
 									label="${c:l('label_RuleDialog_RuleDesign')}" />
 								<tab id="tab_textRule"
@@ -221,7 +215,7 @@
 							<tabpanels id="tabpanelsBoxIndexCenter">
 								<tabpanel id="tabPanel_tree"
 									style="overflow:auto">
-									<groupbox width="99%" visible="true" 
+									<groupbox width="99%" visible="true"
 										closable="false">
 										<caption
 											label="${c:l('label_RuleDialog_RuleDesign')}" />
@@ -230,7 +224,7 @@
 								</tabpanel>
 								<tabpanel id="tabPanel_RuleResult"
 									style="overflow:auto">
-									<groupbox width="99%" visible="true"  
+									<groupbox width="99%" visible="true"
 										closable="false">
 										<caption
 											label="${c:l('label_RuleDialog_TextRule')}" />
@@ -244,19 +238,18 @@
 				</center>
 
 				<south sclass="south-dialog">
-						<groupbox id="groupboxWf" width="99%"
-							height="100%">
-							<caption label="${c:l('Action')}" />
-							<hbox width="75%">
-								<radiogroup id="userAction"
-									name="action" />
-								<label id="label_RecordStatus"
-									value="${c:l('label_RuleDialog_RecordStatus.value')}"
-									sclass="label-status" />
-								<label id="recordStatus" />
-							</hbox>
-						</groupbox>
-					</south>
+					<groupbox id="groupboxWf" width="99%"
+						height="100%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_RecordStatus"
+								value="${c:l('label_RuleDialog_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
 			</borderlayout>
 		</window>
 	</window>

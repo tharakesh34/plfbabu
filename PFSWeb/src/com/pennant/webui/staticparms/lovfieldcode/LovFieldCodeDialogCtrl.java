@@ -67,7 +67,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -81,8 +80,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.staticparms.LovFieldCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -153,7 +155,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl implements Serializable 
 	private transient LovFieldCodeService lovFieldCodeService;
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
-	private List<ValueLabel> listFieldCodeType=PennantAppUtil.getLovFieldType(); // autoWired
+	private List<ValueLabel> listFieldCodeType=PennantStaticListUtil.getLovFieldType(); // autoWired
 
 	/**
 	 * default constructor.<br>
@@ -229,7 +231,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl implements Serializable 
 	private void doSetFieldProperties() {
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
-		this.fieldCode.setMaxlength(10);
+		this.fieldCode.setMaxlength(8);
 		this.fieldCodeDesc.setMaxlength(50);
 
 		if (isWorkFlowEnabled()){
@@ -622,13 +624,11 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		setValidationOn(true);
 
 		if (!this.fieldCode.isReadonly()){
-			this.fieldCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_LovFieldCodeDialog_FieldCode.value")})));
+			this.fieldCode.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldCodeDialog_FieldCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.fieldCodeDesc.isReadonly()) {
-			this.fieldCodeDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[] { Labels.getLabel("label_LovFieldCodeDialog_FieldCodeDesc.value") })));
+			this.fieldCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldCodeDialog_FieldCodeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.fieldCodeType.isDisabled()){
 			this.fieldCodeType.setConstraint(new StaticListValidator(listFieldCodeType,Labels.getLabel(

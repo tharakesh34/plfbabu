@@ -12,7 +12,7 @@ import org.zkoss.zul.Constraint;
 public class PTMobileNumberValidator implements Constraint{
 	private String fieldParm;
 	private boolean mandatory=false;
-	private final String MOBILE_REGEX = "[0-9]*";
+	private final String MOBILE_REGEX = "^\\+971[0-9]{9}";
 	private int maxLength=9;
 	
 	public PTMobileNumberValidator(String fieldParm,boolean mandatory) {

@@ -13,8 +13,8 @@ public class FinanceTypeComparator implements Comparator<Object>, Serializable {
     public int compare(Object o1, Object o2) { 
 		FinanceType data = (FinanceType) o1; 
 		FinanceType data2 = (FinanceType) o2; 
-        return String.valueOf(data.getLovDescProductCodeName()).compareTo(
-        		String.valueOf(data2.getLovDescProductCodeName())); 
+        return String.valueOf(data.getFinCategory()).compareTo(
+        		String.valueOf(data2.getFinCategory())); 
         
     }
 }

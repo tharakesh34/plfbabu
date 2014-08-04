@@ -65,7 +65,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -79,7 +78,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.bmtmasters.RatingCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -633,15 +634,12 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.ratingCode.isReadonly()){
-			this.ratingCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-				"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_RatingCodeDialog_RatingCode.value")})));
+			this.ratingCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RatingCodeDialog_RatingCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}		
 		
 		if (!this.ratingCodeDesc.isReadonly()){
-			this.ratingCodeDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-				"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_RatingCodeDialog_RatingCodeDesc.value")})));
+			this.ratingCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_RatingCodeDialog_RatingCodeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		
 		logger.debug("Leaving");

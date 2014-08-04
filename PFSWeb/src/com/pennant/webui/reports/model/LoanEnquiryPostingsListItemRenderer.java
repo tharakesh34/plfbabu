@@ -12,6 +12,8 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 public class LoanEnquiryPostingsListItemRenderer implements ListitemRenderer<Object>, Serializable{
@@ -44,13 +46,13 @@ public class LoanEnquiryPostingsListItemRenderer implements ListitemRenderer<Obj
 			lc.setParent(item);
 			/*lc = new Listcell(entry.getTranDesc());
 			lc.setParent(item);*/
-			lc = new Listcell(PennantAppUtil.getlabelDesc(entry.getDrOrCr(),PennantAppUtil.getTranType()));
+			lc = new Listcell(PennantAppUtil.getlabelDesc(entry.getDrOrCr(),PennantStaticListUtil.getTranType()));
 			lc.setParent(item);
 			lc = new Listcell(entry.getTranCode());
 			lc.setParent(item);
 			lc = new Listcell(entry.getRevTranCode());
 			lc.setParent(item);
-			lc = new Listcell(entry.getAccount());
+			lc = new Listcell(PennantApplicationUtil.formatAccountNumber(entry.getAccount()));
 			lc.setStyle("font-weight:bold;");
 			lc.setParent(item);
 			BigDecimal amt = new BigDecimal(entry.getPostAmount().toString()).setScale(0,RoundingMode.HALF_DOWN);

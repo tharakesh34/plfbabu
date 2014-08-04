@@ -123,17 +123,18 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 	@Override
 	public Provision getProvisionById(final String id, String type) {
 		logger.debug("Entering");
-		Provision provision = getProvision();
+		Provision provision = new Provision();
 		
 		provision.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, FinBranch, FinType, " );
 		selectSql.append(" CustID, ProvisionCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue, " );
 		selectSql.append(" NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue, ProfitDue, " );
-		selectSql.append(" DueFromDate, LastFullyPaidDate");
+		selectSql.append(" DueFromDate, LastFullyPaidDate , ");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(", lovDescFinFormatter, lovDescCustCIF, lovDescCustShrtName");
+			selectSql.append(" lovDescFinFormatter, lovDescCustCIF, lovDescCustShrtName , ");
 		}
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" From FinProvisions");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
@@ -237,10 +238,14 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference, FinBranch, FinType, CustID, ProvisionCalDate,");
 		insertSql.append(" ProvisionedAmt, ProvisionAmtCal, ProvisionDue, NonFormulaProv, UseNFProv, AutoReleaseNFP,");
-		insertSql.append(" PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate)");
+		insertSql.append(" PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, ");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:FinReference, :FinBranch, :FinType, :CustID, :ProvisionCalDate,");
 		insertSql.append(" :ProvisionedAmt, :ProvisionAmtCal, :ProvisionDue, :NonFormulaProv,");
-		insertSql.append(" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate)");
+		insertSql.append(" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate, " );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
@@ -276,7 +281,10 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		updateSql.append(" ProvisionDue = :ProvisionDue, NonFormulaProv = :NonFormulaProv,");
 		updateSql.append(" UseNFProv = :UseNFProv, AutoReleaseNFP = :AutoReleaseNFP,");
 		updateSql.append(" PrincipalDue = :PrincipalDue, ProfitDue = :ProfitDue, ");
-		updateSql.append(" DueFromDate = :DueFromDate, LastFullyPaidDate = :LastFullyPaidDate");
+		updateSql.append(" DueFromDate = :DueFromDate, LastFullyPaidDate = :LastFullyPaidDate, ");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
 		updateSql.append(" Where FinReference =:FinReference");
 		
 		logger.debug("updateSql: " + updateSql.toString());

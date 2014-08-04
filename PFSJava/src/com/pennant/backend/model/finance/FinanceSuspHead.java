@@ -44,20 +44,26 @@
 
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.WorkFlowUtil;
 
 
 /**
  * Model class for the <b>FinSuspHead table</b>.<br>
  *
  */
-public class FinanceSuspHead {
+public class FinanceSuspHead implements Serializable {
 
+    private static final long serialVersionUID = -7731584953589841445L;
+    
 	private String finReference;
 	private String finBranch;
 	private String finType;
@@ -66,19 +72,56 @@ public class FinanceSuspHead {
 	private boolean finIsInSusp=false;
 	private boolean manualSusp=false;
 	private Date finSuspDate;
-	private BigDecimal finSuspAmt = new BigDecimal(0);
-	private BigDecimal finCurSuspAmt = new BigDecimal(0);
+	private Date finSuspTrfDate;
+	private BigDecimal finSuspAmt = BigDecimal.ZERO;
+	private BigDecimal finCurSuspAmt = BigDecimal.ZERO;
+	private int version;
+	private long lastMntBy;
+	private Timestamp lastMntOn;
+	private boolean newRecord=false;
+	private String lovValue;
+	private FinanceSuspHead befImage;
+	private LoginUserDetails userDetails;
+
+	private String recordStatus;
+	private String roleCode="";
+	private String nextRoleCode= "";
+	private String taskId="";
+	private String nextTaskId= "";
+	private String recordType;
+	private String userAction = "Save";
+	private long workflowId = 0;	
 	
 	private String lovDescCustCIFName;
 	private int lovDescFinFormatter;
 	private String lovDescCustShrtName;
+	
 	private List<FinanceSuspDetails> suspDetailsList = new ArrayList<FinanceSuspDetails>();
 	private List<ReturnDataSet> suspPostingsList = new ArrayList<ReturnDataSet>();
+	
+	public boolean isNew() {
+		return isNewRecord();
+	}
+
+	public FinanceSuspHead() {
+		this.workflowId = WorkFlowUtil.getWorkFlowID("FinanceSuspHead");
+	}
+
+	public FinanceSuspHead(String id) {
+		this.setId(id);
+	}
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-		
+	
+	public String getId() {
+		return finReference;
+	}
+	public void setId (String id) {
+		this.finReference = id;
+	}
+	
 	public String getFinReference() {
 		return finReference;
 	}
@@ -135,6 +178,13 @@ public class FinanceSuspHead {
 		this.finSuspDate = finSuspDate;
 	}
 	
+	public Date getFinSuspTrfDate() {
+	    return finSuspTrfDate;
+    }
+	public void setFinSuspTrfDate(Date finSuspTrfDate) {
+	    this.finSuspTrfDate = finSuspTrfDate;
+    }
+	
 	public BigDecimal getFinSuspAmt() {
 		return finSuspAmt;
 	}
@@ -147,6 +197,118 @@ public class FinanceSuspHead {
 	}
 	public void setFinCurSuspAmt(BigDecimal finCurSuspAmt) {
 		this.finCurSuspAmt = finCurSuspAmt;
+	}
+	
+	public int getVersion() {
+		return version;
+	}
+	public void setVersion(int version) {
+		this.version = version;
+	}
+	
+	public long getLastMntBy() {
+		return lastMntBy;
+	}
+	public void setLastMntBy(long lastMntBy) {
+		this.lastMntBy = lastMntBy;
+	}
+
+	public Timestamp getLastMntOn() {
+		return lastMntOn;
+	}
+	public void setLastMntOn(Timestamp lastMntON) {
+		this.lastMntOn = lastMntON;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+	
+	public String getLovValue() {
+		return lovValue;
+	}
+	public void setLovValue(String lovValue) {
+		this.lovValue = lovValue;
+	}
+
+	public FinanceSuspHead getBefImage(){
+		return this.befImage;
+	}
+	public void setBefImage(FinanceSuspHead beforeImage){
+		this.befImage=beforeImage;
+	}
+
+	public LoginUserDetails getUserDetails() {
+		return userDetails;
+	}
+	public void setUserDetails(LoginUserDetails userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public String getRecordStatus() {
+		return recordStatus;
+	}
+	public void setRecordStatus(String recordStatus) {
+		this.recordStatus = recordStatus;
+	}
+	
+	public String getRoleCode() {
+		return roleCode;
+	}
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
+	}
+	
+	public String getNextRoleCode() {
+		return nextRoleCode;
+	}
+	public void setNextRoleCode(String nextRoleCode) {
+		this.nextRoleCode = nextRoleCode;
+	}
+	
+	public String getTaskId() {
+		return taskId;
+	}
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+
+	public String getNextTaskId() {
+		return nextTaskId;
+	}
+	public void setNextTaskId(String nextTaskId) {
+		this.nextTaskId = nextTaskId;
+	}
+	
+	public String getRecordType() {
+		return recordType;
+	}
+	public void setRecordType(String recordType) {
+		this.recordType = recordType;
+	}
+
+	public String getUserAction() {
+		return userAction;
+	}
+	public void setUserAction(String userAction) {
+		this.userAction = userAction;
+	}
+
+	public boolean isWorkflow() {
+		if (this.workflowId==0){
+			return false;
+		}
+		return true;
+	}
+
+	public long getWorkflowId() {
+		return workflowId;
+	}
+	public void setWorkflowId(long workflowId) {
+		this.workflowId = workflowId;
 	}
 	
 	public void setLovDescCustCIFName(String lovDescCustCIFName) {
@@ -184,6 +346,11 @@ public class FinanceSuspHead {
 	    return suspPostingsList;
     }
 	
+	// Overridden Equals method to handle the comparison
+	public boolean equals(FinanceSuspHead financeSuspHead) {
+		return getFinReference() == financeSuspHead.getFinReference();
+	}
+	
 	/**
 	 * Check object is equal or not with Other object
 	 * 
@@ -201,5 +368,5 @@ public class FinanceSuspHead {
 		}
 		return false;
 	}
-	
+
 }

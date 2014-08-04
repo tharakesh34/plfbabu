@@ -67,6 +67,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.service.administration.SecurityRightService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -112,7 +113,7 @@ public class SecurityRightSearchCtrl extends GFCBaseCtrl implements Serializable
 	// not auto wired variables
 	private transient SecurityRightService  securityRightService;
 	private transient WorkFlowDetails  workFlowDetails=WorkFlowUtil.getWorkFlowDetails("SecurityRight");
-	private List<ValueLabel>           listRightType = PennantAppUtil.getRightType();
+	private List<ValueLabel>           listRightType = PennantStaticListUtil.getRightType();
     private Listbox listBox;
     private Paging  paging;
 	private Object  object;
@@ -162,19 +163,19 @@ public class SecurityRightSearchCtrl extends GFCBaseCtrl implements Serializable
 		setListRightType();
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_rightID.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_rightID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_rightID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_rightType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_rightType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_rightType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_rightName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_rightName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_rightName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

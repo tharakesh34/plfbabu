@@ -30,7 +30,7 @@ public class AmountCodeGenerationUtil {
 		amountCodeDetail.setNextRepayPftDate(financeMain.getNextRepayPftDate());
 		amountCodeDetail.setLastRepayRvwDate(financeMain.getLastRepayRvwDate());
 		amountCodeDetail.setNextRepayRvwDate(financeMain.getNextRepayRvwDate());
-		BigDecimal totalPftAmount = new BigDecimal(0);
+		BigDecimal totalPftAmount = BigDecimal.ZERO;
 		for (int i = 0; i < financeScheduleDetails.size(); i++) {
 			amountCodeDetail = doPrepareAmountCodes(amountCodeDetail, financeScheduleDetails.get(i));
 			totalPftAmount = totalPftAmount.add(financeScheduleDetails.get(i).getProfitSchd());
@@ -148,7 +148,7 @@ public class AmountCodeGenerationUtil {
 		dataSet.setRepayAccount(financeMain.getRepayAccountId());
 		dataSet.setFinAmount(financeMain.getFinAmount());
 		dataSet.setNewRecord(financeMain.isNewRecord());
-		dataSet.setDownPayment(financeMain.getDownPayment()==null?new BigDecimal(0):financeMain.getDownPayment());
+		dataSet.setDownPayment(financeMain.getDownPayment()==null?BigDecimal.ZERO:financeMain.getDownPayment());
 		return dataSet;
 	}
 	

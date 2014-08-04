@@ -116,7 +116,7 @@ public class PropertyTypeDAOImpl extends BasisNextidDaoImpl<PropertyType> implem
 	@Override
 	public PropertyType getPropertyTypeById(final long id, String type) {
 		logger.debug("Entering");
-		PropertyType propertyType = getPropertyType();
+		PropertyType propertyType = new PropertyType();
 		propertyType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

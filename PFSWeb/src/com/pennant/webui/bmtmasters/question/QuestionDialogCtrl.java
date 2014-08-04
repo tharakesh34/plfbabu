@@ -83,7 +83,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -158,7 +157,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
 
-	private List<ValueLabel> listCorrectAnswer = PennantAppUtil.getAnswer();
+	private List<ValueLabel> listCorrectAnswer = null;
 
 	/**
 	 * default constructor.<br>

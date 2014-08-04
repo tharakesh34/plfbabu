@@ -54,4 +54,5 @@ public interface CustomerGroupDAO {
 	public long save(CustomerGroup customerGroup,String type);
 	public void initialize(CustomerGroup customerGroup);
 	public void refresh(CustomerGroup entity);
+	public CustomerGroup getCustomerGroupByCode(String id, String type);
 }

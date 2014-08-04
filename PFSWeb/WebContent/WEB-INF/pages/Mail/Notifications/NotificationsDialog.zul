@@ -1,0 +1,297 @@
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client"
+	xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<style>
+			.CodeMirror-line-numbers {
+			width: 2.2em;
+			color: #aaa;
+			background-color: #eee; 
+			text-align: right; 
+			padding-right: .3em;
+			font-size: 10pt; 
+			font-family: monospace; 
+			padding-top: .4em;
+			line-height: normal; 
+		}
+	</style>
+
+	<script type="text/javascript" src="/ptjs/fulljslint.js" /> 
+    		<script type="text/javascript">
+			<![CDATA[ 
+               var code;   
+               var isValidCode; 
+
+               function addStringContent(strContent) {
+					zk.Widget.$(jq('$formula'))._editor.focus();
+					zk.Widget.$(jq('$formula'))._editor.replaceSelection(strContent);
+				}
+			 
+				function validateJs(simulation,saveRecord) {
+      					jslint_options = {
+							'passfail':false,	// Stop on first error
+							'white':false,		// Strict whitespace (enabled in "good parts")
+							'browser':false,	// Assume a browser
+							'devel':false,		// Assume console, alert,...
+							'widget':false,		// Assume Yahoo widget
+							'windows':false,	// Assume Windows
+							'rhino':false,		// Assume Rhino
+							'safe':false,		// Safe Subset
+							'adsafe':false,		// ADsafe
+					 
+							'debug':false,		// Tolerate debugger statements
+							'evil':false,		// Tolerate eval() statements
+							'laxbreak':false,	// Tolerate sloppy linebreaking
+							'forin':false,		// Tolerate unfiltered for in
+							'sub':true,		// Tolerate inefficient subscripting
+							'css':false,		// Tolerate CSS workarounds
+							'cap':false,		// Tolerate HTML case
+							'on':false,		    // Tolerate HTML event handlers
+							'fragment':false,	// Tolerate HTML fragments
+							'es5':false,		// Tolerate ES5 syntax
+					 
+							'onevar':false,		// Allow one var statement per function (enabled in "good parts")
+							'undef':false,		// Disallow undefined variables (enabled in "good parts")
+							'nomen':true,		// Disallow dangling _ in identifiers (enabled in "good parts")
+							'predef':$,
+							'eqeqeq':false,		// Disallow == and != (enabled in "good parts")
+							'plusplus':true,	// Disallow ++ and -- (enabled in "good parts")
+							'bitwise':true,		// Disallow bitwise operators (enabled in "good parts")
+							'regexp':true,		// Disallow insecure . and [^...] in /RegExp/ (enabled in "good parts")
+							'newcap':true,		// Require Initial Caps for constructors (enabled in "good parts")
+							'immed':true,		// Require parens around immediate invocations (enabled in "good parts")
+							'strict':false,		// Require "use strict";
+							'maxerr':10, 
+							'indent':4
+						};
+      					
+  					var resultCode = zk.Widget.$(jq('$rule'))._editor.getCode();
+   					msgWidget = zk.Widget.$(jq('$btnValidate'));
+   					
+  					if(resultCode != ''){
+  						code = resultCode;
+   						isValidCode = JSLINT(code, jslint_options);
+    					var result = [isValidCode && simulation,JSLINT.errors,JSLINT.data().implieds,saveRecord];
+  						zAu.send(new zk.Event(msgWidget, 'onUser',result));
+  				 	 }else{
+  				 		zAu.send(new zk.Event(msgWidget, 'onUser',null));
+  				 	 }
+  				}
+			]]>
+			  </script>
+
+	<window>
+		<window id="window_NotificationsDialog" border="normal"
+			apply="${notificationsDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+			<borderlayout id="borderlayoutRule">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnNew.tooltiptext')}" />
+								<button id="btnEdit"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnEdit.tooltiptext')}" />
+								<button id="btnDelete"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnDelete.tooltiptext')}" />
+								<button id="btnSave"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnSave.tooltiptext')}" />
+								<button id="btnCancel"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+								<button id="btnNotes"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+								<button id="btnValidate"
+									tooltiptext="${c:l('button_Validation.tooltiptext')}"
+									label="${c:l('label_Validate')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate">
+								</button>
+								<button id="btnSimulation"
+									label="${c:l('label_Simulate')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnSimulation.tooltiptext')}"
+									w:onClick="validateJs(true,false);" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label id="label_RuleTitle"
+									value="${c:l('window_NotificationsDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp"
+									label="${c:l('label_Help')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+								<button id="btnClose"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
+									tooltiptext="${c:l('btnClose.tooltiptext')}" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none">
+					<div>
+						<tabbox id="tabBoxNotifications" width="98%"
+							height="100%">
+							<tabs id="tabsIndexCenterHeader">
+								<tab id="tab_ruleTemplate"
+									label="${c:l('tab_ruleTemplate.value')}" />
+								<tab id="tab_ruleTemplateDetails"
+									label="${c:l('tab_ruleTemplateDetails.value')}" />
+								<tab id="tab_ruleReciepent"
+									label="${c:l('tab_ruleReciepent.value')}" />
+								<tab id="tab_ruleReciepentDetails"
+									label="${c:l('tab_ruleReciepentDetails.value')}" />
+								<tab id="tab_ruleAttachment"
+									label="${c:l('tab_ruleAttachment.value')}" />
+								<tab id="tab_ruleAttachmentDetails"
+									label="${c:l('tab_ruleAttachmentDetails.value')}" />
+							</tabs>
+							<tabpanels
+								id="tabpanelsBoxNotificationsr">
+								<tabpanel id="tabPanel_ruleTemplate"
+									style="overflow:auto">
+									<div id="div_ruleTemplate">
+										<groupbox id="gb_template"
+											mold="3d">
+											<grid
+												sclass="GridLayoutNoBorder" fixedLayout="true"
+												style="border:0px">
+												<columns>
+													<column width="15%" />
+													<column width="35%" />
+													<column width="15%" />
+													<column width="35%" />
+												</columns>
+												<rows>
+													<row id="row0">
+														<label
+															id="label_RuleCode"
+															value="${c:l('label_NotificationsDialog_RuleCode.value')}" />
+														<hlayout
+															id="hlayout_RuleCode">
+															<space
+																id="space_RuleCode" spacing="2px" sclass="mandatory" />
+															<textbox
+																id="ruleCode" maxlength="8" width="150px" />
+														</hlayout>
+														<label
+															id="label_RuleModule"
+															value="${c:l('label_NotificationsDialog_RuleModule.value')}" />
+														<hlayout
+															id="hlayout_RuleModule">
+															<space
+																id="space_RuleModule" spacing="2px" sclass="mandatory" />
+															<combobox
+																id="ruleModule" width="150px" />
+														</hlayout>
+													</row>
+													<row id="row1">
+														<label
+															id="label_RuleCodeDesc"
+															value="${c:l('label_NotificationsDialog_RuleCodeDesc.value')}" />
+														<hlayout
+															id="hlayout_RuleCodeDesc">
+															<space
+																id="space_RuleCodeDesc" spacing="2px"
+																sclass="mandatory" />
+															<textbox
+																id="ruleCodeDesc" maxlength="50" width="150px" />
+														</hlayout>
+													</row>
+												</rows>
+											</grid>
+											<javaScriptBuilder
+												id="ruleTemplate" />
+										</groupbox>
+									</div>
+								</tabpanel>
+								<tabpanel
+									id="tabPanel_RuleTemplateResult" style="overflow:auto">
+									<groupbox width="99%" visible="true"
+										closable="false">
+										<caption
+											label="${c:l('label_RuleTemplateResult_TextRule')}" />
+										  <codemirror id="ruleTemplateResult"
+											readonly="true" width="100%" config="lineNumbers:true" height="300px" syntax="js" /> 
+									</groupbox>
+								</tabpanel>
+
+								<tabpanel id="tabPanel_ruleReciepent"
+									style="overflow:auto">
+									<div id="div_ruleReciepent">
+										<groupbox id="gb_reciepent"
+											mold="3d">
+											<javaScriptBuilder
+												id="ruleReciepent" />
+										</groupbox>
+									</div>
+								</tabpanel>
+								<tabpanel
+									id="tabPanel_RuleReciepentResult" style="overflow:auto">
+									<groupbox width="99%" visible="true"
+										closable="false">
+										<caption
+											label="${c:l('label_RuleReciepentResult_TextRule')}" />
+										 <codemirror id="ruleReciepentResult"
+											readonly="true" width="100%" config="lineNumbers:true" height="300px" syntax="js"/> 
+									</groupbox>
+								</tabpanel>
+								<tabpanel id="tabPanel_ruleAttachment"
+									style="overflow:auto">
+									<div id="div_ruleAttachment">
+										<groupbox id="gb_attachment"
+											mold="3d">
+											<javaScriptBuilder
+												id="ruleAttachment" />
+										</groupbox>
+									</div>
+								</tabpanel>
+								<tabpanel
+									id="tabPanel_RuleAttachmentResult" style="overflow:auto">
+									<groupbox width="99%" visible="true"
+										closable="false">
+										<caption
+											label="${c:l('label_RuleAttachmentResult_TextRule')}" />
+										  <codemirror id="ruleAttachmentResult"
+											readonly="true" width="100%" config="lineNumbers:true" height="300px" syntax="js"/> 
+									</groupbox>
+								</tabpanel>
+							</tabpanels>
+						</tabbox>
+						  <codemirror id = "rule" visible = "false"/>
+					</div>
+				</center>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%"
+						height="100%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_RecordStatus"
+								value="${c:l('label_RuleDialog_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

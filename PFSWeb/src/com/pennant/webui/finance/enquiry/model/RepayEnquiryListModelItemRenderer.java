@@ -10,9 +10,10 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 
-public class RepayEnquiryListModelItemRenderer implements ListitemRenderer, Serializable{
+public class RepayEnquiryListModelItemRenderer implements ListitemRenderer<FinanceRepayments>, Serializable{
 
 	private static final long serialVersionUID = 3541122568618470160L;
 	private int formatter;
@@ -21,33 +22,31 @@ public class RepayEnquiryListModelItemRenderer implements ListitemRenderer, Seri
 		super();
 		this.formatter = formatter;
 	}
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, FinanceRepayments repayment, int count) throws Exception {
 		
 		if (item instanceof Listgroup) { 
-			Object groupData = (Object) data; 
-			final FinanceRepayments repayment= (FinanceRepayments)groupData;
-			item.appendChild(new Listcell(DateUtility.getDBDate(repayment.getFinSchdDate().toString()).toString()));
+			item.appendChild(new Listcell("Schedule Term : "+DateUtility.formatUtilDate(repayment.getFinSchdDate(),
+					PennantConstants.dateFormate)));
 		} else if (item instanceof Listgroupfoot) { 
 			Listcell cell = new Listcell("");
 			cell.setSpan(6);
 			item.appendChild(cell); 
 		} else { 
 
-			final FinanceRepayments aFinRepayDetail = (FinanceRepayments) data;
 			Listcell lc;
-			lc = new Listcell(DateUtility.getDBDate(aFinRepayDetail.getFinPostDate().toString()).toString());
+			lc = new Listcell(DateUtility.formatUtilDate(repayment.getFinPostDate(),
+					PennantConstants.dateFormate));
 			lc.setParent(item);
-			lc = new Listcell(String.valueOf(aFinRepayDetail.getLinkedTranId()));
+			lc = new Listcell(String.valueOf(repayment.getLinkedTranId()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(aFinRepayDetail.getFinSchdPftPaid(),this.formatter));
+			lc = new Listcell(PennantAppUtil.amountFormate(repayment.getFinSchdPftPaid(),this.formatter));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(aFinRepayDetail.getFinSchdPriPaid(),this.formatter));
+			lc = new Listcell(PennantAppUtil.amountFormate(repayment.getFinSchdPriPaid(),this.formatter));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(aFinRepayDetail.getFinTotSchdPaid(),this.formatter));
+			lc = new Listcell(PennantAppUtil.amountFormate(repayment.getFinTotSchdPaid(),this.formatter));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(aFinRepayDetail.getFinRefund(),this.formatter));
+			lc = new Listcell(PennantAppUtil.amountFormate(repayment.getFinRefund(),this.formatter));
 			lc.setParent(item);
 		}
 	}

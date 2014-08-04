@@ -81,7 +81,6 @@ public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
 	 * This method set the Work Flow id based on the module name and return the new Course 
 	 * @return Course
 	 */
-
 	@Override
 	public Course getCourse() {
 		logger.debug("Entering");
@@ -94,14 +93,11 @@ public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
 		return course;
 	}
 
-
 	/**
 	 * This method get the module from method getCourse() and
 	 *  set the new record flag as true and return Course()   
 	 * @return Course
 	 */
-
-
 	@Override
 	public Course getNewCourse() {
 		logger.debug("Entering");
@@ -122,7 +118,7 @@ public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
 	@Override
 	public Course getCourseById(final String id, String type) {
 		logger.debug("Entering");
-		Course course = getCourse();
+		Course course = new Course();
 		course.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

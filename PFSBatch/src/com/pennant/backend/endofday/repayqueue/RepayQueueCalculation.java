@@ -50,6 +50,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -64,11 +65,11 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.batch.admin.BatchAdminDAO;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
 
 public class RepayQueueCalculation implements Tasklet {
@@ -78,27 +79,22 @@ public class RepayQueueCalculation implements Tasklet {
 	private FinanceRepayPriorityDAO financeRepayPriorityDAO;
 	private FinRepayQueueDAO finRepayQueueDAO;
 	private DataSource dataSource;
-	private BatchAdminDAO batchAdminDAO;
-	
 
-	private FinRepayQueue finRepayQueue;
 	private Date dateValueDate = null;
 	private Map<String, Integer> priorityMap = null;
 	private BigDecimal zeroValue = BigDecimal.ZERO;
-
-	@SuppressWarnings("serial")
+	
+	int repayments = 0;
+	int processed = 0;
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
-		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
 
 		logger.debug("START: Repayments Queue Today Queuing for Value Date: " + dateValueDate);
-		
-		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		// FETCH Finance type Repayment Priorities
-		ArrayList<ValueLabel> finRpyPriorities = new ArrayList<ValueLabel>(getFinanceRepayPriorityDAO()
-				.getFinanceRepayPriorities(""));
+		List<ValueLabel> finRpyPriorities = getFinanceRepayPriorityDAO().getFinanceRepayPriorities();
 
 		priorityMap = new HashMap<String, Integer>();
 		for (int i = 0; i < finRpyPriorities.size(); i++) {
@@ -109,44 +105,85 @@ public class RepayQueueCalculation implements Tasklet {
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
-		StringBuffer selQuery = new StringBuffer();
-		selQuery = prepareSelectQuery(selQuery);
 
 		try {
 			
+			//Clear Repay Queue Details
+			getFinRepayQueueDAO().deleteRepayQueue();
+			
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(selQuery.toString());
+			sqlStatement = connection.prepareStatement(getCountQuery());
+			sqlStatement.setDate(1, DateUtility.getDBDate(dateValueDate.toString()));			
 			resultSet = sqlStatement.executeQuery();
+			resultSet.next();	
+			repayments  = resultSet.getInt(1);
+			BatchUtil.setExecution(context,  "TOTAL", String.valueOf(repayments));
+			
+			sqlStatement = connection.prepareStatement(prepareSelectQuery());
+			sqlStatement.setDate(1, DateUtility.getDBDate(dateValueDate.toString()));
+			resultSet = sqlStatement.executeQuery();
+			
+			List<FinRepayQueue> repayQueuList = new ArrayList<FinRepayQueue>();
 
 			while (resultSet.next()) {
-
+				
 				if (resultSet.getBigDecimal("DefProfitbal").compareTo(zeroValue) > 0
 						|| resultSet.getBigDecimal("DefPrincipalBal").compareTo(zeroValue) > 0) {
-					finRepayQueue = doWriteDataToBean(resultSet, PennantConstants.DEFERED);
-					finRepayQueueDAO.setFinRepayQueueRecords(finRepayQueue, "");
+					repayQueuList.add(doWriteDataToBean(resultSet, PennantConstants.DEFERED));
 				}
 
 				if (resultSet.getBigDecimal("SchdPftBal").compareTo(zeroValue) > 0 
 						|| resultSet.getBigDecimal("SchdPriBal").compareTo(zeroValue) > 0) {
-					finRepayQueue = doWriteDataToBean(resultSet, PennantConstants.SCHEDULE);
-					finRepayQueueDAO.setFinRepayQueueRecords(finRepayQueue, "");
+					repayQueuList.add(doWriteDataToBean(resultSet, PennantConstants.SCHEDULE));
 				}
 				
-				getBatchAdminDAO().saveStepDetails(resultSet.getString("FinReference"), getRepayQueue(finRepayQueue), context.getStepContext().getStepExecution().getId());
-				context.getStepContext().getStepExecution().getExecutionContext().putInt("FIELD_COUNT", resultSet.getRow());
+				if(repayQueuList.size() == 299 || repayQueuList.size() == 300){
+					getFinRepayQueueDAO().setFinRepayQueueRecords(repayQueuList);
+					repayQueuList.clear();
+				}
+				
+				processed = resultSet.getRow();
+				BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
+				BatchUtil.setExecution(context,  "INFO", getInfo());
 
 			}
-		} catch (SQLException e) {
+			
+			if(repayQueuList.size() > 0){
+				getFinRepayQueueDAO().setFinRepayQueueRecords(repayQueuList);
+				repayQueuList = null;
+			}
+			
+			BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
+			BatchUtil.setExecution(context,  "INFO", getInfo());
+			
+		} catch (Exception e) {
 			logger.error(e);
-			throw new SQLException(e.getMessage()) {};
+			throw e;
 		} finally {
-			finRepayQueue = null;
 			priorityMap = null;
-			resultSet.close();
-			sqlStatement.close();
+			if(resultSet != null) {
+				resultSet.close();
+			}
+			if(sqlStatement != null) {
+				sqlStatement.close();
+			}
 		}
 		logger.debug("COMPLETE: Repayments Queue Today Queuing for Value Date: " + dateValueDate);
 		return RepeatStatus.FINISHED;
+	}
+	
+	/**
+	 * Method for get count of Schedule data
+	 * @return selQuery 
+	 */
+	private String getCountQuery() {
+		
+		StringBuilder selQuery = new StringBuilder(" SELECT count(F.FinReference) ");
+		selQuery.append(" FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference");
+		selQuery.append(" AND S.SchDate <= ? AND S.RepayOnSchDate = '1' AND F.FinIsActive = '1'");
+		selQuery.append(" AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid OR S.DefPrincipalSchd <> S.DefSchdPriPaid OR S.DefProfitSchd <> S.DefSchdPftPaid)");
+		return selQuery.toString();
+		
 	}
 
 	/**
@@ -155,20 +192,16 @@ public class RepayQueueCalculation implements Tasklet {
 	 * @param selQuery
 	 * @return
 	 */
-	private StringBuffer prepareSelectQuery(StringBuffer selQuery) {
+	private String prepareSelectQuery() {
 		
-		selQuery.append(" SELECT FinanceMain.FinReference, FinanceMain.FinBranch, FinanceMain.FinType ,FinanceMain.CustID , ");
-		selQuery.append(" DefSchdDate, DefProfitSchd ,DefPrincipalSchd,ProfitSchd,PrincipalSchd,DefSchdPftPaid,DefSchdPriPaid,");
-		selQuery.append(" SchdPftpaid,SchdPriPaid, (ProfitSchd - SchdPftPaid) As SchdPftBal, ");
-		selQuery.append(" (PrincipalSchd - SchdPriPaid) As SchdPriBal,");
-		selQuery.append(" (DefPrincipalSchd - DefSchdPriPaid) As DefPrincipalBal, ");
-		selQuery.append(" (DefProfitSchd - DefSchdPftPaid) As DefProfitbal ");
-		selQuery.append(" FROM FinanceMain, FinScheduleDetails ");
-		selQuery.append(" WHERE FinanceMain.FinReference = FinScheduleDetails.FinReference");
-		selQuery.append(" AND DefSchdDate <= '" + dateValueDate + "'");
-		selQuery.append(" AND RepayOnSchDate = '1'");
-		selQuery.append(" AND (PrincipalSchd <> SchdPriPaid OR ProfitSchd <> SchdPftPaid OR DefPrincipalSchd <> DefSchdPriPaid OR DefProfitSchd <> DefSchdPftPaid)");
-		return selQuery;
+		StringBuilder selQuery = new StringBuilder(" SELECT F.FinReference, F.FinBranch, F.FinType ,F.CustID , ");
+		selQuery.append(" S.SchDate, S.DefProfitSchd ,S.DefPrincipalSchd, S.ProfitSchd, S.PrincipalSchd, S.DefSchdPftPaid, S.DefSchdPriPaid,");
+		selQuery.append(" S.SchdPftpaid, S.SchdPriPaid, (S.ProfitSchd - S.SchdPftPaid) As SchdPftBal, (S.PrincipalSchd - S.SchdPriPaid) As SchdPriBal,");
+		selQuery.append(" (S.DefPrincipalSchd - S.DefSchdPriPaid) As DefPrincipalBal, (S.DefProfitSchd - S.DefSchdPftPaid) As DefProfitbal ");
+		selQuery.append(" FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference");
+		selQuery.append(" AND S.SchDate <= ? AND S.RepayOnSchDate = '1' AND F.FinIsActive = '1' ");
+		selQuery.append(" AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid OR S.DefPrincipalSchd <> S.DefSchdPriPaid OR S.DefProfitSchd <> S.DefSchdPftPaid)");
+		return selQuery.toString();
 		
 	}
 
@@ -182,7 +215,7 @@ public class RepayQueueCalculation implements Tasklet {
 	private FinRepayQueue doWriteDataToBean(ResultSet resultSet, String rpyFor) {
 		logger.debug("Entering");
 		
-		finRepayQueue = new FinRepayQueue();
+		FinRepayQueue finRepayQueue = new FinRepayQueue();
 
 		try {
 			
@@ -190,7 +223,7 @@ public class RepayQueueCalculation implements Tasklet {
 			finRepayQueue.setBranch(resultSet.getString("FinBranch"));
 			finRepayQueue.setFinType(resultSet.getString("FinType"));
 			finRepayQueue.setCustomerID(resultSet.getLong("CustID"));
-			finRepayQueue.setRpyDate(resultSet.getDate("DefSchdDate"));
+			finRepayQueue.setRpyDate(resultSet.getDate("SchDate"));
 			finRepayQueue.setFinRpyFor(rpyFor);
 
 			if (priorityMap.containsKey(finRepayQueue.getFinType())) {
@@ -216,14 +249,14 @@ public class RepayQueueCalculation implements Tasklet {
 				finRepayQueue.setSchdPriBal(resultSet.getBigDecimal("SchdPriBal"));
 			}
 
-			if (finRepayQueue.getSchdPftBal().compareTo(new BigDecimal(0)) == 0) {
+			if (finRepayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) == 0) {
 				finRepayQueue.setSchdIsPftPaid(true);
 			} else {
 				finRepayQueue.setSchdIsPftPaid(false);
 			}
 
 			if (finRepayQueue.isSchdIsPftPaid() && 
-					finRepayQueue.getSchdPriBal().compareTo(new BigDecimal(0)) == 0) {
+					finRepayQueue.getSchdPriBal().compareTo(BigDecimal.ZERO) == 0) {
 				finRepayQueue.setSchdIsPriPaid(true);
 			} else {
 				finRepayQueue.setSchdIsPriPaid(false);
@@ -237,86 +270,12 @@ public class RepayQueueCalculation implements Tasklet {
 		return finRepayQueue;
 	}
 	
-	private String getRepayQueue(FinRepayQueue repayQueue) {
-		StringBuffer strRepayQueue = new StringBuffer();
-
-
-		if (strRepayQueue != null) {
-			strRepayQueue.append("RpyDate");
-			strRepayQueue.append("-");
-			strRepayQueue.append(DateUtility.formatUtilDate(repayQueue.getRpyDate(), PennantConstants.dateFormat));
-			strRepayQueue.append(";");
-
-			strRepayQueue.append("FinRpyFor");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getFinRpyFor());
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("FinPriority");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getFinPriority());
-			strRepayQueue.append(";");
-
-			strRepayQueue.append("FinType");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getFinType());
-			strRepayQueue.append(";");
-			
-						
-			strRepayQueue.append("FinBranch");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getBranch());
-			strRepayQueue.append(";");
-				
-			strRepayQueue.append("SchdPft");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPft()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdPri");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPri()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-
-			strRepayQueue.append("SchdPftPaid");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPftPaid()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdPriPaid");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPriPaid()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdPftBal");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPftBal()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdPriBal");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPriBal()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdIsPftPaid");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.isSchdIsPftPaid());
-			strRepayQueue.append(";");
-
-			strRepayQueue.append("RefundAmount");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getRefundAmount()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("RcdNotExist");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.isRcdNotExist()); 
-			strRepayQueue.append(";");
-	
-		}
-
-		return strRepayQueue.toString();
+	private String getInfo() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Total Repayment's").append(": ").append(repayments);		
+		return builder.toString();
 	}
+	
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -336,25 +295,10 @@ public class RepayQueueCalculation implements Tasklet {
 		return finRepayQueueDAO;
 	}
 
-	public void setFinRepayQueue(FinRepayQueue finRepayQueue) {
-		this.finRepayQueue = finRepayQueue;
-	}
-	public FinRepayQueue getFinRepayQueue() {
-		return finRepayQueue;
-	}
-
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 	public DataSource getDataSource() {
 		return dataSource;
-	}
-
-	public BatchAdminDAO getBatchAdminDAO() {
-		return batchAdminDAO;
-	}
-
-	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
-		this.batchAdminDAO = batchAdminDAO;
 	}
 }

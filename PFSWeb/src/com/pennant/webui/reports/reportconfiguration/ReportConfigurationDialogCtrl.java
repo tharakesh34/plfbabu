@@ -245,8 +245,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl implements Serial
 			}else{
 				enqModule=false;
 			}
-			/* set components visible dependent of the users rights */
-			doCheckRights();
+		
 			setReportFilterFieldsPagedListWrapper();
 			// READ OVERHANDED parameters !
 			if (args.containsKey("reportConfiguration")) {
@@ -271,7 +270,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl implements Serial
 				getUserWorkspace().alocateAuthorities("ReportConfigurationDialog");
 			}
 
-
+			/* set components visible dependent of the users rights */
+			doCheckRights();
 
 			fillComboBox(dataSourceName, "", dataSourceNamesList,"");
 

@@ -38,8 +38,7 @@
 							<menubar id="menubar" width="auto"
 								 style="float:left; border-style: none;">
 								<menu id="menu_filter" >
-									<menupopup id="menupopup_filter"
-										 >
+									<menupopup id="menupopup_filter">
 									</menupopup>
 								</menu>
 							</menubar>
@@ -67,17 +66,7 @@
 									<label
 										id="label_CustomerAccountDialog_CustName"
 										value="${c:l('label_CustomerAccountDialog_CustName.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="custCIF"
-											width="100px" readonly="true" />
-									
-										<button id="btnSearchCustCIF"
-											image="/images/icons/LOVSearch.png" height="24px">
-										</button>
-											<label id="custShrtName"
-										 />
-									</hbox>
+									<extendedcombobox id="custCIF"/>
 									<label
 										id="label_CustomerAccountDialog_DefaultBranch"
 										value="${c:l('label_CustomerAccountDialog_DefaultBranch.value')}" />
@@ -90,50 +79,52 @@
 							</rows>
 						</grid>
 						
-						<listbox id="listBoxEnquiryResult" vflex="true"
-							tooltiptext="${c:l('listbox.tooltiptext')}" width="99%"
-							height="98%" multiple="false">
+						<listbox id="listBoxEnquiryResult"
+						    emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+							vflex="true" span="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
 							<listhead sizable="true">
 								<listheader id="listheader_AccountId"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_AccountId.label')}"
-									width="14%" />
+									hflex="min" />
 								<listheader id="listheader_AcShortName"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_AcShortName.label')}"
-									width="15%" />
+									hflex="min" />
 								<listheader id="listheader_AcBranch"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_AcBranch.label')}"
-									width="7%" />
+									hflex="min" />
 								<listheader id="listheader_AcType"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_AcType.label')}"
-									width="12%" />
+									hflex="min" />
 								<listheader id="listheader_AcCcy"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_AcCcy.label')}"
-									width="8%" />
+									hflex="min" />
 								<listheader id="listheader_AcPurpose"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_AcPurpose.label')}"
-									width="13%" />
+									hflex="min" />
 								<listheader id="listheader_InternalAc"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_InternalAc.label')}"
-									width="11%" />
+									hflex="min" />
 								<listheader id="listheader_CustSysAc"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_CustSysAc.label')}"
-									width="12%" />
+									hflex="min" />
 								<listheader id="listheader_AcTodayBal"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_AcTodayBal.label')}"
-									width="15%" />
+									hflex="min" />
 								<listheader id="listheader_AcAccrualBal"
 									sort="false"
 									label="${c:l('listheader_CustomerAccountDialog_AcAccrualBal.label')}"
-									width="15%" />
+									hflex="min" />
 							</listhead>
 						</listbox>
 					</vlayout>

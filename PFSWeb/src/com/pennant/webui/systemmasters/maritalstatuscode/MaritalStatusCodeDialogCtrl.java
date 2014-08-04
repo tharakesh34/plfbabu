@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.MaritalStatusCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -410,6 +411,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl implements Serializ
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -426,7 +428,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl implements Serializ
 		this.maritalStsIsActive.setChecked(aMaritalStatusCode.isMaritalStsIsActive());
 		this.recordStatus.setValue(aMaritalStatusCode.getRecordStatus());
 		
-		if(aMaritalStatusCode.isNew() || aMaritalStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aMaritalStatusCode.isNew() || (aMaritalStatusCode.getRecordType() != null ? aMaritalStatusCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.maritalStsIsActive.setChecked(true);
 			this.maritalStsIsActive.setDisabled(true);
 		}
@@ -597,15 +599,12 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl implements Serializ
 		setValidationOn(true);
 
 		if (!this.maritalStsCode.isReadonly()){
-			this.maritalStsCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_MaritalStatusCodeDialog_MaritalStsCode.value")})));
+			this.maritalStsCode.setConstraint(new PTStringValidator(Labels.getLabel("label_MaritalStatusCodeDialog_MaritalStsCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.maritalStsDesc.isReadonly()){
-			this.maritalStsDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_MaritalStatusCodeDialog_MaritalStsDesc.value")})));
+			this.maritalStsDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_MaritalStatusCodeDialog_MaritalStsDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -748,7 +747,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl implements Serializ
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

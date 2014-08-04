@@ -55,7 +55,7 @@ public interface CustomerStatusCodeDAO {
 	public CustomerStatusCode getNewCustomerStatusCode();
 
 	public CustomerStatusCode getCustomerStatusCodeById(String id, String type);
-
+	
 	public void update(CustomerStatusCode CustomerStatusCode, String type);
 
 	public void delete(CustomerStatusCode CustomerStatusCode, String type);
@@ -65,4 +65,11 @@ public interface CustomerStatusCodeDAO {
 	public void initialize(CustomerStatusCode CustomerStatusCode);
 
 	public void refresh(CustomerStatusCode entity);
+	
+	public boolean getFinanceSuspendStatus(int curODDays);
+
+	public String getFinanceStatus(String finReference, boolean isCurFinSts);
+
+	public CustomerStatusCode getCustStatusByMinDueDays(String type);
+	
 }

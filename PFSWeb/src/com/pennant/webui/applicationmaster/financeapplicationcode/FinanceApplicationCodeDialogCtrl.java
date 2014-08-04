@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.FinanceApplicationCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -409,6 +410,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl implements Ser
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -425,7 +427,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl implements Ser
 		this.finAppIsActive.setChecked(aFinanceApplicationCode.isFinAppIsActive());
 		this.recordStatus.setValue(aFinanceApplicationCode.getRecordStatus());
 		
-		if(aFinanceApplicationCode.isNew() || aFinanceApplicationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aFinanceApplicationCode.isNew() || (aFinanceApplicationCode.getRecordType() != null ? aFinanceApplicationCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.finAppIsActive.setChecked(true);
 			this.finAppIsActive.setDisabled(true);
 		}
@@ -597,15 +599,12 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl implements Ser
 		setValidationOn(true);
 
 		if (!this.finAppType.isReadonly()){
-			this.finAppType.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_FinanceApplicationCodeDialog_FinAppType.value")})));
+			this.finAppType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceApplicationCodeDialog_FinAppType.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 
 		if (!this.finAppDesc.isReadonly()){
-			this.finAppDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_FinanceApplicationCodeDialog_FinAppDesc.value")})));
+			this.finAppDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceApplicationCodeDialog_FinAppDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -749,7 +748,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl implements Ser
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

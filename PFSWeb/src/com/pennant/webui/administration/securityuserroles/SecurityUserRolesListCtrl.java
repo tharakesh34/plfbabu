@@ -96,30 +96,30 @@ public class SecurityUserRolesListCtrl extends GFCBaseListCtrl<SecurityUser> imp
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window       win_SecurityUserRolesList;                          // autowired
-	protected Borderlayout borderLayout_SecurityUserList;                     // autowired
+	protected Window       win_SecurityUserRolesList;                          // autoWired
+	protected Borderlayout borderLayout_SecurityUserList;                      // autoWired
 	// List headers
-	protected Listheader   listheader_UsrLogin;                                // autowired
-	protected Listheader   listheader_UsrFName;                                // autowired
-	protected Listheader   listheader_UsrMName;                                // autowired
-	protected Listheader   listheader_UsrLName;                                // autowired
-	protected Listheader   listheader_UsrCanOverrideLimits;                    // autowired
-	protected Listheader   listheader_UsrAcExp;                                // autowired
-	protected Listheader   listheader_UsrCredentialsExp;                       // autowired
-	protected Listheader   listheader_UsrAcLocked;                             // autowired
-	protected Listheader   listheader_UsrDftAppCode;                           // autowired
-	protected Listheader   listheader_UsrBranchCode;                           // autowired
-	protected Listheader   listheader_UsrDeptCode;                             // autowired
-	protected Listheader   listheader_RecordStatus;                            // autowired
-	protected Listheader   listheader_RecordType;                              // autowired
-	protected Panel        securityUsersSeekPanel;                             // autowired
-	protected Panel        securityUsersListPanel;                             // autowired
+	protected Listheader   listheader_UsrLogin;                                // autoWired
+	protected Listheader   listheader_UsrFName;                                // autoWired
+	protected Listheader   listheader_UsrMName;                                // autoWired
+	protected Listheader   listheader_UsrLName;                                // autoWired
+	protected Listheader   listheader_UsrCanOverrideLimits;                    // autoWired
+	protected Listheader   listheader_UsrAcExp;                                // autoWired
+	protected Listheader   listheader_UsrCredentialsExp;                       // autoWired
+	protected Listheader   listheader_UsrAcLocked;                             // autoWired
+	protected Listheader   listheader_UsrDftAppCode;                           // autoWired
+	protected Listheader   listheader_UsrBranchCode;                           // autoWired
+	protected Listheader   listheader_UsrDeptCode;                             // autoWired
+	protected Listheader   listheader_RecordStatus;                            // autoWired
+	protected Listheader   listheader_RecordType;                              // autoWired
+	protected Panel        securityUsersSeekPanel;                             // autoWired
+	protected Panel        securityUsersListPanel;                             // autoWired
 	// checkRights
-	protected Button       btnHelp;                                            // autowired
-	protected Button       button_SecurityUserList_SecurityUserSearchDialog; // autowired
-	protected Button       button_SecurityUserList_PrintList;                 // autowired
-	protected Paging         pagingSecurityUserList;                            // autowired
-	protected Listbox        listBoxSecurityUser;                               // autowired
+	protected Button       btnHelp;                                            // autoWired
+	protected Button       button_SecurityUserList_SecurityUserSearchDialog;   // autoWired
+	protected Button       button_SecurityUserList_PrintList;                  // autoWired
+	protected Paging         pagingSecurityUserList;                           // autoWired
+	protected Listbox        listBoxSecurityUser;                              // autoWired
 	// NEEDED for the ReUse in the SearchWindow
 	protected         JdbcSearchObject<SecurityUser> searchObj;
 	private transient SecurityUserService      securityUsersService;
@@ -141,6 +141,8 @@ public class SecurityUserRolesListCtrl extends GFCBaseListCtrl<SecurityUser> imp
 	 */
 	public void onCreate$win_SecurityUserRolesList(Event event) throws Exception {
 		logger.debug("Entering into"+event.toString());
+		
+		try{
 		this.button_SecurityUserList_PrintList.setVisible(false);
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("SecurityUser");
 		boolean wfAvailable=true;
@@ -226,7 +228,13 @@ public class SecurityUserRolesListCtrl extends GFCBaseListCtrl<SecurityUser> imp
 			// set the itemRenderer
 			this.listBoxSecurityUser.setItemRenderer(new SecurityUserListModelItemRenderer());
 		}	
-		logger.debug("Leaving"+event.toString());
+		} catch (Exception e) {
+			PTMessageUtils.showErrorMessage(e.toString());
+			e.printStackTrace();
+			win_SecurityUserRolesList.onClose();
+		}
+
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -325,7 +333,7 @@ public class SecurityUserRolesListCtrl extends GFCBaseListCtrl<SecurityUser> imp
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/Administration/SecurityUserRoles" +
-					"/SecurityUserRolesDailog.zul",null,map);
+					"/SecurityUserRolesDialog.zul",null,map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());

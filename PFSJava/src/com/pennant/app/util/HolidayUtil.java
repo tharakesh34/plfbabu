@@ -51,6 +51,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.objectlab.kit.datecalc.common.DateCalculator;
@@ -290,22 +291,57 @@ public class HolidayUtil implements Serializable {
 				BigDecimal holidayYear =  holidayList.get(i).getHolidayYear();
 				List<HolidayDetail> nHolidayDetails = holidayList.get(i).getHolidayList(holidayYear);
 				for (int j = 0; j < nHolidayDetails.size(); j++) {
-					if(!holidays.contains(nHolidayDetails.get(i).getHoliday())){
-						holidays.add(nHolidayDetails.get(i).getHoliday());
+					if(!holidays.contains(nHolidayDetails.get(j).getHoliday())){
+						holidays.add(nHolidayDetails.get(j).getHoliday());
 					}
 				}
 				
-				List<HolidayDetail> pHolidayDetails =  pHolidayMaster.getHolidayList(holidayYear);
-				
-				for (int j = 0; j < pHolidayDetails.size(); j++) {
-					if(!holidays.contains(pHolidayDetails.get(i).getHoliday())){
-						holidays.add(pHolidayDetails.get(i).getHoliday());
+				if(pHolidayMaster != null){
+					List<HolidayDetail> pHolidayDetails =  pHolidayMaster.getHolidayList(holidayYear);
+
+					for (int j = 0; j < pHolidayDetails.size(); j++) {
+						if(!holidays.contains(pHolidayDetails.get(j).getHoliday())){
+							holidays.add(pHolidayDetails.get(j).getHoliday());
+						}
 					}
 				}
 			}
 		}
 		logger.debug("Leaving");
 		return holidays;
+	} 
+	
+	/**
+	 * Get collection of holidays Map
+	 * 
+	 * @param holidayList (List)
+	 * 
+	 * @param pHolidayMaster (HolidayMaster)
+	 * 
+	 * @return calendar
+	 *
+	 */
+	private static Map<String,Boolean> getHolidayMap(List<HolidayMaster> holidayList){
+		logger.debug("Entering");
+		 Map<String,Boolean> holidayMap=null;
+		if(holidayList!=null){
+			holidayMap = new HashMap<String, Boolean>();
+			for (int i = 0; i < holidayList.size(); i++) {
+				BigDecimal holidayYear =  holidayList.get(i).getHolidayYear();
+				List<HolidayDetail> holidayDetails = holidayList.get(i).getHolidayList(holidayYear);
+                if(holidayDetails == null){
+                    continue;
+                }
+				for (int j = 0; j < holidayDetails.size(); j++) {
+					String curDate = DateUtility.formatDate(holidayDetails.get(j).getHoliday().getTime(), PennantConstants.DBDateFormat);
+					if(!holidayMap.containsKey(curDate)){
+						holidayMap.put(curDate, true);
+					}
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return holidayMap;
 	} 
 
 	/**
@@ -480,7 +516,7 @@ public class HolidayUtil implements Serializable {
 		if(holidayCode.equals("") || holidayCode == null) {	
 			holidayCode = "GEN";
 		}
-		String handlerType = (Action == HolidayHandlerTypes.MOVE_PREVIOUS ? HolidayHandlerType.BACKWARD:HolidayHandlerType.FORWARD);
+		String handlerType = getHandlerType(Action);
 		int moveBy = (Action == HolidayHandlerTypes.MOVE_PREVIOUS ? -1:1);
 		Calendar tempDate = Calendar.getInstance();
 		tempDate.setTime(date);
@@ -492,7 +528,44 @@ public class HolidayUtil implements Serializable {
 		else {
 			return dateCalculator.moveByBusinessDays(moveBy).getCurrentBusinessDate();
 		}
-	}	
+	}
+	
+	/**
+	 * Method for Getting Working Business Date either Previous or Next Date depends on action Performed
+	 * @param holidayCode
+	 * @param handlerType
+	 * @param date
+	 * @return
+	 */
+	public static Calendar getWorkingBussinessDate(String holidayCode,String handlerType,Date date) {
+		
+		List<HolidayMaster> holidayList =   getHolidayMasterDAO().getHolidayMasterCode(holidayCode);
+		
+		boolean workingBussDateFound = false;
+		Calendar tempDate = Calendar.getInstance();
+		tempDate.setTime(date);
+		
+		//Save Details of Calendar Dates into Map(GregorianCalendar's are not compared correctly)
+		Map<String,Boolean> holidayListMap = getHolidayMap(holidayList);
+		if(holidayListMap == null){
+			tempDate.add(Calendar.DATE, 1);
+			return tempDate;
+		}
+		
+		while(!workingBussDateFound){
+
+			if(handlerType.equals(HolidayHandlerTypes.MOVE_NEXT)){
+				tempDate.add(Calendar.DATE, 1);
+			}else if(handlerType.equals(HolidayHandlerTypes.MOVE_PREVIOUS)){
+				tempDate.add(Calendar.DATE, -1);
+			}
+			if (!holidayListMap.containsKey(DateUtility.formatDate(tempDate.getTime(), PennantConstants.DBDateFormat))){
+				workingBussDateFound = true;
+			}
+		}
+		return tempDate;
+		
+	}
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

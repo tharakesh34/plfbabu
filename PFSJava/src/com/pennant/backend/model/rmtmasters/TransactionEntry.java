@@ -76,7 +76,7 @@ public class TransactionEntry implements java.io.Serializable, Entity {
 	private String chargeType;
 	
 	private String feeCode;
-	private String ruleDecider;
+	//private String ruleDecider;
 	private String lovDescFeeCodeName;
 	private boolean entryByInvestment;
 	private boolean openNewFinAc;
@@ -497,9 +497,9 @@ public class TransactionEntry implements java.io.Serializable, Entity {
 		this.feeCode = feeCode;
 	}
 
-	public String getRuleDecider() {
+	/*public String getRuleDecider() {
 		return ruleDecider;
-	}
+	}*/
 
 	public String getLovDescFeeCodeName() {
 		return lovDescFeeCodeName;
@@ -509,9 +509,9 @@ public class TransactionEntry implements java.io.Serializable, Entity {
 		this.lovDescFeeCodeName = lovDescFeeCodeName;
 	}
 
-	public void setRuleDecider(String ruleDecider) {
+	/*public void setRuleDecider(String ruleDecider) {
 		this.ruleDecider = ruleDecider;
-	}
+	}*/
 
 	public void setChargeType(String chargeType) {
 	    this.chargeType = chargeType;

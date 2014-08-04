@@ -27,7 +27,9 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -39,6 +41,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 public class FinanceType implements java.io.Serializable {
 
 	private static final long serialVersionUID = -4098586745401583126L;
+	
 	//	Ordered Same AS Table please don't break It
 	private String finType;
 	private String finCategory;
@@ -47,10 +50,12 @@ public class FinanceType implements java.io.Serializable {
 	private String finDaysCalType;
 	private String finAcType;
 	private String finContingentAcType;
+	private String finSuspAcType;
 	private String finBankContingentAcType;
 	private String finProvisionAcType;
 	private String pftPayAcType;
 	private boolean finIsOpenPftPayAcc;
+	private String finDivision;
 	private boolean finIsGenRef;
 	private boolean finIsOpenNewFinAc;
 	private BigDecimal finMaxAmount;
@@ -122,11 +127,14 @@ public class FinanceType implements java.io.Serializable {
 	private String finAEAmzSusp;
 	private String finAEToNoAmz;
 	private String finToAmz;
+	private String finAEMAmz;
 	private String finAERateChg;
 	private String finAERepay;
 	private String finAEEarlyPay;
 	private String finAEEarlySettle;
 	private String finAEWriteOff;
+	private String finAEWriteOffBK;
+	private String finAEGraceEnd;
 	private String finProvision;
 	private String finSchdChange;
 	private String finAECapitalize;
@@ -155,6 +163,16 @@ public class FinanceType implements java.io.Serializable {
 	private String finAEMaturity;
 	private boolean finPftUnChanged;
 	
+	//Overdue Penalty Details
+	private boolean applyODPenalty;
+	private boolean oDIncGrcDays;
+	private String oDChargeType;
+	private int oDGraceDays;
+	private String oDChargeCalOn;
+	private BigDecimal oDChargeAmtOrPerc;
+	private boolean oDAllowWaiver;
+	private BigDecimal oDMaxWaiverPerc;
+	
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -176,14 +194,16 @@ public class FinanceType implements java.io.Serializable {
 	private HashMap<String, List<AuditDetail>> lovDescMarginSlabAuditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-	//==================Not the Tab;e
+	//==================Not the Table
 	private int lovDescFinFormetter;
 	private String lovDescFinCcyName;
+	private String lovDescFinDivisionName;
 	private String lovDescFinDaysCalTypeName;
 	private String lovDescFinIndBaseRateName;
 	private String lovDescFinAcTypeName;
 	private String lovDescPftPayAcTypeName;
 	private String lovDescFinContingentAcTypeName;
+	private String lovDescFinSuspAcTypeName;
 	private String lovDescFinBankContingentAcTypeName;
 	private String lovDescFinProvisionAcTypeName;
 	private String lovDescFinSchdMthdName;
@@ -208,6 +228,8 @@ public class FinanceType implements java.io.Serializable {
 	private String lovDescEVFinAEToNoAmzName;
 	private String lovDescFinToAmzName;
 	private String lovDescEVFinToAmzName;
+	private String lovDescFinMAmzName;
+	private String lovDescEVFinMAmzName;
 	private String lovDescFinAERateChgName;
 	private String lovDescEVFinAERateChgName;
 	private String lovDescFinAERepayName;
@@ -224,6 +246,10 @@ public class FinanceType implements java.io.Serializable {
 	private String lovDescFinDefRepayName;
 	private String lovDescFinAEWriteOffName;
 	private String lovDescEVFinAEWriteOffName;
+	private String lovDescFinAEWriteOffBKName;
+	private String lovDescEVFinAEWriteOffBKName;
+	private String lovDescFinAEGraceEndName;
+	private String lovDescEVFinAEGraceEndName;
 	private String lovDescFinProvisionName;
 	private String lovDescEVFinProvisionName;
 	private String lovDescFinSchdChangeName;
@@ -247,14 +273,23 @@ public class FinanceType implements java.io.Serializable {
 	private String lovDescFinAESellOrMaturityName;
 	private String lovDescEVFinAESellOrMaturityName;
 	private String lovDescProductCodeName;
+	private String lovDescProductCodeDesc;
 	private String lovDescAssetCodeName;
-
+	
+	private List<FinTypeAccount> finTypeAccounts=new ArrayList<FinTypeAccount>();
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
 
 	public FinanceType() {
 
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("finTypeAccounts");
+		return excludeFields;
 	}
 
 	public FinanceType(String finCategory) {
@@ -317,6 +352,20 @@ public class FinanceType implements java.io.Serializable {
 	public void setLovDescFinCcyName(String lovDescFinCcyName) {
 		this.lovDescFinCcyName = lovDescFinCcyName;
 	}
+	
+	public String getFinDivision() {
+    	return finDivision;
+    }
+	public void setFinDivision(String finDivision) {
+    	this.finDivision = finDivision;
+    }
+
+	public String getLovDescFinDivisionName() {
+    	return lovDescFinDivisionName;
+    }
+	public void setLovDescFinDivisionName(String lovDescFinDivisionName) {
+    	this.lovDescFinDivisionName = lovDescFinDivisionName;
+    }
 
 	public String getFinDaysCalType() {
 		return finDaysCalType;
@@ -364,6 +413,22 @@ public class FinanceType implements java.io.Serializable {
 
 	public void setLovDescFinContingentAcTypeName(String lovDescFinContingentAcTypeName) {
 		this.lovDescFinContingentAcTypeName = lovDescFinContingentAcTypeName;
+	}
+	
+	public String getFinSuspAcType() {
+		return finSuspAcType;
+	}
+
+	public void setFinSuspAcType(String finSuspAcType) {
+		this.finSuspAcType = finSuspAcType;
+	}
+
+	public String getLovDescFinSuspAcTypeName() {
+		return this.lovDescFinSuspAcTypeName;
+	}
+
+	public void setLovDescFinSuspAcTypeName(String lovDescFinSuspAcTypeName) {
+		this.lovDescFinSuspAcTypeName = lovDescFinSuspAcTypeName;
 	}
 
 	public String getFinBankContingentAcType() {
@@ -918,6 +983,20 @@ public class FinanceType implements java.io.Serializable {
 		this.lovDescFinToAmzName = lovDescFinToAmzName;
 	}
 
+	public String getFinAEMAmz() {
+    	return finAEMAmz;
+    }
+	public void setFinAEMAmz(String finAEMAmz) {
+    	this.finAEMAmz = finAEMAmz;
+    }
+
+	public String getLovDescFinMAmzName() {
+    	return lovDescFinMAmzName;
+    }
+	public void setLovDescFinMAmzName(String lovDescFinMAmzName) {
+    	this.lovDescFinMAmzName = lovDescFinMAmzName;
+    }
+
 	public String getFinAERateChg() {
 		return finAERateChg;
 	}
@@ -997,6 +1076,38 @@ public class FinanceType implements java.io.Serializable {
 	public void setLovDescFinAEWriteOffName(String lovDescFinAEWriteOffName) {
 		this.lovDescFinAEWriteOffName = lovDescFinAEWriteOffName;
 	}
+
+	public String getFinAEWriteOffBK() {
+    	return finAEWriteOffBK;
+    }
+
+	public void setFinAEWriteOffBK(String finAEWriteOffBK) {
+    	this.finAEWriteOffBK = finAEWriteOffBK;
+    }
+
+	public String getFinAEGraceEnd() {
+    	return finAEGraceEnd;
+    }
+
+	public void setFinAEGraceEnd(String finAEGraceEnd) {
+    	this.finAEGraceEnd = finAEGraceEnd;
+    }
+
+	public String getLovDescFinAEWriteOffBKName() {
+    	return lovDescFinAEWriteOffBKName;
+    }
+
+	public void setLovDescFinAEWriteOffBKName(String lovDescFinAEWriteOffBKName) {
+    	this.lovDescFinAEWriteOffBKName = lovDescFinAEWriteOffBKName;
+    }
+
+	public String getLovDescFinAEGraceEndName() {
+    	return lovDescFinAEGraceEndName;
+    }
+
+	public void setLovDescFinAEGraceEndName(String lovDescFinAEGraceEndName) {
+    	this.lovDescFinAEGraceEndName = lovDescFinAEGraceEndName;
+    }
 
 	public boolean isFinIsActive() {
 		return finIsActive;
@@ -1286,31 +1397,40 @@ public class FinanceType implements java.io.Serializable {
 		this.lovDescEVFinAEEarlySettleName = lovDescEVFinAEEarlySettleName;
 	}
 
-	/** @return the lovDescEVFinAEWriteOffName */
 	public String getLovDescEVFinAEWriteOffName() {
 		return lovDescEVFinAEWriteOffName;
 	}
-
-	/**
-	 * @param lovDescEVFinAEWriteOffName
-	 *            the lovDescEVFinAEWriteOffName to set
-	 */
 	public void setLovDescEVFinAEWriteOffName(String lovDescEVFinAEWriteOffName) {
 		this.lovDescEVFinAEWriteOffName = lovDescEVFinAEWriteOffName;
 	}
+	
+	public String getLovDescEVFinAEWriteOffBKName() {
+		return lovDescEVFinAEWriteOffBKName;
+	}
+	public void setLovDescEVFinAEWriteOffBKName(String lovDescEVFinAEWriteOffBKName) {
+		this.lovDescEVFinAEWriteOffBKName = lovDescEVFinAEWriteOffBKName;
+	}
+	
+	public String getLovDescEVFinAEGraceEndName() {
+		return lovDescEVFinAEGraceEndName;
+	}
+	public void setLovDescEVFinAEGraceEndName(String lovDescEVFinAEGraceEndName) {
+		this.lovDescEVFinAEGraceEndName = lovDescEVFinAEGraceEndName;
+	}
 
-	/** @return the lovDescEVFinToAmzName */
 	public String getLovDescEVFinToAmzName() {
 		return lovDescEVFinToAmzName;
 	}
-
-	/**
-	 * @param lovDescEVFinToAmzName
-	 *            the lovDescEVFinToAmzName to set
-	 */
 	public void setLovDescEVFinToAmzName(String lovDescEVFinToAmzName) {
 		this.lovDescEVFinToAmzName = lovDescEVFinToAmzName;
 	}
+	
+	public String getLovDescEVFinMAmzName() {
+    	return lovDescEVFinMAmzName;
+    }
+	public void setLovDescEVFinMAmzName(String lovDescEVFinMAmzName) {
+    	this.lovDescEVFinMAmzName = lovDescEVFinMAmzName;
+    }
 
 	/**
 	 * @param finOrgPrfUnchanged
@@ -1559,7 +1679,7 @@ public class FinanceType implements java.io.Serializable {
 	public void setLovDescProductCodeName(String lovDescProductCodeName) {
 		this.lovDescProductCodeName = lovDescProductCodeName;
 	}
-
+	
 	public String getLovDescAssetCodeName() {
 		return lovDescAssetCodeName;
 	}
@@ -2025,11 +2145,79 @@ public class FinanceType implements java.io.Serializable {
 	public void setFinPftUnChanged(boolean finPftUnChanged) {
 	    this.finPftUnChanged = finPftUnChanged;
     }
-
 	public boolean isFinPftUnChanged() {
 	    return finPftUnChanged;
     }
-	
-	
 
+	public boolean isApplyODPenalty() {
+    	return applyODPenalty;
+    }
+	public void setApplyODPenalty(boolean applyODPenalty) {
+    	this.applyODPenalty = applyODPenalty;
+    }
+
+	public boolean isODIncGrcDays() {
+    	return oDIncGrcDays;
+    }
+	public void setODIncGrcDays(boolean oDIncGrcDays) {
+    	this.oDIncGrcDays = oDIncGrcDays;
+    }
+
+	public String getODChargeType() {
+    	return oDChargeType;
+    }
+	public void setODChargeType(String oDChargeType) {
+    	this.oDChargeType = oDChargeType;
+    }
+
+	public int getODGraceDays() {
+    	return oDGraceDays;
+    }
+	public void setODGraceDays(int oDGraceDays) {
+    	this.oDGraceDays = oDGraceDays;
+    }
+
+	public String getODChargeCalOn() {
+    	return oDChargeCalOn;
+    }
+	public void setODChargeCalOn(String oDChargeCalOn) {
+    	this.oDChargeCalOn = oDChargeCalOn;
+    }
+
+	public BigDecimal getODChargeAmtOrPerc() {
+    	return oDChargeAmtOrPerc;
+    }
+	public void setODChargeAmtOrPerc(BigDecimal oDChargeAmtOrPerc) {
+    	this.oDChargeAmtOrPerc = oDChargeAmtOrPerc;
+    }
+
+	public boolean isODAllowWaiver() {
+    	return oDAllowWaiver;
+    }
+	public void setODAllowWaiver(boolean oDAllowWaiver) {
+    	this.oDAllowWaiver = oDAllowWaiver;
+    }
+
+	public BigDecimal getODMaxWaiverPerc() {
+    	return oDMaxWaiverPerc;
+    }
+	public void setODMaxWaiverPerc(BigDecimal oDMaxWaiverPerc) {
+    	this.oDMaxWaiverPerc = oDMaxWaiverPerc;
+    }
+
+	public String getLovDescProductCodeDesc() {
+    	return lovDescProductCodeDesc;
+    }
+	public void setLovDescProductCodeDesc(String lovDescProductCodeDesc) {
+    	this.lovDescProductCodeDesc = lovDescProductCodeDesc;
+    }
+
+	public List<FinTypeAccount> getFinTypeAccounts() {
+    	return finTypeAccounts;
+    }
+
+	public void setFinTypeAccounts(List<FinTypeAccount> finTypeAccounts) {
+    	this.finTypeAccounts = finTypeAccounts;
+    }
+	
 }

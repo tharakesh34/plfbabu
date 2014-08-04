@@ -66,6 +66,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -123,7 +124,7 @@ public class DashboardConfigurationSearchCtrl extends GFCBaseCtrl implements Ser
 	private transient DashboardConfigurationListCtrl dashboardConfigurationCtrl; // overHanded per parameter
 	private transient DashboardConfigurationService dashboardConfigurationService;
 	private transient WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("DashboardConfiguration");
-	private static   List<ValueLabel>  listDashboardType = PennantAppUtil.getDashBoardType(); 	// autoWiredgetChartDimensions()
+	private static   List<ValueLabel>  listDashboardType = PennantStaticListUtil.getDashBoardType(); 	// autoWiredgetChartDimensions()
 
 	/**
 	 * constructor
@@ -179,7 +180,7 @@ public class DashboardConfigurationSearchCtrl extends GFCBaseCtrl implements Ser
 		this.sortOperator_subCaption.setModel(new ListModelList(new SearchOperators().getStringOperators()));
 		this.sortOperator_subCaption.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_dashboardType.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_dashboardType.setModel(new ListModelList(new SearchOperators().getEqualOperators()));
 		this.sortOperator_dashboardType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_dimension.setModel(new ListModelList(new SearchOperators().getStringOperators()));
@@ -397,7 +398,7 @@ public class DashboardConfigurationSearchCtrl extends GFCBaseCtrl implements Ser
 		}
 		if(this.dashboardType.getSelectedItem()!=null){
 			String dashBoardType=PennantAppUtil.getlabelDesc(
-					String.valueOf(this.dashboardType.getSelectedItem().getValue()),PennantAppUtil.getDashBoardType());
+					String.valueOf(this.dashboardType.getSelectedItem().getValue()),PennantStaticListUtil.getDashBoardType());
 			// get the search operator
 			final Listitem item_DashboardDesc = this.sortOperator_dashboardType.getSelectedItem();
 

@@ -68,7 +68,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -83,8 +82,12 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CorporateCustomerDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTPhoneNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -1196,22 +1199,19 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl implements Se
 					new String[]{Labels.getLabel("label_CorporateCustomerDetailDialog_CustId.value")}));
 		}
 		if (!this.name.isReadonly()){
-			this.name.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,Labels.getLabel(
-					"MAND_FIELD_CHARACTER",new String[] { Labels.getLabel("label_CorporateCustomerDetailDialog_Name.value") })));
+			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_Name.value"),
+					PennantRegularExpressions.REGEX_NAME, true));
 		}	
 		if (!this.phoneNumber.isReadonly()){
-			this.phoneNumber.setConstraint(new SimpleConstraint(PennantConstants.PH_REGEX,Labels.getLabel(
-					"MAND_NUMBER",new String[] { Labels.getLabel("label_CorporateCustomerDetailDialog_PhoneNumber.value") })));
+			this.phoneNumber.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_PhoneNumber.value"),true));
 		}	
 		if (!this.phoneNumber1.isReadonly()){
 			if(!StringUtils.trimToEmpty(this.phoneNumber1.getValue()).equals("")){
-				this.phoneNumber1.setConstraint(new SimpleConstraint(PennantConstants.PH_REGEX,Labels.getLabel(
-						"MAND_NUMBER",new String[] { Labels.getLabel("label_CorporateCustomerDetailDialog_PhoneNumber1.value") })));
+				this.phoneNumber1.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_PhoneNumber1.value"),true));
 			}
 		}	
 		if (!this.emailId.isReadonly()){
-			this.emailId.setConstraint(new SimpleConstraint(PennantConstants.MAIL_REGEX,Labels.getLabel("MAND_FIELD_MAIL",
-					new String[] { Labels.getLabel("label_CorporateCustomerDetailDialog_EmailId.value") })));
+			this.emailId.setConstraint(new PTEmailValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_EmailId.value"),true));
 		}	
 		if (!this.bussCommenceDate.isDisabled()){
 			this.bussCommenceDate.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:"+ Labels.getLabel("DATE_EMPTY_FUTURE_TODAY",

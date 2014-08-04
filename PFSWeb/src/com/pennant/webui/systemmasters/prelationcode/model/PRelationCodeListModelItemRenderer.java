@@ -62,10 +62,10 @@ public class PRelationCodeListModelItemRenderer implements ListitemRenderer<PRel
 		Serializable {
 
 	private static final long serialVersionUID = 4872966285218448333L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, PRelationCode pRelationCode, int count) throws Exception {
-		//final PRelationCode pRelationCode = (PRelationCode) data;
+
 		Listcell lc;
 		lc = new Listcell(pRelationCode.getPRelationCode());
 		lc.setParent(item);

@@ -121,7 +121,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 	@Override
 	public Salutation getSalutationById(final String id, String type) {
 		logger.debug("Entering");
-		Salutation salutation = getSalutation();
+		Salutation salutation = new Salutation();
 		salutation.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

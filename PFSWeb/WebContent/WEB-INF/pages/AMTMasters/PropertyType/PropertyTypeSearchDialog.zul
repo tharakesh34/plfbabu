@@ -9,7 +9,7 @@
 
 	<window id="window_PropertyTypeSearch"
 		title="${c:l('window_PropertyTypeSearch.title')}" border="none"
-		apply="${propertyTypeSearchCtrl}" closable="true" width="400px"
+		apply="${propertyTypeSearchCtrl}" closable="true" width="550px"
 		height="284px" sizable="true">
 
 		<borderlayout>
@@ -26,7 +26,7 @@
 								<column width="100%" />
 							</columns>
 							<rows>
-								<row>
+								<row visible = "false">
 									<label id="label_PropertyTypeSearch_PropertyTypeId" value="${c:l('label_PropertyTypeSearch_PropertyTypeId.value')}" />
 									<listbox id="sortOperator_propertyTypeId" width="43px" mold="select" rows="1" />
 									  <uppercasebox  id="propertyTypeId" width="90px" maxlength="10" />
@@ -36,7 +36,7 @@
 								<row>
 									<label id="label_PropertyTypeSearch_PropertyTypeName" value="${c:l('label_PropertyTypeSearch_PropertyTypeName.value')}" />
 									<listbox id="sortOperator_propertyTypeName" width="43px" mold="select" rows="1" />
-									 <textbox id="propertyTypeName" width="450px" maxlength="50" />
+									 <textbox id="propertyTypeName" width="330px" maxlength="50" />
 								  
 										
 								</row>

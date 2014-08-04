@@ -58,14 +58,12 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.batch.admin.BatchAdminDAO;
 
 public class ValueDateUpdation implements Tasklet {
 	
 	private Logger logger = Logger.getLogger(ValueDateUpdation.class);
 
 	private DataSource dataSource;
-	private BatchAdminDAO batchAdminDAO;
 		
 	private Date dateValueDate = null;
 
@@ -75,18 +73,17 @@ public class ValueDateUpdation implements Tasklet {
 		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
 
 		logger.debug("START: Updation of ValueDate on Value Date: "+ dateValueDate);
-		
 		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		Connection connection = null;
 		PreparedStatement sqlStatement = null;
-		StringBuffer updateQuery = new StringBuffer();
-		updateQuery = prepareUpdateQuery(updateQuery, DateUtility.addDays(dateValueDate, 1).toString(), "APP_VALUEDATE");
 
 		try {
 
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(updateQuery.toString());
+			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
+			sqlStatement.setString(1,  DateUtility.addDays(dateValueDate, 1).toString());
+			sqlStatement.setString(2,  "APP_VALUEDATE");
 			sqlStatement.executeUpdate();
 			
 			//Value Date Updation 
@@ -117,12 +114,11 @@ public class ValueDateUpdation implements Tasklet {
 	 * @param updateQuery
 	 * @return
 	 */
-	private StringBuffer prepareUpdateQuery(StringBuffer updateQuery, String value, 
-			String parameterCode) {
+	private String prepareUpdateQuery() {
 		
-		updateQuery.append(" UPDATE SMTparameters SET SysParmValue = '"+value+"'");
-		updateQuery.append(" Where SysParmCode ='"+parameterCode+"'");
-		return updateQuery;
+		StringBuilder updateQuery = new StringBuilder(" UPDATE SMTparameters SET SysParmValue = ?");
+		updateQuery.append(" Where SysParmCode =?");
+		return updateQuery.toString();
 		
 	}
 
@@ -135,14 +131,6 @@ public class ValueDateUpdation implements Tasklet {
 	}
 	public DataSource getDataSource() {
 		return dataSource;
-	}
-
-	public BatchAdminDAO getBatchAdminDAO() {
-		return batchAdminDAO;
-	}
-
-	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
-		this.batchAdminDAO = batchAdminDAO;
 	}
 	
 }

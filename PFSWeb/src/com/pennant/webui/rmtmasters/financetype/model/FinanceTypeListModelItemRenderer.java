@@ -60,24 +60,21 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-@SuppressWarnings("rawtypes")
-public class FinanceTypeListModelItemRenderer implements ListitemRenderer, Serializable {
+public class FinanceTypeListModelItemRenderer implements ListitemRenderer<FinanceType>, Serializable {
 
 	private static final long serialVersionUID = 2118469590661434900L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, FinanceType financeType, int count) throws Exception {
 
 		if (item instanceof Listgroup) { 
-			Object groupData = (Object) data; 
-			final FinanceType financeType= (FinanceType)groupData;
-			item.appendChild(new Listcell(String.valueOf(financeType.getLovDescProductCodeName()))); 
+			item.appendChild(new Listcell(String.valueOf(financeType.getLovDescProductCodeDesc()))); 
 		} else if (item instanceof Listgroupfoot) { 
 			Listcell cell = new Listcell("");
-			cell.setSpan(11);
+			cell.setSpan(10);
 			item.appendChild(cell); 
 		} else { 
-			final FinanceType financeType = (FinanceType) data;
+
 			Listcell lc;
 			lc = new Listcell(financeType.getFinType());
 			lc.setParent(item);
@@ -99,14 +96,14 @@ public class FinanceTypeListModelItemRenderer implements ListitemRenderer, Seria
 			checkbox.setParent(lc);
 			lc.setParent(item);
 
-			lc = new Listcell(financeType.getLovDescAssetCodeName());
+			lc = new Listcell(financeType.getFinDivision());
 			lc.setParent(item);
 
 			lc = new Listcell(financeType.getRecordStatus());
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(financeType.getRecordType()));
 			lc.setParent(item);
-			item.setAttribute("data", data);
+			item.setAttribute("data", financeType);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onFinanceTypeItemDoubleClicked");
 		}
 	}

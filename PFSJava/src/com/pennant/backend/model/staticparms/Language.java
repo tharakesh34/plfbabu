@@ -66,7 +66,7 @@ public class Language implements java.io.Serializable {
 	private String lovValue;
 	private Language befImage;
 	private LoginUserDetails userDetails;
-
+ 
 	private String recordStatus;
 	private String roleCode = "";
 	private String nextRoleCode = "";

@@ -61,25 +61,15 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerAddressListModelItemRenderer implements ListitemRenderer<CustomerAddres>, Serializable {
 
 	private static final long serialVersionUID = -5263188939752215836L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, CustomerAddres customerAddress, int count) throws Exception {
 
-		//final CustomerAddres customerAddress = (CustomerAddres) data;
 		Listcell lc;
-		if(customerAddress.getRecordType().equals(PennantConstants.RCD_ADD) 
-				|| customerAddress.getRecordType().equals(PennantConstants.RCD_UPD) ){
-
-			lc = new Listcell(customerAddress.getLovDescCustAddrTypeName());
-			lc.setParent(item);
-			lc = new Listcell(customerAddress.getLovDescCustAddrCityName());
-			lc.setParent(item);
-		}else{
-			lc = new Listcell(customerAddress.getCustAddrType()+"-"+customerAddress.getLovDescCustAddrTypeName());
-			lc.setParent(item);
-			lc = new Listcell(customerAddress.getCustAddrCity()+"-"+customerAddress.getLovDescCustAddrCityName());
-			lc.setParent(item);
-		}
+		lc = new Listcell(customerAddress.getLovDescCustAddrTypeName());
+		lc.setParent(item);
+		lc = new Listcell(customerAddress.getLovDescCustAddrCountryName());
+		lc.setParent(item);
 		lc = new Listcell(customerAddress.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(customerAddress.getRecordType()));

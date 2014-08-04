@@ -42,6 +42,8 @@
 */
 
 package com.pennant.backend.dao.customermasters;
+import java.util.List;
+
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 
 /**
@@ -52,12 +54,14 @@ public interface CustomerEmploymentDetailDAO {
 
 	public CustomerEmploymentDetail getCustomerEmploymentDetail();
 	public CustomerEmploymentDetail getNewCustomerEmploymentDetail();
-	public CustomerEmploymentDetail getCustomerEmploymentDetailByID(long id,String type);
+	public CustomerEmploymentDetail getCustomerEmploymentDetailByID(long id,long custEmpName,String type);
 	public void update(CustomerEmploymentDetail customerEmploymentDetail,String type);
 	public void delete(CustomerEmploymentDetail customerEmploymentDetail,String type);
 	public long save(CustomerEmploymentDetail customerEmploymentDetail,String type);
 	public void initialize(CustomerEmploymentDetail customerEmploymentDetail);
 	public void refresh(CustomerEmploymentDetail entity);
 	public CustomerEmploymentDetail isEmployeeExistWithCustID(long id,String type);
+	public List<CustomerEmploymentDetail> getCustomerEmploymentDetailsByID(long id, String type);
+	public void deleteByCustomer(long custID, String tableType);
 	
 }

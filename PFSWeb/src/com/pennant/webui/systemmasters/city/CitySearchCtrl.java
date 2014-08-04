@@ -92,8 +92,8 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	protected Window  window_CitySearch; 			// autowired
 
-	protected Textbox pCCounty; 					// autowired
-	protected Listbox sortOperator_pCCounty; 		// autowired
+	protected Textbox pCCountry; 					// autowired
+	protected Listbox sortOperator_pCCountry; 		// autowired
 	protected Textbox pCProvince; 					// autowired
 	protected Listbox sortOperator_pCProvince; 		// autowired
 	protected Textbox pCCity; 						// autowired
@@ -154,32 +154,32 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_pCCounty.setModel(new ListModelList(
+		this.sortOperator_pCCountry.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
-		this.sortOperator_pCCounty.setItemRenderer(
+		this.sortOperator_pCCountry.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_pCProvince.setModel(new ListModelList(
+		this.sortOperator_pCProvince.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pCProvince.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_pCCity.setModel(new ListModelList(
+		this.sortOperator_pCCity.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pCCity.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_pCCityName.setModel(new ListModelList(
+		this.sortOperator_pCCityName.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pCCityName.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
@@ -206,10 +206,10 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 			for (final Filter filter : ft) {
 
 				// restore founded properties
-				if (filter.getProperty().equals("pCCounty")) {
+				if (filter.getProperty().equals("pCCountry")) {
 					SearchOperators.restoreStringOperator(
-							this.sortOperator_pCCounty, filter);
-					this.pCCounty.setValue(filter.getValue().toString());
+							this.sortOperator_pCCountry, filter);
+					this.pCCountry.setValue(filter.getValue().toString());
 				} else if (filter.getProperty().equals("pCProvince")) {
 					SearchOperators.restoreStringOperator(
 							this.sortOperator_pCProvince, filter);
@@ -320,23 +320,23 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 			so.addTabelName("RMTProvinceVsCity_AView");
 		}
 
-		if (StringUtils.isNotEmpty(this.pCCounty.getValue())) {
+		if (StringUtils.isNotEmpty(this.pCCountry.getValue())) {
 
 			// get the search operator
-			final Listitem item_PCCounty = this.sortOperator_pCCounty
+			final Listitem item_PCCountry = this.sortOperator_pCCountry
 					.getSelectedItem();
 
-			if (item_PCCounty != null) {
-				final int searchOpId = ((SearchOperators) item_PCCounty
+			if (item_PCCountry != null) {
+				final int searchOpId = ((SearchOperators) item_PCCountry
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("pCCounty", "%"
-						+ this.pCCounty.getValue().toUpperCase() + "%",searchOpId));
+					so.addFilter(new Filter("pCCountry", "%"
+						+ this.pCCountry.getValue().toUpperCase() + "%",searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("pCCounty", this.pCCounty
+					so.addFilter(new Filter("pCCountry", this.pCCountry
 							.getValue(), searchOpId));
 				}
 			}
@@ -450,7 +450,7 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// Default Sort on the table
-		so.addSort("PCCounty", false);
+		so.addSort("PCCountry", false);
 
 		if (logger.isDebugEnabled()) {
 			final List<Filter> lf = so.getFilters();

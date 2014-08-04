@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.endofday.repayqueue;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,10 +49,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -65,20 +67,31 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.OverDueRecoveryPostingsUtil;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.batch.admin.BatchAdminDAO;
+import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
+import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
+import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
-import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.AccountHoldStatus;
+import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
+import com.pennant.eod.util.EODProperties;
 
 public class RepayQueuePostings implements Tasklet {
 	
@@ -87,102 +100,324 @@ public class RepayQueuePostings implements Tasklet {
 	private FinanceProfitDetailDAO profitDetailDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinStatusDetailDAO finStatusDetailDAO;
+	private CustomerStatusCodeDAO customerStatusCodeDAO;
 	private RepaymentPostingsUtil postingsUtil;
+	private OverDueRecoveryPostingsUtil recoveryPostingsUtil;	
 	private AccountInterfaceService accountInterfaceService;
 	private SuspensePostingUtil suspensePostingUtil;
+	private FinODDetailsDAO finODDetailsDAO;
+	private FinanceSuspHeadDAO financeSuspHeadDAO;
+	private FinLogEntryDetailDAO finLogEntryDetailDAO; 
+	private FinRepayQueueDAO finRepayQueueDAO;
+	
 	private DataSource dataSource;
-	private BatchAdminDAO batchAdminDAO;
 	
-	
-	private List<FinanceScheduleDetail> scheduleDetails = null;
-	private FinanceProfitDetail financeProfitDetail = null;
 	private Date dateValueDate = null;
-	private FinanceMain financeMain = null;
+	private Date dateNextBusinessDate = null;
+	
 	private BigDecimal repayAmountBal;
-	private FinRepayQueue finRepayQueue = null;
-
-	@SuppressWarnings("serial")
+	
+	int repayments = 0;
+	int overDues = 0;
+	int suspenses = 0;
+	int processed = 0;
+	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
 		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateNextBusinessDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE").toString());
 
 		logger.debug("START: Repayments Due Today Queue Postings for Value Date: " + dateValueDate);
-
-		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 		
 		// FETCH Finance Repayment Queues
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
-		StringBuffer selQuery = new StringBuffer();
-		selQuery = prepareSelectQuery(selQuery);
+		
+		FinRepayQueue finRepayQueue = null;
+		FinanceMain financeMain = null;
+		FinanceType financeType = null;
 		
 		try {
 			
+			//Remove Account Holds before Repayments Process
+			logger.debug("START: Remove Account Holds for Value Date: " + dateValueDate);
+			getAccountInterfaceService().removeAccountHolds();
+			logger.debug("END: Remove Account Holds for Value Date: " + dateValueDate);
+			
+			//Finance Repayments Details
 			connection = DataSourceUtils.doGetConnection(getDataSource());	
-			sqlStatement = connection.prepareStatement(selQuery.toString());
+			sqlStatement = connection.prepareStatement(getCountQuery());
+			sqlStatement.setDate(1, DateUtility.getDBDate(dateValueDate.toString()));
+			resultSet = sqlStatement.executeQuery();
+			resultSet.next();
+			BatchUtil.setExecution(context, "TOTAL", String.valueOf(resultSet.getInt(1)));
+			
+			sqlStatement = connection.prepareStatement(prepareSelectQuery());
+			sqlStatement.setDate(1, DateUtility.getDBDate(dateValueDate.toString()));
 			resultSet = sqlStatement.executeQuery();
 			
 			while (resultSet.next()) {
-
-				// Prepare Finance RepayQueue Data
-				finRepayQueue = doWriteDataToBean(resultSet);
-				String finReference = finRepayQueue.getFinReference();
-
-				// Get the Finance Main Data, Schedule details List &
-				// ProfitDetails based on Finance reference
-				financeMain = getFinanceMainDAO().getFinanceMainForDataSet(finReference);
-				scheduleDetails = new ArrayList<FinanceScheduleDetail>(financeMain.getNumberOfTerms()+1);
-				scheduleDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "", false);
-				financeProfitDetail = getProfitDetailDAO().getFinProfitDetailsById(finReference);
 				
-				if (checkPaymentBalance(resultSet.getBoolean("AlwPartialRpy"), resultSet.getBigDecimal("RepayQueueBal"))) {
-
-					getPostingsUtil().postingsRepayProcess(financeMain, scheduleDetails,
-							financeProfitDetail, dateValueDate, finRepayQueue, repayAmountBal,
-							resultSet.getBoolean("AllowRIAInvestment"));
-
-				} else {
-
-					// Finance Over Due Details
-					FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinanceScheduleDetailById(
-							finRepayQueue.getFinReference(), finRepayQueue.getRpyDate(), "", false);
-
-					FinODDetails finODDetails = getPostingsUtil().overDuesPreparation(finRepayQueue, scheduleDetail, dateValueDate);
-
-					// Finance Suspence
-					getSuspensePostingUtil().suspensePreparation(financeMain, financeProfitDetail, 
-							finODDetails, dateValueDate, resultSet.getBoolean("AllowRIAInvestment"));
+				financeType = EODProperties.getFinanceType(resultSet.getString("FinType").trim());
+				
+				// Prepare Finance RepayQueue Data
+				financeMain = doWriteDataToBean(financeMain, resultSet);
+				finRepayQueue = doWriteDataToBean(finRepayQueue, resultSet);
+				
+				boolean allowRIAInvestment = financeType.isAllowRIAInvestment();
+				String finReference = finRepayQueue.getFinReference();
+				repayAmountBal = BigDecimal.ZERO;
+				
+				//Check whether Schedule came for Updation of Flags or for Repayments
+				if(resultSet.getBigDecimal("RepayQueueBal").compareTo(BigDecimal.ZERO) == 0){
+					getPostingsUtil().updateSchdlDetail(finRepayQueue);
+					continue;
 				}
-				getBatchAdminDAO().saveStepDetails(resultSet.getString("FinReference"), getRepayQueue(finRepayQueue), context.getStepContext().getStepExecution().getId());
-				context.getStepContext().getStepExecution().getExecutionContext().putInt("FIELD_COUNT", resultSet.getRow());
+				
+				long linkedTranId = Long.MIN_VALUE;
+				
+				//Repayments Only for "AUTO" Payment Finances
+				String repayMethod = resultSet.getString("FinRepayMethod");
+				boolean doProcessPostings = false;
+				if(StringUtils.trimToEmpty(repayMethod).equals(PennantConstants.REPAYMTH_AUTO)){
+					doProcessPostings = true;
+				}
+
+				//Overdue Recovery Calculations & Recovery Posting
+				if(finRepayQueue.getRpyDate().compareTo(dateValueDate) < 0){
+					List<Object> odObjDetails = getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, 
+							dateValueDate, allowRIAInvestment, doProcessPostings, false, linkedTranId, financeType.getFinDivision());
+
+					if(odObjDetails!=null && !odObjDetails.isEmpty()) {
+						if(!doProcessPostings || (Boolean)odObjDetails.get(0)) {
+							overDues++;
+						}else{
+							//THROW ERROR FOR POSTINGS NOT SUCCESS
+							logger.error("Postings Failed for OverDue Payment Process");
+							//throw new Exception("Postings Failed for OverDue Payment Process");
+						}
+						
+						if(doProcessPostings){
+							linkedTranId = (Long) odObjDetails.get(1);
+						}
+					}
+					odObjDetails = null;
+				}
+				
+				//Repayments postings By Available Balance Check
+				if (doProcessPostings && !StringUtils.trimToEmpty(financeMain.getRepayAccountId()).equals("") && 
+						checkPaymentBalance(financeType.isFinIsAlwPartialRpy(), resultSet.getBigDecimal("RepayQueueBal"), 
+								financeMain.getRepayAccountId(), financeType.getFinDivision())) {
+					
+					//Remove Below line for Single Transaction Posting Entry
+					linkedTranId = Long.MIN_VALUE;
+
+					// Get Schedule details List Data
+					List<FinanceScheduleDetail> scheduleDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(finReference);
+
+					// Get ProfitDetails based on Finance reference
+					FinanceProfitDetail pftDetail = new FinanceProfitDetail();
+					pftDetail.setFinReference(finReference);
+					pftDetail.setAcrTillLBD(resultSet.getBigDecimal("AcrTillLBD"));
+					pftDetail.setTdPftAmortizedSusp(resultSet.getBigDecimal("TdPftAmortizedSusp"));
+					pftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
+
+					List<Object> returnList = getPostingsUtil().postingsEODRepayProcess(financeMain, scheduleDetails, pftDetail, 
+							dateValueDate, finRepayQueue, repayAmountBal, allowRIAInvestment, linkedTranId);
+					
+					if(!(Boolean)returnList.get(0)){
+						//THROW ERROR FOR POSTINGS NOT SUCCESS
+						logger.error("Postings Failed for Repayment Process: "+returnList.get(1));
+						//throw new Exception("Postings Failed for Repayments Process: "+returnList.get(1));
+					}
+					
+					//Create log entry for Action for Schedule Repayments Modification
+					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+					entryDetail.setFinReference(finReference);
+					entryDetail.setEventAction(PennantConstants.SCH_REPAY);
+					entryDetail.setSchdlRecal(false);
+					entryDetail.setPostDate(dateValueDate);
+					entryDetail.setReversalCompleted(false);
+					getFinLogEntryDetailDAO().save(entryDetail);
+					
+					repayments++;
+					
+					scheduleDetails = null;
+				} else {
+					
+					if (finRepayQueue.getRpyDate().compareTo(dateValueDate) <= 0) {
+						
+						//Overdue Details preparation 
+						getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, true);
+						
+						// Finance Suspense
+						List<Object> returnList = getSuspensePostingUtil().suspensePreparation(financeMain, finRepayQueue, dateValueDate, allowRIAInvestment, false);
+						
+						if(!(Boolean)returnList.get(0)){
+							//THROW ERROR FOR POSTINGS NOT SUCCESS
+							logger.error("Postings Failed for Suspense Preparation Process : "+returnList.get(2));
+							//throw new Exception("Postings Failed for Suspense Preparation Process : "+returnList.get(2));
+						}
+						
+						boolean isDueSuspNow = (Boolean) returnList.get(1);
+						//Check Current Finance Max Status For updation
+						String curFinStatus = getCustomerStatusCodeDAO().getFinanceStatus(financeMain.getFinReference(), true);
+						String finStsReason = financeMain.getFinStsReason();
+						boolean isStsChanged = false;
+						
+						if(!financeMain.getFinStatus().equals(curFinStatus)){
+							isStsChanged = true;
+						}
+						
+						// Finance Main Details Update
+						financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount());
+						
+						if (isStsChanged) {
+							
+							BigDecimal feeChargeAmt = financeMain.getFeeChargeAmt() == null? BigDecimal.ZERO : financeMain.getFeeChargeAmt();
+							getFinanceMainDAO().updateRepaymentAmount(financeMain.getFinReference(), financeMain.getFinAmount().add(feeChargeAmt), 
+									financeMain.getFinRepaymentAmount(), curFinStatus, PennantConstants.FINSTSRSN_SYSTEM,false);
+						}
+						
+						//Finance Status Details insertion, if status modified then change to High Risk Level
+						if(isStsChanged){
+							FinStatusDetail statusDetail = new FinStatusDetail();
+							statusDetail.setFinReference(financeMain.getFinReference());
+							statusDetail.setValueDate(dateValueDate);
+							statusDetail.setCustId(financeMain.getCustID());
+							statusDetail.setFinStatus(curFinStatus);			
+							statusDetail.setFinStatusReason(finStsReason);			
+							
+							getFinStatusDetailDAO().saveOrUpdateFinStatus(statusDetail);
+						}
+						
+						if(isDueSuspNow) {
+							suspenses++;
+						}
+					}
+				}
+				processed = resultSet.getRow();
+				BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
+				BatchUtil.setExecution(context,  "INFO", getInfo());
+				
+				financeMain = null;
+				finRepayQueue = null;
 			}
 			
-		} catch (SQLException e) {
+			//Customer Statuses Updation depends on Finance Status
+			List<FinStatusDetail> custStatuses = getFinStatusDetailDAO().getFinStatusDetailList(dateValueDate);
+			if(custStatuses != null && custStatuses.size() > 0){
+				
+				//Customer Status Date Updation
+				List<Long> custIdList = new ArrayList<Long>();
+				for (FinStatusDetail finSts : custStatuses) {
+					custIdList.add(finSts.getCustId());
+				}
+				
+				List<FinStatusDetail> suspDateStsList = getFinanceSuspHeadDAO().getCustSuspDate(custIdList);
+				Map<Long, Date> suspDateMap = new HashMap<Long, Date>();
+				for (FinStatusDetail suspDatests : suspDateStsList) {
+					suspDateMap.put(suspDatests.getCustId(), suspDatests.getValueDate());
+				}
+				
+				for (FinStatusDetail finSts : custStatuses) {
+					if(suspDateMap.containsKey(finSts.getCustId())){
+						finSts.setValueDate(suspDateMap.get(finSts.getCustId()));
+					}else{
+						finSts.setValueDate(null);
+					}
+				}
+				
+				getFinStatusDetailDAO().updateCustStatuses(custStatuses);
+				
+				custIdList = null;
+				suspDateStsList = null;
+				custStatuses = null;
+				suspDateMap = null;
+			}
+			
+			BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
+			BatchUtil.setExecution(context,  "INFO", getInfo());
+			
+			//Process Account Holds only If date Value Date is Same As Next Bussiness Date
+			Date futureValueDate = DateUtility.addDays(dateValueDate, 1);
+			if(dateNextBusinessDate.compareTo(futureValueDate) == 0){
+				
+				//Adding Holdings To Accounts After Repayments Process
+				List<AccountHoldStatus> accountsList = getFinODDetailsDAO().getFinODAmtByRepayAc(dateValueDate);
+				List<AccountHoldStatus> returnAcList = null;
+				if(!accountsList.isEmpty()){
+
+					logger.debug("START: Adding Account Holds for Value Date: " + dateValueDate);
+
+					returnAcList = new ArrayList<AccountHoldStatus>();
+
+					//Sending 2000 Records At a time to Process for Holding
+					while (!accountsList.isEmpty()) {
+
+						List<AccountHoldStatus> subAcList = null;
+						if(accountsList.size() > 2000){
+							subAcList = accountsList.subList(0, 2000);
+						}else{
+							subAcList = accountsList;
+						}
+						returnAcList.addAll(getAccountInterfaceService().addAccountHolds(subAcList,dateValueDate));
+
+						if(accountsList.size() > 2000){
+							accountsList.subList(0, 2000).clear();
+						}else{
+							accountsList.clear();
+						}
+					}
+
+					//Save Returned Account List For Report Purpose
+					getFinODDetailsDAO().saveHoldAccountStatus(returnAcList);
+
+					logger.debug("END: Adding Account Holds for Value Date: " + dateValueDate);
+				}
+			}
+			
+			//Clear Repay Queue Details
+			getFinRepayQueueDAO().deleteRepayQueue();
+			
+		} catch (Exception e) {
 			logger.error(e);
-			throw new SQLException(e.getMessage()) {};
-		} catch (AccountNotFoundException e) {
-			logger.error(e);
-			throw new AccountNotFoundException(e.getMessage()) {};
-		} catch (IllegalAccessException e) {
-			logger.error(e);
-			throw new IllegalAccessException(e.getMessage()) {};
-		} catch (InvocationTargetException e) {
-			logger.error(e);
-			throw new InvocationTargetException(e, e.getMessage()) {};
-		} finally {
+			throw e;
+		}  finally {
 			financeMain = null;
-			scheduleDetails = null;
-			financeProfitDetail = null;
 			finRepayQueue = null;
-			resultSet.close();
-			sqlStatement.close();
+			
+			if(resultSet!= null) {
+				resultSet.close();
+			}
+			
+			if(sqlStatement != null) {
+				sqlStatement.close();
+			}
 		}
 
 		logger.debug("END: Repayments Due Today Queue Postings for Value Date: " + dateValueDate);
 		return RepeatStatus.FINISHED;
 
+	}
+	
+
+	/**
+	 * Method for get count of Repay postings
+	 * @return selQuery 
+	 */
+	private String getCountQuery() {
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT count(1)");
+		selectSql.append(" FROM Financemain FM ");
+		selectSql.append(" INNER JOIN FinRpyQueue RQ ON RQ.FinReference = FM.FinReference ");
+		selectSql.append(" INNER JOIN FinPftDetails PD ON PD.FinReference = FM.FinReference ");
+		selectSql.append(" WHERE RQ.RpyDate <= ? AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0)");
+		return selectSql.toString();
 	}
 
 	/**
@@ -191,29 +426,35 @@ public class RepayQueuePostings implements Tasklet {
 	 * @param selectSql
 	 * @return
 	 */
-	private StringBuffer prepareSelectQuery(StringBuffer selectSql) {
+	private String prepareSelectQuery() {
 
-		selectSql = new StringBuffer(" SELECT  RpyDate, FinPriority, FinRpyQueue.FinType AS FinType, FinReference,");
-		selectSql.append(" Branch, CustomerID, FinRpyFor, SchdPft, SchdPri,");
-		selectSql.append(" SchdPftPaid, SchdPriPaid, SchdPftBal, SchdPriBal,");
-		selectSql.append(" SchdIsPftPaid, SchdIsPriPaid , RMTFinanceTypes.FinIsAlwPartialRpy AS AlwPartialRpy ,");
-		selectSql.append(" (SchdPftBal+SchdPriBal) AS RepayQueueBal, RMTFinanceTypes.AllowRIAInvestment ");
-		selectSql.append(" FROM FinRpyQueue , RMTFinanceTypes ");
-		selectSql.append(" WHERE  FinRpyQueue.FinType= RMTFinanceTypes.FinType ");
-		selectSql.append(" AND (SchdIsPftPaid =0  OR  SchdIsPriPaid =0 ) AND RpyDate <= '"+dateValueDate+"'");
-		selectSql.append(" ORDER BY RpyDate,FinPriority, FinRpyFor ASC ");
-		return selectSql;
-		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FM.GrcPeriodEndDate, FM.FinRepaymentAmount, FM.DisbAccountid, FM.RepayAccountid, FM.FinAccount, FM.FinCustPftAccount, FM.FinCommitmentRef,");
+		selectSql.append(" FM.FinCcy, FM.FinAmount, FM.FeeChargeAmt, FM.DownPayment, FM.DownPayBank, FM.DownPaySupl, FM.DownPayAccount, FM.SecurityDeposit, "); 
+		selectSql.append(" FM.FinStartDate, FM.NumberOfTerms, FM.GraceTerms,  FM.NextGrcPftDate, FM.nextRepayDate, FM.LastRepayPftDate, FM.NextRepayPftDate, ");
+		selectSql.append(" FM.LastRepayRvwDate, FM.NextRepayRvwDate, FM.FinAssetValue, FM.FinCurrAssetValue,");
+		selectSql.append(" FM.RecordType, FM.ProfitDaysBasis, FM.FeeChargeAmt, FM.FinStatus, FM.FinStsReason, FM.SecurityDeposit, FM.MaturityDate,");
+		selectSql.append(" RQ.RpyDate, RQ.FinPriority, FM.FinType, RQ.FinReference, FM.ProfitDaysBasis,");
+		selectSql.append(" RQ.Branch, RQ.CustomerID, RQ.FinRpyFor, RQ.SchdPft, RQ.SchdPri, RQ.SchdPftPaid, RQ.SchdPriPaid, RQ.SchdPftBal, RQ.SchdPriBal,");
+		selectSql.append(" RQ.SchdIsPftPaid, RQ.SchdIsPriPaid, (RQ.SchdPftBal+ RQ.SchdPriBal) AS RepayQueueBal,");
+		selectSql.append(" PD.AcrTillLBD, PD.TdPftAmortizedSusp, PD.AmzTillLBD, FM.FinRepayMethod ");
+		selectSql.append(" FROM Financemain FM ");
+		selectSql.append(" INNER JOIN FinRpyQueue RQ ON RQ.FinReference = FM.FinReference ");
+		selectSql.append(" INNER JOIN FinPftDetails PD ON PD.FinReference = FM.FinReference ");
+		selectSql.append(" WHERE RQ.RpyDate <= ? AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0) ");
+		selectSql.append(" ORDER BY RQ.RpyDate, RQ.FinPriority, RQ.FinReference, RQ.FinRpyFor ASC ");
+		return selectSql.toString();
 	}
 
 	/**
 	 * Method for Creating RepayQueue Object using resultSet
 	 * 
-	 * @param resultSet
-	 * @return
+	 * @param FinRepayQueue finRepayQueue
+	 * @param ResultSet resultSet
+	 * @return FinRepayQueue finRepayQueue
 	 */
 	@SuppressWarnings("serial")
-	private FinRepayQueue doWriteDataToBean(ResultSet resultSet) {
+	private FinRepayQueue doWriteDataToBean(FinRepayQueue finRepayQueue, ResultSet resultSet) {
 
 		finRepayQueue = new FinRepayQueue();
 
@@ -240,115 +481,118 @@ public class RepayQueuePostings implements Tasklet {
 		return finRepayQueue;
 	}
 	
+	/**
+	 * Method for Creating RepayQueue Object using resultSet
+	 * 
+	 * @param FinanceMain
+	 *            financeMain
+	 * @param ResultSet
+	 *            resultSet
+	 * @return FinanceMain financeMain
+	 */
+	@SuppressWarnings("serial")
+	private FinanceMain doWriteDataToBean(FinanceMain financeMain, ResultSet resultSet) {
+
+		financeMain = new FinanceMain();
+
+		try {
+			financeMain.setFinReference(resultSet.getString("FinReference"));
+			financeMain.setGrcPeriodEndDate(resultSet.getDate("GrcPeriodEndDate"));
+			financeMain.setFinRepaymentAmount(resultSet.getBigDecimal("FinRepaymentAmount"));
+			financeMain.setDisbAccountId(resultSet.getString("DisbAccountid"));
+			financeMain.setRepayAccountId(resultSet.getString("RepayAccountid"));
+			financeMain.setFinAccount(resultSet.getString("FinAccount"));
+			financeMain.setFinCustPftAccount(resultSet.getString("FinCustPftAccount"));
+			financeMain.setFinCommitmentRef(resultSet.getString("FinCommitmentRef"));
+			financeMain.setFinCcy(resultSet.getString("FinCcy"));
+			financeMain.setFinBranch(resultSet.getString("Branch"));
+			financeMain.setCustID(resultSet.getLong("CustomerID"));
+			financeMain.setFinAmount(resultSet.getBigDecimal("FinAmount"));
+			financeMain.setFeeChargeAmt(resultSet.getBigDecimal("FeeChargeAmt"));
+			financeMain.setDownPayment(resultSet.getBigDecimal("DownPayment"));
+			financeMain.setDownPayBank(resultSet.getBigDecimal("DownPayBank"));
+			financeMain.setDownPaySupl(resultSet.getBigDecimal("DownPaySupl"));
+			financeMain.setDownPayAccount(resultSet.getString("DownPayAccount"));
+			financeMain.setSecurityDeposit(resultSet.getBigDecimal("SecurityDeposit"));
+			financeMain.setFinType(resultSet.getString("FinType"));
+			financeMain.setFinStartDate(resultSet.getDate("FinStartDate"));
+			financeMain.setNumberOfTerms(resultSet.getInt("NumberOfTerms"));
+			financeMain.setGraceTerms(resultSet.getInt("GraceTerms"));
+			financeMain.setNextGrcPftDate(resultSet.getDate("NextGrcPftDate"));
+			financeMain.setNextRepayDate(resultSet.getDate("nextRepayDate"));
+			financeMain.setLastRepayPftDate(resultSet.getDate("LastRepayPftDate"));
+			financeMain.setNextRepayPftDate(resultSet.getDate("NextRepayPftDate"));
+			financeMain.setLastRepayRvwDate(resultSet.getDate("LastRepayRvwDate"));
+			financeMain.setNextRepayRvwDate(resultSet.getDate("NextRepayRvwDate"));
+			financeMain.setFinAssetValue(resultSet.getBigDecimal("FinAssetValue"));
+			financeMain.setFinCurrAssetValue(resultSet.getBigDecimal("FinCurrAssetValue"));
+			financeMain.setRecordType(resultSet.getString("RecordType"));
+			financeMain.setProfitDaysBasis(resultSet.getString("ProfitDaysBasis"));
+			financeMain.setFeeChargeAmt(resultSet.getBigDecimal("FeeChargeAmt"));
+			financeMain.setFinStatus(resultSet.getString("FinStatus"));
+			financeMain.setFinStsReason(resultSet.getString("FinStsReason"));
+			financeMain.setMaturityDate(resultSet.getDate("MaturityDate"));
+
+		} catch (SQLException e) {
+			throw new DataAccessException(e.getMessage()) { };
+		}
+		return financeMain;
+	}
+	
 	/**-----------------------------------------------------*/
 	//###### Condition for Checking Available Balance ######//
-	/**-----------------------------------------------------*/
+	/**-----------------------------------------------------
+	 * @throws AccountNotFoundException */
 	
-	private boolean checkPaymentBalance(boolean isAlwPartialRpy, BigDecimal repayQueueBal) {
+	private boolean checkPaymentBalance(boolean isAlwPartialRpy, BigDecimal repayQueueBal, String repayAccountId, String finDivision) throws AccountNotFoundException {
 
 		boolean isPayNow = false;
-		repayAmountBal = new BigDecimal(0);
+		boolean accFound = false;
+		repayAmountBal = BigDecimal.ZERO;
 		
-		IAccounts iAccount = new IAccounts();
-		iAccount.setAccountId(financeMain.getRepayAccountId());
-
+		String acType = SystemParameterDetails.getSystemParameterValue("ALWFULLPAY_TSR_ACTYPE").toString();
+			
 		// Check Available Funding Account Balance
-		iAccount = getAccountInterfaceService().fetchAccountAvailableBal(iAccount,false);
+		IAccounts iAccount = getAccountInterfaceService().fetchAccountAvailableBal(repayAccountId);
 
-		// Set Requested Repayment Amount as RepayAmount Balance
+		//Account Type Check
+		String[] acTypeList = acType.split(",");
+		for (int i = 0; i < acTypeList.length; i++) {
+			if(iAccount.getAcType().equals(acTypeList[i].trim())){
+				accFound = true;
+				break;
+			}
+		}
+		
+		// Set Requested Repayments Amount as RepayAmount Balance
 		if (iAccount.getAcAvailableBal().compareTo(repayQueueBal) >= 0) {
 			repayAmountBal = repayQueueBal;
 			isPayNow = true;
+		} else if (accFound && StringUtils.trimToEmpty(finDivision).equals(PennantConstants.FIN_DIVISION_TREASURY)) {
+			repayAmountBal = repayQueueBal;
+			isPayNow = true;
 		} else {
-			if (isAlwPartialRpy && iAccount.getAcAvailableBal().intValue() > 0) {
+			if (isAlwPartialRpy && iAccount.getAcAvailableBal().compareTo(BigDecimal.ZERO) > 0) {
 				repayAmountBal = iAccount.getAcAvailableBal();
 				isPayNow = true;
 			}
 		}
-
+		
+		iAccount = null;
 		return isPayNow;
 	}
 	
-	private String getRepayQueue(FinRepayQueue repayQueue) {
-		StringBuffer strRepayQueue = new StringBuffer();
+	private String getInfo() {
+		StringBuilder builder = new StringBuilder();
 
-
-		if (strRepayQueue != null) {
-			strRepayQueue.append("RpyDate");
-			strRepayQueue.append("-");
-			strRepayQueue.append(DateUtility.formatUtilDate(repayQueue.getRpyDate(), PennantConstants.dateFormat));
-			strRepayQueue.append(";");
-
-			strRepayQueue.append("FinRpyFor");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getFinRpyFor());
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("FinPriority");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getFinPriority());
-			strRepayQueue.append(";");
-
-			strRepayQueue.append("FinType");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getFinType());
-			strRepayQueue.append(";");
-			
-						
-			strRepayQueue.append("FinBranch");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getBranch());
-			strRepayQueue.append(";");
-				
-			strRepayQueue.append("SchdPft");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPft()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdPri");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPri()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-
-			strRepayQueue.append("SchdPftPaid");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPftPaid()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdPriPaid");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPriPaid()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdPftBal");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPftBal()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdPriBal");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getSchdPriBal()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("SchdIsPftPaid");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.isSchdIsPftPaid());
-			strRepayQueue.append(";");
-
-			strRepayQueue.append("RefundAmount");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.getRefundAmount()); //TODO AMTFORMART
-			strRepayQueue.append(";");
-			
-			strRepayQueue.append("RcdNotExist");
-			strRepayQueue.append("-");
-			strRepayQueue.append(repayQueue.isRcdNotExist()); 
-			strRepayQueue.append(";");
-	
-		}
-
-		return strRepayQueue.toString();
+		builder.append("Total Repayment's").append(": ").append(repayments);
+		builder.append("\n");
+		builder.append("Total Overdue's").append(": ").append(overDues);
+		builder.append("\n");
+		builder.append("Total Suspense's").append(": ").append(suspenses);
+		return builder.toString();
 	}
+	
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -375,6 +619,20 @@ public class RepayQueuePostings implements Tasklet {
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	public void setFinStatusDetailDAO(FinStatusDetailDAO finStatusDetailDAO) {
+		this.finStatusDetailDAO = finStatusDetailDAO;
+	}
+	public FinStatusDetailDAO getFinStatusDetailDAO() {
+		return finStatusDetailDAO;
+	}
+
+	public CustomerStatusCodeDAO getCustomerStatusCodeDAO() {
+		return customerStatusCodeDAO;
+	}
+	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
+		this.customerStatusCodeDAO = customerStatusCodeDAO;
+	}
+
 	public RepaymentPostingsUtil getPostingsUtil() {
 		return postingsUtil;
 	}
@@ -389,12 +647,47 @@ public class RepayQueuePostings implements Tasklet {
 			AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
 	}
+	
+	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {
+		this.recoveryPostingsUtil = recoveryPostingsUtil;
+	}
+	public OverDueRecoveryPostingsUtil getRecoveryPostingsUtil() {
+		return recoveryPostingsUtil;
+	}
 
 	public void setSuspensePostingUtil(SuspensePostingUtil suspensePostingUtil) {
 		this.suspensePostingUtil = suspensePostingUtil;
 	}
 	public SuspensePostingUtil getSuspensePostingUtil() {
 		return suspensePostingUtil;
+	}
+	
+	public FinODDetailsDAO getFinODDetailsDAO() {
+		return finODDetailsDAO;
+	}
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+	
+	public FinLogEntryDetailDAO getFinLogEntryDetailDAO() {
+		return finLogEntryDetailDAO;
+	}
+	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
+		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
+	}
+
+	public FinanceSuspHeadDAO getFinanceSuspHeadDAO() {
+		return financeSuspHeadDAO;
+	}
+	public void setFinanceSuspHeadDAO(FinanceSuspHeadDAO financeSuspHeadDAO) {
+		this.financeSuspHeadDAO = financeSuspHeadDAO;
+	}
+
+	public FinRepayQueueDAO getFinRepayQueueDAO() {
+		return finRepayQueueDAO;
+	}
+	public void setFinRepayQueueDAO(FinRepayQueueDAO finRepayQueueDAO) {
+		this.finRepayQueueDAO = finRepayQueueDAO;
 	}
 	
 	public void setDataSource(DataSource dataSource) {
@@ -404,12 +697,5 @@ public class RepayQueuePostings implements Tasklet {
 		return dataSource;
 	}
 
-	public BatchAdminDAO getBatchAdminDAO() {
-		return batchAdminDAO;
-	}
-
-	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
-		this.batchAdminDAO = batchAdminDAO;
-	}
 
 }

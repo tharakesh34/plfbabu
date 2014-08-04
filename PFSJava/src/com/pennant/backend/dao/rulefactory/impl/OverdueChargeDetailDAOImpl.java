@@ -126,7 +126,7 @@ public class OverdueChargeDetailDAOImpl extends BasisCodeDAO<OverdueChargeDetail
 	@Override
 	public OverdueChargeDetail getOverdueChargeDetailById(final String ruleCode, final String ctgCode, String type) {
 		logger.debug("Entering");
-		OverdueChargeDetail overdueChargeDetail = getOverdueChargeDetail();
+		OverdueChargeDetail overdueChargeDetail = new OverdueChargeDetail();
 
 		overdueChargeDetail.setId(ruleCode);
 		overdueChargeDetail.setoDCCustCtg(ctgCode);
@@ -332,7 +332,7 @@ public class OverdueChargeDetailDAOImpl extends BasisCodeDAO<OverdueChargeDetail
 	public List<OverdueChargeDetail> getListOverdueChargeDetailById(String id, String type) {
 		logger.debug("Entering");
 
-		OverdueChargeDetail overdueChargeDetail = getOverdueChargeDetail();
+		OverdueChargeDetail overdueChargeDetail = new OverdueChargeDetail();
 		overdueChargeDetail.setoDCRuleCode(id);
 
 		StringBuilder selectSql = new StringBuilder("Select ODCRuleCode, ODCCustCtg, ODCType, ODCOn,");

@@ -61,6 +61,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceScheduleDetailService;
 import com.pennant.backend.util.PennantConstants;
@@ -431,5 +432,13 @@ public class FinanceScheduleDetailServiceImpl extends GenericService<FinanceSche
     public BigDecimal getTotalUnpaidPftAmount(String finReference) {
 		return getFinanceScheduleDetailDAO().getTotalUnpaidPftAmount(finReference);
     }
+	
+	@Override
+	public 	OverdueChargeRecovery getOverdueChargeRecovery(String finReference){
+		OverdueChargeRecovery overdueCherage=new OverdueChargeRecovery();
+		overdueCherage.setFinReference(finReference);
+		return getFinanceScheduleDetailDAO().getODCRecoveryDetails(overdueCherage);
+	}
+
 
 }

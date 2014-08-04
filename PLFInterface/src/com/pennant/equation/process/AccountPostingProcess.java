@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.vo.CoreBankAccountPosting;
@@ -26,24 +27,19 @@ public class AccountPostingProcess extends GenericProcess{
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public List<CoreBankAccountPosting> doFillPostingDetails(List<CoreBankAccountPosting> accountPostings,String finBranch,
+	public List<CoreBankAccountPosting> doFillPostingDetails(List<CoreBankAccountPosting> accountPostings,String postBranch,
 			String createNow) throws AccountNotFoundException {
 		logger.debug("Entering");
 				
 		AS400 as400 = null;
 		ProgramCallDocument pcmlDoc = null;
 		String pcml = "PFFSFP"; 		// Save Finance Postings
-		boolean newConnection = false;
 		
 		int[] indices = new int[1]; 	// Indices for access array value
 		int dsRspCount;              	// Number of records returned 
 		List<CoreBankAccountPosting> bankAccountPostings = new ArrayList<CoreBankAccountPosting>(accountPostings.size());
 				
 		try {
-			if(this.hostConnection==null){
-				this.hostConnection= new HostConnection();
-				newConnection = true;
-			}
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			
@@ -54,13 +50,13 @@ public class AccountPostingProcess extends GenericProcess{
 			pcmlDoc.setValue(pcml + ".@REQDTA.LinkTranId", StringUtils.rightPad(StringUtils.trimToEmpty(accountPostings.get(0).getLinkedTranId()), 10));   //Linked Transaction Id
 			pcmlDoc.setValue(pcml + ".@REQDTA.ValueDate", DateUtility.formatDate(accountPostings.get(0).getValueDate(),"ddMMyyyy")); 					   //Value Date
 			pcmlDoc.setValue(pcml + ".@REQDTA.FinType", StringUtils.rightPad(StringUtils.trimToEmpty(accountPostings.get(0).getFinType()), 8)); 		   //Finance Type
-			pcmlDoc.setValue(pcml + ".@REQDTA.PostBrnm", StringUtils.rightPad(StringUtils.trimToEmpty(finBranch),4)); 									   //Finance Branch
+			pcmlDoc.setValue(pcml + ".@REQDTA.PostBrnm", StringUtils.rightPad(StringUtils.trimToEmpty(postBranch),4)); 									   //Finance Branch
 			for (indices[0] = 0; indices[0] < accountPostings.size(); indices[0]++){
 				CoreBankAccountPosting posting = accountPostings.get(indices[0]);  
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.CustId", indices, posting.getCustCIF()); 			// Customer Number
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.Currency",indices, posting.getAcCcy());			// Account Currency
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.AcType", indices, StringUtils.rightPad(posting.getAcType(), 8));// Account Type
-				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.Branch",indices, posting.getAcBranch());			// Account Branch
+				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.Branch",indices, StringUtils.trimToEmpty(posting.getAcBranch()));			// Account Branch
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.AccountNumber", indices, StringUtils.rightPad(StringUtils.trimToEmpty(posting.getAccount()), 13));// Account Number
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.CreateNew", indices, posting.getCreateNew()); 		// Is create New Ac 
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.CreateIfNF", indices, posting.getCreateIfNF()); 	// Create New If not Found
@@ -113,13 +109,14 @@ public class AccountPostingProcess extends GenericProcess{
 				bankAccountPostings.add(account);
 			}
 			
+		} catch (ConnectionPoolException e){
+			logger.error("Exception " + e);
+			throw new AccountNotFoundException("Host Connection Failed.. Please contact administrator ");
 		} catch (Exception e) {
 			logger.error(e);
 			throw new AccountNotFoundException(e.getMessage());
 		}  finally {			
-			if(newConnection){
-				this.hostConnection.disConnection();
-			}
+				this.hostConnection.closeConnection(as400);
 		}
 		
 		logger.debug("Leaving");

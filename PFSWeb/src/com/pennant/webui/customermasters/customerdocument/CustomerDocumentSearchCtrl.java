@@ -51,11 +51,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.GroupsModelArray;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -65,11 +65,10 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.customermasters.customerdocument.model.CustomerDocumentComparator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -159,22 +158,22 @@ public class CustomerDocumentSearchCtrl extends GFCBaseCtrl implements Serializa
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_custCIF.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custDocType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custDocType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custDocType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custDocTitle.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custDocTitle.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custDocTitle.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custDocSysName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custDocSysName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custDocSysName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
@@ -295,6 +294,7 @@ public class CustomerDocumentSearchCtrl extends GFCBaseCtrl implements Serializa
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */
+	@SuppressWarnings("unchecked")
 	public void doSearch() {
 		logger.debug("Entering");
 
@@ -442,17 +442,18 @@ public class CustomerDocumentSearchCtrl extends GFCBaseCtrl implements Serializa
 		}
 
 		// store the searchObject for reReading
+		final Listbox listBox = this.customerDocumentCtrl.listBoxCustomerDocument;
+		final Paging paging = this.customerDocumentCtrl.pagingCustomerDocumentList;
+		
+		((PagedListWrapper<CustomerDocument>) listBox.getModel()).init(so, listBox, paging);
+	
 		this.customerDocumentCtrl.setSearchObj(so);
 
-		final SearchResult<CustomerDocument> searchResult = this.customerDocumentCtrl
-				.getPagedListService().getSRBySearchObject(so);
-		this.customerDocumentCtrl.listBoxCustomerDocument
-				.setModel(new GroupsModelArray(searchResult.getResult().toArray(), 
-						new CustomerDocumentComparator()));
+		
 
 		this.label_CustomerDocumentSearchResult.setValue(Labels
 				.getLabel("label_CustomerDocumentSearchResult.value")+ " "
-				+ String.valueOf(searchResult.getTotalCount()));
+				+ String.valueOf(paging.getTotalSize()));
 		logger.debug("Leaving");
 	}
 

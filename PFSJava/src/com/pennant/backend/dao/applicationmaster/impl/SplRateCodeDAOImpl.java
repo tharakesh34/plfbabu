@@ -118,7 +118,7 @@ public class SplRateCodeDAOImpl extends BasisCodeDAO<SplRateCode> implements Spl
 	@Override
 	public SplRateCode getSplRateCodeById(final String id, String type) {
 		logger.debug("Entering");
-		SplRateCode splRateCode = getSplRateCode();
+		SplRateCode splRateCode = new SplRateCode();
 		splRateCode.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select SRType, SRTypeDesc, SRIsActive," );

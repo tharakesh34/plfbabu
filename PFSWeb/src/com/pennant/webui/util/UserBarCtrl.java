@@ -44,14 +44,23 @@ package com.pennant.webui.util;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
@@ -61,6 +70,8 @@ import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.service.MenuDetailsService;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.PennantAppUtil;
 
  
 public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
@@ -99,6 +110,7 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 		super();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void doAfterCompose(Component window) throws Exception {
 		logger.debug("Entering ");
@@ -151,6 +163,13 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 				doShowLabel();
 			}
 		});
+		
+		// Listener for Last Login
+		EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
+			public void onEvent(Event event) throws Exception {
+				doShowLastLogin();
+			}
+		});
 		logger.debug("Leaving ");
 	}
 
@@ -170,6 +189,13 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 	private void doShowLabel() {
 		this.menu_user.setLabel(get_UserText())	;
 		this.label_branch.setValue(get_BranchCodeText() + "/" + get_DepartmentCodeText());
+	}
+	
+	private void doShowLastLogin() {
+		String loginInfo = getLastLoginInfo(this.menu_user.getLabel());
+		if(loginInfo != null) {
+			Clients.showNotification(loginInfo, "info", this.menu_user, "start_before", -1);
+		}
 	}
 	
 	
@@ -192,6 +218,57 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 		Textbox textbox = (Textbox) west.getChildren().get(0).getChildren().get(0).getFellowIfAny("menuName1");
 		textbox.setValue("changePassword");
 		Events.postEvent("onClick", button, event);
+	}
+	
+	private String getLastLoginInfo(String UsrLogin) {
+
+		StringBuilder builder = new StringBuilder("<table>");
+		Map<String, Object> inputParamMap = new LinkedHashMap<String, Object>();
+		Map<String, Object> outputParamMap = new LinkedHashMap<String, Object>();
+		inputParamMap.put("LOGIN_USER", Types.VARCHAR);
+		outputParamMap.put("@LAST_SUCC_LOGINTIME", Types.VARCHAR);
+		outputParamMap.put("@FAILED_COUNT", Types.INTEGER);
+		outputParamMap.put("@LAST_UNSUCC_LOGINTIME", Types.VARCHAR);	
+		outputParamMap = this.menuDetailsService.getLastLoginInfo("LOGIN_DETAILS", UsrLogin, inputParamMap, outputParamMap);
+
+		String sucLogin = "", failLogin = "", failCount = "0";
+		for (Entry<String, Object> entry : outputParamMap.entrySet()) {
+			if(entry.getValue() == null) {
+				return null;
+			}
+			if("@LAST_SUCC_LOGINTIME".equals(entry.getKey())){	
+				sucLogin = PennantAppUtil.formateDate(new Date((Timestamp.valueOf(entry.getValue().toString())).getTime()), PennantConstants.dateTimeAMPMFormat);
+			}
+
+			if("@LAST_UNSUCC_LOGINTIME".equals(entry.getKey()) && entry.getValue() != null){
+				failLogin = PennantAppUtil.formateDate(new Date((Timestamp.valueOf(entry.getValue().toString())).getTime()), PennantConstants.dateTimeAMPMFormat);
+			}
+
+			if("@FAILED_COUNT".equals(entry.getKey()) && entry.getValue() != null && Integer.parseInt(entry.getValue().toString()) > 0){	       
+				failCount = entry.getValue().toString();
+					
+			}
+		}	
+		
+		if (StringUtils.trimToNull(sucLogin) != null) {
+			builder.append("<tr>");
+			builder.append("<td nowrap>").append(Labels.getLabel("label_last_logged")).append("</td>");
+			builder.append("<td nowrap>").append(sucLogin).append("</td>");
+			builder.append("</tr>");
+		}
+		if (StringUtils.trimToNull(failLogin) != null) {
+			builder.append("<tr>");
+			builder.append("<td nowrap>").append(Labels.getLabel("label_last_unsuccessfull_login")).append("</td>");
+			builder.append("<td nowrap>").append(failLogin).append("</td>");
+			builder.append("</tr>");
+			
+			builder.append("<tr>");
+			builder.append("<td nowrap>").append(Labels.getLabel("label_last_no_tries")).append("</td>");
+			builder.append("<td nowrap>").append(failCount).append("</td>");
+			builder.append("</tr>");
+		}
+		builder.append("</table>");
+		return builder.toString();
 	}
 
 

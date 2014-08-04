@@ -48,7 +48,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,7 +61,6 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
@@ -74,7 +72,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.coremasters.CollateralType;
@@ -84,7 +81,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -153,8 +149,6 @@ public class CollateralTypeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private transient CollateralTypeService collateralTypeService;
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
-
-	private List<ValueLabel> listHWINS=PennantAppUtil.getYesNo(); // autowired Insurance required
 
 	/**
 	 * default constructor.<br>
@@ -260,6 +254,7 @@ public class CollateralTypeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * The rights are get from the spring framework users grantedAuthority(). A
 	 * right is only a string. <br>
 	 */
+	@SuppressWarnings("unused")
 	private void doCheckRights() {
 		logger.debug("Entering") ;
 

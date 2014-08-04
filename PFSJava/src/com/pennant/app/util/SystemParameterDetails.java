@@ -145,7 +145,6 @@ public class SystemParameterDetails {
 	 * @return object
 	 */
 	public static Object getSystemParameterValue(PFSParameter parameter) {
-		logger.debug("Entering");
 		Object object = null;
 		if(parameter!=null){
 			String parmType = StringUtils.trimToEmpty(parameter.getSysParmType()).trim();
@@ -160,7 +159,6 @@ public class SystemParameterDetails {
 				object=strValue;
 			}
 		}
-		logger.debug("Leaving");
 		return object;
 	}
 

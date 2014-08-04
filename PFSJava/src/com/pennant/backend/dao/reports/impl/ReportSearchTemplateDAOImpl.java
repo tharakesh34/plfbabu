@@ -100,7 +100,7 @@ public class ReportSearchTemplateDAOImpl  implements ReportSearchTemplateDAO{
 		selectSql.append("SELECT  ReportID,TemplateName,FieldID,UsrID,FieldValue,Filter,FieldType ");
 		selectSql.append(",Version,LastMntBy,LastMntOn,RecordStatus");
 		selectSql.append(",RoleCode,NextRoleCode,TaskId,RecordType,WorkflowId ");
-		selectSql.append(" FROM REPORTSEARCHTEMPLATE  where ReportID=:ReportID and UsrID=:UsrID");	
+		selectSql.append(" FROM REPORTSEARCHTEMPLATE  where ReportID=:ReportID and UsrID in (-1,:UsrID)");	
 		logger.debug("selectSql : " + selectSql.toString()); 
 		try{
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aReportSearchTemplate);

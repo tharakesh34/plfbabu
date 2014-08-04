@@ -51,9 +51,9 @@ import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Constraint;
-import org.zkoss.zul.Div;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Space;
@@ -70,45 +70,56 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 public class ExtendedCombobox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
 	private final static Logger logger = Logger.getLogger(ExtendedCombobox.class);
-	private Space space;
-	private Textbox textbox;
-	private Button button;
-	private Label label;
-	private Filter[] filters;
-	// the returned bean object
-	private Object object = null;
-	private String selctedValue = null;
+	
+	private 	Space 		space;
+	private 	Textbox 	textbox;
+	private 	Button 		button;
+	private 	Label 		label;
+	private 	Hbox 		hbox;
+
+	private 	Filter[] 	filters;
+	private 	Object 		object = null;
+	private 	String 		selctedValue = null;
+	
+	/*** Mandatory Properties **/
+	private 	String 		moduleName; 							//mandatory
+	private 	int 		displayStyle = 1; 						//mandatory 	
+	private 	String 		valueColumn; 							//mandatory
+	private 	boolean 	isdisplayError = true;					//mandatory
+	private 	boolean 	inputAllowed = true;					//mandatory
+
+	/*** Optional Properties **/
+	private 	String 		descColumn; 							//Optional
+	private 	String[] 	validateColumns; 						//Optional
+
 	@SuppressWarnings("rawtypes")
-	private JdbcSearchObject jdbcSearchObject;
+	private 	JdbcSearchObject jdbcSearchObject;
+	private 	ModuleMapping moduleMapping = null;
 	private transient PagedListService pagedListService;
-	private ModuleMapping moduleMapping = null;
-
-	private String moduleName; //mandatory
-	/*	DisplayStyle == 1 ==Show in Separate Label 
-		DisplayStyle == 2 == Append Value with - */
-	private int displayStyle = 1; //mandatory 	
-	private String valueColumn; //mandatory
-	private String descColumn; //Optional
-	private String[] validateColumns; //Optional
-
-	private boolean isdisplayError = true;
-	private boolean inputAllowed = true;
 
 	/**
-	 * Module Search box 
-	 * 
+	 * ExtendedCombobox
+	 * Constructor
+	 * Defining the components and events
 	 */
 	public ExtendedCombobox() {
-		logger.debug("Entering ExtenedBox()");
+		logger.debug("Entering");
+		
+		//Space
 		space = new Space();
 		space.setWidth("2px");
 		this.appendChild(space);
-
-		Hbox hbox = new Hbox();
-		hbox.setSpacing("0px");
+		
+		//Hbox
+		hbox = new Hbox();
+		hbox.setSpacing("2px");
 		hbox.setSclass("cssHbox");
+		
+		//Textbox
 		textbox = new Textbox();
 		textbox.setStyle("border:0px;margin:0px;");
+		
+		// If input allowed set text box editable
 		if (inputAllowed) {
 			textbox.setReadonly(false);
 			textbox.addForward("onChange", this, "onChangeTextbox");
@@ -116,32 +127,32 @@ public class ExtendedCombobox extends Hbox {
 			textbox.setReadonly(true);
 		}
 		hbox.appendChild(textbox);
-
+		
+		//Button
 		button = new Button();
 		button.setSclass("cssBtnSearch");
-		button.setTabindex(-1);
 		button.setHeight("20px");
 		button.addForward("onClick", this, "onButtonClick");
 		hbox.appendChild(button);
 		this.appendChild(hbox);
-		Div div = new Div();
-		div.setSclass("cssLabel");
+		
 		label = new Label();
-		div.appendChild(label);
-		this.appendChild(div);
+		this.appendChild(label);
 
-		logger.debug("Leaving ExtenedBox()");
+		logger.debug("Leaving");
 	}
-
+	
 	/**
 	 * Called when changing the value of the text box
 	 * @param event
 	 */
 	public void onChangeTextbox(Event event) {
-		logger.debug("Entering on changing Event");
+		logger.debug("Entering");
 		this.setErrorMessage("");
-		this.label.setValue("");
+ 		this.label.setValue("");
 		this.label.setTooltiptext("");
+		Clients.clearWrongValue(this.button);
+		selctedValue="";
 		validateValue(false);
 		if (this.object != null) {
 			try {
@@ -153,22 +164,29 @@ public class ExtendedCombobox extends Hbox {
 				Events.postEvent("onFulfill", this, null);
 			}
 		}
-		logger.debug("Leaving on changing Event");
+		logger.debug("Leaving");
 	}
 
 	/**
-	 * 
+	 * Called when clicking on a button
 	 * @param event
 	 */
 	public void onButtonClick(Event event) {
-		logger.debug("Entering onButtonClick()");
+		logger.debug("Entering");
 		this.textbox.setErrorMessage("");
+		Clients.clearWrongValue(this.button);
 		try {
 			if (moduleName != null && moduleName.length() != 0) {
 				if (filters != null) {
-					this.object = ExtendedSearchListBox.show(this, moduleName, filters, this.textbox.getValue());
+					Object object= ExtendedSearchListBox.show(this, moduleName, filters, this.textbox.getValue());
+					if (object!=null) {
+						this.object=object;
+					}
 				} else {
-					this.object = ExtendedSearchListBox.show(this, moduleName, this.textbox.getValue());
+					Object object=ExtendedSearchListBox.show(this, moduleName, this.textbox.getValue());
+					if (object!=null) {
+						this.object=object;
+					}
 				}
 				if (this.object != null) {
 					if (this.object instanceof String) {
@@ -179,54 +197,73 @@ public class ExtendedCombobox extends Hbox {
 				}
 			}
 
-			logger.debug("Leaving onButtonClick()");
+			logger.debug("Leaving");
 		} catch (Exception e) {
 			logger.debug(e);
 		} finally {
 			Events.postEvent("onFulfill", this, null);
 		}
 	}
-
+	
 	/**
-	 * 
+	 * Used to clear the values and attributes of the components
+	 * @param event
 	 */
 	private void doClear() {
+		logger.debug("Entering");
+		selctedValue ="";
 		this.textbox.setValue("");
 		this.label.setValue("");
 		this.label.setTooltiptext("");
 		this.textbox.setAttribute("data", null);
+		logger.debug("Leaving");
 	}
 
 	/**
-	 * 
+	 * Internal method to write the calues to the components
 	 * @throws Exception
 	 */
 	private void doWrite() throws Exception {
+		logger.debug("Entering");
 		String valueMethod = "get" + getValueColumn();
-		String value = this.object.getClass().getMethod(valueMethod, null).invoke(object, null).toString();
-		selctedValue = value;
-		this.textbox.setValue(value);
+		selctedValue = this.object.getClass().getMethod(valueMethod).invoke(object).toString();
+		this.textbox.setValue(selctedValue);
 		this.textbox.setAttribute("data", object);
+		
 		if (getDescColumn() != null && getDescColumn().length() != 0) {
 			String descMethod = "get" + getDescColumn();
-			String desc = this.object.getClass().getMethod(descMethod, null).invoke(object, null).toString();
+			String desc = this.object.getClass().getMethod(descMethod).invoke(object).toString();
 			if (getDisplayStyle() == 2) {
-				this.textbox.setValue(value + "-" + desc);
-			} else {
+				this.textbox.setValue(selctedValue + "-" + desc);
+			}else if(getDisplayStyle() == 3){
+				this.textbox.setValue(desc);
+				this.label.setValue(selctedValue);
+				this.label.setVisible(false);
+			}
+			else {
 				this.label.setTooltiptext(desc);
 				this.label.setValue(desc);
 			}
 		}
+		logger.debug("Leaving");
 	}
 
 	/**
-	 * 
+	 * Set JdbcSearchobjext
+	 * Set the properties to the search object from module mapping and the filters
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void setJdbcSearchObject() {
+	private void setJdbcSearchObject() {
+		logger.debug("Entering");
 		setModuleMapping(PennantJavaUtil.getModuleMap(moduleName));
 		this.jdbcSearchObject = new JdbcSearchObject(getModuleMapping().getModuleClass());
 		this.jdbcSearchObject.addTabelName(getModuleMapping().getLovDBObjectName());
+		
+		String[] lovFields = getModuleMapping().getLovFields();
+		if(lovFields != null && lovFields.length > 0){
+			this.jdbcSearchObject.addSort(lovFields[0].trim(), false) ;
+			this.jdbcSearchObject.addSort(lovFields[1].trim(), false) ;
+		}
 
 		if (this.filters != null) {
 			for (int i = 0; i < filters.length; i++) {
@@ -254,9 +291,208 @@ public class ExtendedCombobox extends Hbox {
 
 			}
 		}
+		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	/**
+	 * Validate the value of the text entered in the textbox 
+	 * @param showError
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void validateValue(boolean showError) {
+		if (getValidateColumns() != null && getValidateColumns().length != 0) {
+			this.object = null;
+			setJdbcSearchObject();
+			final SearchResult searchResult = getPagedListService().getSRBySearchObject(this.jdbcSearchObject);
+			if (searchResult.getResult().size() <= 0) {
+				if (isIsdisplayError() || showError) {
+					this.textbox.setFocus(true);
+					Events.postEvent("onFulfill", this, null);
+					throw new WrongValueException(this.button, this.textbox.getValue() + " is not valid");
+					
+				} else {
+					Events.postEvent("onClick", this.button, Events.ON_CLICK);
+				}
+			} else {
+				this.object = searchResult.getResult().get(0);
+			}
+		}
+	}
+	
+	/**
+	 * update the object  
+	 * @param showError
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void setObjectData() {
+		if (getValidateColumns() != null && getValidateColumns().length != 0) {
+			this.object = null;
+			setJdbcSearchObject();
+			final SearchResult searchResult = getPagedListService().getSRBySearchObject(this.jdbcSearchObject);
+			if (searchResult.getResult().size() > 0) {
+				this.object = searchResult.getResult().get(0);
+			} 
+		}
+	}
+	
+	
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+	public String getModuleName() {
+		return moduleName;
+	}
+	
+	public void setFilters(Filter[] filters) {
+		this.filters = filters;
+	}
+	public Filter[] getFilters() {
+		return filters;
+	}
+	
+	public void setValue(String value) {
+		this.selctedValue = value;
+		if(getDisplayStyle() == 3){
+			this.label.setValue(value);
+		}else{
+			this.textbox.setValue(value);
+		}
+	}
+	public String getValue() {
+		this.textbox.getValue();//to call the constraint if any
+		if (inputAllowed) {
+			if (!StringUtils.trimToEmpty(selctedValue).equals("")) {
+				return selctedValue;
+			} else {
+				return "";
+			}
+		} else {
+			if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
+				if (getDisplayStyle() == 2) {
+					return this.textbox.getValue().substring(0, this.textbox.getValue().indexOf("-"));
+				}else if(getDisplayStyle() == 3){
+					return this.label.getValue();
+				}
+				else {
+					return this.textbox.getValue();
+				}
+			} else {
+				 if(getDisplayStyle() == 3){
+				return String.valueOf(new Long(0));	 
+				 }else{
+				return "";
+			}}
+		}
+	}
+	
+	/**
+	 * Get the value from the text box after validating it
+	 * @return String
+	 */
+	public String getValidatedValue() {
+		this.textbox.getValue();//to call the constraint if any
+		if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
+			if (inputAllowed && !this.textbox.isReadonly()) {
+				validateValue(true);
+			}
+			if (getDisplayStyle() == 2) {
+				return this.textbox.getValue().substring(0, this.textbox.getValue().indexOf("-"));
+			}else if (getDisplayStyle() == 3){
+				return this.label.getValue();
+			}
+			else {
+				return this.textbox.getValue();
+			}
+		} else {
+			return "";
+		}
+
+	}
+
+	/**
+	 * Get the description from the text box
+	 * @return String(Description)
+	 */
+	public String setDescription() {
+		if (getDisplayStyle() == 2) {
+			if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
+				return this.textbox.getValue().substring(this.textbox.getValue().indexOf("-"));
+			} else {
+				return "";
+			}
+		}else if(getDisplayStyle() == 3){
+			if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
+				return this.textbox.getValue();
+			} else {
+				return String.valueOf(new Long(0));
+			}
+		}
+		else {
+			return this.label.getValue();
+		}
+	}
+
+	/**
+	 * set Description to the label
+	 * @param desc
+	 */
+	public void setDescription(String desc) {
+		if (getDisplayStyle() == 2) {
+			this.textbox.setValue(this.selctedValue + "-" + desc);
+		}else if(getDisplayStyle() == 3){
+			this.textbox.setValue(desc);
+			this.label.setVisible(false);
+		}
+		else {
+			this.label.setValue(desc);
+			this.label.setTooltiptext(desc);
+		}
+	}
+
+	/**
+	 * Set Value and description to the textbox and label
+	 * @param value
+	 * @param desc
+	 */
+	public void setValue(String value, String desc) {
+		this.selctedValue = value;
+		if (getDisplayStyle() == 2) {
+			this.textbox.setValue(value + "-" + desc);
+		}else {
+			this.textbox.setValue(value);
+			this.label.setValue(desc);
+			this.label.setTooltiptext(desc);
+		}
+	}
+
+	/**
+	 * Get the description from the text box
+	 * @return String(Description)
+	 */
+	public String getDescription() {
+		if (getDisplayStyle() == 2) {
+			if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
+				return this.textbox.getValue().substring(this.textbox.getValue().indexOf("-"));
+			} else {
+				return "";
+			}
+		}else if(getDisplayStyle() == 3){
+			if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
+				return this.textbox.getValue();
+			} else {
+				return "";
+			}
+		}
+		else {
+			return this.label.getValue();
+		}
+	}
+	
+	/**
+	 * Get the Db Object based on the module mapping and the code
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getDBObject() {
 		setModuleMapping(PennantJavaUtil.getModuleMap(moduleName));
 		JdbcSearchObject jdbcSearchObj = new JdbcSearchObject(getModuleMapping().getModuleClass());
@@ -270,90 +506,13 @@ public class ExtendedCombobox extends Hbox {
 		return null;
 
 	}
-
-	/**
-	 * 
-	 * @param showError
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void validateValue(boolean showError) {
-		if (getValidateColumns() != null && getValidateColumns().length != 0) {
-			this.object = null;
-			setJdbcSearchObject();
-			final SearchResult searchResult = getPagedListService().getSRBySearchObject(this.jdbcSearchObject);
-			if (searchResult.getResult().size() <= 0) {
-				if (isIsdisplayError() || showError) {
-					throw new WrongValueException(this.textbox, this.textbox.getValue() + " Not Found in the Database");
-				} else {
-					Events.postEvent("onClick", this.button, Events.ON_CLICK);
-				}
-			} else {
-				this.object = searchResult.getResult().get(0);
-			}
-		}
-	}
-
-	/**
-	 * Get the value from the text box
-	 * @return String
-	 */
-	public String getValue() {
+	
+	public Object getObject() {
 		this.textbox.getValue();//to call the constraint if any
-		if (inputAllowed) {
-			if (!StringUtils.trimToEmpty(selctedValue).equals("")) {
-				return selctedValue;
-			} else {
-				return "";
-			}
-		} else {
-			if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
-				if (getDisplayStyle() == 2) {
-					return this.textbox.getValue().substring(0, this.textbox.getValue().indexOf("-"));
-				} else {
-					return this.textbox.getValue();
-				}
-			} else {
-				return "";
-			}
-		}
+		return object;
 	}
-
-	/**
-	 * Get the value from the text box
-	 * @return String
-	 */
-	public String getValidatedValue() {
-		this.textbox.getValue();//to call the constraint if any
-		if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
-			if (inputAllowed) {
-				validateValue(true);
-			}
-			if (getDisplayStyle() == 2) {
-				return this.textbox.getValue().substring(0, this.textbox.getValue().indexOf("-"));
-			} else {
-				return this.textbox.getValue();
-			}
-		} else {
-			return "";
-		}
-
-	}
-
-	/**
-	 * Get the description from the text box
-	 * @return String
-	 */
-	public String getDescription() {
-		if (getDisplayStyle() == 2) {
-			if (!StringUtils.trimToEmpty(this.textbox.getValue()).equals("")) {
-				return this.textbox.getValue().substring(this.textbox.getValue().indexOf("-"));
-			} else {
-				return "";
-			}
-		} else {
-			return this.label.getValue();
-
-		}
+	public void setObject(Object object) {
+		this.object = object;
 	}
 
 	public void setTextBoxWidth(int width) {
@@ -361,51 +520,17 @@ public class ExtendedCombobox extends Hbox {
 			this.textbox.setWidth(width + "px");
 		}
 	}
-
+	
 	public void setConstraint(String constraint) {
 		this.textbox.setConstraint(constraint);
 	}
-
 	public void setConstraint(Constraint constraint) {
 		this.textbox.setConstraint(constraint);
-	}
-
-	public Filter[] getFilters() {
-		return filters;
-	}
-
-	public void setFilters(Filter[] filters) {
-		this.filters = filters;
-	}
-
-	public String getModuleName() {
-		return moduleName;
-	}
-
-	public void setModuleName(String moduleName) {
-		this.moduleName = moduleName;
-	}
-
-	public void setValue(String value) {
-		this.selctedValue = value;
-		this.textbox.setValue(value);
-	}
-
-	public void setValue(String value, String desc) {
-		this.selctedValue = value;
-		if (getDisplayStyle() == 2) {
-			this.textbox.setValue(value + "-" + desc);
-		} else {
-			this.textbox.setValue(value);
-			this.label.setValue(desc);
-			this.label.setTooltiptext(desc);
-		}
 	}
 
 	public void setErrorMessage(String errmsg) {
 		this.textbox.setErrorMessage(errmsg);
 	}
-
 	public void clearErrorMessage() {
 		this.textbox.clearErrorMessage();
 	}
@@ -422,72 +547,66 @@ public class ExtendedCombobox extends Hbox {
 		this.button.setDisabled(isDisable);
 		if (inputAllowed) {
 			this.textbox.setReadonly(isDisable);
-			this.textbox.setDisabled(isDisable);
-		} else {
-			this.textbox.setReadonly(true);
-			this.textbox.setDisabled(true);
-
+ 		} else {
+ 			this.textbox.setDisabled(isDisable);
 		}
 		if (isDisable) {
 			this.space.setSclass("");
 		}
 	}
 
-	public void setButtonVisible(boolean isVisible) {
-		this.button.setVisible(isVisible);
+	public void setReadonly(boolean isReadOnly) {
+		this.button.setVisible(!isReadOnly);
 		if (inputAllowed) {
-			this.textbox.setReadonly(!isVisible);
-			this.textbox.setDisabled(!isVisible);
-		} else {
+			this.textbox.setReadonly(isReadOnly);
+ 		} else {
 			this.textbox.setReadonly(true);
-			this.textbox.setDisabled(true);
-		}
-		if (!isVisible) {
+			this.textbox.setTabindex(-1);
+ 		}
+		if (isReadOnly) {
 			this.space.setSclass("");
+			this.textbox.setTabindex(-1);
 		}
+	}
+	public boolean isReadonly() {
+		return this.textbox.isReadonly();
 	}
 
 	public boolean isButtonVisible() {
 		return this.button.isVisible();
 	}
-
 	public boolean isButtonDisabled() {
 		return this.button.isDisabled();
 	}
 
 	public boolean setVisible(boolean decider) {
-		return this.setVisible(decider);
+		return super.setVisible(decider);
 	}
 
 	public void setMaxlength(int length) {
 		if (inputAllowed) {
 			this.textbox.setMaxlength(length);
+			if(getDisplayStyle() == 1){
+				this.textbox.setWidth(length*10+"px");
+			}else{
+				this.textbox.setWidth("180px");
+			}
         }else{
         	this.textbox.setMaxlength(-1);
+        	this.textbox.setWidth("180px");
         }
 	}
 
 	public ModuleMapping getModuleMapping() {
 		return moduleMapping;
 	}
-
 	public void setModuleMapping(ModuleMapping moduleMapping) {
 		this.moduleMapping = moduleMapping;
-	}
-
-	public Object getObject() {
-		this.textbox.getValue();//to call the constraint if any
-		return object;
-	}
-
-	public void setObject(Object object) {
-		this.object = object;
 	}
 
 	public Textbox getTextbox() {
 		return textbox;
 	}
-
 	public void setTextbox(Textbox textbox) {
 		this.textbox = textbox;
 	}
@@ -495,7 +614,6 @@ public class ExtendedCombobox extends Hbox {
 	public Button getButton() {
 		return button;
 	}
-
 	public void setButton(Button button) {
 		this.button = button;
 	}
@@ -503,9 +621,12 @@ public class ExtendedCombobox extends Hbox {
 	public Label getLabel() {
 		return label;
 	}
-
 	public void setLabel(Label label) {
 		this.label = label;
+	}
+	
+	public Space getSpace() {
+		return this.space;
 	}
 
 	public int getDisplayStyle() {
@@ -523,7 +644,6 @@ public class ExtendedCombobox extends Hbox {
 	public String getValueColumn() {
 		return valueColumn;
 	}
-
 	public void setValueColumn(String valueColumn) {
 		this.valueColumn = valueColumn;
 	}
@@ -531,7 +651,6 @@ public class ExtendedCombobox extends Hbox {
 	public String getDescColumn() {
 		return descColumn;
 	}
-
 	public void setDescColumn(String descColumn) {
 		this.descColumn = descColumn;
 	}
@@ -539,7 +658,6 @@ public class ExtendedCombobox extends Hbox {
 	public String[] getValidateColumns() {
 		return validateColumns;
 	}
-
 	public void setValidateColumns(String[] validateColumns) {
 		this.validateColumns = validateColumns;
 	}
@@ -547,7 +665,6 @@ public class ExtendedCombobox extends Hbox {
 	public boolean isIsdisplayError() {
 		return isdisplayError;
 	}
-
 	public void setIsdisplayError(boolean isdisplayError) {
 		this.isdisplayError = isdisplayError;
 	}
@@ -574,4 +691,5 @@ public class ExtendedCombobox extends Hbox {
 		}
 		return pagedListService;
 	}
+	
 }

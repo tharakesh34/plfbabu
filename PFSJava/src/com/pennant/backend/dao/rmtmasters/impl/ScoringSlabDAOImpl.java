@@ -122,7 +122,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 	@Override
 	public ScoringSlab getScoringSlabById(final long id, String type) {
 		logger.debug("Entering");
-		ScoringSlab scoringSlab = getScoringSlab();
+		ScoringSlab scoringSlab = new ScoringSlab();
 
 		scoringSlab.setId(id);
 
@@ -153,7 +153,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 
 	public List<ScoringSlab> getScoringSlabsByScoreGrpId(final long scoreGrpId, String type) {
 		logger.debug("Entering");
-		ScoringSlab scoringSlab = getScoringSlab();
+		ScoringSlab scoringSlab = new ScoringSlab();
 		scoringSlab.setScoreGroupId(scoreGrpId);
 		List<ScoringSlab>  scoringSlabList;
 
@@ -258,7 +258,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 
 	public void delete(long scoreGroupId,String type) {
 		logger.debug("Entering");
-		ScoringSlab scoringSlab=getScoringSlab();
+		ScoringSlab scoringSlab=new ScoringSlab();
 		scoringSlab.setScoreGroupId(scoreGroupId);
 		StringBuilder deleteSql = new StringBuilder("Delete From RMTScoringSlab");
 		deleteSql.append(StringUtils.trimToEmpty(type));

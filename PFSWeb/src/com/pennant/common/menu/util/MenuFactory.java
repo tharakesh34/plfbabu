@@ -58,10 +58,6 @@ import com.pennant.common.menu.domain.IMenuDomain;
 import com.pennant.common.menu.domain.MenuDomain;
 import com.pennant.common.menu.domain.MetaMenuFactory;
 
-
-/**
- * 
- */
 abstract public class MenuFactory implements Serializable {
 
 	private static final long serialVersionUID = 142621423557135573L;

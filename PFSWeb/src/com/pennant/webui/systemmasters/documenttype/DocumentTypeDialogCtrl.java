@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -108,6 +109,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 	protected Textbox 	docTypeDesc; 				// autoWired
 	protected Checkbox 	docIsMandatory; 			// autoWired
 	protected Checkbox 	docTypeIsActive; 			// autoWired
+	protected Checkbox 	docIsCustDoc; 				// autoWired
 
 	protected Label 		recordStatus; 			// autoWired
 	protected Radiogroup 	userAction;
@@ -124,6 +126,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 	private transient String 	oldVar_docTypeDesc;
 	private transient boolean 	oldVar_docIsMandatory;
 	private transient boolean 	oldVar_docTypeIsActive;
+	private transient boolean 	oldVar_docIsCustDoc;
 	private transient String 	oldVar_recordStatus;
 
 	private transient boolean validationOn;
@@ -219,7 +222,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering");
 
 		// Empty sent any required attributes
-		this.docTypeCode.setMaxlength(8);
+		this.docTypeCode.setMaxlength(50);
 		this.docTypeDesc.setMaxlength(50);
 
 		if (isWorkFlowEnabled()) {
@@ -408,6 +411,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -423,8 +427,9 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.docTypeDesc.setValue(aDocumentType.getDocTypeDesc());
 		this.docIsMandatory.setChecked(aDocumentType.isDocIsMandatory());
 		this.docTypeIsActive.setChecked(aDocumentType.isDocTypeIsActive());
+		this.docIsCustDoc.setChecked(aDocumentType.isDocIsCustDoc());
 		this.recordStatus.setValue(aDocumentType.getRecordStatus());
-		if(aDocumentType.isNew() || aDocumentType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aDocumentType.isNew() || (aDocumentType.getRecordType() != null ? aDocumentType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.docTypeIsActive.setChecked(true);
 			this.docTypeIsActive.setDisabled(true);
 		}
@@ -460,6 +465,11 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		try {
 			aDocumentType.setDocTypeIsActive(this.docTypeIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aDocumentType.setDocIsCustDoc(this.docIsCustDoc.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -551,6 +561,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.oldVar_docTypeDesc = this.docTypeDesc.getValue();
 		this.oldVar_docIsMandatory = this.docIsMandatory.isChecked();
 		this.oldVar_docTypeIsActive = this.docTypeIsActive.isChecked();
+		this.oldVar_docIsCustDoc = this.docIsCustDoc.isChecked();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
 	}
@@ -564,6 +575,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.docTypeDesc.setValue(this.oldVar_docTypeDesc);
 		this.docIsMandatory.setChecked(this.oldVar_docIsMandatory);
 		this.docTypeIsActive.setChecked(this.oldVar_docTypeIsActive);
+		this.docIsCustDoc.setChecked(this.oldVar_docIsCustDoc);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
 		if (isWorkFlowEnabled()) {
@@ -594,6 +606,9 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		if (this.oldVar_docTypeIsActive != this.docTypeIsActive.isChecked()) {
 			return true;
 		}
+		if (this.oldVar_docIsCustDoc != this.docIsCustDoc.isChecked()) {
+			return true;
+		}
 		return false;
 	}
 
@@ -605,15 +620,12 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		setValidationOn(true);
 
 		if (!this.docTypeCode.isReadonly()){
-			this.docTypeCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_DocumentTypeDialog_DocTypeCode.value")})));
+			this.docTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocTypeCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.docTypeDesc.isReadonly()){
-			this.docTypeDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_DocumentTypeDialog_DocTypeDesc.value")})));
+			this.docTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocTypeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -740,6 +752,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.docTypeDesc.setReadonly(isReadOnly("DocumentTypeDialog_docTypeDesc"));
 		this.docIsMandatory.setDisabled(isReadOnly("DocumentTypeDialog_docIsMandatory"));
 		this.docTypeIsActive.setDisabled(isReadOnly("DocumentTypeDialog_docTypeIsActive"));
+		this.docIsCustDoc.setDisabled(isReadOnly("DocumentTypeDialog_docIsMandatory"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -753,7 +766,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -768,6 +781,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.docTypeDesc.setReadonly(true);
 		this.docIsMandatory.setDisabled(true);
 		this.docTypeIsActive.setDisabled(true);
+		this.docIsCustDoc.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -791,6 +805,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.docTypeDesc.setValue("");
 		this.docIsMandatory.setChecked(false);
 		this.docTypeIsActive.setChecked(false);
+		this.docIsCustDoc.setChecked(false);
 		logger.debug("Leaving");
 	}
 

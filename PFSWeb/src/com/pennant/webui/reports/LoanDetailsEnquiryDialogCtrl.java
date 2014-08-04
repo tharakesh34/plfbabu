@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+ *//*
 
 package com.pennant.webui.reports;
 
@@ -147,23 +147,23 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
-/**
+*//**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- */
+ *//*
 public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	private static final long serialVersionUID = 6004939933729664895L;
 	private final static Logger logger = Logger.getLogger(LoanDetailsEnquiryDialogCtrl.class);
 
-	/*
+	
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the ZUL-file are getting autoWired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 */
+	 
 	protected Window 		window_LoanDetailsEnquiryDialog; 	// autoWired
 	protected Textbox 		finReference; 						// autoWired
 	protected Textbox 		finStatus; 							// autoWired
@@ -464,9 +464,9 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	private boolean isRepaymentsEnquiry;
 	private Map<Date,ArrayList<FinanceRepayments>> paymentDetailsMap;
 	private int formatter;
-	/**
+	*//**
 	 * default constructor.<br>
-	 */
+	 *//*
 	public LoanDetailsEnquiryDialogCtrl() {
 		super();
 	}
@@ -475,18 +475,18 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	/**
+	*//**
 	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_LoanDetailsEnquiryDialog(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 
-		/* set components visible dependent of the users rights */
+		 set components visible dependent of the users rights 
 		doCheckRights();
 
 		// get the parameters map that are over handed by creation.
@@ -548,9 +548,9 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
+	*//**
 	 * Set the properties of the fields, like maxLength.<br>
-	 */
+	 *//*
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
@@ -639,13 +639,13 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
 	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
-	 */
+	 *//*
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("LoanDetailsEnquiryDialog");
@@ -661,36 +661,36 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	// +++++++++++++++++++++++ Components events +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onClose$window_LoanDetailsEnquiryDialog(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		doClose();
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
+	*//**
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_LoanDetailsEnquiryDialog);
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
+	*//**
 	 * When the financeMain print button is clicked.
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$button_LoanDetails_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		List<Object> list =  new ArrayList<Object>();
@@ -725,12 +725,12 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	}
 
 
-	/**
+	*//**
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$btnClose(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
@@ -744,7 +744,7 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 
 	// GUI Process
 
-	/**
+	*//**
 	 * Closes the dialog window. <br>
 	 * <br>
 	 * Before closing we check if there are unsaved changes in <br>
@@ -752,7 +752,7 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	 * 
 	 * @throws InterruptedException
 	 * 
-	 */
+	 *//*
 	private void doClose() throws InterruptedException {
 		logger.debug("Entering ");
 		closeDialog(this.window_LoanDetailsEnquiryDialog, "financeMain");
@@ -760,13 +760,13 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	}
 
 
-	/**
+	*//**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain
 	 *            financeMain
 	 * @throws InterruptedException 
-	 */
+	 *//*
 	public void doWriteBeanToComponents() throws InterruptedException {
 		logger.debug("Entering");
 
@@ -1070,14 +1070,14 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		return lovDescValue;
 	}
 
-	/**
+	*//**
 	 * Opens the Dialog window modal.
 	 * 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
 		doReadOnly();
@@ -1094,11 +1094,11 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
 	 * 
 	 * @throws InterruptedException
-	 */
+	 *//*
 	private void doLoadTabsData() throws InterruptedException {
 		logger.debug("Entering");
 		try {
@@ -1133,8 +1133,8 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 				}
 
 				//Additional Detail Tab Dynamic Display
-				/*If getExtendedFieldDetails() contains Additional Fields then the Tab will be
-				 * displayed dynamically  */
+				If getExtendedFieldDetails() contains Additional Fields then the Tab will be
+				 * displayed dynamically  
 				if (getFinanceDetail().getExtendedFieldHeader().getExtendedFieldDetails() != null 
 						&& getFinanceDetail().getExtendedFieldHeader().getExtendedFieldDetails().size() > 0) {
 					addlDetailTab.setVisible(true);
@@ -1185,9 +1185,9 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	}
 
 
-	/**
+	*//**
 	 * Set the components to ReadOnly. <br>
-	 */
+	 *//*
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.finReference.setReadonly(true);
@@ -1289,12 +1289,12 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		return prvfinanceMain;
 	}
 
-	/**
+	*//**
 	 * Method to fill the ScheduleList
 	 * 
 	 * @param FinanceDetail
 	 *            (aFinanceDetail)
-	 */
+	 *//*
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 		
@@ -1352,17 +1352,17 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		return this.validationOn;
 	}
 
-	/**
+	*//**
 	 * @return the financeDetail
-	 */
+	 *//*
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
 
-	/**
+	*//**
 	 * @param financeDetail
 	 *            the financeDetail to set
-	 */
+	 *//*
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -1375,17 +1375,17 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.finScheduleData = finScheduleData;
 	}
 
-	/**
+	*//**
 	 * @return the financeDetailService
-	 */
+	 *//*
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
 
-	/**
+	*//**
 	 * @param financeDetailService
 	 *            the financeDetailService to set
-	 */
+	 *//*
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -1430,12 +1430,12 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.assetDataChanged = assetDataChanged;
 	}
 
-	/**
+	*//**
 	 * Method to load extended field details.
 	 * 
 	 * @param FinanceDetail (aFinanceDetail)
 	 * 
-	 * */
+	 * *//*
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void doAdditionalFieldLoad(FinanceDetail aFinanceDetail) {
 		List<ExtendedFieldDetail> listextendedFieldDetails = aFinanceDetail.getExtendedFieldHeader().getExtendedFieldDetails();
@@ -1608,13 +1608,13 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		}
 		this.addlDetailTab.setLabel("Additional Details");
 	}
-	/**
+	*//**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aHomeLoanDetail
 	 *            HomeLoanDetail
 	 * @return 
-	 */
+	 *//*
 
 	public void doWriteBeanToComponents_HomeLoan(HomeLoanDetail aHomeLoanDetail){
 		logger.debug("Entering");
@@ -1676,12 +1676,12 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCarLoanDetail
 	 *            CarLoanDetail
-	 */  
+	 *//*  
 	public void doWriteBeanToComponents_CarLoan(CarLoanDetail aCarLoanDetail) {
 		logger.debug("Entering") ;
 
@@ -1698,12 +1698,12 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	}
 
 
-	/**
+	*//**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aEducationalLoan
 	 *            EducationalLoan
-	 */
+	 *//*
 	public void doWriteBeanToComponents_EducationalLoan(EducationalLoan aEducationalLoan) {
 		logger.debug("Entering") ;
 		this.eduCourse.setValue(aEducationalLoan.getEduCourse());
@@ -1733,10 +1733,10 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		doFillExpenseDetailsList(aEducationalLoan.getEduExpenseList());
 		logger.debug("Leaving");
 	}
-	/**
+	*//**
 	 * This method fills expense details list 
 	 * @param expenseDetails
-	 */
+	 *//*
 	@SuppressWarnings("unchecked")
 	public void doFillExpenseDetailsList(List<EducationalExpense> expenseDetailList){
 		logger.debug("Entering ");
@@ -1753,12 +1753,12 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	}
 
 
-	/**
+	*//**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aMortgageLoanDetail
 	 *            MortgageLoanDetail
-	 */
+	 *//*
 	public void doWriteBeanToComponents_MortgageLoan(MortgageLoanDetail aMortgageLoanDetail) {
 		logger.debug("Entering") ;
 		this.mortgProperty.setValue(aMortgageLoanDetail.getMortgProperty());
@@ -1791,11 +1791,11 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Method to display<br>
 	 * Financetype, Schedule Method, ProfitDaysBasis, Currency, Finance Reference and  
 	 * Grace period enddate data in all tabs.
-	 * */
+	 * *//*
 	public void doFillCommonDetails() {
 		
 		if(this.scheduleTabDiv.getChildren().size()>0){
@@ -1857,12 +1857,12 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 
 	}
 
-	/**
+	*//**
 	 * when the "btnPrintAccounting" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onClick$btnPrintPostings(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
@@ -1915,7 +1915,7 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Comman Details Filling 
 	 * @param finRef
 	 * @param finStatus
@@ -1926,7 +1926,7 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	 * @param finBranch
 	 * @param custCIF
 	 * @return
-	 */
+	 *//*
 	private Grid createCommonGB(String finRef, String finStatus, String finType, String finCcy, 
 			String schMthd, String pftDays, String finBranch,String custCIF){
 
@@ -2066,9 +2066,9 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Leaving");
 		return false;
 	}
-	/**
+	*//**
 	 * 
-	 */
+	 *//*
 	public void doShowReportChart() {
 		logger.debug("Entering ");
 		DashboardConfiguration aDashboardConfiguration=new DashboardConfiguration();
@@ -2124,10 +2124,10 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.graphDivTabDiv.appendChild(chartUtil.getHtmlContent(chartDetail));
 		logger.debug("Leaving ");
 	}
-	/**
+	*//**
 	 * This method returns data for Repayments Chart
 	 * @return
-	 */
+	 *//*
 	public List<ChartSetElement> getReportDataForRepayments(){
 		logger.debug("Entering ");
 
@@ -2169,10 +2169,10 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Leaving ");
 		return listChartSetElement;
 	}
-	/**
+	*//**
 	 * This method returns data for Finace vs amount chart
 	 * @return
-	 */
+	 *//*
 	public List<ChartSetElement> getReportDataForFinVsAmount(){
 
 		BigDecimal downPayment= new BigDecimal(0).setScale(formatter, RoundingMode.HALF_UP);
@@ -2184,8 +2184,8 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 		if(listScheduleDetail!=null){
 			ChartSetElement chartSetElement;
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				/*financeAmount=financeAmount.add(PennantAppUtil.formateAmount(listScheduleDetail.get(i).getDisbAmount(), 
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));*/
+				financeAmount=financeAmount.add(PennantAppUtil.formateAmount(listScheduleDetail.get(i).getDisbAmount(), 
+						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 				downPayment=downPayment.add(PennantAppUtil.formateAmount(listScheduleDetail.get(i).getDownPaymentAmount(), 
 						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 				capitalized=capitalized.add(PennantAppUtil.formateAmount(listScheduleDetail.get(i).getCpzAmount(), 
@@ -2210,3 +2210,4 @@ public class LoanDetailsEnquiryDialogCtrl extends GFCBaseCtrl implements Seriali
 	}
 
 }
+*/

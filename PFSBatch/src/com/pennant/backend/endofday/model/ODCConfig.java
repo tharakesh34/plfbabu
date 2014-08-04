@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+ *//*
 package com.pennant.backend.endofday.model;
 
 import java.io.Serializable;
@@ -183,3 +183,4 @@ public class ODCConfig implements Serializable{
 	}
 	
 }
+*/

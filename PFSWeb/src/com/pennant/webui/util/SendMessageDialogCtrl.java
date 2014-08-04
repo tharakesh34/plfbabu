@@ -154,7 +154,6 @@ public class SendMessageDialogCtrl  extends  GFCBaseListCtrl<ReportConfiguration
 		logger.debug("Entering" +event.toString());
 		try {
 			// get the parameters map that are overHanded by creation.
-			final Map<String, Object> args = getCreationArgsMap(event);
 			int delayTime = 1 * 60 * 1000;
 			this.refreshTimer.setDelay(delayTime);
 			userName = ((UserImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -340,11 +339,13 @@ public class SendMessageDialogCtrl  extends  GFCBaseListCtrl<ReportConfiguration
 			parameters[2]=userName;
 			HashMap<String,String> messageRecivers=new HashMap<String, String>();
 			String msg="";
-			msg = msg + PTDateFormat.getDateTimeLongFormater().format(new Date()) + " / " + Labels.getLabel("common.Message.From")
-			+ " " + userName + ":" + "\n";
-			msg = msg +this.messageBox.getValue();
-			msg = msg + "\n" + "____________________ END _______________________" + "\n";
-
+			msg="Date : "+PTDateFormat.getDateFormater().format(new Date())+ "\t"+"\t"+"\t"+"Time : "+PTDateFormat.getTimeLongFormater().format(new Date())+"\n";
+			msg = msg +Labels.getLabel("common.From")
+			+ " : " + userName + "\n"+ "\n";
+			msg = msg +"Message : "+"\n"+"\n";
+			msg = msg +this.messageBox.getValue()+ "\n"+ "\n";
+			msg = msg  + "*******************   END  ********************* " + "\n";
+			
 
 			Set  seletedSet=null;
 			boolean isByUsers=false;
@@ -438,14 +439,19 @@ public class SendMessageDialogCtrl  extends  GFCBaseListCtrl<ReportConfiguration
 	 * @return  Map<String, Boolean> actualMap
 	 */
 	private Map<String, Boolean> getActiveUsersMap() {
-		Map<String, Boolean> onLineAndActiveDesktopUsersMap=new HashMap<String, Boolean>();
-		for(String userID :SessionUtil.getActiveDeskTopsMap().keySet()){
-
-			if(!onLineAndActiveDesktopUsersMap.containsKey(userID.substring(0, userID.indexOf("-")))
+		Map<String, Boolean> onLineAndActiveDesktopUsersMap = new HashMap<String, Boolean>();
+		for(String userID :SessionUtil.getCurrentLoginUsers().keySet()){
+			
+			if(SessionUtil.getActiveDeskTopsMap().containsKey(userID)) {
+				onLineAndActiveDesktopUsersMap.put(userID,  SessionUtil.getActiveDeskTopsMap().get(userID));
+			} else {
+				onLineAndActiveDesktopUsersMap.put(userID,  true);
+			}
+			/*if(!onLineAndActiveDesktopUsersMap.containsKey(userID.substring(0, userID.indexOf("-")))
 					||(onLineAndActiveDesktopUsersMap.containsKey(userID.substring(0, userID.indexOf("-")))
 							&& onLineAndActiveDesktopUsersMap.get(userID.substring(0, userID.indexOf("-")))==false)){
 				onLineAndActiveDesktopUsersMap.put(userID.substring(0, userID.indexOf("-")), SessionUtil.getActiveDeskTopsMap().get(userID));
-			}
+			}*/
 
 
 		}

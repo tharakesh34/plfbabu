@@ -124,7 +124,7 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 	@Override
 	public WeekendMaster getWeekendMasterByID(final String id, String type) {
 		logger.debug("Entering");
-		WeekendMaster weekendMaster = getWeekendMaster();
+		WeekendMaster weekendMaster = new WeekendMaster();
 		weekendMaster.setId(id);
 		
 		StringBuilder selectListSql = new StringBuilder("Select WeekendCode, WeekendDesc, Weekend, ");
@@ -151,8 +151,8 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 
 	@Override
 	public WeekendMaster getWeekendMasterByCode(final String weekendCode) {
-		logger.debug("Entering getWeekendMasterByID()");
-		WeekendMaster weekendMaster = getWeekendMaster();
+		logger.debug("Entering");
+		WeekendMaster weekendMaster = new WeekendMaster();
 		weekendMaster.setWeekendCode(weekendCode);
 
 		StringBuilder selectListSql = new StringBuilder("Select WeekendCode, WeekendDesc, Weekend, ");

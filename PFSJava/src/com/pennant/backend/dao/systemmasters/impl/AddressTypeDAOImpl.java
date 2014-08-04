@@ -121,7 +121,7 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 	@Override
 	public AddressType getAddressTypeById(final String id, String type) {
 		logger.debug("Entering");
-		AddressType addressType = getAddressType();
+		AddressType addressType = new AddressType();
 		addressType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

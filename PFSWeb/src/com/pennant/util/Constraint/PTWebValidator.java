@@ -12,7 +12,7 @@ import org.zkoss.zul.Constraint;
 public class PTWebValidator implements Constraint{
 	private String fieldParm;
 	private boolean mandatory=false;
-	private final String WEB_REGEX							= "^[wW]{3}[\\.]{1}([a-zA-z]+[0-9]*)(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
+	private final String WEB_REGEX = "^[wW]{3}[\\.]{1}([a-zA-z]+[0-9]*)(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
 	private int maxLength=100;
 	
 	public PTWebValidator(String fieldParm,boolean mandatory) {

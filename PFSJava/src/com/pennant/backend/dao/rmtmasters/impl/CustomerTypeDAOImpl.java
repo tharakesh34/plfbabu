@@ -124,7 +124,7 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 	public CustomerType getCustomerTypeById(final String id, String type) {
 		logger.debug("Entering");
 
-		CustomerType customerType = getCustomerType();
+		CustomerType customerType = new CustomerType();
 		customerType.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select CustTypeCode, CustTypeCtg, CustTypeDesc,CustTypeIsActive," );

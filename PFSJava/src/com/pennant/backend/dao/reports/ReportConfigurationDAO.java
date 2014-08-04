@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.reports;
 
+import java.util.List;
+
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.reports.ReportConfiguration;
 
 /**
@@ -59,4 +62,8 @@ public interface ReportConfigurationDAO {
 	public long save(ReportConfiguration reportConfiguration,String type);
 	public void initialize(ReportConfiguration reportConfiguration);
 	public void refresh(ReportConfiguration entity);
+	
+	//Month End Report Details
+	public List<ValueLabel> getMonthEndReportGrpCodes();
+	List<ValueLabel> getReportListByGrpCode(String groupCode);
 }

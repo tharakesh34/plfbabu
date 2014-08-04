@@ -121,11 +121,11 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 	@Override
 	public DocumentType getDocumentTypeById(final String id, String type) {
 		logger.debug("Entering");
-		DocumentType documentType = getDocumentType();
+		DocumentType documentType = new DocumentType();
 		documentType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive," );
+		selectSql.append("SELECT DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
 		/*if(type.contains("View")){
 			selectSql.append("");
 		}*/
@@ -246,10 +246,10 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 
 		insertSql.append("Insert Into BMTDocumentTypes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive," );
+		insertSql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, " );
+		insertSql.append(" Values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, :DocIsCustDoc," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 		
@@ -283,7 +283,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 	
 		updateSql.append("Update BMTDocumentTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DocTypeCode = :DocTypeCode, DocTypeDesc = :DocTypeDesc," );
+		updateSql.append(" Set DocTypeCode = :DocTypeCode, DocTypeDesc = :DocTypeDesc, DocIsCustDoc = :DocIsCustDoc," );
 		updateSql.append(" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

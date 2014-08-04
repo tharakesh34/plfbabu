@@ -220,7 +220,6 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 				isRcdType=true;
 			}else if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				extendedFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType=true;
 			}
 
 			if(method.equals("saveOrUpdate") && (isRcdType==true)){

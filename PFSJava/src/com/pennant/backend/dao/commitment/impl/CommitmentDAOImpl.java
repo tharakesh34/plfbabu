@@ -27,7 +27,9 @@ package com.pennant.backend.dao.commitment.impl;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -43,11 +45,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.commitment.Commitment;
+import com.pennant.backend.model.commitment.CommitmentSummary;
+import com.pennant.backend.model.reports.AvailCommitment;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -110,20 +115,20 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 	@Override
 	public Commitment getCommitmentById(final String id, String type) {
 		logger.debug("Entering");
-		Commitment commitment = getCommitment();
+		Commitment commitment = new Commitment();
 
 		commitment.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(
 		        "Select CmtReference, custID, CmtBranch, OpenAccount, CmtAccount");
-		selectSql.append(", CmtCcy,CmtPftRateMin, CmtPftRateMax, CmtAmount, CmtUtilizedAmount");
+		selectSql.append(", CmtCcy, CmtPftRateMin, CmtPftRateMax, CmtAmount, CmtUtilizedAmount");
 		selectSql.append(", CmtAvailable, CmtPromisedDate, CmtStartDate, CmtExpDate");
 		selectSql.append(", CmtTitle, CmtNotes, Revolving, SharedCmt, MultiBranch");
-		selectSql.append(",CmtCharges,ChargesAccount,CmtActive,CmtStopRateRange,NonPerforming");
+		selectSql.append(",CmtCharges,ChargesAccount,CmtActive,CmtStopRateRange,NonPerforming,FacilityRef");
 		selectSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",custShrtName,BranchDesc,CcyDesc,ccyEditField,custCIF");
+			selectSql.append(",custShrtName,BranchDesc,CcyDesc,ccyEditField,custCIF,facilityRefDesc");
 			/*selectSql.append(",custIDName,CmtBranchName,CmtCcyName");*/
 		}
 		selectSql.append(" From Commitments");
@@ -143,6 +148,112 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		}
 		logger.debug("Leaving");
 		return commitment;
+	}
+	
+	/**
+	 * Fetch the Record Commitment Detail details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Commitment
+	 */
+	@Override
+	public Commitment getCommitmentByRef(final String id, String type) {
+		logger.debug("Entering");
+		
+		Commitment commitment = new Commitment();
+		commitment.setId(id);
+
+		StringBuilder selectSql = new StringBuilder("Select CmtReference ");
+		selectSql.append(" From Commitments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CmtReference =:CmtReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
+		RowMapper<Commitment> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		        .newInstance(Commitment.class);
+
+		try {
+			commitment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			        beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			commitment = null;
+		}
+		logger.debug("Leaving");
+		return commitment;
+	}
+	
+	@Override
+	public Commitment getCommitmentByFacilityRef(final String id, String type) {
+		logger.debug("Entering");
+		Commitment commitment = new Commitment();
+
+		commitment.setId(id);
+
+		StringBuilder selectSql = new StringBuilder(
+		        "Select CmtReference, custID, CmtBranch, OpenAccount, CmtAccount");
+		selectSql.append(", CmtCcy, CmtPftRateMin, CmtPftRateMax, CmtAmount, CmtUtilizedAmount");
+		selectSql.append(", CmtAvailable, CmtPromisedDate, CmtStartDate, CmtExpDate");
+		selectSql.append(", CmtTitle, CmtNotes, Revolving, SharedCmt, MultiBranch");
+		selectSql.append(",CmtCharges,ChargesAccount,CmtActive,CmtStopRateRange,NonPerforming,FacilityRef");
+		selectSql
+		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(",custShrtName,BranchDesc,CcyDesc,ccyEditField,custCIF,facilityRefDesc");
+			/*selectSql.append(",custIDName,CmtBranchName,CmtCcyName");*/
+		}
+		selectSql.append(" From Commitments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID =:CustID And FacilityRef =:FacilityRef");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
+		RowMapper<Commitment> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		        .newInstance(Commitment.class);
+
+		try {
+			commitment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+			        beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			commitment = null;
+		}
+		logger.debug("Leaving");
+		return commitment;
+	}
+	
+	
+	/**
+	 * Fetch the Record Commitment Detail details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Commitment
+	 */
+	@Override
+	public List<AvailCommitment> getCommitmentListByCustId(final long custId, String type) {
+		logger.debug("Entering");
+		Commitment commitment = new Commitment();
+		commitment.setCustID(custId);
+		
+		StringBuilder selectSql = new StringBuilder("Select CmtReference, CmtAccount , CmtCcy, CmtAmount, CmtUtilizedAmount,");
+		selectSql.append(" CmtAvailable, CmtExpDate , CmtTitle, Revolving, CmtNotes, FacilityRef");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(" ,CcyEditField,facilityRefDesc ");
+		}
+		selectSql.append(" From Commitments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID =:CustID ORDER BY CmtExpDate DESC");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
+		RowMapper<AvailCommitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AvailCommitment.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -220,6 +331,27 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		}
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Deleting Commitment based on Commitment Reference 
+	 * @param cmtReference
+	 * @param type
+	 */
+	@Override
+	public void deleteByRef(String cmtReference, String type) {
+		logger.debug("Entering");
+		Commitment commitment = new Commitment();
+		commitment.setCmtReference(cmtReference);
+
+		StringBuilder deleteSql = new StringBuilder("Delete From Commitments");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where CmtReference =:CmtReference");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * This method insert new Records into Commitments or Commitments_Temp.
@@ -243,13 +375,13 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql
 		        .append(" (CmtReference, custID, CmtBranch, OpenAccount, CmtAccount, CmtCcy, CmtPftRateMin, CmtPftRateMax, CmtAmount, CmtUtilizedAmount, CmtAvailable, CmtPromisedDate, CmtStartDate, CmtExpDate, CmtTitle, CmtNotes, Revolving, SharedCmt, MultiBranch");
-		insertSql.append(",CmtCharges,ChargesAccount,CmtActive,CmtStopRateRange,NonPerforming");
+		insertSql.append(",CmtCharges,ChargesAccount,CmtActive,CmtStopRateRange,NonPerforming,FacilityRef");
 		insertSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql
 		        .append(" Values(:CmtReference, :custID, :CmtBranch, :OpenAccount, :CmtAccount, :CmtCcy, :CmtPftRateMin, :CmtPftRateMax, :CmtAmount, :CmtUtilizedAmount, :CmtAvailable, :CmtPromisedDate, :CmtStartDate, :CmtExpDate, :CmtTitle, :CmtNotes, :Revolving, :SharedCmt, :MultiBranch");
 		insertSql
-		        .append(",:CmtCharges,:ChargesAccount,:CmtActive,:CmtStopRateRange,:NonPerforming");
+		        .append(",:CmtCharges,:ChargesAccount,:CmtActive,:CmtStopRateRange,:NonPerforming,:FacilityRef");
 		insertSql
 		        .append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -284,7 +416,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		updateSql
 		        .append(" Set CmtReference = :CmtReference, custID = :custID, CmtBranch = :CmtBranch, OpenAccount = :OpenAccount, CmtAccount = :CmtAccount, CmtCcy = :CmtCcy, CmtPftRateMin = :CmtPftRateMin, CmtPftRateMax = :CmtPftRateMax, CmtAmount = :CmtAmount, CmtUtilizedAmount = :CmtUtilizedAmount, CmtAvailable = :CmtAvailable, CmtPromisedDate = :CmtPromisedDate, CmtStartDate = :CmtStartDate, CmtExpDate = :CmtExpDate, CmtTitle = :CmtTitle, CmtNotes = :CmtNotes, Revolving = :Revolving, SharedCmt = :SharedCmt, MultiBranch = :MultiBranch");
 		updateSql
-		        .append(",CmtCharges=:CmtCharges,ChargesAccount=:ChargesAccount,CmtActive=:CmtActive,CmtStopRateRange=:CmtStopRateRange,NonPerforming=:NonPerforming");
+		        .append(",CmtCharges=:CmtCharges,ChargesAccount=:ChargesAccount,CmtActive=:CmtActive,CmtStopRateRange=:CmtStopRateRange,NonPerforming=:NonPerforming,FacilityRef=:FacilityRef");
 		updateSql
 		        .append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CmtReference =:CmtReference");
@@ -413,23 +545,57 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		selectSql.append(" FROM Commitments where custID=:custID and CmtExpDate >= CURRENT_TIMESTAMP ");
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving getCmtAmountCount()");
+		
 		return  this.namedParameterJdbcTemplate.queryForMap(selectSql.toString(), namedParamters);
 	}
+	/**
+	 * This method get Commitment Amount Summary
+	 * 
+	 * @param RoleId
+	 *            (long)
+	 * @return List<Long RoleIDs>
+	 */
+	@Override
+	public List<CommitmentSummary> getCommitmentSummary(long custID) {
+		logger.debug("Entering ");
+		CommitmentSummary commitmentSummary=new CommitmentSummary();
+		commitmentSummary.setCustID(custID);
+		StringBuilder selectSql = new StringBuilder(" SELECT CmtCcy,CcyEditField, COUNT(*) AS ");
+		selectSql.append(PennantConstants.CMT_TOTALCMT);
+		selectSql.append(" , IsNull(SUM(CmtAmount),0) AS ");
+		selectSql.append(PennantConstants.CMT_TOTALCMTAMT);
+		selectSql.append(" , IsNull(SUM(CmtUtilizedAmount),0) AS ");
+		selectSql.append(PennantConstants.CMT_TOTALUTZAMT);
+		selectSql.append(" FROM Commitments_AView where custID=:custID and CmtExpDate >= CURRENT_TIMESTAMP group by CmtCcy,CcyEditField");
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving getCmtAmountCount()");
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentSummary);
+		RowMapper<CommitmentSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommitmentSummary.class);
+		return  this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+	}
 	
-	public boolean updateCommitmentAmounts(String cmtReference, BigDecimal postingAmount){
-		logger.debug("Starting");
+	public boolean updateCommitmentAmounts(String cmtReference, BigDecimal postingAmount, Date cmtExpDate){
+		logger.debug("Entering");
+		
+		boolean cmtExpired = false;
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		if(cmtExpDate.compareTo(curBussDate) < 0){
+			cmtExpired = true;
+		}
+		
 		int recordCount = 0;
 		Map<String, Object> namedParameters=new HashMap<String, Object>();
 		namedParameters.put("CmtReference", cmtReference);
 		namedParameters.put("CmtUtilizedAmount", postingAmount);
 		namedParameters.put("CmtAvailable", postingAmount);
 
-
-		StringBuilder updateSql = new StringBuilder();
-
-		updateSql.append(" Update Commitments");
+		StringBuilder updateSql = new StringBuilder(" Update Commitments");
 		updateSql.append(" set CmtUtilizedAmount = CmtUtilizedAmount + :CmtUtilizedAmount, ");
-		updateSql.append(" CmtAvailable = CmtAvailable - :CmtAvailable ");
+		if(cmtExpired){
+			updateSql.append(" CmtAvailable = 0 ");
+		}else{
+			updateSql.append(" CmtAvailable = CmtAvailable - :CmtAvailable ");
+		}
 		updateSql.append(" where CmtReference =:CmtReference");
 
 		logger.debug("updateSql:"+updateSql.toString());
@@ -439,10 +605,32 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 			logger.error(e);
 		}
 		logger.debug("Leaving");
-		return recordCount >= 1?true:false;
+		return recordCount >= 1 ? true : false;
 	}
-		
-	
-	
 
+	@Override
+    public void updateNonPerformStatus(String commitmentRef) {
+		logger.debug("Entering");
+		
+		Commitment commitment = new Commitment();
+		commitment.setCmtReference(commitmentRef);
+		commitment.setNonperformingStatus(true);
+		
+		StringBuilder updateSql = new StringBuilder();
+
+		updateSql.append(" Update Commitments");
+		updateSql.append(" set NonperformingStatus = :NonperformingStatus ");
+		updateSql.append(" where CmtReference =:CmtReference");
+
+		logger.debug("updateSql:"+updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
+		
+		try{
+			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		logger.debug("Leaving");
+    }
+		
 }

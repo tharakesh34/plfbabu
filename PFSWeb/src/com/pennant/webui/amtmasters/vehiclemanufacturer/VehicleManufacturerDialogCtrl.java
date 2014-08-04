@@ -75,7 +75,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.amtmasters.VehicleManufacturerService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -560,7 +562,7 @@ public class VehicleManufacturerDialogCtrl extends GFCBaseCtrl implements Serial
 		setValidationOn(true);
 
 		if (!this.manufacturerName.isReadonly()){
-			this.manufacturerName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_VehicleManufacturerDialog_ManufacturerName.value")}));
+			this.manufacturerName.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleManufacturerDialog_ManufacturerName.value"), PennantRegularExpressions.REGEX_NAME, true));
 		}	
 		logger.debug("Leaving");
 	}

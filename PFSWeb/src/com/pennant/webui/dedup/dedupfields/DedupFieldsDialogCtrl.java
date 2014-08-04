@@ -83,6 +83,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.dedup.DedupFieldsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -150,7 +151,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient DedupFieldsService dedupFieldsService;
 	private transient PagedListService pagedListService;
 	
-	private List<ValueLabel> listFieldControl=PennantAppUtil.getFieldTypeList(); // autowired
+	private List<ValueLabel> listFieldControl=PennantStaticListUtil.getFieldTypeList(); // autowired
 
 	/**
 	 * default constructor.<br>
@@ -619,6 +620,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * 
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("rawtypes")
 	private void doDelete() throws InterruptedException {
 		logger.debug("Enterring");	
 		final DedupFields aDedupFields = new DedupFields();
@@ -1041,6 +1043,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl implements Serializable {
 	}
 
 	
+	@SuppressWarnings("deprecation")
 	private AuditHeader getAuditHeader(DedupFields aDedupFields, String tranType){
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDedupFields.getBefImage(), aDedupFields);   
 		return new AuditHeader(aDedupFields.getFieldName(),null,null,null,auditDetail,aDedupFields.getUserDetails());

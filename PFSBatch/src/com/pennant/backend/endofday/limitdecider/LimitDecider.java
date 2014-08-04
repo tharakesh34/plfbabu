@@ -59,7 +59,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.HolidayUtil;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.batch.admin.BatchAdminDAO;
 import com.pennant.equation.util.HostConnection;
 
 public class LimitDecider implements JobExecutionDecider {
@@ -67,8 +66,6 @@ public class LimitDecider implements JobExecutionDecider {
 	private Logger logger = Logger.getLogger(LimitDecider.class);
 
 	private DataSource dataSource;
-	private BatchAdminDAO batchAdminDAO;
-		
 	private HostConnection hostConnection;
 
 	private Date dateValueDate = null;
@@ -81,35 +78,41 @@ public class LimitDecider implements JobExecutionDecider {
 		dateNextBusinessDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE").toString());
 
 		logger.debug("START: Limit Decider for generation of Loop for Value Date: "+ DateUtility.addDays(dateValueDate,-1));
-		
 		stepExecution.getExecutionContext().put(stepExecution.getId().toString(), dateValueDate);
 
 		Connection connection = null;
 		PreparedStatement sqlStatement = null;		
-		String updateQuery  = prepareAcUpdateQuery();
 
 		try {
 
 			//Update Today Account Balances to ZeroValue
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(updateQuery);
+			sqlStatement = connection.prepareStatement(prepareAcUpdateQuery());
 			sqlStatement.executeUpdate();
 			
 			// If NBD is holiday then loop continues, else end process.
 			if (dateValueDate.compareTo(dateNextBusinessDate) == 0) {			
 				
-				String nextBussDate = DateUtility.formatUtilDate(HolidayUtil.getNextBusinessDate("GEN", "N", dateNextBusinessDate).getTime(),"yyyy-MM-dd");				
-				sqlStatement = connection.prepareStatement(prepareUpdateQuery(nextBussDate, "APP_NEXT_BUS_DATE"));
+				String nextBussDate = DateUtility.formatUtilDate(HolidayUtil.getWorkingBussinessDate("GEN", "N", dateNextBusinessDate).getTime(),"yyyy-MM-dd");				
+				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
+				sqlStatement.setString(1, nextBussDate);
+				sqlStatement.setString(2, "APP_NEXT_BUS_DATE");
 				sqlStatement.executeUpdate();
 				
-				String prevBussDate = DateUtility.formatUtilDate(HolidayUtil.getNextBusinessDate("GEN", "P", dateNextBusinessDate).getTime(),"yyyy-MM-dd");				
-				sqlStatement = connection.prepareStatement(prepareUpdateQuery(prevBussDate, "APP_LAST_BUS_DATE"));
+				String prevBussDate = DateUtility.formatUtilDate(HolidayUtil.getWorkingBussinessDate("GEN", "P", dateNextBusinessDate).getTime(),"yyyy-MM-dd");				
+				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
+				sqlStatement.setString(1, prevBussDate);
+				sqlStatement.setString(2, "APP_LAST_BUS_DATE");
 				sqlStatement.executeUpdate();
 							
-				sqlStatement = connection.prepareStatement(prepareUpdateQuery(dateNextBusinessDate.toString(), "APP_DATE"));
+				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
+				sqlStatement.setString(1, dateNextBusinessDate.toString());
+				sqlStatement.setString(2, "APP_DATE");
 				sqlStatement.executeUpdate();
 				
-				sqlStatement = connection.prepareStatement(prepareUpdateQuery("DAY", "PHASE").toString());
+				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
+				sqlStatement.setString(1, "DAY");
+				sqlStatement.setString(2, "PHASE");
 				sqlStatement.executeUpdate();
 				
 				//Reset Next Business Date in System Parameters
@@ -117,8 +120,11 @@ public class LimitDecider implements JobExecutionDecider {
 				SystemParameterDetails.setParmDetails("APP_LAST_BUS_DATE", prevBussDate);
 				SystemParameterDetails.setParmDetails("APP_DATE", dateNextBusinessDate.toString());
 				SystemParameterDetails.setParmDetails("PHASE", "DAY");
-
-				getHostConnection().disConnection();
+				
+				//Close Host Connection
+				getHostConnection().closeAllConnection();
+				
+				logger.debug("COMPLETE: Limit Decider with Value Date: "+ DateUtility.addDays(dateValueDate,-1));
 				return FlowExecutionStatus.COMPLETED;
 				
 			}
@@ -150,9 +156,8 @@ public class LimitDecider implements JobExecutionDecider {
 	 * @return
 	 */
 	private String prepareAcUpdateQuery() {
-		StringBuffer query =  new StringBuffer();
 		
-		query.append(" UPDATE Accounts SET  AcPrvDayBal = (AcPrvDayBal+AcTodayBal) , " );
+		StringBuilder query =  new StringBuilder(" UPDATE Accounts SET  AcPrvDayBal = (AcPrvDayBal+AcTodayBal) , " );
 		query.append(" AcTodayDr = 0, AcTodayCr =0, AcTodayNet =0,AcTodayBal= 0 ");
 		if (dateValueDate.compareTo(dateNextBusinessDate) < 0) {		
 			query.append(" ,AcAccrualBal = 0");
@@ -167,12 +172,11 @@ public class LimitDecider implements JobExecutionDecider {
 	 * @param updateQuery
 	 * @return
 	 */
-	private String prepareUpdateQuery(String value, String parameterCode) {
+	private String prepareUpdateQuery() {
 
-		StringBuffer query = new StringBuffer();
-
-		query.append(" UPDATE SMTparameters SET SysParmValue = '"+value+"'");
-		query.append(" Where SysParmCode ='"+parameterCode+"'");
+		StringBuilder query = new StringBuilder();
+		query.append(" UPDATE SMTparameters SET SysParmValue = ?");
+		query.append(" Where SysParmCode =?");
 		return query.toString();
 
 	}
@@ -180,13 +184,6 @@ public class LimitDecider implements JobExecutionDecider {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void setHostConnection(HostConnection hostConnection) {
-		this.hostConnection = hostConnection;
-	}
-	public HostConnection getHostConnection() {
-		return hostConnection;
-	}
 	
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -195,12 +192,11 @@ public class LimitDecider implements JobExecutionDecider {
 		return dataSource;
 	}
 
-	public BatchAdminDAO getBatchAdminDAO() {
-		return batchAdminDAO;
+	public HostConnection getHostConnection() {
+		return hostConnection;
 	}
-
-	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
-		this.batchAdminDAO = batchAdminDAO;
+	public void setHostConnection(HostConnection hostConnection) {
+		this.hostConnection = hostConnection;
 	}
 	
 }

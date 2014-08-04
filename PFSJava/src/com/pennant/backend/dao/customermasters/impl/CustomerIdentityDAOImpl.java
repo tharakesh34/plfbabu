@@ -116,7 +116,7 @@ public class CustomerIdentityDAOImpl extends BasisCodeDAO<CustomerIdentity> impl
 	@Override
 	public CustomerIdentity getCustomerIdentityByID(final long id,String idType, String type) {
 		logger.debug("Entering");
-		CustomerIdentity customerIdentity = getCustomerIdentity();
+		CustomerIdentity customerIdentity = new CustomerIdentity();
 		customerIdentity.setId(id);
 		customerIdentity.setIdType(idType);
 		

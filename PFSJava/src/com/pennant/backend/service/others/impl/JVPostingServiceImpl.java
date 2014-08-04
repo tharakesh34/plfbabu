@@ -25,7 +25,10 @@
 
 package com.pennant.backend.service.others.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,7 +36,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.Interface.service.AccountInterfaceService;
+import com.pennant.Interface.service.PostingsInterfaceService;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.dao.others.JVPostingEntryDAO;
@@ -42,10 +49,14 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.others.JVPostingService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.coreinterface.exception.AccountNotFoundException;
+import com.pennant.coreinterface.vo.CoreBankAccountDetail;
 
 /**
  * Service implementation for methods that depends on <b>JVPosting</b>.<br>
@@ -55,8 +66,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private final static Logger logger = Logger.getLogger(JVPostingServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
-
 	private JVPostingDAO jVPostingDAO;
+	private JVPostingEntryDAO jVPostingEntryDAO;
+	private NextidviewDAO nextidviewDAO;
+	private AccountInterfaceService accountInterfaceService;
+	private PostingsInterfaceService postingsInterfaceService;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -137,36 +151,112 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online) {
 		logger.debug("Entering");
-		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate", online);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+
 		String tableType = "";
 		JVPosting jVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
-
 		if (jVPosting.isWorkflow()) {
 			tableType = "_TEMP";
 		}
-
+	
 		if (jVPosting.isNew()) {
-			getJVPostingDAO().save(jVPosting, tableType);
+			jVPosting.setBatchReference(getJVPostingDAO().save(jVPosting, tableType));
+			if (jVPosting.getJVPostingEntrysList() != null
+			        && jVPosting.getJVPostingEntrysList().size() > 0) {
+				for (int i = 0; i < jVPosting.getJVPostingEntrysList().size(); i++) {
+					jVPosting.getJVPostingEntrysList().get(i)
+					        .setBatchReference(jVPosting.getBatchReference());
+					jVPosting.getJVPostingEntrysList().get(i).setVersion(jVPosting.getVersion());
+				}
+			}
 		} else {
 			getJVPostingDAO().update(jVPosting, tableType);
+			// Process Entry Details
 		}
-		
-		if (jVPosting.getJVPostingEntrysList() != null && jVPosting.getJVPostingEntrysList().size() > 0) {
+		if (jVPosting.getJVPostingEntrysList() != null
+				&& jVPosting.getJVPostingEntrysList().size() > 0) {
 			List<AuditDetail> details = jVPosting.getAuditDetailMap().get("JVPostingEntry");
-			details = processJVPostingEntry(details, tableType);
+			details = processJVPostingEntry(details, tableType, jVPosting, false, true);
 			auditDetails.addAll(details);
 		}
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
+
 		logger.debug("Leaving");
 		return auditHeader;
 
+	}
+	
+	public boolean doAccountValidation(JVPosting jVPosting, List<JVPostingEntry> distinctEntryList) {
+		logger.debug("Entering");
+		
+		boolean isValid = validateAccounts(distinctEntryList);
+
+		//METHOD TO CHECK ALL THE RECORDS ARE VALIDATED OR NOT		
+		if (isValid) {
+			jVPosting.setValidationStatus(PennantConstants.Posting_success);
+		}else {
+			jVPosting.setValidationStatus(PennantConstants.Posting_fail);
+		}
+		
+		logger.debug("Leaving");
+		
+		return jVPosting.getValidationStatus().equals(PennantConstants.Posting_success)?true:false;
+	}
+	
+	private boolean validateAccounts(List<JVPostingEntry> distinctEntryList) {
+		logger.debug("Entering");
+		boolean validationSuccess = true;
+		List<CoreBankAccountDetail> cbAccountsList = new ArrayList<CoreBankAccountDetail>();
+		for (JVPostingEntry aJVPostingEntry : distinctEntryList) {
+			CoreBankAccountDetail iAccount = new CoreBankAccountDetail();
+			iAccount.setAccountNumber(aJVPostingEntry.getAccount());
+			cbAccountsList.add(iAccount);
+		}
+		// Fetch account ids from Equation
+		try {
+			cbAccountsList = getAccountInterfaceService().checkAccountID(cbAccountsList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+			for (JVPostingEntry jVPostingEntry : distinctEntryList) {
+				jVPostingEntry.setTxnReference(jVPostingEntry.getTxnReference());
+				jVPostingEntry.setValidationStatus(PennantConstants.Posting_fail + " : "
+				        + (e instanceof AccountNotFoundException ?((AccountNotFoundException) e).getErrorMsg():e.getMessage()));
+			}
+			return false;
+		}
+		
+		if (cbAccountsList != null && cbAccountsList.size() > 0) {
+			for (JVPostingEntry aJVPostingEntry : distinctEntryList) {
+				for (CoreBankAccountDetail accountDetail : cbAccountsList) {
+					if (aJVPostingEntry.getAccount().equalsIgnoreCase(
+					        accountDetail.getAccountNumber())) {
+						if (!StringUtils.equals(accountDetail.getErrorCode(), "0000") && 
+								!StringUtils.equals(accountDetail.getErrorCode(), null)) {
+							aJVPostingEntry.setValidationStatus(accountDetail.getErrorCode() + ":"
+							        + accountDetail.getErrorMessage());
+							validationSuccess = false;
+						} else {
+							if(aJVPostingEntry.isExternalAccount()) {
+								aJVPostingEntry.setAcType(accountDetail.getAcType());
+								aJVPostingEntry.setAccountName(accountDetail.getAcShrtName());
+								aJVPostingEntry.setAccCCy(accountDetail.getAcCcy());
+							}
+							aJVPostingEntry.setValidationStatus(PennantConstants.Posting_success);
+						}
+					}
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return validationSuccess;
 	}
 
 	/**
@@ -191,8 +281,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		JVPosting jVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
 		getJVPostingDAO().delete(jVPosting, "");
-		
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "", auditHeader.getAuditTranType())));
+
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "",
+		        auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -209,12 +300,18 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 */
 
 	@Override
-	public JVPosting getJVPostingById(String id) {
-		JVPosting jvPosting=getJVPostingDAO().getJVPostingById(id, "_View");
-		if (jvPosting!=null) {
-			jvPosting.setJVPostingEntrysList(getJVPostingEntryDAO().getJVPostingEntryListById(jvPosting.getBatchReference(), "_View"));
-        }
+	public JVPosting getJVPostingById(long id) {
+		JVPosting jvPosting = getJVPostingDAO().getJVPostingById(id, "_View");
+		if (jvPosting != null) {
+			jvPosting.setJVPostingEntrysList(getjVPostingEntryDAO().getJVPostingEntryListById(
+			        jvPosting.getBatchReference(), "_View"));
+		}
 		return jvPosting;
+	}
+
+	@Override
+	public JVPosting getJVPostingByFileName(String fileName) {
+		return getJVPostingDAO().getJVPostingByFileName(fileName);
 	}
 
 	/**
@@ -226,11 +323,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * @return JVPosting
 	 */
 
-	public JVPosting getApprovedJVPostingById(String id) {
-		JVPosting jvPosting=getJVPostingDAO().getJVPostingById(id, "_AView");
-		if (jvPosting!=null) {
-			jvPosting.setJVPostingEntrysList(getJVPostingEntryDAO().getJVPostingEntryListById(jvPosting.getBatchReference(), "_AView"));
-        }
+	public JVPosting getApprovedJVPostingById(long id) {
+		JVPosting jvPosting = getJVPostingDAO().getJVPostingById(id, "_AView");
+		if (jvPosting != null) {
+			jvPosting.setJVPostingEntrysList(getjVPostingEntryDAO().getJVPostingEntryListById(
+			        jvPosting.getBatchReference(), "_AView"));
+		}
 		return jvPosting;
 	}
 
@@ -268,63 +366,138 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		String tranType = "";
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		boolean postingSuccess = true;
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
 
 		JVPosting jVPosting = new JVPosting();
-		BeanUtils .copyProperties((JVPosting) auditHeader.getAuditDetail().getModelData(), jVPosting);
+		BeanUtils
+		        .copyProperties((JVPosting) auditHeader.getAuditDetail().getModelData(), jVPosting);
 
-		if (jVPosting.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType = PennantConstants.TRAN_DEL;
-			auditDetails.addAll(listDeletion(jVPosting, "", auditHeader.getAuditTranType()));
-			getJVPostingDAO().delete(jVPosting, "");
+		// User Action is Approved record so argument (isApproved) is False
+		if (StringUtils.equals(jVPosting.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+			
+			List<JVPostingEntry> dbList = new ArrayList<JVPostingEntry>();
+			
+			for (JVPostingEntry entry : jVPosting.getJVPostingEntrysList()) {
+				dbList.add(entry);
+				dbList.addAll(PostingsPreparationUtil.prepareAccountingEntry(entry, jVPosting.getCurrency(), jVPosting.getCcyNumber(), jVPosting.getCurrencyEditField(), false));
+            }
+			
+			// Processing Account Postings from Approver level
+			Collections.sort(dbList,new EntryComparator());
+			long linkedTranId = Long.MIN_VALUE;
+			try {
+				List<ReturnDataSet> list = PostingsPreparationUtil.processEntryList(dbList, jVPosting.getBranch());
+				if (list != null && list.size() > 0) {
+					ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+					for (int i = 0; i < list.size(); i++) {
+						ReturnDataSet set = list.get(i);
+						if (!("0000".equals(set.getErrorId()) || "".equals(set.getErrorId()))) {
+							errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(),
+									"E", set.getErrorMsg(), new String[] {}, new String[] {}));
+							postingSuccess = false;
+						} else {
+							linkedTranId = set.getLinkedTranId();
+							set.setPostStatus("S");
+						}
+					}
+					auditHeader.setErrorList(errorDetails);
+				}
+            } catch (AccountNotFoundException e) {
+            	postingSuccess = false;
+	            e.printStackTrace();
+            }
+			
+			if (postingSuccess) {
+				jVPosting.setJVPostingEntrysList(dbList);
+				//IF ALL THE ENTRIES ARE POSTED WITH SUCCESS OR FAIL THEN UPDATE
+				if (postingSuccess) {
+					//If All Entries got Success then Header status is success.	
+					jVPosting.setBatchPostingStatus(PennantConstants.Posting_success);
+					for (JVPostingEntry entry : jVPosting.getJVPostingEntrysList()) {
+						entry.setPostingStatus(PennantConstants.Posting_success);
+						entry.setLinkedTranId(linkedTranId);
+					}
+				}
+				//Update Child Records Status
+				getjVPostingEntryDAO().updateListPostingStatus(jVPosting.getJVPostingEntrysList(),
+						"_Temp", true);
+				// Updating Header Status
+				getjVPostingDAO().updateBatchPostingStatus(jVPosting, "_Temp");
+				// Regular Approving Process moving total Batch into main table and remove from Temp Table. 
+				approveRecords(auditHeader, jVPosting);
+			}
+		}
+		// Logic for posting threads creation
+		return auditHeader;
+	}
+	
+	private void approveRecords(AuditHeader auditHeader, JVPosting jVPosting) {
+		logger.debug("Entering");
 
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String tranType = "";
+
+		// Checking if it is Re-Posting Process, If Yes then Update record in Main Table otherwise Insert.
+		JVPosting RePosting = getjVPostingDAO().getJVPostingById(jVPosting.getBatchReference(), "_AView");
+		if (RePosting != null) {
+			jVPosting.setVersion(jVPosting.getVersion()+1);
+			getjVPostingDAO().update(jVPosting, "");
 		} else {
+			// Setting Work flow details Empty for Successfully Posted Records. 
+			tranType = PennantConstants.TRAN_ADD;
 			jVPosting.setRoleCode("");
 			jVPosting.setNextRoleCode("");
 			jVPosting.setTaskId("");
 			jVPosting.setNextTaskId("");
 			jVPosting.setWorkflowId(0);
-
-			if (jVPosting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType = PennantConstants.TRAN_ADD;
-				jVPosting.setRecordType("");
-				getJVPostingDAO().save(jVPosting, "");
-			} else {
-				tranType = PennantConstants.TRAN_UPD;
-				jVPosting.setRecordType("");
-				getJVPostingDAO().update(jVPosting, "");
-			}
-			
-
-			if (jVPosting.getJVPostingEntrysList() != null && jVPosting.getJVPostingEntrysList().size() > 0) {
-				List<AuditDetail> details = jVPosting.getAuditDetailMap().get("JVPostingEntry");
-				details = processJVPostingEntry(details, "");
-				auditDetails.addAll(details);
-			}
+			jVPosting.setRecordType("");
+			jVPosting.setValidationStatus(PennantConstants.Posting_success);
+			// Saving In main Table
+			getjVPostingDAO().save(jVPosting, "");
 		}
 
-		getJVPostingDAO().delete(jVPosting, "_TEMP");
+		if (jVPosting.getJVPostingEntrysList() != null
+		        && jVPosting.getJVPostingEntrysList().size() > 0) {
+			List<AuditDetail> details = jVPosting.getAuditDetailMap().get("JVPostingEntry");
+			details = processJVPostingEntry(details, "", jVPosting, false, true);
+			auditDetails.addAll(details);
+		}
+
+		getjVPostingDAO().delete(jVPosting, "_TEMP");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_TEMP", auditHeader.getAuditTranType())));
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting.getBefImage(), jVPosting));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_TEMP",
+		        auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting
+		        .getBefImage(), jVPosting));
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(jVPosting);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting.getBefImage(), jVPosting));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting
+		        .getBefImage(), jVPosting));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		//getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
-
-		return auditHeader;
 	}
-
+	
+	private class EntryComparator implements Comparator<JVPostingEntry>{
+	    @Override
+	    public int compare(JVPostingEntry e1, JVPostingEntry e2) {
+	        if(e1.getTxnReference() < e2.getTxnReference()){
+	            return 1;
+	        } else {
+	            return -1;
+	        }
+	    }
+	}
+	
+	
+	
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
@@ -348,9 +521,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getJVPostingDAO().delete(jVPosting, "_TEMP");
 
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting.getBefImage(), jVPosting));
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_TEMP", auditHeader.getAuditTranType())));
-		
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting
+		        .getBefImage(), jVPosting));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_TEMP",
+		        auditHeader.getAuditTranType())));
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 
@@ -372,11 +547,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
 		        auditHeader.getUsrLanguage(), method, onlineRequest);
+
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		
+
 		auditHeader = getAuditDetails(auditHeader, method);
-		
+
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -410,28 +586,29 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = jVPosting.getId();
+		valueParm[0] = jVPosting.getId() + "";
 		errParm[0] = PennantJavaUtil.getLabel("label_BatchReference") + ":" + valueParm[0];
 
 		if (jVPosting.isNew()) { // for New record or new record into work flow
 
 			if (!jVPosting.isWorkflow()) {// With out Work flow only new records  
 				if (befJVPosting != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					        new ErrorDetails(PennantConstants.KEY_FIELD,
+					                "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (jVPosting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befJVPosting != null || tempJVPosting != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-						        PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
-						        usrLanguage));
+						        PennantConstants.KEY_FIELD, "41001",
+						        errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befJVPosting == null || tempJVPosting != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-						        PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						        usrLanguage));
+						        PennantConstants.KEY_FIELD, "41005",
+						        errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -440,34 +617,37 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			if (!jVPosting.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befJVPosting == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					        new ErrorDetails(PennantConstants.KEY_FIELD,
+					                "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (old_JVPosting != null
 					        && !old_JVPosting.getLastMntOn().equals(befJVPosting.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							        PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
-							        usrLanguage));
+							       PennantConstants.KEY_FIELD, "41003",
+							        errParm, valueParm), usrLanguage));
 						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							        PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
-							        usrLanguage));
+							        PennantConstants.KEY_FIELD, "41004",
+							        errParm, valueParm), usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempJVPosting == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					        new ErrorDetails(PennantConstants.KEY_FIELD,
+					                "41005", errParm, valueParm), usrLanguage));
 				}
-
 				if (old_JVPosting != null
-				        && !old_JVPosting.getLastMntOn().equals(tempJVPosting.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				        && !StringUtils.equals(old_JVPosting.getLastMntOn().toString(),
+				                tempJVPosting.getLastMntOn().toString())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					        new ErrorDetails(PennantConstants.KEY_FIELD,
+					                "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -482,52 +662,36 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		return auditDetail;
 	}
 
-	//===================
-	private JVPostingEntryDAO jVPostingEntryDAO;
-
-	@Override
-	public JVPostingEntry getNewJVPostingEntry() {
-		return getJVPostingEntryDAO().getNewJVPostingEntry();
-	}
-
-	public void setJVPostingEntryDAO(JVPostingEntryDAO jVPostingEntryDAO) {
-		this.jVPostingEntryDAO = jVPostingEntryDAO;
-	}
-
-	public JVPostingEntryDAO getJVPostingEntryDAO() {
-		return jVPostingEntryDAO;
-	}
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-		JVPosting accountingSet = (JVPosting) auditHeader.getAuditDetail().getModelData();
+		JVPosting jvPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
 
 		String auditTranType = "";
 
-		if (method.equals("saveOrUpdate") || method.equals("doApprove") || method.equals("doReject")) {
-			if (accountingSet.isWorkflow()) {
+		if (method.equals("saveOrUpdate") || method.equals("doApprove")
+		        || method.equals("doReject")) {
+			if (jvPosting.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
-		if (accountingSet.getJVPostingEntrysList() != null && accountingSet.getJVPostingEntrysList().size() > 0) {
-			auditDetailMap.put("JVPostingEntry", setJVPostingEntryAuditData(accountingSet, auditTranType, method));
+		if (jvPosting.getJVPostingEntrysList() != null
+		        && jvPosting.getJVPostingEntrysList().size() > 0) {
+			auditDetailMap.put("JVPostingEntry",
+			        setJVPostingEntryAuditData(jvPosting, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("JVPostingEntry"));
 		}
 
-		accountingSet.setAuditDetailMap(auditDetailMap);
-		auditHeader.getAuditDetail().setModelData(accountingSet);
-		auditHeader.setAuditDetails(auditDetails);
-
+		jvPosting.setAuditDetailMap(auditDetailMap);
+		auditHeader.getAuditDetail().setModelData(jvPosting);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
-	
-	
+
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
@@ -536,11 +700,14 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setJVPostingEntryAuditData(JVPosting jVPosting, String auditTranType, String method) {
+	private List<AuditDetail> setJVPostingEntryAuditData(JVPosting jVPosting, String auditTranType,
+	        String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new JVPostingEntry(),new JVPostingEntry().getExcludeFields());
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new JVPostingEntry(),
+		        new JVPostingEntry().getExcludeFields());
 
 		for (int i = 0; i < jVPosting.getJVPostingEntrysList().size(); i++) {
 
@@ -548,7 +715,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			jVPostingEntry.setWorkflowId(jVPosting.getWorkflowId());
 
 			boolean isRcdType = false;
-
 			if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
@@ -565,10 +731,13 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (jVPostingEntry.getRecordType().equalsIgnoreCase(
+				        PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(
+				        PennantConstants.RECORD_TYPE_DEL)
+				        || jVPostingEntry.getRecordType().equalsIgnoreCase(
+				                PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -580,7 +749,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			jVPostingEntry.setLastMntOn(jVPosting.getLastMntOn());
 
 			if (!StringUtils.trimToEmpty(jVPostingEntry.getRecordType()).equals("")) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], jVPostingEntry.getBefImage(), jVPostingEntry));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+				        jVPostingEntry.getBefImage(), jVPostingEntry));
 			}
 		}
 		logger.debug("Leaving");
@@ -595,7 +765,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * @param custId
 	 * @return
 	 */
-	private List<AuditDetail> processJVPostingEntry(List<AuditDetail> auditDetails, String type) {
+	private List<AuditDetail> processJVPostingEntry(List<AuditDetail> auditDetails, String type,
+	        JVPosting jVPosting, boolean deleteUpdateFlag, boolean generateEntry) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -606,6 +777,14 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		for (int i = 0; i < auditDetails.size(); i++) {
 
 			JVPostingEntry jVPostingEntry = (JVPostingEntry) auditDetails.get(i).getModelData();
+			jVPostingEntry.setAccount(PennantApplicationUtil.unFormatAccountNumber(jVPostingEntry
+			        .getAccount()));
+			jVPostingEntry.setBatchReference(jVPosting.getBatchReference());
+			jVPostingEntry.setRoleCode(jVPosting.getRoleCode());
+			jVPostingEntry.setNextRoleCode(jVPosting.getNextRoleCode());
+			jVPostingEntry.setTaskId(jVPosting.getTaskId());
+			jVPostingEntry.setNextTaskId(jVPosting.getNextTaskId());
+			jVPostingEntry.setWorkflowId(jVPosting.getWorkflowId());
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -614,13 +793,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			String recordStatus = "";
 			if (type.equals("")) {
 				approveRec = true;
-				jVPostingEntry.setRoleCode("");
-				jVPostingEntry.setNextRoleCode("");
-				jVPostingEntry.setTaskId("");
-				jVPostingEntry.setNextTaskId("");
 			}
-
-			jVPostingEntry.setWorkflowId(0);
 
 			if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
@@ -628,20 +801,25 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				saveRecord = true;
 				if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				} else if (jVPostingEntry.getRecordType()
+				        .equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				} else if (jVPostingEntry.getRecordType()
+				        .equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
-			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(
+			        PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(
+			        PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(
+			        PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
 				} else if (jVPostingEntry.isNew()) {
@@ -659,15 +837,46 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			}
 
 			if (saveRecord) {
+				if(jVPostingEntry.isNewRecord()){
+					jVPostingEntry.setTxnReference(0);
+				}
 				jVPostingEntryDAO.save(jVPostingEntry, type);
+				if(generateEntry) {
+					for (JVPostingEntry entry :PostingsPreparationUtil.prepareAccountingEntry(jVPostingEntry, jVPosting.getCurrency(),
+							jVPosting.getCcyNumber(), jVPosting.getCurrencyEditField(), false)) {
+						entry.setTxnReference(jVPostingEntry.getTxnReference());
+						getjVPostingEntryDAO().save(entry, type);
+					} 
+				}
 			}
 
 			if (updateRecord) {
-				jVPostingEntryDAO.update(jVPostingEntry, type);
+				if(jVPostingEntry.getTxnAmount_Ac().compareTo(BigDecimal.ZERO)<0){
+					jVPostingEntry.setTxnAmount_Ac(jVPostingEntry.getTxnAmount_Ac().multiply(new BigDecimal(-1)));
+				}
+				if (deleteUpdateFlag) {
+					jVPostingEntryDAO.updateDeletedDetails(jVPostingEntry, type);
+				} else {
+					jVPostingEntryDAO.update(jVPostingEntry, type);
+					if(generateEntry) {
+						for (JVPostingEntry entry :PostingsPreparationUtil.prepareAccountingEntry(jVPostingEntry, jVPosting.getCurrency(),
+								jVPosting.getCcyNumber(), jVPosting.getCurrencyEditField(), false)) {
+							entry.setTxnReference(jVPostingEntry.getTxnReference());
+							getjVPostingEntryDAO().update(entry, type);
+						} 
+					}
+				}
 			}
 
 			if (deleteRecord) {
 				jVPostingEntryDAO.delete(jVPostingEntry, type);
+				if(generateEntry) {
+					for (JVPostingEntry entry :PostingsPreparationUtil.prepareAccountingEntry(jVPostingEntry, jVPosting.getCurrency(),
+							jVPosting.getCcyNumber(), jVPosting.getCurrencyEditField(), false)) {
+						entry.setTxnReference(jVPostingEntry.getTxnReference());
+						jVPostingEntryDAO.delete(entry, type);
+					} 
+				}
 			}
 
 			if (approveRec) {
@@ -685,21 +894,32 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	/**
 	 * Method deletion of feeTier list with existing fee type
 	 * 
-	 * @param accountingSet
+	 * @param jvPosting
 	 * @param tableType
 	 */
-	public List<AuditDetail> listDeletion(JVPosting accountingSet, String tableType, String auditTranType) {
+	public List<AuditDetail> listDeletion(JVPosting jvPosting, String tableType,
+	        String auditTranType) {
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		if (accountingSet.getJVPostingEntrysList() != null && accountingSet.getJVPostingEntrysList().size() > 0) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new JVPostingEntry(),new JVPostingEntry().getExcludeFields());
-			for (int i = 0; i < accountingSet.getJVPostingEntrysList().size(); i++) {
-				JVPostingEntry feeTier = accountingSet.getJVPostingEntrysList().get(i);
-				if (!feeTier.getRecordType().equals("") || tableType.equals("")) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], feeTier.getBefImage(), feeTier));
-				}
+		List<JVPostingEntry> entryList = new ArrayList<JVPostingEntry>();
+		if (jvPosting.getJVPostingEntrysList() != null
+		        && jvPosting.getJVPostingEntrysList().size() > 0) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new JVPostingEntry(),
+			        new JVPostingEntry().getExcludeFields());
+			for (int i = 0; i < jvPosting.getJVPostingEntrysList().size(); i++) {
+				JVPostingEntry jvEntry = jvPosting.getJVPostingEntrysList().get(i);
+				entryList.add(jvEntry);
+				entryList.addAll(PostingsPreparationUtil.prepareAccountingEntry(jvEntry, jvPosting.getCurrency(),
+						jvPosting.getCcyNumber(), jvPosting.getCurrencyEditField(), false));
 			}
-			getJVPostingEntryDAO().deleteByBatchRef(accountingSet.getBatchReference(), tableType);
+			for (int i = 0; i < entryList.size(); i++) {
+				JVPostingEntry jvEntry = entryList.get(i);
+				if (!jvEntry.getRecordType().equals("") || tableType.equals("")) {
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							jvEntry.getBefImage(), jvEntry));
+				}
+				getjVPostingEntryDAO().deleteByID(jvEntry, tableType);
+			}
 		}
 		return auditList;
 	}
@@ -723,13 +943,15 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 				String transType = "";
 				String rcdType = "";
-				JVPostingEntry jVPostingEntry = (JVPostingEntry) ((AuditDetail) list.get(i)).getModelData();
+				JVPostingEntry jVPostingEntry = (JVPostingEntry) ((AuditDetail) list.get(i))
+				        .getModelData();
 
 				rcdType = jVPostingEntry.getRecordType();
 
 				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					transType = PennantConstants.TRAN_ADD;
-				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) || rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+				        || rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					transType = PennantConstants.TRAN_DEL;
 				} else {
 					transType = PennantConstants.TRAN_UPD;
@@ -737,11 +959,176 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 				if (!(transType.equals(""))) {
 					// check and change below line for Complete code
-					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), jVPostingEntry.getBefImage(), jVPostingEntry));
+					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i))
+					        .getAuditSeq(), jVPostingEntry.getBefImage(), jVPostingEntry));
 				}
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetailsList;
 	}
+
+	@Override
+	public CoreBankAccountDetail getAccountDetails(String accountNumber) throws AccountNotFoundException  {
+		List<CoreBankAccountDetail> iAccountsList = new ArrayList<CoreBankAccountDetail>();
+		CoreBankAccountDetail iAccount = new CoreBankAccountDetail();
+		iAccount.setAccountNumber(accountNumber);
+		iAccountsList.add(iAccount);
+		// Fetch account ids from Equation
+		return getAccountInterfaceService().checkAccountID(iAccountsList).get(0);
+		
+	}
+	
+	@Override
+    public void deleteIAEntries(long batchReference) {
+		logger.debug("Entering");
+		getjVPostingEntryDAO().deleteIAEntries(batchReference);
+		logger.debug("Leaving");
+    }
+
+	/**
+	 * This method gets the max endnum
+	 * 
+	 * @param Inventory
+	 *            (inventory)
+	 * @return inventory
+	 */
+	public JVPostingDAO getjVPostingDAO() {
+		return jVPostingDAO;
+	}
+
+	public void setjVPostingDAO(JVPostingDAO jVPostingDAO) {
+		this.jVPostingDAO = jVPostingDAO;
+	}
+
+	public JVPostingEntryDAO getjVPostingEntryDAO() {
+		return jVPostingEntryDAO;
+	}
+
+	public void setjVPostingEntryDAO(JVPostingEntryDAO jVPostingEntryDAO) {
+		this.jVPostingEntryDAO = jVPostingEntryDAO;
+	}
+
+	public NextidviewDAO getNextidviewDAO() {
+		return nextidviewDAO;
+	}
+
+	public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
+		this.nextidviewDAO = nextidviewDAO;
+	}
+
+	@Override
+	public JVPostingEntry getNewJVPostingEntry() {
+		return getjVPostingEntryDAO().getNewJVPostingEntry();
+	}
+
+	@Override
+	public List<JVPostingEntry> getJVPostingEntryListById(long id) {
+		return getjVPostingEntryDAO().getJVPostingEntryListById(id, "_View");
+	}
+
+	@Override
+	public List<JVPostingEntry> getFailureJVPostingEntryListById(long batchRef) {
+		return getjVPostingEntryDAO().getFailureJVPostingEntryListById(batchRef,
+		        "_View");
+	}
+
+	@Override
+	public JVPostingEntry getJVPostingEntryById(long id, long txnRef, long acEntryRef) {
+		return getjVPostingEntryDAO().getJVPostingEntryById(id, txnRef, acEntryRef, "_View");
+	}
+
+	@Override
+	public JVPostingEntry getApprovedJVPostingEntryById(long id, long txnRef, long acEntryRef) {
+		return getjVPostingEntryDAO().getJVPostingEntryById(id, txnRef,acEntryRef, "_AView");
+	}
+
+	@Override
+	public long save(JVPostingEntry externalAcEntry,String baseCcy, String baseCcyNumber, int baseCcyEditField, boolean addIAEntry) {
+		long txnReference =  getjVPostingEntryDAO().save(externalAcEntry, "_Temp");
+		if(addIAEntry){
+			for (JVPostingEntry entry :PostingsPreparationUtil.prepareAccountingEntry(externalAcEntry, baseCcy, baseCcyNumber, baseCcyEditField, false)) {
+				entry.setTxnReference(externalAcEntry.getTxnReference());
+				getjVPostingEntryDAO().save(entry, "_Temp");
+            } 
+		}
+		return txnReference;
+		
+	}
+
+	@Override
+	public void update(JVPostingEntry externalAcEntry,String baseCcy, String baseCcyNumber, int baseCcyEditField, boolean addIAEntry, String type) {
+		getjVPostingEntryDAO().update(externalAcEntry, "_Temp");
+		if(addIAEntry){
+			for (JVPostingEntry entry :PostingsPreparationUtil.prepareAccountingEntry(externalAcEntry, baseCcy, baseCcyNumber, baseCcyEditField, false)){
+				entry.setNewRecord(false);
+				getjVPostingEntryDAO().update(entry, "_Temp");
+			}
+		}
+	}
+
+	@Override
+	public void deleteByID(JVPostingEntry jVPostingEntry, String type) {
+		getjVPostingEntryDAO().deleteByID(jVPostingEntry, "_Temp");
+	}
+
+	@Override
+	public JVPostingEntry getJVPostingEntryById(long batchRef,
+	        long txnReference, String account, String txnEntry, BigDecimal txnAmount) {
+		return getjVPostingEntryDAO().getJVPostingEntryById(batchRef, txnReference,
+		        account, txnEntry, txnAmount, "_View");
+	}
+
+	@Override
+	public JVPosting getJVPostingBatchById(long id) {
+		return getJVPostingDAO().getJVPostingById(id, "_TView");
+	}
+
+	@Override
+	public List<JVPostingEntry> getDeletedJVPostingEntryListById(long batchRef) {
+		return getjVPostingEntryDAO().getDeletedJVPostingEntryListById(batchRef,
+		        "_TView");
+	}
+
+	@Override
+	public void updateDeleteFlag(JVPostingEntry jVPostingEntry) {
+		getjVPostingEntryDAO().updateDeleteFlag(jVPostingEntry, "_Temp");
+	}
+
+	@Override
+	public void updateValidationStatus(JVPosting jVPosting) {
+		getJVPostingDAO().updateValidationStatus(jVPosting, "_Temp");
+	}
+
+	@Override
+	public int getMaxSeqNumForCurrentDay(JVPostingEntry jVPostingEntry) {
+		return getjVPostingEntryDAO().getMaxSeqNumForCurrentDay(jVPostingEntry);
+	}
+
+	@Override
+	public void upDateSeqNoForCurrentDayBatch(JVPostingEntry jVPostingEntry) {
+		getjVPostingEntryDAO().upDateSeqNoForCurrentDayBatch(jVPostingEntry);
+	}
+
+	@Override
+	public void updateWorkFlowDetails(JVPostingEntry jVPostingEntry) {
+		getjVPostingEntryDAO().updateWorkFlowDetails(jVPostingEntry, "_Temp");
+	}
+
+	public AccountInterfaceService getAccountInterfaceService() {
+	    return accountInterfaceService;
+    }
+
+	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
+	    this.accountInterfaceService = accountInterfaceService;
+    }
+
+	public PostingsInterfaceService getPostingsInterfaceService() {
+	    return postingsInterfaceService;
+    }
+
+	public void setPostingsInterfaceService(PostingsInterfaceService postingsInterfaceService) {
+	    this.postingsInterfaceService = postingsInterfaceService;
+    }
+	
 }

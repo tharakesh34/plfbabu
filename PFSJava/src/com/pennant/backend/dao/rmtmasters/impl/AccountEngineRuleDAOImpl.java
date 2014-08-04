@@ -126,7 +126,7 @@ public class AccountEngineRuleDAOImpl extends
 	@Override
 	public AccountEngineRule getAccountEngineRuleById(final long id, String type) {
 		logger.debug("Entering");
-		AccountEngineRule accountEngineRule = getAccountEngineRule();
+		AccountEngineRule accountEngineRule = new AccountEngineRule();
 		accountEngineRule.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select AERuleId, AEEvent,  AERule," );

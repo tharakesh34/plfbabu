@@ -56,11 +56,9 @@ import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.GlobalVariable;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -68,10 +66,10 @@ import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
 import com.pennant.backend.model.rulefactory.AEAmountCodesRIAFB;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.SubHeadRule;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
+import com.pennant.eod.util.EODProperties;
 
 public class AccountEngineExecutionRIA implements Serializable {
 
@@ -92,7 +90,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 	private FinanceMain financeMain;
 	private AEAmountCodesRIAFB amountCodesRIAFB;
 	private SubHeadRule subHeadRule = null;
-	private ValueLabel currency = null;
+	private String currencyCode = null;
 	private Customer customer = null;
 	List<GlobalVariable> globalVariableList = new ArrayList<GlobalVariable>();// retrieve values from table--GlobalVariable
 	List<IAccounts> accountsList = new ArrayList<IAccounts>();
@@ -143,6 +141,11 @@ public class AccountEngineExecutionRIA implements Serializable {
 	//Default Constructor
 	public AccountEngineExecutionRIA() {
 		super();
+	}
+	
+	private enum FINEVENT {
+		ADDDBSF , ADDDBSN , ADDDBSP , AMZ , AMZSUSP , DEFRPY , DEFFRQ , EARLYPAY , EARLYSTL , LATEPAY , M_AMZ , M_NONAMZ , 
+		RATCHG , REPAY , WRITEOFF , WRITEBK , GRACEEND , SCDCHG , COMPOUND , PROVSN , DPRCIATE , ISTBILL ;
 	}
 
 	/**
@@ -209,9 +212,14 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 		//Fill Amount Code Detail Object with Respect to Schedule Details
 		String accountingSetId = prepareAmountCodes(dataSet, aeAmountCodes, riaDetailList);
-
-		List<TransactionEntry> transactionEntries = getTransactionEntryDAO()
-		        .getListTransactionEntryById(Long.valueOf(accountingSetId), "_AEView", true);
+		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("PHASE").toString());
+		
+		List<TransactionEntry> transactionEntries = null;
+		if (phase.equals("DAY")) {
+			transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(Long.valueOf(accountingSetId), "_AEView", true);
+		} else {
+			transactionEntries = EODProperties.getTransactionEntryList(Long.valueOf(accountingSetId));
+		}
 
 		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(dataSet,
 		        transactionEntries, riaDetailList, createNow);
@@ -226,7 +234,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 		financeType = null;
 		financeMain = null;
-		currency = null;
+		currencyCode = null;
 		amountCodesRIAFB = null;
 		newAccount = null;
 		accountsMap = new HashMap<String, Object>();
@@ -283,52 +291,96 @@ public class AccountEngineExecutionRIA implements Serializable {
 		// getting values from table---GlobalVariable
 		globalVariableList = SystemParameterDetails.getGlobaVariableList();
 
+		logger.debug("Leaving");
+		return  getAccSetId(dataSet.getFinEvent());
+	}
+	
+	/**
+	 * Method For Fetching Accounting Set ID Depends on Finance Event
+	 * @param finEvent
+	 * @return
+	 */
+	private String getAccSetId(String finEvent){
+		
 		//Execute entries depend on Finance Event
 		String accountingSetId = "";
-		if (dataSet.getFinEvent().equals("ADDDBSF")) {
-			accountingSetId = financeType.getFinAEAddDsbFD();
-		} else if (dataSet.getFinEvent().equals("ADDDBSN")) {
-			accountingSetId = financeType.getFinAEAddDsbFDA();
-		} else if (dataSet.getFinEvent().equals("ADDDBSP")) {
-			accountingSetId = financeType.getFinAEAddDsbOD();
-		} else if (dataSet.getFinEvent().equals("AMZ")) {
-			accountingSetId = financeType.getFinAEAmzNorm();
-		} else if (dataSet.getFinEvent().equals("AMZSUSP")) {
-			accountingSetId = financeType.getFinAEAmzSusp();
-		} else if (dataSet.getFinEvent().equals("DEFRPY")) {
-			accountingSetId = financeType.getFinDefRepay();
-		} else if (dataSet.getFinEvent().equals("DEFFRQ")) {
-			accountingSetId = financeType.getFinDeffreq();
-		} else if (dataSet.getFinEvent().equals("EARLYPAY")) {
-			accountingSetId = financeType.getFinAEEarlyPay();
-		} else if (dataSet.getFinEvent().equals("EARLYSTL")) {
-			accountingSetId = financeType.getFinAEEarlySettle();
-		} else if (dataSet.getFinEvent().equals("LATEPAY")) {
-			accountingSetId = financeType.getFinLatePayRule();
-		} else if (dataSet.getFinEvent().equals("M_AMZ")) {
-			accountingSetId = financeType.getFinToAmz();
-		} else if (dataSet.getFinEvent().equals("M_NONAMZ")) {
-			accountingSetId = financeType.getFinAEToNoAmz();
-		} else if (dataSet.getFinEvent().equals("RATCHG")) {
-			accountingSetId = financeType.getFinAERateChg();
-		} else if (dataSet.getFinEvent().equals("REPAY")) {
-			accountingSetId = financeType.getFinAERepay();
-		} else if (dataSet.getFinEvent().equals("WRITEOFF")) {
-			accountingSetId = financeType.getFinAEWriteOff();
-		} else if (dataSet.getFinEvent().equals("SCDCHG")) {
-			accountingSetId = financeType.getFinSchdChange();
-		} else if (dataSet.getFinEvent().equals("COMPOUND")) {
-			accountingSetId = financeType.getFinAECapitalize();
-		} else if (dataSet.getFinEvent().equals("PROVSN")) {
-			accountingSetId = financeType.getFinProvision();
-		} else if (dataSet.getFinEvent().equals("DPRCIATE")) {
-			accountingSetId = financeType.getFinDepreciationRule();
-		}
+		FINEVENT eventCode = FINEVENT.valueOf(finEvent);
 
-		logger.debug("Leaving");
+		switch (eventCode) {
+	        case ADDDBSF:
+	        	accountingSetId = financeType.getFinAEAddDsbFD();
+		        break;
+	        case ADDDBSN:
+	        	accountingSetId = financeType.getFinAEAddDsbFDA();
+	        	break;
+	        case ADDDBSP:
+	        	accountingSetId = financeType.getFinAEAddDsbOD();
+	        	break;
+	        case AMZ:
+	        	accountingSetId = financeType.getFinAEAmzNorm();
+	        	break;
+	        case AMZSUSP:
+	        	accountingSetId = financeType.getFinAEAmzSusp();
+	        	break;
+	        case DEFRPY:
+	        	accountingSetId = financeType.getFinDefRepay();
+	        	break;
+	        case DEFFRQ:
+	        	accountingSetId = financeType.getFinDeffreq();
+	        	break;
+	        case EARLYPAY:
+	        	accountingSetId = financeType.getFinAEEarlyPay();
+	        	break;
+	        case EARLYSTL:
+	        	accountingSetId = financeType.getFinAEEarlySettle();
+	        	break;
+	        case LATEPAY:
+	        	accountingSetId = financeType.getFinLatePayRule();
+	        	break;
+	        case M_AMZ:
+	        	accountingSetId = financeType.getFinToAmz();
+	        	break;
+	        case M_NONAMZ:
+	        	accountingSetId = financeType.getFinAEToNoAmz();
+	        	break;
+	        case RATCHG:
+	        	accountingSetId = financeType.getFinAERateChg();
+	        	break;
+	        case REPAY:
+	        	accountingSetId = financeType.getFinAERepay();
+	        	break;
+	        case WRITEOFF:
+	        	accountingSetId = financeType.getFinAEWriteOff();
+	        	break;
+	        case WRITEBK:
+	        	accountingSetId = financeType.getFinAEWriteOffBK();
+	        	break;
+	        case GRACEEND:
+	        	accountingSetId = financeType.getFinAEGraceEnd();
+	        	break;
+	        case SCDCHG:
+	        	accountingSetId = financeType.getFinSchdChange();
+	        	break;
+	        case COMPOUND:
+	        	accountingSetId = financeType.getFinAECapitalize();
+	        	break;
+	        case PROVSN:
+	        	accountingSetId = financeType.getFinProvision();
+	        	break;
+	        case DPRCIATE:
+	        	accountingSetId = financeType.getFinDepreciationRule();
+	        	break;
+	        case ISTBILL:
+	        	accountingSetId = "110";//TODO--- Hard code FIXME
+	        	break;
+	        default:
+	        	accountingSetId = "0";
+		        break;
+	    }
+		
 		return accountingSetId;
 	}
-
+	
 	/**
 	 * Method for preparing List of ReturnDataSet objects by executing rules
 	 * 
@@ -382,24 +434,15 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 		//Calling Core Banking Interface Service
 		if ("N".equals(createNow)) {
-			accountsList = getAccountInterfaceService().fetchExistAccount(accountsList, createNow,
-			        true);
-			for (IAccounts interfaceAccount : accountsList) {
-				if (accountsMap.containsKey(interfaceAccount.getTransOrder().trim())) {
-					accountsMap.remove(interfaceAccount.getTransOrder());
-					accountsMap.put(interfaceAccount.getTransOrder(), interfaceAccount);
-				}
-			}
-
-		} else {
-
-			for (IAccounts interfaceAccount : accountsList) {
-				if (accountsMap.containsKey(interfaceAccount.getTransOrder().trim())) {
-					accountsMap.remove(interfaceAccount.getTransOrder());
-					accountsMap.put(interfaceAccount.getTransOrder(), interfaceAccount);
-				}
+			accountsList = getAccountInterfaceService().fetchExistAccount(accountsList, createNow);
+		}
+		for (IAccounts interfaceAccount : accountsList) {
+			if (accountsMap.containsKey(interfaceAccount.getTransOrder().trim())) {
+				accountsMap.remove(interfaceAccount.getTransOrder());
+				accountsMap.put(interfaceAccount.getTransOrder(), interfaceAccount);
 			}
 		}
+		
 
 		for (TransactionEntry transactionEntry : transactionEntries) {
 			if(!transactionEntry.isEntryByInvestment()){
@@ -451,7 +494,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 		returnDataSet.setPostref(branch + "-" + accType + "-" + dataSet.getFinCcy());
 
 		returnDataSet.setPostStatus("S");
-		returnDataSet.setRuleDecider(transactionEntry.getRuleDecider());
+		//returnDataSet.setRuleDecider(transactionEntry.getRuleDecider());
 		returnDataSet.setAmountType(transactionEntry.getChargeType());
 
 		//Set Account Number
@@ -472,7 +515,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 			}else{
 				returnDataSet.setCustCIF(((AEAmountCodesRIA)amountCodesRIA).getCustCIF());
 			}
-			returnDataSet.setFinCcy(dataSet.getFinCcy());
+			returnDataSet.setAcCcy(dataSet.getFinCcy());
 			returnDataSet.setFinBranch(dataSet.getFinBranch());
 			returnDataSet.setFlagCreateNew(acc.getFlagCreateNew());
 			returnDataSet.setFlagCreateIfNF(acc.getFlagCreateIfNF());
@@ -482,9 +525,10 @@ public class AccountEngineExecutionRIA implements Serializable {
 		//Execute Transaction Entry Rule
 		BigDecimal amount = BigDecimal.ZERO;
 		if(transactionEntry.getAmountRule() != null){
-			Object result = getRuleExecutionUtil().executeRule(transactionEntry.getAmountRule(), amountCodesRIA ,globalVariableList);
+			Object result = getRuleExecutionUtil().executeRule(transactionEntry.getAmountRule(), amountCodesRIA ,globalVariableList, dataSet.getFinCcy());
 			amount = new BigDecimal(result == null ? "0" : result.toString());
 		}
+		returnDataSet.setCustId(dataSet.getCustId());
 		returnDataSet.setPostAmount(amount);
 		
 		return returnDataSet;
@@ -528,7 +572,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 			if (!createNow) {
 				accountIdList.add(tranOrder);
-				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+riaNo+transactionEntry.getTransOrder());
+				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+riaNo+"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder, transactionEntry.getAccount());
 			}
@@ -545,7 +589,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 			
 			if (!createNow) {
 				accountIdList.add(tranOrder);
-				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+riaNo+transactionEntry.getTransOrder());
+				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+riaNo+"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder, transactionEntry.getAccount());
 			}
@@ -553,6 +597,24 @@ public class AccountEngineExecutionRIA implements Serializable {
 			logger.debug("Leaving");
 			return newAccount;
 		}
+		
+		//Set Disbursement Account
+		if(transactionEntry.getAccount().equals(PennantConstants.DOWNPAY)){
+			
+			newAccount.setAcType("DOWNPAY");
+			newAccount.setFlagCreateIfNF(false);
+			newAccount.setAccountId(dataSet.getDownPayAccount());
+			
+			if(!createNow){
+				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
+				accountIdList.add(tranOrder);
+			}else{
+				accountsMap.put(tranOrder,transactionEntry.getAccount());
+			}
+			
+			return newAccount;
+		}
+		
 
 		//Set GL&PL Account
 		if (transactionEntry.getAccount().equals(PennantConstants.GLNPL)) {
@@ -568,7 +630,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 			if (!createNow) {
 				accountIdList.add(tranOrder);
-				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+riaNo+transactionEntry.getTransOrder());
+				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+riaNo+"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+ transactionEntry.getAccountType());
 			}
@@ -591,7 +653,55 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 			if (!createNow) {
 				accountIdList.add(tranOrder);
-				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+riaNo+transactionEntry.getTransOrder());
+				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+riaNo+"-"+transactionEntry.getTransOrder());
+			} else {
+				accountsMap.put(tranOrder, transactionEntry.getAccount());
+			}
+
+			logger.debug("Leaving");
+			return newAccount;
+		}
+		
+		//Finance Unearned Profit Account
+		if (transactionEntry.getAccount().equals(PennantConstants.UNEARN)) {
+
+			newAccount.setAcType(financeType.getPftPayAcType());
+
+			if (!createNow) {
+				accountIdList.add(tranOrder);
+				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+riaNo+"-"+transactionEntry.getTransOrder());
+			} else {
+				accountsMap.put(tranOrder, transactionEntry.getAccount());
+			}
+
+			logger.debug("Leaving");
+			return newAccount;
+		}
+		
+		//Finance Unearned Suspense Account
+		if (transactionEntry.getAccount().equals(PennantConstants.SUSP)) {
+
+			newAccount.setAcType(financeType.getFinSuspAcType());
+
+			if (!createNow) {
+				accountIdList.add(tranOrder);
+				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+riaNo+"-"+transactionEntry.getTransOrder());
+			} else {
+				accountsMap.put(tranOrder, transactionEntry.getAccount());
+			}
+
+			logger.debug("Leaving");
+			return newAccount;
+		}
+		
+		//Finance Provision Account
+		if (transactionEntry.getAccount().equals(PennantConstants.PROVSN)) {
+
+			newAccount.setAcType(financeType.getFinProvisionAcType());
+
+			if (!createNow) {
+				accountIdList.add(tranOrder);
+				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+riaNo+"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder, transactionEntry.getAccount());
 			}
@@ -608,7 +718,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 			if (!createNow) {
 				accountIdList.add(tranOrder);
-				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+riaNo+transactionEntry.getTransOrder());
+				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+riaNo+"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder,transactionEntry.getAccount()+ transactionEntry.getAccountType());
 			}
@@ -626,7 +736,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 			
 			if (!createNow) {
 				accountIdList.add(tranOrder);
-				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+riaNo+transactionEntry.getTransOrder());
+				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+riaNo+"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder,transactionEntry.getAccount()+ transactionEntry.getAccountType());
 			}
@@ -650,7 +760,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 			if (!createNow) {
 				accountIdList.add(tranOrder);
-				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+riaNo+transactionEntry.getTransOrder());
+				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+riaNo+"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder,transactionEntry.getAccount());
 			}
@@ -679,21 +789,18 @@ public class AccountEngineExecutionRIA implements Serializable {
 	        InvocationTargetException {
 
 		//System Internal Account checking
-		SystemInternalAccountDefinition accountDefinition = getInternalAccountDefinitionDAO()
-		        .getSystemInternalAccountDefinitionById(entry.getAccountType(), "_AView");
+		String sysIntAcNum = getInternalAccountDefinitionDAO().getSysIntAccNum(entry.getAccountType());
 
-		if (currency == null) {
-			currency = getCurrencyDAO().getCurrencyById(dataSet.getFinCcy());
+		if (currencyCode == null) {
+			currencyCode = getCurrencyDAO().getCurrencyById(dataSet.getFinCcy());
 		}
 
-		int length = accountDefinition.getSIANumber().length()
-		        - Integer.parseInt(SystemParameterDetails.getSystemParameterValue(
+		int length = sysIntAcNum.length() - Integer.parseInt(SystemParameterDetails.getSystemParameterValue(
 		                "SYSINT_ACCOUNT_LEN").toString());
-		String accNumber = dataSet.getFinBranch()
-		        + accountDefinition.getSIANumber().substring(length) + currency.getValue();
+		String accNumber = dataSet.getFinBranch() + sysIntAcNum.substring(length) + currencyCode;
 
 		if (!(StringUtils.trimToEmpty(entry.getAccountSubHeadRule()).equals(""))) {
-			Rule rule = getRuleDAO().getRuleByID(entry.getAccountSubHeadRule(), "SUBHEAD", "", "_View");
+			String amountRule = getRuleDAO().getAmountRule(entry.getAccountSubHeadRule(), "SUBHEAD", "");
 
 
 			subHeadRule = new SubHeadRule();
@@ -705,16 +812,17 @@ public class AccountEngineExecutionRIA implements Serializable {
 				BeanUtils.copyProperties(subHeadRule, customer);
 			}
 
-			subHeadRule.setReqProduct(getFinanceType().getLovDescProductCodeName());
+			subHeadRule.setReqProduct(getFinanceType().getFinCategory());
+			subHeadRule.setReqFinType(getFinanceType().getFinType());
 
-			subHeadRule.setDebitOrCredit(entry.getDebitcredit());
+			/*subHeadRule.setDebitOrCredit(entry.getDebitcredit());
 			if (SystemParameterDetails.getSystemParameterValue("CBI_AVAIL").equals("Y")) {
 				subHeadRule.setReqGLHead(accountDefinition.getSIANumber().substring(0, length));
 			} else {
 				subHeadRule.setReqGLHead("00");
-			}
+			}*/
 
-			Object result = getRuleExecutionUtil().executeRule(rule.getSQLRule(), subHeadRule,globalVariableList);
+			Object result = getRuleExecutionUtil().executeRule(amountRule, subHeadRule,globalVariableList, dataSet.getFinCcy());
 			String subHeadCode = result == null ? "" : result.toString();
 			if (StringUtils.trimToEmpty(subHeadCode).contains(".")) {
 				subHeadCode = subHeadCode.substring(0, subHeadCode.indexOf('.'));
@@ -724,10 +832,9 @@ public class AccountEngineExecutionRIA implements Serializable {
 				logger.debug("Leaving");
 				return accNumber;
 			} else {
-				String sIANumber = accountDefinition.getSIANumber().substring(length,
-				        (accountDefinition.getSIANumber().length() - subHeadCode.length()));
+				String sIANumber = sysIntAcNum.substring(length,(sysIntAcNum.length() - subHeadCode.length()));
 				logger.debug("Leaving");
-				return (dataSet.getFinBranch() + sIANumber + subHeadCode + currency.getValue());
+				return (dataSet.getFinBranch() + sIANumber + subHeadCode + currencyCode);
 			}
 
 		} else {

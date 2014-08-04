@@ -89,8 +89,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.smtmasters.WeekendMasterService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -126,7 +128,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 
 	protected Label recordStatus; // autowired
 	protected Radiogroup userAction;
-	protected Groupbox gb;
+	protected Groupbox groupboxWf;
 
 	// not auto wired vars
 	private WeekendMaster weekendMaster; // overhanded per param
@@ -193,7 +195,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 		doCheckRights();
 		setListWrapper();
 
-		weekendList = PennantAppUtil.getWeekName();
+		weekendList = PennantStaticListUtil.getWeekName();
 
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(),
@@ -256,9 +258,9 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.weekend.setMaxlength(50);
 
 		if (isWorkFlowEnabled()) {
-			this.gb.setVisible(true);
+			this.groupboxWf.setVisible(true);
 		} else {
-			this.gb.setVisible(false);
+			this.groupboxWf.setVisible(false);
 		}
 		logger.debug("Leaving");
 	}
@@ -622,8 +624,8 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Entering doResetInitValues()");
 		this.weekendCode.setValue(this.oldVar_weekendCode);
 		this.weekendDesc.setValue(this.oldVar_weekendDesc);
-		for (int i = 0; i < PennantAppUtil.getWeekName().size(); i++) {
-			if (PennantAppUtil.getWeekName().get(i).equals(this.oldVar_weekend)) {
+		for (int i = 0; i < PennantStaticListUtil.getWeekName().size(); i++) {
+			if (PennantStaticListUtil.getWeekName().get(i).equals(this.oldVar_weekend)) {
 				this.weekend.setSelectedIndex(i);
 			} else {
 				this.weekend.setSelectedIndex(0);
@@ -670,19 +672,13 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 
 		if (!this.weekendCode.isReadonly()) {
 			this.weekendCode
-					.setConstraint("NO EMPTY:"
-							+ Labels.getLabel(
-									"FIELD_NO_EMPTY",
-									new String[] { Labels
-											.getLabel("label_WeekendMasterDialog_WeekendCode.value") }));
+					.setConstraint(new PTStringValidator(Labels
+											.getLabel("label_WeekendMasterDialog_WeekendCode.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 		if (!this.weekendDesc.isReadonly()) {
 			this.weekendDesc
-					.setConstraint("NO EMPTY:"
-							+ Labels.getLabel(
-									"FIELD_NO_EMPTY",
-									new String[] { Labels
-											.getLabel("label_WeekendMasterDialog_WeekendDesc.value") }));
+					.setConstraint(new PTStringValidator(Labels
+											.getLabel("label_WeekendMasterDialog_WeekendDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving doSetValidation()");
 	}
@@ -707,6 +703,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 	 * 
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("rawtypes")
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering doDelete()");
 		final WeekendMaster aWeekendMaster = new WeekendMaster();

@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.administration.securityrole.model.SecurityRoleListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -208,8 +208,8 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 	private void doCheckRights() {
 		logger.debug("Entering into  doCheckRights()");
 		getUserWorkspace().alocateAuthorities("SecurityRoleList");
-		this.button_SecurityRoleList_SecurityRoleSearchDialog.setVisible(
-				getUserWorkspace().isAllowed("button_SecurityRoleList_SecurityRoleFindDialog"));
+//		this.button_SecurityRoleList_SecurityRoleSearchDialog.setVisible(getUserWorkspace().isAllowed("button_SecurityRoleList_SecurityRoleFindDialog"));
+		this.button_SecurityRoleList_SecurityRoleSearchDialog.setVisible(true);
 		this.button_SecurityRoleList_PrintList.setVisible(
 				getUserWorkspace().isAllowed("button_SecurityRoleList_PrintList"));
 		logger.debug("Leaving  doCheckRights()");
@@ -366,7 +366,7 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 	 */
 	public void onClick$button_SecurityRoleList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering into "+event.toString());
-		PTReportUtils.getReport("SecurityRole", getSearchObj());
+		new PTListReportUtils("SecRoleGroups", getSearchObj(),this.pagingSecurityRoleList.getTotalSize()+1);
 		logger.debug("Leaving "+event.toString());
 	}
 

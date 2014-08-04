@@ -43,6 +43,7 @@
 
 package com.pennant.equation.util;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -86,6 +87,25 @@ public final class DateUtility {
 	public static String formatDate(java.util.Date date, String format){
 		SimpleDateFormat df = new SimpleDateFormat(format);
 		return df.format(date) + "";
-	}  
+	}
+	
+	public static java.util.Date convertDateFromAS400(BigDecimal as400Date){
+		if (as400Date != null){
+			if  (BigDecimal.ZERO.equals(as400Date)) {
+				return getUtilDate("1900-01-01","yyyy-MM-dd");
+			}else if (as400Date.equals(new BigDecimal(9999999))){
+				return getUtilDate("2049-12-31","yyyy-MM-dd"); 
+			}else{			
+				SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+				try {
+					return df.parse(new BigDecimal(19000000).add(as400Date).toString());
+				} catch (ParseException pe) {
+					pe.printStackTrace();
+				}
+			}
+		}
+		
+		return null;
+	}
 
 }

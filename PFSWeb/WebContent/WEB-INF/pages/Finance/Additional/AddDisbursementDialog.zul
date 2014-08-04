@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_AddDisbursementDialog" border="normal"
-		apply="${addDisbursementDialogCtrl}" width="525px" height="265px"
+		apply="${addDisbursementDialogCtrl}" width="700px" height="265px"
 		sizable="false"
 		title="${c:l('window_AddDisbursementDialog.title')}" closable="true">
 
@@ -20,7 +20,7 @@
 						style="border:0px">
 						<columns>
 							<column width="200px" />
-                            <column width="260px"/>
+                            <column width="360px"/>
 						</columns>
 						<rows>
 						    <row height="20px">
@@ -41,13 +41,7 @@
 								<label
 									id="label_AddDisbursementDialog_Amount"
 									value="${c:l('label_AddDisbursementDialog_Amount.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<decimalbox id="disbAmount"
-										width="120px" maxlength="15" style="text-align:right">
-									</decimalbox>
-								</hbox>
+								<currencyBox id="disbAmount" />
 							</row>
 							<row>
 								<label
@@ -85,6 +79,21 @@
                                     </combobox>
                                 </hbox>
                             </row>
+							<row id="disbursementAccount">
+                                <label
+                                	id="label_AddDisbursementDialog_DisbAcctId"
+                                	value="${c:l('label_AddDisbursementDialog_DisbAcctId.value')}" />
+                                <hbox>
+                                	<space id="space_disbAcctId"
+                                		spacing="2px" sclass="mandatory" />
+                                	<textbox id="disbAcctId"
+                                		width="175px" readonly="true" />
+                                	<button id="btnSearchDisbAcctId"
+                                		image="/images/icons/LOVSearch.png"
+                                		tabindex="11" height="24px" />
+                                	<label id="disbAcctBal" />
+                                </hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

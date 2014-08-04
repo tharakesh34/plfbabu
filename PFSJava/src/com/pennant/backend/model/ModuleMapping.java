@@ -91,6 +91,7 @@ public class ModuleMapping implements Serializable {
 		setWorkflowType(workflowType);
 		setLovListWidth(lovListWidth);
 	}
+
 	@SuppressWarnings("rawtypes")
 	public ModuleMapping (String moduleName,Class moduleClass,String tabelName,String[] LovFields,String[][] lovCondition,String workflowType,int lovListWidth){
 		setModuleName(moduleName);

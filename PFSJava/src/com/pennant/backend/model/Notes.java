@@ -62,6 +62,9 @@ public class Notes implements java.io.Serializable, Entity {
 	private long 		inputBy;
 	private Date 		inputDate;
 	private String 		usrLogin="";
+	private String      roleCode="";
+	private String      roleDesc="";
+	private String      UsrName="";
 
 	public Notes() {
 	}
@@ -170,6 +173,13 @@ public class Notes implements java.io.Serializable, Entity {
 		this.usrLogin = usrLogin;
 	}
 	
+	public String getRoleCode() {
+		return roleCode;
+	}
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -183,5 +193,21 @@ public class Notes implements java.io.Serializable, Entity {
 
 		return false;
 	}
+
+	public void setRoleDesc(String roleDesc) {
+	    this.roleDesc = roleDesc;
+    }
+
+	public String getRoleDesc() {
+	    return roleDesc;
+    }
+
+	public String getUsrName() {
+	    return UsrName;
+    }
+
+	public void setUsrName(String usrName) {
+	    UsrName = usrName;
+    }
 
 }

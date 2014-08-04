@@ -120,7 +120,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 	@Override
 	public CustomerPhoneNumber getCustomerPhoneNumberByID(final long id,String typeCode,String type) {
 		logger.debug("Entering");
-		CustomerPhoneNumber customerPhoneNumber = getCustomerPhoneNumber();
+		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setId(id);
 		customerPhoneNumber.setPhoneTypeCode(typeCode);
 		
@@ -310,7 +310,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 	 */
 	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(final long id,String type) {
 		logger.debug("Entering");
-		CustomerPhoneNumber customerPhoneNumber = getCustomerPhoneNumber();
+		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(id);
 		
 		StringBuilder selectSql = new StringBuilder();
@@ -332,6 +332,31 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	
+	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id,String type, String phoneType) {
+		logger.debug("Entering");
+		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
+		customerPhoneNumber.setPhoneCustID(id);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber," );
+		if(type.contains("View")){
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
+			selectSql.append(" lovDescCustRecordType ,lovDescCustCIF,lovDescCustShrtName,");
+		}
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" FROM  CustomerPhoneNumbers"+StringUtils.trimToEmpty(type) );
+		selectSql.append(" Where PhoneCustID =:PhoneCustID and PhoneTypeCode =:PhoneTypeCode") ; 
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				CustomerPhoneNumber.class);
+		
+		logger.debug("Leaving ");
+		return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+	}
+	
 	/**
 	 * This method Deletes the Record from the CustomerPhoneNumbers or CustomerPhoneNumbers_Temp.
 	 * if Record not deleted then throws DataAccessException with  error  41003.
@@ -347,7 +372,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 	public void deleteByCustomer(final long id ,String type) {
 		logger.debug("Entering");
 		
-		CustomerPhoneNumber customerPhoneNumber = getCustomerPhoneNumber();
+		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(id);
 		
 		StringBuilder deleteSql = new StringBuilder();

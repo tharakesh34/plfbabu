@@ -23,12 +23,12 @@
 							<combobox id="cbSelectTemplate"
 								width="200px"
 								tooltiptext="${c:l('label_Select_Template.label')}" />
-							<button id="btnDeleteTemplate" height="20"
-								disabled="true" image="/images/icons/btn_exitdoor2_16x16.gif"
-								tooltiptext="${c:l('label_Delete_Template.tooltipText')}" />
 							<button id="btnSaveTemplate" height="20"
-								image="/images/icons/add.png"
+								label="${c:l('btnSave.label')}"
 								tooltiptext="${c:l('label_Add_Template.tooltipText')}" />
+							<button id="btnDeleteTemplate" height="20"
+								disabled="true" label="${c:l('btnDelete.label')}"
+								tooltiptext="${c:l('label_Delete_Template.tooltipText')}" />
 						</hbox>
 					</toolbar>
 
@@ -44,7 +44,20 @@
 
 					</columns>
 					<rows id="dymanicFieldsRows">
-						<row height="20px"></row>
+						<row height="20px" />
+						<row id="rows_formatType" visible="false">
+							<label
+								id="label_ReportPromptFilterCtrl_ReportFormat"
+								value="${c:l('label_ReportPromptFilterCtrl_ReportFormat.value')}" />
+							<space spacing="2px" />
+							<radiogroup>
+								<radio id="pdfFormat"
+									label="${c:l('label_ReportPromptFilterCtrl_PDFFormat.value')}"
+									selected="true" width="200px" />
+								<radio id="excelFormat"
+									label="${c:l('label_ReportPromptFilterCtrl_ExcelFormat.value')}" />
+							</radiogroup>
+						</row>
 					</rows>
 				</grid>
 			</center>

@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,7 +77,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.SalesOfficerService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -437,6 +438,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -466,7 +468,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		this.recordStatus.setValue(aSalesOfficer.getRecordStatus());
 		
-		if(aSalesOfficer.isNew() || aSalesOfficer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aSalesOfficer.isNew() || (aSalesOfficer.getRecordType() != null ? aSalesOfficer.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.salesOffIsActive.setChecked(true);
 			this.salesOffIsActive.setDisabled(true);
 		}
@@ -682,38 +684,23 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		setValidationOn(true);
 
 		if (!this.salesOffCode.isReadonly()){
-			this.salesOffCode.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-							"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-								"label_SalesOfficerDialog_SalesOffCode.value")})));
+			this.salesOffCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		
 		if (!this.salesOffFName.isReadonly()){
-			this.salesOffFName.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHA_REGEX, Labels.getLabel(
-							"MAND_FIELD_CHARACTER",new String[]{Labels.getLabel(
-								"label_SalesOfficerDialog_SalesOffFName.value")})));
+			this.salesOffFName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffFName.value"), PennantRegularExpressions.REGEX_NAME, true));
 		}
 		
 		if (!this.salesOffMName.isReadonly()){
-			this.salesOffMName.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHA_REGEX, Labels.getLabel(
-							"MAND_FIELD_CHARACTER",new String[]{Labels.getLabel(
-								"label_SalesOfficerDialog_SalesOffMName.value")})));
+			this.salesOffMName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffMName.value"), PennantRegularExpressions.REGEX_NAME, true));
 		}
 
 		if (!this.salesOffLName.isReadonly()){
-			this.salesOffLName.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHA_REGEX, Labels.getLabel(
-							"MAND_FIELD_CHARACTER",new String[]{Labels.getLabel(
-								"label_SalesOfficerDialog_SalesOffLName.value")})));
+			this.salesOffLName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffLName.value"), PennantRegularExpressions.REGEX_NAME, true));
 		}
 
 		if (!this.salesOffShrtName.isReadonly()){
-			this.salesOffShrtName.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHA_REGEX, Labels.getLabel(
-							"MAND_FIELD_CHARACTER",new String[]{Labels.getLabel(
-								"label_SalesOfficerDialog_SalesOffShrtName.value")})));
+			this.salesOffShrtName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffShrtName.value"), PennantRegularExpressions.REGEX_NAME, true));
 		}
 		
 		logger.debug("Leaving");
@@ -737,9 +724,8 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescSalesOffDeptName.setConstraint("NO EMPTY:" + Labels.getLabel(
-			"FIELD_NO_EMPTY", new String[] { Labels.getLabel(
-				"label_SalesOfficerDialog_SalesOffDept.value") }));
+		this.lovDescSalesOffDeptName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffDept.value"), 
+				null, true));
 	}
 
 	/**
@@ -882,7 +868,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		// remember the old variables
 		doStoreInitValues();

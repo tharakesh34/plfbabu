@@ -55,14 +55,15 @@ public interface CustomerIncomeDAO {
 
 	public CustomerIncome getCustomerIncome();
 	public CustomerIncome getNewCustomerIncome();
-	public CustomerIncome getCustomerIncomeById(long id,String incomeType,String country,String type);
-	public List<CustomerIncome> getCustomerIncomeByCustomer(final long id,String type);
+	public CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type);
+	public List<CustomerIncome> getCustomerIncomeByCustomer(final long id,boolean isWIF, String type);
 	public void update(CustomerIncome customerIncome,String type);
 	public void delete(CustomerIncome customerIncome,String type);
 	public long save(CustomerIncome customerIncome,String type);
 	public void initialize(CustomerIncome customerIncome);
 	public void refresh(CustomerIncome entity);
-	public void deleteByCustomer(final long id,String type);
+	public void deleteByCustomer(final long id,String type, boolean isWIF);
 	public BigDecimal getTotalIncomeByCustomer(long custId);
+	public void saveBatch(List<CustomerIncome> customerIncome, String type, boolean isWIF);
 	
 }

@@ -59,4 +59,7 @@ public interface FinanceReferenceDetailDAO {
 	public List<FinanceReferenceDetail> getFinanceReferenceDetail(String financeType,String roleCode, String type);
 	public List<FinanceReferenceDetail> getFinRefDetByRoleAndFinType(String financeType,
 			String MandInputInStage, List<String> groupIds, String type);
+	public void deleteByFinType(String finType, String type);
+	public List<Long> getMailTemplatesByFinType(String financeType, String roleCode);
+	public List<FinanceReferenceDetail> getAgreementListByCode(String aggCodes);
 }

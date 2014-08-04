@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
@@ -79,12 +80,12 @@ public class CustomerAddressValidation {
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
-		valueParm[0] = String.valueOf(customerAddres.getCustID());
+		valueParm[0] = StringUtils.trimToEmpty(customerAddres.getLovDescCustCIF());
 		valueParm[1] = customerAddres.getCustAddrType();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CustAddrType") + ":" + valueParm[1];
-
+        errParm[0] = PennantJavaUtil.getLabel("AddressDetails") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
+        errParm[1] = PennantJavaUtil.getLabel("label_CustAddrType") + "-" + valueParm[1];
+		
 		if (customerAddres.isNew()) { // for New record or new record into work
 			// flow
 
@@ -154,6 +155,8 @@ public class CustomerAddressValidation {
 			}
 		}
 
+		auditDetail.setErrorDetail(screenValidations(customerAddres));
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !customerAddres.isWorkflow()) {
@@ -162,4 +165,69 @@ public class CustomerAddressValidation {
 		return auditDetail;
 	}
 
+	/**
+	 * Method For Screen Level Validations
+	 * 
+	 * @param auditHeader
+	 * @param usrLanguage
+	 * @return
+	 */
+	public ErrorDetails  screenValidations(CustomerAddres customerAddres){
+		
+		if(StringUtils.trimToEmpty(customerAddres.getCustAddrHNbr()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("AddressDetails"),
+					Labels.getLabel("label_CustomerAddresDialog_CustAddrHNbr.value"),
+					Labels.getLabel("listheader_CustAddrType.label"),
+					customerAddres.getCustAddrType()},
+					new String[] {});	
+		}
+		
+		if(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("AddressDetails"),
+					Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),
+					Labels.getLabel("listheader_CustAddrType.label"),
+					customerAddres.getCustAddrType()},
+					new String[] {});	
+		}
+		
+		/*if(StringUtils.trimToEmpty(customerAddres.getCustPOBox()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("AddressDetails"),
+					Labels.getLabel("label_CustomerAddresDialog_CustPOBox.value"),
+					Labels.getLabel("listheader_CustAddrType.label"),
+					customerAddres.getCustAddrType()},
+					new String[] {});	
+		}*/
+		
+		if(StringUtils.trimToEmpty(customerAddres.getCustAddrCountry()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("AddressDetails"),
+					Labels.getLabel("label_CustomerAddresDialog_CustAddrCountry.value"),
+					Labels.getLabel("listheader_CustAddrType.label"),
+					customerAddres.getCustAddrType()},
+					new String[] {});	
+		}
+		
+		if(StringUtils.trimToEmpty(customerAddres.getCustAddrProvince()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("AddressDetails"),
+					Labels.getLabel("label_CustomerAddresDialog_CustAddrProvince.value"),
+					Labels.getLabel("listheader_CustAddrType.label"),
+					customerAddres.getCustAddrType()},
+					new String[] {});	
+		}
+		
+		if(StringUtils.trimToEmpty(customerAddres.getCustAddrCity()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("AddressDetails"),
+					Labels.getLabel("label_CustomerAddresDialog_CustAddrCity.value"),
+					Labels.getLabel("listheader_CustAddrType.label"),
+					customerAddres.getCustAddrType()},
+					new String[] {});	
+		}
+	
+		return null;
+	}
 }

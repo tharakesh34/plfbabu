@@ -117,7 +117,7 @@ public class CustomerGroupDAOImpl extends BasisNextidDaoImpl<CustomerGroup> impl
 	@Override
 	public CustomerGroup getCustomerGroupByID(final long id, String type) {
 		logger.debug("Entering");
-		CustomerGroup customerGroup = getCustomerGroup();
+		CustomerGroup customerGroup = new CustomerGroup();
 		customerGroup.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
@@ -138,6 +138,36 @@ public class CustomerGroupDAOImpl extends BasisNextidDaoImpl<CustomerGroup> impl
 		try{
 			customerGroup = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
+			customerGroup = null;
+		}
+		logger.debug("Leaving");
+		return customerGroup;
+	}
+	
+	@Override
+	public CustomerGroup getCustomerGroupByCode(final String id, String type) {
+		logger.debug("Entering");
+		CustomerGroup customerGroup = new CustomerGroup();
+		customerGroup.setCustGrpCode(id);
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append("SELECT CustGrpID, CustGrpCode, CustGrpDesc, CustGrpRO1, CustGrpLimit, CustGrpIsActive,");
+		if(type.contains("View")){
+			selectSql.append(" lovDescCustGrpRO1Name,");
+		}
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+		selectSql.append(" NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" FROM  CustomerGroups");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustGrpCode =:CustGrpCode") ;
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
+		RowMapper<CustomerGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGroup.class);
+		
+		try{
+			customerGroup = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (Exception e) {
 			customerGroup = null;
 		}
 		logger.debug("Leaving");

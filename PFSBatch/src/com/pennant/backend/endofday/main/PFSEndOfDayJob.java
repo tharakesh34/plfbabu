@@ -75,10 +75,9 @@ public class PFSEndOfDayJob {
 		jobParameters = builder.toJobParameters();  
 
 		//Loading End Of Day XML file into Context
-		//ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("PradeepPFSEndOfDayJob.xml");
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("PFSBDEodJob.xml");
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("PFSEquationEodJob.xml");
 		JobLauncher joblauncher = (JobLauncher)context.getBean("jobLauncher");
-		Job job = (Job)context.getBean("PradeepPFSEndOfDayJob");
+		Job job = (Job)context.getBean("PFSEndOfDayJob");
 		
 		try {
 			

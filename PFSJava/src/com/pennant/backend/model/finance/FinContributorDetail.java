@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
@@ -52,6 +54,12 @@ public class FinContributorDetail implements Serializable, Entity {
 
 	public FinContributorDetail(String id) {
 		this.setFinReference(id);
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		
+		return excludeFields;
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

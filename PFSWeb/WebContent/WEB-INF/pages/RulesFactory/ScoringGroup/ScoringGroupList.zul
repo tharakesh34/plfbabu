@@ -23,11 +23,11 @@
 						style="border-style: none;">
 						<button
 							id="button_ScoringGroupList_ScoringGroupSearchDialog"
-							height="24px" label = "${c:l('label_Filter')}"
+							height="24px" label="${c:l('label_Filter')}"
 							autodisable="button_ScoringGroupList_ScoringGroupSearchDialog,button_ScoringGroupList_PrintList,button_ScoringGroupList_NewScoringGroup,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_ScoringGroupList_ScoringGroupSearchDialog.tooltiptext')}" />
 						<button id="button_ScoringGroupList_PrintList"
-							height="24px" label = "${c:l('label_Print')}"
+							height="24px" label="${c:l('label_Print')}"
 							autodisable="button_ScoringGroupList_ScoringGroupSearchDialog,button_ScoringGroupList_PrintList,button_ScoringGroupList_NewScoringGroup,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_ScoringGroupList_PrintList.tooltiptext')}" />
 					</toolbar>
@@ -36,15 +36,15 @@
 					<toolbar align="end" style="border-style: none;">
 						<button
 							id="button_ScoringGroupList_NewScoringGroup" height="24px"
-							label = "${c:l('label_New')}"
+							label="${c:l('label_New')}"
 							autodisable="button_ScoringGroupList_ScoringGroupSearchDialog,button_ScoringGroupList_PrintList,button_ScoringGroupList_NewScoringGroup,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_ScoringGroupList_NewScoringGroup.tooltiptext')}" />
 						<button id="btnRefresh" height="24px"
-							label = "${c:l('label_Refresh')}"
+							label="${c:l('label_Refresh')}"
 							autodisable="button_ScoringGroupList_ScoringGroupSearchDialog,button_ScoringGroupList_PrintList,button_ScoringGroupList_NewScoringGroup,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 						<button id="btnHelp" height="24px"
-							label = "${c:l('label_Help')}"
+							label="${c:l('label_Help')}"
 							autodisable="button_ScoringGroupList_ScoringGroupSearchDialog,button_ScoringGroupList_PrintList,button_ScoringGroupList_NewScoringGroup,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 					</toolbar>
@@ -55,38 +55,136 @@
 				<north border="none" />
 
 				<center border="none">
-
-					<listbox id="listBoxScoringGroup" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
-						<listhead sizable="true">
-							<listheader id="listheader_ScoreGroupCode"
-								label="${c:l('listheader_ScoreGroupCode.label')}" sort="auto"
-								width="14%" />
-							<listheader id="listheader_ScoreGroupName"
-								label="${c:l('listheader_ScoreGroupName.label')}" sort="auto"
-								width="27%" />
-							<listheader id="listheader_CategoryType"
-								label="${c:l('listheader_CategoryType.label')}" sort="auto"
-								width="11%" />
-							<listheader id="listheader_MinScore"
-								label="${c:l('listheader_MinScore.label')}" sort="auto"
-								width="8%" />
-							<listheader id="listheader_Isoverride"
-								label="${c:l('listheader_Isoverride.label')}" sort="auto"
-								width="8%" />
-							<listheader id="listheader_OverrideScore"
-								label="${c:l('listheader_OverrideScore.label')}" sort="auto"
-								width="12%" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
-						</listhead>
-
-					</listbox>
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px">
+							<columns>
+								<column width="17%" />
+								<column width="5%" />
+								<column width="28%" />
+								<column width="17%" />
+								<column width="5%" />
+								<column width="28%" />
+							</columns>
+							<rows>
+								<row visible="false">
+									<label
+										id="label_ScoringGroupSearch_ScoreGroupId"
+										value="${c:l('label_ScoringGroupSearch_ScoreGroupId.value')}" />
+									<listbox
+										id="sortOperator_scoreGroupId" width="43px" mold="select"
+										rows="1" />
+									<longbox id="scoreGroupId"
+										width="171px" maxlength="26" />
+								</row>
+								<row>
+									<label
+										id="label_ScoringGroupSearch_ScoreGroupCode"
+										value="${c:l('label_ScoringGroupSearch_ScoreGroupCode.value')}" />
+									<listbox
+										id="sortOperator_scoreGroupCode" width="43px" mold="select"
+										rows="1" />
+									<textbox id="scoreGroupCode"
+										width="72px" maxlength="8" />
+									<label
+										id="label_ScoringGroupSearch_ScoreGroupName"
+										value="${c:l('label_ScoringGroupSearch_ScoreGroupName.value')}" />
+									<listbox
+										id="sortOperator_scoreGroupName" width="43px" mold="select"
+										rows="1" />
+									<textbox id="scoreGroupName"
+										width="200px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_ScoringGroupSearch_MinScore"
+										value="${c:l('label_ScoringGroupSearch_MinScore.value')}" />
+									<listbox id="sortOperator_minScore"
+										width="43px" mold="select" rows="1" />
+									<intbox id="minScore" width="36px"
+										maxlength="4" />
+									<label
+										id="label_ScoringGroupSearch_Isoverride"
+										value="${c:l('label_ScoringGroupSearch_Isoverride.value')}" />
+									<listbox
+										id="sortOperator_isoverride" width="43px" mold="select"
+										rows="1" />
+									<checkbox id="isoverride"
+										checked="false" />
+								</row>
+								<row>
+									<label
+										id="label_ScoringGroupSearch_OverrideScore"
+										value="${c:l('label_ScoringGroupSearch_OverrideScore.value')}" />
+									<listbox
+										id="sortOperator_overrideScore" width="43px" mold="select"
+										rows="1" />
+									<intbox id="overrideScore"
+										width="36px" maxlength="4" />
+										<label
+										id="label_ScoringGroupSearch_CustCtgCode"
+										value="${c:l('label_ScoringGroupSearch_CustCtgCode.value')}" />
+									<listbox
+										id="sortOperator_CategoryType" width="43px" mold="select"
+										rows="1" />
+									<textbox id="categoryType"
+										width="100px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_ScoringGroupSearch_RecordStatus"
+										value="${c:l('label_ScoringGroupSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_ScoringGroupSearch_RecordType"
+										value="${c:l('label_ScoringGroupSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxScoringGroup" vflex="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_ScoreGroupCode"
+									label="${c:l('listheader_ScoreGroupCode.label')}" sort="auto"
+									width="14%" />
+								<listheader
+									id="listheader_ScoreGroupName"
+									label="${c:l('listheader_ScoreGroupName.label')}" sort="auto"
+									width="27%" />
+								<listheader id="listheader_CategoryType"
+									label="${c:l('listheader_CategoryType.label')}" sort="auto"
+									width="11%" />
+								<listheader id="listheader_MinScore"
+									label="${c:l('listheader_MinScore.label')}" sort="auto"
+									width="8%" />
+								<listheader id="listheader_Isoverride"
+									label="${c:l('listheader_Isoverride.label')}" sort="auto"
+									width="8%" />
+								<listheader
+									id="listheader_OverrideScore"
+									label="${c:l('listheader_OverrideScore.label')}" sort="auto"
+									width="12%" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									width="10%" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									width="10%" />
+							</listhead>
+						</listbox>
+						</div>
 				</center>
 				<south border="none">
 					<paging id="pagingScoringGroupList" />

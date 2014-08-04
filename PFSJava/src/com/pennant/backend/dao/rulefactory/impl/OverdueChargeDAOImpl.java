@@ -122,7 +122,7 @@ public class OverdueChargeDAOImpl extends BasisCodeDAO<OverdueCharge> implements
 	@Override
 	public OverdueCharge getOverdueChargeById(final String id, String type) {
 		logger.debug("Entering");
-		OverdueCharge overdueCharge = getOverdueCharge();
+		OverdueCharge overdueCharge = new OverdueCharge();
 		
 		overdueCharge.setId(id);
 		

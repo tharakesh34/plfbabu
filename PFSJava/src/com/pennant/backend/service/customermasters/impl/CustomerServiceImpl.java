@@ -44,6 +44,7 @@
 package com.pennant.backend.service.customermasters.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,10 +52,12 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.PennantConstants;
@@ -71,6 +74,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerDAO customerDAO;
+	private IncomeTypeDAO incomeTypeDAO;
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -89,12 +93,19 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
+	
+	public void setIncomeTypeDAO(IncomeTypeDAO incomeTypeDAO) {
+	    this.incomeTypeDAO = incomeTypeDAO;
+    }
+	public IncomeTypeDAO getIncomeTypeDAO() {
+	    return incomeTypeDAO;
+    }
 
 	public Customer getCustomer() {
 		return getCustomerDAO().getCustomer(false);
 	}
 	public Customer getNewCustomer() {
-		return getCustomerDAO().getNewCustomer(false);
+		return getCustomerDAO().getNewCustomer(true);
 	}
 
 	/**
@@ -452,5 +463,27 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+	@Override
+    public boolean isJointCustExist(long custID) {
+		logger.debug("Entering");
+		boolean jointCustExist = getCustomerDAO().isJointCustExist(custID);
+		logger.debug("Leaving");
+	    return jointCustExist;
+    }
+	
+	@Override
+    public WIFCustomer getWIFCustomerByID(long custId, String custCRCPR) {
+	    return getCustomerDAO().getWIFCustomerByID(custId, custCRCPR, "_AView");
+    }
+	@Override
+    public Date getCustBlackListedDate(String custCRCPR) {
+	    return getCustomerDAO().getCustBlackListedDate(custCRCPR, "_View");
+    }
+	
+	@Override
+    public String getCustomerByCRCPR(String custCRCPR, String type) {
+	    return getCustomerDAO().getCustomerByCRCPR(custCRCPR, type);
+    }
+
 
 }

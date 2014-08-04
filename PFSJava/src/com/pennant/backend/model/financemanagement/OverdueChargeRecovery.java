@@ -55,38 +55,29 @@ import com.pennant.backend.util.WorkFlowUtil;
  *
  */
 public class OverdueChargeRecovery implements java.io.Serializable {
-	private static final long serialVersionUID = 1L;
-	private String finReference = null;
-	private Date finSchdDate;
+	
+    private static final long serialVersionUID = 128728346836978541L;
+    
+	private String finReference;
+	private Date finODSchdDate;
 	private String finODFor;
-	private String finBranch;
-	private String finType;
-	private long finCustId;
-	private String finCcy;
-	private Date finODDate;
-	private BigDecimal finODPri = new BigDecimal(0);
-	private BigDecimal finODPft = new BigDecimal(0);
-	private BigDecimal finODTot = new BigDecimal(0);
-	private String finODCRuleCode;
-	private String finODCPLAc;
-	private String finODCCAc;
-	private BigDecimal finODCPLShare = new BigDecimal(0);
-	private boolean finODCSweep;
-	private String finODCCustCtg;
-	private String finODCType;
-	private String finODCOn;
-	private BigDecimal finODC = new BigDecimal(0);
-	private int finODCGraceDays;
-	private boolean finODCAlwWaiver;
-	private BigDecimal finODCMaxWaiver = new BigDecimal(0);
-	private BigDecimal finODCPenalty = new BigDecimal(0);
-	private BigDecimal finODCWaived = new BigDecimal(0);
-	private BigDecimal finODCPLPenalty = new BigDecimal(0);
-	private BigDecimal finODCCPenalty = new BigDecimal(0);
-	private BigDecimal finODCPaid = new BigDecimal(0);
-	private BigDecimal finODCWaiverPaid = new BigDecimal(0);
-	private Date finODCLastPaidDate;
-	private String finODCRecoverySts;
+	private Date movementDate;
+	private int seqNo = 0;
+	private int oDDays = 0;
+	private BigDecimal finCurODAmt = BigDecimal.ZERO;
+	private BigDecimal finCurODPri = BigDecimal.ZERO;
+	private BigDecimal finCurODPft = BigDecimal.ZERO;
+	private String penaltyType;
+	private String penaltyCalOn;
+	private BigDecimal penaltyAmtPerc = BigDecimal.ZERO;
+	private BigDecimal penalty = BigDecimal.ZERO;
+	private BigDecimal maxWaiver = BigDecimal.ZERO;
+	private BigDecimal waivedAmt = BigDecimal.ZERO;
+	private BigDecimal penaltyPaid = BigDecimal.ZERO;
+	private BigDecimal penaltyBal = BigDecimal.ZERO;
+	private boolean rcdCanDel = false;
+	
+	//Screen Level Maintenance
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -108,15 +99,15 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	private String lovDescCustShrtName;
 	private Date lovDescFinStartDate;
 	private Date lovDescMaturityDate;
-	private BigDecimal lovDescFinAmount = new BigDecimal(0);
-	private BigDecimal lovDescCurFinAmt = new BigDecimal(0);
-	private BigDecimal lovDescCurSchPriDue = new BigDecimal(0);
-	private BigDecimal lovDescCurSchPftDue = new BigDecimal(0);
-	private BigDecimal lovDescTotOvrDueChrg = new BigDecimal(0);
-	private BigDecimal lovDescTotOvrDueChrgWaived = new BigDecimal(0);
-	private BigDecimal lovDescTotOvrDueChrgPaid = new BigDecimal(0);
-	private BigDecimal lovDescTotOvrDueChrgBal = new BigDecimal(0);
-	private BigDecimal pendingODC = new BigDecimal(0);
+	private BigDecimal lovDescFinAmount = BigDecimal.ZERO;
+	private BigDecimal lovDescCurFinAmt = BigDecimal.ZERO;
+	private BigDecimal lovDescCurSchPriDue = BigDecimal.ZERO;
+	private BigDecimal lovDescCurSchPftDue = BigDecimal.ZERO;
+	private BigDecimal lovDescTotOvrDueChrg = BigDecimal.ZERO;
+	private BigDecimal lovDescTotOvrDueChrgWaived = BigDecimal.ZERO;
+	private BigDecimal lovDescTotOvrDueChrgPaid = BigDecimal.ZERO;
+	private BigDecimal lovDescTotOvrDueChrgBal = BigDecimal.ZERO;
+	private BigDecimal pendingODC = BigDecimal.ZERO;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -130,241 +121,146 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 		this.setId(id);
 	}
 
-	//Getter and Setter methods
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
 	public String getId() {
 		return finReference;
 	}
-	
 	public void setId (String id) {
 		this.finReference = id;
 	}
 	
 	public String getFinReference() {
-		return finReference;
-	}
+    	return finReference;
+    }
 	public void setFinReference(String finReference) {
-		this.finReference = finReference;
-	}
-	
-	
-		
-	
-	public Date getFinSchdDate() {
-		return finSchdDate;
-	}
-	public void setFinSchdDate(Date finSchdDate) {
-		this.finSchdDate = finSchdDate;
-	}
-	
+    	this.finReference = finReference;
+    }
+
+	public Date getFinODSchdDate() {
+    	return finODSchdDate;
+    }
+	public void setFinODSchdDate(Date finODSchdDate) {
+    	this.finODSchdDate = finODSchdDate;
+    }
+
 	public String getFinODFor() {
-		return finODFor;
-	}
+    	return finODFor;
+    }
 	public void setFinODFor(String finODFor) {
-		this.finODFor = finODFor;
-	}
-	
-	public String getFinBranch() {
-		return finBranch;
-	}
-	public void setFinBranch(String finBrnm) {
-		this.finBranch = finBrnm;
-	}
-	
-	public String getFinType() {
-		return finType;
-	}
-	public void setFinType(String finType) {
-		this.finType = finType;
-	}
-	
-	public long getFinCustId() {
-		return finCustId;
-	}
-	public void setFinCustId(long finCustId) {
-		this.finCustId = finCustId;
-	}
-	
-	public String getFinCcy() {
-		return finCcy;
-	}
-	public void setFinCcy(String finCcy) {
-		this.finCcy = finCcy;
-	}
-
-	public Date getFinODDate() {
-		return finODDate;
-	}
-	public void setFinODDate(Date finODDate) {
-		this.finODDate = finODDate;
-	}
-	
-	public BigDecimal getFinODPri() {
-		return finODPri;
-	}
-	public void setFinODPri(BigDecimal finODPri) {
-		this.finODPri = finODPri;
-	}
-	
-	public BigDecimal getFinODPft() {
-		return finODPft;
-	}
-	public void setFinODPft(BigDecimal finODPft) {
-		this.finODPft = finODPft;
-	}
-	
-	public BigDecimal getFinODTot() {
-		return finODTot;
-	}
-	public void setFinODTot(BigDecimal finODTot) {
-		this.finODTot = finODTot;
-	}
-	
-	public String getFinODCRuleCode() {
-		return finODCRuleCode;
-	}
-	public void setFinODCRuleCode(String finODCRuleCode) {
-		this.finODCRuleCode = finODCRuleCode;
-	}
-	
-	public String getFinODCPLAc() {
-		return finODCPLAc;
-	}
-	public void setFinODCPLAc(String finODCPLAc) {
-		this.finODCPLAc = finODCPLAc;
-	}
-	
-	public String getFinODCCAc() {
-		return finODCCAc;
-	}
-	public void setFinODCCAc(String finODCCAc) {
-		this.finODCCAc = finODCCAc;
-	}
-	
-	public BigDecimal getFinODCPLShare() {
-		return finODCPLShare;
-	}
-	public void setFinODCPLShare(BigDecimal finODCPLShare) {
-		this.finODCPLShare = finODCPLShare;
-	}
-	
-	public boolean isFinODCSweep() {
-		return finODCSweep;
-	}
-	public void setFinODCSweep(boolean finODCSweep) {
-		this.finODCSweep = finODCSweep;
-	}
-	
-	public String getFinODCCustCtg() {
-		return finODCCustCtg;
-	}
-	public void setFinODCCustCtg(String finODCCustCtg) {
-		this.finODCCustCtg = finODCCustCtg;
-	}
-	
-	public String getFinODCType() {
-		return finODCType;
-	}
-	public void setFinODCType(String finODCType) {
-		this.finODCType = finODCType;
-	}
-	
-	public String getFinODCOn() {
-		return finODCOn;
-	}
-	public void setFinODCOn(String finODCOn) {
-		this.finODCOn = finODCOn;
-	}
-	
-	public BigDecimal getFinODC() {
-		return finODC;
-	}
-	public void setFinODC(BigDecimal finODC) {
-		this.finODC = finODC;
-	}
-	
-	public int getFinODCGraceDays() {
-		return finODCGraceDays;
-	}
-	public void setFinODCGraceDays(int finODCGraceDays) {
-		this.finODCGraceDays = finODCGraceDays;
-	}
-	
-	public boolean isFinODCAlwWaiver() {
-		return finODCAlwWaiver;
-	}
-	public void setFinODCAlwWaiver(boolean finODCAlwWaiver) {
-		this.finODCAlwWaiver = finODCAlwWaiver;
-	}
-	
-	public BigDecimal getFinODCMaxWaiver() {
-		return finODCMaxWaiver;
-	}
-	public void setFinODCMaxWaiver(BigDecimal finODCMaxWaiver) {
-		this.finODCMaxWaiver = finODCMaxWaiver;
-	}
-	
-	public BigDecimal getFinODCPenalty() {
-		return finODCPenalty;
-	}
-	public void setFinODCPenalty(BigDecimal finODCPenalty) {
-		this.finODCPenalty = finODCPenalty;
-	}
-	
-	public BigDecimal getFinODCWaived() {
-		return finODCWaived;
-	}
-	public void setFinODCWaived(BigDecimal finODCWaived) {
-		this.finODCWaived = finODCWaived;
-	}
-	
-	public BigDecimal getFinODCPLPenalty() {
-		return finODCPLPenalty;
-	}
-	public void setFinODCPLPenalty(BigDecimal finODCPLPenalty) {
-		this.finODCPLPenalty = finODCPLPenalty;
-	}
-	
-	public BigDecimal getFinODCCPenalty() {
-		return finODCCPenalty;
-	}
-	public void setFinODCCPenalty(BigDecimal finODCCPenalty) {
-		this.finODCCPenalty = finODCCPenalty;
-	}
-	
-	public BigDecimal getFinODCPaid() {
-		return finODCPaid;
-	}
-	public void setFinODCPaid(BigDecimal finODCPaid) {
-		this.finODCPaid = finODCPaid;
-	}
-	
-	public BigDecimal getFinODCWaiverPaid() {
-    	return finODCWaiverPaid;
+    	this.finODFor = finODFor;
     }
 
-	public void setFinODCWaiverPaid(BigDecimal finODCWaiverPaid) {
-    	this.finODCWaiverPaid = finODCWaiverPaid;
+	public Date getMovementDate() {
+    	return movementDate;
+    }
+	public void setMovementDate(Date movementDate) {
+    	this.movementDate = movementDate;
     }
 
-	public Date getFinODCLastPaidDate() {
-		return finODCLastPaidDate;
+	public int getSeqNo() {
+    	return seqNo;
+    }
+	public void setSeqNo(int seqNo) {
+    	this.seqNo = seqNo;
+    }
+
+	public int getODDays() {
+    	return oDDays;
+    }
+	public void setODDays(int oDDays) {
+    	this.oDDays = oDDays;
+    }
+
+	public BigDecimal getFinCurODAmt() {
+    	return finCurODAmt;
+    }
+	public void setFinCurODAmt(BigDecimal finCurODAmt) {
+    	this.finCurODAmt = finCurODAmt;
+    }
+
+	public BigDecimal getFinCurODPri() {
+    	return finCurODPri;
+    }
+	public void setFinCurODPri(BigDecimal finCurODPri) {
+    	this.finCurODPri = finCurODPri;
+    }
+
+	public BigDecimal getFinCurODPft() {
+    	return finCurODPft;
+    }
+	public void setFinCurODPft(BigDecimal finCurODPft) {
+    	this.finCurODPft = finCurODPft;
+    }
+
+	public String getPenaltyType() {
+    	return penaltyType;
+    }
+	public void setPenaltyType(String penaltyType) {
+    	this.penaltyType = penaltyType;
+    }
+
+	public String getPenaltyCalOn() {
+    	return penaltyCalOn;
+    }
+	public void setPenaltyCalOn(String penaltyCalOn) {
+    	this.penaltyCalOn = penaltyCalOn;
+    }
+
+	public BigDecimal getPenaltyAmtPerc() {
+    	return penaltyAmtPerc;
+    }
+	public void setPenaltyAmtPerc(BigDecimal penaltyAmtPerc) {
+    	this.penaltyAmtPerc = penaltyAmtPerc;
+    }
+
+	public BigDecimal getPenalty() {
+    	return penalty;
+    }
+	public void setPenalty(BigDecimal penalty) {
+    	this.penalty = penalty;
+    }
+
+	public BigDecimal getMaxWaiver() {
+    	return maxWaiver;
+    }
+	public void setMaxWaiver(BigDecimal maxWaiver) {
+    	this.maxWaiver = maxWaiver;
+    }
+
+	public BigDecimal getWaivedAmt() {
+    	return waivedAmt;
+    }
+	public void setWaivedAmt(BigDecimal waivedAmt) {
+    	this.waivedAmt = waivedAmt;
+    }
+
+	public BigDecimal getPenaltyPaid() {
+    	return penaltyPaid;
 	}
-	public void setFinODCLastPaidDate(Date finODCLastPaidDate) {
-		this.finODCLastPaidDate = finODCLastPaidDate;
-	}
-	
-	public String getFinODCRecoverySts() {
-		return finODCRecoverySts;
-	}
-	public void setFinODCRecoverySts(String finODCRecoverySts) {
-		this.finODCRecoverySts = finODCRecoverySts;
-	}
-	
+	public void setPenaltyPaid(BigDecimal penaltyPaid) {
+    	this.penaltyPaid = penaltyPaid;
+    }
+
+	public BigDecimal getPenaltyBal() {
+    	return penaltyBal;
+    }
+	public void setPenaltyBal(BigDecimal penaltyBal) {
+    	this.penaltyBal = penaltyBal;
+    }
+
+	public boolean isRcdCanDel() {
+    	return rcdCanDel;
+    }
+	public void setRcdCanDel(boolean rcdCanDel) {
+    	this.rcdCanDel = rcdCanDel;
+    }
+
 	public int getVersion() {
 		return version;
 	}
-	
 	public void setVersion(int version) {
 		this.version = version;
 	}
@@ -372,7 +268,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public long getLastMntBy() {
 		return lastMntBy;
 	}
-	
 	public void setLastMntBy(long lastMntBy) {
 		this.lastMntBy = lastMntBy;
 	}
@@ -380,7 +275,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public Timestamp getLastMntOn() {
 		return lastMntOn;
 	}
-
 	public void setLastMntOn(Timestamp lastMntON) {
 		this.lastMntOn = lastMntON;
 	}
@@ -388,7 +282,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
-
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -396,7 +289,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public String getLovValue() {
 		return lovValue;
 	}
-
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -404,7 +296,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public OverdueChargeRecovery getBefImage(){
 		return this.befImage;
 	}
-	
 	public void setBefImage(OverdueChargeRecovery beforeImage){
 		this.befImage=beforeImage;
 	}
@@ -412,7 +303,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public LoginUserDetails getUserDetails() {
 		return userDetails;
 	}
-
 	public void setUserDetails(LoginUserDetails userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -420,7 +310,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public String getRecordStatus() {
 		return recordStatus;
 	}
-	
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
 	}
@@ -428,7 +317,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public String getRoleCode() {
 		return roleCode;
 	}
-	
 	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
 	}
@@ -436,7 +324,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public String getNextRoleCode() {
 		return nextRoleCode;
 	}
-	
 	public void setNextRoleCode(String nextRoleCode) {
 		this.nextRoleCode = nextRoleCode;
 	}
@@ -444,7 +331,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public String getTaskId() {
 		return taskId;
 	}
-	
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
 	}
@@ -452,7 +338,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public String getNextTaskId() {
 		return nextTaskId;
 	}
-	
 	public void setNextTaskId(String nextTaskId) {
 		this.nextTaskId = nextTaskId;
 	}
@@ -460,7 +345,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public String getRecordType() {
 		return recordType;
 	}
-
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
 	}
@@ -468,7 +352,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public String getUserAction() {
 		return userAction;
 	}
-
 	public void setUserAction(String userAction) {
 		this.userAction = userAction;
 	}
@@ -483,7 +366,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public long getWorkflowId() {
 		return workflowId;
 	}
-
 	public void setWorkflowId(long workflowId) {
 		this.workflowId = workflowId;
 	}
@@ -491,7 +373,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public int getLovDescFinFormatter() {
 		return lovDescFinFormatter;
 	}
-
 	public void setLovDescFinFormatter(int lovDescFinFormatter) {
 		this.lovDescFinFormatter = lovDescFinFormatter;
 	}
@@ -499,7 +380,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
-
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
@@ -514,7 +394,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public Date getLovDescFinStartDate() {
 		return lovDescFinStartDate;
 	}
-
 	public void setLovDescFinStartDate(Date lovDescFinStartDate) {
 		this.lovDescFinStartDate = lovDescFinStartDate;
 	}
@@ -522,7 +401,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public Date getLovDescMaturityDate() {
 		return lovDescMaturityDate;
 	}
-
 	public void setLovDescMaturityDate(Date lovDescMaturityDate) {
 		this.lovDescMaturityDate = lovDescMaturityDate;
 	}
@@ -530,7 +408,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public BigDecimal getLovDescFinAmount() {
 		return lovDescFinAmount;
 	}
-
 	public void setLovDescFinAmount(BigDecimal lovDescFinAmount) {
 		this.lovDescFinAmount = lovDescFinAmount;
 	}
@@ -538,7 +415,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public BigDecimal getLovDescCurFinAmt() {
 		return lovDescCurFinAmt;
 	}
-
 	public void setLovDescCurFinAmt(BigDecimal lovDescCurFinAmt) {
 		this.lovDescCurFinAmt = lovDescCurFinAmt;
 	}
@@ -585,7 +461,7 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 		this.lovDescTotOvrDueChrgBal = lovDescTotOvrDueChrgBal;
 	}
 
-	// Overidden Equals method to handle the comparision
+	// Overridden Equals method to handle the comparison
 	public boolean equals(OverdueChargeRecovery overdueChargeRecovery) {
 		return getId() == overdueChargeRecovery.getId();
 	}
@@ -606,7 +482,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public BigDecimal getPendingODC() {
 		return pendingODC;
 	}
-
 	public void setPendingODC(BigDecimal pendingODC) {
 		this.pendingODC = pendingODC;
 	}

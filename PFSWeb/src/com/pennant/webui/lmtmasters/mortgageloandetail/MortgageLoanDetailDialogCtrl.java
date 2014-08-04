@@ -61,24 +61,25 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Caption;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.amtmasters.PropertyDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
@@ -89,16 +90,19 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.lmtmasters.MortgageLoanDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
+import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennant.webui.util.constraint.PTListValidator;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -119,22 +123,31 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window     window_MortgageLoanDetailDialog;            // autoWired
-	protected Longbox    mortgProperty;                              // autoWired
-	protected Decimalbox mortgCurrentValue;                          // autoWired
+	protected ExtendedCombobox    mortgProperty;                              // autoWired
+	protected CurrencyBox 	 mortgCurrentValue;                          // autoWired
 	protected Textbox    mortgPurposeOfLoan;                         // autoWired
-	protected Longbox    mortgPropertyRelation;                      // autoWired
-	protected Longbox    mortgOwnership;                             // autoWired
+	protected ExtendedCombobox    mortgPropertyRelation;                      // autoWired
+	protected ExtendedCombobox    mortgOwnership;                             // autoWired
 	protected Textbox    mortgAddrHNbr;                              // autoWired
 	protected Textbox    mortgAddrFlatNbr;                           // autoWired
 	protected Textbox    mortgAddrStreet;                            // autoWired
 	protected Textbox    mortgAddrLane1;                             // autoWired
 	protected Textbox    mortgAddrLane2;                             // autoWired
 	protected Textbox    mortgAddrPOBox;                             // autoWired
-	protected Textbox    mortgAddrCountry;                           // autoWired
-	protected Textbox    mortgAddrProvince;                          // autoWired
-	protected Textbox    mortgAddrCity;                              // autoWired
+	protected ExtendedCombobox    mortgAddrCountry;                           // autoWired
+	protected ExtendedCombobox    mortgAddrProvince;                          // autoWired
+	protected ExtendedCombobox    mortgAddrCity;                              // autoWired
 	protected Textbox    mortgAddrZIP;                               // autoWired
 	protected Textbox    mortgAddrPhone;                             // autoWired
+	
+	private Textbox mortDeedNo;
+	private Textbox mortRegistrationNo;
+	private Decimalbox mortAreaSF;
+	private Decimalbox mortAreaSM;
+	private Decimalbox mortPricePF;
+	private Intbox mortAge;
+	private Decimalbox mortFinRatio;
+	private Combobox mortStatus;
 	
 	protected Label      recordStatus;                               // autoWired
 	protected Radiogroup userAction;                                 // autoWired
@@ -147,7 +160,7 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
-	private transient long  		oldVar_mortgProperty;
+	private transient String  		oldVar_mortgProperty;
 	private transient BigDecimal  	oldVar_mortgCurrentValue;
 	private transient String  		oldVar_mortgPurposeOfLoan;
 	private transient long  		oldVar_mortgPropertyRelation;
@@ -182,28 +195,11 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	protected Button     btnNotes;                                   // autoWired
 	
 	//Search Button declarations
-	protected Button     btnSearchMortgPropertyRelation;             // autoWired
-	protected Textbox    lovDescMortgPropertyRelationName;           // autoWired
 	private transient String 		oldVar_lovDescMortgPropertyRelationName;
-	
-	protected Button     btnSearchMortgProperty;                     // autoWired
-	protected Textbox    lovDescMortgPropertyName;                   // autoWired
 	private transient String 		oldVar_lovDescMortgPropertyName;
-	
-	protected Button     btnSearchMortgOwnership;                    // autoWired
-	protected Textbox    lovDescMortgOwnershipName;                  // autoWired
 	private transient String 		oldVar_lovDescMortgOwnershipName;
-	
-	protected Button     btnSearchMortgAddrCountry;                  // autoWired
-	protected Textbox    lovDescMortgAddrCountryName;                // autoWired
 	private transient String 		oldVar_lovDescMortgAddrCountryName;
-	
-	protected Button     btnSearchMortgAddrProvince;                 // autoWired
-	protected Textbox    lovDescMortgAddrProvinceName;               // autoWired
 	private transient String 		oldVar_lovDescMortgAddrProvinceName;
-	
-	protected Button     btnSearchMortgAddrCity;                     // autoWired
-	protected Textbox    lovDescMortgAddrCityName;					 // autoWired
 	private transient String 		oldVar_lovDescMortgAddrCityName;
 	
 	// ServiceDAOs / Domain Classes
@@ -212,11 +208,13 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 	//For Dynamically calling of this Controller
 	private Div toolbar;
-	private FinanceMainDialogCtrl financeMainDialogCtrl;
+	private Object financeMainDialogCtrl;
 	private Tabpanel panel = null;
 	private Grid grid_mortgageLoanDetails;
 	protected Caption		caption_mortLoan;
-
+	private transient boolean recSave = false;
+    private transient String  mortgAddrCountryTemp;
+    private transient String  mortgAddrProvinceTemp;
 	/**
 	 * default constructor.<br>
 	 */
@@ -239,9 +237,6 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	public void onCreate$window_MortgageLoanDetailDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
-		
 		if(event.getTarget().getParent() != null){
 			panel = (Tabpanel) event.getTarget().getParent();
 		}
@@ -266,17 +261,16 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		}
 		
 		if(args.containsKey("financeMainDialogCtrl")){
-			this.financeMainDialogCtrl = (FinanceMainDialogCtrl) args.get("financeMainDialogCtrl");
+			this.financeMainDialogCtrl = (Object) args.get("financeMainDialogCtrl");
 			setNewFinance(true);
 			this.mortgageLoanDetail.setWorkflowId(0);
 			this.window_MortgageLoanDetailDialog.setTitle("");
 			this.caption_mortLoan.setVisible(true);
 		}
 		
-		if(args.containsKey("financeMainDialogCtrl")){
-			this.financeMainDialogCtrl = (FinanceMainDialogCtrl) args.get("financeMainDialogCtrl");
-			setNewFinance(true);
-			this.mortgageLoanDetail.setWorkflowId(0);
+		if(args.containsKey("roleCode")){
+			setRole((String) args.get("roleCode"));
+			getUserWorkspace().alocateRoleAuthorities(getRole(), "MortgageLoanDetailDialog");
 		}
 		
 		if(args.containsKey("ccyFormatter")){
@@ -290,6 +284,9 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 			this.userAction	= setListRecordStatus(this.userAction);
 			getUserWorkspace().alocateRoleAuthorities(getRole(), "MortgageLoanDetailDialog");
 		}
+		
+		/* set components visible dependent of the users rights */
+		doCheckRights();
 
 		// READ OVERHANDED params !
 		// we get the mortgageLoanDetailListWindow controller. So we have access
@@ -318,7 +315,7 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	private void doCheckRights() {
 		logger.debug("Entering") ;
 
-		getUserWorkspace().alocateAuthorities("MortgageLoanDetailDialog");
+		getUserWorkspace().alocateAuthorities("MortgageLoanDetailDialog", getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_MortgageLoanDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_MortgageLoanDetailDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_MortgageLoanDetailDialog_btnDelete"));
@@ -432,29 +429,39 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	@SuppressWarnings("unchecked")
 	public void onAssetValidation(Event event){
 		logger.debug("Entering" + event.toString());
-		
+
 		String userAction = "";
 		Map<String,Object> map = new HashMap<String,Object>();
 		if(event.getData() != null){
 			map = (Map<String, Object>) event.getData();
 		}
-	
+
 		if(map.containsKey("userAction")){
 			userAction = (String) map.get("userAction");
 		}
 		doClearMessage();
-		if("Submit".equalsIgnoreCase(userAction)){
+		recSave = false;
+		if(("Save".equalsIgnoreCase(userAction) || "Cancel".equalsIgnoreCase(userAction))
+				&& !map.containsKey("agreement")){
+			recSave = true;
+		}else{
 			doSetValidation();
 			doSetLOVValidation();
 		}
-		
+
 		doWriteComponentsToBean(getMortgageLoanDetail());
 		if(StringUtils.trimToEmpty(getMortgageLoanDetail().getRecordType()).equals("")){
 			getMortgageLoanDetail().setVersion(getMortgageLoanDetail().getVersion() + 1);
 			getMortgageLoanDetail().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			getMortgageLoanDetail().setNewRecord(true);
 		}
-		this.financeMainDialogCtrl.getFinanceDetail().setMortgageLoanDetail(getMortgageLoanDetail());
+		try {
+			financeMainDialogCtrl.getClass().getMethod("setMortgageLoanDetail", MortgageLoanDetail.class).invoke(
+					financeMainDialogCtrl, getMortgageLoanDetail());
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -465,7 +472,11 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	 * */
 	public void onAssetClose(Event event){
 		logger.debug("Entering" + event.toString());
-		this.financeMainDialogCtrl.setAssetDataChanged(isDataChanged());
+			try {
+					financeMainDialogCtrl.getClass().getMethod("setAssetDataChanged", Boolean.class).invoke(financeMainDialogCtrl, isDataChanged());
+			} catch (Exception e) {
+				logger.error(e);
+			}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -474,145 +485,127 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	// ++++++++++++ Search Button Component Events+++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public void onClick$btnSearchMortgProperty(Event event){
+	
+	public void onFulfill$mortgPropertyRelation(Event event){
 		logger.debug("Entering" + event.toString());
 		
-		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,"PropertyDetail");
+		Object dataObject = mortgPropertyRelation.getObject();
 		if (dataObject instanceof String){
-			this.mortgProperty.setText("");
-			this.lovDescMortgPropertyName.setValue("");
+			this.mortgPropertyRelation.setValue(String.valueOf(new Long(0)));
 		}else{
-			PropertyDetail details= (PropertyDetail) dataObject;
+			LovFieldDetail details= (LovFieldDetail) dataObject;
 			if (details != null) {
-				this.mortgProperty.setValue(details.getPropertyDetailId());
-				this.lovDescMortgPropertyName.setValue(details.getPropertyDetailId()+"-"+
-						details.getPropertyDetailDesc());
+				this.mortgPropertyRelation.setValue(String.valueOf(details.getFieldCodeId()));
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onFulfill$mortgOwnership(Event event){
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = mortgOwnership.getObject();
+		if (dataObject instanceof String){
+			this.mortgOwnership.setValue(String.valueOf(new Long(0)));
+		}else{
+			LovFieldDetail details= (LovFieldDetail) dataObject;
+			if (details != null) {
+				this.mortgOwnership.setValue(String.valueOf(details.getFieldCodeId()));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	public void onClick$btnSearchMortgPropertyRelation(Event event){
-		logger.debug("Entering" + event.toString());
-		
-	/*	Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("FieldCode", "PROPREL", Filter.OP_EQUAL);
-*/
-		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,"PropertyRelation");
-		if (dataObject instanceof String){
-			this.mortgPropertyRelation.setText("");
-			this.lovDescMortgPropertyRelationName.setValue("");
-		}else{
-			LovFieldDetail details= (LovFieldDetail) dataObject;
-			if (details != null) {
-				this.mortgPropertyRelation.setValue(details.getFieldCodeId());
-				this.lovDescMortgPropertyRelationName.setValue(details.getFieldCode()+"-"+details.getFieldCodeValue());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
 
-	public void onClick$btnSearchMortgOwnership(Event event){
+	public void onFulfill$mortgAddrCountry(Event event){
 		logger.debug("Entering" + event.toString());
-		
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,
-				"Ownership");
-		if (dataObject instanceof String){
-			this.mortgOwnership.setText("");
-			this.lovDescMortgOwnershipName.setValue("");
-		}else{
-			LovFieldDetail details= (LovFieldDetail) dataObject;
-			if (details != null) {
-				this.mortgOwnership.setValue(details.getFieldCodeId());
-				this.lovDescMortgOwnershipName.setValue(details.getFieldCode()+"-"+
-						details.getFieldCodeValue());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
 	
-	public void onClick$btnSearchMortgAddrCountry(Event event){
-		logger.debug("Entering" + event.toString());
-		
-		String sMortgAddrCountry= this.mortgAddrCountry.getValue();
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,"Country");
+		Object dataObject = mortgAddrCountry.getObject();
 		if (dataObject instanceof String){
 			this.mortgAddrCountry.setValue(dataObject.toString());
-			this.lovDescMortgAddrCountryName.setValue("");
+			this.mortgAddrCountry.setDescription("");
 		}else{
 			Country details= (Country) dataObject;
 			if (details != null) {
 				this.mortgAddrCountry.setValue(details.getCountryCode());
-				this.lovDescMortgAddrCountryName.setValue(details.getCountryCode()+"-"+
-						details.getCountryDesc());
+				this.mortgAddrCountry.setDescription(details.getCountryDesc());
 			}
 		}
-		if (!StringUtils.trimToEmpty(sMortgAddrCountry).equals(this.mortgAddrCountry.getValue())){
+		if (!StringUtils.trimToEmpty(mortgAddrCountryTemp).equals(this.mortgAddrCountry.getValue())){
 			this.mortgAddrProvince.setValue("");
-			this.lovDescMortgAddrProvinceName.setValue("");
+			this.mortgAddrProvince.setDescription("");
 			this.mortgAddrCity.setValue("");
-			this.lovDescMortgAddrCityName.setValue("");
+			this.mortgAddrCity.setDescription("");
+			this.mortgAddrCity.setReadonly(true);	
+			this.mortgAddrCity.setMandatoryStyle(false);	
 		}
 		if(!StringUtils.trimToEmpty(this.mortgAddrCountry.getValue()).equals("")){
-			this.btnSearchMortgAddrProvince.setVisible(true);
+			this.mortgAddrProvince.setReadonly(false);
+			this.mortgAddrProvince.setMandatoryStyle(true);
 		}else{
-			this.btnSearchMortgAddrProvince.setVisible(false);
-			this.btnSearchMortgAddrCity.setVisible(false);		   
+			this.mortgAddrProvince.setReadonly(true);
+			this.mortgAddrCity.setReadonly(true);
+			this.mortgAddrProvince.setMandatoryStyle(false);
+			this.mortgAddrCity.setMandatoryStyle(false);
+			
 		}
+		mortgAddrCountryTemp = this.mortgAddrCountry.getValue();
+		Filter[] filtersProvince = new Filter[1] ;
+		filtersProvince[0]= new Filter("CPCountry", this.mortgAddrCountry.getValue(), Filter.OP_EQUAL);
+		this.mortgAddrProvince.setFilters(filtersProvince);
 		logger.debug("Leaving" + event.toString());
-	}
 	
-	public void onClick$btnSearchMortgAddrProvince(Event event){
+		
+	}	
+	
+	
+	public void onFulfill$mortgAddrProvince(Event event){
 		logger.debug("Entering" + event.toString());
 		
-		String sMortgAddrProvince= this.mortgAddrProvince.getValue();
-
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("CPCountry", this.mortgAddrCountry.getValue(), Filter.OP_EQUAL);
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,
-				"Province",filters);
+		Object dataObject = mortgAddrProvince.getObject();
 		if (dataObject instanceof String){
 			this.mortgAddrProvince.setValue(dataObject.toString());
-			this.lovDescMortgAddrProvinceName.setValue("");
+			this.mortgAddrProvince.setDescription("");
 		}else{
 			Province details= (Province) dataObject;
 			if (details != null) {
 				this.mortgAddrProvince.setValue(details.getCPProvince());
-				this.lovDescMortgAddrProvinceName.setValue(details.getCPProvince()+"-"+
-						details.getCPProvinceName());
+				this.mortgAddrProvince.setDescription(details.getCPProvinceName());
 			}
 		}
 
-		if (!StringUtils.trimToEmpty(sMortgAddrProvince).equals(this.mortgAddrProvince.getValue())){
+		if (!StringUtils.trimToEmpty(mortgAddrProvinceTemp).equals(this.mortgAddrProvince.getValue())){
 			this.mortgAddrCity.setValue("");
-			this.lovDescMortgAddrCityName.setValue("");   
+			this.mortgAddrCity.setDescription("");   
 		}
 		if(!StringUtils.trimToEmpty(this.mortgAddrProvince.getValue()).equals("")){
-			this.btnSearchMortgAddrCity.setVisible(true);		   
+			this.mortgAddrCity.setReadonly(false);
+			this.mortgAddrCity.setMandatoryStyle(true);
 		}else{
-			this.btnSearchMortgAddrCity.setVisible(false);		   
+			this.mortgAddrCity.setReadonly(true);		   
+			this.mortgAddrCity.setMandatoryStyle(false);		   
 		}
+		mortgAddrProvinceTemp= this.mortgAddrProvince.getValue();
+		Filter[] filtersCity = new Filter[1] ;
+		filtersCity[0]= new Filter("PCProvince", this.mortgAddrProvince.getValue(), Filter.OP_EQUAL);
+		this.mortgAddrCity.setFilters(filtersCity);
+		
 		logger.debug("Leaving" + event.toString());
 	}
+
 	
-	public void onClick$btnSearchMortgAddrCity(Event event){
+	public void onFulfill$mortgAddrCity(Event event){
 		logger.debug("Entering" + event.toString());
 		
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("PCProvince", this.mortgAddrProvince.getValue(), Filter.OP_EQUAL);
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_MortgageLoanDetailDialog,"City",filters);
+		Object dataObject = mortgAddrCity.getObject();
 		if (dataObject instanceof String){
 			this.mortgAddrCity.setValue(dataObject.toString());
-			this.lovDescMortgAddrCityName.setValue("");
+			this.mortgAddrCity.setDescription("");
 		}else{
 			City details= (City) dataObject;
 			if (details != null) {
 				this.mortgAddrCity.setValue(details.getPCCity());
-				this.lovDescMortgAddrCityName.setValue(details.getPCCity()+"-"+details.getPCCityName());
+				this.mortgAddrCity.setDescription(details.getPCCityName());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -621,6 +614,9 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++ GUI Process +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	
+	
+	
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
@@ -628,24 +624,84 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
 		this.mortgProperty.setMaxlength(19);
+		this.mortgProperty.setInputAllowed(false);
+		this.mortgProperty.setDisplayStyle(3);
+        this.mortgProperty.setMandatoryStyle(true);
+		this.mortgProperty.setModuleName("PropertyDetail");
+		this.mortgProperty.setValueColumn("PropertyDetailId");
+		this.mortgProperty.setDescColumn("PropertyDetailDesc");
+		this.mortgProperty.setValidateColumns(new String[] { "PropertyDetailId" });		
+		
+		this.mortDeedNo.setMaxlength(50);
+		
+		this.mortAreaSF.setMaxlength(15);
+		this.mortAreaSF.setFormat(PennantConstants.rateFormate9);
+		this.mortAreaSF.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.mortAreaSF.setScale(9);
+		this.mortAreaSM.setMaxlength(15);
+		this.mortAreaSM.setFormat(PennantConstants.rateFormate9);
+		this.mortAreaSM.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.mortAreaSM.setScale(9);
+		
+		this.mortgCurrentValue.setMandatory(true);
 		this.mortgCurrentValue.setMaxlength(18);
 		this.mortgCurrentValue.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		
+		this.mortFinRatio.setMaxlength(18);
+		this.mortFinRatio.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		
+		this.mortPricePF.setMaxlength(18);
+		this.mortPricePF.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		
 		this.mortgPurposeOfLoan.setMaxlength(100);
-		this.mortgPropertyRelation.setMaxlength(19);
-		this.mortgOwnership.setMaxlength(19);
+		
+		this.mortgPropertyRelation.setInputAllowed(false);
+		this.mortgPropertyRelation.setDisplayStyle(3);
+        this.mortgPropertyRelation.setMandatoryStyle(true);
+		this.mortgPropertyRelation.setModuleName("PropertyRelation");
+		this.mortgPropertyRelation.setValueColumn("FieldCodeValue");
+		this.mortgPropertyRelation.setDescColumn("ValueDesc");
+		this.mortgPropertyRelation.setValidateColumns(new String[] { "FieldCodeValue" });
+		
+		this.mortgOwnership.setInputAllowed(false);
+		this.mortgOwnership.setDisplayStyle(3);
+        this.mortgOwnership.setMandatoryStyle(true);
+		this.mortgOwnership.setModuleName("Ownership");
+		this.mortgOwnership.setValueColumn("FieldCodeValue");
+		this.mortgOwnership.setDescColumn("ValueDesc");
+		this.mortgOwnership.setValidateColumns(new String[] { "FieldCodeValue" });
+		
 		this.mortgAddrHNbr.setMaxlength(50);
 		this.mortgAddrFlatNbr.setMaxlength(50);
 		this.mortgAddrStreet.setMaxlength(50);
 		this.mortgAddrLane1.setMaxlength(50);
 		this.mortgAddrLane2.setMaxlength(50);
 		this.mortgAddrPOBox.setMaxlength(8);
+		
 		this.mortgAddrCountry.setMaxlength(2);
+		this.mortgAddrCountry.setMandatoryStyle(true);
+		this.mortgAddrCountry.setModuleName("Country");
+		this.mortgAddrCountry.setValueColumn("CountryCode");
+		this.mortgAddrCountry.setDescColumn("CountryDesc");
+		this.mortgAddrCountry.setValidateColumns(new String[] { "CountryCode" });
+		
 		this.mortgAddrProvince.setMaxlength(8);
+		this.mortgAddrProvince.setModuleName("Province");
+		this.mortgAddrProvince.setValueColumn("CPProvince");
+		this.mortgAddrProvince.setDescColumn("CPProvinceName");
+		this.mortgAddrProvince.setValidateColumns(new String[] { "CPProvince" });
+
 		this.mortgAddrCity.setMaxlength(8);
+		this.mortgAddrCity.setModuleName("City");
+		this.mortgAddrCity.setValueColumn("PCCity");
+		this.mortgAddrCity.setDescColumn("PCCityName");
+		this.mortgAddrCity.setValidateColumns(new String[] { "PCCity" });
+		
+		
 		this.mortgAddrZIP.setMaxlength(10);
-		this.mortgAddrPhone.setMaxlength(50);
-		this.btnSearchMortgAddrProvince.setVisible(false);
-		this.btnSearchMortgAddrCity.setVisible(false);
+		this.mortgAddrPhone.setMaxlength(15);
+		this.mortgAddrProvince.setReadonly(true);
+		this.mortgAddrCity.setReadonly(true);
 
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
@@ -693,7 +749,7 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		}
 
 		if(close){
-			closeDialog(this.window_MortgageLoanDetailDialog, "MortgageLoanDetail");	
+			closeDialog(this.window_MortgageLoanDetailDialog, "MortgageLoanDetailDialog");	
 		}
 
 		logger.debug("Leaving") ;
@@ -721,12 +777,21 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	public void doWriteBeanToComponents(MortgageLoanDetail aMortgageLoanDetail) {
 		logger.debug("Entering") ;
-		this.mortgProperty.setValue(aMortgageLoanDetail.getMortgProperty());
+		this.mortgProperty.setValue(String.valueOf(aMortgageLoanDetail.getMortgProperty()));
 		this.mortgCurrentValue.setValue(PennantAppUtil.formateAmount(
 				aMortgageLoanDetail.getMortgCurrentValue(),this.ccyFormatter));
+		
+		this.mortDeedNo.setValue(aMortgageLoanDetail.getMortDeedNo());
+		this.mortRegistrationNo.setValue(aMortgageLoanDetail.getMortRegistrationNo());
+		this.mortAreaSF.setValue(aMortgageLoanDetail.getMortAreaSF());
+		this.mortAreaSM.setValue(aMortgageLoanDetail.getMortAreaSM());
+		this.mortPricePF.setValue(PennantAppUtil.formateAmount(aMortgageLoanDetail.getMortPricePF(),this.ccyFormatter));
+		this.mortAge.setValue(aMortgageLoanDetail.getMortAge());
+		this.mortFinRatio.setValue(PennantAppUtil.formateAmount(aMortgageLoanDetail.getMortFinRatio(),this.ccyFormatter));
+		fillComboBox(this.mortStatus, aMortgageLoanDetail.getMortStatus(), PennantStaticListUtil.getMortgaugeStatus(), "");
 		this.mortgPurposeOfLoan.setValue(aMortgageLoanDetail.getMortgPurposeOfLoan());
-		this.mortgPropertyRelation.setValue(aMortgageLoanDetail.getMortgPropertyRelation());
-		this.mortgOwnership.setValue(aMortgageLoanDetail.getMortgOwnership());
+		this.mortgPropertyRelation.setValue(String.valueOf(aMortgageLoanDetail.getMortgPropertyRelation()));
+		this.mortgOwnership.setValue(String.valueOf(aMortgageLoanDetail.getMortgOwnership()));
 		this.mortgAddrHNbr.setValue(aMortgageLoanDetail.getMortgAddrHNbr());
 		this.mortgAddrFlatNbr.setValue(aMortgageLoanDetail.getMortgAddrFlatNbr());
 		this.mortgAddrStreet.setValue(aMortgageLoanDetail.getMortgAddrStreet());
@@ -739,27 +804,21 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.mortgAddrZIP.setValue((aMortgageLoanDetail.getMortgAddrZIP()==null)?"":
 			aMortgageLoanDetail.getMortgAddrZIP().trim());
 		this.mortgAddrPhone.setValue(aMortgageLoanDetail.getMortgAddrPhone());
-
 		if (aMortgageLoanDetail.isNewRecord()){
-			this.lovDescMortgPropertyName.setValue("");
-			this.lovDescMortgPropertyRelationName.setValue("");
-			this.lovDescMortgOwnershipName.setValue("");
-			this.lovDescMortgAddrCountryName.setValue("");
-			this.lovDescMortgAddrProvinceName.setValue("");
-			this.lovDescMortgAddrCityName.setValue("");
+			this.mortgProperty.setDescription("");
+			this.mortgPropertyRelation.setDescription("");
+			this.mortgOwnership.setDescription("");
+			this.mortgAddrCountry.setDescription("");
+			this.mortgAddrProvince.setDescription("");
+			this.mortgAddrCity.setDescription("");
 		}else{
-			this.lovDescMortgPropertyName.setValue(aMortgageLoanDetail.getMortgProperty()+"-"+
-					aMortgageLoanDetail.getLovDescMortgPropertyName());
-			this.lovDescMortgPropertyRelationName.setValue(aMortgageLoanDetail.getMortgPropertyRelation()+
-					"-"+aMortgageLoanDetail.getLovDescMortgPropertyRelationName());
-			this.lovDescMortgOwnershipName.setValue(aMortgageLoanDetail.getMortgOwnership()+
-					"-"+aMortgageLoanDetail.getLovDescMortgOwnershipName());
-			this.lovDescMortgAddrCountryName.setValue(aMortgageLoanDetail.getMortgAddrCountry()+
-					"-"+aMortgageLoanDetail.getLovDescMortgAddrCountryName());
-			this.lovDescMortgAddrProvinceName.setValue(aMortgageLoanDetail.getMortgAddrProvince()+
-					"-"+aMortgageLoanDetail.getLovDescMortgAddrProvinceName());
-			this.lovDescMortgAddrCityName.setValue(aMortgageLoanDetail.getMortgAddrCity()+
-					"-"+aMortgageLoanDetail.getLovDescMortgAddrCityName());
+			this.mortgProperty.setDescription(aMortgageLoanDetail.getLovDescMortgPropertyName());
+			
+			this.mortgPropertyRelation.setDescription(aMortgageLoanDetail.getLovDescMortgPropertyRelationName());
+			this.mortgOwnership.setDescription(aMortgageLoanDetail.getLovDescMortgOwnershipName());
+			this.mortgAddrCountry.setDescription(aMortgageLoanDetail.getLovDescMortgAddrCountryName());
+			this.mortgAddrProvince.setDescription(aMortgageLoanDetail.getLovDescMortgAddrProvinceName());
+			this.mortgAddrCity.setDescription(aMortgageLoanDetail.getLovDescMortgAddrCityName());
 		}
 		this.recordStatus.setValue(aMortgageLoanDetail.getRecordStatus());
 		logger.debug("Leaving");
@@ -776,19 +835,51 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aMortgageLoanDetail.setLovDescMortgPropertyName(this.lovDescMortgPropertyName.getValue());
-			aMortgageLoanDetail.setMortgProperty(this.mortgProperty.getValue());	
-		}catch (WrongValueException we ) {
+			aMortgageLoanDetail.setLovDescMortgPropertyName(this.mortgProperty.getDescription());
+			aMortgageLoanDetail.setMortgProperty(Long.valueOf(this.mortgProperty.getValue()));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.mortgCurrentValue.getValue()!=null){
-				aMortgageLoanDetail.setMortgCurrentValue(PennantAppUtil.unFormateAmount(
-						this.mortgCurrentValue.getValue(), this.ccyFormatter));
+			if (this.mortgCurrentValue.getValue() != null) {
+				aMortgageLoanDetail.setMortgCurrentValue(PennantAppUtil.unFormateAmount(this.mortgCurrentValue.getValue(), this.ccyFormatter));
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aMortgageLoanDetail.setMortDeedNo(this.mortDeedNo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortRegistrationNo(this.mortRegistrationNo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortPricePF(PennantAppUtil.unFormateAmount(this.mortPricePF.getValue(),this.ccyFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortAge(this.mortAge.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aMortgageLoanDetail.setMortFinRatio(PennantAppUtil.unFormateAmount(this.mortFinRatio.getValue(),this.ccyFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.mortStatus.getSelectedItem()!=null && !this.mortStatus.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
+				aMortgageLoanDetail.setMortStatus(this.mortStatus.getSelectedItem().getValue().toString());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+			
 		try {
 			aMortgageLoanDetail.setMortgPurposeOfLoan(this.mortgPurposeOfLoan.getValue());
 		}catch (WrongValueException we ) {
@@ -796,14 +887,14 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		}
 		try {
 			aMortgageLoanDetail.setLovDescMortgPropertyRelationName(
-					this.lovDescMortgPropertyRelationName.getValue());
-			aMortgageLoanDetail.setMortgPropertyRelation(this.mortgPropertyRelation.getValue());	
+					this.mortgPropertyRelation.getDescription());
+			aMortgageLoanDetail.setMortgPropertyRelation(Long.valueOf(this.mortgPropertyRelation.getValue()));	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			aMortgageLoanDetail.setLovDescMortgOwnershipName(this.lovDescMortgOwnershipName.getValue());
-			aMortgageLoanDetail.setMortgOwnership(this.mortgOwnership.getValue());	
+			aMortgageLoanDetail.setLovDescMortgOwnershipName(this.mortgOwnership.getDescription());
+			aMortgageLoanDetail.setMortgOwnership(Long.valueOf(this.mortgOwnership.getValue()));	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -838,20 +929,20 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 			wve.add(we);
 		}
 		try {
-			aMortgageLoanDetail.setLovDescMortgAddrCountryName(this.lovDescMortgAddrCountryName.getValue());
-			aMortgageLoanDetail.setMortgAddrCountry(this.mortgAddrCountry.getValue());	
+			aMortgageLoanDetail.setLovDescMortgAddrCountryName(this.mortgAddrCountry.getDescription());
+			aMortgageLoanDetail.setMortgAddrCountry(StringUtils.trimToEmpty(this.mortgAddrCountry.getValidatedValue()));	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			aMortgageLoanDetail.setLovDescMortgAddrProvinceName(this.lovDescMortgAddrProvinceName.getValue());
-			aMortgageLoanDetail.setMortgAddrProvince(this.mortgAddrProvince.getValue());	
+			aMortgageLoanDetail.setLovDescMortgAddrProvinceName(this.mortgAddrProvince.getDescription());
+			aMortgageLoanDetail.setMortgAddrProvince(this.mortgAddrProvince.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			aMortgageLoanDetail.setLovDescMortgAddrCityName(this.lovDescMortgAddrCityName.getValue());
-			aMortgageLoanDetail.setMortgAddrCity(this.mortgAddrCity.getValue());	
+			aMortgageLoanDetail.setLovDescMortgAddrCityName(this.mortgAddrCity.getDescription());
+			aMortgageLoanDetail.setMortgAddrCity(this.mortgAddrCity.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -869,21 +960,46 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+		if(!recSave){
+			if (wve.size()>0) {
+				WrongValueException [] wvea = new WrongValueException[wve.size()];
+				for (int i = 0; i < wve.size(); i++) {
+					wvea[i] = (WrongValueException) wve.get(i);
+				}
+				if(panel != null){
+					((Tab)panel.getParent().getParent().getFellowIfAny("loanAssetTab")).setSelected(true);
+				}
+				throw new WrongValuesException(wvea);
 			}
-			if(panel != null){
-				((Tab)panel.getParent().getParent().getFellowIfAny("loanAssetTab")).setSelected(true);
-			}
-			throw new WrongValuesException(wvea);
 		}
-
+		validateMortAreaSFSM(aMortgageLoanDetail);
 		aMortgageLoanDetail.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
-
+	
+	
+	public void validateMortAreaSFSM(MortgageLoanDetail aMortgageLoanDetail){
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		this.mortAreaSF.setConstraint(new PTDecimalValidator(Labels.getLabel("label_MortgageLoanDetailDialog_mortAreaSF.value"),9,false,false,99999));
+		this.mortAreaSM.setConstraint(new PTDecimalValidator(Labels.getLabel("label_MortgageLoanDetailDialog_mortAreaSM.value"),9,false,false,99999));
+		try{
+			aMortgageLoanDetail.setMortAreaSF(this.mortAreaSF.getValue());
+		}catch(WrongValueException wea){
+			wve.add(wea);
+		}
+		try{
+			aMortgageLoanDetail.setMortAreaSM(this.mortAreaSM.getValue());
+		}catch(WrongValueException wea){
+			wve.add(wea);
+		}
+		WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if(wve.size() > 0){
+		for (int i = 0; i < wve.size(); i++) {
+			wvea[i] = (WrongValueException) wve.get(i);
+		}
+		throw new WrongValuesException(wvea);
+		}
+}
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -961,14 +1077,14 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	private void doStoreInitValues() {
 		logger.debug("Entering");
-		this.oldVar_mortgProperty = this.mortgProperty.longValue();
-		this.oldVar_lovDescMortgPropertyName = this.lovDescMortgPropertyName.getValue();
+		this.oldVar_mortgProperty = this.mortgProperty.getValue();
+		this.oldVar_lovDescMortgPropertyName = this.mortgProperty.getDescription();
 		this.oldVar_mortgCurrentValue = this.mortgCurrentValue.getValue();
 		this.oldVar_mortgPurposeOfLoan = this.mortgPurposeOfLoan.getValue();
-		this.oldVar_mortgPropertyRelation = this.mortgPropertyRelation.longValue();
-		this.oldVar_lovDescMortgPropertyRelationName = this.lovDescMortgPropertyRelationName.getValue();
-		this.oldVar_mortgOwnership = this.mortgOwnership.longValue();
-		this.oldVar_lovDescMortgOwnershipName = this.lovDescMortgOwnershipName.getValue();
+		this.oldVar_mortgPropertyRelation = Long.valueOf(this.mortgPropertyRelation.getValue());
+		this.oldVar_lovDescMortgPropertyRelationName = this.mortgPropertyRelation.getDescription();
+		this.oldVar_mortgOwnership = Long.valueOf(this.mortgOwnership.getValue());
+		this.oldVar_lovDescMortgOwnershipName = this.mortgOwnership.getDescription();
 		this.oldVar_mortgAddrHNbr = this.mortgAddrHNbr.getValue();
 		this.oldVar_mortgAddrFlatNbr = this.mortgAddrFlatNbr.getValue();
 		this.oldVar_mortgAddrStreet = this.mortgAddrStreet.getValue();
@@ -976,11 +1092,11 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.oldVar_mortgAddrLane2 = this.mortgAddrLane2.getValue();
 		this.oldVar_mortgAddrPOBox = this.mortgAddrPOBox.getValue();
 		this.oldVar_mortgAddrCountry = this.mortgAddrCountry.getValue();
-		this.oldVar_lovDescMortgAddrCountryName = this.lovDescMortgAddrCountryName.getValue();
+		this.oldVar_lovDescMortgAddrCountryName = this.mortgAddrCountry.getDescription();
 		this.oldVar_mortgAddrProvince = this.mortgAddrProvince.getValue();
-		this.oldVar_lovDescMortgAddrProvinceName = this.lovDescMortgAddrProvinceName.getValue();
+		this.oldVar_lovDescMortgAddrProvinceName = this.mortgAddrProvince.getDescription();
 		this.oldVar_mortgAddrCity = this.mortgAddrCity.getValue();
-		this.oldVar_lovDescMortgAddrCityName = this.lovDescMortgAddrCityName.getValue();
+		this.oldVar_lovDescMortgAddrCityName = this.mortgAddrCity.getDescription();
 		this.oldVar_mortgAddrZIP = this.mortgAddrZIP.getValue();
 		this.oldVar_mortgAddrPhone = this.mortgAddrPhone.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
@@ -993,13 +1109,13 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	private void doResetInitValues() {
 		logger.debug("Entering");
 		this.mortgProperty.setValue(this.oldVar_mortgProperty);
-		this.lovDescMortgPropertyName.setValue(this.oldVar_lovDescMortgPropertyName);
+		this.mortgProperty.setDescription(this.oldVar_lovDescMortgPropertyName);
 		this.mortgCurrentValue.setValue(this.oldVar_mortgCurrentValue);
 		this.mortgPurposeOfLoan.setValue(this.oldVar_mortgPurposeOfLoan);
-		this.mortgPropertyRelation.setValue(this.oldVar_mortgPropertyRelation);
-		this.lovDescMortgPropertyRelationName.setValue(this.oldVar_lovDescMortgPropertyRelationName);
-		this.mortgOwnership.setValue(this.oldVar_mortgOwnership);
-		this.lovDescMortgOwnershipName.setValue(this.oldVar_lovDescMortgOwnershipName);
+		this.mortgPropertyRelation.setValue(String.valueOf(this.oldVar_mortgPropertyRelation));
+		this.mortgPropertyRelation.setDescription(this.oldVar_lovDescMortgPropertyRelationName);
+		this.mortgOwnership.setValue(String.valueOf(this.oldVar_mortgOwnership));
+		this.mortgOwnership.setDescription(this.oldVar_lovDescMortgOwnershipName);
 		this.mortgAddrHNbr.setValue(this.oldVar_mortgAddrHNbr);
 		this.mortgAddrFlatNbr.setValue(this.oldVar_mortgAddrFlatNbr);
 		this.mortgAddrStreet.setValue(this.oldVar_mortgAddrStreet);
@@ -1007,11 +1123,11 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.mortgAddrLane2.setValue(this.oldVar_mortgAddrLane2);
 		this.mortgAddrPOBox.setValue(this.oldVar_mortgAddrPOBox);
 		this.mortgAddrCountry.setValue(this.oldVar_mortgAddrCountry);
-		this.lovDescMortgAddrCountryName.setValue(this.oldVar_lovDescMortgAddrCountryName);
+		this.mortgAddrCountry.setDescription(this.oldVar_lovDescMortgAddrCountryName);
 		this.mortgAddrProvince.setValue(this.oldVar_mortgAddrProvince);
-		this.lovDescMortgAddrProvinceName.setValue(this.oldVar_lovDescMortgAddrProvinceName);
+		this.mortgAddrProvince.setDescription(this.oldVar_lovDescMortgAddrProvinceName);
 		this.mortgAddrCity.setValue(this.oldVar_mortgAddrCity);
-		this.lovDescMortgAddrCityName.setValue(this.oldVar_lovDescMortgAddrCityName);
+		this.mortgAddrCity.setDescription(this.oldVar_lovDescMortgAddrCityName);
 		this.mortgAddrZIP.setValue(this.oldVar_mortgAddrZIP);
 		this.mortgAddrPhone.setValue(this.oldVar_mortgAddrPhone);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
@@ -1042,10 +1158,10 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		if (this.oldVar_mortgPurposeOfLoan != this.mortgPurposeOfLoan.getValue()) {
 			return true;
 		}
-		if (this.oldVar_mortgPropertyRelation != this.mortgPropertyRelation.getValue()) {
+		if (this.oldVar_mortgPropertyRelation != Long.valueOf(this.mortgPropertyRelation.getValue())) {
 			return true;
 		}
-		if (this.oldVar_mortgOwnership != this.mortgOwnership.getValue()) {
+		if (this.oldVar_mortgOwnership != Long.valueOf(this.mortgOwnership.getValue())){
 			return true;
 		}
 		if (this.oldVar_mortgAddrHNbr != this.mortgAddrHNbr.getValue()) {
@@ -1094,44 +1210,57 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 			this.mortgCurrentValue.setConstraint(new AmountValidator(18,0,
 					Labels.getLabel("label_MortgageLoanDetailDialog_MortgCurrentValue.value")));
 		}	
+		if (!this.mortDeedNo.isReadonly()) {
+			this.mortDeedNo.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_mortDeedNo.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
+		}
+/*		if (!this.mortRegistrationNo.isReadonly()) {
+			this.mortRegistrationNo.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_mortRegistrationNo.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
+		}*/
+		if (!this.mortStatus.isDisabled()) {
+			this.mortStatus.setConstraint(new PTListValidator(Labels.getLabel("label_MortgageLoanDetailDialog_mortStatus.value"), PennantStaticListUtil.getMortgaugeStatus()));
+		}
+	/*	if (!this.mortAreaSF.isReadonly()) {
+			this.mortAreaSF.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_mortAreaSF.value"),PennantRegularExpressions.REGEX_NUMERIC, true));
+		}
+		if (!this.mortAreaSM.isReadonly()) {
+			this.mortAreaSM.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_mortAreaSM.value"),PennantRegularExpressions.REGEX_NUMERIC, true));
+		}
+		if (!this.mortAge.isReadonly()) {
+			this.mortAge.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_mortAge.value"),PennantRegularExpressions.REGEX_NUMERIC, true));
+		}*/
+		if (!this.mortPricePF.isReadonly()) {
+			this.mortPricePF.setConstraint(new AmountValidator(18, 0, Labels.getLabel("label_MortgageLoanDetailDialog_mortPricePF.value")));
+		}
+/*		if (!this.mortFinRatio.isReadonly()) {
+			this.mortFinRatio.setConstraint(new AmountValidator(18, 0, Labels.getLabel("label_MortgageLoanDetailDialog_mortFinRatio.value")));
+		}*/
 		if (!this.mortgPurposeOfLoan.isReadonly()){
-			this.mortgPurposeOfLoan.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgPurposeOfLoan.value")}));
+			this.mortgPurposeOfLoan.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgPurposeOfLoan.value"), PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}	
-		if (!this.mortgAddrHNbr.isReadonly()){
-			this.mortgAddrHNbr.setConstraint(new SimpleConstraint(PennantConstants.HNO_FNO_REGEX, 
-				Labels.getLabel("MAND_FIELD_ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
-						"label_MortgageLoanDetailDialog_MortgAddrHNbr.value")})));
+		/*if (!this.mortgAddrHNbr.isReadonly()){
+			this.mortgAddrHNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrHNbr.value"),
+					PennantRegularExpressions.REGEX_ADDRESS, true));
 		}	
 		if (!this.mortgAddrFlatNbr.isReadonly()){
-			this.mortgAddrFlatNbr.setConstraint(new SimpleConstraint(PennantConstants.HNO_FNO_REGEX, 
-					Labels.getLabel("MAND_FIELD_ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
-							"label_MortgageLoanDetailDialog_MortgAddrFlatNbr.value")})));
+			this.mortgAddrFlatNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrFlatNbr.value"),
+					PennantRegularExpressions.REGEX_ADDRESS, true));
 		}	
 		if (!this.mortgAddrStreet.isReadonly()){
-
-			this.mortgAddrStreet.setConstraint(new SimpleConstraint(PennantConstants.ADDRESS_LINE1_REGEX, 
-					Labels.getLabel("MAND_FIELD_CHAR_NUMBER",new String[]{Labels.getLabel(
-							"label_MortgageLoanDetailDialog_MortgAddrStreet.value")})));
+			this.mortgAddrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrStreet.value"),PennantRegularExpressions.REGEX_ADDRESS, true));
 		}	
 	
 		if (!this.mortgAddrPOBox.isReadonly()){
-			this.mortgAddrPOBox.setConstraint(new SimpleConstraint(PennantConstants.NUM_REGEX, 
-					Labels.getLabel("FIELD_NUMBER",new String[]{Labels.getLabel(
-							"label_MortgageLoanDetailDialog_MortgAddrPOBox.value")})));
+			this.mortgAddrPOBox.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrPOBox.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}	
 		if (!this.mortgAddrZIP.isReadonly()){
-			this.mortgAddrZIP.setConstraint(new SimpleConstraint(PennantConstants.ZIP_REGEX, 
-					Labels.getLabel("FIELD_NUMBER",new String[]{Labels.getLabel(
-							"label_MortgageLoanDetailDialog_MortgAddrZIP.value")})));
-
+			this.mortgAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrZIP.value"),
+					PennantRegularExpressions.REGEX_ZIP, false));
 		}	
 		if (!this.mortgAddrPhone.isReadonly()){
-			this.mortgAddrPhone.setConstraint(new SimpleConstraint(PennantConstants.PH_REGEX,
-					Labels.getLabel("MAND_FIELD_PHONENUM",new String[]{Labels.getLabel(
-							"label_MortgageLoanDetailDialog_MortgAddrPhone.value")})));
+			this.mortgAddrPhone.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrPhone.value"),true));
 		}	
-		logger.debug("Leaving");
+*/		logger.debug("Leaving");
 	}
 
 	/**
@@ -1141,6 +1270,14 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.mortgCurrentValue.setConstraint("");
+		this.mortDeedNo.setConstraint("");
+		this.mortStatus.setConstraint("");
+		this.mortRegistrationNo.setConstraint("");
+		this.mortAreaSF.setConstraint("");
+		this.mortAreaSM.setConstraint("");
+		this.mortAge.setConstraint("");
+		this.mortPricePF.setConstraint("");
+		this.mortFinRatio.setConstraint("");
 		this.mortgPurposeOfLoan.setConstraint("");
 		this.mortgAddrHNbr.setConstraint("");
 		this.mortgAddrFlatNbr.setConstraint("");
@@ -1156,23 +1293,17 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescMortgPropertyName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgProperty.value")}));
+		this.mortgProperty.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgProperty.value"), null, true));
 		
-		this.lovDescMortgPropertyRelationName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgPropertyRelation.value")}));
+		this.mortgPropertyRelation.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgPropertyRelation.value"), null, true));
 		
-		this.lovDescMortgOwnershipName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgOwnership.value")}));
+		this.mortgOwnership.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgOwnership.value"), null, true));
 		
-		this.lovDescMortgAddrCountryName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCountry.value")}));
+		this.mortgAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCountry.value"), null, true));
 		
-		this.lovDescMortgAddrProvinceName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrProvince.value")}));
+		this.mortgAddrProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrProvince.value"), null, true));
 		
-		this.lovDescMortgAddrCityName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCity.value")}));
+		this.mortgAddrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCity.value"), null, true));
 		logger.debug("Leaving");
 	}
 	/**
@@ -1180,12 +1311,12 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescMortgPropertyName.setConstraint("");
-		this.lovDescMortgPropertyRelationName.setConstraint("");
-		this.lovDescMortgOwnershipName.setConstraint("");
-		this.lovDescMortgAddrCountryName.setConstraint("");
-		this.lovDescMortgAddrProvinceName.setConstraint("");
-		this.lovDescMortgAddrCityName.setConstraint("");
+		this.mortgProperty.setConstraint("");
+		this.mortgPropertyRelation.setConstraint("");
+		this.mortgOwnership.setConstraint("");
+		this.mortgAddrCountry.setConstraint("");
+		this.mortgAddrProvince.setConstraint("");
+		this.mortgAddrCity.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1194,20 +1325,31 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	private void doClearMessage() {
 		logger.debug("Entering");
-		this.lovDescMortgPropertyName.setErrorMessage("");
+		this.mortgProperty.setErrorMessage("");
 		this.mortgCurrentValue.setErrorMessage("");
 		this.mortgPurposeOfLoan.setErrorMessage("");
-		this.lovDescMortgPropertyRelationName.setErrorMessage("");
-		this.lovDescMortgOwnershipName.setErrorMessage("");
+		this.mortgPropertyRelation.setErrorMessage("");
+		this.mortgOwnership.setErrorMessage("");
 		this.mortgAddrHNbr.setErrorMessage("");
 		this.mortgAddrFlatNbr.setErrorMessage("");
 		this.mortgAddrStreet.setErrorMessage("");
 		this.mortgAddrPOBox.setErrorMessage("");
-		this.lovDescMortgAddrCountryName.setErrorMessage("");
-		this.lovDescMortgAddrProvinceName.setErrorMessage("");
-		this.lovDescMortgAddrCityName.setErrorMessage("");
+		this.mortgAddrCountry.setErrorMessage("");
+		this.mortgAddrProvince.setErrorMessage("");
+		this.mortgAddrCity.setErrorMessage("");
 		this.mortgAddrZIP.setErrorMessage("");
 		this.mortgAddrPhone.setErrorMessage("");
+		this.mortDeedNo.setErrorMessage("");
+		this.mortStatus.setErrorMessage("");
+		this.mortRegistrationNo.setErrorMessage("");
+		this.mortAreaSF.setErrorMessage("");
+		this.mortAreaSM.setErrorMessage("");
+		this.mortAge.setErrorMessage("");
+		this.mortPricePF.setErrorMessage("");
+		this.mortFinRatio.setErrorMessage("");
+		this.mortAreaSF.setErrorMessage("");
+		this.mortAreaSM.setErrorMessage("");
+		
 		logger.debug("Leaving");
 	}
 
@@ -1266,7 +1408,7 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 			try {
 				if(doProcess(aMortgageLoanDetail,tranType)){
 					refreshList();
-					closeDialog(this.window_MortgageLoanDetailDialog, "MortgageLoanDetail"); 
+					closeDialog(this.window_MortgageLoanDetailDialog, "MortgageLoanDetailDialog"); 
 				}
 			}catch (DataAccessException e){
 				logger.error("doDelete " + e);
@@ -1306,22 +1448,29 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		}else{
 			this.btnCancel.setVisible(true);
 		}
-		this.btnSearchMortgProperty.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgProperty"));
+		this.mortgProperty.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgProperty"));
 		this.mortgCurrentValue.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgCurrentValue"));
 		this.mortgPurposeOfLoan.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgPurposeOfLoan"));
-		this.btnSearchMortgPropertyRelation.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgPropertyRelation"));
-		this.btnSearchMortgOwnership.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgOwnership"));
+		this.mortgPropertyRelation.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgPropertyRelation"));
+		this.mortgOwnership.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgOwnership"));
 		this.mortgAddrHNbr.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrHNbr"));
 		this.mortgAddrFlatNbr.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrFlatNbr"));
 		this.mortgAddrStreet.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrStreet"));
 		this.mortgAddrLane1.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrLane1"));
 		this.mortgAddrLane2.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrLane2"));
 		this.mortgAddrPOBox.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPOBox"));
-		this.btnSearchMortgAddrCountry.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgAddrCountry"));
-		this.btnSearchMortgAddrProvince.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgAddrProvince"));
-		this.btnSearchMortgAddrCity.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgAddrCity"));
+		this.mortgAddrCountry.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrCountry"));
 		this.mortgAddrZIP.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrZIP"));
 		this.mortgAddrPhone.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));
+		
+		this.mortDeedNo.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
+		this.mortRegistrationNo.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
+		this.mortAreaSF.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
+		this.mortAreaSM.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
+		this.mortPricePF.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
+		this.mortAge.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
+		this.mortFinRatio.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
+		this.mortStatus.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1353,20 +1502,20 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchMortgProperty.setDisabled(true);
+		this.mortgProperty.setReadonly(true);
 		this.mortgCurrentValue.setReadonly(true);
 		this.mortgPurposeOfLoan.setReadonly(true);
-		this.btnSearchMortgPropertyRelation.setDisabled(true);
-		this.btnSearchMortgOwnership.setDisabled(true);
+		this.mortgPropertyRelation.setReadonly(true);
+		this.mortgOwnership.setReadonly(true);
 		this.mortgAddrHNbr.setReadonly(true);
 		this.mortgAddrFlatNbr.setReadonly(true);
 		this.mortgAddrStreet.setReadonly(true);
 		this.mortgAddrLane1.setReadonly(true);
 		this.mortgAddrLane2.setReadonly(true);
 		this.mortgAddrPOBox.setReadonly(true);
-		this.btnSearchMortgAddrCountry.setDisabled(true);
-		this.btnSearchMortgAddrProvince.setDisabled(true);
-		this.btnSearchMortgAddrCity.setDisabled(true);
+		this.mortgAddrCountry.setReadonly(true);
+		this.mortgAddrProvince.setReadonly(true);
+		this.mortgAddrCity.setReadonly(true);
 		this.mortgAddrZIP.setReadonly(true);
 		this.mortgAddrPhone.setReadonly(true);
 
@@ -1389,14 +1538,14 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	public void doClear() {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
-		this.mortgProperty.setText("");
-		this.lovDescMortgPropertyName.setValue("");
+		this.mortgProperty.setValue("");
+		this.mortgProperty.setDescription("");
 		this.mortgCurrentValue.setValue("");
 		this.mortgPurposeOfLoan.setValue("");
-		this.mortgPropertyRelation.setText("");
-		this.lovDescMortgPropertyRelationName.setValue("");
-		this.mortgOwnership.setText("");
-		this.lovDescMortgOwnershipName.setValue("");
+		this.mortgPropertyRelation.setValue(String.valueOf(new Long(0)));
+		this.mortgPropertyRelation.setDescription("");
+		this.mortgOwnership.setValue(String.valueOf(new Long(0)));
+		this.mortgOwnership.setDescription("");
 		this.mortgAddrHNbr.setValue("");
 		this.mortgAddrFlatNbr.setValue("");
 		this.mortgAddrStreet.setValue("");
@@ -1404,11 +1553,11 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.mortgAddrLane2.setValue("");
 		this.mortgAddrPOBox.setValue("");
 		this.mortgAddrCountry.setValue("");
-		this.lovDescMortgAddrCountryName.setValue("");
+		this.mortgAddrCountry.setDescription("");
 		this.mortgAddrProvince.setValue("");
-		this.lovDescMortgAddrProvinceName.setValue("");
+		this.mortgAddrProvince.setDescription("");
 		this.mortgAddrCity.setValue("");
-		this.lovDescMortgAddrCityName.setValue("");
+		this.mortgAddrCity.setDescription("");
 		this.mortgAddrZIP.setValue("");
 		this.mortgAddrPhone.setValue("");
 		logger.debug("Leaving");
@@ -1429,6 +1578,7 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		// force validation, if on, than execute by component.getValue()
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		doSetValidation();
+		doSetLOVValidation();
 		// fill the MortgageLoanDetail object with the components data
 		doWriteComponentsToBean(aMortgageLoanDetail);
 
@@ -1462,9 +1612,8 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		// save it to database
 		try {
 			if(doProcess(aMortgageLoanDetail,tranType)){
-				doWriteBeanToComponents(aMortgageLoanDetail);
 				refreshList();
-				closeDialog(this.window_MortgageLoanDetailDialog, "MortgageLoanDetail");
+				closeDialog(this.window_MortgageLoanDetailDialog, "MortgageLoanDetailDialog");
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);

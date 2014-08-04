@@ -42,6 +42,9 @@
 */
 
 package com.pennant.backend.dao.masters;
+import java.util.List;
+
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 
 public interface SystemInternalAccountDefinitionDAO {
@@ -54,4 +57,6 @@ public interface SystemInternalAccountDefinitionDAO {
 	public String save(SystemInternalAccountDefinition systemInternalAccountDefinition,String type);
 	public void initialize(SystemInternalAccountDefinition systemInternalAccountDefinition);
 	public void refresh(SystemInternalAccountDefinition entity);
+	public String getSysIntAccNum(String sIACode);
+	public List<ValueLabel> getEntrySIANumDetails();
 }

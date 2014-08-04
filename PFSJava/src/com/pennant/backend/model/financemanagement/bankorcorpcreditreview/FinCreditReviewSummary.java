@@ -12,6 +12,10 @@ public class FinCreditReviewSummary implements java.io.Serializable ,Entity{
 	private long summaryId  = Long.MIN_VALUE;;
 	private long detailId;
 	private String subCategoryCode;
+	private long lovDescCategoryID;
+	private String lovDescCategoryDesc;
+	private String lovDescSubCategoryDesc;
+	private String lovDescCreditRevCode;
 	private BigDecimal itemValue;	
 	private int version;
 	private long lastMntBy;
@@ -33,6 +37,9 @@ public class FinCreditReviewSummary implements java.io.Serializable ,Entity{
 	private String lovDescBankName;
 	private int lovDescNoOfShares;
 	private BigDecimal lovDescMarketPrice;
+	private String auditYear;
+	private String creditRevCode;
+	private int lovDescCcyEditField;
 	
 	
 	public BigDecimal getLovDescConversionRate() {
@@ -51,6 +58,14 @@ public class FinCreditReviewSummary implements java.io.Serializable ,Entity{
     	this.lovDescBankName = lovDescBankName;
     }
 
+	public String getLovDescCreditRevCode() {
+    	return lovDescCreditRevCode;
+    }
+
+	public void setLovDescCreditRevCode(String lovDescCreditRevCode) {
+    	this.lovDescCreditRevCode = lovDescCreditRevCode;
+    }
+
 	public FinCreditReviewSummary(){}
 	
 	public boolean isNew() {
@@ -65,6 +80,14 @@ public class FinCreditReviewSummary implements java.io.Serializable ,Entity{
 	public long getDetailId() {
     	return detailId;
     }
+	public String getLovDescSubCategoryDesc() {
+    	return lovDescSubCategoryDesc;
+    }
+
+	public void setLovDescSubCategoryDesc(String lovDescSubCategoryDesc) {
+    	this.lovDescSubCategoryDesc = lovDescSubCategoryDesc;
+    }
+
 	public void setDetailId(long detailId) {
     	this.detailId = detailId;
     }	
@@ -217,6 +240,46 @@ public class FinCreditReviewSummary implements java.io.Serializable ,Entity{
 
 	public BigDecimal getLovDescMarketPrice() {
 	    return lovDescMarketPrice;
+    }
+
+	public long getLovDescCategoryID() {
+    	return lovDescCategoryID;
+    }
+
+	public void setLovDescCategoryID(long lovDescCategoryID) {
+    	this.lovDescCategoryID = lovDescCategoryID;
+    }
+
+	public String getLovDescCategoryDesc() {
+    	return lovDescCategoryDesc;
+    }
+
+	public void setLovDescCategoryDesc(String lovDescCategoryDesc) {
+    	this.lovDescCategoryDesc = lovDescCategoryDesc;
+    }
+
+	public void setAuditYear(String auditYear) {
+	    this.auditYear = auditYear;
+    }
+
+	public String getAuditYear() {
+	    return auditYear;
+    }
+
+	public void setCreditRevCode(String creditRevCode) {
+	    this.creditRevCode = creditRevCode;
+    }
+
+	public String getCreditRevCode() {
+	    return creditRevCode;
+    }
+
+	public int getLovDescCcyEditField() {
+    	return lovDescCcyEditField;
+    }
+
+	public void setLovDescCcyEditField(int lovDescCcyEditField) {
+    	this.lovDescCcyEditField = lovDescCcyEditField;
     }
 
 }

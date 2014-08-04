@@ -67,8 +67,8 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class CustomerNotesTypeServiceImpl extends
 		GenericService<CustomerNotesType> implements CustomerNotesTypeService {
-	private static Logger logger = Logger
-			.getLogger(CustomerNotesTypeServiceImpl.class);
+	
+	private static Logger logger = Logger.getLogger(CustomerNotesTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerNotesTypeDAO customerNotesTypeDAO;

@@ -51,6 +51,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -75,6 +76,7 @@ public class ReportSearchTemplatePromptDialogCtrl extends  GFCBaseListCtrl<Repor
 	protected ReportGenerationPromptDialogCtrl  reportGenerationPromptDialogCtrl;
 	private  ReportConfigurationService reportConfigurationService;
     private  long reportId;
+    protected Radiogroup        saveTemplateFor;               // autowired
 
 	/**
 	 * On creating Window 
@@ -121,8 +123,12 @@ public class ReportSearchTemplatePromptDialogCtrl extends  GFCBaseListCtrl<Repor
 					,new String[] {Labels.getLabel("label_Template.label")}));
 
 		}else{
+			long templateUser = -1; 
+			if(saveTemplateFor.getSelectedIndex() == 0){
+				templateUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrID();
+			}
 			boolean  isSaved = this.reportGenerationPromptDialogCtrl.doSaveTemplate(
-					reportId ,getUserWorkspace().getUserDetails().getSecurityUser().getUsrID(),this.templateName.getValue());
+					reportId ,templateUser,this.templateName.getValue());
 			if(isSaved){
 				this.window_ReportSearchTemplateDialog.onClose();
 			}

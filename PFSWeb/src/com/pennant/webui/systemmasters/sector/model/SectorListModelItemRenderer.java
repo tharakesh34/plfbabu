@@ -62,13 +62,11 @@ import com.pennant.util.PennantAppUtil;
  */
 public class SectorListModelItemRenderer implements ListitemRenderer<Sector>, Serializable {
 
-
 	private static final long serialVersionUID = 2238613076188385979L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+	
 	@Override
 	public void render(Listitem item, Sector sector, int count) throws Exception {
 
-		//final Sector sector = (Sector) data;
 		Listcell lc;
 		lc = new Listcell(sector.getSectorCode());
 		lc.setParent(item);

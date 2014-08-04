@@ -48,6 +48,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 
 public interface FinanceScheduleDetailService {
 	
@@ -64,4 +65,5 @@ public interface FinanceScheduleDetailService {
 	BigDecimal getTotalRepayAmount(String finReference);
 	BigDecimal getTotalUnpaidPriAmount(String finReference);
 	BigDecimal getTotalUnpaidPftAmount(String finReference);
+	OverdueChargeRecovery getOverdueChargeRecovery(String finReference);
 }

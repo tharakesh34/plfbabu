@@ -56,8 +56,22 @@ import com.pennant.backend.util.WorkFlowUtil;
 public class VehicleDealer implements java.io.Serializable, Entity {
 	private static final long serialVersionUID = 1L;
 	private long dealerId = Long.MIN_VALUE;
+	private String dealerType;
 	private String dealerName;
-	private int version;
+	private String dealerTelephone;
+	private String dealerFax;
+	private String dealerAddress1;
+	private String dealerAddress2;
+	private String dealerAddress3;
+	private String dealerAddress4;
+	private String dealerCountry;
+	private String dealerCity;
+	private String dealerProvince;
+	private String lovDescCountry;
+	private String lovDescCity;
+	private String lovDescProvince;
+	
+    private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private boolean newRecord=false;
@@ -103,9 +117,14 @@ public class VehicleDealer implements java.io.Serializable, Entity {
 		this.dealerId = dealerId;
 	}
 	
-	
-		
-	
+	public String getDealerType() {
+    	return dealerType;
+    }
+
+	public void setDealerType(String dealerType) {
+    	this.dealerType = dealerType;
+    }
+
 	public String getDealerName() {
 		return dealerName;
 	}
@@ -116,6 +135,102 @@ public class VehicleDealer implements java.io.Serializable, Entity {
 	
 		
 	
+	public String getDealerTelephone() {
+    	return dealerTelephone;
+    }
+
+	public void setDealerTelephone(String dealerTelephone) {
+    	this.dealerTelephone = dealerTelephone;
+    }
+
+	public String getDealerFax() {
+    	return dealerFax;
+    }
+
+	public void setDealerFax(String dealerFax) {
+    	this.dealerFax = dealerFax;
+    }
+
+	public String getDealerAddress1() {
+    	return dealerAddress1;
+    }
+
+	public void setDealerAddress1(String dealerAddress1) {
+    	this.dealerAddress1 = dealerAddress1;
+    }
+
+	public String getDealerAddress2() {
+    	return dealerAddress2;
+    }
+
+	public void setDealerAddress2(String dealerAddress2) {
+    	this.dealerAddress2 = dealerAddress2;
+    }
+	
+	public String getDealerAddress3() {
+    	return dealerAddress3;
+    }
+
+	public void setDealerAddress3(String dealerAddress3) {
+    	this.dealerAddress3 = dealerAddress3;
+    }
+
+	public String getDealerAddress4() {
+    	return dealerAddress4;
+    }
+
+	public void setDealerAddress4(String dealerAddress4) {
+    	this.dealerAddress4 = dealerAddress4;
+    }
+
+	public String getDealerCountry() {
+    	return dealerCountry;
+    }
+
+	public void setDealerCountry(String dealerCountry) {
+    	this.dealerCountry = dealerCountry;
+    }
+
+	public String getDealerCity() {
+    	return dealerCity;
+    }
+
+	public void setDealerCity(String dealerCity) {
+    	this.dealerCity = dealerCity;
+    }
+
+	public String getDealerProvince() {
+    	return dealerProvince;
+    }
+
+	public void setDealerProvince(String dealerProvince) {
+    	this.dealerProvince = dealerProvince;
+    }
+
+	public String getLovDescCountry() {
+    	return lovDescCountry;
+    }
+
+	public void setLovDescCountry(String lovDescCountry) {
+    	this.lovDescCountry = lovDescCountry;
+    }
+
+	public String getLovDescCity() {
+    	return lovDescCity;
+    }
+
+	public void setLovDescCity(String lovDescCity) {
+    	this.lovDescCity = lovDescCity;
+    }
+
+	public String getLovDescProvince() {
+    	return lovDescProvince;
+    }
+
+	public void setLovDescProvince(String lovDescProvince) {
+    	this.lovDescProvince = lovDescProvince;
+    }
+
 	public int getVersion() {
 		return version;
 	}

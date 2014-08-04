@@ -79,6 +79,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -1083,7 +1084,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl implements Seria
 	}	
 
 	private void doSetLOVValidation() {
-		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceRepayPriorityDialog_FinType.value")}));
+		this.lovDescFinTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceRepayPriorityDialog_FinType.value"), null, true));
 	}
 	private void doRemoveLOVValidation() {
 		this.lovDescFinTypeName.setConstraint("");

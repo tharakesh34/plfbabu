@@ -118,7 +118,7 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 	@Override
 	public AgreementDefinition getAgreementDefinitionById(final long id, String type) {
 		logger.debug("Entering");
-		AgreementDefinition agreementDefinition = getAgreementDefinition();
+		AgreementDefinition agreementDefinition = new AgreementDefinition();
 		
 		agreementDefinition.setId(id);
 		
@@ -156,8 +156,8 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 	@Override
 	public AgreementDefinition getAgreementDefinitionByCode(final String aggCode, String type) {
 		logger.debug("Entering");
-		AgreementDefinition agreementDefinition = getAgreementDefinition();
 		
+		AgreementDefinition agreementDefinition = new AgreementDefinition();
 		agreementDefinition.setAggCode(aggCode);
 		
 		StringBuilder selectSql = new StringBuilder("Select AggId, AggCode, AggName, AggDesc, " );

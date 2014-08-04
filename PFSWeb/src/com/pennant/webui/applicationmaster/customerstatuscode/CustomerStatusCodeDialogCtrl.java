@@ -65,7 +65,6 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,8 +77,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.CustomerStatusCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -108,8 +109,9 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 
 	protected Textbox 	custStsCode; 					// autoWired
 	protected Textbox 	custStsDescription; 			// autoWired
+	protected Intbox 	dueDays; 						// autoWired
+	protected Checkbox 	suspendProfit; 					// autoWired
 	protected Checkbox 	custStsIsActive; 				// autoWired
-	protected Intbox 	custStsOrder; 					// autoWired
 
 	protected Label 		recordStatus; 				// autoWired
 	protected Radiogroup 	userAction;
@@ -125,8 +127,9 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 	// on the values are edited since the last initialization.
 	private transient String 	oldVar_custStsCode;
 	private transient String 	oldVar_custStsDescription;
+	private transient int 		oldVar_dueDays;
+	private transient boolean 	oldVar_suspendProfit;
 	private transient boolean 	oldVar_custStsIsActive;
-	private transient int 		oldVar_custStsOrder;
 	private transient String 	oldVar_recordStatus;
 
 	private transient boolean validationOn;
@@ -224,7 +227,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		// Empty sent any required attributes
 		this.custStsCode.setMaxlength(8);
 		this.custStsDescription.setMaxlength(50);
-		this.custStsOrder.setMaxlength(8);
+		this.dueDays.setMaxlength(4);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -430,11 +433,12 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 
 		this.custStsCode.setValue(aCustomerStatusCode.getCustStsCode());
 		this.custStsDescription.setValue(aCustomerStatusCode.getCustStsDescription());
+		this.dueDays.setValue(aCustomerStatusCode.getDueDays());
+		this.suspendProfit.setChecked(aCustomerStatusCode.isSuspendProfit());
 		this.custStsIsActive.setChecked(aCustomerStatusCode.isCustStsIsActive());
-		this.custStsOrder.setValue(aCustomerStatusCode.getCustStsOrder());
 		this.recordStatus.setValue(aCustomerStatusCode.getRecordStatus());
 		
-		if(aCustomerStatusCode.isNew() || aCustomerStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aCustomerStatusCode.isNew() || (aCustomerStatusCode.getRecordType() != null ? aCustomerStatusCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.custStsIsActive.setChecked(true);
 			this.custStsIsActive.setDisabled(true);
 		}
@@ -464,12 +468,17 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 			wve.add(we);
 		}
 		try {
-			aCustomerStatusCode.setCustStsIsActive(this.custStsIsActive.isChecked());
+			aCustomerStatusCode.setDueDays(this.dueDays.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerStatusCode.setCustStsOrder(this.custStsOrder.getValue());
+			aCustomerStatusCode.setSuspendProfit(this.suspendProfit.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerStatusCode.setCustStsIsActive(this.custStsIsActive.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -560,8 +569,9 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		
 		this.oldVar_custStsCode = this.custStsCode.getValue();
 		this.oldVar_custStsDescription = this.custStsDescription.getValue();
+		this.oldVar_dueDays = this.dueDays.intValue();
+		this.oldVar_suspendProfit = this.suspendProfit.isChecked();
 		this.oldVar_custStsIsActive = this.custStsIsActive.isChecked();
-		this.oldVar_custStsOrder = this.custStsOrder.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
 	}
@@ -574,8 +584,9 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		
 		this.custStsCode.setValue(this.oldVar_custStsCode);
 		this.custStsDescription.setValue(this.oldVar_custStsDescription);
+		this.dueDays.setValue(this.oldVar_dueDays);
+		this.suspendProfit.setChecked(this.oldVar_suspendProfit);
 		this.custStsIsActive.setChecked(this.oldVar_custStsIsActive);
-		this.custStsOrder.setValue(this.oldVar_custStsOrder);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
 		if (isWorkFlowEnabled()) {
@@ -600,7 +611,10 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		if (this.oldVar_custStsDescription != this.custStsDescription.getValue()) {
 			return true;
 		}
-		if (this.oldVar_custStsOrder!= this.custStsOrder.getValue()) {
+		if (this.oldVar_dueDays!= this.dueDays.intValue()) {
+			return true;
+		}
+		if (this.oldVar_suspendProfit != this.suspendProfit.isChecked()) {
 			return true;
 		}
 		if (this.oldVar_custStsIsActive != this.custStsIsActive.isChecked()) {
@@ -618,20 +632,17 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		setValidationOn(true);
 
 		if (!this.custStsCode.isReadonly()){
-			this.custStsCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_CustomerStatusCodeDialog_CustStsCode.value")})));
+			this.custStsCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerStatusCodeDialog_CustStsCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.custStsDescription.isReadonly()){
-			this.custStsDescription.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_CustomerStatusCodeDialog_CustStsDescription.value")})));
+			this.custStsDescription.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerStatusCodeDialog_CustStsDescription.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
-		if (!this.custStsOrder.isReadonly()) {
-			this.custStsOrder.setConstraint(new IntValidator(4,Labels.getLabel(
-			"label_CustomerStatusCodeDialog_CustStsOrder.value")));
+		if (!this.dueDays.isReadonly()) {
+			this.dueDays.setConstraint(new IntValidator(4,Labels.getLabel(
+			"label_CustomerStatusCodeDialog_DueDays.value")));
 		}
 
 		logger.debug("Leaving");
@@ -645,7 +656,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		setValidationOn(false);
 		this.custStsCode.setConstraint("");
 		this.custStsDescription.setConstraint("");
-		this.custStsOrder.setConstraint("");
+		this.dueDays.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -668,7 +679,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Entering");
 		this.custStsCode.setErrorMessage("");
 		this.custStsDescription.setErrorMessage("");
-		this.custStsOrder.setErrorMessage("");
+		this.dueDays.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -761,8 +772,9 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 			this.btnCancel.setVisible(true);
 		}
 		this.custStsDescription.setReadonly(isReadOnly("CustomerStatusCodeDialog_custStsDescription"));
+		this.dueDays.setDisabled(isReadOnly("CustomerStatusCodeDialog_dueDays"));
+		this.suspendProfit.setDisabled(isReadOnly("CustomerStatusCodeDialog_suspendProfit"));
 		this.custStsIsActive.setDisabled(isReadOnly("CustomerStatusCodeDialog_custStsIsActive"));
-		this.custStsOrder.setDisabled(isReadOnly("CustomerStatusCodeDialog_CustStsOrder"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -790,8 +802,9 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Entering");
 		this.custStsCode.setReadonly(true);
 		this.custStsDescription.setReadonly(true);
+		this.dueDays.setReadonly(true);
+		this.suspendProfit.setDisabled(true);
 		this.custStsIsActive.setDisabled(true);
-		this.custStsOrder.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -814,8 +827,9 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		// remove validation, if there are a save before
 		this.custStsCode.setValue("");
 		this.custStsDescription.setValue("");
+		this.dueDays.setText("");
+		this.suspendProfit.setChecked(false);
 		this.custStsIsActive.setChecked(false);
-		this.custStsOrder.setText("");
 		logger.debug("Leaving");
 	}
 
@@ -835,6 +849,13 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 		// force validation, if on, than execute by component.getValue()
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		doSetValidation();
+		/*String statusCode = getCustomerStatusCodeService().getCurDueDaysStatus(this.dueDays.intValue(),"_View");
+		if(!StringUtils.trimToEmpty(statusCode).equals("")) {	
+			PTMessageUtils.showErrorMessage(Labels.getLabel("CUST_STS_CODE_WITH_DUEDAYS_ALREADY_EXISTS",
+					new String[]{statusCode, String.valueOf(this.dueDays.getValue()) }));
+			return;
+		}*/
+		
 		// fill the CustomerStatusCode object with the components data
 		doWriteComponentsToBean(aCustomerStatusCode);
 
@@ -1176,6 +1197,12 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl implements Seriali
 	public void setCustomerStatusCode(CustomerStatusCode customerStatusCode) {
 		this.customerStatusCode = customerStatusCode;
 	}
+	/*public CustomerStatusCode getCustomerDueDays() {
+		return this.dueDays;
+	}
+	public void setCustomerDueDays(CustomerStatusCode dueDays) {
+		this.dueDays = dueDays;
+	}*/
 
 	public void setCustomerStatusCodeService(CustomerStatusCodeService customerStatusCodeService) {
 		this.customerStatusCodeService = customerStatusCodeService;

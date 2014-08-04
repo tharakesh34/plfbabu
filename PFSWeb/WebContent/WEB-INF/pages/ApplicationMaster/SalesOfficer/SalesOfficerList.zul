@@ -55,26 +55,26 @@
 
 				<listbox id="listBoxSalesOfficer" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
+					height="100%" multiple="false"  sizedByContent="true" span="true">
 					<listhead sizable="true">
 						<listheader id="listheader_SalesOffCode"
 							label="${c:l('listheader_SalesOffCode.label')}" sort="auto"
-							width="15%" />
+							hflex="min" />
 						<listheader id="listheader_SalesOffFName"
 							label="${c:l('listheader_SalesOffFName.label')}" sort="auto"
-							width="30%" />
+							hflex="min" />
 						<listheader id="listheader_SalesOffDept"
 							label="${c:l('listheader_SalesOffDept.label')}" sort="auto"
-							width="25%" />
+							hflex="min" />
 						<listheader id="listheader_SalesOffIsActive"
 							label="${c:l('listheader_SalesOffIsActive.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_RecordStatus"
 							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_RecordType"
 							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 					</listhead>
 				</listbox>
 

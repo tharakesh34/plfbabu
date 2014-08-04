@@ -70,6 +70,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.homeloandetail.model.HomeLoanDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
@@ -196,12 +197,13 @@ public class HomeLoanDetailListCtrl extends GFCBaseListCtrl<HomeLoanDetail> impl
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<HomeLoanDetail>(HomeLoanDetail.class, getListRows());
 		this.searchObj.addSort("loanRefNumber", false);
+		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("LMTHomeLoanDetail_View");
 			if (isFirstTask()) {
-				button_HomeLoanDetailList_NewHomeLoanDetail.setVisible(true);
+				button_HomeLoanDetailList_NewHomeLoanDetail.setVisible(false);
 			} else {
 				button_HomeLoanDetailList_NewHomeLoanDetail.setVisible(false);
 			}
@@ -235,8 +237,7 @@ public class HomeLoanDetailListCtrl extends GFCBaseListCtrl<HomeLoanDetail> impl
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("HomeLoanDetailList");
 
-		this.button_HomeLoanDetailList_NewHomeLoanDetail.setVisible(getUserWorkspace().isAllowed(
-				"button_HomeLoanDetailList_NewHomeLoanDetail"));
+		this.button_HomeLoanDetailList_NewHomeLoanDetail.setVisible(false);//getUserWorkspace().isAllowed("button_HomeLoanDetailList_NewHomeLoanDetail")
 		this.button_HomeLoanDetailList_HomeLoanDetailSearchDialog.setVisible(getUserWorkspace().isAllowed(
 				"button_HomeLoanDetailList_HomeLoanDetailFindDialog"));
 		this.button_HomeLoanDetailList_PrintList.setVisible(getUserWorkspace().isAllowed(

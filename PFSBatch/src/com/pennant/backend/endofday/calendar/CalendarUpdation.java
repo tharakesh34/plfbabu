@@ -61,8 +61,8 @@ import com.pennant.Interface.service.CalendarInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.HolidayUtil;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.batch.admin.BatchAdminDAO;
 import com.pennant.backend.dao.accounts.AccountsDAO;
+import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
 
 public class CalendarUpdation implements Tasklet {
@@ -72,62 +72,62 @@ public class CalendarUpdation implements Tasklet {
 	private CalendarInterfaceService calendarInterfaceService;
 	private AccountsDAO accountsDAO;
 	private DataSource dataSource;
-	private BatchAdminDAO batchAdminDAO;
-	
+
 	private Date dateValueDate = null;
-	
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		
+
 		//Date Parameter List
 		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+
 		logger.debug("START: CalendarUpdation for Value Date: "+ dateValueDate);
-		
 		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
-	
+
 		Connection connection = null;
 		PreparedStatement sqlStatement = null;
-		StringBuffer updateQuery = new StringBuffer();
-		
+
 		// Accounts Accrual Balance reset to Zero
 		getAccountsDAO().updateAccrualBalance(); 
-		
-		try {
-			
-			//Value Date updation with Application Date
-			updateQuery = prepareUpdateQuery(updateQuery,SystemParameterDetails.getSystemParameterValue("APP_DATE").toString(),
-					"APP_VALUEDATE");
 
+		try {
+
+			//Value Date updation with Application Date
 			connection = DataSourceUtils.doGetConnection(dataSource);
-			sqlStatement = connection.prepareStatement(updateQuery.toString());
+			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
+			sqlStatement.setString(1, SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+			sqlStatement.setString(2, "APP_VALUEDATE");
 			sqlStatement.executeUpdate();
-			
+
 			SystemParameterDetails.setParmDetails("APP_VALUEDATE", SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
-			
+
 			//Calendar Updation 
 			boolean isUpdated = getCalendarInterfaceService().calendarUpdate();
 
 			//Process for Next BussinessDate only if Calendar days are updated
 			if(isUpdated){
 
-				Calendar calendar = HolidayUtil.getNextBusinessDate("GEN", "N", dateValueDate);
-				updateQuery = prepareUpdateQuery(updateQuery,DateUtility.formatUtilDate(calendar.getTime(),"yyyy-MM-dd"), "APP_NEXT_BUS_DATE");
+				Calendar calendar = HolidayUtil.getWorkingBussinessDate("GEN", "N", dateValueDate);
+				String nextBussDate = DateUtility.formatUtilDate(calendar.getTime(),"yyyy-MM-dd");
 
-				connection = DataSourceUtils.doGetConnection(dataSource);
-				sqlStatement = connection.prepareStatement(updateQuery.toString());
+				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
+				sqlStatement.setString(1, DateUtility.formatUtilDate(calendar.getTime(),"yyyy-MM-dd"));
+				sqlStatement.setString(2, "APP_NEXT_BUS_DATE");
 				sqlStatement.executeUpdate();
 				
+				SystemParameterDetails.setParmDetails("APP_NEXT_BUS_DATE", nextBussDate);
+
 			}
-			
+
 			//Update PHASE Parameter
-			updateQuery = prepareUpdateQuery(updateQuery,"EOD","PHASE");
-			sqlStatement = connection.prepareStatement(updateQuery.toString());
+			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
+			sqlStatement.setString(1, "EOD");
+			sqlStatement.setString(2, "PHASE");
 			sqlStatement.executeUpdate();
-			
+
 			//Reset System Parameter Value
 			SystemParameterDetails.setParmDetails("PHASE", "EOD");
-						
+
 		} catch (EquationInterfaceException e) {
 			logger.error(e);
 			throw new EquationInterfaceException(e.getMessage());
@@ -142,25 +142,24 @@ public class CalendarUpdation implements Tasklet {
 
 		logger.debug("COMPLETE: CalendarUpdation for Value Date: "+ dateValueDate);
 		
+		ExecutionStatus executionStatus = new ExecutionStatus();
+		context.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("current", executionStatus);
 		return RepeatStatus.FINISHED;
 	}
-	
+
 	/**
 	 * Method for preparation of Update Query To update 
 	 * 
 	 * @param updateQuery
 	 * @return
 	 */
-	private StringBuffer prepareUpdateQuery(StringBuffer updateQuery, String parameterValue,
-			String parameterCode) {
-		
-		updateQuery.append(" UPDATE SMTparameters SET SysParmValue = '"+  parameterValue +"'");
-		updateQuery.append(" Where SysParmCode ='"+  parameterCode +"'");
-		return updateQuery;
-		
+	private String prepareUpdateQuery() {
+		StringBuilder updateQuery = new StringBuilder(" UPDATE SMTparameters SET SysParmValue = ?");
+		updateQuery.append(" Where SysParmCode = ?");
+		return updateQuery.toString();
+
 	}
-	
-	
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -171,7 +170,7 @@ public class CalendarUpdation implements Tasklet {
 	public CalendarInterfaceService getCalendarInterfaceService() {
 		return calendarInterfaceService;
 	}
-	
+
 	public void setAccountsDAO(AccountsDAO accountsDAO) {
 		this.accountsDAO = accountsDAO;
 	}
@@ -186,12 +185,4 @@ public class CalendarUpdation implements Tasklet {
 		return dataSource;
 	}
 
-	public BatchAdminDAO getBatchAdminDAO() {
-		return batchAdminDAO;
-	}
-
-	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
-		this.batchAdminDAO = batchAdminDAO;
-	}
-	
 }

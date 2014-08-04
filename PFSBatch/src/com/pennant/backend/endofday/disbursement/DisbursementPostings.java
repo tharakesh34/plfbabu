@@ -42,11 +42,9 @@
  */
 package com.pennant.backend.endofday.disbursement;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -63,7 +61,6 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.batch.admin.BatchAdminDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -74,8 +71,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.coreinterface.exception.AccountNotFoundException;
+import com.pennant.backend.util.BatchUtil;
 
 public class DisbursementPostings implements Tasklet {
 
@@ -87,13 +83,13 @@ public class DisbursementPostings implements Tasklet {
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private DataSource dataSource;
-	private BatchAdminDAO batchAdminDAO;
-	
 
 	private Date dateValueDate = null;
 	private Date dateAppDate = null;
-
-	@SuppressWarnings("serial")
+	
+	int postings = 0;
+	int processed = 0;
+	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
@@ -102,20 +98,29 @@ public class DisbursementPostings implements Tasklet {
 
 		logger.debug("START: Disbursement Postings for Value Date: "+ dateValueDate);
 		
-		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
-		StringBuffer selQuery = new StringBuffer();
-		selQuery = prepareSelectQuery(selQuery,dateValueDate);
 
 		try {
 
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(selQuery.toString());
+			sqlStatement = connection.prepareStatement(getCountQuery());
+			sqlStatement.setDate(1, (java.sql.Date)dateValueDate);
 			resultSet = sqlStatement.executeQuery();
+			resultSet.next();
+			
+			BatchUtil.setExecution(context,  "TOTAL", String.valueOf(resultSet.getInt(1)));
+			
+			sqlStatement = connection.prepareStatement(prepareSelectQuery());
+			sqlStatement.setDate(1, (java.sql.Date)dateValueDate);
+			resultSet = sqlStatement.executeQuery();
+			
+			FinanceMain financeMain = null;
+			List<FinanceScheduleDetail> scheduleDetailList = null;
+			FinanceProfitDetail finPftDetail = null;
 			
 			while (resultSet.next()) {
 
@@ -124,51 +129,80 @@ public class DisbursementPostings implements Tasklet {
 				disbursement.setDisbDate(resultSet.getDate("DisbDate"));
 				disbursement.setDisbSeq(resultSet.getInt("DisbSeq"));
 
-				FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForDataSet(resultSet.getString("FinReference"));
-				List<FinanceScheduleDetail> scheduleDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(
-						resultSet.getString("FinReference"), "", false);
-				FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(resultSet.getString("FinReference"));
+				financeMain = getFinanceMainDAO().getFinanceMainForBatch(resultSet.getString("FinReference"));
+				financeMain.setCurDisbursementAmt(resultSet.getBigDecimal("DisbAmount"));
+				financeMain.setDisbAccountId(resultSet.getString("DisbAccountId"));
+				scheduleDetailList = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(resultSet.getString("FinReference"));
+				
+				finPftDetail = new FinanceProfitDetail();
+				finPftDetail.setFinReference(resultSet.getString("FinReference"));
+				finPftDetail.setAcrTillLBD(resultSet.getBigDecimal("AcrTillLBD"));
+				finPftDetail.setTdPftAmortizedSusp(resultSet.getBigDecimal("TdPftAmortizedSusp"));
+				finPftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
 
-				AEAmounts aeAmounts = new AEAmounts();
-				DataSet dataSet = aeAmounts.createDataSet(financeMain, "ADDDBSN", dateValueDate,
-						financeMain.getFinStartDate());
+				DataSet dataSet = AEAmounts.createDataSet(financeMain, "ADDDBSN", dateValueDate, resultSet.getDate("DisbDate"));
 				dataSet.setNewRecord(false);
 
 				//AmountCodes Preparation
-				AEAmountCodes amountCodes = aeAmounts.procAEAmounts(financeMain, scheduleDetails,
-						pftDetail, dateValueDate);
+				AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, scheduleDetailList, finPftDetail, dateValueDate);
 
 				//Postings Process
-				getPostingsPreparationUtil().processPostingDetails(dataSet,amountCodes, true, 
-						resultSet.getBoolean("AllowRIAInvestment"), "Y", dateAppDate, null, false);
+				List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(dataSet,amountCodes, true, 
+						resultSet.getBoolean("AllowRIAInvestment"), "Y", dateAppDate,false, Long.MIN_VALUE);
+				
+				if(odObjDetails!=null && !odObjDetails.isEmpty()) {
+					if((Boolean)odObjDetails .get(0)) {
+						postings++;
+					}
+				}
 
 				//Disbursement Details Updation
 				disbursement.setDisbDisbursed(true);
-				getFinanceDisbursementDAO().update(disbursement, "", false);
+				getFinanceDisbursementDAO().updateBatchDisb(disbursement, "");
 				
-				getBatchAdminDAO().saveStepDetails(disbursement.getFinReference(), getDisbursement(disbursement), context.getStepContext().getStepExecution().getId());
-				context.getStepContext().getStepExecution().getExecutionContext().putInt("FIELD_COUNT", resultSet.getRow());
+				processed = resultSet.getRow();
+				BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
+				BatchUtil.setExecution(context,  "INFO", getInfo());
+				
+				finPftDetail = null;
+				
 			}
 			
-		} catch (AccountNotFoundException e) {
+			BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
+			BatchUtil.setExecution(context,  "INFO", getInfo());
+			
+		} catch (Exception e) {
 			logger.error(e);
-			throw new AccountNotFoundException(e.getMessage()) {};
-		} catch (SQLException e) {
-			logger.error(e);
-			throw new SQLException(e.getMessage()) {};
-		} catch (IllegalAccessException e) {
-			logger.error(e);
-			throw new IllegalAccessException(e.getMessage()) {};
-		} catch (InvocationTargetException e) {
-			logger.error(e);
-			throw new InvocationTargetException(e, e.getMessage()) {};
+			throw e;
 		} finally {
-			resultSet.close();
-			sqlStatement.close();
+			if(resultSet !=null) {
+				resultSet.close();
+			}
+			if(sqlStatement != null) {
+				sqlStatement.close();
+			}
 		}
 
 		logger.debug("COMPLETE: Disbursement Postings for Value Date: " + dateValueDate);
 		return RepeatStatus.FINISHED;
+	}
+	
+	/**
+	 * Method for preparation of Select Query To get Schedule data
+	 * 
+	 * @param selQuery
+	 * @return
+	 */
+	private String getCountQuery() {
+		
+		StringBuilder selQuery = new StringBuilder(" SELECT count(T1.FinReference)" );
+		selQuery.append(" FROM FinDisbursementDetails AS T1 " );
+		selQuery.append(" INNER JOIN FinanceMain AS T2 ON T1.FinReference = T2.FinReference " );
+		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference " );
+		selQuery.append(" INNER JOIN RMTFinanceTypes AS T3 ON T2.FinType = T3.FinType " );
+		selQuery.append(" WHERE T1.DisbDisbursed = '0' AND T1.DisbDate =?");
+		return selQuery.toString();
+		
 	}
 
 	/**
@@ -177,58 +211,25 @@ public class DisbursementPostings implements Tasklet {
 	 * @param selQuery
 	 * @return
 	 */
-	private StringBuffer prepareSelectQuery(StringBuffer selQuery, Date valueDate) {
+	private String prepareSelectQuery() {
 		
-		selQuery.append(" SELECT T1.FinReference, T1.DisbDate, T1.DisbSeq, T1.DisbAccountId, T1.DisbAmount, " );
-		selQuery.append(" T1.DisbDisbursed, T1.DisbRemarks, T3.AllowRIAInvestment " );
+		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinReference, T1.DisbDate, T1.DisbSeq, T1.DisbAccountId, T1.DisbAmount, " );
+		selQuery.append(" T1.DisbDisbursed, T1.DisbRemarks, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.TdPftAmortizedSusp, T4.AmzTillLBD " );
 		selQuery.append(" FROM FinDisbursementDetails AS T1 " );
 		selQuery.append(" INNER JOIN FinanceMain AS T2 ON T1.FinReference = T2.FinReference " );
+		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference " );
 		selQuery.append(" INNER JOIN RMTFinanceTypes AS T3 ON T2.FinType = T3.FinType " );
-		selQuery.append(" WHERE T1.DisbDisbursed = '0' AND T1.DisbDate ='"+valueDate+"'");
-		return selQuery;
+		selQuery.append(" WHERE T1.DisbDisbursed = '0' AND T1.DisbDate =?");
+		return selQuery.toString();
 		
 	}
 	
-	private String getDisbursement(FinanceDisbursement disbursement) {
-		StringBuffer strdisbursement = new StringBuffer();
-
-		if (disbursement != null) {
-			strdisbursement.append("DisbDate");
-			strdisbursement.append("-");
-			
-			strdisbursement.append(DateUtility.formatUtilDate(disbursement.getDisbDate(), PennantConstants.dateFormat));
-			strdisbursement.append(";");
-			
-			strdisbursement.append("DisbSeq");
-			strdisbursement.append("-");
-			strdisbursement.append(disbursement.getDisbSeq());
-			strdisbursement.append(";");
-			
-			strdisbursement.append("DisbAccountId");
-			strdisbursement.append("-");
-			strdisbursement.append(disbursement.getDisbAccountId());
-			strdisbursement.append(";");
-			
-			strdisbursement.append("DisbAmount");
-			strdisbursement.append("-");
-			strdisbursement.append(disbursement.getDisbAmount()); //TODO AMTFORMART
-			strdisbursement.append(";");
-			
-			strdisbursement.append("DisbDisbursed");
-			strdisbursement.append("-");
-			strdisbursement.append(disbursement.isDisbDisbursed());
-			strdisbursement.append(";");
-			
-			strdisbursement.append("DisbRemarks");
-			strdisbursement.append("-");
-			strdisbursement.append(disbursement.getDisbRemarks()); 
-			strdisbursement.append(";");
-						
-		}
-		return strdisbursement.toString();
-
+	private String getInfo() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Total Depreciation Posting's").append(": ").append(postings);
+		return builder.toString();
 	}
-	
+		
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -276,14 +277,5 @@ public class DisbursementPostings implements Tasklet {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-
-	public BatchAdminDAO getBatchAdminDAO() {
-		return batchAdminDAO;
-	}
-
-	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
-		this.batchAdminDAO = batchAdminDAO;
-	}
-	
 
 }

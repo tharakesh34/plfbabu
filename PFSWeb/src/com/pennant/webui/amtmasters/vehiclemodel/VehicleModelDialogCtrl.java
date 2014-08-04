@@ -77,7 +77,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.amtmasters.VehicleModelService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -592,7 +594,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 		setValidationOn(true);
 		
 		if (!this.vehicleModelDesc.isReadonly()){
-			this.vehicleModelDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_VehicleModelDialog_VehicleModelDesc.value")}));
+			this.vehicleModelDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleModelDialog_VehicleModelDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}	
 	logger.debug("Leaving");
 	}
@@ -1080,7 +1082,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 	}	
 
 	private void doSetLOVValidation() {
-		this.lovDescManufacter.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_VehicleManufacturerDialog_ManufacturerId.value")}));
+		this.lovDescManufacter.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleManufacturerDialog_ManufacturerId.value"), null, true));
 	}
 	private void doRemoveLOVValidation() {
 		this.lovDescManufacter.setConstraint("");

@@ -45,6 +45,8 @@ package com.pennant.backend.model.lmtmasters;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -86,6 +88,16 @@ public class MortgageLoanDetail implements java.io.Serializable {
 	private String lovValue;
 	private MortgageLoanDetail befImage;
 	private LoginUserDetails userDetails;
+	
+	
+	private String mortDeedNo;
+	private String mortRegistrationNo;
+	private BigDecimal mortAreaSF;
+	private BigDecimal mortAreaSM;
+	private BigDecimal mortPricePF;
+	private int mortAge;
+	private BigDecimal mortFinRatio;
+	private String mortStatus;
 
 	private String recordStatus;
 	private String roleCode="";
@@ -106,6 +118,12 @@ public class MortgageLoanDetail implements java.io.Serializable {
 
 	public MortgageLoanDetail(String id) {
 		this.setId(id);
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		
+		return excludeFields;
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -413,4 +431,69 @@ public class MortgageLoanDetail implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public String getMortDeedNo() {
+    	return mortDeedNo;
+    }
+
+	public void setMortDeedNo(String mortDeedNo) {
+    	this.mortDeedNo = mortDeedNo;
+    }
+
+	public String getMortRegistrationNo() {
+    	return mortRegistrationNo;
+    }
+
+	public void setMortRegistrationNo(String mortRegistrationNo) {
+    	this.mortRegistrationNo = mortRegistrationNo;
+    }
+
+	public BigDecimal getMortAreaSF() {
+    	return mortAreaSF;
+    }
+
+	public void setMortAreaSF(BigDecimal mortAreaSF) {
+    	this.mortAreaSF = mortAreaSF;
+    }
+
+	public BigDecimal getMortAreaSM() {
+    	return mortAreaSM;
+    }
+
+	public void setMortAreaSM(BigDecimal mortAreaSM) {
+    	this.mortAreaSM = mortAreaSM;
+    }
+
+	public BigDecimal getMortPricePF() {
+    	return mortPricePF;
+    }
+
+	public void setMortPricePF(BigDecimal mortPricePF) {
+    	this.mortPricePF = mortPricePF;
+    }
+
+	public int getMortAge() {
+    	return mortAge;
+    }
+
+	public void setMortAge(int mortAge) {
+    	this.mortAge = mortAge;
+    }
+
+	public BigDecimal getMortFinRatio() {
+    	return mortFinRatio;
+    }
+
+	public void setMortFinRatio(BigDecimal mortFinRatio) {
+    	this.mortFinRatio = mortFinRatio;
+    }
+
+	public String getMortStatus() {
+    	return mortStatus;
+    }
+
+	public void setMortStatus(String mortStatus) {
+    	this.mortStatus = mortStatus;
+    }
+	
 }

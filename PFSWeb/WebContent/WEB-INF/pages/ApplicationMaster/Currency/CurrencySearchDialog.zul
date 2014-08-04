@@ -13,7 +13,7 @@
 		height="400px" sizable="true">
 
 		<borderlayout>
-			<north></north>
+			<north/>
 			<center flex="true">
 
 				<grid sclass="GridLayoutNoBorder" fixedLayout="true"

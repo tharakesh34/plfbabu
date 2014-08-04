@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,14 +39,14 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+*//*
 package com.pennant;
 
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
-/**
+*//**
  * Workspace for the application. One workspace server. <br>
  * <br>
  * Here are stored several properties for the application. <br>
@@ -57,7 +57,7 @@ import org.apache.log4j.Logger;
  * 
  * <b>Not used at time!</b><br>
  * 
- */
+ *//*
 public class ApplicationWorkspace implements Serializable {
 
 	private static ApplicationWorkspace instance = new ApplicationWorkspace();
@@ -66,9 +66,9 @@ public class ApplicationWorkspace implements Serializable {
 	@SuppressWarnings("unused")
 	private final static Logger logger = Logger.getLogger(ApplicationWorkspace.class);
 
-	/**
+	*//**
 	 * Default Constructor, cannot invoked from outer this class. <br>
-	 */
+	 *//*
 	private ApplicationWorkspace() {
 
 	}
@@ -78,3 +78,4 @@ public class ApplicationWorkspace implements Serializable {
 	}
 
 }
+*/

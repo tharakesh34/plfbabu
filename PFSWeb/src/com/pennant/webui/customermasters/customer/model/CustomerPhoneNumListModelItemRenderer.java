@@ -44,6 +44,7 @@ package com.pennant.webui.customermasters.customer.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -63,9 +64,9 @@ public class CustomerPhoneNumListModelItemRenderer implements ListitemRenderer<C
 	public void render(Listitem item, CustomerPhoneNumber customerPhoneNumber, int count) throws Exception {
 		//final CustomerPhoneNumber customerPhoneNumber = (CustomerPhoneNumber) data;
 		Listcell lc;
-		lc = new Listcell(customerPhoneNumber.getPhoneTypeCode()+"-"+customerPhoneNumber.getLovDescPhoneTypeCodeName());
+		lc = new Listcell(StringUtils.trimToEmpty(customerPhoneNumber.getPhoneTypeCode()));
 		lc.setParent(item);
-		lc = new Listcell(customerPhoneNumber.getPhoneCountryCode()+"-"+customerPhoneNumber.getLovDescPhoneCountryName());
+		lc = new Listcell(StringUtils.trimToEmpty(customerPhoneNumber.getPhoneCountryCode()));
 		lc.setParent(item);
 		lc = new Listcell(customerPhoneNumber.getPhoneAreaCode());
 		lc.setParent(item);

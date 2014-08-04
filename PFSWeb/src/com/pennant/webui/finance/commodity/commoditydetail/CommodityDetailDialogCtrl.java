@@ -63,8 +63,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +75,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.finance.commodity.CommodityDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -120,7 +120,6 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 	protected Radiogroup userAction;
 	protected Groupbox   groupboxWf;
-	protected Row        statusRow;
 
 	// not auto wired variables
 	private CommodityDetail commodityDetail;            // over handed per parameters
@@ -169,7 +168,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @throws Exception
 	 */
 	public void onCreate$window_CommodityDetailDialog(Event event) throws Exception {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -214,7 +213,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getCommodityDetail());
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -224,9 +223,9 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @throws Exception
 	 */
 	public void onClose$window_CommodityDetailDialog(Event event) throws Exception {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doClose();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -236,9 +235,9 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -247,11 +246,11 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
 		// remember the old variables
 		doStoreInitValues();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -261,9 +260,9 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_CommodityDetailDialog);
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -272,9 +271,9 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @param event
 	 */
 	public void onClick$btnNew(Event event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doNew();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -284,9 +283,9 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -295,9 +294,9 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -307,14 +306,14 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnClose(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 
 		try {
 			doClose();
 		} catch (final WrongValuesException e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 	/**
 	 * when the "Notes" button is clicked. <br>
@@ -322,8 +321,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		logger.debug("Entering");
-		// logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
@@ -336,7 +334,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -354,6 +352,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	private void doClose() throws InterruptedException {
 		logger.debug("Entering");
+		
 		boolean close=true;
 		if (isDataChanged()) {
 			logger.debug("isDataChanged : true");
@@ -377,7 +376,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 
 		if(close){
-			closeDialog(this.window_CommodityDetailDialog, "CommodityDetail");	
+			closeDialog(this.window_CommodityDetailDialog, "CommodityDetailDialog");	
 		}
 
 		logger.debug("Leaving") ;
@@ -549,10 +548,8 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
-			this.statusRow.setVisible(true);
 		}else{
 			this.groupboxWf.setVisible(false);
-			this.statusRow.setVisible(false);
 		}
 		logger.debug("Leaving") ;
 	}
@@ -656,27 +653,23 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		setValidationOn(true);
 
 		if (!this.commodityCode.isReadonly()){
-			this.commodityCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_UNDERSCORE_REGEX , 
-					Labels.getLabel("MAND_ALPHANUM_UNDERSCORE"
-							,new String[]{Labels.getLabel("label_CommodityDetailDialog_CommodityCode.value")})));
+			this.commodityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityDetailDialog_CommodityCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 
 		}	
 		if (!this.commodityName.isReadonly()){
-			this.commodityName.setConstraint(new SimpleConstraint(	PennantConstants.ALPHANUM_SPACE_REGEX, 
-					Labels.getLabel("FIELD_CHAR_NUMBERS"
-							,new String[]{Labels.getLabel("label_CommodityDetailDialog_CommodityName.value")})));
+			this.commodityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityDetailDialog_CommodityName.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 
 		}	
 		if (!this.commodityUnitCode.isReadonly()){
-			this.commodityUnitCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_UNDERSCORE_REGEX , 
-					Labels.getLabel("MAND_ALPHANUM_UNDERSCORE"
-							,new String[]{Labels.getLabel("label_CommodityDetailDialog_CommodityUnitCode.value")})));
+			this.commodityUnitCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityDetailDialog_CommodityUnitCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 
 		}	
 		if (!this.commodityUnitName.isReadonly()){
-			this.commodityUnitName.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_SPACE_REGEX, 
-					Labels.getLabel("FIELD_CHAR_NUMBERS"
-							,new String[]{Labels.getLabel("label_CommodityDetailDialog_CommodityUnitName.value")})));
+			this.commodityUnitName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityDetailDialog_CommodityUnitName.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 
 		}	
 		logger.debug("Leaving");
@@ -730,10 +723,6 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.commodityUnitName.setValue("");
 		logger.debug("Leaving");
 	}
-	/**
-	 * 
-	 * @param notes
-	 */
 
 	public void setNotes_entered(String notes) {
 		logger.debug("Entering ");
@@ -746,10 +735,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 		logger.debug("Leaving ");
 	}	
-	/**
-	 * 
-	 * @return
-	 */
+
 	private Notes getNotes(){
 		logger.debug("Entering ");
 		Notes notes = new Notes();
@@ -764,8 +750,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * Get the Reference value
 	 */
 	private String getReference(){
-		return getCommodityDetail().getCommodityCode()+PennantConstants.KEY_SEPERATOR
-		+getCommodityDetail().getCommodityUnitCode();
+		return getCommodityDetail().getCommodityCode()+PennantConstants.KEY_SEPERATOR+getCommodityDetail().getCommodityUnitCode();
 	}
 
 	/**
@@ -779,6 +764,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		return new AuditHeader(getReference(),null,null,null,auditDetail
 				,aCommodityDetail.getUserDetails(),getOverideMap());
 	}
+	
 	/**
 	 * This Method  refresh the list after successful update
 	 */
@@ -792,6 +778,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 		logger.debug("Leaving ");
 	} 
+	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++ CRUD operations +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -832,7 +819,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 			try {
 				if(doProcess(aCommodityDetail,tranType)){
 					refreshList();
-					closeDialog(this.window_CommodityDetailDialog, "CommodityDetail"); 
+					closeDialog(this.window_CommodityDetailDialog, "CommodityDetailDialog"); 
 				}
 
 			}catch (DataAccessException e){
@@ -849,13 +836,14 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	private void doNew() {
 		logger.debug("Entering");
 
+		doStoreInitValues();    	// remember the old variables
 		final CommodityDetail aCommodityDetail = getCommodityDetailService().getNewCommodityDetail();
 		aCommodityDetail.setNewRecord(true);
 		setCommodityDetail(aCommodityDetail);
 		doClear();                  // clear all components
 		doEdit();                   // edit mode
 		this.btnCtrl.setBtnStatus_New();
-		doStoreInitValues();    	// remember the old variables
+		
 		this.commodityCode.focus();	// setFocus
 		logger.debug("Leaving");
 	}
@@ -945,9 +933,8 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		try {
 
 			if(doProcess(aCommodityDetail,tranType)){
-				doWriteBeanToComponents(aCommodityDetail);
 				refreshList();
-				closeDialog(this.window_CommodityDetailDialog, "CommodityDetail");
+				closeDialog(this.window_CommodityDetailDialog, "CommodityDetailDialog");
 			}
 
 		} catch (final DataAccessException e) {
@@ -975,7 +962,7 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		if (isWorkFlowEnabled()) {
 			String taskId = getWorkFlow().getTaskId(getRole());
 			String nextTaskId = "";
-			//Upgraded to ZK-6.5.1.1 Added casting to String 	
+
 			aCommodityDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {

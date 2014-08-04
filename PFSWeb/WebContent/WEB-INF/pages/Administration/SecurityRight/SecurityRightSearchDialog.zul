@@ -48,7 +48,7 @@
 							<listbox id="sortOperator_rightName"
 								width="43px" mold="select" rows="1" />
 							<textbox id="rightName" width="320px"
-								maxlength="50" />
+								maxlength="100" />
 						</row>
 						<row>
 							<label

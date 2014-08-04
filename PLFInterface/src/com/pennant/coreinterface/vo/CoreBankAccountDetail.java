@@ -11,6 +11,8 @@ public class CoreBankAccountDetail implements Serializable {
 	private String acBranch;
 	private String acCcy;
 	private String acType;
+	private String acShrtName;
+	private String tranAc;
 	private String internalAc;
 	private String createNew;
 	private String createIfNF;
@@ -28,6 +30,8 @@ public class CoreBankAccountDetail implements Serializable {
 	private String acSPCode;
 	private int reqRefId;
 	private int reqRefSeq;
+
+	private String division;
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -63,6 +67,22 @@ public class CoreBankAccountDetail implements Serializable {
 
 	public void setAcType(String acType) {
 		this.acType = acType;
+	}
+
+	public String getAcShrtName() {
+		return acShrtName;
+	}
+
+	public void setAcShrtName(String acShrtName) {
+		this.acShrtName = acShrtName;
+	}
+
+	public String getTranAc() {
+		return tranAc;
+	}
+
+	public void setTranAc(String tranAc) {
+		this.tranAc = tranAc;
 	}
 
 	public String getInternalAc() {
@@ -175,6 +195,14 @@ public class CoreBankAccountDetail implements Serializable {
 
 	public String getTransOrder() {
 		return transOrder;
+	}
+
+	public String getDivision() {
+		return division;
+	}
+
+	public void setDivision(String division) {
+		this.division = division;
 	}
 
 }

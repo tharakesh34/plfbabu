@@ -49,7 +49,7 @@ public class PostingsInterfaceServiceCoreDBImpl implements PostingsInterfaceServ
 			accountPosting.setValueDate(dataSet.getValueDate());
 			accountPosting.setCustCIF(dataSet.getCustCIF());
 			accountPosting.setAcBranch(dataSet.getFinBranch());
-			accountPosting.setAcCcy(dataSet.getFinCcy());
+			accountPosting.setAcCcy(dataSet.getAcCcy());
 			
 			if("DISB".equals(dataSet.getAccountType())) {
 				accountPosting.setAcType("DI");
@@ -93,7 +93,7 @@ public class PostingsInterfaceServiceCoreDBImpl implements PostingsInterfaceServ
 			dataSet.setValueDate(detail.getValueDate());
 			dataSet.setCustCIF(detail.getCustCIF());
 			dataSet.setFinBranch(detail.getAcBranch());
-			dataSet.setFinCcy(detail.getAcCcy());
+			dataSet.setAcCcy(detail.getAcCcy());
 			dataSet.setAccountType(detail.getAcType());
 			
 			if("DI".equals(detail.getAcType())) {

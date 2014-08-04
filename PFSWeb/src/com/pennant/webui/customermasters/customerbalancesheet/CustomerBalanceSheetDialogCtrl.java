@@ -174,7 +174,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl implements Seria
 	private transient CustomerBalanceSheetService customerBalanceSheetService;
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
-	private List<ValueLabel> listFinancialYear=PennantAppUtil.getFinancialYears(); // autowired
+	private List<ValueLabel> listFinancialYear= null; // autowired
 
 	private boolean newRecord=false;
 	private boolean newCustomer=false;
@@ -962,7 +962,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl implements Seria
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue==PennantConstants.porcessCONTINUE || 
 							retValue==PennantConstants.porcessOVERIDE){
-						getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
+					//	getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
 						// send the data back to customer
 						closeWindow();
 					}	
@@ -1184,7 +1184,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl implements Seria
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBalanceSheetDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-					getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
+					//getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
 					//true;
 					// send the data back to customer
 					closeWindow();
@@ -1204,73 +1204,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl implements Seria
 	}
 
 	private AuditHeader newCusomerProcess(CustomerBalanceSheet aCustomerBalanceSheet,String tranType){
-		boolean recordAdded=false;
-
-		AuditHeader auditHeader= getAuditHeader(aCustomerBalanceSheet, tranType);
-		balanceSheetDetails = new ArrayList<CustomerBalanceSheet>();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = String.valueOf(aCustomerBalanceSheet.getCustId());
-		valueParm[1] = aCustomerBalanceSheet.getFinancialYear();
-
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_FinancialYear") + ":"+valueParm[1];
-
-		if(getCustomerDialogCtrl().getBalanceSheetList()!=null && 
-				getCustomerDialogCtrl().getBalanceSheetList().size()>0){
-			for (int i = 0; i < getCustomerDialogCtrl().getBalanceSheetList().size(); i++) {
-				CustomerBalanceSheet customerBalanceSheet = getCustomerDialogCtrl().getBalanceSheetList().get(i);
-
-
-				if(customerBalanceSheet.getFinancialYear().equals(aCustomerBalanceSheet.getFinancialYear())){ 
-					// Both Current and Existing list BalanceSheet same
-
-					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,"41001",
-										errParm,valueParm), getUserWorkspace().getUserLanguage()));
-						return auditHeader;
-					}
-
-
-					if(tranType==PennantConstants.TRAN_DEL){
-						if(aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
-							aCustomerBalanceSheet.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
-							balanceSheetDetails.add(aCustomerBalanceSheet);
-						}else if(aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RCD_ADD)){
-							recordAdded=true;
-						}else if(aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							aCustomerBalanceSheet.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
-							balanceSheetDetails.add(aCustomerBalanceSheet);
-						}else if(aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
-							recordAdded=true;
-							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getBalanceSheetList().size(); j++) {
-								CustomerBalanceSheet balanceSheet =  getCustomerDialogCtrl().getCustomerDetails().getBalanceSheetList().get(j);
-								if(balanceSheet.getCustId() == aCustomerBalanceSheet.getCustId() && 
-										balanceSheet.getFinancialYear().equals(aCustomerBalanceSheet.getFinancialYear())){
-									balanceSheetDetails.add(balanceSheet);
-								}
-							}
-						}
-					}else{
-						if(tranType!=PennantConstants.TRAN_UPD){
-							balanceSheetDetails.add(customerBalanceSheet);
-						}
-					}
-				}else{
-					balanceSheetDetails.add(customerBalanceSheet);
-				}
-			}
-		}
-		if(!recordAdded){
-			balanceSheetDetails.add(aCustomerBalanceSheet);
-		}
-		return auditHeader;
-	} 
+		return null;} 
 
 	/**
 	 * Set the workFlow Details List to Object

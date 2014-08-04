@@ -168,62 +168,62 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_ccyCode.setModel(new ListModelList(
+		this.sortOperator_ccyCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_ccyCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ccyNumber.setModel(new ListModelList(
+		this.sortOperator_ccyNumber.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getNumericOperators()));
 		this.sortOperator_ccyNumber.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ccyDesc.setModel(new ListModelList(
+		this.sortOperator_ccyDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_ccyDesc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ccySwiftCode.setModel(new ListModelList(
+		this.sortOperator_ccySwiftCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_ccySwiftCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ccySymbol.setModel(new ListModelList(
+		this.sortOperator_ccySymbol.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_ccySymbol.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ccyMinorCcyDesc.setModel(new ListModelList(
+		this.sortOperator_ccyMinorCcyDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_ccyMinorCcyDesc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ccyIsAlwForLoans.setModel(new ListModelList(
+		this.sortOperator_ccyIsAlwForLoans.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_ccyIsAlwForLoans.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ccyIsAlwForDepo.setModel(new ListModelList(
+		this.sortOperator_ccyIsAlwForDepo.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_ccyIsAlwForDepo.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ccyIsAlwForAc.setModel(new ListModelList(
+		this.sortOperator_ccyIsAlwForAc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_ccyIsAlwForAc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ccyIsActive.setModel(new ListModelList(
+		this.sortOperator_ccyIsActive.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_ccyIsActive.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

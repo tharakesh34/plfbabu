@@ -78,8 +78,10 @@ import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.service.staticparms.ExtendedFieldHeaderService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -656,8 +658,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl implements Serial
 		setValidationOn(true);
 
 		if (!this.tabHeading.isReadonly()) {
-			this.tabHeading.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_ExtendedFieldHeaderDialog_TabHeading.value") }));
+			this.tabHeading.setConstraint(new PTStringValidator(Labels.getLabel("label_ExtendedFieldHeaderDialog_TabHeading.value"), PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}
 
 		logger.debug("Leaving");

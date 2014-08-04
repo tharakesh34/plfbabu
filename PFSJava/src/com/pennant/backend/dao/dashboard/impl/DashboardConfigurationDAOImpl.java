@@ -112,7 +112,7 @@ implements DashboardConfigurationDAO {
 	@Override
 	public DashboardConfiguration getDashboardDetailByID(final String id, String type) {
 		logger.debug("Entering");
-		DashboardConfiguration dashboardConfiguration = getNewDashboardDetail();
+		DashboardConfiguration dashboardConfiguration = new DashboardConfiguration();
 		dashboardConfiguration.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

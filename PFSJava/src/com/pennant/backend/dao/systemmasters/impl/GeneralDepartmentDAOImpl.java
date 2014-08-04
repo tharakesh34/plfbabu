@@ -121,7 +121,7 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 	@Override
 	public GeneralDepartment getGeneralDepartmentById(final String id, String type) {
 		logger.debug("Entering");
-		GeneralDepartment generalDepartment = getGeneralDepartment();
+		GeneralDepartment generalDepartment = new GeneralDepartment();
 		generalDepartment.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select GenDepartment, GenDeptDesc," );

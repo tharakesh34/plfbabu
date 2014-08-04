@@ -69,9 +69,7 @@ public class MortgageLoanDetailListModelItemRenderer implements ListitemRenderer
 		Listcell lc;
 		lc = new Listcell(mortgageLoanDetail.getLoanRefNumber());
 		lc.setParent(item);
-		lc = new Listcell();
-		lc.setParent(item);
-		lc = new Listcell(mortgageLoanDetail.getMortgProperty()+"-"+mortgageLoanDetail.getLovDescMortgPropertyName());
+		lc = new Listcell(mortgageLoanDetail.getLovDescMortgPropertyName());
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.amountFormate(mortgageLoanDetail.getMortgCurrentValue(),0));
 		lc.setParent(item);

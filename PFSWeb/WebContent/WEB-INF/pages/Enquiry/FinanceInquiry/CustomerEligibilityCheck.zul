@@ -67,10 +67,8 @@
 											id="label_EligibilityCheck_CustCIF"
 											value="${c:l('label_EligibilityCheck_CustCIF.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<uppercasebox id="custCIF"
-												readonly="true" width="150px" />
+											<space spacing="2px" sclass="mandatory" />
+											<uppercasebox id="custCIF"  width="150px" />
 											<button
 												id="btnSearchCustCIF"
 												tooltiptext="${c:l('label_EligibilityCheck_btnSearchCustCIF.tooltiptext')}"
@@ -81,14 +79,9 @@
 										<label
 											id="label_EligibilityCheck_FinType" visible="false"
 											value="${c:l('label_EligibilityCheck_FinType.value')}" />
-										<hbox visible="false">
-											<textbox id="finType"
-												readonly="true" width="150px" />
-											<button
-												id="btnSearchFinType"
-												tooltiptext="${c:l('label_EligibilityCheck_btnSearchFinType.tooltiptext')}"
-												image="/images/icons/LOVSearch.png" height="24px" />
-										</hbox>
+										 <hbox visible="false">
+											<extendedcombobox id="finType"/>
+										</hbox> 
 										<button id="btnGo" label="Go"
 											style="font-weight:bold;"
 											tooltiptext="${c:l('label_EligibilityCheck_btnGo.tooltiptext')}"

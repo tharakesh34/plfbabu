@@ -53,6 +53,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 /**
@@ -78,14 +79,14 @@ public class TransactionEntryListModelItemRenderer implements ListitemRenderer<T
 		checkbox.setChecked(transactionEntry.isEntryByInvestment());
 		lc.appendChild(checkbox);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(transactionEntry.getDebitcredit(),PennantAppUtil.getTranType()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(transactionEntry.getDebitcredit(),PennantStaticListUtil.getTranType()));
 	  	lc.setParent(item);
 		lc = new Listcell(transactionEntry.getAccount());
 		lc.setParent(item);
 	  	lc = new Listcell(transactionEntry.getTranscationCode());
 		lc.setParent(item);
-	  	lc = new Listcell(transactionEntry.getRuleDecider());
-		lc.setParent(item);
+	  /*	lc = new Listcell(transactionEntry.getRuleDecider());
+		lc.setParent(item);*/
 	  	lc = new Listcell(transactionEntry.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(transactionEntry.getRecordType()));

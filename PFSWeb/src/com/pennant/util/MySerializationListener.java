@@ -51,7 +51,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.ComponentSerializationListener;
 import org.zkoss.zk.ui.util.EventInterceptor;
 
-public class MySerializationListener implements EventListener, EventInterceptor, java.io.Serializable,
+public class MySerializationListener implements EventListener<Event>, EventInterceptor, java.io.Serializable,
 		ComponentSerializationListener {
 
 	private static final long serialVersionUID = 1L;
@@ -89,7 +89,6 @@ public class MySerializationListener implements EventListener, EventInterceptor,
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Event beforePostEvent(Event event) {
 		logger.info("beforePostEvent 1. --> : " + event.getTarget().getId());

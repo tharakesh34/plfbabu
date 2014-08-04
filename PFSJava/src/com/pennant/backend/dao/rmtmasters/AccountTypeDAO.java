@@ -42,6 +42,9 @@
 */
 
 package com.pennant.backend.dao.rmtmasters;
+import java.util.List;
+
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.AccountType;
 
 /**
@@ -58,4 +61,5 @@ public interface AccountTypeDAO {
 	public String save(AccountType accountType,String type);
 	public void initialize(AccountType accountType);
 	public void refresh(AccountType entity);
+	public List<ValueLabel> getAccountTypeDesc(List<String> acTypeList);
 }

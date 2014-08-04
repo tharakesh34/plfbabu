@@ -67,8 +67,8 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 		implements DocumentTypeService {
-	private final static Logger logger = Logger
-			.getLogger(DocumentTypeServiceImpl.class);
+	
+	private final static Logger logger = Logger.getLogger(DocumentTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DocumentTypeDAO documentTypeDAO;

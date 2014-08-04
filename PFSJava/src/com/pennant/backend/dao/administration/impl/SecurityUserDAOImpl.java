@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.administration.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +63,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -72,10 +75,9 @@ import com.pennant.backend.util.WorkFlowUtil;
 public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements SecurityUserDAO {
 
 	private static Logger logger = Logger.getLogger(SecurityUserDAOImpl.class);
-
+    private SecurityUser securityUser;
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
 	/**
 	 * This method set the Work Flow id based on the module name and return the new SecurityUsers 
 	 * @return SecurityUsers
@@ -117,7 +119,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	@Override
 	public SecurityUser getSecurityUserById(final long id, String type) {
 		logger.debug("Entering ");
-		SecurityUser securityUser = getSecurityUser();
+		SecurityUser securityUser = new SecurityUser();
 		securityUser.setId(id);
 
 		StringBuilder   selectSql = new StringBuilder(" Select UsrID, UsrLogin, UsrPwd, " );
@@ -125,13 +127,14 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		selectSql.append(" UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, " );
 		selectSql.append(" UsrAcExp,UsrAcExpDt, UsrCredentialsExp, UsrAcLocked, UsrLanguage, " );
 		selectSql.append(" UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken, UsrIsMultiBranch, " );
-		selectSql.append(" UsrInvldLoginTries, " );
+		selectSql.append(" UsrInvldLoginTries, UsrDesg," );
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(" lovDescUsrDftAppCode , lovDescUsrDftAppCodeName , " );
+			selectSql.append(" lovDescUsrDeptCodeName ,lovDescUsrBranchCodeName,LovDescUsrLanguage,");
+			selectSql.append(" lovDescUsrDesg,");
+		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" , lovDescUsrDftAppCode , lovDescUsrDftAppCodeName , " );
-			selectSql.append(" lovDescUsrDeptCodeName ,lovDescUsrBranchCodeName,LovDescUsrLanguage");
-		}
 		selectSql.append(" From SecUsers");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where UsrID =:UsrID");
@@ -160,7 +163,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	@Override
 	public SecurityUser getSecurityUserByLogin(final String usrLogin, String type) {
 		logger.debug("Entering ");
-		SecurityUser securityUser = getSecurityUser();
+		SecurityUser securityUser = new SecurityUser();
 		securityUser.setUsrLogin(usrLogin);
 	
 		StringBuilder selectSql= new StringBuilder("Select UsrID, UsrLogin, UsrPwd, " );
@@ -168,12 +171,13 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		selectSql.append(" UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, " );
 		selectSql.append(" UsrAcExp,UsrAcExpDt, UsrCredentialsExp, UsrAcLocked, UsrLanguage, " );
 		selectSql.append(" UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken, UsrIsMultiBranch, " );
-		selectSql.append(" UsrInvldLoginTries, " );
+		selectSql.append(" UsrInvldLoginTries,UsrDesg," );
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(",lovDescUsrDftAppCode,lovDescUsrDftAppCodeName , " );
-			selectSql.append(" lovDescUsrDeptCodeName,lovDescUsrBranchCodeName,LovDescUsrLanguage");
+			selectSql.append(" lovDescUsrDeptCodeName,lovDescUsrBranchCodeName,LovDescUsrLanguage,");
+			selectSql.append(" lovDescUsrDesg");
 		}
 		selectSql.append("  From SecUsers");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -289,13 +293,14 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		insertSql .append(" UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrCredentialsExp, " );
 		insertSql .append(" UsrAcLocked, UsrLanguage, UsrDftAppId, UsrDftAppCode, UsrBranchCode, " );
 		insertSql .append(" UsrDeptCode, UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrAcExpDt, " );
+		insertSql .append(" UsrDesg," );
 		insertSql .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		insertSql .append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql .append(" Values(:UsrID, :UsrLogin, :UsrPwd, :UserStaffID, :UsrFName, :UsrMName, " );
 		insertSql .append(" :UsrLName, :UsrMobile, :UsrEmail, :UsrEnabled, :UsrCanSignonFrom, " );
 		insertSql .append(" :UsrCanSignonTo, :UsrCanOverrideLimits, :UsrAcExp, :UsrCredentialsExp, " );
 		insertSql .append(" :UsrAcLocked, :UsrLanguage, :UsrDftAppId, :UsrDftAppCode, :UsrBranchCode, " );
-		insertSql .append(" :UsrDeptCode, :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries,:UsrAcExpDt, ");
+		insertSql .append(" :UsrDeptCode, :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries,:UsrAcExpDt, :UsrDesg,");
 		insertSql .append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql .append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -306,7 +311,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		logger.debug("Leaving ");
 		return securityUser.getId();
 	}
-
+	
 	/**
 	 * This method updates the Record SecUsers or SecUsers_Temp.
 	 * if Record not updated then throws DataAccessException with  error  41004.
@@ -333,12 +338,12 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		updateSql.append(" UsrCanOverrideLimits = :UsrCanOverrideLimits, UsrAcExp = :UsrAcExp, UsrCredentialsExp = :UsrCredentialsExp," );
 		updateSql.append(" UsrAcLocked = :UsrAcLocked, UsrLanguage = :UsrLanguage, UsrDftAppId= :UsrDftAppId, UsrDftAppCode = :UsrDftAppCode, ");
 		updateSql.append(" UsrBranchCode = :UsrBranchCode, UsrDeptCode = :UsrDeptCode, ");
-		updateSql.append(" UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries, ");
+		updateSql.append(" UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries, UsrDesg = :UsrDesg,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where UsrID =:UsrID");
-		if (!type.endsWith("_TEMP")){
+		if (StringUtils.trimToEmpty(type).equals("")){
 			updateSql.append(" AND Version= :Version-1");
 		}
 		
@@ -388,5 +393,178 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		parms[0][0] = PennantJavaUtil.getLabel("label_UsrLogin")+":" +parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
+	
+	/**
+	 * Fetch the Record Security User Division Branch Details by key fields
+	 * 
+	 */
+	@Override
+	public SecurityUserDivBranch getSecUserDivBrDetailsById(SecurityUserDivBranch securityUserDivBranch, String type) {
+		logger.debug("Entering ");
+		
+		StringBuilder   selectSql = new StringBuilder(" Select UsrID, UserDivision, UserBranch, " );
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(",UserBranchDesc " );
+		}
+		selectSql.append(" From SecurityUserDivBranch");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where UsrID = :UsrID And UserDivision = :UserDivision And UserBranch =:UserBranch");
+		
+		logger.debug("selectSql:" + selectSql);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
+		RowMapper<SecurityUserDivBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
+		
+		try{
+			securityUserDivBranch = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			securityUserDivBranch = null;
+		}
+		logger.debug("Leaving ");
+		return securityUserDivBranch;
+	}
+	
+	/**
+	 * This method is to Save  SecurityUser Division Branch  Details
+	 */
+	public long saveDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type) {
+		logger.debug("Entering ");
+	
+		StringBuilder   insertSql  = new StringBuilder  ("Insert Into SecurityUserDivBranch");
+		insertSql .append(StringUtils.trimToEmpty(type));
+		insertSql .append(" (UsrID, UserDivision, UserBranch," );
+		insertSql .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
+		insertSql .append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql .append(" Values(:UsrID, :UserDivision, :UserBranch," );
+		insertSql .append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
+		insertSql .append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		logger.debug("insertSql:" +insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		
+		logger.debug("Leaving ");
+		return securityUserDivBranch.getId();
+	}
+	
+	/**
+	 * This method is to Update  SecurityUser Division Branch  Details
+	 */
+	@Override
+	public void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type) {
+		logger.debug("Entering ");
+		int recordCount = 0;
+		
+		StringBuilder   updateSql = new StringBuilder  ("Update SecurityUserDivBranch");
+		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(" Set UsrID = :UsrID, UserDivision = :UserDivision, UserBranch = :UserBranch,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		updateSql.append(" Where UsrID = :UsrID And UserDivision = :UserDivision And UserBranch =:UserBranch");
+		
+		logger.debug("updateSql:"+updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError ("41004",String.valueOf(securityUserDivBranch.getUsrID()) , securityUserDivBranch.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving ");
+	}
 
+	/**
+	 * This method is to Delete  Each Branch Under Division   
+	 */
+	@Override
+	public void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type) {
+		logger.debug("Entering ");
+		int recordCount = 0;
+		
+		StringBuilder   deleteSql = new StringBuilder  ("Delete From SecurityUserDivBranch");
+		deleteSql.append(StringUtils.trimToEmpty(type));	
+		deleteSql.append(" Where UsrID = :UsrID And UserDivision = :UserDivision And UserBranch =:UserBranch");
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
+		logger.debug("deleteSql:"+deleteSql.toString());
+		
+		try{
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			if (recordCount <= 0) {
+				ErrorDetails errorDetails= getError ("41003",String.valueOf(securityUserDivBranch.getUsrID()) , 
+						securityUserDivBranch.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) {};
+			}
+		}catch(DataAccessException e){
+			logger.debug("Error delete() Method");
+			ErrorDetails errorDetails= getError ("41006",String.valueOf(securityUserDivBranch.getUsrID()) ,
+					securityUserDivBranch.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 *  This method is to Fetch  SecurityUser Division Branch  Details
+	 */
+	@Override
+	public List<SecurityUserDivBranch> getSecUserDivBrList(long usrID,String type) {
+		logger.debug("Entering");
+		SecurityUserDivBranch securityUserDivBranch = new SecurityUserDivBranch();
+		securityUserDivBranch.setUsrID(usrID);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT UsrID, UserDivision, UserBranch,");
+		if (StringUtils.containsIgnoreCase(type, "VIEW")) {
+			selectSql.append("UserBranchDesc,");
+		}
+
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" FROM  SecurityUserDivBranch");
+		selectSql.append(type);
+		selectSql.append(" Where UsrID = :UsrID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
+		RowMapper<SecurityUserDivBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
+	/**
+	 * This method is to Delete  SecurityUser Division Branch  Details Under User
+	 */
+	@Override
+	public void deleteBranchs(SecurityUser securityUser,String type) {
+		logger.debug("Entering ");
+		int recordCount = 0;
+		
+		StringBuilder   deleteSql = new StringBuilder  ("Delete From SecurityUserDivBranch");
+		deleteSql.append(StringUtils.trimToEmpty(type));	
+		deleteSql.append(" Where UsrID = :UsrID");
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
+		logger.debug("deleteSql:"+deleteSql.toString());
+		
+		try{
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			if (recordCount <= 0) {
+				ErrorDetails errorDetails= getError ("41003",String.valueOf(securityUser.getUsrID()) , 
+						securityUser.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) {};
+			}
+		}catch(DataAccessException e){
+			logger.debug("Error delete() Method");
+			ErrorDetails errorDetails= getError ("41006",String.valueOf(securityUser.getUsrID()) ,
+					securityUser.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving ");
+	}
+	
+	
 }

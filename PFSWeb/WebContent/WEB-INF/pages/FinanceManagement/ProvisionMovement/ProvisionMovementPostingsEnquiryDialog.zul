@@ -8,39 +8,43 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
-		<window id="window_ProvisionMovementPostingsEnquiryList" border="normal"
-			title="${c:l('window_ProvisionPostingsDialog.title')}"
-			apply="${provisionMovementPostingsEnquiryDialogCtrl}" height="100%"
-			sizable="false" width="100%">
-			<div sclass="z-toolbar" style="padding:0px" height="28px">
-				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%" widths="30%,40%,30%">
-
-					<!-- COMMON BUTTONS -->
-					<label value="" />
-
-					<!-- SEARCH AREA -->
-					<toolbar align="center"
-						style="border-style: none;">
-					</toolbar>
-
-					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
-						<button id="btnHelp" height="24px"
-							label = "${c:l('label_Help')}"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}"
-							autodisable="btnHelp,btnClose" />
-						<button id="btnClose" height="24px"
-							image="/images/icons/btn_exitdoor2_16x16.gif"
-							tooltiptext="${c:l('btnClose.tooltiptext')}"
-							autodisable="btnHelp,btnClose" />
-					</toolbar>
-				</hbox>
-			</div>
+		<window id="window_ProvisionMovementPostingsEnquiryList"
+			border="normal" apply="${provisionMovementPostingsEnquiryDialogCtrl}"
+			height="100%" sizable="false" width="100%">
 
 			<borderlayout id="borderLayout_ProvisionMovementList">
-				<north border="none" />
+				<north>
+					<div sclass="z-toolbar" style="padding:0px"
+						height="28px">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="30%,40%,30%">
 
+							<!-- COMMON BUTTONS -->
+							<label value="" />
+
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label
+									value="${c:l('window_ProvisionPostingsDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" height="24px"
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnHelp,btnClose" />
+								<button id="btnClose" height="24px"
+									label="${c:l('label_Close')}"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnHelp,btnClose" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
 				<center border="none" autoscroll="true">
 					<vlayout>
 						<groupbox id="gb_basicDetails">
@@ -191,26 +195,23 @@
 							style="margin-left:2px;" width="99%" height="100%"
 							multiple="false">
 							<listhead sizable="true">
-								<listheader
-									id="listheader_PostingDate"
-									label="${c:l('listheader_PostingDate.label')}"
-									sort="false" width="12%" />
-								<listheader
-									id="listheader_ValueDate"
+								<listheader id="listheader_PostingDate"
+									label="${c:l('listheader_PostingDate.label')}" sort="false"
+									width="12%" />
+								<listheader id="listheader_ValueDate"
 									label="${c:l('listheader_ValueDate.label')}" sort="false"
 									width="12%" />
-								<listheader
-									id="listheader_Account"
+								<listheader id="listheader_Account"
 									label="${c:l('listheader_Account.label')}" sort="false"
 									width="15%" />
 								<listheader id="listheader_DrorCr"
 									label="${c:l('listheader_DrorCr.label')}" sort="false"
 									width="10%" />
-								<listheader
-									id="listheader_TranCode"
+								<listheader id="listheader_TranCode"
 									label="${c:l('listheader_TranCode.label')}" sort="false"
 									width="12%" />
-								<listheader id="listheader_PostingAmount"
+								<listheader
+									id="listheader_PostingAmount"
 									label="${c:l('listheader_PostingAmount.label')}" sort="false"
 									width="15%" />
 								<listheader id="listheader_Shadow"

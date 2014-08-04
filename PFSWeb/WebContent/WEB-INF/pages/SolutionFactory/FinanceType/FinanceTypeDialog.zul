@@ -20,25 +20,26 @@
 						<toolbar align="start" sclass="toolbar-start">
 							<button id="btnNew"
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
 							<button id="btnEdit"
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
 							<button id="btnSave"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
 							<button id="btnDelete" label="Delete"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
 							<button id="btnCancel"
 								tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo" />
 							<button id="btnNotes"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
-							<button id="btnCopyTo" label="Copy"
+							<button id="btnCopyTo" label="${c:l('label_Copy')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
 								tooltiptext="${c:l('btnCopyTo.tooltiptext')}" visible="true" />
 						</toolbar>
-						
+
 						<!-- SEARCH AREA -->
 						<toolbar align="center"
 							sclass="toolbar-center">
@@ -50,8 +51,10 @@
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
 							<button id="btnHelp"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}" label="Help" />
 							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
 								tooltiptext="${c:l('btnClose.tooltiptext')}" />
 						</toolbar>
 					</hbox>
@@ -77,10 +80,13 @@
 						<tab
 							label="${c:l('tab_FinanceTypeDialog_ScheduleDetails.value')}"
 							id="scheduleProfit" visible="false" />
+						<tab
+							label="${c:l('tab_FinanceTypeDialog_FinTypeAccountDetails.value')}"
+							id="finTypeAccountDetails" />
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
 						<tabpanel style="overflow:auto">
-							<groupbox id="gb_basicDetails" 
+							<groupbox id="gb_basicDetails"
 								closable="false">
 								<grid sclass="GridLayoutNoBorder"
 									fixedLayout="true" style="border:0px">
@@ -117,47 +123,26 @@
 												id="label_FinanceTypeDialog_FinCcy"
 												value="${c:l('label_FinanceTypeDialog_FinCcy.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox id="finCcy"
-													width="27px" visible="false" />
-												<hlayout spacing="0px"
-													sclass="cssHbox">
-													<textbox
-														id="lovDescFinCcyName" width="240px" readonly="true"
-														disabled="true" style="border:0px;margin:0px;" />
-													<button
-														id="btnSearchFinCcy" sclass="cssBtnSearch1" height="20px" />
-												</hlayout>
+												<space spacing="2px" sclass="mandatory" />
+												<textbox id="finCcy" width="27px" visible="false" />											
+												<textbox id="lovDescFinCcyName" width="240px"/>
+												<button id="btnSearchFinCcy" image="/images/icons/LOVSearch.png" height="24px" />											
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinDaysCalType"
 												value="${c:l('label_FinanceTypeDialog_FinDaysCalType.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<combobox
-													id="cbfinDaysCalType" width="275px" readonly="true" />
+												<space spacing="2px" sclass="mandatory" />
+												<combobox id="cbfinDaysCalType" width="275px" readonly="true" />
 											</hbox>
 										</row>
 										<row visible="true">
-											<label
-												id="label_FinanceTypeDialog_FinAcType"
-												value="${c:l('label_FinanceTypeDialog_FinAcType.value')}" />
+											<label id="label_FinanceTypeDialog_FinAcType" value="${c:l('label_FinanceTypeDialog_FinAcType.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox id="finAcType"
-													width="24px" visible="false" />
-												<hbox spacing="0px"
-													sclass="cssHbox">
-													<textbox
-														id="lovDescFinAcTypeName" width="240px" readonly="true"
-														disabled="true" style="border:0px;margin:0px;" />
-													<button
-														id="btnSearchFinAcType" sclass="cssBtnSearch1"
-														height="20px" />
-												</hbox>
+												<space spacing="2px" sclass="mandatory" />
+												<textbox id="finAcType" width="24px" visible="false" />											
+												<textbox id="lovDescFinAcTypeName" width="240px" readonly="true" disabled="true"/>
+												<button id="btnSearchFinAcType" image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinIsOpenNewFinAc"
@@ -166,6 +151,54 @@
 												<space spacing="2px" />
 												<checkbox
 													id="finIsOpenNewFinAc" checked="false" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												id="label_FinanceTypeDialog_PftPayAcType"
+												value="${c:l('label_FinanceTypeDialog_PftPayAcType.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<textbox
+													id="pftPayAcType" width="24px" visible="false" />
+												<textbox
+													id="lovDescPftPayAcTypeName" width="250px" readonly="true" />
+												<button
+													id="btnSearchPftPayAcType"
+													image="/images/icons/LOVSearch.png" height="24px" />
+											</hbox>
+											<label
+												id="label_FinanceTypeDialog_FinProvisionAcType"
+												value="${c:l('label_FinanceTypeDialog_FinProvisionAcType.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<textbox
+													id="finProvisionAcType" width="10px" visible="false" />
+												<textbox
+													id="lovDescFinProvisionAcTypeName" width="250px"
+													readonly="true" />
+												<button
+													id="btnSearchFinProvisionAcType"
+													image="/images/icons/LOVSearch.png" height="24px" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												id="label_FinanceTypeDialog_FinSuspAcType"
+												value="${c:l('label_FinanceTypeDialog_FinSuspAcType.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<textbox
+													id="finSuspAcType" width="10px" visible="false" />
+												<textbox
+													id="lovDescFinSuspAcTypeName" width="250px"
+													readonly="true" />
+												<button
+													id="btnSearchFinSuspAcType"
+													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
 										</row>
 										<row visible="false">
@@ -185,38 +218,6 @@
 													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
 											<label
-												id="label_FinanceTypeDialog_FinContingentAcType"
-												value="${c:l('label_FinanceTypeDialog_FinContingentAcType.value')}" />
-											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finContingentAcType" width="10px" visible="false" />
-												<textbox
-													id="lovDescFinContingentAcTypeName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinContingentAcType"
-													image="/images/icons/LOVSearch.png" height="24px" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label
-												id="label_FinanceTypeDialog_FinProvisionAcType"
-												value="${c:l('label_FinanceTypeDialog_FinProvisionAcType.value')}" />
-											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finProvisionAcType" width="10px" visible="false" />
-												<textbox
-													id="lovDescFinProvisionAcTypeName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinProvisionAcType"
-													image="/images/icons/LOVSearch.png" height="24px" />
-											</hbox>
-											<label
 												id="label_FinanceTypeDialog_FinIsOpenPftPayAcc"
 												value="${c:l('label_FinanceTypeDialog_FinIsOpenPftPayAcc.value')}" />
 											<hbox>
@@ -229,21 +230,15 @@
 											<label
 												id="label_FinanceTypeDialog_FinMinAmount"
 												value="${c:l('label_FinanceTypeDialog_FinMinAmount.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox
-													id="finMinAmount" width="180px" maxlength="25"
-													style="text-align:right" />
-											</hbox>
+											<currencyBox id="finMinAmount">
+											</currencyBox>
+
 											<label
 												id="label_FinanceTypeDialog_FinMaxAmount"
 												value="${c:l('label_FinanceTypeDialog_FinMaxAmount.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox
-													id="finMaxAmount" width="180px" maxlength="25"
-													style="text-align:right" />
-											</hbox>
+											<currencyBox
+												id="finMaxAmount">
+											</currencyBox>
 										</row>
 										<row>
 											<label
@@ -280,11 +275,9 @@
 												value="${c:l('label_FinanceTypeDialog_FinMinDownPayAmount.value')}" />
 											<hbox>
 												<space
-													id="space_FinMinDownPayAmount" sclass="mandatory"
-													spacing="2px" />
+													id="space_FinMinDownPayAmount" sclass="" spacing="2px" />
 												<decimalbox
-													id="finMinDownPayAmount" width="150px"
-													style="text-align:right" />
+													id="finMinDownPayAmount" width="150px" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -371,19 +364,29 @@
 												value="${c:l('label_FinanceTypeDialog_AllowRIAInvestment.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<checkbox
-													id="allowRIAInvestment" checked="false" />
+												<checkbox id="allowRIAInvestment" checked="false" />
 											</hbox>
-											<label
-												id="label_FinanceTypeDialog_AllowParllelFinance"
-												value="${c:l('label_FinanceTypeDialog_AllowParllelFinance.value')}" />
-											<hbox>
+											<label id="label_FinanceTypeDialog_AllowParllelFinance" value="${c:l('label_FinanceTypeDialog_AllowParllelFinance.value')}" visible="false"/>
+											<hbox visible="false">
 												<space spacing="2px" />
-												<checkbox
-													id="allowParllelFinance" checked="false" />
+												<checkbox id="allowParllelFinance" checked="false" />
 											</hbox>
 										</row>
 										<row>
+											<label
+												id="label_FinanceTypeDialog_FinDivision"
+												value="${c:l('label_FinanceTypeDialog_FinDivision.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<textbox
+													id="finDivision" width="10px" visible="false" />
+												<textbox
+													id="lovDescFinDivisionName" width="250px" readonly="true" />
+												<button
+													id="btnSearchFinDivision"
+													image="/images/icons/LOVSearch.png" height="24px" />
+											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinIsActive"
 												value="${c:l('label_FinanceTypeDialog_FinIsActive.value')}" />
@@ -577,7 +580,7 @@
 													id="cbfinGrcRvwRateApplFor" width="275px" readonly="true" />
 											</hbox>
 										</row>
-										<row visible="true">
+										<row visible="false">
 											<label
 												id="label_FinanceTypeDialog_FinGrcAlwIndRate"
 												value="${c:l('label_FinanceTypeDialog_FinGrcAlwIndRate.value')}" />
@@ -623,354 +626,494 @@
 						</tabpanel>
 
 						<tabpanel style="overflow:auto">
-							<groupbox id="gb_Repayment"
-								closable="false">
-								<grid sclass="GridLayoutNoBorder"
-									fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="260px" />
-										<column />
-										<column width="260px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-											<label
-												id="label_FinanceTypeDialog_FinRateType"
-												value="${c:l('label_FinanceTypeDialog_FinRateType.value')}" />
-											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<combobox
-													id="cbfinRateType" width="275px" readonly="true" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinIntRate"
-												value="${c:l('label_FinanceTypeDialog_FinIntRate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox
-													id="finIntRate" width="125px" maxlength="15"
-													style="text-align:right" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label
-												id="label_FinanceTypeDialog_FinBaseRate"
-												value="${c:l('label_FinanceTypeDialog_FinBaseRate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox
-													id="finBaseRate" width="200px" visible="false" />
-												<textbox
-													id="lovDescFinBaseRateName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinBaseRate"
-													image="/images/icons/LOVSearch.png" height="24px" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinSplRate"
-												value="${c:l('label_FinanceTypeDialog_FinSplRate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="finSplRate"
-													width="200px" visible="false" />
-												<textbox
-													id="lovDescFinSplRateName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinSplRate"
-													image="/images/icons/LOVSearch.png" height="24px" />
-											</hbox>
-										</row>
-
-										<row>
-											<label
-												id="label_FinanceTypeDialog_FinMargin"
-												value="${c:l('label_FinanceTypeDialog_FinMargin.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox
-													id="finMargin" width="125px" maxlength="15"
-													style="text-align:right" />
+							<div id="repayDetailDiv">
+								<groupbox id="gb_Repayment"
+									closable="false">
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="260px" />
+											<column />
+											<column width="260px" />
+											<column />
+										</columns>
+										<rows>
+											<row visible="true">
 												<label
-													id="labe_EffectiveRate" style="font-weight:bold;" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinFrEqrepayment"
-												value="${c:l('label_FinanceTypeDialog_FinFrEqrepayment.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox
-													id="finFrqrepayment" checked="false" />
-											</hbox>
-										</row>
-										<row>
-											<label
-												id="label_FinanceTypeDialog_FinDftIntFrq"
-												value="${c:l('label_FinanceTypeDialog_FinDftIntFrq.value')}" />
-											<hbox>
-												<textbox
-													id="finDftIntFrq" maxlength="15" visible="false" />
-												<space spacing="2px" />
-												<combobox
-													id="cbfinDftIntFrqCode" width="90px" readonly="true" />
-												<combobox
-													id="cbfinDftIntFrqMth" width="130px" readonly="true" />
-												<combobox
-													id="cbfinDftIntFrqDays" width="50px" readonly="true" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinRepayPftOnFrq"
-												value="${c:l('label_FinanceTypeDialog_FinRepayPftOnFrq.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox
-													id="finRepayPftOnFrq" checked="false" />
-											</hbox>
-										</row>
+													id="label_FinanceTypeDialog_FinRateType"
+													value="${c:l('label_FinanceTypeDialog_FinRateType.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="cbfinRateType" width="275px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinIntRate"
+													value="${c:l('label_FinanceTypeDialog_FinIntRate.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<decimalbox
+														id="finIntRate" width="125px" maxlength="15"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_FinBaseRate"
+													value="${c:l('label_FinanceTypeDialog_FinBaseRate.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<textbox
+														id="finBaseRate" width="200px" visible="false" />
+													<textbox
+														id="lovDescFinBaseRateName" width="250px" readonly="true" />
+													<button
+														id="btnSearchFinBaseRate"
+														image="/images/icons/LOVSearch.png" height="24px" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinSplRate"
+													value="${c:l('label_FinanceTypeDialog_FinSplRate.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<textbox
+														id="finSplRate" width="200px" visible="false" />
+													<textbox
+														id="lovDescFinSplRateName" width="250px" readonly="true" />
+													<button
+														id="btnSearchFinSplRate"
+														image="/images/icons/LOVSearch.png" height="24px" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_FinMargin"
+													value="${c:l('label_FinanceTypeDialog_FinMargin.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<decimalbox
+														id="finMargin" width="125px" maxlength="15"
+														style="text-align:right" />
+													<label
+														id="labe_EffectiveRate" style="font-weight:bold;" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinFrEqrepayment"
+													value="${c:l('label_FinanceTypeDialog_FinFrEqrepayment.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finFrqrepayment" checked="false" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_FinDftIntFrq"
+													value="${c:l('label_FinanceTypeDialog_FinDftIntFrq.value')}" />
+												<hbox>
+													<textbox
+														id="finDftIntFrq" maxlength="15" visible="false" />
+													<space
+														spacing="2px" />
+													<combobox
+														id="cbfinDftIntFrqCode" width="90px" readonly="true" />
+													<combobox
+														id="cbfinDftIntFrqMth" width="130px" readonly="true" />
+													<combobox
+														id="cbfinDftIntFrqDays" width="50px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinRepayPftOnFrq"
+													value="${c:l('label_FinanceTypeDialog_FinRepayPftOnFrq.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finRepayPftOnFrq" checked="false" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_FinRpyFrq"
+													value="${c:l('label_FinanceTypeDialog_FinRpyFrq.value')}" />
+												<hbox>
+													<textbox
+														id="finRpyFrq" maxlength="15" visible="false" />
+													<space
+														spacing="2px" />
+													<combobox
+														id="cbfinRpyFrqCode" width="90px" readonly="true" />
+													<combobox
+														id="cbfinRpyFrqMth" width="130px" readonly="true" />
+													<combobox
+														id="cbfinRpyFrqDays" width="50px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinSchdMthd"
+													value="${c:l('label_FinanceTypeDialog_FinSchdMthd.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="cbfinSchdMthd" width="275px" readonly="true" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_FinIsIntCpz"
+													value="${c:l('label_FinanceTypeDialog_FinIsIntCpz.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finIsIntCpz" checked="false" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinCpzFrq"
+													value="${c:l('label_FinanceTypeDialog_FinCpzFrq.value')}" />
+												<hbox>
+													<textbox
+														id="finCpzFrq" maxlength="15" visible="false" />
+													<space
+														spacing="2px" />
+													<combobox
+														id="cbfinCpzFrqCode" width="90px" readonly="true" />
+													<combobox
+														id="cbfinCpzFrqMth" width="130px" readonly="true" />
+													<combobox
+														id="cbfinCpzFrqDays" width="50px" readonly="true" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_FinIsRvwAlw"
+													value="${c:l('label_FinanceTypeDialog_FinIsRvwAlw.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finIsRvwAlw" checked="false" />
+												</hbox>
 
-										<row visible="true">
-											<label
-												id="label_FinanceTypeDialog_FinRpyFrq"
-												value="${c:l('label_FinanceTypeDialog_FinRpyFrq.value')}" />
-											<hbox>
-												<textbox id="finRpyFrq"
-													maxlength="15" visible="false" />
-												<space spacing="2px" />
-												<combobox
-													id="cbfinRpyFrqCode" width="90px" readonly="true" />
-												<combobox
-													id="cbfinRpyFrqMth" width="130px" readonly="true" />
-												<combobox
-													id="cbfinRpyFrqDays" width="50px" readonly="true" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinSchdMthd"
-												value="${c:l('label_FinanceTypeDialog_FinSchdMthd.value')}" />
-											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<combobox
-													id="cbfinSchdMthd" width="275px" readonly="true" />
-											</hbox>
-										</row>
-										<row>
-											<label
-												id="label_FinanceTypeDialog_FinIsIntCpz"
-												value="${c:l('label_FinanceTypeDialog_FinIsIntCpz.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox
-													id="finIsIntCpz" checked="false" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinCpzFrq"
-												value="${c:l('label_FinanceTypeDialog_FinCpzFrq.value')}" />
-											<hbox>
-												<textbox id="finCpzFrq"
-													maxlength="15" visible="false" />
-												<space spacing="2px" />
-												<combobox
-													id="cbfinCpzFrqCode" width="90px" readonly="true" />
-												<combobox
-													id="cbfinCpzFrqMth" width="130px" readonly="true" />
-												<combobox
-													id="cbfinCpzFrqDays" width="50px" readonly="true" />
-											</hbox>
-										</row>
-										<row>
-											<label
-												id="label_FinanceTypeDialog_FinIsRvwAlw"
-												value="${c:l('label_FinanceTypeDialog_FinIsRvwAlw.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox
-													id="finIsRvwAlw" checked="false" />
-											</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinRvwFrq"
+													value="${c:l('label_FinanceTypeDialog_FinRvwFrq.value')}" />
+												<hbox>
+													<textbox
+														id="finRvwFrq" maxlength="15" visible="false" />
+													<space
+														spacing="2px" />
+													<combobox
+														id="cbfinRvwFrqCode" width="90px" readonly="true" />
+													<combobox
+														id="cbfinRvwFrqMth" width="130px" readonly="true" />
+													<combobox
+														id="cbfinRvwFrqDays" width="50px" readonly="true" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_FinRvwRateApplFor"
+													value="${c:l('label_FinanceTypeDialog_FinRvwRateApplFor.value')}" />
+												<hbox>
+													<space
+														id="space_FinRvwRateApplFor" spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="cbfinRvwRateApplFor" width="275px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinSchCalCodeOnRvw"
+													value="${c:l('label_FinanceTypeDialog_FinSchCalCodeOnRvw.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" id="space_cbfinSchCalCodeOnRvw" />
+													<combobox
+														id="cbfinSchCalCodeOnRvw" width="275px" readonly="true" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_FinAlwIndRate"
+													value="${c:l('label_FinanceTypeDialog_FinAlwIndRate.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finAlwIndRate" checked="false" />
+												</hbox>
 
-											<label
-												id="label_FinanceTypeDialog_FinRvwFrq"
-												value="${c:l('label_FinanceTypeDialog_FinRvwFrq.value')}" />
-											<hbox>
-												<textbox id="finRvwFrq"
-													maxlength="15" visible="false" />
-												<space spacing="2px" />
-												<combobox
-													id="cbfinRvwFrqCode" width="90px" readonly="true" />
-												<combobox
-													id="cbfinRvwFrqMth" width="130px" readonly="true" />
-												<combobox
-													id="cbfinRvwFrqDays" width="50px" readonly="true" />
-											</hbox>
-										</row>
-										<row>
-											<label
-												id="label_FinanceTypeDialog_FinRvwRateApplFor"
-												value="${c:l('label_FinanceTypeDialog_FinRvwRateApplFor.value')}" />
-											<hbox>
-												<space
-													id="space_FinRvwRateApplFor" spacing="2px"
-													sclass="mandatory" />
-												<combobox
-													id="cbfinRvwRateApplFor" width="275px" readonly="true" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinSchCalCodeOnRvw"
-												value="${c:l('label_FinanceTypeDialog_FinSchCalCodeOnRvw.value')}" />
-											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" id="space_cbfinSchCalCodeOnRvw" />
-												<combobox
-													id="cbfinSchCalCodeOnRvw" width="275px" readonly="true" />
-											</hbox>
-										</row>
-										<row>
-											<label
-												id="label_FinanceTypeDialog_FinAlwIndRate"
-												value="${c:l('label_FinanceTypeDialog_FinAlwIndRate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox
-													id="finAlwIndRate" checked="false" />
-											</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinIndBaseRate"
+													value="${c:l('label_FinanceTypeDialog_FinIndBaseRate.value')}" />
+												<hbox>
+													<space spacing="2px"
+														id="space_finIndBaseRate" />
+													<textbox
+														id="finIndBaseRate" width="72px" visible="false" />
+													<textbox
+														id="lovDescFinIndBaseRateName" width="250px"
+														readonly="true" />
+													<button
+														id="btnSearchFinIndBaseRate"
+														image="/images/icons/LOVSearch.png" height="24px" />
+												</hbox>
+											</row>
 
-											<label
-												id="label_FinanceTypeDialog_FinIndBaseRate"
-												value="${c:l('label_FinanceTypeDialog_FinIndBaseRate.value')}" />
-											<hbox>
-												<space spacing="2px"
-													id="space_finIndBaseRate" />
-												<textbox
-													id="finIndBaseRate" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinIndBaseRateName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinIndBaseRate"
-													image="/images/icons/LOVSearch.png" height="24px" />
-											</hbox>
-										</row>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_FinMinTerm"
+													value="${c:l('label_FinanceTypeDialog_FinMinTerm.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="finMinTerm" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
 
-										<row visible="true">
-											<label
-												id="label_FinanceTypeDialog_FinMinTerm"
-												value="${c:l('label_FinanceTypeDialog_FinMinTerm.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<intbox id="finMinTerm"
-													width="45px" maxlength="3" style="text-align:right" />
-											</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinMaxTerm"
+													value="${c:l('label_FinanceTypeDialog_FinMaxTerm.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="finMaxTerm" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_FinDftTerms"
+													value="${c:l('label_FinanceTypeDialog_FinDftTerms.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="finDftTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
 
-											<label
-												id="label_FinanceTypeDialog_FinMaxTerm"
-												value="${c:l('label_FinanceTypeDialog_FinMaxTerm.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<intbox id="finMaxTerm"
-													width="45px" maxlength="3" style="text-align:right" />
-											</hbox>
-										</row>
-										<row>
-											<label
-												id="label_FinanceTypeDialog_FinDftTerms"
-												value="${c:l('label_FinanceTypeDialog_FinDftTerms.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<intbox id="finDftTerms"
-													width="45px" maxlength="3" style="text-align:right" />
-											</hbox>
+												<label
+													id="label_FinanceTypeDialog_FInRepayMethod"
+													value="${c:l('label_FinanceTypeDialog_FInRepayMethod.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<combobox
+														id="cbfinRepayMethod" width="275px" readonly="true" />
+												</hbox>
+											</row>
 
-											<label
-												id="label_FinanceTypeDialog_FInRepayMethod"
-												value="${c:l('label_FinanceTypeDialog_FInRepayMethod.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<combobox
-													id="cbfinRepayMethod" width="275px" readonly="true" />
-											</hbox>
-										</row>
-
-										<row visible="true">
-											<label
-												id="label_FinanceTypeDialog_FinIsAlwPartialRpy"
-												value="${c:l('label_FinanceTypeDialog_FinIsAlwPartialRpy.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox
-													id="finIsAlwPartialRpy" checked="false" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinODRpyTries"
-												value="${c:l('label_FinanceTypeDialog_FinODRpyTries.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<intbox
-													id="finODRpyTries" width="45px" maxlength="3"
-													style="text-align:right" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label
-												id="label_FinanceTypeDialog_FinIsAlwDifferment"
-												value="${c:l('label_FinanceTypeDialog_FinIsAlwDifferment.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox
-													id="finIsAlwDifferment" checked="false" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinIsMaxDifferment"
-												value="${c:l('label_FinanceTypeDialog_FinIsMaxDifferment.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<intbox
-													id="finMaxDifferment" width="100" maxlength="3"
-													style="text-align:right" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label
-												id="label_FinanceTypeDialog_FinIsAlwFrqDifferment"
-												value="${c:l('label_FinanceTypeDialog_FinIsAlwFrqDifferment.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox
-													id="finIsAlwFrqDifferment" checked="false" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinIsMaxFrqDifferment"
-												value="${c:l('label_FinanceTypeDialog_FinIsMaxFrqDifferment.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<intbox
-													id="finMaxFrqDifferment" width="100" maxlength="3"
-													style="text-align:right" />
-											</hbox>
-										</row>
-										<row>
-											<label
-												id="label_FinanceTypeDialog_FinScheduleOn"
-												value="${c:l('label_FinanceTypeDialog_FinScheduleOn.value')}" />
-											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<combobox
-													id="cbFinScheduleOn" width="250px" readonly="true" />
-											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinPftUnChanged"
-												value="${c:l('label_FinanceTypeDialog_FinPftUnChanged.value')}"
-												visible="false" />
-											<hbox visible="false">
-												<space spacing="2px" />
-												<checkbox
-													id="finPftUnChanged" />
-											</hbox>
-										</row>
-
-									</rows>
-								</grid>
-							</groupbox>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_FinIsAlwPartialRpy"
+													value="${c:l('label_FinanceTypeDialog_FinIsAlwPartialRpy.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finIsAlwPartialRpy" checked="false" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinODRpyTries"
+													value="${c:l('label_FinanceTypeDialog_FinODRpyTries.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="finODRpyTries" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_FinIsAlwDifferment"
+													value="${c:l('label_FinanceTypeDialog_FinIsAlwDifferment.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finIsAlwDifferment" checked="false" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinIsMaxDifferment"
+													value="${c:l('label_FinanceTypeDialog_FinIsMaxDifferment.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="finMaxDifferment" width="100" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_FinIsAlwFrqDifferment"
+													value="${c:l('label_FinanceTypeDialog_FinIsAlwFrqDifferment.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finIsAlwFrqDifferment" checked="false" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinIsMaxFrqDifferment"
+													value="${c:l('label_FinanceTypeDialog_FinIsMaxFrqDifferment.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="finMaxFrqDifferment" width="100" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_FinScheduleOn"
+													value="${c:l('label_FinanceTypeDialog_FinScheduleOn.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="cbFinScheduleOn" width="250px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinPftUnChanged"
+													value="${c:l('label_FinanceTypeDialog_FinPftUnChanged.value')}"
+													visible="false" />
+												<hbox visible="false">
+													<space
+														spacing="2px" />
+													<checkbox
+														id="finPftUnChanged" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_FinDepreciationFrq"
+													value="${c:l('label_FinanceTypeDialog_FinDepreciationFrq.value')}" />
+												<hbox>
+													<textbox
+														id="finDepreciationFrq" maxlength="15" visible="false" />
+													<space
+														spacing="2px" />
+													<combobox
+														id="cbfinDepreciationCode" width="90px" readonly="true" />
+													<combobox
+														id="cbfinDepreciationMth" width="130px" readonly="true" />
+													<combobox
+														id="cbfinDepreciationDays" width="50px" readonly="true" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox id="gb_OverDuePenalty"
+									closable="false">
+									<caption
+										label="${c:l('label_FinanceTypeDialog_ODPenalty')}" />
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="260px" />
+											<column />
+											<column width="260px" />
+											<column />
+										</columns>
+										<rows>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_ApplyODPenalty"
+													value="${c:l('label_FinanceTypeDialog_ApplyODPenalty.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="applyODPenalty" checked="false" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_ODIncGrcDays"
+													value="${c:l('label_FinanceTypeDialog_ODIncGrcDays.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="oDIncGrcDays" checked="false" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_ODChargeCalOn"
+													value="${c:l('label_FinanceTypeDialog_ODChargeCalOn.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="oDChargeCalOn" width="200px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_GraceDays"
+													value="${c:l('label_FinanceTypeDialog_ODGraceDays.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<intbox
+														id="oDGraceDays" width="45px" maxlength="3" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_ODChargeType"
+													value="${c:l('label_FinanceTypeDialog_ODChargeType.value')}" />
+												<hbox>
+													<space spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="oDChargeType" width="200px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_ODChargeAmtOrPerc"
+													value="${c:l('label_FinanceTypeDialog_ODChargeAmtOrPerc.value')}" />
+												<hbox>
+													<space spacing="2px"
+														id="space_oDChargeAmtOrPerc" sclass="mandatory" />
+													<decimalbox
+														id="oDChargeAmtOrPerc" width="120px" maxlength="15" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_ODAllowWaiver"
+													value="${c:l('label_FinanceTypeDialog_ODAllowWaiver.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="oDAllowWaiver" checked="false" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_ODMaxWaiver"
+													value="${c:l('label_FinanceTypeDialog_ODMaxWaiver.value')}" />
+												<hbox>
+													<space
+														id="space_oDMaxWaiverPerc" spacing="2px"
+														sclass="mandatory" />
+													<decimalbox
+														id="oDMaxWaiverPerc" width="120px" maxlength="5" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</div>
 						</tabpanel>
 
 						<tabpanel style="overflow:auto">
@@ -1001,10 +1144,6 @@
 													id="btnSearchFinAEAddDsbOD"
 													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
-										</row>
-
-										<row visible="true">
-
 											<label
 												id="label_FinanceTypeDialog_FinAEAddDsbFD"
 												value="${c:l('label_FinanceTypeDialog_FinAEAddDsbFD.value')}" />
@@ -1020,13 +1159,14 @@
 													id="btnSearchFinAEAddDsbFD"
 													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
-
+										</row>
+										<row visible="true">
 											<label
 												id="label_FinanceTypeDialog_FinAEAddDsbFDA"
 												value="${c:l('label_FinanceTypeDialog_FinAEAddDsbFDA.value')}" />
 											<hbox>
 												<space spacing="2px"
-													sclass="mandatory" />
+													id="space_finAEAddDsbFDA" sclass="mandatory" />
 												<textbox
 													id="finAEAddDsbFDA" width="72px" visible="false" />
 												<textbox
@@ -1035,6 +1175,20 @@
 												<button
 													id="btnSearchFinAEAddDsbFDA"
 													image="/images/icons/LOVSearch.png" height="24px" />
+											</hbox>
+											<label
+												id="label_FinanceTypeDialog_FinMAmz"
+												value="${c:l('label_FinanceTypeDialog_FinMAmz.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="" />
+												<textbox id="finMAmz"
+													width="72px" visible="false" />
+												<textbox
+													id="lovDescFinMAmzName" width="250px" readonly="true" />
+												<button
+													id="btnSearchFinMAmz" image="/images/icons/LOVSearch.png"
+													height="24px" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1072,8 +1226,7 @@
 												id="label_FinanceTypeDialog_FinAEToNoAmz"
 												value="${c:l('label_FinanceTypeDialog_FinAEToNoAmz.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
+												<space spacing="2px" />
 												<textbox
 													id="finAEToNoAmz" width="72px" visible="false" />
 												<textbox
@@ -1086,8 +1239,7 @@
 												id="label_FinanceTypeDialog_FinToAmz"
 												value="${c:l('label_FinanceTypeDialog_FinToAmz.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
+												<space spacing="2px" />
 												<textbox id="finToAmz"
 													width="72px" visible="false" />
 												<textbox
@@ -1130,7 +1282,7 @@
 										<row visible="true">
 											<label
 												id="label_FinanceTypeSearch_FinLatePayRule"
-												value="${c:l('label_FinanceTypeSearch_FinLatePayRule.value')}" />
+												value="${c:l('label_FinanceTypeDialog_FinLatePayRule.value')}" />
 											<hbox>
 												<space spacing="2px"
 													sclass="mandatory" />
@@ -1159,18 +1311,18 @@
 										</row>
 										<row>
 											<label
-												id="label_FinanceTypeDialog_FinAEWriteOff"
-												value="${c:l('label_FinanceTypeDialog_FinAEWriteOff.value')}" />
+												id="label_FinanceTypeDialog_FinAEGraceEnd"
+												value="${c:l('label_FinanceTypeDialog_FinAEGraceEnd.value')}" />
 											<hbox>
 												<space spacing="2px"
-													sclass="mandatory" />
+													sclass="" />
 												<textbox
-													id="finAEWriteOff" width="72px" visible="false" />
+													id="finAEGraceEnd" width="72px" visible="false" />
 												<textbox
-													id="lovDescFinAEWriteOffName" width="250px"
+													id="lovDescFinAEGraceEndName" width="250px"
 													readonly="true" />
 												<button
-													id="btnSearchFinAEWriteOff"
+													id="btnSearchFinAEGraceEnd"
 													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
 											<label
@@ -1188,8 +1340,6 @@
 													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
 										</row>
-
-
 										<row visible="true">
 											<label
 												id="label_FinanceTypeDialog_FinSchdChange"
@@ -1228,7 +1378,7 @@
 												value="${c:l('label_FinanceTypeDialog_FinDeffreq.value')}" />
 											<hbox>
 												<space spacing="2px"
-													id="space_finDeffreq" sclass="mandatory" />
+													id="space_finDeffreq" />
 												<textbox id="finDeffreq"
 													width="72px" visible="false" />
 												<textbox
@@ -1242,7 +1392,7 @@
 												value="${c:l('label_FinanceTypeDialog_FinDefRepay.value')}" />
 											<hbox>
 												<space spacing="2px"
-													id="space_finDefRepay" sclass="mandatory" />
+													id="space_finDefRepay" />
 												<textbox
 													id="finDefRepay" width="72px" visible="false" />
 												<textbox
@@ -1257,8 +1407,7 @@
 												id="label_FinanceTypeSearch_FinCapitalize"
 												value="${c:l('label_FinanceTypeSearch_FinCapitalize.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
+												<space spacing="2px" />
 												<textbox
 													id="finAECapitalize" width="72px" visible="false" />
 												<textbox
@@ -1271,20 +1420,38 @@
 										</row>
 										<row visible="true">
 											<label
-												id="label_FinanceTypeSearch_FinAEProgClaim"
-												value="${c:l('label_FinanceTypeDialog_FinAEProgClaim.value')}" />
+												id="label_FinanceTypeDialog_FinAEWriteOff"
+												value="${c:l('label_FinanceTypeDialog_FinAEWriteOff.value')}" />
 											<hbox>
 												<space spacing="2px"
-													id="space_finAEProgClaim" />
+													sclass="" />
 												<textbox
-													id="finAEProgClaim" width="72px" visible="false" />
+													id="finAEWriteOff" width="72px" visible="false" />
 												<textbox
-													id="lovDescFinAEProgClaimName" width="250px"
+													id="lovDescFinAEWriteOffName" width="250px"
 													readonly="true" />
 												<button
-													id="btnSearchFinAEProgClaim"
+													id="btnSearchFinAEWriteOff"
 													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
+											<label
+												id="label_FinanceTypeDialog_FinAEWriteOffBK"
+												value="${c:l('label_FinanceTypeDialog_FinAEWriteOffBK.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="" />
+												<textbox
+													id="finAEWriteOffBK" width="72px" visible="false" />
+												<textbox
+													id="lovDescFinAEWriteOffBKName" width="250px"
+													readonly="true" />
+												<button
+													id="btnSearchFinAEWriteOffBK"
+													image="/images/icons/LOVSearch.png" height="24px" />
+											</hbox>
+										</row>
+										<row id="row_ProgCliamEvent"
+											visible="false">
 											<label
 												id="label_FinanceTypeSearch_FinAEMaturity"
 												value="${c:l('label_FinanceTypeDialog_FinAEMaturity.value')}" />
@@ -1299,9 +1466,23 @@
 													id="btnSearchFinAEMaturity"
 													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
+											<label
+												id="label_FinanceTypeSearch_FinAEProgClaim"
+												value="${c:l('label_FinanceTypeDialog_FinAEProgClaim.value')}" visible="false"/>
+											<hbox visible="false">
+												<space spacing="2px"
+													id="space_finAEProgClaim" />
+												<textbox
+													id="finAEProgClaim" width="72px" visible="false" />
+												<textbox
+													id="lovDescFinAEProgClaimName" width="250px"
+													readonly="true" />
+												<button
+													id="btnSearchFinAEProgClaim"
+													image="/images/icons/LOVSearch.png" height="24px" />
+											</hbox>
 										</row>
-										<!-- Un visible fileds -->
-										<row visible="false">
+										<row visible="true">
 											<label
 												id="label_FinanceTypeDialog_FinAEEarlySettle"
 												value="${c:l('label_FinanceTypeDialog_FinAEEarlySettle.value')}" />
@@ -1318,9 +1499,7 @@
 													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
 										</row>
-
-
-
+                                       <!-- Un visible fileds -->
 										<row>
 											<label visible="false"
 												id="label_FinanceTypeDialog_FinAEEarlyPay"
@@ -1435,39 +1614,24 @@
 												<combobox
 													id="cbfinDftStmtFrqDays" width="50px" readonly="true" />
 											</hbox>
-											<label
-												id="label_FinanceTypeDialog_FinDepreciationFrq"
-												value="${c:l('label_FinanceTypeDialog_FinDepreciationFrq.value')}" />
-											<hbox>
-												<textbox
-													id="finDepreciationFrq" maxlength="15" visible="false" />
-												<space spacing="2px" />
-												<combobox
-													id="cbfinDepreciationCode" width="90px" readonly="true" />
-												<combobox
-													id="cbfinDepreciationMth" width="130px" readonly="true" />
-												<combobox
-													id="cbfinDepreciationDays" width="50px" readonly="true" />
-											</hbox>
 										</row>
 										<row>
-											<label visible="false"
-												id="label_FinanceTypeDialog_PftPayAcType"
-												value="${c:l('label_FinanceTypeDialog_PftPayAcType.value')}" />
-											<hbox visible="false">
+											<label
+												id="label_FinanceTypeDialog_FinContingentAcType"
+												value="${c:l('label_FinanceTypeDialog_FinContingentAcType.value')}" />
+											<hbox>
 												<space spacing="2px"
 													sclass="mandatory" />
 												<textbox
-													id="pftPayAcType" width="24px" visible="false" />
+													id="finContingentAcType" width="10px" visible="false" />
 												<textbox
-													id="lovDescPftPayAcTypeName" width="250px" readonly="true" />
+													id="lovDescFinContingentAcTypeName" width="250px"
+													readonly="true" />
 												<button
-													id="btnSearchPftPayAcType"
+													id="btnSearchFinContingentAcType"
 													image="/images/icons/LOVSearch.png" height="24px" />
 											</hbox>
-
 										</row>
-
 										<row>
 											<label
 												id="label_FinanceTypeDialog_FinCollateralReq"
@@ -1531,6 +1695,65 @@
 									</rows>
 								</grid>
 							</groupbox>
+						</tabpanel>
+						<tabpanel style="overflow:auto">
+							<groupbox id="gb_custAccountDetails" width="100%" height="100%">
+								<div sclass="z-toolbar"
+									style="padding:0" >
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+										height="100%" width="100%">
+										<toolbar align="start"
+											style="border:none;">
+											<label
+												value="${c:l('CustomerAccDetails')}" sclass="listboxHeading">
+											</label>
+										</toolbar>
+										<toolbar align="end"
+											style="float:right; border-style: none; padding:0px;"
+											height="100%">
+											<button
+												id="btnNew_FinTypeAccount" height="24px"
+												label="${c:l('label_New')}"
+												tooltiptext="${c:l('btnNew_FinTypeAccount.tooltiptext')}" />
+										</toolbar>
+									</hbox>
+								</div>
+								<listbox id="listBoxFinTypeAccounts"
+								    fixedLayout="true" 
+								    height="100px" 
+									vflex="true" sizedByContent="true"
+									tooltiptext="${c:l('listbox.tooltiptext')}"
+									emptyMessage="${c:l('listbox.emptyMessage')}" 
+									multiple="false" span="true" >
+									<listhead sizable="true">
+										<listheader
+											id="listheader_AccCurrency"
+											label="${c:l('listheader_AccCurrency.label')}" sort="auto"
+											hflex="min" />
+										<listheader
+											id="listheader_AccEvent"
+											label="${c:l('listheader_AccEvent.label')}" sort="auto"
+											hflex="min" />
+										<listheader
+											id="listheader_AlwManualEntry"
+											label="${c:l('listheader_AlwManualEntry.label')}" sort="auto"
+											hflex="min" />
+										<listheader
+											id="listheader_AlwCustAcc"
+											label="${c:l('listheader_AlwCustAcc.label')}"
+											sort="auto" hflex="min" />
+										<listheader
+											id="listheader_RecordStatus"
+											label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+											hflex="min" />
+										<listheader
+											id="listheader_RecordType"
+											label="${c:l('listheader_RecordType.label')}" sort="auto"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</groupbox>	
 						</tabpanel>
 					</tabpanels>
 				</tabbox>

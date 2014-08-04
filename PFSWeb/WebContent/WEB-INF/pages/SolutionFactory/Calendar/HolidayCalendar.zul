@@ -57,7 +57,7 @@
 					style="float:right; border-style: none;">
 					<button id="btnClose" height="24px"
 						tooltiptext="${c:l('btnClose.tooltiptext')}"
-						image="/images/icons/btn_exitdoor2_16x16.gif" />
+						label="${c:l('label_Close')}" />
 				</toolbar>
 			</hbox>
 		</div>

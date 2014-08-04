@@ -60,27 +60,39 @@
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 						height="100%" multiple="false">
 						<listhead sizable="true">
-							<listheader id="listheader_FinReference"
-								label="${c:l('listheader_FinReference.label')}" sort="auto"
-								width="20%" />
-							<listheader id="listheader_CustID"
-								label="${c:l('listheader_CustID.label')}" sort="auto"
-								width="15%" />
-							<listheader id="listheader_ProvisionCalDate"
-								label="${c:l('listheader_ProvisionCalDate.label')}" sort="auto"
-								width="13%" />
-							<listheader id="listheader_ProvisionDue"
-								label="${c:l('listheader_ProvisionDue.label')}" sort="auto"
-								width="16%" />
-							<listheader id="listheader_UseNFProv"
-								label="${c:l('listheader_UseNFProv.label')}" sort="auto"
-								width="10%" />
-							<listheader id="listheader_DueFromDate"
-								label="${c:l('listheader_DueFromDate.label')}" sort="auto"
-								width="13%" />
-							<listheader id="listheader_LastFullyPaidDate"
-								label="${c:l('listheader_LastFullyPaidDate.label')}" sort="auto"
-								width="13%" />
+								<listheader id="listheader_FinReference"
+									label="${c:l('listheader_FinReference.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CustID"
+									label="${c:l('listheader_CustID.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_ProvisionCalDate"
+									label="${c:l('listheader_ProvisionCalDate.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CalcProvisionDue"
+									label="${c:l('listheader_CalcProvisionDue.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ProvisionedDue"
+									label="${c:l('listheader_ProvisionedDue.label')}" sort="auto"
+									hflex="min" />	
+								<listheader id="listheader_UseNFProv"
+									label="${c:l('listheader_UseNFProv.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_DueFromDate"
+									label="${c:l('listheader_DueFromDate.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_LastFullyPaidDate"
+									label="${c:l('listheader_LastFullyPaidDate.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}"
+									sort="auto" hflex="min" />
 						</listhead>
 					</listbox>
 				</center>

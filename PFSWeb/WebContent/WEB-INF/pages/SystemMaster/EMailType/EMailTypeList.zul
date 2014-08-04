@@ -62,28 +62,28 @@
 
 					<listbox id="listBoxEMailType" vflex="true"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
+						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_EmailTypeCode"
 								label="${c:l('listheader_EmailTypeCode.label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_EmailTypeDesc"
 								label="${c:l('listheader_EmailTypeDesc.label')}" sort="auto"
-								width="45%" />
+								hflex="min" />
 							<listheader
 								id="listheader_EmailTypePriority"
 								label="${c:l('listheader_EmailTypePriority.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader
 								id="listheader_EmailTypeIsActive"
 								label="${c:l('listheader_EmailTypeIsActive.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 						</listhead>
 					</listbox>
 

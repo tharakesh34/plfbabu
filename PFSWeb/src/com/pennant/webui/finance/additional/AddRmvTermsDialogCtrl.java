@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.additional;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,21 +63,22 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.IntValidator;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
-import com.pennant.webui.finance.wiffinancemain.WIFFinanceMainDialogCtrl;
+import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 
 public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2623911832045017662L;
 	private final static Logger logger = Logger.getLogger(AddRmvTermsDialogCtrl.class);
 
 	/*
@@ -100,8 +102,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 				// overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; 	// overhanded per param
-	private transient WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl;
-	private transient FinanceMainDialogCtrl financeMainDialogCtrl;
+	private ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
 	
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
@@ -112,7 +113,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient boolean 		validationOn;
 	private boolean addTerms;
 	
-	static final List<ValueLabel>	      addTermCodes	              = PennantAppUtil.getAddTermCodes();
+	static final List<ValueLabel>	      addTermCodes	              = PennantStaticListUtil.getAddTermCodes();
 
 	/**
 	 * default constructor.<br>
@@ -158,18 +159,10 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// we get the WIFFinanceMainDialogCtrl controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete WIFFinanceMain here.
-		if (args.containsKey("wIFFinanceMainDialogCtrl")) {
-			setwIFFinanceMainDialogCtrl((WIFFinanceMainDialogCtrl) args
-					.get("wIFFinanceMainDialogCtrl"));
-		} else {
-			setwIFFinanceMainDialogCtrl(null);
-		}
-		
 		if (args.containsKey("financeMainDialogCtrl")) {
-			setFinanceMainDialogCtrl((FinanceMainDialogCtrl) args
-					.get("financeMainDialogCtrl"));
+			setScheduleDetailDialogCtrl((ScheduleDetailDialogCtrl) args.get("financeMainDialogCtrl"));
 		} else {
-			setFinanceMainDialogCtrl(null);
+			setScheduleDetailDialogCtrl(null);
 		}
 
 		if (args.containsKey("addTerms")) {
@@ -211,91 +204,12 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
-			setDialog(this.window_AddRmvTermsDialog);
+			//setDialog(this.window_AddRmvTermsDialog);
 		} catch (final Exception e) {
 			logger.error(e);
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
 		logger.debug("Leaving");
-	}
-
-	public FinScheduleData getFinScheduleData() {
-		return finScheduleData;
-	}
-
-	public void setFinScheduleData(FinScheduleData finScheduleData) {
-		this.finScheduleData = finScheduleData;
-	}
-
-	/**
-	 * @return the financeScheduleDetail
-	 */
-	public FinanceScheduleDetail getFinanceScheduleDetail() {
-		return financeScheduleDetail;
-	}
-
-	/**
-	 * @param financeScheduleDetail the financeScheduleDetail to set
-	 */
-	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
-		this.financeScheduleDetail = financeScheduleDetail;
-	}
-
-	/**
-	 * @return the wIFFinanceMainDialogCtrl
-	 */
-	public WIFFinanceMainDialogCtrl getwIFFinanceMainDialogCtrl() {
-		return wIFFinanceMainDialogCtrl;
-	}
-
-	/**
-	 * @param wIFFinanceMainDialogCtrl the wIFFinanceMainDialogCtrl to set
-	 */
-	public void setwIFFinanceMainDialogCtrl(
-			WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl) {
-		this.wIFFinanceMainDialogCtrl = wIFFinanceMainDialogCtrl;
-	}
-	
-	/**
-	 * @return the financeMainDialogCtrl
-	 */
-	public FinanceMainDialogCtrl getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
-	}
-
-	/**
-	 * @param financeMainDialogCtrl the financeMainDialogCtrl to set
-	 */
-	public void setFinanceMainDialogCtrl(FinanceMainDialogCtrl financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
-	}
-
-	/**
-	 * @return the validationOn
-	 */
-	public boolean isValidationOn() {
-		return validationOn;
-	}
-
-	/**
-	 * @param validationOn the validationOn to set
-	 */
-	public void setValidationOn(boolean validationOn) {
-		this.validationOn = validationOn;
-	}
-
-	/**
-	 * @return the addTerms
-	 */
-	public boolean isAddTerms() {
-		return addTerms;
-	}
-
-	/**
-	 * @param addTerms the addTerms to set
-	 */
-	public void setAddTerms(boolean addTerms) {
-		this.addTerms = addTerms;
 	}
 
 	/**
@@ -333,12 +247,12 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 		this.terms.setValue(aFinSchData.getFinanceMain().getReqTerms());
-		fillComboBox(this.cbAddTermAfter, "", addTermCodes, "");
+		fillComboBox(this.cbAddTermAfter, CalculationConstants.ADDTERM_AFTMDT, addTermCodes, "");
 		if(isAddTerms()){
 			this.fromDateRow.setVisible(false);					
 			this.btnAddRmvTerms.setLabel(Labels.getLabel("btnAddTerms.label"));
 			this.btnAddRmvTerms.setTooltiptext(Labels.getLabel("btnAddTerms.tooltiptext"));
-			this.addTermAfterRow.setVisible(true);
+			this.addTermAfterRow.setVisible(false);
 			this.numOfTermsRow.setVisible(true);
 		}else {
 			this.numOfTermsRow.setVisible(false);
@@ -355,8 +269,9 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
+	 * @throws InterruptedException 
 	 */
-	public void doWriteComponentsToBean() {
+	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
 		doSetValidation();
 		int count =0;
@@ -420,16 +335,22 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 			throw new WrongValuesException(wvea);
 		}
 		if(isAddTerms()){
+			getFinScheduleData().getFinanceMain().setEventFromDate(getFinScheduleData().getFinanceMain().getFinStartDate());
 			setFinScheduleData(ScheduleCalculator.addTerm(getFinScheduleData(),this.terms.getValue(),
 					this.cbAddTermAfter.getSelectedItem().getValue().toString()));
 		} else {
 			setFinScheduleData(ScheduleCalculator.deleteTerm(getFinScheduleData()));
 		}
-		getFinScheduleData().setSchduleGenerated(true);
-		if(getFinanceMainDialogCtrl()!=null){
-			this.financeMainDialogCtrl.doFillScheduleList(getFinScheduleData(), null);
-		}else {
-			this.wIFFinanceMainDialogCtrl.doFillScheduleList(getFinScheduleData());
+		
+		//Show Error Details in Schedule Maintainance
+		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+		}else{
+
+			getFinScheduleData().setSchduleGenerated(true);
+			if(getScheduleDetailDialogCtrl()!=null){
+				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -590,36 +511,74 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		doSetValidation();
 		doWriteComponentsToBean();
+		
 		this.window_AddRmvTermsDialog.onClose();
 		logger.debug("Leaving");
 	}
 
 	/** To fill schedule dates */
-	public void fillSchFromDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails) {
+	public void fillSchFromDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails) {
 		logger.debug("Entering");
+		
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		boolean termsExist = false;
+		Date curBussDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		boolean curTermExcluded = false;
+		
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				if (financeScheduleDetails.get(i).isRepayOnSchDate() &&
-						!financeScheduleDetails.get(i).getSpecifier().equals(CalculationConstants.MATURITY)) {
-					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate));
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
-					dateCombobox.appendChild(comboitem);
-					if (getFinanceScheduleDetail() != null
-							&& financeScheduleDetails.get(i).getSchDate()
-							.equals(getFinanceScheduleDetail().getSchDate())) {
-						dateCombobox.setSelectedItem(comboitem);
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+
+				//Not Allowed for Repayment
+				if (!curSchd.isRepayOnSchDate() ) {
+					continue;
+				}
+				
+				//Not before Current Business date & not Current Schedule Term Date
+				if(curBussDate.compareTo(curSchd.getSchDate()) > 0){
+					continue;
+				} else if(curBussDate.compareTo(curSchd.getSchDate()) == 0){
+					curTermExcluded = true;
+					continue;
+				} else{
+					if(!curTermExcluded){
+						curTermExcluded = true;
+						continue;
 					}
 				}
 
+				//Profit Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				//Principal Paid (Partial/Full)
+				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				boolean addToCombo = true;
+				if(curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) == 0){
+					if(!termsExist){
+						addToCombo = false;
+					}
+				}else{
+					termsExist = true;
+				}
+
+				if(addToCombo){
+					comboitem = new Comboitem();
+					comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate));
+					comboitem.setValue(curSchd.getSchDate());
+					dateCombobox.appendChild(comboitem);
+					if (getFinanceScheduleDetail() != null && curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {
+						dateCombobox.setSelectedItem(comboitem);
+					}
+				}
 			}
 		}
 		logger.debug("Leaving");
@@ -636,5 +595,44 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.addTermAfterRow.setVisible(false);
 		}
 		logger.debug("Leaving" + event.toString());
+	}
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	public FinScheduleData getFinScheduleData() {
+		return finScheduleData;
+	}
+	public void setFinScheduleData(FinScheduleData finScheduleData) {
+		this.finScheduleData = finScheduleData;
+	}
+
+	public FinanceScheduleDetail getFinanceScheduleDetail() {
+		return financeScheduleDetail;
+	}
+	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
+		this.financeScheduleDetail = financeScheduleDetail;
+	}
+
+	public boolean isValidationOn() {
+		return validationOn;
+	}
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
+	}
+
+	public boolean isAddTerms() {
+		return addTerms;
+	}
+	public void setAddTerms(boolean addTerms) {
+		this.addTerms = addTerms;
+	}
+
+	public ScheduleDetailDialogCtrl getScheduleDetailDialogCtrl() {
+		return scheduleDetailDialogCtrl;
+	}
+	public void setScheduleDetailDialogCtrl(ScheduleDetailDialogCtrl scheduleDetailDialogCtrl) {
+		this.scheduleDetailDialogCtrl = scheduleDetailDialogCtrl;
 	}
 }

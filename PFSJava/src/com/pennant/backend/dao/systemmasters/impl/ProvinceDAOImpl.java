@@ -121,7 +121,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 	 */
 	public Province getProvinceById(final String CPCountry, String CPProvince,String type) {
 		logger.debug("Entering");
-		Province province = getProvince();
+		Province province = new Province();
 		province.setCPCountry(CPCountry);
 		province.setCPProvince(CPProvince);
 

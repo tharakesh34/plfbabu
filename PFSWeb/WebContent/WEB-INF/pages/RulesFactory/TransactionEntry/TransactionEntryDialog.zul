@@ -23,8 +23,8 @@
     </style>
     
 	<script type="text/javascript" src="/ptjs/fulljslint.js" /> 
-    		<script type="text/javascript">
-			<![CDATA[     
+ 	<script type="text/javascript">
+	<![CDATA[     
 	function addStringContent(strContent) {				
  			zk.Widget.$(jq('$amountRule'))._editor.replaceSelection(strContent);
 	}	
@@ -88,8 +88,8 @@
 			alert("Error on The Page"+err);
 		}
 	}
-			]]>
-			  </script>
+	]]>
+	</script>
 			  
 	<window>		  
 		<window id="window_TransactionEntryDialog" border="normal"
@@ -100,7 +100,7 @@
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
 						<hbox pack="stretch"
-							sclass="hboxRemoveWhiteStrips" width="100%">
+							sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
@@ -124,13 +124,13 @@
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnValidate"
-									tooltiptext="validate" image="/images/icons/tick_16.png"
+									tooltiptext="validate" label="${c:l('label_Validate')}"
 									w:onClick="validateJs('1');" />
 								<button id="btnSimulate"
-									tooltiptext="simulate" image="/images/icons/start.gif"
+									tooltiptext="simulate" label="${c:l('label_Simulate')}"
 									w:onClick="validateJs('2');" />
 								<button id="btnValidateSave"
-									tooltiptext="simulate" image="/images/icons/start.gif"
+									tooltiptext="simulate" label="${c:l('label_ValidateSave')}"
 									visible="false" />
 							</toolbar>
 
@@ -338,7 +338,7 @@
 												image="/images/icons/LOVSearch.png" height="24px" />
 										</hbox>
 									</row>
-									<row>
+									<!-- <row>
 										<label
 											id="label_TransactionEntryDialog_RuleDecider"
 											value="${c:l('label_TransactionEntryDialog_RuleDecider.value')}" />
@@ -348,7 +348,7 @@
 											<combobox id="ruleDecider"
 												readonly="true" />
 										</hbox>
-									</row>
+									</row> -->
 									<row>
 										<label
 											id="label_TransactionEntryDialog_ChargeType"
@@ -397,14 +397,29 @@
 									<row>
 										<tabbox id="tb_Fields">
 											<tabs>
-												<tab
-													label="Amount Codes" />
+												<tab label="Amount Codes" />
+												<tab label="Fee Codes" />
 											</tabs>
 											<tabpanels>
 												<tabpanel
 													style="padding:0px;">
 													<listbox
-														id="CustomerData" style="text-align:left;border:none;"
+														id="amountCodeListbox" style="text-align:left;border:none;"
+														mold="default" width="100%"
+														w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
+														<listhead>
+															<listheader
+																label="Code" width="25%" />
+															<listheader
+																label="Description" width="75%" />
+														</listhead>
+
+													</listbox>
+												</tabpanel>
+												<tabpanel
+													style="padding:0px;">
+													<listbox
+														id="feeCodeListbox" style="text-align:left;border:none;"
 														mold="default" width="100%"
 														w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
 														<listhead>
@@ -418,8 +433,8 @@
 												</tabpanel>
 											</tabpanels>
 										</tabbox>
+										
 										<!-- code mirrior -->
-
 										<codemirror id="amountRule"
 											syntax="js" config="lineNumbers:true" />
 
@@ -454,8 +469,6 @@
 							</grid>
 
 						</groupbox>
-
-
 					</div>
 				</center>
 				<south visible="false">

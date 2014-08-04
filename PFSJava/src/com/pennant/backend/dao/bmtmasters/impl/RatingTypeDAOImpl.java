@@ -121,7 +121,7 @@ public class RatingTypeDAOImpl extends BasisCodeDAO<RatingType> implements Ratin
 	@Override
 	public RatingType getRatingTypeById(final String id, String type) {
 		logger.debug("Entering");
-		RatingType ratingType = getRatingType();
+		RatingType ratingType = new RatingType();
 		ratingType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

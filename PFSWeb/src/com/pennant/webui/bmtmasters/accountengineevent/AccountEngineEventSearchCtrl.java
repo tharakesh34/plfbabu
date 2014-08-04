@@ -143,16 +143,16 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_aEEventCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_aEEventCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_aEEventCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_aEEventCodeDesc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_aEEventCodeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_aEEventCodeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

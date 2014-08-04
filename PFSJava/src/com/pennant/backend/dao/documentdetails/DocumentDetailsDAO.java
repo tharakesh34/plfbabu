@@ -12,9 +12,7 @@ public interface DocumentDetailsDAO {
 	public void update(DocumentDetails channelDetail,String type);
 	public void delete(DocumentDetails channelDetail,String type);
 	public long save(DocumentDetails channelDetail,String type);
-	public void deleteList(ArrayList<DocumentDetails> docList, String type);
+	public void deleteList(List<DocumentDetails> docList, String type);
 	public void saveList(ArrayList<DocumentDetails> docList, String type);
 	public long generateDocSeq();
-	List<DocumentDetails> getDocDetailsByFinRef(String finReference, String type);
-
 }

@@ -45,7 +45,9 @@ package com.pennant.webui.customermasters.customeremail;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -54,12 +56,17 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
-import org.zkoss.zul.GroupsModelArray;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Panel;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -67,19 +74,19 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customeremail.model.CustomerEMailListModelItemRenderer;
-import com.pennant.webui.customermasters.customeremail.model.CustomerEmailComparater;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 
 /**
@@ -102,18 +109,43 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> implem
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window 		window_CustomerEMailList; 			// autoWired
-	protected Panel 		panel_CustomerEMailList; 			// autoWired
 	protected Borderlayout 	borderLayout_CustomerEMailList; 	// autoWired
 	protected Paging 		pagingCustomerEMailList; 			// autoWired
 	protected Listbox 		listBoxCustomerEMail; 				// autoWired
 	
 	// List headers
+	protected Listheader listheader_CustCIF;                // autoWired
 	protected Listheader listheader_CustEMailTypeCode; 		// autoWired
 	protected Listheader listheader_CustEMailPriority; 		// autoWired
-	protected Listheader listheader_CustEMail; 			// autoWired
+	protected Listheader listheader_CustEMail; 			    // autoWired
 	protected Listheader listheader_RecordStatus; 			// autoWired
 	protected Listheader listheader_RecordType;
 
+	//search
+	protected Textbox custCIF; 							// autoWired
+	protected Listbox sortOperator_custCIF; 			// autoWired
+	protected Textbox custEMailTypeCode; 				// autoWired
+	protected Listbox sortOperator_custEMailTypeCode; 	// autoWired
+	protected Intbox  custEMailPriority; 				// autoWired
+	protected Listbox sortOperator_custEMailPriority; 	// autoWired
+	protected Listbox sortOperator_custEMailid;
+	protected Textbox custEMailid;
+	protected Textbox recordStatus; 					// autoWired
+	protected Listbox recordType;						// autoWired
+	protected Listbox sortOperator_recordStatus; 		// autoWired
+	protected Listbox sortOperator_recordType; 			// autoWired
+
+	protected Label label_CustomerEMailSearch_RecordStatus; 	// autoWired
+	protected Label label_CustomerEMailSearch_RecordType; 		// autoWired
+	protected Label label_CustomerEMailSearchResult; 			// autoWired
+	
+	protected Grid	                       searchGrid;	                                                  // autowired
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+	private transient boolean			   approvedList=false;
+	
 	// checkRights
 	protected Button btnHelp; 											// autoWired
 	protected Button button_CustomerEMailList_NewCustomerEMail;			// autoWired
@@ -122,8 +154,6 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> implem
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<CustomerEMail> searchObj;
-	private transient PagedListService pagedListService;	
-
 	private transient CustomerEMailService customerEMailService;
 	private transient WorkFlowDetails workFlowDetails=null;
 
@@ -158,6 +188,35 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> implem
 			wfAvailable=false;
 		}
 
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custEMailTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custEMailTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custEMailPriority.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_custEMailPriority.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		this.sortOperator_custEMailid.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custEMailid.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = PennantAppUtil.setRecordType(this.recordType);
+		} else {
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CustomerEMailSearch_RecordStatus.setVisible(false);
+			this.label_CustomerEMailSearch_RecordType.setVisible(false);
+		}
+		
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -167,11 +226,14 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> implem
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CustomerEMailList.setHeight(getBorderLayoutHeight());
+		this.listBoxCustomerEMail.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCustomerEMailList.setPageSize(getListRows());
 		this.pagingCustomerEMailList.setDetailed(true);
 
+		this.listheader_CustCIF.setSortAscending(new FieldComparator("custID", true));
+		this.listheader_CustCIF.setSortDescending(new FieldComparator("custID", false));
 		this.listheader_CustEMailTypeCode.setSortAscending(new FieldComparator("custEMailTypeCode", true));
 		this.listheader_CustEMailTypeCode.setSortDescending(new FieldComparator("custEMailTypeCode", false));
 		this.listheader_CustEMailPriority.setSortAscending(new FieldComparator("custEMailPriority", true));
@@ -189,50 +251,24 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> implem
 			this.listheader_RecordType.setVisible(false);
 		}
 
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<CustomerEMail>(CustomerEMail.class,getListRows());
-		this.searchObj.addSort("CustID", false);
-		this.searchObj.addFilter(new Filter("lovDescCustRecordType", 
-				PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
-		this.searchObj.addTabelName("CustomerEMails_View");
-
-
-		// Work flow
-		if (isWorkFlowEnabled()) {
-			if (isFirstTask()) {
-				button_CustomerEMailList_NewCustomerEMail.setVisible(true);
-			} else {
-				button_CustomerEMailList_NewCustomerEMail.setVisible(false);
-			}
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}
-
-		setSearchObj(this.searchObj);
+		// set the itemRenderer
+		this.listBoxCustomerEMail.setItemRenderer(new CustomerEMailListModelItemRenderer());
+		
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_CustomerEMailList_NewCustomerEMail.setVisible(false);
 			this.button_CustomerEMailList_CustomerEMailSearchDialog.setVisible(false);
 			this.button_CustomerEMailList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			findSearchObject();
-			// set the itemRenderer
-			this.listBoxCustomerEMail.setItemRenderer(new CustomerEMailListModelItemRenderer());
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}	
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * Method for Rendering List
-	 */
-	public void findSearchObject(){
-		logger.debug("Entering");		
-		final SearchResult<CustomerEMail> searchResult = getPagedListService().getSRBySearchObject(this.searchObj);
-		listBoxCustomerEMail.setModel(new GroupsModelArray(
-				searchResult.getResult().toArray(),new CustomerEmailComparater()));
-		logger.debug("Leaving");
-	}
-	
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
@@ -373,6 +409,18 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> implem
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());		
+		this.sortOperator_custCIF.setSelectedIndex(0);
+		this.custCIF.setValue("");
+		this.sortOperator_custEMailTypeCode.setSelectedIndex(0);
+		this.custEMailTypeCode.setValue("");
+		this.sortOperator_custEMailTypeCode.setSelectedIndex(0);
+		this.custEMailTypeCode.setValue("");
+		this.sortOperator_custEMailPriority.setSelectedIndex(0);
+		this.custEMailPriority.setValue(null);
+		this.sortOperator_custEMailid.setSelectedIndex(0);
+		this.custEMailid.setValue("");
+		this.sortOperator_recordStatus.setSelectedIndex(0);
+		this.recordStatus.setValue("");
 		this.pagingCustomerEMailList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_CustomerEMailList, event);
 		this.window_CustomerEMailList.invalidate();
@@ -386,24 +434,7 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> implem
 	 */
 	public void onClick$button_CustomerEMailList_CustomerEMailSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our CustomerEMailDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected CustomerEMail. For handed over
-		 * these parameter only a Map is accepted. So we put the CustomerEMail object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerEMailCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/CustomerEMail/CustomerEMailSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -415,9 +446,91 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> implem
 	 */
 	public void onClick$button_CustomerEMailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());		
-		PTReportUtils.getReport("CustomerEMail", getSearchObj());
+		@SuppressWarnings("unused")
+		PTListReportUtils reportUtils = new PTListReportUtils("CustomerEMail", getSearchObj(),this.pagingCustomerEMailList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	
+	public void doSearch() {
+		logger.debug("Entering");
+		
+		// ++ create the searchObject and initialize sorting ++//
+		this.searchObj = new JdbcSearchObject<CustomerEMail>(CustomerEMail.class,getListRows());
+		this.searchObj.addSort("CustID", false);
+		searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		this.searchObj.addTabelName("CustomerEMails_View");
+		
+		// Work flow
+		if (isWorkFlowEnabled()) {
+
+			if (isFirstTask() && this.moduleType == null) {
+				button_CustomerEMailList_NewCustomerEMail.setVisible(true);
+			} else {
+				button_CustomerEMailList_NewCustomerEMail.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("CustomerEMails_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("CustomerEMails_AView");
+		}
+		
+		
+		// Customer CIF
+		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custCIF.getSelectedItem(), this.custCIF.getValue(), "lovDescCustCIF");
+		}
+		
+		// Customer EmailTypeCode
+		if (!StringUtils.trimToEmpty(this.custEMailTypeCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custEMailTypeCode.getSelectedItem(), this.custEMailTypeCode.getValue(), "custEMailTypeCode");
+		}
+		
+		// Customer EmailPriority
+		if (this.custEMailPriority.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custEMailPriority.getSelectedItem(), this.custEMailPriority.getValue(), "custEMailPriority");
+		}
+		
+		// Customer EmailId
+		if (!StringUtils.trimToEmpty(this.custEMailid.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custEMailid.getSelectedItem(), this.custEMailid.getValue(), "custEmail");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		
+		getPagedListWrapper().init(this.searchObj, this.listBoxCustomerEMail, this.pagingCustomerEMailList);
+		logger.debug("Leaving");
+	}
+
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -437,10 +550,4 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> implem
 		this.searchObj = searchObj;
 	}
 
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
 }

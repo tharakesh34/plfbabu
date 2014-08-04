@@ -121,7 +121,7 @@ public class AccountEngineEventDAOImpl extends BasisCodeDAO<AccountEngineEvent>	
 	@Override
 	public AccountEngineEvent getAccountEngineEventById(final String id, String type) {
 		logger.debug("Entering");
-		AccountEngineEvent accountEngineEvent = getAccountEngineEvent();
+		AccountEngineEvent accountEngineEvent = new AccountEngineEvent();
 		accountEngineEvent.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

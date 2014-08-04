@@ -8,381 +8,415 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_SecurityUserDialog"
-		title="${c:l('window_SecurityUserDialog.title')}" border="normal"
-		apply="${securityUserDialogCtrl}" width="100%" height="100%"
-		sizable="false">
+		border="normal" apply="${securityUserDialogCtrl}" width="100%" height="100%" sizable="false">
 
-		<div sclass="z-toolbar" style="padding:0px">
-			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
-
-				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					style="float:left; border-style: none;">
-
-					<button id="btnNew" height="24px"
-						tooltiptext="${c:l('btnNew.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
-					<button id="btnEdit" height="24px"
-						tooltiptext="${c:l('btnEdit.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchUsrLanguage
-						,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
-					<button id="btnDelete" visible="false" height="24px"
-						tooltiptext="${c:l('btnDelete.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
-					<button id="btnSave" height="24px"
-						tooltiptext="${c:l('btnSave.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
-					<button id="btnCancel" height="24px"
-						tooltiptext="${c:l('btnCancel.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-					<button id="btnNotes" height="24px"
-						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,
-						btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
-				</toolbar>
-
-				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none;">
-					<hbox align="center" style="padding: 2px"></hbox>
-				</toolbar>
-
-				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
-					<button id="btnHelp" height="24px"
-						label = "${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
-					<button id="btnClose" height="24px"
-						tooltiptext="${c:l('btnClose.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
-				</toolbar>
-			</hbox>
-		</div>
-		<separator></separator>
 		<borderlayout id="borderlayoutSecurityUser">
-			<center border="none" autoscroll="true">
+			<north>
+				<div sclass="z-toolbar" style="padding:0px">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%"  widths="35%,30%,35%">
 
-				<div height="100%">
-					<panel border="normal">
-						<panelchildren>
-							<grid sclass="GridLayoutNoBorder"
-								fixedLayout="true">
-								<columns>
-									<column width="15%" />
-									<column width="35%" />
-									<column width="15%" />
-									<column width="35%" />
-								</columns>
-								<rows>
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrLogin"
-											value="${c:l('label_SecurityUserDialog_UsrLogin.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<uppercasebox id="usrLogin"
-												maxlength="50" width="350px" />
-										</hbox>
-									</row>
-									<row
-										id="rowSecurityUserDialogUsrPwd" visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrPwd"
-											value="${c:l('label_SecurityUserDialog_UsrPwd.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox id="usrPwd"
-												type="password" maxlength="50" />
-											<vbox>
-												<hbox>
-													<label
-														value="${c:l('label_PasswordCriteria.value')}"
-														style="text-decoration:underline">
-													</label>
-													<label
-														id="label_PwdStatus">
-													</label>
-												</hbox>
-												<div
-													id="div_PwdStatusMeter" width="200PX" height="5px">
-												</div>
-											</vbox>
-										</hbox>
-									</row>
-									<row
-										id="rowSecurityUserDialogUsrConfirmPwd">
-										<label
-											id="label_SecurityUserDialog_UsrConfirmPwd"
-											value="${c:l('label_SecurityUserDialog_UsrconfirmPwd.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox id="usrConfirmPwd"
-												type="password" maxlength="50" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrFName"
-											value="${c:l('label_SecurityUserDialog_UsrFName.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox id="usrFName"
-												maxlength="50" width="350px" />
-										</hbox>
-										<label
-											id="label_SecurityUserDialog_UsrMName"
-											value="${c:l('label_SecurityUserDialog_UsrMName.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<textbox id="usrMName"
-												maxlength="50" width="350px"  />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrLName"
-											value="${c:l('label_SecurityUserDialog_UsrLName.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox id="usrLName"
-												maxlength="50" width="350px"  />
-										</hbox>
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start"
+							 sclass="toolbar-start">
 
-										<label
-											id="label_SecurityUserDialog_UserStaffID"
-											value="${c:l('label_SecurityUserDialog_UserStaffID.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox id="userStaffID"
-												maxlength="8" />
-										</hbox>
-									</row>
+							<button id="btnNew" height="24px"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+							<button id="btnEdit" height="24px"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchUsrLanguage
+						        ,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+							<button id="btnDelete" visible="false"
+								height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+							<button id="btnSave" height="24px"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+							<button id="btnCancel" height="24px"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes" height="24px"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,
+						        btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+						</toolbar>
 
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrMobile"
-											value="${c:l('label_SecurityUserDialog_UsrMobile.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox id="usrMobile"
-												maxlength="50" width="200px" />
-										</hbox>
-										<label
-											id="label_SecurityUserDialog_UsrEmail"
-											value="${c:l('label_SecurityUserDialog_UsrEmail.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox id="usrEmail"
-												maxlength="100" width="350px"  />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrEnabled"
-											value="${c:l('label_SecurityUserDialog_UsrEnabled.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox id="usrEnabled"
-												checked="true" />
-										</hbox>
-										<label
-											id="label_SecurityUserDialog_UsrCanOverrideLimits"
-											value="${c:l('label_SecurityUserDialog_UsrCanOverrideLimits.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox
-												id="usrCanOverrideLimits" checked="false" />
-										</hbox>
-									</row>
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label value="${c:l('window_SecurityUserDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
 
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrAcExp"
-											value="${c:l('label_SecurityUserDialog_UsrAcExp.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox id="usrAcExp"
-												checked="false" />
-										</hbox>
-										<label
-											id="label_SecurityUserDialog_UsrCredentialsExp"
-											value="${c:l('label_SecurityUserDialog_UsrCredentialsExp.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox
-												id="usrCredentialsExp" checked="false" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrAcLocked"
-											value="${c:l('label_SecurityUserDialog_UsrAcLocked.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox id="usrAcLocked"
-												checked="false" />
-										</hbox>
-										<label
-											id="label_SecurityUserDialog_UsrIsMultiBranch"
-											value="${c:l('label_SecurityUserDialog_UsrIsMultiBranch.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox
-												id="usrIsMultiBranch" checked="false" />
-										</hbox>
-									</row>
-
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrCanSignonFrom"
-											value="${c:l('label_SecurityUserDialog_UsrCanSignonFrom.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<timebox
-												id="usrCanSignonFrom" cols="15" />
-										</hbox>
-										<label
-											id="label_SecurityUserDialog_UsrCanSignonTo"
-											value="${c:l('label_SecurityUserDialog_UsrCanSignonTo.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<timebox id="usrCanSignonTo"
-												cols="15" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrLanguage"
-											value="${c:l('label_SecurityUserDialog_UsrLanguage.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<hbox>
-												<textbox
-													id="usrLanguage" maxlength="2" width="20px"
-													visible="false" />
-												<textbox
-													id="lovDescUsrLanguage" width="300px" readonly="true" />
-												<button
-													id="btnSearchUsrLanguage"
-													tooltiptext="${c:l('btnSearchUsrLanguage.tooltiptext')}"
-													image="/images/icons/LOVSearch.png" height="24px"
-													autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-													,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
-												</button>
-											</hbox>
-										</hbox>
-										<label
-											id="label_SecurityUserDialog_UsrBranchCode"
-											value="${c:l('label_SecurityUserDialog_UsrBranchCode.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<hbox>
-												<textbox
-													id="usrBranchCode" width="150px" visible="false" />
-												<textbox
-													id="lovDescUsrBranchCodeName" width="300px"
-													readonly="true" />
-												<button
-													id="btnSearchUsrBranchCode"
-													tooltiptext="${c:l('btnSearchUsrBranchCode.tooltiptext')}"
-													image="/images/icons/LOVSearch.png" height="24px"
-													autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-													,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
-												</button>
-											</hbox>
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_SecurityUserDialog_UsrDftAppCode"
-											value="${c:l('label_SecurityUserDialog_UsrDftAppCode.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<combobox id="usrDftAppId"
-												maxlength="50" width="200px" readonly="true">
-											</combobox>
-										</hbox>
-										<label
-											id="label_SecurityUserDialog_UsrDeptCode"
-											value="${c:l('label_SecurityUserDialog_UsrDeptCode.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-
-											<hbox>
-												<textbox
-													id="usrDeptCode" width="150px" visible="false" />
-												<textbox
-													id="lovDescUsrDeptCodeName" width="300px" readonly="true" />
-												<button
-													id="btnSearchUsrDeptCode"
-													tooltiptext="${c:l('btnSearchUsrDeptCode.tooltiptext')}"
-													image="/images/icons/LOVSearch.png" height="24px"
-													autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-													,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
-												</button>
-											</hbox>
-										</hbox>
-									</row>
-									<row visible="true"></row>
-									<row id="statusRow">
-										<label
-											id="label_SecurityUserDialog_RecordStatus"
-											value="${c:l('label_SecurityUserDialog_RecordStatus.value')}" />
-										<label id="recordStatus" />
-									</row>
-									<row spans="2">
-										<label value="   " />
-									</row>
-									<row spans="2">
-										<label value="   " />
-									</row>
-									<row spans="2">
-										<groupbox id="groupboxWf"
-											width="97%">
-											<caption
-												label="${c:l('Action')}"  />
-											<hbox>
-												<radiogroup
-													id="userAction" name="action" />
-											</hbox>
-										</groupbox>
-									</row>
-									<row></row>
-								</rows>
-							</grid>
-						</panelchildren>
-					</panel>
-					<separator></separator>
-					<panel id="panelPasswordInstructions" border="none"
-						visible="false">
-						<panelchildren>
-							<include src="PasswordInstructions.zul"
-								width="100%" />
-						</panelchildren>
-					</panel>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end"
+							 sclass="toolbar-end">
+							<button id="btnHelp" height="24px"
+								label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+							<button id="btnClose" height="24px"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+						</toolbar>
+					</hbox>
 				</div>
+			</north>
+			<center border="none" autoscroll="true">
+				<tabbox id="tabBoxIndexCenter" width="99%"
+					height="100%">
+					<tabs id="tabsIndexCenter">
+						<tab id="secUserDetailsTab"
+							label="Security User Details" />
+						<tab id="secUserDivBranchsTab"
+							label="Branch Details" />
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel style="overflow:auto">
+
+							<div height="100%">
+								<panel border="normal">
+									<panelchildren>
+										<grid
+											sclass="GridLayoutNoBorder" fixedLayout="true">
+											<columns>
+												<column width="15%" />
+												<column width="35%" />
+												<column width="15%" />
+												<column width="35%" />
+											</columns>
+											<rows>
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrLogin"
+														value="${c:l('label_SecurityUserDialog_UsrLogin.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<uppercasebox
+															id="usrLogin" maxlength="50" width="350px" />
+													</hbox>
+												</row>
+												<row
+													id="rowSecurityUserDialogUsrPwd" visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrPwd"
+														value="${c:l('label_SecurityUserDialog_UsrPwd.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="usrPwd" type="password" maxlength="50" />
+														<vbox>
+															<hbox>
+																<label
+																	value="${c:l('label_PasswordCriteria.value')}"
+																	style="text-decoration:underline">
+																</label>
+																<label
+																	id="label_PwdStatus">
+																</label>
+															</hbox>
+															<div
+																id="div_PwdStatusMeter" width="200PX" height="5px">
+															</div>
+														</vbox>
+													</hbox>
+												</row>
+												<row
+													id="rowSecurityUserDialogUsrConfirmPwd">
+													<label
+														id="label_SecurityUserDialog_UsrConfirmPwd"
+														value="${c:l('label_SecurityUserDialog_UsrconfirmPwd.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="usrConfirmPwd" type="password" maxlength="50" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrFName"
+														value="${c:l('label_SecurityUserDialog_UsrFName.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="usrFName" maxlength="50" width="350px" />
+													</hbox>
+													<label
+														id="label_SecurityUserDialog_UsrMName"
+														value="${c:l('label_SecurityUserDialog_UsrMName.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="usrMName" maxlength="50" width="350px" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrLName"
+														value="${c:l('label_SecurityUserDialog_UsrLName.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="usrLName" maxlength="50" width="350px" />
+													</hbox>
+
+													<label
+														id="label_SecurityUserDialog_UserStaffID"
+														value="${c:l('label_SecurityUserDialog_UserStaffID.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<textbox
+															id="userStaffID" maxlength="8" />
+													</hbox>
+												</row>
+
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrMobile"
+														value="${c:l('label_SecurityUserDialog_UsrMobile.value')}" />
+													<hbox>
+														<space
+															spacing="2px"/>
+														<textbox
+															id="usrMobile" maxlength="50" width="200px" />
+													</hbox>
+													<label
+														id="label_SecurityUserDialog_UsrEmail"
+														value="${c:l('label_SecurityUserDialog_UsrEmail.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="usrEmail" maxlength="100" width="350px" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrEnabled"
+														value="${c:l('label_SecurityUserDialog_UsrEnabled.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="usrEnabled" checked="true" />
+													</hbox>
+													<label
+														id="label_SecurityUserDialog_UsrCanOverrideLimits"
+														value="${c:l('label_SecurityUserDialog_UsrCanOverrideLimits.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="usrCanOverrideLimits" checked="false" />
+													</hbox>
+												</row>
+
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrAcExp"
+														value="${c:l('label_SecurityUserDialog_UsrAcExp.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="usrAcExp" checked="false" />
+													</hbox>
+													<label
+														id="label_SecurityUserDialog_UsrCredentialsExp"
+														value="${c:l('label_SecurityUserDialog_UsrCredentialsExp.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="usrCredentialsExp" checked="false" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrAcLocked"
+														value="${c:l('label_SecurityUserDialog_UsrAcLocked.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="usrAcLocked" checked="false" />
+													</hbox>
+													<label
+														id="label_SecurityUserDialog_UsrIsMultiBranch"
+														value="${c:l('label_SecurityUserDialog_UsrIsMultiBranch.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="usrIsMultiBranch" checked="false" />
+													</hbox>
+												</row>
+
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrCanSignonFrom"
+														value="${c:l('label_SecurityUserDialog_UsrCanSignonFrom.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<timebox
+															id="usrCanSignonFrom" cols="15" />
+													</hbox>
+													<label
+														id="label_SecurityUserDialog_UsrCanSignonTo"
+														value="${c:l('label_SecurityUserDialog_UsrCanSignonTo.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<timebox
+															id="usrCanSignonTo" cols="15" />
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrLanguage"
+														value="${c:l('label_SecurityUserDialog_UsrLanguage.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<hbox>
+															<textbox
+																id="usrLanguage" maxlength="2" width="20px"
+																visible="false" />
+															<textbox
+																id="lovDescUsrLanguage" width="300px" readonly="true" />
+															<button
+																id="btnSearchUsrLanguage"
+																tooltiptext="${c:l('btnSearchUsrLanguage.tooltiptext')}"
+																image="/images/icons/LOVSearch.png" height="24px"
+																autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
+													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
+															</button>
+														</hbox>
+													</hbox>
+													<label
+														id="label_SecurityUserDialog_UsrBranchCode"
+														value="${c:l('label_SecurityUserDialog_UsrBranchCode.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<hbox>
+															<textbox
+																id="usrBranchCode" width="150px" visible="false" />
+															<textbox
+																id="lovDescUsrBranchCodeName" width="300px"
+																readonly="true" />
+															<button
+																id="btnSearchUsrBranchCode"
+																tooltiptext="${c:l('btnSearchUsrBranchCode.tooltiptext')}"
+																image="/images/icons/LOVSearch.png" height="24px"
+																autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
+													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
+															</button>
+														</hbox>
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrDftAppCode"
+														value="${c:l('label_SecurityUserDialog_UsrDftAppCode.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<combobox
+															id="usrDftAppId" maxlength="50" width="200px"
+															readonly="true">
+														</combobox>
+													</hbox>
+													<label
+														id="label_SecurityUserDialog_UsrDeptCode"
+														value="${c:l('label_SecurityUserDialog_UsrDeptCode.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+
+														<hbox>
+															<textbox
+																id="usrDeptCode" width="150px" visible="false" />
+															<textbox
+																id="lovDescUsrDeptCodeName" width="300px"
+																readonly="true" />
+															<button
+																id="btnSearchUsrDeptCode"
+																tooltiptext="${c:l('btnSearchUsrDeptCode.tooltiptext')}"
+																image="/images/icons/LOVSearch.png" height="24px"
+																autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
+													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
+															</button>
+														</hbox>
+													</hbox>
+												</row>
+												<row visible="true">
+													<label
+														id="label_SecurityUserDialog_UsrDesg"
+														value="${c:l('label_SecurityUserDialog_UsrDesg.value')}" />
+													<extendedcombobox
+														id="usrDesg" />
+												</row>
+											</rows>
+										</grid>
+									</panelchildren>
+								</panel>
+								<separator></separator>
+								<panel id="panelPasswordInstructions"
+									border="none" visible="false">
+									<panelchildren>
+										<include src="PasswordInstructions.zul" width="100%" />
+									</panelchildren>
+								</panel>
+							</div>
+						</tabpanel>
+						<tabpanel style="overflow:auto">
+							<div height="100%">
+								<panel border="normal">
+									<panelchildren>
+										<grid id="divisionBranchs"
+											sclass="GridLayoutNoBorder" fixedLayout="true">
+											<columns>
+												<column width="40%" />
+												<column width="60%" />
+											</columns>
+											<rows id="divBranch_Rows">
+											</rows>
+										</grid>
+									</panelchildren>
+								</panel>
+							</div>
+						</tabpanel>
+					</tabpanels>
+				</tabbox>
 			</center>
-			<south size="20PX" border="none"></south>
+			<south height="48px" border="none" style="padding:5px;">
+				<groupbox id="groupboxWf" width="98%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_SecurityUserDialog_RecordStatus"
+							value="${c:l('label_SecurityUserDialog_RecordStatus.value')} :"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
 		</borderlayout>
 	</window>
 </zk>

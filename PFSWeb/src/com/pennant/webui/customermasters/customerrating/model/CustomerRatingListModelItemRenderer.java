@@ -47,8 +47,6 @@ import java.io.Serializable;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listgroup;
-import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
@@ -59,27 +57,19 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CustomerRatingListModelItemRenderer implements ListitemRenderer, Serializable {
+public class CustomerRatingListModelItemRenderer implements ListitemRenderer<CustomerRating>, Serializable {
 
 	private static final long serialVersionUID = 1255070721055120232L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
-	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
 
-		if (item instanceof Listgroup) { 
-			Object groupData = (Object) data; 
-			final CustomerRating customerRating= (CustomerRating)groupData;
-			item.appendChild(new Listcell(String.valueOf(customerRating.getLovDescCustCIF()))); 
-		} else if (item instanceof Listgroupfoot) { 
-			Listcell cell = new Listcell("");
-			cell.setSpan(6);
-			item.appendChild(cell); 
-		} else { 
-			final CustomerRating customerRating = (CustomerRating) data;
+	@Override
+	public void render(Listitem item, CustomerRating customerRating, int count) throws Exception {
+
 			Listcell lc;
-			lc = new Listcell(customerRating.getCustRatingType()+"-"+customerRating.getLovDescCustRatingTypeName());
+			lc=new Listcell(customerRating.getLovDescCustCIF());
 			lc.setParent(item);
-			lc = new Listcell(customerRating.getCustRatingCode()+"-"+customerRating.getLovDescCustRatingCodeName());
+			lc = new Listcell(customerRating.getCustRatingType());
+			lc.setParent(item);
+			lc = new Listcell(customerRating.getCustRatingCode());
 			lc.setParent(item);
 			lc = new Listcell(customerRating.getCustRating());
 			lc.setParent(item);
@@ -87,8 +77,8 @@ public class CustomerRatingListModelItemRenderer implements ListitemRenderer, Se
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(customerRating.getRecordType()));
 			lc.setParent(item);
-			item.setAttribute("data", data);
+			item.setAttribute("data", customerRating);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerRatingItemDoubleClicked");
-		}
+		
 	}
 }

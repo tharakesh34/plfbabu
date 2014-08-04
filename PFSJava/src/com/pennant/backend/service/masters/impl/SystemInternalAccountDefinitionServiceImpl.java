@@ -43,8 +43,6 @@
 
 package com.pennant.backend.service.masters.impl;
 
-
-
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,7 +69,6 @@ public class SystemInternalAccountDefinitionServiceImpl extends GenericService<S
 	private final static Logger logger = Logger.getLogger(SystemInternalAccountDefinitionServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
-	
 	private SystemInternalAccountDefinitionDAO systemInternalAccountDefinitionDAO;
 
 	/**

@@ -120,7 +120,7 @@ public class CommodityBrokerDetailDAOImpl extends BasisCodeDAO<CommodityBrokerDe
 	@Override
 	public CommodityBrokerDetail getCommodityBrokerDetailById(final String id, String type) {
 		logger.debug("Entering");
-		CommodityBrokerDetail commodityBrokerDetail = getCommodityBrokerDetail();
+		CommodityBrokerDetail commodityBrokerDetail = new CommodityBrokerDetail();
 		
 		commodityBrokerDetail.setId(id);
 		

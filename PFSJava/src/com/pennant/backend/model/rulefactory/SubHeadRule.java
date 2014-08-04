@@ -1,213 +1,190 @@
 package com.pennant.backend.model.rulefactory;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-public class SubHeadRule {
+public class SubHeadRule implements Serializable {
 	
-	private String custCIF;
+    private static final long serialVersionUID = 734402688459795510L;
+    
 	private String custCOB;
 	private String custCtgCode;
-	private String custIndustry;
-	private boolean custIsStaff;
 	private String custNationality;
+	private String custSector;
+	private String custSubSector;
+	private String custTypeCode;
+	private String reqFinAcType;
+	private String reqProduct;
+	private BigDecimal REFUNDPFT = BigDecimal.ZERO;
+	private BigDecimal TOTALPFT = BigDecimal.ZERO;
+	private BigDecimal TOTALPFTBAL = BigDecimal.ZERO;
+	private BigDecimal ACCRUE = BigDecimal.ZERO;
+	private boolean isProcessed= false;
+	private String reqFinType;
+	private String reqFinPurpose;
+	private String reqFinDivision;
+	private BigDecimal CALFEE = BigDecimal.ZERO;
+	private BigDecimal WAVFEE = BigDecimal.ZERO;
+	private BigDecimal PAIDFEE = BigDecimal.ZERO;
+	private int tenure = 0;
+	private int remTenure = 0;
+	
+	/*private String custIndustry;
+	private String custCIF;
+	private boolean custIsStaff = false;
 	private String custParentCountry;
 	private String custResdCountry;
 	private String custRiskCountry;
-	private String custSector;
-	private String custSegment;
-	private String custSubSector;
-	private String custSubSegment;
-	private String custTypeCode;
 	private String debitOrCredit;
 	private String reqCampaign;
-	private String reqFinAcType;
 	private String reqFinBranch;
 	private String reqFinCcy;
 	private String reqFinType;
-	private String reqGLHead;
-	private String reqProduct;
-	private long earlyDays;
-	private BigDecimal REFUND;
-	private boolean isProcessed= false;
+	private String reqGLHead;*/
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public String getCustCIF() {
-		return custCIF;
-	}
-	public void setCustCIF(String custCIF) {
-		this.custCIF = custCIF;
-	}
-	
 	public String getCustCOB() {
-		return custCOB;
-	}
+    	return custCOB;
+    }
 	public void setCustCOB(String custCOB) {
-		this.custCOB = custCOB;
-	}
-	
+    	this.custCOB = custCOB;
+    }
+
 	public String getCustCtgCode() {
-		return custCtgCode;
-	}
+    	return custCtgCode;
+    }
 	public void setCustCtgCode(String custCtgCode) {
-		this.custCtgCode = custCtgCode;
-	}
-	
-	public String getCustIndustry() {
-		return custIndustry;
-	}
-	public void setCustIndustry(String custIndustry) {
-		this.custIndustry = custIndustry;
-	}
-	
-	public boolean isCustIsStaff() {
-		return custIsStaff;
-	}
-	public void setCustIsStaff(boolean custIsStaff) {
-		this.custIsStaff = custIsStaff;
-	}
-	
+    	this.custCtgCode = custCtgCode;
+    }
+
 	public String getCustNationality() {
-		return custNationality;
-	}
+    	return custNationality;
+    }
 	public void setCustNationality(String custNationality) {
-		this.custNationality = custNationality;
-	}
-	
-	public String getCustParentCountry() {
-		return custParentCountry;
-	}
-	public void setCustParentCountry(String custParentCountry) {
-		this.custParentCountry = custParentCountry;
-	}
-	
-	public String getCustResdCountry() {
-		return custResdCountry;
-	}
-	public void setCustResdCountry(String custResdCountry) {
-		this.custResdCountry = custResdCountry;
-	}
-	
-	public String getCustRiskCountry() {
-		return custRiskCountry;
-	}
-	public void setCustRiskCountry(String custRiskCountry) {
-		this.custRiskCountry = custRiskCountry;
-	}
-	
+    	this.custNationality = custNationality;
+    }
+
 	public String getCustSector() {
-		return custSector;
-	}
+    	return custSector;
+    }
 	public void setCustSector(String custSector) {
-		this.custSector = custSector;
-	}
-	
-	public String getCustSegment() {
-		return custSegment;
-	}
-	public void setCustSegment(String custSegment) {
-		this.custSegment = custSegment;
-	}
-	
+    	this.custSector = custSector;
+    }
+
 	public String getCustSubSector() {
-		return custSubSector;
-	}
+    	return custSubSector;
+    }
 	public void setCustSubSector(String custSubSector) {
-		this.custSubSector = custSubSector;
-	}
-	
-	public String getCustSubSegment() {
-		return custSubSegment;
-	}
-	public void setCustSubSegment(String custSubSegment) {
-		this.custSubSegment = custSubSegment;
-	}
-	
+    	this.custSubSector = custSubSector;
+    }
+
 	public String getCustTypeCode() {
-		return custTypeCode;
-	}
+    	return custTypeCode;
+    }
 	public void setCustTypeCode(String custTypeCode) {
-		this.custTypeCode = custTypeCode;
-	}
-	
-	public String getDebitOrCredit() {
-		return debitOrCredit;
-	}
-	public void setDebitOrCredit(String debitOrCredit) {
-		this.debitOrCredit = debitOrCredit;
-	}
-	
-	public String getReqCampaign() {
-		return reqCampaign;
-	}
-	public void setReqCampaign(String reqCampaign) {
-		this.reqCampaign = reqCampaign;
-	}
-	
+    	this.custTypeCode = custTypeCode;
+    }
+
 	public String getReqFinAcType() {
-		return reqFinAcType;
-	}
+    	return reqFinAcType;
+    }
 	public void setReqFinAcType(String reqFinAcType) {
-		this.reqFinAcType = reqFinAcType;
-	}
+    	this.reqFinAcType = reqFinAcType;
+    }
+
+	public String getReqProduct() {
+    	return reqProduct;
+    }
+	public void setReqProduct(String reqProduct) {
+    	this.reqProduct = reqProduct;
+    }
 	
-	public String getReqFinBranch() {
-		return reqFinBranch;
-	}
-	public void setReqFinBranch(String reqFinBranch) {
-		this.reqFinBranch = reqFinBranch;
-	}
-	
-	public String getReqFinCcy() {
-		return reqFinCcy;
-	}
-	public void setReqFinCcy(String reqFinCcy) {
-		this.reqFinCcy = reqFinCcy;
-	}
+	public void setREFUNDPFT(BigDecimal rEFUNDPFT) {
+	    REFUNDPFT = rEFUNDPFT;
+    }
+	public BigDecimal getREFUNDPFT() {
+	    return REFUNDPFT;
+    }
+
+	public boolean isProcessed() {
+    	return isProcessed;
+    }
+	public void setProcessed(boolean isProcessed) {
+    	this.isProcessed = isProcessed;
+    }
 	
 	public String getReqFinType() {
-		return reqFinType;
-	}
+    	return reqFinType;
+    }
 	public void setReqFinType(String reqFinType) {
-		this.reqFinType = reqFinType;
-	}
-	
-	public String getReqGLHead() {
-		return reqGLHead;
-	}
-	public void setReqGLHead(String reqGLHead) {
-		this.reqGLHead = reqGLHead;
-	}
-	
-	public String getReqProduct() {
-		return reqProduct;
-	}
-	public void setReqProduct(String reqProduct) {
-		this.reqProduct = reqProduct;
-	}
-	
-	public long getEarlyDays() {
-    	return earlyDays;
-    }
-	public void setEarlyDays(long earlyDays) {
-    	this.earlyDays = earlyDays;
+    	this.reqFinType = reqFinType;
     }
 	
-	public BigDecimal getREFUND() {
-    	return REFUND;
+	public void setReqFinPurpose(String reqFinPurpose) {
+	    this.reqFinPurpose = reqFinPurpose;
     }
-	public void setREFUND(BigDecimal rEFUND) {
-    	REFUND = rEFUND;
+	public String getReqFinPurpose() {
+	    return reqFinPurpose;
     }
 	
-	public boolean isProcessed() {
-		return isProcessed;
+	public BigDecimal getCALFEE() {
+    	return CALFEE;
+    }
+	public void setCALFEE(BigDecimal cALFEE) {
+    	CALFEE = cALFEE;
+    }
+	
+	public BigDecimal getWAVFEE() {
+    	return WAVFEE;
+    }
+	public void setWAVFEE(BigDecimal wAVFEE) {
+    	WAVFEE = wAVFEE;
+    }
+	public int getTenure() {
+    	return tenure;
+    }
+	public void setTenure(int tenure) {
+    	this.tenure = tenure;
+    }
+	public int getRemTenure() {
+    	return remTenure;
+    }
+	public void setRemTenure(int remTenure) {
+    	this.remTenure = remTenure;
+    }
+	public void setReqFinDivision(String reqFinDivision) {
+	    this.reqFinDivision = reqFinDivision;
+    }
+	public String getReqFinDivision() {
+	    return reqFinDivision;
+    }
+	public BigDecimal getTOTALPFT() {
+    	return TOTALPFT;
+    }
+	public void setTOTALPFT(BigDecimal tOTALPFT) {
+    	TOTALPFT = tOTALPFT;
+    }
+	public BigDecimal getTOTALPFTBAL() {
+    	return TOTALPFTBAL;
+    }
+	public void setTOTALPFTBAL(BigDecimal tOTALPFTBAL) {
+    	TOTALPFTBAL = tOTALPFTBAL;
+    }
+	public BigDecimal getACCRUE() {
+    	return ACCRUE;
+    }
+	public void setACCRUE(BigDecimal aCCRUE) {
+    	ACCRUE = aCCRUE;
+    }
+	public BigDecimal getPAIDFEE() {
+		return PAIDFEE;
 	}
-	public void setProcessed(boolean isProcessed) {
-		this.isProcessed = isProcessed;
+	public void setPAIDFEE(BigDecimal pAIDFEE) {
+		PAIDFEE = pAIDFEE;
 	}
 	
 	//Set values into Map
@@ -222,4 +199,5 @@ public class SubHeadRule {
 		}
 		return subHeadRuleMap;
 	}
+	
 }

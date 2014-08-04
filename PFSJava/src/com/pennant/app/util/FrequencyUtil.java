@@ -989,6 +989,36 @@ public class FrequencyUtil implements Serializable {
 		return frequencyDetails;
 	}
 	
+	public static String getMonthFrqValue(String monthValue, String frqCode) {
+		String mth ="";
+		int month = Integer.parseInt(monthValue);
+		if("Q".equals(frqCode)) {
+			if(month==1 || month==4 || month==7 || month==10 ) {
+				mth = Q01;
+			}else if(month==2 || month==5 || month==8 || month==11 ) {
+				mth = Q02;
+			}else if(month==3 || month==6 || month==9 || month==12 ) {
+				mth = Q03;
+			}
+		}else if("H".equals(frqCode)) {
+			if(month==1 || month==7) {
+				mth = H01;
+			}else if(month==2 || month==8 ) {
+				mth = H02;
+			}else if(month==3 || month==9 ) {
+				mth = H03;
+			}else if(month==4 || month==10 ) {
+				mth = H04;
+			}else if(month==5 || month==11 ) {
+				mth = H05;
+			}else if(month==6 || month==12 ) {
+				mth = H06;
+			}
+		}
+		return mth;
+	}
+
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -999,5 +1029,4 @@ public class FrequencyUtil implements Serializable {
 	public void setErrorDetailsDAO(ErrorDetailsDAO errorDetailsDAO) {
 		FrequencyUtil.errorDetailsDAO = errorDetailsDAO;
 	}
-
 }

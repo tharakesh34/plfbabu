@@ -16,7 +16,6 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
@@ -29,6 +28,7 @@ import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.UserWorkspace;
 import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.accounts.Accounts;
@@ -39,7 +39,6 @@ import com.pennant.search.Filter;
 import com.pennant.webui.reports.customer.model.CustomerAccountListModelItemRender;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 public class CustomerAccountDialogCtrl extends GFCBaseListCtrl<Accounts> implements Serializable {
 
@@ -57,12 +56,10 @@ public class CustomerAccountDialogCtrl extends GFCBaseListCtrl<Accounts> impleme
 	protected  	Window    			window_CustomerAccountDialog; // autoWired
 
 	protected 	Borderlayout 		borderlayout_Account;  		  // autoWired
-	protected 	Label    			custShrtName;	              // autoWired
-	protected 	Textbox    			custCIF;	          		  // autoWired
+	protected 	ExtendedCombobox    			custCIF;	          		  // autoWired
 	protected 	Textbox				dftBranch;		  			  // autoWired
 
 	protected 	Button    			button_Print;	              // autoWired
-	protected 	Button				btnSearchCustCIF;			  // autoWired
 
 	protected 	Listbox				listBoxEnquiryResult;		  // autoWired
 	protected 	Paging     			pagingEnquiryList;	          // autoWired
@@ -130,7 +127,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseListCtrl<Accounts> impleme
 		}
 		
 		if (args.containsKey("custShrtName")) {
-			this.custShrtName.setValue(String.valueOf(args.get("custShrtName")));
+			this.custCIF.setDescription(String.valueOf(args.get("custShrtName")));
 		}
 		
 		if (args.containsKey("dftBranch")) {
@@ -147,6 +144,11 @@ public class CustomerAccountDialogCtrl extends GFCBaseListCtrl<Accounts> impleme
 	/** Set the properties of the fields, like maxLength.<br> */
 	private void doSetFieldProperties() {
 		this.dftBranch.setMaxlength(20);
+		this.custCIF.setMaxlength(12);
+		this.custCIF.setModuleName("Customer");
+		this.custCIF.setValueColumn("CustCIF");
+		this.custCIF.setDescColumn("CustShrtName");
+		this.custCIF.setValidateColumns(new String[] { "CustCIF" });
 	}
 
 	/**
@@ -178,7 +180,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseListCtrl<Accounts> impleme
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("custId",this.custId);
 		map.put("custCIF",this.custCIF.getValue());
-		map.put("custShrtName",this.custShrtName.getValue());
+		map.put("custShrtName",this.custCIF.getDescription());
 		map.put("dftBranch",this.dftBranch.getValue());
 
 		// call the ZUL-file with the parameters packed in a map
@@ -203,7 +205,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseListCtrl<Accounts> impleme
 				tab.setLabel(Labels.getLabel("menu_Item_CustomerEnquiry"));
 				tab.setClosable(true);
 
-				tab.addEventListener(Events.ON_CLOSE, new EventListener() {
+				tab.addEventListener(Events.ON_CLOSE, new EventListener<Event>() {
 					public void onEvent(Event event) throws UiException {
 						String pageName = event.getTarget().getId().replace("tab_", "");
 						@SuppressWarnings("deprecation")
@@ -243,24 +245,25 @@ public class CustomerAccountDialogCtrl extends GFCBaseListCtrl<Accounts> impleme
 		}
 		logger.debug("Leaving ");
 	}
+	
 
 	/**
 	 * This method fill the CustomerName, Branch and CIF values by using Search box. <br>
 	 * @throws Exception 
 	 **/
-	public void onClick$btnSearchCustCIF(Event event)  {
+	public void onFulfill$custCIF(Event event)  {
 		logger.debug("Entering");
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerAccountDialog, "Customer");
+		Object dataObject = custCIF.getObject();
 		if (dataObject instanceof String) {
 			this.custCIF.setValue(dataObject.toString());
-			this.custShrtName.setValue("");
+			this.custCIF.setDescription("");
 			this.dftBranch.setValue("");
 		} else {
 			customer = (Customer) dataObject;
 			if (customer != null) {
 				this.custCIF.setValue(String.valueOf(customer.getCustCIF()));
-				this.custShrtName.setValue(customer.getCustShrtName());
+				this.custCIF.setDescription(customer.getCustShrtName());
 				this.dftBranch.setValue(customer.getCustDftBranch());
 				this.custId = customer.getCustID();
 				doFillAccountDetail(customer.getCustID());
@@ -274,7 +277,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseListCtrl<Accounts> impleme
 	 * @throws Exception 
 	 **/
 	public void doFillAccountDetail(long custId) {
-		if(custId != Long.MIN_VALUE) {
+		if(custId != Long.MIN_VALUE || custId != 0) {
 			pagingEnquiryList.setDetailed(true);
 			this.searchObjAc = new JdbcSearchObject<Accounts>(Accounts.class);
 			this.searchObjAc.addFilter(new Filter("acCustId", custId,Filter.OP_EQUAL));

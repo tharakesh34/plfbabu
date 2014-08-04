@@ -56,8 +56,8 @@ public class City implements java.io.Serializable {
 		
 	private static final long serialVersionUID = -306657295035931426L;
 	
-	private String pCCounty = null;
-	private String lovDescPCCountyName;
+	private String pCCountry = null;
+	private String lovDescPCCountryName;
 	private String pCProvince;
 	private String lovDescPCProvinceName;
 	private String pCCity;
@@ -102,18 +102,18 @@ public class City implements java.io.Serializable {
 		this.pCCity = id;
 	}
 	
-	public String getPCCounty() {
-		return pCCounty;
+	public String getPCCountry() {
+		return pCCountry;
 	}
-	public void setPCCounty(String pCCounty) {
-		this.pCCounty = pCCounty;
+	public void setPCCountry(String pCCountry) {
+		this.pCCountry = pCCountry;
 	}
 
-	public String getLovDescPCCountyName() {
-		return this.lovDescPCCountyName;
+	public String getLovDescPCCountryName() {
+		return this.lovDescPCCountryName;
 	}
-	public void setLovDescPCCountyName(String lovDescPCCountyName) {
-		this.lovDescPCCountyName= lovDescPCCountyName;
+	public void setLovDescPCCountryName(String lovDescPCCountryName) {
+		this.lovDescPCCountryName= lovDescPCCountryName;
 	}
 	
 	public String getPCProvince() {
@@ -258,7 +258,7 @@ public class City implements java.io.Serializable {
 
 	// Overridden Equals method to handle the comparison
 	public boolean equals(City city) {
-		if(getPCCity()==city.getPCCity() && getPCProvince()==city.getPCProvince() && getPCCounty()==city.getPCCounty()){
+		if(getPCCity()==city.getPCCity() && getPCProvince()==city.getPCProvince() && getPCCountry()==city.getPCCountry()){
 			return true;
 		}
 		return false;

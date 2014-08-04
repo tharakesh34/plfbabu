@@ -58,12 +58,15 @@ public interface TransactionEntryDAO {
 	public void initialize(TransactionEntry transactionEntry);
 	public void refresh(TransactionEntry entity);
 	public List<TransactionEntry> getListTransactionEntryById(final long id, String type,boolean postingProcess);
-	public List<Rule> getListFeeChargeRules(final long id, String ruleEvent, String type);
+	public List<Rule> getListFeeChargeRules(final long id, String ruleEvent, String type, int seqOrder);
 	public void deleteByAccountingSetId(long accountSetid, String tableType);
 	public List<TransactionEntry> getListFeeTransEntryById(long id, String type);
 	public List<TransactionEntry> getODTransactionEntries();
 	public List<TransactionEntry> getTransactionEntryList(String oDRuleCode);
 	public void updateTransactionEntryList(List<TransactionEntry> entries);
-	public List<TransactionEntry> getListTransactionEntryByRefType(String finType, String refType, String roleCode, 
+	public List<TransactionEntry> getListTransactionEntryByRefType(String finType, int refType, String roleCode, 
 			String type,boolean postingProcess);
+	public List<TransactionEntry> getListTranEntryForBatch(long accSetid, String type);
+	public List<Long> getAccountSetIds();
+	public List<String> getListFeeCodes(long accountSetId);
 }

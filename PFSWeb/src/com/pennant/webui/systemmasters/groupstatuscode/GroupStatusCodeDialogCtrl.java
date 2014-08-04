@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.GroupStatusCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -407,6 +408,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -423,7 +425,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.grpStsIsActive.setChecked(aGroupStatusCode.isGrpStsIsActive());
 		this.recordStatus.setValue(aGroupStatusCode.getRecordStatus());
 		
-		if(aGroupStatusCode.isNew() || aGroupStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aGroupStatusCode.isNew() || (aGroupStatusCode.getRecordType() != null ? aGroupStatusCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.grpStsIsActive.setChecked(true);
 			this.grpStsIsActive.setDisabled(true);
 		}
@@ -593,16 +595,11 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 		setValidationOn(true);
 
 		if (!this.grpStsCode.isReadonly()){
-			this.grpStsCode.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-							"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-							"label_GroupStatusCodeDialog_GrpStsCode.value")})));
+			this.grpStsCode.setConstraint(new PTStringValidator(Labels.getLabel("label_GroupStatusCodeDialog_GrpStsCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 		if (!this.grpStsDescription.isReadonly()){
-			this.grpStsDescription.setConstraint(new SimpleConstraint(
-					PennantConstants.DESC_REGEX, Labels.getLabel(
-							"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_GroupStatusCodeDialog_GrpStsDescription.value")})));
+			this.grpStsDescription.setConstraint(new PTStringValidator(Labels.getLabel("label_GroupStatusCodeDialog_GrpStsDescription.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -741,7 +738,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

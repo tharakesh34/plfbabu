@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,7 +77,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.CustomerNotesTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -445,7 +446,7 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		}
 		this.recordStatus.setValue(aCustomerNotesType.getRecordStatus());
 		
-		if(aCustomerNotesType.isNew() || aCustomerNotesType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aCustomerNotesType.isNew() || (aCustomerNotesType.getRecordType() != null ? aCustomerNotesType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.custNotesTypeIsActive.setChecked(true);
 			this.custNotesTypeIsActive.setDisabled(true);
 		}
@@ -641,15 +642,12 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		setValidationOn(true);
 
 		if (!this.custNotesTypeCode.isReadonly()){
-			this.custNotesTypeCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_CustomerNotesTypeDialog_CustNotesTypeCode.value")})));
+			this.custNotesTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.custNotesTypeDesc.isReadonly()){
-			this.custNotesTypeDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_CustomerNotesTypeDialog_CustNotesTypeDesc.value")})));
+			this.custNotesTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -670,8 +668,8 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescCustNotesTypeArchiveFrqName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeArchiveFrq.value") }));
+		this.lovDescCustNotesTypeArchiveFrqName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeArchiveFrq.value"), 
+				null, true));
 	}
 
 	/**

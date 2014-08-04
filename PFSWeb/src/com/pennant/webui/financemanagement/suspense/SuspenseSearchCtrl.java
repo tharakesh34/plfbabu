@@ -148,31 +148,31 @@ public class SuspenseSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_finReference.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finBranch.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finBranch.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_custID.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finSuspDate.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finSuspDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finSuspDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finSuspAmt.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finSuspAmt.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finSuspAmt.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finCurSuspAmt.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finCurSuspAmt.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finCurSuspAmt.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finIsInSusp.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_finIsInSusp.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_finIsInSusp.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_manualSusp.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_manualSusp.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_manualSusp.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		// ++++ Restore the search mask input definition ++++ //

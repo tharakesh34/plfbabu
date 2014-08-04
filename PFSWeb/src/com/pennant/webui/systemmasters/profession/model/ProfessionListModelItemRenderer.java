@@ -62,15 +62,20 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class ProfessionListModelItemRenderer implements ListitemRenderer<Profession>, Serializable {
 
 	private static final long serialVersionUID = -2463856192651940409L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, Profession profession, int count) throws Exception {
 		
-		//final Profession profession = (Profession) data;
 		Listcell lc;
 	  	lc = new Listcell(profession.getProfessionCode());
 		lc.setParent(item);
 	  	lc = new Listcell(profession.getProfessionDesc());
+		lc.setParent(item);
+		lc = new Listcell();
+		final Checkbox cbProfessionSelfEmployee = new Checkbox();
+		cbProfessionSelfEmployee.setDisabled(true);
+		cbProfessionSelfEmployee.setChecked(profession.isSelfEmployee());
+		lc.appendChild(cbProfessionSelfEmployee);
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbProfessionIsActive = new Checkbox();

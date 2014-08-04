@@ -142,27 +142,27 @@ public class VehicleVersionSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_vehicleVersionId.setModel(new ListModelList(
+		this.sortOperator_vehicleVersionId.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_vehicleVersionId.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_vehicleModelId.setModel(new ListModelList(
+		this.sortOperator_vehicleModelId.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_vehicleModelId.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_vehicleVersionCode.setModel(new ListModelList(
+		this.sortOperator_vehicleVersionCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_vehicleVersionCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

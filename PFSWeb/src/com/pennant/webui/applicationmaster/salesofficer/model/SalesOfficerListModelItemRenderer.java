@@ -62,11 +62,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class SalesOfficerListModelItemRenderer implements ListitemRenderer<SalesOfficer>, Serializable {
 
 	private static final long serialVersionUID = 601020221986538839L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, SalesOfficer salesOfficer, int count) throws Exception {
 
-		//final SalesOfficer salesOfficer = (SalesOfficer) data;
 		Listcell lc;
 	  	lc = new Listcell(salesOfficer.getSalesOffCode());
 		lc.setParent(item);

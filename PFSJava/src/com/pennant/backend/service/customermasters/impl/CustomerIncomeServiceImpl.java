@@ -44,6 +44,9 @@
 package com.pennant.backend.service.customermasters.impl;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -180,8 +183,8 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	 * @return CustomerIncome
 	 */
 	@Override
-	public CustomerIncome getCustomerIncomeById(long id,String incomeType,String country) {
-		return getCustomerIncomeDAO().getCustomerIncomeById(id,incomeType,country,"_View");
+	public CustomerIncome 	getCustomerIncomeById(CustomerIncome customerIncome){
+		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_View");
 	}
 	
 	@Override
@@ -198,13 +201,13 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	 *            (String)
 	 * @return CustomerIncome
 	 */
-	public CustomerIncome getApprovedCustomerIncomeById(long id,String incomeType,String country) {
-		return getCustomerIncomeDAO().getCustomerIncomeById(id,incomeType,country,"_AView");
+	public CustomerIncome getApprovedCustomerIncomeById(CustomerIncome customerIncome) {
+		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_AView");
 	}
 
 	/**
 	 * This method refresh the Record.
-	 * @param CustomerIncome (customerIncome)
+	 * @param CustomerIncomeDetails (customerIncome)
 	 * @return customerIncome
 	 */
 	@Override
@@ -328,5 +331,34 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+	
+	@Override
+    public Map<String, BigDecimal> getCustomerIncomeByCustomer(long custID, boolean isWIF) {
+	    List<CustomerIncome> list = getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID, isWIF, "_AView");
+	    Map<String, BigDecimal> map = null;
+	    if(list != null && list.size() > 0){
+	    	map = new HashMap<String, BigDecimal>(list.size());
+	    	for (CustomerIncome customerIncome : list) {
+	    		 String key = "I_";
+	    		if(PennantConstants.EXPENSE.equals(customerIncome.getIncomeExpense())){
+	    			key = "E_";
+	    		}
+	    		key = key+customerIncome.getCategory()+"_"+customerIncome.getCustIncomeType();
+
+	    		if(customerIncome.isJointCust()){
+	    			key = key+"_S";
+	    		}else{
+	    			key = key+"_P";
+	    		}
+	    		map.put(key, customerIncome.getCustIncome());
+            }
+	    }
+		return map;
+    }
+	
+	@Override
+    public List<CustomerIncome> getCustomerIncomes(long custID, boolean isWIF) {
+	    return getCustomerIncomeDAO().getCustomerIncomeByCustomer(custID, isWIF, "_AView");
+    }
 	
 }

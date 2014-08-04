@@ -46,6 +46,7 @@ package com.pennant.webui.financemanagement.provision;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,10 +54,11 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -65,6 +67,9 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -88,8 +93,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.financemanagement.provision.model.ProvisionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
@@ -125,15 +130,43 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	protected Listheader listheader_UseNFProv; 		// autowired
 	protected Listheader listheader_DueFromDate; 	// autowired
 	protected Listheader listheader_ProvisionCalDate; 	// autowired
-	protected Listheader listheader_ProvisionDue; 	// autowired
+	protected Listheader listheader_CalcProvisionDue; 	// autowired
+	protected Listheader listheader_ProvisionedDue; 	// autowired
 	protected Listheader listheader_LastFullyPaidDate; 	// autowired
+	protected Listheader listheader_RecordStatus; 		// autowired
+	protected Listheader listheader_RecordType; 		// autowired
+
+	// Filtering Fields
+
+	protected Textbox 		finReference; 						// autowired
+	protected Listbox 		sortOperator_finReference; 			// autowired
+	protected Decimalbox 	custID; 							// autowired
+	protected Listbox 		sortOperator_custID; 				// autowired
+	protected Datebox 		provisionCalDate; 					// autowired
+	protected Listbox 		sortOperator_provisionCalDate; 		// autowired
+	protected Decimalbox 	provisionedAmt; 					// autowired
+	protected Listbox 		sortOperator_provisionedAmt; 		// autowired
+	protected Checkbox 		useNFProv; 							// autowired
+	protected Listbox 		sortOperator_useNFProv; 			// autowired
+	protected Datebox 		dueFromDate; 					    // autowired
+	protected Listbox       sortOperator_dueFromDate;           // autowired
+	protected Datebox 		lastFullyPaidDate;                  // autowired
+	protected Listbox       sortOperator_lastFullyPaidDate;     // autowired
+
+	private Grid 			searchGrid;							// autowired
+	protected Textbox 		moduleType; 						// autowired
+	protected Radio			fromApproved;
+	protected Radio			fromWorkFlow;
+	protected Row			workFlowFrom;
+
+	private transient boolean  approvedList=false; 
 
 	// checkRights
 	protected Button btnHelp; 										// autowired
 	protected Button button_ProvisionList_NewProvision; 			// autowired
 	protected Button button_ProvisionList_ProvisionSearchDialog; 	// autowired
 	protected Button button_ProvisionList_PrintList; 				// autowired
-	
+
 	protected Textbox    custCIF;	               // autoWired
 	protected Textbox    branchCode;               // autoWired
 	protected Datebox    startDate_one;            // autoWired
@@ -147,7 +180,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	protected Textbox    enquiryType; 	           // autoWired
 	protected Label 	 label_startDate;		   // autoWired
 	protected Label 	 label_maturityDate;	   // autoWired
-	
+
 	protected Listheader listheader_FinType;		// autoWired
 	protected Listheader listheader_FinProduct;		// autoWired
 	protected Listheader listheader_CustCIF;		// autoWired
@@ -168,7 +201,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	protected Listbox   sortOperator_FinProduct;   // autowired
 	protected Listbox   sortOperator_FinType;      // autowired
 	protected Listbox   sortOperator_FinCcy;       // autowired
-	
+
 	protected int   oldVar_sortOperator_custCIF = -1;      // autowired
 	protected int   oldVar_sortOperator_Branch = -1;       // autowired
 	protected int   oldVar_sortOperator_StartDate = -1;    // autowired
@@ -190,12 +223,14 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 
 	protected Grid      grid_enquiryDetails;       // autowired
 
+
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Provision> searchObj;
 	private transient ProvisionService provisionService;
 	private transient WorkFlowDetails workFlowDetails=null;
 	protected Textbox moduleName;
 	private String module = "";
+	private String menuItemRightName = null;
 	int listRows;
 
 	/**
@@ -219,6 +254,20 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	 */
 	public void onCreate$window_ProvisionList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
+		
+		//Getting Menu Item Right Name
+		if (event.getTarget() != null && event.getTarget().getParent() != null
+				&& event.getTarget().getParent().getParent()!=null && 
+				event.getTarget().getParent().getParent().getParent() != null && 
+				event.getTarget().getParent().getParent().getParent().getParent() != null) {
+
+			String menuItemName = ((Tabbox)event.getTarget().getParent().getParent().getParent().getParent()).getSelectedTab().getId();
+			menuItemName = menuItemName.trim().replace("tab_", "menu_Item_");
+
+			if(getUserWorkspace().getHasMenuRights().containsKey(menuItemName)){
+				menuItemRightName = getUserWorkspace().getHasMenuRights().get(menuItemName);
+			}
+		}
 
 		if(moduleName.getValue().equals("PROV")){
 			this.module="Provision";
@@ -243,38 +292,76 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 			wfAvailable=false;
 		}
 
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_custID.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_provisionCalDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_provisionCalDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_provisionedAmt.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_provisionedAmt.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_useNFProv.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_useNFProv.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_dueFromDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_dueFromDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_lastFullyPaidDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_lastFullyPaidDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_ProvisionList.setHeight(getBorderLayoutHeight());
+		this.listBoxProvision.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingProvisionList.setPageSize(getListRows());
 		this.pagingProvisionList.setDetailed(true);
-		
+
 		//Listbox Sorting
 
 		this.listheader_FinReference.setSortAscending(new FieldComparator("finReference", true));
 		this.listheader_FinReference.setSortDescending(new FieldComparator("finReference", false));
-		
+
 		this.listheader_CustID.setSortAscending(new FieldComparator("custID", true));
 		this.listheader_CustID.setSortDescending(new FieldComparator("custID", false));
-		
+
 		this.listheader_UseNFProv.setSortAscending(new FieldComparator("useNFProv", true));
 		this.listheader_UseNFProv.setSortDescending(new FieldComparator("useNFProv", false));
-		
+
 		this.listheader_DueFromDate.setSortAscending(new FieldComparator("dueFromDate", true));
 		this.listheader_DueFromDate.setSortDescending(new FieldComparator("dueFromDate", false));
-		
+
 		this.listheader_ProvisionCalDate.setSortAscending(new FieldComparator("provisionCalDate", true));
 		this.listheader_ProvisionCalDate.setSortDescending(new FieldComparator("provisionCalDate", false));
+
+		this.listheader_CalcProvisionDue.setSortAscending(new FieldComparator("provisionAmtCal", true));
+		this.listheader_CalcProvisionDue.setSortDescending(new FieldComparator("provisionAmtCal", false));
 		
-		this.listheader_ProvisionDue.setSortAscending(new FieldComparator("provisionDue", true));
-		this.listheader_ProvisionDue.setSortDescending(new FieldComparator("provisionDue", false));
-		
+		this.listheader_ProvisionedDue.setSortAscending(new FieldComparator("provisionedAmt", true));
+		this.listheader_ProvisionedDue.setSortDescending(new FieldComparator("provisionedAmt", false));
+
 		this.listheader_LastFullyPaidDate.setSortAscending(new FieldComparator("lastFullyPaidDate", true));
 		this.listheader_LastFullyPaidDate.setSortDescending(new FieldComparator("lastFullyPaidDate", false));
 		
+		this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
+		this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
+		
+		this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
+		this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
+
+		// set the itemRenderer
+		this.listBoxProvision.setItemRenderer(new ProvisionListModelItemRenderer());
+
 		if("Provision".equals(this.module)){
 			// ++ create the searchObject and init sorting ++//
 			this.searchObj = new JdbcSearchObject<Provision>(Provision.class,getListRows());
@@ -282,64 +369,25 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 
 			// Workflow
 			if (isWorkFlowEnabled()) {
-				this.searchObj.addTabelName("FinProvisions_View");
 				if (isFirstTask()) {
 					button_ProvisionList_NewProvision.setVisible(true);
 				} else {
 					button_ProvisionList_NewProvision.setVisible(false);
 				}
-
-				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-			}else{
-				this.searchObj.addTabelName("FinProvisions_AView");
 			}
 
-			setSearchObj(this.searchObj);
 			if (!isWorkFlowEnabled() && wfAvailable){
 				this.button_ProvisionList_NewProvision.setVisible(false);
 				this.button_ProvisionList_ProvisionSearchDialog.setVisible(false);
 				this.button_ProvisionList_PrintList.setVisible(false);
 				PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 			}else{
-				// Set the ListModel for the articles.
-				getPagedListWrapper().init(this.searchObj,this.listBoxProvision,this.pagingProvisionList);
-				// set the itemRenderer
-				this.listBoxProvision.setItemRenderer(new ProvisionListModelItemRenderer());
+				doSearch();
+				if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
+					this.workFlowFrom.setVisible(false);
+					this.fromApproved.setSelected(true);
+				}
 			}
-		}else{
-			//Search boxes Rendering and Storing Items into Listboxes
-
-			this.sortOperator_custCIF.setModel(new ListModelList(new SearchOperators().getMultiStringOperators()));
-			this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
-			this.sortOperator_Branch.setModel(new ListModelList(new SearchOperators().getMultiStringOperators()));
-			this.sortOperator_Branch.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
-			this.sortOperator_FinRef.setModel(new ListModelList(new SearchOperators().getMultiStringOperators()));
-			this.sortOperator_FinRef.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
-			this.sortOperator_FinType.setModel(new ListModelList(new SearchOperators().getMultiStringOperators()));
-			this.sortOperator_FinType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
-			this.sortOperator_StartDate.setModel(new ListModelList(new SearchOperators().getMultiDateOperators()));
-			this.sortOperator_StartDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
-			this.sortOperator_MaturityDate.setModel(new ListModelList(new SearchOperators().getMultiDateOperators()));
-			this.sortOperator_MaturityDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
-			this.sortOperator_FinProduct.setModel(new ListModelList(new SearchOperators().getMultiStringOperators()));
-			this.sortOperator_FinProduct.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
-			this.sortOperator_FinCcy.setModel(new ListModelList(new SearchOperators().getMultiStringOperators()));
-			this.sortOperator_FinCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			
-			//Set listbox height and set paging size
-			int dialogHeight =  grid_enquiryDetails.getRows().getVisibleItemCount()* 20 + 128 ; 
-			int listboxHeight = borderLayoutHeight-dialogHeight;
-			listBoxProvision.setHeight(listboxHeight+"px");
-			listRows = Math.round(listboxHeight/ 24);
-			this.pagingProvisionList.setPageSize(listRows);
-			
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -359,7 +407,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 		}else{
 			this.button_ProvisionList_NewProvision.setVisible(false);
 		}
-		
+
 		this.button_ProvisionList_PrintList.setVisible(getUserWorkspace()
 				.isAllowed("button_ProvisionList_PrintList"));
 		logger.debug("Leaving");
@@ -460,6 +508,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 		 * dialog when we do a delete, edit or insert a Provision.
 		 */
 		map.put("provisionListCtrl", this);
+		map.put("menuItemRightName", menuItemRightName);
 
 		// call the zul-file with the parameters packed in a map
 		try {
@@ -499,9 +548,21 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingProvisionList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_ProvisionList, event);
-		this.window_ProvisionList.invalidate();
+		this.sortOperator_custID.setSelectedIndex(0);
+		this.custID.setText("");
+		this.sortOperator_dueFromDate.setSelectedIndex(0);
+		this.dueFromDate.setValue(null);
+		this.sortOperator_finReference.setSelectedIndex(0);
+		this.finReference.setValue(null);
+		this.sortOperator_lastFullyPaidDate.setSelectedIndex(0);
+		this.lastFullyPaidDate.setValue(null);
+		this.sortOperator_provisionCalDate.setSelectedIndex(0);
+		this.provisionCalDate.setValue(null);
+		this.sortOperator_provisionedAmt.setSelectedIndex(0);
+		this.provisionedAmt.setText("");
+		this.sortOperator_useNFProv.setSelectedIndex(0);
+		this.useNFProv.setChecked(false);
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -512,25 +573,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	 */
 	public void onClick$button_ProvisionList_ProvisionSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our ProvisionDialog zul-file with parameters. So we can
-		 * call them with a object of the selected Provision. For handed over
-		 * these parameter only a Map is accepted. So we put the Provision object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("provisionCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Provision/ProvisionSearchDialog.zul",
-					null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -540,19 +583,20 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_ProvisionList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("Provision", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("Provision", getSearchObj(),this.pagingProvisionList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * When user clicks on  "btnSearchCustCIF" button
 	 * @param event
 	 */
 	public void onClick$btnSearchCustCIF(Event event) throws  SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
-		
+
 		if(this.oldVar_sortOperator_custCIF == Filter.OP_IN || this.oldVar_sortOperator_custCIF == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB
 			String selectedValues= (String) MultiSelectionSearchListBox.show(
@@ -560,7 +604,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 			if (selectedValues!= null) {
 				this.custCIF.setValue(selectedValues);
 			}
-			
+
 		}else{
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_ProvisionList, "Customer");
@@ -583,7 +627,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	 */
 	public void onClick$btnSearchFinType(Event event) {
 		logger.debug("Entering " + event.toString());
-		
+
 		if(this.oldVar_sortOperator_FinType == Filter.OP_IN || this.oldVar_sortOperator_FinType == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB
 			String selectedValues= (String) MultiSelectionSearchListBox.show(
@@ -591,7 +635,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 			if (selectedValues!= null) {
 				this.finType.setValue(selectedValues);
 			}
-			
+
 		}else{
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_ProvisionList, "FinanceType");
@@ -622,7 +666,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 			if (selectedValues!= null) {
 				this.finProduct.setValue(selectedValues);
 			}
-			
+
 		}else{
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_ProvisionList, "Product");
@@ -653,7 +697,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 			if (selectedValues!= null) {
 				this.finCcy.setValue(selectedValues);
 			}
-			
+
 		}else{
 			Object dataObject = ExtendedSearchListBox.show(this.window_ProvisionList, "Currency");
 			if (dataObject instanceof String) {
@@ -682,7 +726,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 			if (selectedValues!= null) {
 				this.finRef.setValue(selectedValues);
 			}
-			
+
 		}else{
 			Object dataObject  = ExtendedSearchListBox.show(this.window_ProvisionList,"FinanceMain");
 
@@ -697,7 +741,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * When user clicks on "btnSearchBranchCode" button
 	 * This method displays ExtendedSearchListBox with branch details
@@ -713,7 +757,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 			if (selectedValues!= null) {
 				this.branchCode.setValue(selectedValues);
 			}
-			
+
 		}else{
 			Object dataObject = ExtendedSearchListBox.show(this.window_ProvisionList,"Branch");
 			if (dataObject instanceof String){
@@ -734,15 +778,15 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	 */
 	public void onClick$button_Search(Event event){
 		logger.debug("Entering " + event.toString());
-		
+
 		doSearch();
 		this.pagingProvisionList.setDetailed(true);
 		getPagedListWrapper().init(this.searchObj, this.listBoxProvision, this.pagingProvisionList);
 		this.listBoxProvision.setItemRenderer(new ProvisionListModelItemRenderer());
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * When user clicks on button "button_Reset" button
 	 * @param event
@@ -758,7 +802,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 		this.sortOperator_FinType.setSelectedIndex(0);
 		this.sortOperator_FinRef.setSelectedIndex(0);
 		this.sortOperator_FinCcy.setSelectedIndex(0);
-		
+
 		this.custCIF.setValue("");
 		this.branchCode.setValue("");
 		this.startDate_one.setText("");
@@ -773,14 +817,14 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 		this.finType.setValue("");
 		this.finRef.setValue("");
 		this.finCcy.setValue("");
-		
+
 		this.listBoxProvision.getItems().clear();
 		this.pagingProvisionList.setTotalSize(0);
 		this.pagingProvisionList.setActivePage(0);
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +On Change Events for Multi-Selection Listbox's for Search operators+ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -788,27 +832,27 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	public void onSelect$sortOperator_custCIF(Event event){
 		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_custCIF, oldVar_sortOperator_custCIF, this.custCIF);
 	}
-	
+
 	public void onSelect$sortOperator_Branch(Event event){
 		this.oldVar_sortOperator_Branch = doChangeStringOperator(sortOperator_Branch, oldVar_sortOperator_Branch, this.branchCode);
 	}
-	
+
 	public void onSelect$sortOperator_FinProduct(Event event){
 		this.oldVar_sortOperator_FinProduct = doChangeStringOperator(sortOperator_FinProduct, oldVar_sortOperator_FinProduct, this.finProduct);
 	}
-	
+
 	public void onSelect$sortOperator_FinType(Event event){
 		this.oldVar_sortOperator_FinType = doChangeStringOperator(sortOperator_FinType, oldVar_sortOperator_FinType, this.finType);
 	}
-	
+
 	public void onSelect$sortOperator_FinRef(Event event){
 		this.oldVar_sortOperator_FinRef = doChangeStringOperator(sortOperator_FinRef, oldVar_sortOperator_FinRef, this.finRef);
 	}
-	
+
 	public void onSelect$sortOperator_FinCcy(Event event){
 		this.oldVar_sortOperator_FinCcy = doChangeStringOperator(sortOperator_FinCcy, oldVar_sortOperator_FinCcy, this.finCcy);
 	}
-	
+
 	public void onSelect$sortOperator_StartDate(Event event){
 		this.oldVar_sortOperator_StartDate = doChangeDateOperator(sortOperator_StartDate, oldVar_sortOperator_StartDate,
 				this.startDate_one, this.startDate_two);
@@ -819,10 +863,10 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 		}else{
 			this.startDate_two.setVisible(false);
 			this.label_startDate.setVisible(false);
-			
+
 		}
 	}
-	
+
 	public void onSelect$sortOperator_MaturityDate(Event event){
 		this.oldVar_sortOperator_MaturityDate = doChangeDateOperator(sortOperator_MaturityDate, oldVar_sortOperator_MaturityDate,
 				this.maturityDate_one, this.maturityDate_two);
@@ -835,9 +879,9 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 			this.label_maturityDate.setVisible(false);
 		}
 	}
-	
+
 	private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
-		
+
 		final Listitem item = listbox.getSelectedItem();
 		final int searchOpId = ((SearchOperators) item.getAttribute("data")).getSearchOperatorId();
 
@@ -851,11 +895,11 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 			}
 		}
 		return searchOpId;
-		
+
 	}
-	
+
 	private int doChangeDateOperator(Listbox listbox,int oldOperator,Datebox datebox_one,Datebox datebox_two){
-		
+
 		final Listitem item = listbox.getSelectedItem();
 		final int searchOpId = ((SearchOperators) item.getAttribute("data")).getSearchOperatorId();
 
@@ -881,207 +925,86 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> implements Ser
 	 */
 	public void doSearch(){
 		logger.debug("Entering");
-		
+
 		this.searchObj = new JdbcSearchObject<Provision>(Provision.class, this.listRows);
 		this.searchObj.addSort("finReference", false);
 		
 		// Workflow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("FinProvisions_View");
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+
+			if(this.moduleType==null){
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+				approvedList=false;
+
+			}else{
+				if(this.fromApproved.isSelected()){
+					approvedList=true;
+				}else{
+					approvedList=false;
+				}
+			}
 		}else{
+			approvedList=true;
+		}
+		if(approvedList){
 			this.searchObj.addTabelName("FinProvisions_AView");
+		}else{
+			this.searchObj.addTabelName("FinProvisions_View");
 		}
-		setSearchObj(this.searchObj);
-		
-		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
 
-			// get the search operator
-			final Listitem item_CustID = this.sortOperator_custCIF.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == -1) {
-					// do nothing
-				} else if (searchOpId == Filter.OP_LIKE) {
-					this.searchObj.addFilter(new Filter("lovDescCustCIF", "%"
-							+ this.custCIF.getValue().trim().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == Filter.OP_IN) {
-					this.searchObj.addFilter(new Filter("lovDescCustCIF", this.custCIF.getValue().trim().split(","),Filter.OP_IN));
-				}else if (searchOpId == Filter.OP_NOT_IN) {
-					this.searchObj.addFilter(new Filter("lovDescCustCIF", this.custCIF.getValue().trim().split(","),Filter.OP_NOT_IN));
-				}else {
-					this.searchObj.addFilter(new Filter("lovDescCustCIF", this.custCIF.getValue().trim(), searchOpId));
-				}
-			}
+		//Finance Reference 
+		if (!StringUtils.trimToEmpty(this.finReference.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finReference.getSelectedItem(), this.finReference.getValue() , "finReference");
 		}
-		if (!StringUtils.trimToEmpty(this.branchCode.getValue()).equals("")) {
-
-			// get the search operator
-			final Listitem item_CustID = this.sortOperator_Branch.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == -1) {
-					// do nothing
-				} else if (searchOpId == Filter.OP_LIKE) {
-					this.searchObj.addFilter(new Filter("finBranch", "%" 
-							+ this.branchCode.getValue().trim().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == Filter.OP_IN) {
-					this.searchObj.addFilter(new Filter("finBranch", this.branchCode.getValue().trim().split(","),Filter.OP_IN));
-				} else if (searchOpId == Filter.OP_NOT_IN) {
-					this.searchObj.addFilter(new Filter("finBranch", this.branchCode.getValue().trim().split(","),Filter.OP_NOT_IN));
-				} else {
-					this.searchObj.addFilter(new Filter("finBranch",this.branchCode.getValue().trim(), searchOpId));
-				}
-			}
+		// Customer ID 
+		if (this.custID.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custID.getSelectedItem(), this.custID.getValue() , "custID");
 		}
-		
-		if (this.startDate_one.getValue() != null || this.startDate_two.getValue() != null) {
 
-			// get the search operator
-			final Listitem item_StartDate = this.sortOperator_StartDate.getSelectedItem();
+		// Provision Calculated Date
+		if (this.provisionCalDate.getValue()!=null) {
+			//searchObj = getSearchFilter(searchObj,this.sortOperator_finSchdDate.getSelectedItem(), this.finSchdDate.getValue() , "finSchdDate");
 
-			if (item_StartDate != null) {
-				final int searchOpId = ((SearchOperators) item_StartDate
-						.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == -1) {
-					// do nothing
-				} else if (searchOpId == Filter.OP_BETWEEN) {
-					if (this.startDate_one.getValue() != null) {
-						this.searchObj.addFilter(new Filter("FinStartDate",DateUtility.formatUtilDate(
-								this.startDate_one.getValue(),PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
-					}
-					if (this.startDate_two.getValue() != null) {
-						this.searchObj.addFilter(new Filter("FinStartDate",DateUtility.formatUtilDate(
-								this.startDate_two.getValue(),PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
-					}
-				} else {
-					this.searchObj.addFilter(new Filter("FinStartDate",DateUtility.formatUtilDate(
-							this.startDate_one.getValue(),PennantConstants.DBDateFormat), searchOpId));
-				}
-			}
+			searchObj.addFilter(new Filter("provisionCalDate",DateUtility.formatUtilDate(
+					this.provisionCalDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));
 		}
-		
-		if (this.maturityDate_one.getValue() != null || this.maturityDate_two.getValue() != null) {
-			
-			// get the search operator
-			final Listitem item_StartDate = this.sortOperator_MaturityDate.getSelectedItem();
-			
-			if (item_StartDate != null) {
-				final int searchOpId = ((SearchOperators) item_StartDate
-						.getAttribute("data")).getSearchOperatorId();
-				
-				if (searchOpId == -1) {
-					// do nothing
-				} else if (searchOpId == Filter.OP_BETWEEN) {
-					if (this.maturityDate_one.getValue() != null) {
-						this.searchObj.addFilter(new Filter("MaturityDate",DateUtility.formatUtilDate(
-								this.maturityDate_one.getValue(),PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
-					}
-					if(this.maturityDate_two.getValue() != null){
-						this.searchObj.addFilter(new Filter("MaturityDate",DateUtility.formatUtilDate(
-								this.maturityDate_two.getValue(),PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
-					}
-				} else {
-					this.searchObj.addFilter(new Filter("MaturityDate",DateUtility.formatUtilDate(
-							this.maturityDate_one.getValue(),PennantConstants.DBDateFormat), searchOpId));
+
+		// Provisioned Amount
+		if (this.provisionedAmt.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_provisionedAmt.getSelectedItem(), this.provisionedAmt.getValue() , "provisionedAmt");
+		}
+
+		//  Use NV Provision
+		if (this.sortOperator_useNFProv.getSelectedItem() != null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_useNFProv.getSelectedItem(), this.useNFProv.isChecked() ? 1 : 0, "useNFProv");
+		}
+
+		// Due From Date
+		if (this.dueFromDate.getValue()!=null) {
+			searchObj.addFilter(new Filter("dueFromDate",DateUtility.formatUtilDate(
+					this.dueFromDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));
+		}
+
+		// Last Fully Payed Date
+		if (this.lastFullyPaidDate.getValue()!=null) {
+			searchObj.addFilter(new Filter("dueFromDate",DateUtility.formatUtilDate(
+					this.dueFromDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
 				}
 			}
 		}
 
-		if (!StringUtils.trimToEmpty(this.finRef.getValue()).equals("")) {
-
-			// get the search operator
-			final Listitem item_CustID = this.sortOperator_FinRef.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == -1) {
-					// do nothing
-				} else if (searchOpId == Filter.OP_LIKE) {
-					this.searchObj.addFilter(new Filter("FinReference", "%" 
-							+ this.finRef.getValue().trim().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == Filter.OP_IN) {
-					this.searchObj.addFilter(new Filter("FinReference", this.finRef.getValue().trim().split(","),Filter.OP_IN));
-				} else if (searchOpId == Filter.OP_NOT_IN) {
-					this.searchObj.addFilter(new Filter("FinReference", this.finRef.getValue().trim().split(","),Filter.OP_NOT_IN));
-				} else {
-					this.searchObj.addFilter(new Filter("FinReference", this.finRef.getValue().trim(), searchOpId));
-				}
-			}
-		}
-
-		if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
-
-			// get the search operator
-			final Listitem item_CustID = this.sortOperator_FinType.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == -1) {
-					// do nothing
-				} else if (searchOpId == Filter.OP_LIKE) {
-					this.searchObj.addFilter(new Filter("FinType", "%" 
-							+ this.finType.getValue().trim().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == Filter.OP_IN) {
-					this.searchObj.addFilter(new Filter("FinType", this.finType.getValue().trim().split(","),Filter.OP_IN));
-				} else if (searchOpId == Filter.OP_NOT_IN) {
-					this.searchObj.addFilter(new Filter("FinType", this.finType.getValue().trim().split(","),Filter.OP_NOT_IN));
-				} else {
-					this.searchObj.addFilter(new Filter("FinType", this.finType.getValue().trim(), searchOpId));
-				}
-			}
-		}
-		if (!StringUtils.trimToEmpty(this.finProduct.getValue()).equals("")) {
-
-			// get the search operator
-			final Listitem item_CustID = this.sortOperator_FinProduct.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == -1) {
-					// do nothing
-				} else if (searchOpId == Filter.OP_LIKE) {
-					this.searchObj.addFilter(new Filter("LovDescProductCodeName", "%" 
-							+ this.finProduct.getValue().trim().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == Filter.OP_IN) {
-					this.searchObj.addFilter(new Filter("LovDescProductCodeName", this.finProduct.getValue().trim().split(","),Filter.OP_IN));
-				} else if (searchOpId == Filter.OP_NOT_IN) {
-					this.searchObj.addFilter(new Filter("LovDescProductCodeName", this.finProduct.getValue().trim().split(","),Filter.OP_NOT_IN));
-				} else {
-					this.searchObj.addFilter(new Filter("LovDescProductCodeName", this.finProduct.getValue().trim(), searchOpId));
-				}
-			}
-		}
-		if (!StringUtils.trimToEmpty(this.finCcy.getValue()).equals("")) {
-
-			// get the search operator
-			final Listitem item_CustID = this.sortOperator_FinCcy.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == -1) {
-					// do nothing
-				} else if (searchOpId == Filter.OP_LIKE) {
-					this.searchObj.addFilter(new Filter("FinCcy", "%" 
-							+ this.finCcy.getValue().trim().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == Filter.OP_IN) {
-					this.searchObj.addFilter(new Filter("FinCcy", this.finCcy.getValue().trim().split(","),Filter.OP_IN));
-				} else if (searchOpId == Filter.OP_NOT_IN) {
-					this.searchObj.addFilter(new Filter("FinCcy", this.finCcy.getValue().trim().split(","),Filter.OP_NOT_IN));
-				} else {
-					this.searchObj.addFilter(new Filter("FinCcy", this.finCcy.getValue().trim(), searchOpId));
-				}
-			}
-		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxProvision,this.pagingProvisionList);
 		logger.debug("Leaving");
 	}
 

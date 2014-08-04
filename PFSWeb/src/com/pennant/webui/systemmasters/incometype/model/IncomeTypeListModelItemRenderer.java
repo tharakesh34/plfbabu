@@ -53,6 +53,8 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for list items in the list box.
@@ -62,12 +64,15 @@ public class IncomeTypeListModelItemRenderer implements ListitemRenderer<IncomeT
 		Serializable {
 
 	private static final long serialVersionUID = -385475759409018331L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, IncomeType incomeType, int count) throws Exception {
 		
-	//	final IncomeType incomeType = (IncomeType) data;
 		Listcell lc;
+		lc = new Listcell(PennantAppUtil.getlabelDesc(incomeType.getIncomeExpense(), PennantStaticListUtil.getIncomeExpense()));
+		lc.setParent(item);
+		lc = new Listcell(incomeType.getCategory());
+		lc.setParent(item);
 		lc = new Listcell(incomeType.getIncomeTypeCode());
 		lc.setParent(item);
 		lc = new Listcell(incomeType.getIncomeTypeDesc());

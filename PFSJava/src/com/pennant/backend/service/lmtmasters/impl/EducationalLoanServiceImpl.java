@@ -46,15 +46,21 @@ package com.pennant.backend.service.lmtmasters.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.lmtmasters.EducationalExpenseDAO;
 import com.pennant.backend.dao.lmtmasters.EducationalLoanDAO;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.EducationalExpense;
 import com.pennant.backend.model.lmtmasters.EducationalLoan;
 import com.pennant.backend.service.GenericService;
@@ -74,21 +80,21 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 	private AuditHeaderDAO auditHeaderDAO;
 	private EducationalLoanDAO educationalLoanDAO;
 	private EducationalExpenseDAO educationalExpenseDAO;
-	
+
 	private EducationalLoanDetailValidation educationalLoanDetailValidation;
 	private EduExpenseDetailValidation eduExpenseDetailValidation;	
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 	public EducationalLoanDAO getEducationalLoanDAO() {
 		return educationalLoanDAO;
 	}
@@ -100,7 +106,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 	public EducationalLoan getEducationalLoan() {
 		return getEducationalLoanDAO().getEducationalLoan();
 	}
-	
+
 	@Override
 	public EducationalLoan getNewEducationalLoan() {
 		return getEducationalLoanDAO().getNewEducationalLoan();
@@ -112,8 +118,8 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 	public void setEducationalExpenseDAO(EducationalExpenseDAO educationalExpenseDAO) {
 		this.educationalExpenseDAO = educationalExpenseDAO;
 	}
-	
-	
+
+
 	/**
 	 * @return the educationalLoanDetailValidation
 	 */
@@ -123,7 +129,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 		}
 		return this.educationalLoanDetailValidation;
 	}
-	
+
 	/**
 	 * @return the eduExpenseDetailValidation
 	 */
@@ -133,7 +139,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 		}
 		return this.eduExpenseDetailValidation;
 	}
-	
+
 	/**
 	 * saveOrUpdate	method method do the following steps.
 	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
@@ -175,7 +181,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 		//Retrieving List of Audit Details For educational expense  related modules
 		if(educationalLoan.getEduExpenseList()!=null &&educationalLoan.getEduExpenseList().size()>0){
 			List<AuditDetail> details = educationalLoan.getLovDescAuditDetailMap().get("EduExpense");
-			details = processingEduExpenseList(details,tableType,educationalLoan.getLoanRefNumber() );
+			details = saveOrUpdateEduExpenseList(details,tableType,educationalLoan.getLoanRefNumber() );
 			auditDetails.addAll(details);
 		}
 		auditHeader.setAuditDetails(auditDetails);
@@ -307,14 +313,14 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 				educationalLoan.setRecordType("");
 				getEducationalLoanDAO().update(educationalLoan,"");
 			}
-			
+
 			if(educationalLoan.getEduExpenseList()!=null &&educationalLoan.getEduExpenseList().size()>0){
 				List<AuditDetail> details = educationalLoan.getLovDescAuditDetailMap().get("EduExpense");
-				details = processingEduExpenseList(details,"",educationalLoan.getLoanRefNumber());
+				details = saveOrUpdateEduExpenseList(details,"",educationalLoan.getLoanRefNumber());
 				auditDetails.addAll(details);
 			}
 		}
-		
+
 		//Retrieving List of Audit Details For Customer related modules
 		getEducationalLoanDAO().delete(educationalLoan,"_TEMP");
 		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(educationalLoan, "_TEMP",auditHeader.getAuditTranType())));
@@ -322,7 +328,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 
 				1, educationalLoan.getBefImage(), educationalLoan));
 		getAuditHeaderDAO().addAudit(auditHeader);
-	
+
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 
@@ -357,7 +363,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getEducationalLoanDAO().delete(educationalLoan,"_TEMP");
 		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(educationalLoan, "_TEMP",auditHeader.getAuditTranType())));
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -378,28 +384,51 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditHeader = getEducationalLoanDetailValidation().eduLoanDetailValidation(auditHeader, method);
+		auditHeader = validate(auditHeader, method);
 		auditHeader = getAuditDetails(auditHeader, method);		
-		
+
 		EducationalLoan educationalLoan = (EducationalLoan) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = educationalLoan.getUserDetails().getUsrLanguage();
-		
+
 		// EmploymentDetail Validation
 		if(educationalLoan.getEduExpenseList() != null){
 			List<AuditDetail> details = educationalLoan.getLovDescAuditDetailMap().get("EduExpense");
-			details = getEduExpenseDetailValidation().eduExpenseDetailListValidation(details, method, usrLanguage);
+			details = validateEduExpense(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-		
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());	
 		}
-		
+
 		auditHeader=nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 	
+	private AuditHeader validate(AuditHeader auditHeader, String method){
+		
+		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		return auditHeader;
+	}
+
+	public List<AuditDetail> validateEduExpense(List<AuditDetail> auditDetails, String method,String  usrLanguage){
+
+		if(auditDetails!=null && auditDetails.size()>0){
+			List<AuditDetail> details = new ArrayList<AuditDetail>();
+			for (int i = 0; i < auditDetails.size(); i++) {
+				AuditDetail auditDetail =   validateEduExpense(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail); 		
+			}
+			return details;
+		}
+		return new ArrayList<AuditDetail>();
+	}
+
+
+
 	/**
 	 * Common Method for Retrieving AuditDetails List
 	 * @param auditHeader
@@ -491,7 +520,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 		logger.debug("Leaving ");
 		return auditDetails;
 	}
-	
+
 	/**
 	 * Method For Preparing List of AuditDetails for Educational expenses
 	 * @param auditDetails
@@ -499,8 +528,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 	 * @param custId
 	 * @return
 	 */
-	private List<AuditDetail> processingEduExpenseList(List<AuditDetail> auditDetails, 
-			String type,String eduCationLoanID) {
+	private List<AuditDetail> saveOrUpdateEduExpenseList(List<AuditDetail> auditDetails, String type,String eduCationLoanID) {
 		logger.debug("Entering ");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -583,7 +611,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 		logger.debug("Leaving ");
 		return auditDetails;	
 	}
-	
+
 	/**
 	 * This method deletes Educational expenses records related to  EducationalLoan 
 	 *  by calling EducationalExpenseDAO's delete method
@@ -608,7 +636,7 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 		}
 		return auditList;
 	}
-	
+
 	/** 
 	 * Common Method for Customers list validation
 	 * @param list
@@ -648,6 +676,448 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 		}
 		logger.debug("Leaving");
 		return auditDetailsList;
+	}
+
+	@Override
+	public EducationalLoan getEducationalLoanById(String finReference, String tableType) {
+		return getEducationalLoanDAO().getEducationalLoanByID(finReference, tableType);
+	}
+
+
+	@Override
+	public void setEducationalLoanDetails(FinanceDetail financeDetail, String tableType) {
+		String finReference = financeDetail.getFinScheduleData().getFinReference();
+		EducationalLoan educationalLoan = null;
+		List<EducationalExpense> eduExpenseList = null;
+
+		educationalLoan = getEducationalLoanDAO().getEducationalLoanByID(finReference, tableType);
+		financeDetail.setEducationalLoan(educationalLoan);
+
+		if(educationalLoan != null) {
+			eduExpenseList = getEducationalExpenseDAO().getEducationalExpenseByEduLoanId(finReference, tableType);
+			educationalLoan.setEduExpenseList(eduExpenseList);
+		}
+
+
+	}
+	
+	@Override
+	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType, String auditTranType) {
+		String[] fields = PennantJavaUtil.getFieldDetails(new EducationalLoan());
+		List<AuditDetail> auditDetails = null;
+		EducationalLoan educationalLoan = financeDetail.getEducationalLoan(); 
+
+
+		auditDetails = new ArrayList<AuditDetail>();
+
+		if(tableType.equals("")) {
+			educationalLoan.setRecordType("");
+		}
+		educationalLoan.setWorkflowId(0);
+
+		if (educationalLoan.isNewRecord()) {
+			getEducationalLoanDAO().save(educationalLoan, tableType);
+		} else {
+			getEducationalLoanDAO().update(educationalLoan, tableType);
+		}
+
+		auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], educationalLoan.getBefImage(), educationalLoan));
+
+		if (educationalLoan.getEduExpenseList() != null && !educationalLoan.getEduExpenseList().isEmpty()) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("EduExpense");
+			details = saveOrUpdateEduExpenseList(details, tableType, educationalLoan.getLoanRefNumber());
+			auditDetails.addAll(details);
+		}
+
+
+		return auditDetails;
+	}
+	
+	
+	@Override
+	public List<AuditDetail> doApprove(FinanceDetail financeDetail, String tableType, String auditTranType) {
+			
+			EducationalLoan educationalLoan = financeDetail.getEducationalLoan();
+			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+			String[] fields = PennantJavaUtil.getFieldDetails(educationalLoan, educationalLoan.getExcludeFields());
+			EducationalLoan header = new EducationalLoan();
+			BeanUtils.copyProperties(educationalLoan, header);
+			
+			
+			if (tableType.equals("")) {
+				educationalLoan.setRoleCode("");
+				educationalLoan.setNextRoleCode("");
+				educationalLoan.setTaskId("");
+				educationalLoan.setNextTaskId("");
+			}
+			
+			educationalLoan.setWorkflowId(0);
+
+			getEducationalLoanDAO().save(educationalLoan, tableType);
+			
+			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], header.getBefImage(), header));
+			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], educationalLoan.getBefImage(), educationalLoan));
+
+			List<EducationalExpense> educationalExpenses = educationalLoan.getEduExpenseList();
+			
+			
+			if(educationalExpenses !=null && !educationalExpenses.isEmpty()) {
+				boolean saveRecord = false;
+				boolean updateRecord = false;
+				boolean deleteRecord = false;
+				boolean approveRec = false;
+				
+				for (EducationalExpense educationalExpense : educationalExpenses) {
+					saveRecord = false;
+					updateRecord = false;
+					deleteRecord = false;
+					approveRec = true;
+					String rcdType = "";
+					String recordStatus = "";
+
+					EducationalExpense detail = new EducationalExpense();
+
+					BeanUtils.copyProperties(educationalExpense, detail);
+					
+					if (tableType.equals("")) {
+						approveRec = true;
+						educationalExpense.setRoleCode("");
+						educationalExpense.setNextRoleCode("");
+						educationalExpense.setTaskId("");
+						educationalExpense.setNextTaskId("");
+					}
+					
+					educationalExpense.setWorkflowId(0);		
+					if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						deleteRecord = true;
+					} else if (educationalExpense.isNewRecord()) {
+						saveRecord = true;
+						if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+							educationalExpense.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+							educationalExpense.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+							educationalExpense.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						}
+
+					} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						if (approveRec) {
+							saveRecord = true;
+						} else {
+							updateRecord = true;
+						}
+					} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+						updateRecord = true;
+					} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						if (approveRec) {
+							deleteRecord = true;
+						} else if (educationalExpense.isNew()) {
+							saveRecord = true;
+						} else {
+							updateRecord = true;
+						}
+					}
+					if (approveRec) {
+						rcdType = educationalExpense.getRecordType();
+						recordStatus = educationalExpense.getRecordStatus();
+						educationalExpense.setRecordType("");
+						educationalExpense.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					}
+					if (saveRecord) {
+						getEducationalExpenseDAO().save(educationalExpense, tableType);
+					}
+
+					if (updateRecord) {
+						getEducationalExpenseDAO().update(educationalExpense, tableType);
+					}
+
+					if (deleteRecord) {
+						getEducationalExpenseDAO().delete(educationalExpense, tableType);
+					}
+
+					if (approveRec) {
+						educationalExpense.setRecordType(rcdType);
+						educationalExpense.setRecordStatus(recordStatus);
+					}
+				}
+			}
+			
+			return auditDetails;
+		}
+
+
+	@Override
+	public List<AuditDetail> delete(FinanceDetail financeDetail, String tableType, String auditTranType) {
+		List<AuditDetail> auditDetails  = new ArrayList<AuditDetail>();
+		EducationalLoan object = new EducationalLoan();
+		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
+		
+		EducationalLoan educationalLoan = financeDetail.getEducationalLoan();
+		getEducationalLoanDAO().delete(educationalLoan, tableType);
+		
+		auditTranType = getAuditTranType(educationalLoan.getRecordType());
+
+		if ("".equals(auditTranType)) {
+			auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], educationalLoan.getBefImage(), educationalLoan));
+		}
+		
+		
+		EducationalExpense eduExpense;
+		if (educationalLoan.getEduExpenseList() != null && !educationalLoan.getEduExpenseList().isEmpty()) {
+			EducationalExpense subObject = new EducationalExpense();
+			fields = PennantJavaUtil.getFieldDetails(subObject, subObject.getExcludeFields());
+			for (int i = 0; i < educationalLoan.getEduExpenseList().size(); i++) {
+				eduExpense = educationalLoan.getEduExpenseList().get(i);
+				
+				auditTranType = getAuditTranType(eduExpense.getRecordType());				
+				if (!eduExpense.getRecordType().equals("")) {
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], eduExpense.getBefImage(), eduExpense));
+				}
+			}
+			getEducationalExpenseDAO().delete(financeDetail.getFinScheduleData().getFinReference(), tableType);
+		}
+
+		return auditDetails;
+	}
+
+	@Override
+	public List<AuditDetail> validate(FinanceDetail financeDetail, String method, String usrLanguage) {
+		List<AuditDetail> auditDetails = financeDetail.getAuditDetailMap().get("EducationalLoan");		
+		List<AuditDetail> details = null;
+		if(auditDetails!=null && !auditDetails.isEmpty()){
+			details = new ArrayList<AuditDetail>();
+			for (int i = 0; i < auditDetails.size(); i++) {
+				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail); 		
+			}
+		}
+
+		if (financeDetail.getEducationalLoan() != null) {
+			if (financeDetail.getEducationalLoan().getEduExpenseList() != null) {
+				details.addAll(validateEduExpense(financeDetail, method, usrLanguage));
+			}
+		}	
+
+
+		if(details == null) {
+			details = new ArrayList<AuditDetail>();
+		}
+
+		return details;
+
+	}
+
+	private AuditDetail validate(AuditDetail auditDetail,String usrLanguage,String method){
+		logger.debug("Entering");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		EducationalLoan educationalLoan= (EducationalLoan) auditDetail.getModelData();
+
+		EducationalLoan tempEducationalLoan= null;
+		if (educationalLoan.isWorkflow()){
+			tempEducationalLoan = getEducationalLoanDAO().getEducationalLoanByID(
+					educationalLoan.getLoanRefNumber(), "_Temp");
+		}
+		EducationalLoan befEducationalLoan= getEducationalLoanDAO().getEducationalLoanByID(
+				educationalLoan.getLoanRefNumber(), "");
+
+		EducationalLoan old_EducationalLoan= educationalLoan.getBefImage();
+
+		String[] errParm= new String[1];
+		String[] valueParm= new String[1];
+		valueParm[0]=String.valueOf(educationalLoan.getLoanRefNumber());
+		errParm[0]=PennantJavaUtil.getLabel("label_LoanRefNumber")+":"+valueParm[0];
+
+		if (educationalLoan.isNew()){ // for New record or new record into work flow
+
+			if (!educationalLoan.isWorkflow()){// With out Work flow only new records  
+				if (befEducationalLoan !=null){	// Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+				}	
+			}else{ // with work flow
+				if (educationalLoan.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
+					if (befEducationalLoan !=null || tempEducationalLoan!=null ){ // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+								PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					}
+				}else{ // if records not exists in the Main flow table
+					if (befEducationalLoan ==null || tempEducationalLoan!=null ){
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+								PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					}
+				}
+			}
+		}else{
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!educationalLoan.isWorkflow()){	// With out Work flow for update and delete
+
+				if (befEducationalLoan ==null){ // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+				}else{
+					if (old_EducationalLoan!=null && !old_EducationalLoan.getLastMntOn().equals(
+							befEducationalLoan.getLastMntOn())){
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
+								PennantConstants.TRAN_DEL)){
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+									PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+						}else{
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+									PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+						}
+					}
+				}
+			}else{
+
+				if (tempEducationalLoan==null ){ // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				}
+
+				if (tempEducationalLoan!=null && old_EducationalLoan!=null && !old_EducationalLoan.getLastMntOn().equals(
+						tempEducationalLoan.getLastMntOn())){ 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				}
+			}
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		if(StringUtils.trimToEmpty(method).equals("doApprove") || !educationalLoan.isWorkflow()){
+			educationalLoan.setBefImage(befEducationalLoan);	
+		}
+		logger.debug("Leaving ");
+		return auditDetail;
+	}
+
+
+
+	private List<AuditDetail> validateEduExpense(FinanceDetail financeDetail, String method,String  usrLanguage){
+		List<AuditDetail> auditDetails = financeDetail.getAuditDetailMap().get("EduExpense");
+
+		if(auditDetails!=null && auditDetails.size()>0){
+			List<AuditDetail> details = new ArrayList<AuditDetail>();
+			for (int i = 0; i < auditDetails.size(); i++) {
+				AuditDetail auditDetail =   validateEduExpense(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail); 		
+			}
+			return details;
+		}
+		return new ArrayList<AuditDetail>();
+	}
+
+	private AuditDetail validateEduExpense(AuditDetail auditDetail,String usrLanguage,String method){
+		logger.debug("Entering");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		EducationalExpense educationalExpense= (EducationalExpense) auditDetail.getModelData();
+
+		EducationalExpense tempEducationalExpense= null;
+		if (educationalExpense.isWorkflow()){
+			tempEducationalExpense = getEducationalExpenseDAO().getEducationalExpenseByID(
+					educationalExpense.getLoanRefNumber(),educationalExpense.getId(), "_Temp");
+		}
+		EducationalExpense befEducationalExpense= getEducationalExpenseDAO().getEducationalExpenseByID(
+				educationalExpense.getLoanRefNumber(),educationalExpense.getId(), "");
+
+		EducationalExpense old_EducationalExpense= educationalExpense.getBefImage();
+
+
+		String[] errParm= new String[1];
+		String[] valueParm= new String[1];
+		valueParm[0]=String.valueOf(educationalExpense.getLoanRefNumber());
+		errParm[0]=PennantJavaUtil.getLabel("label_loanReferenceNumber")+":"+valueParm[0];
+
+		if (educationalExpense.isNew()){ // for New record or new record into work flow
+
+			if (!educationalExpense.isWorkflow()){// With out Work flow only new records  
+				if (befEducationalExpense !=null){	// Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+				}	
+			}else{ // with work flow
+				if (educationalExpense.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
+					if (befEducationalExpense !=null || tempEducationalExpense!=null ){ // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					}
+				}else{ // if records not exists in the Main flow table
+					if (befEducationalExpense ==null || tempEducationalExpense!=null ){
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					}
+				}
+			}
+		}else{
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!educationalExpense.isWorkflow()){	// With out Work flow for update and delete
+
+				if (befEducationalExpense ==null){ // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+				}else{
+					if (old_EducationalExpense!=null && !old_EducationalExpense.getLastMntOn().equals(befEducationalExpense.getLastMntOn())){
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+						}else{
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+						}
+					}
+				}
+			}else{
+
+				if (tempEducationalExpense==null ){ // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				}
+
+				if (tempEducationalExpense!=null && old_EducationalExpense!=null && !old_EducationalExpense.getLastMntOn().equals(tempEducationalExpense.getLastMntOn())){ 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				}
+			}
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		if(StringUtils.trimToEmpty(method).equals("doApprove") || !educationalExpense.isWorkflow()){
+			educationalExpense.setBefImage(befEducationalExpense);	
+		}
+
+		return auditDetail;
+	}
+
+
+	/**
+	 * set the financeMain Workflow details to EducationalLoan module and create auditDetails
+	 * 
+	 * and put the auditDetails into auditDetailMap
+	 * 
+	 * @param Map
+	 *            <String, List<AuditDetail>> (auditDetailMap)
+	 * @param FinanceDetail
+	 *            (financeDetail)
+	 * @param String
+	 *            (auditTranType)
+	 * @return List<AuditDetail> auditDetails
+	 */
+	@Override
+	public List<AuditDetail> getAuditDetail(Map<String, List<AuditDetail>> auditDetailMap, FinanceDetail financeDetail, String auditTranType, String method) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> subAuditDetails;
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain(); 
+
+		EducationalLoan educationalLoan = financeDetail.getEducationalLoan();
+		educationalLoan.setWorkflowId(financeMain.getWorkflowId());
+
+		EducationalLoan object = new EducationalLoan();
+		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
+		auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], educationalLoan.getBefImage(), educationalLoan));
+
+		auditDetailMap.put("EducationalLoan", auditDetails);
+
+		if (educationalLoan.getEduExpenseList() != null && !educationalLoan.getEduExpenseList().isEmpty()) {
+			subAuditDetails = setEduExpenseAuditData(educationalLoan, auditTranType, method);
+			auditDetailMap.put("EduExpense", subAuditDetails);
+		}
+
+		return auditDetails;
+
 	}
 
 }

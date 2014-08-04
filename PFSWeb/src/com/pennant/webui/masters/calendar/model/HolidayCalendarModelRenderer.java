@@ -33,7 +33,8 @@ public class HolidayCalendarModelRenderer extends SimpleCalendarModel implements
 	        this.filterText = filterText;
 	    }
 	 
-	    @Override
+	    @SuppressWarnings("unchecked")
+		@Override
 	    public List<CalendarEvent> get(Date beginDate, Date endDate, RenderContext rc) {
 	    	logger.debug("Entering ");
 	        List<CalendarEvent> list = new LinkedList<CalendarEvent>();

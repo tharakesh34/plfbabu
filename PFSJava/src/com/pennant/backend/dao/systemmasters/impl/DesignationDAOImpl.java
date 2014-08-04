@@ -121,7 +121,7 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 	@Override
 	public Designation getDesignationById(final String id, String type) {
 		logger.debug("Entering");
-		Designation designation = getDesignation();
+		Designation designation = new Designation();
 		designation.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

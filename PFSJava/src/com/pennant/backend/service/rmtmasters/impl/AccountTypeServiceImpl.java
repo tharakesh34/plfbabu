@@ -44,6 +44,7 @@
 package com.pennant.backend.service.rmtmasters.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,6 +55,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.impl.AccountTypeDAOImpl;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.AccountType;
@@ -430,6 +432,10 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+	@Override
+    public List<ValueLabel> getAccountTypeDesc(List<String> acTypeList) {
+	    return getAccountTypeDAO().getAccountTypeDesc(acTypeList);
+    }
 
 
 }

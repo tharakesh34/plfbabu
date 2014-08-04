@@ -97,6 +97,7 @@ public class Customer implements java.io.Serializable,Entity {
 	private String custRO2;
 	private String lovDescCustRO2Name;
 	private long custGroupID;
+	private String lovDescCustGroupCode;
 	private String lovDesccustGroupIDName;
 	private String custTradeLicenceNum;
 	private Date custTradeLicenceExpiry;
@@ -126,7 +127,8 @@ public class Customer implements java.io.Serializable,Entity {
 	private String lovDescCustSubSectorName;
 	private String custProfession;
 	private String lovDescCustProfessionName;
-	private BigDecimal custTotalIncome = new BigDecimal(0);
+	private BigDecimal custTotalIncome = BigDecimal.ZERO;
+	private BigDecimal custTotalExpense = BigDecimal.ZERO;
 	private String custMaritalSts;
 	private String lovDescCustMaritalStsName;
 	private String custEmpSts;
@@ -136,6 +138,8 @@ public class Customer implements java.io.Serializable,Entity {
 	private String custSubSegment;
 	private String lovDescCustSubSegmentName;
 	private boolean custIsBlackListed;
+	private Date custBlackListDate;
+	private int  noOfDependents;
 	private String custBLRsnCode;
 	private String lovDescCustBLRsnCodeName;
 	private boolean custIsRejected;
@@ -187,6 +191,9 @@ public class Customer implements java.io.Serializable,Entity {
 	private String custAddlVar9;
 	private String custAddlVar10;
 	private String custAddlVar11;
+	private String contactPersonName;
+	private String emailID;
+	private String phoneNumber;
 	private double custAddlDec1;
 	private double custAddlDec2;
 	private double custAddlDec3;
@@ -219,8 +226,12 @@ public class Customer implements java.io.Serializable,Entity {
 	private boolean proceedToDedup = false;
 	private boolean dedupFound = false;
 	private boolean skipDedup = false;
+	private String custCRCPR;
 	private String maintModule="";
-	
+	private boolean jointCust;
+	private String jointCustName;
+	private Date jointCustDob;
+	private String custRelation;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -1387,6 +1398,15 @@ public class Customer implements java.io.Serializable,Entity {
 		this.skipDedup = skipDedup;
 	}
 
+	public void setCustCRCPR(String custCRCPR) {
+	    this.custCRCPR = custCRCPR;
+    }
+
+	public String getCustCRCPR() {
+	    return custCRCPR;
+    }
+	
+	
 	public String getMaintModule() {
 		return maintModule;
 	}
@@ -1400,5 +1420,93 @@ public class Customer implements java.io.Serializable,Entity {
 
 	public int getLovDescCcyFormatter() {
 	    return lovDescCcyFormatter;
+    }
+
+	public void setCustTotalExpense(BigDecimal custTotalExpense) {
+	    this.custTotalExpense = custTotalExpense;
+    }
+
+	public BigDecimal getCustTotalExpense() {
+	    return custTotalExpense;
+    }
+
+	public void setCustBlackListDate(Date custBlackListDate) {
+	    this.custBlackListDate = custBlackListDate;
+    }
+
+	public Date getCustBlackListDate() {
+	    return custBlackListDate;
+    }
+
+	public void setNoOfDependents(int noOfDependents) {
+	    this.noOfDependents = noOfDependents;
+    }
+
+	public int getNoOfDependents() {
+	    return noOfDependents;
+    }
+
+	public boolean isJointCust() {
+    	return jointCust;
+    }
+
+	public void setJointCust(boolean jointCust) {
+    	this.jointCust = jointCust;
+    }
+
+	public void setJointCustName(String jointCustName) {
+	    this.jointCustName = jointCustName;
+    }
+
+	public String getJointCustName() {
+	    return jointCustName;
+    }
+
+	public void setJointCustDob(Date jointCustDob) {
+	    this.jointCustDob = jointCustDob;
+    }
+
+	public Date getJointCustDob() {
+	    return jointCustDob;
+    }
+
+	public void setLovDescCustGroupCode(String lovDesccustGroupCode) {
+	    this.lovDescCustGroupCode = lovDesccustGroupCode;
+    }
+
+	public String getLovDescCustGroupCode() {
+	    return lovDescCustGroupCode;
+    }
+
+	public String getCustRelation() {
+    	return custRelation;
+    }
+
+	public void setCustRelation(String custRelation) {
+    	this.custRelation = custRelation;
+    }
+
+	public String getContactPersonName() {
+    	return contactPersonName;
+    }
+
+	public void setContactPersonName(String contactPersonName) {
+    	this.contactPersonName = contactPersonName;
+    }
+
+	public String getEmailID() {
+	    return emailID;
+    }
+
+	public void setEmailID(String emailID) {
+	    this.emailID = emailID;
+    }
+
+	public String getPhoneNumber() {
+	    return phoneNumber;
+    }
+
+	public void setPhoneNumber(String phoneNumber) {
+	    this.phoneNumber = phoneNumber;
     }
 }

@@ -45,7 +45,9 @@ package com.pennant.backend.dao.financemanagement.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -123,38 +125,99 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 	public OverdueChargeRecovery getOverdueChargeRecoveryById(final String id,Date finSchDate,
 			String finOdFor, String type) {
 		logger.debug("Entering");
-		OverdueChargeRecovery overdueChargeRecovery = getOverdueChargeRecovery();
+		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
 		
 		overdueChargeRecovery.setId(id);
-		overdueChargeRecovery.setFinSchdDate(finSchDate);
+		overdueChargeRecovery.setFinODSchdDate(finSchDate);
 		overdueChargeRecovery.setFinODFor(finOdFor);
 		
-		StringBuilder selectSql = new StringBuilder("Select FinReference, FinSchdDate, FinODFor,");
-		selectSql.append(" FinBranch, FinType, FinCustId, FinCcy, FinODDate, FinODPri, FinODPft,");
-		selectSql.append(" FinODTot, FinODCRuleCode, FinODCPLAc, FinODCCAc, FinODCPLShare,");
-		selectSql.append(" FinODCSweep, FinODCCustCtg, FinODCType, FinODCOn, FinODC,");
-		selectSql.append(" FinODCGraceDays, FinODCAlwWaiver, FinODCMaxWaiver, FinODCPenalty,");
-		selectSql.append(" FinODCWaived, FinODCPLPenalty, FinODCCPenalty, FinODCPaid, FinODCWaiverPaid,");
-		selectSql.append(" FinODCLastPaidDate, FinODCRecoverySts,");
-		selectSql.append(" (SELECT SUM(FinODCWaived) From FinODCRecovery WHERE  FinReference =:FinReference)");
-		selectSql.append(" AS lovDescTotOvrDueChrgWaived ,");
-		selectSql.append(" (SELECT SUM(FinODCPenalty) From FinODCRecovery WHERE  FinReference =:FinReference)");
-		selectSql.append(" AS lovDescTotOvrDueChrg,");
-		selectSql.append(" (SELECT SUM(FinODCPaid) From FinODCRecovery WHERE  FinReference =:FinReference)");
-		selectSql.append(" AS lovDescTotOvrDueChrgPaid");
+		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, MovementDate, SeqNo,");
+		selectSql.append(" ODDays, FinCurODAmt, FinCurODPri, FinCurODPft, PenaltyType, PenaltyCalOn,");
+		selectSql.append(" PenaltyAmtPerc, Penalty, MaxWaiver, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" ,lovDescFinFormatter, lovDescCustCIF, lovDescCustShrtName, lovDescFinStartDate,");
 			selectSql.append(" lovDescMaturityDate, lovDescFinAmount, lovDescCurFinAmt");
 		}
 		selectSql.append(" From FinODCRecovery");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference AND FinSchdDate = :FinSchdDate AND FinODFor = :FinODFor");
+		selectSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND FinODFor = :FinODFor");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
 		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				OverdueChargeRecovery.class);
 
+		try{
+			overdueChargeRecovery = this.namedParameterJdbcTemplate.queryForObject(
+					selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			overdueChargeRecovery = null;
+		}
+		logger.debug("Leaving");
+		return overdueChargeRecovery;
+	}
+	/**
+	 * Fetch the Record  Overdue Charge Recovery details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return OverdueChargeRecovery
+	 */
+	@Override
+	public List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, String type) {
+		logger.debug("Entering");
+		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
+		overdueChargeRecovery.setFinReference(finRef);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, MovementDate, SeqNo,");
+		selectSql.append(" ODDays, FinCurODAmt, FinCurODPri, FinCurODPft, PenaltyType, PenaltyCalOn,");
+		selectSql.append(" PenaltyAmtPerc, Penalty, MaxWaiver, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel");
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(" ,lovDescFinFormatter");
+		}
+		selectSql.append(" From FinODCRecovery");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				OverdueChargeRecovery.class);
+	
+		logger.debug("Leaving");
+		return	this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+	
+	/**
+	 * Fetch the Record  Overdue Charge Recovery details by key field
+	 * 
+	 * @param finReference (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return OverdueChargeRecovery
+	 */
+	@Override
+	public OverdueChargeRecovery getMaxOverdueChargeRecoveryById(final String finReference,Date finSchDate,
+			String finOdFor, String type) {
+		logger.debug("Entering");
+		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
+		
+		overdueChargeRecovery.setId(finReference);
+		overdueChargeRecovery.setFinODSchdDate(finSchDate);
+		overdueChargeRecovery.setFinODFor(finOdFor);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, MovementDate,SeqNo,");
+		selectSql.append(" Penalty, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel");
+		selectSql.append(" From FinODCRecovery");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND FinODFor = :FinODFor");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				OverdueChargeRecovery.class);
+		
 		try{
 			overdueChargeRecovery = this.namedParameterJdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);	
@@ -233,6 +296,28 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 	}
 	
 	/**
+	 * Method for Deletion of overdue Recovery Details records if when Overdue will not happen
+	 */
+	@Override
+	public void deleteUnpaid(String finReference , Date finODSchDate, String finODFor, String type) {
+		logger.debug("Entering");
+		
+		OverdueChargeRecovery recovery = new OverdueChargeRecovery();
+		recovery.setFinReference(finReference);
+		recovery.setFinODSchdDate(finODSchDate);
+		recovery.setFinODFor(finODFor);
+		
+		StringBuilder deleteSql = new StringBuilder("Delete From FinODCRecovery");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where FinReference =:FinReference AND FinODSchdDate= :FinODSchdDate AND FinODFor= :FinODFor AND RcdCanDel = 1");
+		logger.debug("deleteSql: " + deleteSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recovery);
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	/**
 	 * This method insert new Records into FinODCRecovery or FinODCRecovery_Temp.
 	 *
 	 * save Overdue Charge Recovery 
@@ -249,19 +334,13 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		logger.debug("Entering");
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into FinODCRecovery");
-		insertSql.append(" (FinReference, FinSchdDate, FinODFor, FinBranch, FinType," );
-		insertSql.append(" FinCustId, FinCcy, FinODDate, FinODPri, FinODPft, FinODTot, FinODCRuleCode," );
-		insertSql.append(" FinODCPLAc, FinODCCAc, FinODCPLShare, FinODCSweep, FinODCCustCtg," );
-		insertSql.append(" FinODCType, FinODCOn, FinODC, FinODCGraceDays, FinODCAlwWaiver," );
-		insertSql.append(" FinODCMaxWaiver, FinODCPenalty, FinODCWaived, FinODCPLPenalty," );
-		insertSql.append(" FinODCCPenalty, FinODCPaid, FinODCWaiverPaid, FinODCLastPaidDate, FinODCRecoverySts )");
-		insertSql.append(" Values(:FinReference, :FinSchdDate, :FinODFor, :FinBranch, :FinType," );
-		insertSql.append(" :FinCustId, :FinCcy, :FinODDate, :FinODPri, :FinODPft, :FinODTot," );
-		insertSql.append(" :FinODCRuleCode, :FinODCPLAc, :FinODCCAc, :FinODCPLShare, :FinODCSweep," );
-		insertSql.append(" :FinODCCustCtg, :FinODCType, :FinODCOn, :FinODC, :FinODCGraceDays," );
-		insertSql.append(" :FinODCAlwWaiver, :FinODCMaxWaiver, :FinODCPenalty, :FinODCWaived," );
-		insertSql.append(" :FinODCPLPenalty, :FinODCCPenalty, :FinODCPaid, :FinODCWaiverPaid, :FinODCLastPaidDate, :FinODCRecoverySts )");
-		
+		insertSql.append(" (FinReference, FinODSchdDate, FinODFor, MovementDate,SeqNo, ODDays, FinCurODAmt," );
+		insertSql.append(" FinCurODPri, FinCurODPft, PenaltyType, PenaltyCalOn, PenaltyAmtPerc, Penalty," );
+		insertSql.append(" MaxWaiver, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel)" );
+		insertSql.append(" Values( :FinReference, :FinODSchdDate, :FinODFor, :MovementDate, :SeqNo, :ODDays, :FinCurODAmt," );
+		insertSql.append(" :FinCurODPri, :FinCurODPft, :PenaltyType, :PenaltyCalOn, :PenaltyAmtPerc," );
+		insertSql.append(" :Penalty, :MaxWaiver, :WaivedAmt, :PenaltyPaid, :PenaltyBal, :RcdCanDel)" );
+			
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
@@ -284,15 +363,17 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 	 */
 	@SuppressWarnings("serial")
 	@Override
-	public void update(OverdueChargeRecovery overdueChargeRecovery,String type) {
+	public void update(OverdueChargeRecovery overdueChargeRecovery, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinODCRecovery");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinODCPaid = :FinODCPaid, FinODCLastPaidDate = :FinODCLastPaidDate,");
-		updateSql.append(" FinODCWaived =:FinODCWaived, FinODCWaiverPaid =:FinODCWaiverPaid,FinODCRecoverySts = :FinODCRecoverySts");
+		updateSql.append(" Set FinReference= :FinReference, FinODSchdDate= :FinODSchdDate, FinODFor= :FinODFor, " );
+		updateSql.append(" MovementDate= :MovementDate,SeqNo=:SeqNo, ODDays= :ODDays, FinCurODAmt= :FinCurODAmt, FinCurODPri= :FinCurODPri," );
+		updateSql.append(" FinCurODPft= :FinCurODPft, PenaltyType= :PenaltyType, PenaltyCalOn= :PenaltyCalOn, PenaltyAmtPerc= :PenaltyAmtPerc,");
+		updateSql.append(" Penalty= :Penalty, MaxWaiver= :MaxWaiver, WaivedAmt= :WaivedAmt, PenaltyPaid= :PenaltyPaid, PenaltyBal= :PenaltyBal, RcdCanDel= :RcdCanDel");
 		updateSql.append(" Where FinReference =:FinReference AND FinSchdDate = :FinSchdDate" );
-		updateSql.append(" AND FinODFor = :FinODFor");
+		updateSql.append(" AND FinODFor = :FinODFor AND MovementDate= :MovementDate");
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
@@ -308,16 +389,43 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 	}
 	
 	/**
-	 * Method for getting Pending OverDue Amount basrd on FinReference
+	 * Method for Overdue Recovery Details Updation on Postings
+	 */
+	@SuppressWarnings("serial")
+    @Override
+    public void updatePenaltyPaid(OverdueChargeRecovery recovery, String type) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		StringBuilder	updateSql =new StringBuilder("Update FinODCRecovery");
+		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(" Set WaivedAmt= :WaivedAmt, PenaltyPaid= :PenaltyPaid, " );
+		updateSql.append(" PenaltyBal= (PenaltyBal - :PenaltyBal), RcdCanDel= :RcdCanDel");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate" );
+		updateSql.append(" AND FinODFor = :FinODFor AND MovementDate= :MovementDate AND RcdCanDel =1");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recovery);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError("41004",recovery.getFinReference() , "EN" );//TODO
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");	    
+    }
+	
+	/**
+	 * Method for getting Pending OverDue Amount based on FinReference
 	 */
 	public BigDecimal getPendingODCAmount(final String id) {
 		logger.debug("Entering");
-		OverdueChargeRecovery overdueChargeRecovery = getOverdueChargeRecovery();
+		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
 		
 		overdueChargeRecovery.setId(id);
-		StringBuilder selectSql = new StringBuilder("SELECT SUM(FinODCPenalty - FinODCWaived - FinODCPaid) As PendingODC ");
-		selectSql.append(" From FinODCRecovery");
-		selectSql.append(" Where FinReference =:FinReference AND FinODCRecoverySts <> 'C'");
+		StringBuilder selectSql = new StringBuilder("SELECT SUM(TotPenaltyBal) As PendingODC ");
+		selectSql.append(" From FinODDetails");
+		selectSql.append(" Where FinReference =:FinReference ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
@@ -330,18 +438,18 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		}
 		
 		if (overdueChargeRecovery ==null) {
-			return new BigDecimal(0);
+			return BigDecimal.ZERO;
 		} 
 		logger.debug("Leaving");
 		return overdueChargeRecovery.getPendingODC();
 	}
 	
 	@Override
-    public List<String> getOverDueFinanceList() {
+    public List<String> getOverDueFinanceList() {//FIXME
 		logger.debug("Entering");
 		
 		StringBuilder selectSql = new StringBuilder("Select DISTINCT FinReference from FinODDetails ");
-		selectSql.append(" WHERE FinCurODDays > 0  AND FinCurODAmt <> 0 ");
+		selectSql.append(" WHERE FinCurODDays > GraceDays ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
@@ -349,13 +457,93 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 				new BeanPropertySqlParameterSource(""), String.class);
     }
 	
+	/**
+	 * Method for Paid Penalty Details using Key: FinRefrence
+	 */
+	@Override
+    public List<OverdueChargeRecovery> getFinancePenaltysByFinRef(String finReference, String type) {
+		logger.debug("Entering");
+		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
+		overdueChargeRecovery.setId(finReference);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, MovementDate, PenaltyPaid ");
+		selectSql.append(" From FinODCRecovery");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference AND PenaltyPaid > 0 ORDER BY FinODSchdDate, MovementDate, SeqNo ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				OverdueChargeRecovery.class);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+    }
+	
+	@Override
+	public BigDecimal getPaidPenaltiesbySchDates(String finReference, List<Date> pastSchDates) {
+		logger.debug("Entering");
+		
+		Map<String,List<Date>> map=new HashMap<String, List<Date>>();
+		map.put("PastSchDates", pastSchDates);
+		
+		StringBuilder selectSql = new StringBuilder("Select ISNULL(SUM(PenaltyPaid),0) ");
+		selectSql.append(" From FinODCRecovery ");
+		selectSql.append(" WITH(NOLOCK)  Where FinReference = '" );
+		selectSql.append(finReference);
+		selectSql.append( "' AND FinOdSchdDate IN (:PastSchDates) AND RcdCanDel = 0 AND PenaltyPaid > 0 ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), map, BigDecimal.class);	
+	}
+	
+	/**
+	 * Method for Saving History Details while Processing Past due Deferment Case
+	 */
+	@Override
+	public void saveODDeferHistory(String finReference, List<Date> pastSchDates) {
+		logger.debug("Entering");
+		
+		Map<String,List<Date>> map=new HashMap<String, List<Date>>();
+		map.put("PastSchDates", pastSchDates);
+		
+		StringBuilder selectSql = new StringBuilder("INSERT INTO FinODCRecovery_PD ");
+		selectSql.append(" Select * From FinODCRecovery ");
+		selectSql.append(" WITH(NOLOCK)  Where FinReference = '" );
+		selectSql.append(finReference);
+		selectSql.append( "' AND FinOdSchdDate IN (:PastSchDates) ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		this.namedParameterJdbcTemplate.update(selectSql.toString(), map);	
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Delete History Details while Processing Past due Deferment Case
+	 */
+	@Override
+    public void deleteODDeferHistory(String finReference, List<Date> pastSchDates) {
+		logger.debug("Entering");
+		
+		Map<String,List<Date>> map=new HashMap<String, List<Date>>();
+		map.put("PastSchDates", pastSchDates);
+		
+		StringBuilder deleteSql = new StringBuilder(" Delete From FinODCRecovery ");
+		deleteSql.append("  Where FinReference = '" );
+		deleteSql.append(finReference);
+		deleteSql.append( "' AND FinOdSchdDate IN (:PastSchDates) ");
+		logger.debug("deleteSql: " + deleteSql.toString());
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), map);
+		logger.debug("Leaving");
+    }
 	
 	private ErrorDetails  getError(String errorId, String FinReference, String userLanguage){
 		String[][] parms= new String[2][1];
 		parms[1][0] = FinReference;
 		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
+
 
 }

@@ -67,7 +67,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -81,8 +80,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.CustomerTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -148,7 +150,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerTypeService customerTypeService;
 	private transient PagedListService pagedListService;
-	private List<ValueLabel> categoryTypeList = PennantAppUtil.getCategoryType();
+	private List<ValueLabel> categoryTypeList = PennantStaticListUtil.getCategoryType();
 
 	/**
 	 * default constructor.<br>
@@ -640,19 +642,15 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		
 		setValidationOn(true);
 		if (!this.custTypeCode.isReadonly()){
-			this.custTypeCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX,
-					Labels.getLabel("FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-							"label_CustomerTypeDialog_CustTypeCode.value")})));
+			this.custTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerTypeDialog_CustTypeCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.custTypeDesc.isReadonly()){
-			this.custTypeDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX,
-					Labels.getLabel("MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_CustomerTypeDialog_CustTypeDesc.value")})));
+			this.custTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerTypeDialog_CustTypeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.custTypeCtg.isReadonly()) {
-			this.custTypeCtg.setConstraint("NO EMPTY:" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[] { Labels.getLabel(
-					"label_CustomerTypeDialog_CustTypeCtg.value") }));
+			this.custTypeCtg.setConstraint(new PTStringValidator(Labels.getLabel(
+					"label_CustomerTypeDialog_CustTypeCtg.value"), null, true));
 		}
 		
 		logger.debug("Leaving");

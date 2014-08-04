@@ -46,6 +46,8 @@ package com.pennant.backend.model.lmtmasters;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
@@ -90,6 +92,12 @@ public class EducationalExpense implements java.io.Serializable, Entity {
 
 	public EducationalExpense(long id) {
 		this.setId(id);
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		
+		return excludeFields;
 	}
 
 	//Getter and Setter methods

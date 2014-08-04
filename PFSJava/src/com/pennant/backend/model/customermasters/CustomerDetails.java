@@ -46,7 +46,7 @@ package com.pennant.backend.model.customermasters;
 import java.util.HashMap;
 import java.util.List;
 
-import org.zkoss.util.resource.Labels;
+import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -62,28 +62,25 @@ public class CustomerDetails implements java.io.Serializable {
 	private boolean newRecord=false;
 
 	private Customer customer;
-	private CustomerEmploymentDetail customerEmploymentDetail;
 	private List<CustomerRating> ratingsList;
+	private List<CustomerEmploymentDetail> employmentDetailsList;
+	private List<CustomerDocument> customerDocumentsList;//======Customer ID's
 	private List<CustomerAddres> addressList;
-	private List<CustomerIncome> customerIncomeList;
-	private List<CustomerPRelation> customerPRelationList;
 	private List<CustomerPhoneNumber> customerPhoneNumList;
 	private List<CustomerEMail> customerEMailList;
-	private List<CustomerDocument> customerDocumentsList;
-	private CorporateCustomerDetail corporateCustomerDetail;
-	private List<DirectorDetail> directorsList;
-	private List<CustomerBalanceSheet> balanceSheetList;
+	private List<CustomerIncome> customerIncomeList;
+	private List<DirectorDetail> customerDirectorList;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private CustomerDedup	custDedup;
 
+	
+	
 	private CustomerDetails befImage;
 	private LoginUserDetails userDetails;
 	public CustomerDetails(){
 		super();
-		this.customerEmploymentDetail = new CustomerEmploymentDetail();
 		this.customer 				  = new Customer();
 		this.custDedup				  = new CustomerDedup();	
-		this.corporateCustomerDetail = new CorporateCustomerDetail();
 	}	
 
 	public long getCustID() {
@@ -107,13 +104,6 @@ public class CustomerDetails implements java.io.Serializable {
 		this.customer = customer;
 	}
 
-	public CustomerEmploymentDetail getCustomerEmploymentDetail() {
-		return customerEmploymentDetail;
-	}
-	public void setCustomerEmploymentDetail(
-			CustomerEmploymentDetail customerEmploymentDetail) {
-		this.customerEmploymentDetail = customerEmploymentDetail;
-	}
 
 	public List<CustomerRating> getRatingsList() {
 		return ratingsList;
@@ -134,14 +124,6 @@ public class CustomerDetails implements java.io.Serializable {
 	}
 	public void setCustomerIncomeList(List<CustomerIncome> customerIncomeList) {
 		this.customerIncomeList = customerIncomeList;
-	}
-
-	public List<CustomerPRelation> getCustomerPRelationList() {
-		return customerPRelationList;
-	}
-	public void setCustomerPRelationList(
-			List<CustomerPRelation> customerPRelationList) {
-		this.customerPRelationList = customerPRelationList;
 	}
 
 	public CustomerDetails getBefImage() {
@@ -179,28 +161,6 @@ public class CustomerDetails implements java.io.Serializable {
 		return customerDocumentsList;
 	}
 
-	public CorporateCustomerDetail getCorporateCustomerDetail() {
-		return corporateCustomerDetail;
-	}
-	public void setCorporateCustomerDetail(
-			CorporateCustomerDetail corporateCustomerDetail) {
-		this.corporateCustomerDetail = corporateCustomerDetail;
-	}
-
-	public void setDirectorsList(List<DirectorDetail> directorsList) {
-		this.directorsList = directorsList;
-	}
-	public List<DirectorDetail> getDirectorsList() {
-		return directorsList;
-	}
-
-	public List<CustomerBalanceSheet> getBalanceSheetList() {
-		return balanceSheetList;
-	}
-	public void setBalanceSheetList(List<CustomerBalanceSheet> balanceSheetList) {
-		this.balanceSheetList = balanceSheetList;
-	}
-
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
@@ -219,24 +179,13 @@ public class CustomerDetails implements java.io.Serializable {
 			custDedup.setCustId(this.customer.getCustID());
 			custDedup.setCustCIF(this.customer.getCustCIF()!=null?this.customer.getCustCIF():"");
 			custDedup.setCustCoreBank(this.customer.getCustCoreBank()!=null?this.customer.getCustCoreBank():"");
-			custDedup.setCustFName(this.customer.getCustFName()!=null?this.customer.getCustFName():"");
-			custDedup.setCustMName(this.customer.getCustMName()!=null?this.customer.getCustMName():"");
-			custDedup.setCustLName(this.customer.getCustLName()!=null?this.customer.getCustLName():"");
-			custDedup.setCustMotherMaiden(this.customer.getCustMotherMaiden() != null?this.customer.getCustMotherMaiden():"");
-			custDedup.setLikeCustFName(this.customer.getCustFName()!=null?"%"+this.customer.getCustFName()+"%":"");
-			custDedup.setLikeCustMName(this.customer.getCustMName()!=null?"%"+this.customer.getCustMName()+"%":"");
-			custDedup.setLikeCustLName(this.customer.getCustLName()!=null?"%"+this.customer.getCustLName()+"%":"");
-			custDedup.setLikecustMotherMaiden(this.customer.getCustMotherMaiden() != null?"%"+this.customer.getCustMotherMaiden()+"%":"");
 			custDedup.setCustDOB(this.customer.getCustDOB());		
-			custDedup.setCustCOB(this.customer.getCustCOB());		
+			custDedup.setCustShrtName(this.customer.getCustShrtName());
 			custDedup.setCustNationality(this.customer.getCustNationality()!=null ?this.customer.getCustNationality():"");
-			custDedup.setCustPassportExpiry(this.customer.getCustPassportExpiry());
-			custDedup.setCustPassportNo(this.customer.getCustPassportNo()!=null?this.customer.getCustPassportNo():"");
-			custDedup.setCustPOB(this.customer.getCustPOB()!=null?this.customer.getCustPOB():"");
-			custDedup.setCustResdCountry(this.customer.getCustResdCountry()!=null?this.customer.getCustResdCountry():"");
-			custDedup.setCustSalutationCode(this.customer.getCustSalutationCode()!=null?this.customer.getCustSalutationCode():"");
-			custDedup.setCustVisaNum(this.customer.getCustVisaNum()!=null?this.customer.getCustVisaNum():"");
-			custDedup.setCustTradeLicenceNum(this.customer.getCustTradeLicenceNum()!=null?this.customer.getCustTradeLicenceNum():"");
+			custDedup.setCustCtgCode(StringUtils.trimToEmpty(this.customer.getCustCtgCode()));
+			custDedup.setCustDftBranch(StringUtils.trimToEmpty(this.customer.getCustDftBranch()));
+			custDedup.setCustSector(StringUtils.trimToEmpty(this.customer.getCustSector()));
+			custDedup.setCustSubSector(StringUtils.trimToEmpty(this.customer.getCustSubSector()));
 		}		
 
 		//Customer Phone Number
@@ -265,11 +214,26 @@ public class CustomerDetails implements java.io.Serializable {
 				custDedup.setCustEMail(custEmail.getCustEMail());
 			}
 		}
-		custDedup.setDedupFields(Labels.getLabel("label_DedupFields_label"));
 		return custDedup;
 	}
 	public void setCustDedup(CustomerDedup custDedup) {
 		this.custDedup = custDedup;
 	}
+
+	public void setEmploymentDetailsList(List<CustomerEmploymentDetail> employmentDetailsList) {
+	    this.employmentDetailsList = employmentDetailsList;
+    }
+
+	public List<CustomerEmploymentDetail> getEmploymentDetailsList() {
+	    return employmentDetailsList;
+    }
+
+	public List<DirectorDetail> getCustomerDirectorList() {
+    	return customerDirectorList;
+    }
+
+	public void setCustomerDirectorList(List<DirectorDetail> customerDirectorList) {
+    	this.customerDirectorList = customerDirectorList;
+    }
 
 }

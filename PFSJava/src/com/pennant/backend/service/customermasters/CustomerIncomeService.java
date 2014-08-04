@@ -44,6 +44,8 @@
 package com.pennant.backend.service.customermasters;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -57,11 +59,13 @@ public interface CustomerIncomeService {
 	CustomerIncome getCustomerIncome();
 	CustomerIncome getNewCustomerIncome();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CustomerIncome getCustomerIncomeById(long id,String incomeType,String country);
-	CustomerIncome getApprovedCustomerIncomeById(long id,String incomeType,String country);
+	CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome);
+	CustomerIncome getApprovedCustomerIncomeById(CustomerIncome customerIncome);
 	CustomerIncome refresh(CustomerIncome customerIncome);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	public BigDecimal getTotalIncomeByCustomer(long custId);
+	Map<String, BigDecimal> getCustomerIncomeByCustomer(long custID, boolean isWIF);
+	List<CustomerIncome> getCustomerIncomes(long custID, boolean isWIF);
 }

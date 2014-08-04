@@ -61,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class ProvinceListModelItemRenderer implements ListitemRenderer<Province>, Serializable {
 
 	private static final long serialVersionUID = -3187829903184756130L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, Province province, int count) throws Exception {
 
-		//final Province province = (Province) data;
 		Listcell lc;
 		lc = new Listcell(province.getCPCountry()+"-"+province.getLovDescCPCountryName());
 		lc.setParent(item);

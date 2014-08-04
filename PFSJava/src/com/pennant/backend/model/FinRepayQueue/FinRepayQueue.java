@@ -12,18 +12,25 @@ public class FinRepayQueue {
 	private String finType;
 	private String Branch;
 	private long customerID;
-	private BigDecimal schdPft = new BigDecimal(0);
-	private BigDecimal schdPri = new BigDecimal(0);
-	private BigDecimal schdPftPaid = new BigDecimal(0);
-	private BigDecimal schdPriPaid = new BigDecimal(0);
-	private BigDecimal schdPftBal = new BigDecimal(0);
-	private BigDecimal schdPriBal = new BigDecimal(0);
+	private BigDecimal schdPft = BigDecimal.ZERO;
+	private BigDecimal schdPri = BigDecimal.ZERO;
+	private BigDecimal schdPftPaid = BigDecimal.ZERO;
+	private BigDecimal schdPriPaid = BigDecimal.ZERO;
+	private BigDecimal schdPftBal = BigDecimal.ZERO;
+	private BigDecimal schdPriBal = BigDecimal.ZERO;
 	private boolean schdIsPftPaid;
 	private boolean schdIsPriPaid;
-
+	
+	private BigDecimal schdPftPayNow = BigDecimal.ZERO;
+	private BigDecimal schdPriPayNow = BigDecimal.ZERO;
+	
 	// External Fields Used for EOD process
-	private BigDecimal refundAmount = new BigDecimal(0);
+	private BigDecimal refundAmount = BigDecimal.ZERO;
 	private boolean rcdNotExist = false;
+	
+	private BigDecimal penaltyAmount = BigDecimal.ZERO;
+	private BigDecimal waivedAmount = BigDecimal.ZERO;
+	private String chargeType = "";
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -162,5 +169,44 @@ public class FinRepayQueue {
 	public void setRcdNotExist(boolean rcdNotExist) {
     	this.rcdNotExist = rcdNotExist;
     }
+
+	public BigDecimal getPenaltyAmount() {
+    	return penaltyAmount;
+    }
+	public void setPenaltyAmount(BigDecimal penaltyAmount) {
+    	this.penaltyAmount = penaltyAmount;
+    }
+
+	public BigDecimal getWaivedAmount() {
+    	return waivedAmount;
+    }
+	public void setWaivedAmount(BigDecimal waivedAmount) {
+    	this.waivedAmount = waivedAmount;
+    }
+
+	public String getChargeType() {
+    	return chargeType;
+    }
+	public void setChargeType(String chargeType) {
+    	this.chargeType = chargeType;
+    }
+
+	public BigDecimal getSchdPftPayNow() {
+    	return schdPftPayNow;
+    }
+
+	public void setSchdPftPayNow(BigDecimal schdPftPayNow) {
+    	this.schdPftPayNow = schdPftPayNow;
+    }
+
+	public BigDecimal getSchdPriPayNow() {
+    	return schdPriPayNow;
+    }
+
+	public void setSchdPriPayNow(BigDecimal schdPriPayNow) {
+    	this.schdPriPayNow = schdPriPayNow;
+    }
+	
+	
 
 }

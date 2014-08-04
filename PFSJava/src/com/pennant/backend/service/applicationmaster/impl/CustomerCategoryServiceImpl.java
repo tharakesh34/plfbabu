@@ -65,11 +65,9 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>CustomerCategory</b>.<br>
  * 
  */
-public class CustomerCategoryServiceImpl extends
-		GenericService<CustomerCategory> implements CustomerCategoryService {
+public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory> implements CustomerCategoryService {
 
-	private static Logger logger = Logger
-			.getLogger(CustomerCategoryServiceImpl.class);
+	private static Logger logger = Logger.getLogger(CustomerCategoryServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerCategoryDAO customerCategoryDAO;

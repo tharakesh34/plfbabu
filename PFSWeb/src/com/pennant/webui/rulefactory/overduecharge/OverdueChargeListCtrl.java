@@ -46,19 +46,28 @@ package com.pennant.webui.rulefactory.overduecharge;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +80,14 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.rulefactory.overduecharge.model.OverdueChargeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -108,7 +121,34 @@ public class OverdueChargeListCtrl extends GFCBaseListCtrl<OverdueCharge> implem
 	protected Listheader listheader_ODCSweepCharges; // autowired
 	protected Listheader listheader_RecordStatus; // autowired
 	protected Listheader listheader_RecordType;
+	
+	//Search
+	protected Textbox oDCRuleCode; // autowired
+	protected Listbox sortOperator_oDCRuleCode; // autowired
+	protected Textbox oDCPLAccount; // autowired
+	protected Listbox sortOperator_oDCPLAccount; // autowired
+	protected Textbox oDCCharityAccount; // autowired
+	protected Listbox sortOperator_oDCCharityAccount; // autowired
+  	protected Decimalbox oDCPLShare; // autowired
+  	protected Listbox sortOperator_oDCPLShare; // autowired
+	protected Checkbox oDCSweepCharges; // autowired
+	protected Listbox sortOperator_oDCSweepCharges; // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType;	// autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+	
+	protected Label label_OverdueChargeSearch_RecordStatus; // autowired
+	protected Label label_OverdueChargeSearch_RecordType; // autowired
+	protected Label label_OverdueChargeSearchResult; // autowired
 
+	protected Grid	                       searchGrid;	
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+
+	private transient boolean	           approvedList	    = false;
 	// checkRights
 	protected Button btnHelp; // autowired
 	protected Button button_OverdueChargeList_NewOverdueCharge; // autowired
@@ -147,11 +187,43 @@ public class OverdueChargeListCtrl extends GFCBaseListCtrl<OverdueCharge> implem
 		}else{
 			wfAvailable=false;
 		}
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		
+		this.sortOperator_oDCRuleCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_oDCRuleCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_oDCPLAccount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_oDCPLAccount.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_oDCCharityAccount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_oDCCharityAccount.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_oDCPLShare.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_oDCPLShare.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_oDCSweepCharges.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_oDCSweepCharges.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+		}else{
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_OverdueChargeSearch_RecordStatus.setVisible(false);
+			this.label_OverdueChargeSearch_RecordType.setVisible(false);
+		}
 		
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 		
 		this.borderLayout_OverdueChargeList.setHeight(getBorderLayoutHeight());
+		this.listBoxOverdueCharge.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingOverdueChargeList.setPageSize(getListRows());
@@ -177,35 +249,22 @@ public class OverdueChargeListCtrl extends GFCBaseListCtrl<OverdueCharge> implem
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
-		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<OverdueCharge>(OverdueCharge.class,getListRows());
-		this.searchObj.addSort("ODCRuleCode", false);
-		// Workflow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("FinODCHeader_View");
-			if (isFirstTask()) {
-				button_OverdueChargeList_NewOverdueCharge.setVisible(true);
-			} else {
-				button_OverdueChargeList_NewOverdueCharge.setVisible(false);
-			}
-
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}else{
-			this.searchObj.addTabelName("FinODCHeader_AView");
-		}
-
-		setSearchObj(this.searchObj);
+		// set the itemRenderer
+		this.listBoxOverdueCharge.setItemRenderer(new OverdueChargeListModelItemRenderer());
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_OverdueChargeList_NewOverdueCharge.setVisible(false);
 			this.button_OverdueChargeList_OverdueChargeSearchDialog.setVisible(false);
 			this.button_OverdueChargeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 			// Set the ListModel for the articles.
 			getPagedListWrapper().init(this.searchObj,this.listBoxOverdueCharge,this.pagingOverdueChargeList);
-			// set the itemRenderer
-			this.listBoxOverdueCharge.setItemRenderer(new OverdueChargeListModelItemRenderer());
+			
 		}
 		logger.debug("Leaving");
 	}
@@ -341,9 +400,28 @@ public class OverdueChargeListCtrl extends GFCBaseListCtrl<OverdueCharge> implem
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingOverdueChargeList.setActivePage(0);
+		this.sortOperator_oDCCharityAccount.setSelectedIndex(0);
+		this.oDCCharityAccount.setValue("");
+		this.sortOperator_oDCPLAccount.setSelectedIndex(0);
+		this.oDCPLAccount.setValue("");
+		this.sortOperator_oDCPLShare.setSelectedIndex(0);
+		this.oDCPLShare.setValue("");
+		this.sortOperator_oDCRuleCode.setSelectedIndex(0);
+		this.oDCRuleCode.setValue("");
+		this.sortOperator_oDCSweepCharges.setSelectedIndex(0);
+		this.oDCSweepCharges.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		doSearch();
+		/*this.pagingOverdueChargeList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_OverdueChargeList, event);
-		this.window_OverdueChargeList.invalidate();
+		this.window_OverdueChargeList.invalidate();*/
 		logger.debug("Leaving");
 	}
 
@@ -353,24 +431,7 @@ public class OverdueChargeListCtrl extends GFCBaseListCtrl<OverdueCharge> implem
 	
 	public void onClick$button_OverdueChargeList_OverdueChargeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		/*
-		 * we can call our OverdueChargeDialog zul-file with parameters. So we can
-		 * call them with a object of the selected OverdueCharge. For handed over
-		 * these parameter only a Map is accepted. So we put the OverdueCharge object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("overdueChargeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/RuleFactory/OverdueCharge/OverdueChargeSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -380,13 +441,90 @@ public class OverdueChargeListCtrl extends GFCBaseListCtrl<OverdueCharge> implem
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_OverdueChargeList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		PTReportUtils.getReport("OverdueCharge", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("OverdueCharge", getSearchObj(),this.pagingOverdueChargeList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<OverdueCharge>(OverdueCharge.class,getListRows());
+		this.searchObj.addSort("ODCRuleCode", false);
+		this.searchObj.addTabelName("FinODCHeader_View");
+		if (isWorkFlowEnabled()) {
 
+			if (isFirstTask() && this.moduleType == null) {
+				button_OverdueChargeList_NewOverdueCharge.setVisible(true);
+			} else {
+				button_OverdueChargeList_NewOverdueCharge.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("FinODCHeader_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("FinODCHeader_AView");
+		}
+		// De-dup parameter query code
+		if (!StringUtils.trimToEmpty(this.oDCRuleCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_oDCRuleCode.getSelectedItem(), this.oDCRuleCode.getValue(), "oDCRuleCode");
+		}
+		
+		// De-dup parameter query module
+		if (!StringUtils.trimToEmpty(this.oDCPLAccount.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_oDCPLAccount.getSelectedItem(), this.oDCPLAccount.getValue(), "oDCPLAccount");
+		}
+		// De-dup parameter query desc
+		if (!StringUtils.trimToEmpty(this.oDCCharityAccount.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_oDCCharityAccount.getSelectedItem(), this.oDCCharityAccount.getValue(), "oDCCharityAccount");
+		}
+		// De-dup parameter query code
+		if (this.oDCPLShare.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_oDCPLShare.getSelectedItem(), this.oDCPLShare.getValue(), "oDCPLShare");
+		}
+		if (oDCSweepCharges.isChecked()) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_oDCSweepCharges.getSelectedItem(), 1,"oDCSweepCharges");
+		} else {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_oDCSweepCharges.getSelectedItem(), 0,"oDCSweepCharges");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxOverdueCharge, this.pagingOverdueChargeList);
+		logger.debug("Leaving");
+	}
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	public void setOverdueChargeService(OverdueChargeService overdueChargeService) {
 		this.overdueChargeService = overdueChargeService;
 	}

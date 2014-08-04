@@ -1,7 +1,6 @@
 package com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import java.util.Set;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -24,12 +22,11 @@ public class CreditReviewSummaryData {
 
 	private static Logger logger= Logger.getLogger(CreditReviewSummaryData.class);
 
-	private int noOfYears = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("NO_OF_YEARS_TOSHOW").toString());;
 	private Map<String,List<FinCreditReviewSummary>> detailsMap = new HashMap<String,List<FinCreditReviewSummary>> ();
 	private Map<String,String> dataMap = null;
 	private Map<String,String> itemTotCalMap = null;
 	private Map<String,String> itemRuleMap = new HashMap<String,String> ();
-	private boolean ratioFlag= true;
+	private boolean ratioFlag= false;
 	private transient CreditApplicationReviewService creditApplicationReviewService;
 
 
@@ -38,11 +35,11 @@ public class CreditReviewSummaryData {
 	 * This method for setting the data or storing the all the data in map.<BR>
 	 * If we call this we will get all the data in map.<BR>
 	 * @param custID
-	 * @param noOfYears
 	 * @param year
+	 * @param noOfYears
 	 * @return Map<String,String>
 	 */
-	public Map<String,String>  setDataMap(long custID,int year,String custCtgType,boolean required) {
+	public Map<String,String>  setDataMap(long custID, int year, int noOfYears, String custCtgType, boolean required, boolean isEnquiry) {
 		logger.debug("Entering");
 
 		// create a script engine manager
@@ -50,31 +47,46 @@ public class CreditReviewSummaryData {
 
 		// create a JavaScript engine
 		ScriptEngine engine = factory.getEngineByName("JavaScript");
-
 		List<FinCreditRevSubCategory>  listOfFinCreditRevSubCategoryRatio = null;
 		dataMap = new HashMap<String,String> ();
 		itemTotCalMap = new HashMap<String,String> ();
-		Map<String ,List<FinCreditReviewSummary>> detailedMap = this.creditApplicationReviewService.
-		getListCreditReviewSummaryByCustId(custID, noOfYears,year);
+		Map<String ,List<FinCreditReviewSummary>> detailedMap;
+		if(isEnquiry){
+		detailedMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(custID, noOfYears+1,year, "");
+		} else {
+			detailedMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(custID, noOfYears+1,year, "_View");
+		}
+		
 		Set<String> set = detailedMap.keySet();
 
 		//put the values in the map
 		for(String key : set){
 			this.detailsMap.put(key, detailedMap.get(key));
 		}
-		ratioFlag= true;
+		ratioFlag= false;
 		listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(custCtgType);
 		if(detailsMap.size() > 0){
 			for(FinCreditRevCategory fcrcy:listOfFinCreditRevCategory){
 				if(fcrcy.getRemarks().equals("R")){
-					this.ratioFlag = false;
+					this.ratioFlag = true;
 				}
 				listOfFinCreditRevSubCategoryRatio = this.creditApplicationReviewService.
 				getFinCreditRevSubCategoryByCategoryId(fcrcy.getCategoryId());
 				List<FinCreditRevSubCategory>  listOfFinCreditRevSubCategory = this.creditApplicationReviewService.
 				getFinCreditRevSubCategoryByCategoryIdAndCalcSeq(fcrcy.getCategoryId());
-
-
+				
+				if(detailedMap.get(year-noOfYears) != null){
+					List<FinCreditReviewSummary>	listOfCreditReviewSummary = this.detailsMap.get(year-noOfYears);
+					for(FinCreditReviewSummary finCreditReviewSummary : listOfCreditReviewSummary){
+						engine.put("YM"+finCreditReviewSummary.getSubCategoryCode(), 
+								finCreditReviewSummary.getItemValue() != null ? finCreditReviewSummary.getItemValue() : BigDecimal.ZERO);
+					}
+				} else {
+					for(FinCreditRevSubCategory finCreditRevSubCategory : listOfFinCreditRevSubCategory){
+						engine.put("YM"+finCreditRevSubCategory.getSubCategoryCode(), BigDecimal.ZERO);
+					} 
+				}
+				
 				for(int i =0 ;i<listOfFinCreditRevSubCategory.size();i++){
 
 					FinCreditRevSubCategory finCreditRevSubCategory = null;
@@ -82,20 +94,26 @@ public class CreditReviewSummaryData {
 
 					if(finCreditRevSubCategory.getSubCategoryItemType().equals("Calc")){
 						itemTotCalMap.put(finCreditRevSubCategory.getSubCategoryCode(), finCreditRevSubCategory.getItemsToCal());
-					}
+					}  
 					itemRuleMap.put(finCreditRevSubCategory.getSubCategoryCode(), finCreditRevSubCategory.getItemRule());
-
 				}
 
 				// entries
 				for(int j=noOfYears;j>=1;j--){	
 
-					String auditYear =String.valueOf(year-j);
-					List<FinCreditReviewSummary> listOfCreditReviewSummary = this.detailsMap.get(auditYear);
-					if(listOfCreditReviewSummary.size()>0){
-						for(int k=0;k<listOfCreditReviewSummary.size();k++){
+					String auditYear =String.valueOf(year-j+1);
+					List<FinCreditReviewSummary> listOfCreditReviewSummary;
 
+					listOfCreditReviewSummary = this.detailsMap.get(auditYear);
+                    
+					if(listOfCreditReviewSummary.size()>0){	
+						for(int k=0;k<listOfCreditReviewSummary.size();k++){
+							// Putting Values into map
 							FinCreditReviewSummary creditReviewSummary = listOfCreditReviewSummary.get(k);
+							if(!dataMap.containsKey("lovDescCcyEditField")){
+								dataMap.put("lovDescCcyEditField", String.valueOf(creditReviewSummary.getLovDescCcyEditField()));
+							}
+
 							engine.put("EXCHANGE", creditReviewSummary.getLovDescConversionRate());
 							engine.put("NoOfShares", creditReviewSummary.getLovDescNoOfShares());
 							engine.put("MarketPrice", creditReviewSummary.getLovDescMarketPrice());
@@ -103,56 +121,56 @@ public class CreditReviewSummaryData {
 							if(!itemTotCalMap.keySet().contains(creditReviewSummary.getSubCategoryCode())){
 								try{
 									value = creditReviewSummary.getItemValue().toString();
-
 								} catch (Exception e) {
 									value ="--";
 									logger.error(e);
 								}
-								engine.put("Y"+(noOfYears-j)+creditReviewSummary.getSubCategoryCode(),!value.equals("--")?new BigDecimal(value).setScale(2, RoundingMode.HALF_DOWN):null);
-								dataMap.put("Y"+(noOfYears-j)+"_"+creditReviewSummary.getSubCategoryCode(),String.valueOf(!value.equals("--")?new BigDecimal(value).setScale(2, RoundingMode.HALF_DOWN):"--"));
+								engine.put("Y"+(noOfYears-j)+creditReviewSummary.getSubCategoryCode(),!value.equals("--")?new BigDecimal(value):BigDecimal.ZERO);
+								dataMap.put("Y"+(noOfYears-j)+"_"+creditReviewSummary.getSubCategoryCode(),value);
+								if(noOfYears == j){
+									engine.put("Y"+(noOfYears-j)+"DIVCOUNT",BigDecimal.ONE);
+								} else {
+									engine.put("Y"+(noOfYears-j)+"DIVCOUNT", new BigDecimal(2));
+								}
 							}	
 						}
 					}else{
 						for(int r=0;r<listOfFinCreditRevSubCategoryRatio.size();r++){
 							FinCreditRevSubCategory finCreditRevSubCategory =listOfFinCreditRevSubCategory.get(r);
 							if(!itemTotCalMap.keySet().contains(finCreditRevSubCategory.getSubCategoryCode())){
-								engine.put("Y"+(noOfYears-j)+finCreditRevSubCategory.getSubCategoryCode(),"--");
-								dataMap.put("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode(),"--");
+								engine.put("Y"+(noOfYears-j)+finCreditRevSubCategory.getSubCategoryCode(),BigDecimal.ZERO);
+								dataMap.put("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode(),String.valueOf(BigDecimal.ZERO));
 							}
 						}
 					}
 				}
-
-
+				
 				//Total Calculations
-
 				for(int m=noOfYears;m>=1;m--){	
 					for(int q=0;q<listOfFinCreditRevSubCategoryRatio.size();q++){
+						
 						FinCreditRevSubCategory finCreditRevSubCategory =listOfFinCreditRevSubCategory.get(q);
 						if(itemTotCalMap.keySet().contains(finCreditRevSubCategory.getSubCategoryCode())){							
 							String value = "--";
+
 							try{
 								if(StringUtils.trimToEmpty(itemTotCalMap.get(finCreditRevSubCategory.getSubCategoryCode())).equals("") ){
 									value = String.valueOf(0);
-
-								}else if((engine.eval(replaceYear(itemTotCalMap.get(finCreditRevSubCategory.getSubCategoryCode()),(noOfYears-m))).toString().equals("NaN")) ||
-										(engine.eval(replaceYear(itemTotCalMap.get(finCreditRevSubCategory.getSubCategoryCode()),(noOfYears-m))).toString().equals("Infinity"))){
-									value ="--";
 								}else{
 									value = engine.eval(replaceYear(itemTotCalMap.get(finCreditRevSubCategory.getSubCategoryCode()),(noOfYears-m))).toString();
-								}
+									if("NaN".equals(value) || value.contains("Infinity")){
+										value ="--";
+									}
+								}	
 							} catch (Exception e) {
 								value ="--";
 								logger.error(e);
 							}
-							engine.put("Y"+(noOfYears-m)+finCreditRevSubCategory.getSubCategoryCode(),!value.contains("--")?new BigDecimal(value).setScale(2, RoundingMode.HALF_DOWN):value);
-							dataMap.put("Y"+(noOfYears-m)+"_"+finCreditRevSubCategory.getSubCategoryCode(),String.valueOf(!value.contains("--")?new BigDecimal(value).setScale(2, RoundingMode.HALF_DOWN):"--"));
+							engine.put("Y"+(noOfYears-m)+finCreditRevSubCategory.getSubCategoryCode(),!value.contains("--")?new BigDecimal(value):BigDecimal.ZERO);
+							dataMap.put("Y"+(noOfYears-m)+"_"+finCreditRevSubCategory.getSubCategoryCode(),String.valueOf(!value.contains("--")?new BigDecimal(value):BigDecimal.ZERO));
 						}
-
-
 					}
 				}
-
 
 				//break down
 				//entries
@@ -164,80 +182,63 @@ public class CreditReviewSummaryData {
 							String value ="--";
 							try{
 								if(!itemRuleMap.get(finCreditRevSubCategory.getSubCategoryCode()).equals("")){
-									if((engine.eval(replaceYear(itemRuleMap.get(finCreditRevSubCategory.getSubCategoryCode()),(noOfYears-l))).toString().equals("NaN")) ||
-											(engine.eval(replaceYear(itemRuleMap.get(finCreditRevSubCategory.getSubCategoryCode()),(noOfYears-l))).toString().equals("Infinity"))){
+									value = engine.eval(replaceYear(itemRuleMap.get(finCreditRevSubCategory.getSubCategoryCode()),(noOfYears-l))).toString();
+									if("NaN".equals(value) || value.contains("Infinity")){
 										value ="--";
-									}else{
-										value = engine.eval(replaceYear(itemRuleMap.get(finCreditRevSubCategory.getSubCategoryCode()),(noOfYears-l))).toString();
 									}
 								} 
 							}catch (Exception e) {
 								logger.error(e);
 								value ="--";
 							}
-							if(!this.ratioFlag ){
-								engine.put("Y"+(noOfYears-l)+finCreditRevSubCategory.getSubCategoryCode(),String
-										.valueOf(!value.contains("--") ? new BigDecimal(value)
-										.setScale(2, RoundingMode.HALF_DOWN) : "--"));
-							}
-							if (!this.ratioFlag) {
+							if(this.ratioFlag ){
+								engine.put("Y"+(noOfYears-l)+finCreditRevSubCategory.getSubCategoryCode(),!value.contains("--")?new BigDecimal(value):BigDecimal.ZERO);
 								dataMap.put("Y" + (noOfYears - l) + "_"
 										+ finCreditRevSubCategory.getSubCategoryCode(), String
-										.valueOf(!value.contains("--") ? new BigDecimal(value)
-										.setScale(2, RoundingMode.HALF_DOWN) : "--"));
-							} else if(required){
-
+										.valueOf(!value.contains("--") ? new BigDecimal(value) : BigDecimal.ZERO));
+							}else if(required){
 								dataMap.put("RY" + (noOfYears - l) + "_"
 										+ finCreditRevSubCategory.getSubCategoryCode(), String
-										.valueOf(!value.contains("--") ? new BigDecimal(value)
-										.setScale(2, RoundingMode.HALF_DOWN) : "--"));
+										.valueOf(!value.contains("--") ? new BigDecimal(value)  : BigDecimal.ZERO));
 							}
 						}
 					}
-
 
 					// % change calculation
 					if(noOfYears != l ){
-						BigDecimal ratioCalValPrev = null;
-						BigDecimal ratioCalValCurr = null;
-						//	BigDecimal subtotal = null;
-						BigDecimal totCalvalue= null;
-						//BigDecimal divtotal= null;
+						BigDecimal ratioCalValPrev = BigDecimal.ZERO;
+						BigDecimal ratioCalValCurr = BigDecimal.ZERO;
+						String value = "--";
 						for(int p=0;p<listOfFinCreditRevSubCategoryRatio.size();p++){
 							FinCreditRevSubCategory finCreditRevSubCategory=listOfFinCreditRevSubCategory.get(p);
-							/*	if(itemRuleMap.keySet().contains(finCreditRevSubCategory.getSubCategoryCode()) && 
-									!itemRuleMap.get(finCreditRevSubCategory.getSubCategoryCode()).equals("")){*/
 							try{
 								ScriptEngine engine1 = factory.getEngineByName("JavaScript");
-								ratioCalValPrev =new BigDecimal(dataMap.get("Y"+(noOfYears-l-1)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
-								ratioCalValCurr =new BigDecimal(dataMap.get("Y"+(noOfYears-l)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
+								if(dataMap.get("Y"+(noOfYears-l-1)+"_"+finCreditRevSubCategory.getSubCategoryCode()) != null){
+									ratioCalValPrev =new BigDecimal(dataMap.get("Y"+(noOfYears-l-1)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
+								} else {
+									ratioCalValPrev = BigDecimal.ZERO;
+								}
+								if(dataMap.get("Y"+(noOfYears-l)+"_"+finCreditRevSubCategory.getSubCategoryCode()) != null){
+									ratioCalValCurr =new BigDecimal(dataMap.get("Y"+(noOfYears-l)+"_"+finCreditRevSubCategory.getSubCategoryCode()));
+								} else {
+									ratioCalValCurr = BigDecimal.ZERO;
+								}
 								engine1.put("ratioCalValPrev", ratioCalValPrev);
 								engine1.put("ratioCalValCurr", ratioCalValCurr);
-								try {
-									totCalvalue = new BigDecimal(engine1.eval("((ratioCalValCurr-ratioCalValPrev)/ratioCalValPrev)*100").toString());
-								} catch (Exception e) {
-									totCalvalue = null;
+								value = engine1.eval("((ratioCalValCurr-ratioCalValPrev)/ratioCalValPrev)*100").toString();
+								if("NaN".equals(value) || value.contains("Infinity")){
+									value = "--";
 								}
-								/*subtotal=ratioCalValCurr.subtract(ratioCalValPrev);
-									divtotal = BigDecimal.ZERO;
-									totCalvalue = BigDecimal.ZERO;
-									if (ratioCalValPrev != null &&  ratioCalValPrev != BigDecimal.ZERO && ratioCalValPrev.compareTo(BigDecimal.ZERO)!=0) {
-										divtotal = (subtotal).divide(ratioCalValPrev,RoundingMode.HALF_DOWN);
-										totCalvalue =divtotal.multiply(new BigDecimal(100));
-									}else{
-										totCalvalue = null;
-									}*/
-
 							}catch(Exception aex){
+								value = "--";
 								logger.error(aex);
-								totCalvalue = null;
 							}
 							if(required){
-								dataMap.put("CY"+(noOfYears-l)+"_"+finCreditRevSubCategory.getSubCategoryCode(),totCalvalue!=null?String.valueOf(totCalvalue.setScale(2, RoundingMode.HALF_DOWN)):"--");
+								dataMap.put("CY"+(noOfYears-l)+"_"+finCreditRevSubCategory.getSubCategoryCode(),String
+										.valueOf(!value.contains("--") ? new BigDecimal(value) : BigDecimal.ZERO)); 
 							}
 						}
 					}
-					//}
 				}
 			}
 		}
@@ -251,13 +252,17 @@ public class CreditReviewSummaryData {
 			CreditApplicationReviewService creditApplicationReviewService) {
 		this.creditApplicationReviewService = creditApplicationReviewService;
 	}
+	
 	public String replaceYear(String formula,int year){
+		
+		int noOfYears;
+		noOfYears = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("NO_OF_YEARS_TOSHOW").toString());
 		String formatedFormula= formula;
-		for(int i= 0;i<this.noOfYears;i++){
+		for(int i= 0;i< noOfYears;i++){
 			if(i==0){
 				formatedFormula = formatedFormula.replace("YN.","Y"+year);
 			}else{
-				formatedFormula = formatedFormula.replace("YN-"+i+".","Y"+(year-i));
+				formatedFormula = formatedFormula.replace("YN-"+i+".","Y"+(year == 0 ? "M" : year-i));
 			}
 		}
 		return formatedFormula;

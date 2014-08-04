@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window id="window_ReportSearchTemplateDialog" border="normal"
 		closable="true" title="Enter Template Name" width="600px"
-		height="120px" sizable="false"
+		height="160px" sizable="false"
 		apply="${reportSearchTemplateDialog}">
 
 		<borderlayout id="borderlayout">
@@ -27,6 +27,14 @@
 							<button id="btnSaveTemplate" height="20"
 								image="/images/icons/btn_save2_16x16.gif" 
 								tooltiptext="Save Template" />
+						</row>
+						<row valign="middle">
+							<label value="Save For" />
+							<radiogroup id="saveTemplateFor">
+							    <radio id="currentUser" label="Current User" selected="true" />
+							    <space spacing="20px"/>
+								<radio id="allUsers" label="All Users"/>
+							</radiogroup>
 						</row>
 					</rows>
 				</grid>

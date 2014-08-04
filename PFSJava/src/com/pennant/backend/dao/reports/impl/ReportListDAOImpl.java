@@ -116,7 +116,7 @@ public class ReportListDAOImpl extends BasisCodeDAO<ReportList> implements Repor
 	@Override
 	public ReportList getReportListById(final String id, String type) {
 		logger.debug("Entering");
-		ReportList reportList = getReportList();
+		ReportList reportList = new ReportList();
 		reportList.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

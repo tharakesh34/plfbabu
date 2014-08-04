@@ -55,26 +55,26 @@
 
 				<listbox id="listBoxMortgageLoanDetail" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
+					height="100%" multiple="false" span="true">
 					<listhead sizable="true">
 						<listheader id="listheader_LoanRefNumber"
 							label="${c:l('listheader_LoanRefNumber.label')}" sort="auto"
-							width="15%" />
+							hflex="min" />
 						<listheader id="listheader_MortgProperty"
 							label="${c:l('listheader_MortgProperty.label')}" sort="auto"
-							width="15%" />
+								hflex="min"/>
 						<listheader id="listheader_MortgCurrentValue"
 							label="${c:l('listheader_MortgCurrentValue.label')}" sort="auto"
-							width="18%" />
+								hflex="min" />
 						<listheader id="listheader_MortgPurposeOfLoan"
 							label="${c:l('listheader_MortgPurposeOfLoan.label')}" sort="auto"
-							width="30%" />
+								hflex="min" />
 						<listheader id="listheader_RecordStatus"
 							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
+								hflex="min" />
 						<listheader id="listheader_RecordType"
 							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
+								hflex="min"/>
 					</listhead>
 				</listbox>
 

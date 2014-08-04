@@ -1,44 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
- ********************************************************************************************
- *                                 FILE HEADER                                              *
- ********************************************************************************************
- *
- * FileName    		:  AEAmounts.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
- ********************************************************************************************
- * Date             Author                   Version      Comments                          *
- ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- ********************************************************************************************
+ ******************************************************************************************** 
+ * FILE HEADER *
+ ******************************************************************************************** 
+ * 
+ * FileName : AEAmounts.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
+ ******************************************************************************************** 
+ * Date Author Version Comments *
+ ******************************************************************************************** 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
+ ******************************************************************************************** 
  */
 package com.pennant.app.util;
 
@@ -51,6 +42,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -60,42 +54,93 @@ import com.pennant.backend.util.PennantConstants;
 
 public class AEAmounts implements Serializable {
 
-    private static final long serialVersionUID = 4594615740716296558L;
-	private Logger logger = Logger.getLogger(AEAmounts.class);
+	private static final long serialVersionUID = 4594615740716296558L;
+	private static Logger logger = Logger.getLogger(AEAmounts.class);
 
-	private static AEAmountCodes aeAmountCodes;
+	private AEAmountCodes aeAmountCodes;
+	private DataSet dataSet;
+
 	private BigDecimal zeroValue = BigDecimal.ZERO;
 	private Date datePrvRepay = new Date();
 	private Date dateCurRepay = new Date();
 
 	private Date datePrvSchd = new Date();
 	private Date dateCurSchd = new Date();
+	private Date datePrvSchdSusp = new Date();
+	private Date dateCurSchdSusp = new Date();
+
 	private Date dateRefundCheck = new Date();
 	private Date dateAccrueValue = new Date();
 	private Date dateODFrom = new Date();
 	private Date dateLastFullyPaid = new Date();
-	private Date dateRepay = new Date();
+	private Date dateSuspPftTfr = new Date();
+
+	private Date datePrvRecord = new Date();
+	private Date dateCurRecord = new Date();
 
 	private boolean isOverDue = false;
 	private boolean isFutureDeal = false;
 	private boolean isEOD = false;
+	private boolean isSusp = false;
+	private boolean isCurSchdSet = false;
+	private boolean isCurRepaySet = false;
+	private boolean isCurSchdSuspSet = false;
+	private boolean isNextSchdSet = false;
 
 	// Profit Accrued till current Schedule End Date
 	private BigDecimal accrueTillDate = BigDecimal.ZERO;
+	private BigDecimal accumulatedPriTillDate = BigDecimal.ZERO;
+	private BigDecimal depreciatePri = BigDecimal.ZERO; //Yearly Depreciation Principal
+	//private BigDecimal accrueTillTsfdDate = BigDecimal.ZERO;
 	private BigDecimal amzTillDate = BigDecimal.ZERO;
 	private BigDecimal amzTillRepay = BigDecimal.ZERO;
+	private BigDecimal accrueTillSusp = BigDecimal.ZERO;
+	
+	private static FinanceSuspHeadDAO suspHeadDAO;
+	private static FinODDetailsDAO finODDetailsDAO;
+
+	public AEAmounts() {
+		super();
+	}
 
 	// -------------------------------------------------------------------------------------------------
 	// Processing Schedule Details to fill AmountCode Details DATA
 	// -------------------------------------------------------------------------------------------------
-	public AEAmountCodes procAEAmounts(FinanceMain financeMain,
-	        List<FinanceScheduleDetail> schdDetails, FinanceProfitDetail pftDetail, Date valueDate) {
 
+	public static AEAmountCodes procAEAmounts(FinanceMain financeMain,
+	        List<FinanceScheduleDetail> schdDetails, FinanceProfitDetail pftDetail, Date valueDate) {
+		return new AEAmounts(financeMain, schdDetails, pftDetail, valueDate, false).getAeAmountCodes();
+	}
+	
+	public static AEAmountCodes procAccrualAmounts(FinanceMain financeMain,
+			List<FinanceScheduleDetail> schdDetails, FinanceProfitDetail pftDetail, Date valueDate) {
+		return new AEAmounts(financeMain, schdDetails, pftDetail, valueDate, true).getAeAmountCodes();
+	}
+
+	private AEAmounts(FinanceMain financeMain, List<FinanceScheduleDetail> schdDetails,
+	        FinanceProfitDetail pftDetail, Date valueDate, boolean isAccrualProcess) {
 		logger.debug("Entering");
 
 		accrueTillDate = zeroValue;
+		accumulatedPriTillDate = zeroValue;
+		depreciatePri = zeroValue;
 		amzTillDate = zeroValue;
 		amzTillRepay = zeroValue;
+		accrueTillSusp = zeroValue;
+
+		//Fetch Finance Suspense Head Object Details
+		Date suspDate = getSuspHeadDAO().getCustSuspDate(financeMain.getCustID());
+
+		isSusp = false;
+		aeAmountCodes = new AEAmountCodes();
+		if (suspDate != null) {
+			dateSuspPftTfr = suspDate;
+			aeAmountCodes.setPftInSusp(true);
+			isSusp = true;
+
+			//TODO Calculate datePftTranfered
+			dateSuspPftTfr = DateUtility.getMonthStartDate(dateSuspPftTfr);
+		}
 
 		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(
 		        "PHASE").toString());
@@ -105,64 +150,97 @@ public class AEAmounts implements Serializable {
 
 		isOverDue = false;
 		dateODFrom = financeMain.getFinStartDate();
-		dateLastFullyPaid = dateODFrom;
+		dateLastFullyPaid = financeMain.getFinStartDate();
 
 		if (valueDate.before(financeMain.getFinStartDate())) {
 			isFutureDeal = true;
 		}
 
-		if (financeMain.isAllowGrcPeriod()
-		        && financeMain.getGrcPeriodEndDate().compareTo(valueDate) >= 0) {
-			dateRepay = financeMain.getNextGrcPftDate();
-		} else {
-			dateRepay = financeMain.getNextRepayDate();
+		if (financeMain.getGrcPeriodEndDate() == null) {
+			financeMain.setGrcPeriodEndDate(financeMain.getFinStartDate());
 		}
 
 		// Reset Finance Profit Details
-		aeAmountCodes = new AEAmountCodes();
 		aeAmountCodes.setFinReference(financeMain.getFinReference());
-		aeAmountCodes.setLastRepayPftDate(financeMain.getLastRepayPftDate());
 		aeAmountCodes.setNextRepayPftDate(financeMain.getNextRepayPftDate());
-		aeAmountCodes.setLastRepayRvwDate(financeMain.getLastRepayRvwDate());
 		aeAmountCodes.setNextRepayRvwDate(financeMain.getNextRepayRvwDate());
 		aeAmountCodes.setODInst(0);
 		aeAmountCodes.setPftInAdv(zeroValue);
 
 		// FIND Schedule and Repayment Dates
 		int sdSize = schdDetails.size();
-		boolean isCurSchdSet = false;
-		boolean isCurRepaySet = false;
 
 		datePrvRepay = financeMain.getFinStartDate();
 		datePrvSchd = datePrvRepay;
 		dateRefundCheck = datePrvRepay;
 
+		// NORMAL Day or EOD/SOD
+		if (isEOD) {
+			dateAccrueValue = DateUtility.addDays(valueDate, 1);
+		} else {
+			dateAccrueValue = valueDate;
+		}
+
+		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+		FinanceScheduleDetail prvSchd = new FinanceScheduleDetail();
+
+		boolean isFirstRepaySet = false;
+		
+		// Calculate Amounts
 		for (int i = 0; i < sdSize; i++) {
-			// Set Repayment Dates
-			if (schdDetails.get(i).isRepayOnSchDate()) {
-				if (schdDetails.get(i).getSchDate().compareTo(valueDate) < 0) {
-					datePrvRepay = schdDetails.get(i).getSchDate();
-				} else {
-					if (!isCurRepaySet) {
-						dateCurRepay = schdDetails.get(i).getSchDate();
-						isCurRepaySet = true;
-					}
-				}
-			}
+			curSchd = schdDetails.get(i);
+			dateCurRecord = curSchd.getSchDate();
 
-			// Set Schedule Dates
-			if (schdDetails.get(i).getSchDate().compareTo(valueDate) < 0) {
-				datePrvSchd = schdDetails.get(i).getSchDate();
+			if (!isFirstRepaySet && curSchd.isRepayOnSchDate()) {
+				aeAmountCodes.setFirstRepayAmt(curSchd.getPrincipalSchd()
+				        .add(curSchd.getProfitSchd()).add(curSchd.getDefPrincipalSchd())
+				        .add(curSchd.getDefProfitSchd()));
+				aeAmountCodes.setFirstRepayDate(curSchd.getSchDate());
+				isFirstRepaySet = true;
+            }
+			
+			if (i != 0) {
+				prvSchd = schdDetails.get(i - 1);
+				datePrvRecord = prvSchd.getSchDate();
 			} else {
-				if (!isCurSchdSet) {
-					dateCurSchd = schdDetails.get(i).getSchDate();
-					isCurSchdSet = true;
-				}
+				datePrvRecord = dateCurRecord;
 			}
 
-			if (isCurRepaySet && isCurSchdSet) {
-				break;
-			}
+			// Method calling for calculation of AmountCodes for all Schedules
+			aeAmountCodes = calAEAmounts(curSchd, prvSchd, i, valueDate,
+			        financeMain.getProfitDaysBasis(), isAccrualProcess);
+			
+			if ((i != 0) && (valueDate.compareTo(curSchd.getSchDate()) <= 0 || (i == sdSize-1)) && 
+					aeAmountCodes.getNextRpySchDate() == null){
+				aeAmountCodes.setNextRpySchDate(curSchd.getSchDate());
+	 				
+					if(i != 0){
+						aeAmountCodes.setLastRpySchDate(prvSchd.getSchDate());
+						aeAmountCodes.setLastRpySchPft(prvSchd.getPrincipalSchd());
+						aeAmountCodes.setLastRpySchPri(prvSchd.getProfitSchd());
+					}
+					
+					aeAmountCodes.setNextSchdPri(curSchd.getPrincipalSchd().add(
+					        curSchd.getDefPrincipalSchd()));
+					aeAmountCodes.setNextSchdPft(curSchd.getProfitSchd().add(
+					        curSchd.getDefProfitSchd()));
+					aeAmountCodes.setNextSchdPriBal(aeAmountCodes.getNextSchdPri()
+					        .subtract(curSchd.getSchdPriPaid())
+					        .subtract(curSchd.getDefSchdPriPaid()));
+					aeAmountCodes.setNextSchdPftBal(aeAmountCodes.getNextSchdPft()
+					        .subtract(curSchd.getSchdPftPaid())
+					        .subtract(curSchd.getDefSchdPftPaid()));
+ 			}
+		}
+		
+		//Last Repay Amount Value
+		Date lastSchDate = null;
+		if((sdSize -1) > 0){
+			FinanceScheduleDetail lastSchd = schdDetails.get(sdSize -1);
+			lastSchDate = lastSchd.getSchDate();
+			aeAmountCodes.setLastRepayAmt(lastSchd.getPrincipalSchd()
+					.add(lastSchd.getProfitSchd()).add(lastSchd.getDefPrincipalSchd())
+					.add(lastSchd.getDefProfitSchd()));
 		}
 
 		// Finance Asset Value
@@ -180,28 +258,7 @@ public class AEAmounts implements Serializable {
 			aeAmountCodes.setCpDaysTill(DateUtility.getDaysBetween(valueDate, datePrvRepay));
 		}
 
-		// NORMAL Day or EOD/SOD
-		if (isEOD) {
-			dateAccrueValue = DateUtility.addDays(valueDate, 1);
-		} else {
-			dateAccrueValue = valueDate;
-		}
-
 		aeAmountCodes.setDaysDiff(DateUtility.getDaysBetween(valueDate, dateCurRepay));
-
-		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
-		FinanceScheduleDetail prvSchd = new FinanceScheduleDetail();
-
-		// Calculate Amounts
-		for (int i = 0; i < sdSize; i++) {
-			curSchd = schdDetails.get(i);
-			if (i != 0) {
-				prvSchd = schdDetails.get(i - 1);
-			}
-
-			// Method calling for calucation of AmountCodes for all Schedules
-			aeAmountCodes = calAEAmounts(curSchd, prvSchd, i, valueDate);
-		}
 
 		// Capitalize from next schedule date
 		aeAmountCodes.setCpzNxt(aeAmountCodes.getCpzTot().subtract(aeAmountCodes.getCpzPrv())
@@ -218,116 +275,298 @@ public class AEAmounts implements Serializable {
 
 		// Scheduled Principal balance till now
 		aeAmountCodes.setPriSB(aeAmountCodes.getPriS().subtract(aeAmountCodes.getPriSP()));
+		
+		//Principal Depreciation Value Till now
+		aeAmountCodes.setAccumulatedDepPri(accumulatedPriTillDate);
+		
+		if(lastSchDate != null && (valueDate.compareTo(lastSchDate) > 0) && (DateUtility.getYear(valueDate) !=  DateUtility.getYear(lastSchDate))){
+			depreciatePri = BigDecimal.ZERO;
+		}
+		aeAmountCodes.setDepreciatePri(depreciatePri);
 
 		// ----------------------------------------------------
 		// ACCRUALS SETTING
 		// ----------------------------------------------------
 		// Accrued Profit Till Now
-		aeAmountCodes.setAccrue(accrueTillDate.subtract(aeAmountCodes.getPftInAdv()));
+		if (financeMain.isFinIsActive()) {
+        	aeAmountCodes.setAccrue(accrueTillDate.subtract(aeAmountCodes.getPftInAdv()));
 
-		// Accrued Profit Suspended Till now
-		aeAmountCodes.setAccrueS(pftDetail.getTdPftAccrueSusp());
+			// Accrued Profit Suspended Till now
+			if (isSusp) {
+				aeAmountCodes.setAccrueS(aeAmountCodes.getAccrue().subtract(accrueTillSusp));
+			} else {
+				aeAmountCodes.setAccrueS(BigDecimal.ZERO);
+			}
 
-		// Accrued Till Last posting
-		aeAmountCodes.setlAccrue(pftDetail.getAcrTillLBD());
+			// Accrued Till Last posting
+			aeAmountCodes.setlAccrue(pftDetail.getAcrTillLBD());
 
-		// Accrue calculated From Last Posted to Next business date
-		aeAmountCodes.setDAccrue(accrueTillDate.subtract(aeAmountCodes.getlAccrue()));
+			// Accrue calculated From Last Posted to Next business date
+			aeAmountCodes.setDAccrue(accrueTillDate.subtract(aeAmountCodes.getlAccrue()));
 
-		// Accrued Till NextBusiness Date
-		aeAmountCodes.setNAccrue(accrueTillDate.subtract(aeAmountCodes.getPftInAdv()));
+			// Accrued Till NextBusiness Date
+			aeAmountCodes.setNAccrue(accrueTillDate.subtract(aeAmountCodes.getPftInAdv()));
 
+        } else {
+			aeAmountCodes.setAccrue(zeroValue);
+			aeAmountCodes.setAccrueS(zeroValue);
+			aeAmountCodes.setlAccrue(pftDetail.getAcrTillLBD());
+			aeAmountCodes.setDAccrue(accrueTillDate.subtract(aeAmountCodes.getlAccrue()));
+			aeAmountCodes.setNAccrue(zeroValue);
+		}
+		
 		// ----------------------------------------------------
 		// AMORTIZATION SETTING
 		// ----------------------------------------------------
-		// Amortized Profit Till Now
-		aeAmountCodes.setAmz(amzTillDate.add(aeAmountCodes.getPftInAdv()));
+		if (financeMain.isFinIsActive()) {
+			// Amortized Profit Till Now
+			aeAmountCodes.setAmz(amzTillDate.add(aeAmountCodes.getPftInAdv()));
 
-		// Amortized Profit Suspended Till now
-		aeAmountCodes.setAmzS(pftDetail.getTdPftAmortizedSusp());
+			// Amortized Profit Suspended Till now
+			aeAmountCodes.setAmzS(pftDetail.getTdPftAmortizedSusp());
 
-		// Amortized Till Last posting
-		aeAmountCodes.setlAmz(pftDetail.getAmzTillLBD());
+			// Amortized Till Last posting
+			aeAmountCodes.setlAmz(pftDetail.getAmzTillLBD());
 
-		// Amortized calculated From Last Posted to Next business date
-		aeAmountCodes.setdAmz(amzTillDate.subtract(aeAmountCodes.getlAmz()));
+			// Amortized calculated From Last Posted to Next business date
+			aeAmountCodes.setdAmz(amzTillDate.subtract(aeAmountCodes.getlAmz()));
 
-		// Amortized Till NextBusiness Date
-		aeAmountCodes.setnAmz(amzTillDate.add(aeAmountCodes.getPftInAdv()));
+			// Amortized Till NextBusiness Date
+			aeAmountCodes.setnAmz(amzTillDate.add(aeAmountCodes.getPftInAdv()));
+			
+		} else {
+			aeAmountCodes.setAmz(aeAmountCodes.getPftAP());
+			aeAmountCodes.setAmzS(zeroValue);
+			aeAmountCodes.setlAmz(pftDetail.getAmzTillLBD());
+			aeAmountCodes.setdAmz(amzTillDate.subtract(aeAmountCodes.getlAmz()));
+			aeAmountCodes.setnAmz(aeAmountCodes.getPftAP());
+		}
 
 		// Overdue Days
 		if (isOverDue) {
-			aeAmountCodes.setODDays(DateUtility.getDaysBetween(dateODFrom, valueDate));
+			
+			// NORMAL Day or EOD/SOD
+			if (isEOD) {
+				aeAmountCodes.setODDays(DateUtility.getDaysBetween(dateODFrom, dateAccrueValue));
+			} else {
+				aeAmountCodes.setODDays(DateUtility.getDaysBetween(dateODFrom, valueDate));
+			}
+			
+			if(pftDetail.getFirstODDate() == null){
+				aeAmountCodes.setFirstODDate(dateODFrom);
+			}
+
+			//Fetch Finance Overdue Details
+			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(
+			        financeMain.getFinReference(), "");
+
+			if (finODDetails != null) {
+				aeAmountCodes.setPriOD(finODDetails.getFinCurODPri());
+				aeAmountCodes.setPftOD(finODDetails.getFinCurODPft());
+				aeAmountCodes.setPenaltyPaid(finODDetails.getTotPenaltyPaid());
+				aeAmountCodes.setPenaltyDue(finODDetails.getTotPenaltyBal());
+				aeAmountCodes.setPenaltyWaived(finODDetails.getTotWaived());
+			}
+
 		} else {
 			aeAmountCodes.setODDays(0);
 		}
 
 		// Last Fully Paid Days
-		aeAmountCodes.setDaysFromFullyPaid(DateUtility.getDaysBetween(dateLastFullyPaid, valueDate));
+		aeAmountCodes
+		        .setDaysFromFullyPaid(DateUtility.getDaysBetween(dateLastFullyPaid, valueDate));
+		
+		BigDecimal dayFactor = BigDecimal.ONE;
+		if(financeMain.getMaturityDate() != null){
+			dayFactor = CalculationUtil.getInterestDays(financeMain.getFinStartDate(),
+					financeMain.getMaturityDate(), financeMain.getProfitDaysBasis());
+		}
+		dayFactor = dayFactor.setScale(9, RoundingMode.HALF_DOWN);
 
+		/*
+		 * Rate = (Profit including Capitalized * 100) / (Principal Paid excluding Capitalized * Day Factor)
+		 * 
+		 */
+		if (aeAmountCodes.getPri().compareTo(BigDecimal.ZERO) != 0) {
+			aeAmountCodes.setCurFlatRate(aeAmountCodes
+			        .getPft()
+			        .add(aeAmountCodes.getCpzTot())
+			        .multiply(new BigDecimal(100))
+			        .divide((aeAmountCodes.getPri().subtract(aeAmountCodes.getCpzTot()))
+			                .multiply(dayFactor), 9, RoundingMode.HALF_DOWN));
+		}
+
+		aeAmountCodes.setFullyPaidDate(dateLastFullyPaid);
+
+		setAEAmountCodes(aeAmountCodes);
 		logger.debug("Leaving");
-		return aeAmountCodes;
-
 	}
 
 	/*
 	 * Start Calculating the Amounts for accounting engine
 	 */
-	private AEAmountCodes calAEAmounts(FinanceScheduleDetail curSchd,
-	        FinanceScheduleDetail prvSchd, int curSchdRecord, Date valueDate) {
-
-		logger.debug("Entering");
-		Date schdDate = curSchd.getSchDate();
+	private AEAmountCodes calAEAmounts(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd, 
+			int curSchdRecord, Date valueDate, String profitDayBasis, boolean isAccrualProcess) {
 
 		// -------------------------------------------------------------------------------------------------
 		// Set Disbursement and down payment amounts
 		// -------------------------------------------------------------------------------------------------
-		if (schdDate.compareTo(valueDate) == 0) {
+		if (dateCurRecord.compareTo(valueDate) == 0) {
 			aeAmountCodes.setDisburse(curSchd.getDisbAmount());
 			aeAmountCodes.setDownpay(curSchd.getDownPaymentAmount());
 		}
 
-		if (curSchdRecord == 0) {
-			return aeAmountCodes;
-		}
-
 		// Set Date for refund checking
-		if (curSchd.isCpzOnSchDate() && schdDate.compareTo(dateRefundCheck) > 0
-		        && schdDate.compareTo(dateCurRepay) < 0) {
-			dateRefundCheck = schdDate;
+		//TODO
+		//Pradeep-04 Jan 14: Why isCpzOnSchDate condition included here???
+		//How this dateRefundCheck is in used in the refund calculation???
+		if (curSchd.isCpzOnSchDate() && dateCurRecord.compareTo(dateRefundCheck) > 0
+		        && dateCurRecord.compareTo(dateCurRepay) < 0) {
+			dateRefundCheck = dateCurRecord;
 		}
 
 		// -------------------------------------------------------------------------------------------------
 		// TOTALS FOR ALL PERIODS
 		// -------------------------------------------------------------------------------------------------
+		
+		//Boolean is only used to reduce validations related to schedule dates
+		if (!isCurSchdSet) {
+			//Previous Record Date less than value date then set previous details
+			if (dateCurRecord.compareTo(valueDate) < 0) {
+				datePrvSchd = dateCurRecord;
+			} 
 
+			//Value Date > Previous Record Date AND <= Current Record Date then set current schedule date 
+			if (valueDate.compareTo(datePrvRecord) > 0 && valueDate.compareTo(dateCurRecord) <= 0) {
+				dateCurSchd = dateCurRecord;
+				isCurSchdSet = true;
+				aeAmountCodes.setCpzCur(aeAmountCodes.getCpzCur().add(curSchd.getCpzAmount()));
+			}
+        }
+
+		//Boolean is only used to reduce validations related t
+		if (!isCurSchdSuspSet) {
+			//Previous Record Date less than vaue date then set previous details
+			if (dateCurRecord.compareTo(dateSuspPftTfr) < 0) {
+				datePrvSchdSusp = dateCurRecord;
+			} 
+
+			//Value Date > Previous Record Date AND <= Current Record Date then set current schedule date 
+			if (valueDate.compareTo(datePrvRecord) > 0 && dateSuspPftTfr.compareTo(dateCurRecord) <= 0) {
+				dateCurSchdSusp = dateCurRecord;
+				isCurSchdSuspSet = true;
+            }
+        }
+
+		//If the schedule date less than current schedule date set reducing rate.
+		if (dateCurRecord.compareTo(valueDate) <= 0) {
+			aeAmountCodes.setCurReducingRate(curSchd.getCalculatedRate());
+		}
+
+		
+		//REPAYMENT Records
 		if (curSchd.isRepayOnSchDate()) {
+			
+			//Total Terms Calculation
+			aeAmountCodes.setTtlTerms(aeAmountCodes.getTtlTerms() + 1);
 
 			// Last Fully Paid Date
 			if (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0
 			        && curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0
 			        && curSchd.getDefPrincipalSchd().compareTo(curSchd.getDefSchdPriPaid()) == 0
-			        && curSchd.getDefProfitSchd().compareTo(curSchd.getDefSchdPftPaid()) == 0) {
-				dateLastFullyPaid = curSchd.getSchDate();
+			        && curSchd.getDefProfitSchd().compareTo(curSchd.getDefSchdPftPaid()) == 0){
+
+				if( (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0 
+						|| curSchd.getDefRepaySchd().compareTo(BigDecimal.ZERO) > 0)) {
+					dateLastFullyPaid = dateCurRecord;
+				}
+
+				//Total Paid Terms Calculation
+				aeAmountCodes.setPaidInst(aeAmountCodes.getPaidInst() + 1);
+			}
+
+			//Elapsed Terms Calculation
+			if (dateCurRecord.compareTo(valueDate) <= 0) {
+				aeAmountCodes.setElpTerms(aeAmountCodes.getElpTerms() + 1);
+			}
+			
+			boolean isOverdueSchd = false;
+			if(isAccrualProcess){
+				isOverdueSchd = (dateCurRecord.compareTo(valueDate) <= 0) ;
+			}else{
+				isOverdueSchd = dateCurRecord.before(valueDate);
 			}
 
 			//Over Due Calculations
-			if (curSchd.getSchDate().before(valueDate) && isOverDue) {
+			if (isOverdueSchd && isOverDue) {
 				aeAmountCodes.setODInst(aeAmountCodes.getODInst() + 1);
+				aeAmountCodes.setLastODDate(dateCurRecord);
 			}
 
-			if (curSchd.getSchDate().before(valueDate) && !isOverDue) {
+			if (isOverdueSchd && !isOverDue) {
 				if (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) != 0
 				        || curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) != 0
 				        || curSchd.getDefPrincipalSchd().compareTo(curSchd.getDefSchdPriPaid()) != 0
 				        || curSchd.getDefProfitSchd().compareTo(curSchd.getDefSchdPftPaid()) != 0) {
 					dateODFrom = curSchd.getSchDate();
 					aeAmountCodes.setODInst(1);
+					aeAmountCodes.setLastODDate(dateODFrom);
 					isOverDue = true;
 				}
 			}
+
+			//Boolean is only used to reduce validations
+			if (!isCurRepaySet) {
+				//Previous Record Date less than vaue date then set previous details
+				if (dateCurRecord.compareTo(valueDate) < 0) {
+					datePrvRepay = dateCurRecord;
+				} 
+
+				//Value Date > Previous Record Date AND <= Current Record Date then set current schedule date 
+				if (valueDate.compareTo(datePrvRecord) > 0 && valueDate.compareTo(dateCurRecord) <= 0) {
+					dateCurRepay = dateCurRecord;
+					isCurRepaySet = true;
+	            }
+				
+				// Payments till current repayment date
+				// Schedule Profit and Paid
+				aeAmountCodes.setPftS(aeAmountCodes.getPftS().add(curSchd.getProfitSchd())
+				        .add(curSchd.getDefProfitSchd()));
+				aeAmountCodes.setPftSP(aeAmountCodes.getPftSP().add(curSchd.getSchdPftPaid())
+				        .add(curSchd.getDefSchdPftPaid()));
+
+				// Schedule principal and Paid
+				aeAmountCodes.setPriS(aeAmountCodes.getPriS().add(curSchd.getPrincipalSchd())
+				        .add(curSchd.getDefPrincipalSchd()));
+				aeAmountCodes.setPriSP(aeAmountCodes.getPriSP().add(curSchd.getSchdPriPaid())
+				        .add(curSchd.getDefSchdPriPaid()));
+
+				// Amortization till current repayment date
+				amzTillRepay = amzTillRepay.add(curSchd.getProfitCalc());
+    
+            }  
 		}
 
+		/*//Latest Repay Schedule Profit (Either Partially or Fully paid -  include Deferment Schedule Amount)
+		if(curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getDefSchdPftPaid().compareTo(BigDecimal.ZERO) > 0){
+			aeAmountCodes.setLastRpySchPft(curSchd.getSchdPftPaid().add(curSchd.getDefSchdPftPaid()));
+			aeAmountCodes.setLastRpySchDate(curSchd.getSchDate());
+		}
+
+		//Latest Repay Schedule principal (Either Partially or Fully paid -  include Deferment Schedule Amount)
+		if(curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getDefSchdPriPaid().compareTo(BigDecimal.ZERO) > 0){
+			aeAmountCodes.setLastRpySchPri(curSchd.getSchdPriPaid().add(curSchd.getDefSchdPriPaid()));
+			aeAmountCodes.setLastRpySchDate(curSchd.getSchDate());
+		}
+		
+		//Next Schedule Repayments Date
+		if (aeAmountCodes.getNextRpySchDate() == null && (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) != 0
+		        || curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) != 0
+		        || curSchd.getDefPrincipalSchd().compareTo(curSchd.getDefSchdPriPaid()) != 0
+		        || curSchd.getDefProfitSchd().compareTo(curSchd.getDefSchdPftPaid()) != 0)) {
+			aeAmountCodes.setNextRpySchDate(curSchd.getSchDate());
+		}*/
+		
 		// Total Scheduled Profit and Paid
 		aeAmountCodes.setPft(aeAmountCodes.getPft().add(curSchd.getProfitSchd())
 		        .add(curSchd.getDefProfitSchd()));
@@ -347,18 +586,17 @@ public class AEAmounts implements Serializable {
 		// Amounts Calculation Till Previous Scheduled Date
 		// -------------------------------------------------------------------------------------------------
 		if (isEOD) {
-			if (schdDate.compareTo(valueDate) == 0) {
+			if (dateCurRecord.compareTo(valueDate) == 0) {
 				aeAmountCodes.setCpzPrv(aeAmountCodes.getCpzPrv().add(curSchd.getCpzAmount()));
 			}
 		}
 
-		//TODO : Check whether this part will go to else condition
-		if (schdDate.compareTo(datePrvSchd) <= 0) {
+		if (dateCurRecord.compareTo(datePrvSchd) <= 0) {
 			aeAmountCodes.setCpzPrv(aeAmountCodes.getCpzPrv().add(curSchd.getCpzAmount()));
 		}
 
 		// Accrued and Amortized till amortization value date PAST
-		if (schdDate.compareTo(dateAccrueValue) < 0) {
+		if (dateCurRecord.compareTo(dateAccrueValue) < 0) {
 			// Accrue till previous scheduled date
 			accrueTillDate = accrueTillDate.add(curSchd.getProfitCalc())
 			        .subtract(curSchd.getSchdPftPaid()).subtract(curSchd.getDefSchdPftPaid())
@@ -366,79 +604,137 @@ public class AEAmounts implements Serializable {
 
 			// Amortization till previous scheduled date
 			amzTillDate = amzTillDate.add(curSchd.getProfitCalc());
+
+		}
+		
+		// Principal Accumulated till previous scheduled date
+		if (isAccrualProcess && dateCurRecord.compareTo(valueDate) < 0) {
+			accumulatedPriTillDate = accumulatedPriTillDate.add(curSchd.getPrincipalSchd()).add(curSchd.getDefPrincipalSchd());
+			
+			//Yearly Depreciation value calculation
+			if(DateUtility.getYear(prvSchd.getSchDate()) != DateUtility.getYear(curSchd.getSchDate())  && curSchdRecord != 0){
+				depreciatePri = BigDecimal.ZERO;
+				
+				BigDecimal priAmt = curSchd.getPrincipalSchd().add(curSchd.getDefPrincipalSchd());
+				int actualDays = DateUtility.getDaysBetween(curSchd.getSchDate(), DateUtility.getMonthEndDate(prvSchd.getSchDate()));
+				int totalDays = DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchd.getSchDate());
+				depreciatePri = (priAmt.multiply(new BigDecimal(actualDays))).divide(new BigDecimal(totalDays), 0, RoundingMode.HALF_DOWN);
+				
+			}else{
+				depreciatePri = depreciatePri.add(curSchd.getPrincipalSchd()).add(curSchd.getDefPrincipalSchd());
+			}
+		}
+
+		/*// Transfered Accrued Amount till PAST month End Date
+		if (dateCurRecord.compareTo(dateAccrueTsfdValue) <= 0) {
+			// Accrue till previous Month End date
+			accrueTillTsfdDate = accrueTillTsfdDate.add(curSchd.getProfitCalc())
+			        .subtract(curSchd.getSchdPftPaid()).subtract(curSchd.getDefSchdPftPaid())
+			        .subtract(curSchd.getCpzAmount());
+
+			prvAccrueTsfdDate = dateCurRecord;
+		}*/
+
+		//###NEW Accrued till suspense date month start PAST
+		if (isSusp) {
+			if (dateCurRecord.compareTo(dateSuspPftTfr) < 0) {
+				// Accrue till previous scheduled date
+				accrueTillSusp = accrueTillSusp.add(curSchd.getProfitCalc())
+				        .subtract(curSchd.getSchdPftPaid()).subtract(curSchd.getDefSchdPftPaid())
+				        .subtract(curSchd.getCpzAmount());
+			}
 		}
 
 		// VALUE DATE IS LAST DATE OF PREVIOUS SCHDULE RECORD
-		if (prvSchd.getSchDate().compareTo(valueDate) == 0) {
-			aeAmountCodes = calPartAccrual(curSchd, prvSchd.getSchDate());
-		}
+		if (curSchdRecord != 0) {
+			if (datePrvRecord.compareTo(valueDate) == 0) {
+				aeAmountCodes = calPartAccrual(curSchd, datePrvRecord,
+				        prvSchd.getCalculatedRate(), profitDayBasis);
+				
+				//Principal Accrual Calculation
+				if(isAccrualProcess){
+					calPartPriAccrual(curSchd, datePrvRecord,valueDate);
+				}
+			}
 
-		if (schdDate.compareTo(dateAccrueValue) >= 0 && schdDate.compareTo(dateCurSchd) <= 0) {
-			aeAmountCodes = calPartAccrual(curSchd, datePrvSchd);
-		}
+			//###NEW Suspense From DATE IS LAST DATE OF PREVIOUS SCHDULE RECORD
+			if (isSusp) {
+				if (prvSchd.getSchDate().compareTo(dateSuspPftTfr) == 0) {
+					aeAmountCodes = calPartAccrualSusp(curSchd, datePrvRecord,
+					        prvSchd.getCalculatedRate(), profitDayBasis);
+				}
+			}
 
-		// Payments till current repayment date
-		if (schdDate.compareTo(dateCurRepay) <= 0) {
+			if (isCurSchdSet) {
+				if (dateCurRecord.compareTo(dateAccrueValue) >= 0 && dateCurRecord.compareTo(dateCurSchd) <= 0) {
+					aeAmountCodes = calPartAccrual(curSchd, datePrvSchd, prvSchd.getCalculatedRate(),
+					        profitDayBasis);
+				}    
+				
+				//Principal Accrual Calculation
+				if(isAccrualProcess){
+					if(datePrvRecord.compareTo(valueDate) < 0 && dateCurRecord.compareTo(valueDate) > 0){
+						calPartPriAccrual(curSchd, datePrvRecord,valueDate);
+					}
+				}
+            }
+			
 
-			// Schedule Profit and Paid
-			aeAmountCodes.setPftS(aeAmountCodes.getPftS().add(curSchd.getProfitSchd())
-			        .add(curSchd.getDefProfitSchd()));
-			aeAmountCodes.setPftSP(aeAmountCodes.getPftSP().add(curSchd.getSchdPftPaid())
-			        .add(curSchd.getDefSchdPftPaid()));
-
-			// Schedule principal and Paid
-			aeAmountCodes.setPriS(aeAmountCodes.getPriS().add(curSchd.getPrincipalSchd())
-			        .add(curSchd.getDefPrincipalSchd()));
-			aeAmountCodes.setPriSP(aeAmountCodes.getPriSP().add(curSchd.getSchdPriPaid())
-			        .add(curSchd.getDefSchdPriPaid()));
-		}
-
-		// TODO to be verified the below code
-		// Schedule Date same as value date
-		if (schdDate.compareTo(datePrvSchd) > 0 && schdDate.compareTo(dateCurSchd) <= 0) {
-			aeAmountCodes.setCpzCur(aeAmountCodes.getCpzCur().add(curSchd.getCpzAmount()));
-		}
-
-		// Amortization till current repayment date
-		if (schdDate.compareTo(dateCurRepay) <= 0) {
-			amzTillRepay = amzTillRepay.add(curSchd.getProfitCalc());
+			//###NEW Suspense From DATE IS BETWEEN the schedule dates
+			if (isSusp && isCurSchdSuspSet) {
+				if (dateCurRecord.compareTo(dateSuspPftTfr) >= 0
+				        && dateCurRecord.compareTo(dateCurSchdSusp) <= 0) {
+					aeAmountCodes = calPartAccrualSusp(curSchd, datePrvSchdSusp,
+					        prvSchd.getCalculatedRate(), profitDayBasis);
+				}
+			}
+			
+			/*//Partial Transfered Accrue Amount Till Last Month End
+			if (dateCurRecord.compareTo(dateAccrueTsfdValue) > 0
+			        && valueDate.compareTo(dateAccrueTsfdValue) == 0) {
+				calPartAccrualTsfd(curSchd, prvAccrueTsfdDate, prvSchd.getCalculatedRate(),
+				        profitDayBasis);
+			}*/
 		}
 
 		//Profit Paid in advance
-		if (schdDate.compareTo(dateRepay) > 0) {
+		if (isNextSchdSet) {
 			aeAmountCodes.setPftInAdv(aeAmountCodes.getPftInAdv().add(curSchd.getSchdPftPaid())
 			        .add(curSchd.getDefSchdPftPaid()));
 		}
-		logger.debug("Leaving");
 		return aeAmountCodes;
 	}
 
-	private AEAmountCodes calPartAccrual(FinanceScheduleDetail curSchd, Date dateFrom) {
+	private AEAmountCodes calPartAccrual(FinanceScheduleDetail curSchd, Date dateFrom,
+	        BigDecimal pftRate, String profitDayBasis) {
 
-		logger.debug("Entering");
-		int totalDays = 0;
-		int daysIn = 0;
+		//	int daysIn = 0;
 		BigDecimal pftCalAsOfNow = zeroValue;
 
 		// Calculate Accruals if not in future
 		if (!isFutureDeal) {
-			// Total Days in current schedule record
-			totalDays = DateUtility.getDaysBetween(dateFrom, curSchd.getSchDate());
 			// Days in current schedule record
-			daysIn = DateUtility.getDaysBetween(dateFrom, dateAccrueValue);
+			//	daysIn = DateUtility.getDaysBetween(dateFrom, dateAccrueValue);
 
-			if (totalDays > 0 && daysIn < totalDays) {
-				pftCalAsOfNow = curSchd.getProfitCalc().divide(BigDecimal.valueOf(totalDays), 0,
-				        RoundingMode.HALF_DOWN);
-				pftCalAsOfNow = pftCalAsOfNow.setScale(0, RoundingMode.HALF_DOWN);
-				pftCalAsOfNow = pftCalAsOfNow.multiply(new BigDecimal(daysIn));
+			if (curSchd.getSchDate().compareTo(dateAccrueValue) != 0) {
+				/*pftCalAsOfNow = curSchd.getBalanceForPftCal().multiply(new BigDecimal(daysIn)).multiply(pftRate);
+				pftCalAsOfNow = pftCalAsOfNow.setScale(0, RoundingMode.HALF_DOWN);*/
+
+				BigDecimal dayFactor = CalculationUtil.getInterestDays(dateFrom, dateAccrueValue,
+				        profitDayBasis);
+				dayFactor = dayFactor.setScale(9, RoundingMode.HALF_DOWN);
+
+				pftCalAsOfNow = ((curSchd.getBalanceForPftCal().multiply(pftRate))
+				        .multiply(dayFactor))
+				        .divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+
 			} else {
 				pftCalAsOfNow = curSchd.getProfitCalc();
 			}
 		}
 
 		// Accure till Value date
-		if (curSchd.getSchDate().equals(dateAccrueValue)) {
+		if (curSchd.getSchDate().compareTo(dateAccrueValue) == 0) {
 			accrueTillDate = accrueTillDate.add(pftCalAsOfNow).subtract(curSchd.getSchdPftPaid())
 			        .subtract(curSchd.getDefSchdPftPaid());
 		} else {
@@ -455,7 +751,83 @@ public class AEAmounts implements Serializable {
 			amzTillDate = amzTillDate.add(pftCalAsOfNow);
 		}
 
-		logger.debug("Leaving");
+		return aeAmountCodes;
+	}
+	
+	/**
+	 * Method for Calculating Partial Principal Accrual Amount
+	 * @param curSchd
+	 * @param dateFrom
+	 * @param valueDate
+	 */
+	private void calPartPriAccrual(FinanceScheduleDetail curSchd, Date dateFrom, Date valueDate) {
+
+		BigDecimal priCalAsOfNow = zeroValue;
+
+		// Calculate Accruals if not in future
+		if (!isFutureDeal) {
+			
+			// Days in current schedule record
+			int daysIn = DateUtility.getDaysBetween(dateFrom, valueDate);
+			int totaldaysIn = DateUtility.getDaysBetween(dateFrom, curSchd.getSchDate());
+			priCalAsOfNow = curSchd.getPrincipalSchd().add(curSchd.getDefPrincipalSchd());
+
+			if (curSchd.getSchDate().compareTo(valueDate) != 0) {
+				priCalAsOfNow = (priCalAsOfNow.multiply(new BigDecimal(daysIn))).divide(new BigDecimal(totaldaysIn), 0, RoundingMode.HALF_DOWN);
+			}
+		}
+
+		//Principal Accrue till Value date
+		accumulatedPriTillDate = accumulatedPriTillDate.add(priCalAsOfNow);
+		depreciatePri = depreciatePri.add(priCalAsOfNow);
+
+	}
+
+	/*private void calPartAccrualTsfd(FinanceScheduleDetail curSchd, Date dateFrom,
+	        BigDecimal pftRate, String profitDayBasis) {
+
+		BigDecimal accrueAsOfLastMnthEnd = zeroValue;
+
+		// Calculate Accruals if not in future
+		if (!isFutureDeal) {
+
+			if (curSchd.getSchDate().compareTo(dateAccrueTsfdValue) != 0) {
+				
+				Date fromDate = DateUtility.addDays(dateFrom, 1);
+
+				BigDecimal dayFactor = CalculationUtil.getInterestDays(fromDate,
+						dateAccrueTsfdValue, profitDayBasis);
+				dayFactor = dayFactor.setScale(9, RoundingMode.HALF_DOWN);
+
+				accrueAsOfLastMnthEnd = ((curSchd.getBalanceForPftCal().multiply(pftRate))
+				        .multiply(dayFactor))
+				        .divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+
+				accrueTillTsfdDate = accrueTillTsfdDate.add(accrueAsOfLastMnthEnd)
+				        .subtract(curSchd.getSchdPftPaid()).subtract(curSchd.getDefSchdPftPaid());
+
+			}
+		}
+	}*/
+
+	private AEAmountCodes calPartAccrualSusp(FinanceScheduleDetail curSchd, Date dateFrom,
+	        BigDecimal pftRate, String profitDayBasis) {
+
+		BigDecimal pftCalAsOfNow = zeroValue;
+
+		if (curSchd.getSchDate().compareTo(dateSuspPftTfr) != 0) {
+			BigDecimal dayFactor = CalculationUtil.getInterestDays(dateFrom, dateSuspPftTfr,
+			        profitDayBasis);
+			dayFactor = dayFactor.setScale(9, RoundingMode.HALF_DOWN);
+
+			pftCalAsOfNow = ((curSchd.getBalanceForPftCal().multiply(pftRate)).multiply(dayFactor))
+			        .divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+		} else {
+			pftCalAsOfNow = curSchd.getProfitCalc();
+		}
+
+		accrueTillSusp = accrueTillSusp.add(pftCalAsOfNow).subtract(curSchd.getSchdPftPaid())
+		        .subtract(curSchd.getDefSchdPftPaid());
 		return aeAmountCodes;
 	}
 
@@ -466,9 +838,13 @@ public class AEAmounts implements Serializable {
 	 * @param eventCode
 	 * @return
 	 */
-	public DataSet createDataSet(FinanceMain financeMain, String eventCode, Date dateValueDate,
-	        Date dateSchdDate) {
+	public static DataSet createDataSet(FinanceMain financeMain, String eventCode,
+	        Date dateValueDate, Date dateSchdDate) {
+		return new AEAmounts(financeMain, eventCode, dateValueDate, dateSchdDate).getDataSet();
+	}
 
+	private AEAmounts(FinanceMain financeMain, String eventCode, Date dateValueDate,
+	        Date dateSchdDate) {
 		logger.debug("Entering");
 		DataSet dataSet = new DataSet();
 		dataSet.setFinReference(financeMain.getFinReference());
@@ -495,24 +871,64 @@ public class AEAmounts implements Serializable {
 		dataSet.setRepayAccount(financeMain.getRepayAccountId());
 		dataSet.setFinAccount(financeMain.getFinAccount());
 		dataSet.setFinCustPftAccount(financeMain.getFinCustPftAccount());
-		dataSet.setDisburseAmount(financeMain.getFinAmount());
-		
-		//FIXME -- for disbursements which amt is currect
-		dataSet.setFinAmount(financeMain.getCurDisbursementAmt()== null? financeMain.getFinAmount().subtract(
-		        financeMain.getFinRepaymentAmount()) : financeMain.getCurDisbursementAmt());
-		
+		dataSet.setDisburseAmount(financeMain.getCurDisbursementAmt());
+		dataSet.setFinPurpose(financeMain.getFinPurpose());
+		dataSet.setCmtReference(financeMain.getFinCommitmentRef());
+		dataSet.setFinAmount(financeMain.getFinAmount());
+
 		if (financeMain.isNewRecord()
-		        || financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+		        || PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
 			dataSet.setNewRecord(true);
 		} else {
 			dataSet.setNewRecord(false);
 		}
 
-		dataSet.setDownPayment(financeMain.getDownPayment() == null ? BigDecimal.ZERO
-		        : financeMain.getDownPayment());
-		dataSet.setNoOfTerms(financeMain.getNumberOfTerms());
+		dataSet.setDownPayment(financeMain.getDownPayment() == null ? BigDecimal.ZERO : financeMain.getDownPayment());
+		dataSet.setDownPayBank(financeMain.getDownPayBank() == null ? BigDecimal.ZERO : financeMain.getDownPayBank());
+		dataSet.setDownPaySupl(financeMain.getDownPaySupl() == null ? BigDecimal.ZERO : financeMain.getDownPaySupl());
+		dataSet.setDownPayAccount(financeMain.getDownPayAccount());
+		dataSet.setSecurityDeposit(financeMain.getSecurityDeposit() == null ? BigDecimal.ZERO : financeMain.getSecurityDeposit());
+		dataSet.setGrcPftChg(financeMain.getTotalGrossGrcPft() == null ? BigDecimal.ZERO : financeMain.getTotalGrossGrcPft());
+		dataSet.setNoOfTerms(financeMain.getNumberOfTerms()+ financeMain.getGraceTerms());
+
+		//Tenure Calculation
+		int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),true);
+		dataSet.setTenure(months);
+		
+		setDataSet(dataSet);
 		logger.debug("Leaving");
+	}
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+	public AEAmountCodes getAeAmountCodes() {
+		return aeAmountCodes;
+	}
+	public void setAEAmountCodes(AEAmountCodes aeAmountCodes) {
+		this.aeAmountCodes = aeAmountCodes;
+	}
+
+	public DataSet getDataSet() {
 		return dataSet;
+	}
+	public void setDataSet(DataSet dataSet) {
+		this.dataSet = dataSet;
+	}
+
+	public static FinanceSuspHeadDAO getSuspHeadDAO() {
+		return suspHeadDAO;
+	}
+	public void setSuspHeadDAO(FinanceSuspHeadDAO suspHeadDAO) {
+		AEAmounts.suspHeadDAO = suspHeadDAO;
+	}
+
+	public static FinODDetailsDAO getFinODDetailsDAO() {
+		return finODDetailsDAO;
+	}
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		AEAmounts.finODDetailsDAO = finODDetailsDAO;
 	}
 
 }

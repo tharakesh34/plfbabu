@@ -62,11 +62,10 @@ public class DocumentTypeListModelItemRenderer implements ListitemRenderer<Docum
 		Serializable {
 
 	private static final long serialVersionUID = -2962501113956666838L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, DocumentType documentType, int count) throws Exception {
 		
-		//final DocumentType documentType = (DocumentType) data;
 		Listcell lc;
 		lc = new Listcell(documentType.getDocTypeCode());
 		lc.setParent(item);

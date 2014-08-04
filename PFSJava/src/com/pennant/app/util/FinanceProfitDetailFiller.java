@@ -53,6 +53,10 @@ public class FinanceProfitDetailFiller implements Serializable {
     private static final long serialVersionUID = 5554665802334950598L;
     private Logger logger = Logger.getLogger(AccountProcessUtil.class);
 
+    public FinanceProfitDetailFiller() {
+    	super();
+    }
+    
 	// -------------------------------------------------------------------------------------------------
 	// Process Schedule Details to fill Profit Details DATA
 	// -------------------------------------------------------------------------------------------------
@@ -81,8 +85,8 @@ public class FinanceProfitDetailFiller implements Serializable {
 		pftDetail.setTdSchdPftBal(aeAmountCodes.getPftSB());
 		
 		// ACCRUAL FIELDS
-		pftDetail.setTdPftAccrued(aeAmountCodes.getNAccrue());
-		pftDetail.setTdPftAccrueSusp(aeAmountCodes.getAccrueS());
+		pftDetail.setTdPftAccrued(aeAmountCodes.getNAccrue() );
+		pftDetail.setTdPftAccrueSusp(aeAmountCodes.getAccrueS().compareTo(aeAmountCodes.getNAccrue()) > 0 ? aeAmountCodes.getNAccrue() :  aeAmountCodes.getAccrueS());
 		pftDetail.setAcrTillNBD(aeAmountCodes.getNAccrue());
 		pftDetail.setAcrTodayToNBD(aeAmountCodes.getDAccrue());
 
@@ -93,9 +97,70 @@ public class FinanceProfitDetailFiller implements Serializable {
 
 		// AMORTIZATION FIELDS
 		pftDetail.setTdPftAmortized(aeAmountCodes.getAmz());
-		pftDetail.setTdPftAmortizedSusp(aeAmountCodes.getAmzS());
+		pftDetail.setTdPftAmortizedSusp(aeAmountCodes.getAmzS().compareTo(aeAmountCodes.getAmz()) > 0 ? aeAmountCodes.getAmz() :  aeAmountCodes.getAmzS());
 		pftDetail.setAmzTillNBD(aeAmountCodes.getnAmz());
 		pftDetail.setAmzTodayToNBD(aeAmountCodes.getdAmz());
+		
+		//Paid Details 
+		pftDetail.setFullPaidDate(aeAmountCodes.getFullyPaidDate());
+		pftDetail.setCurReducingRate(aeAmountCodes.getCurReducingRate());
+		pftDetail.setCurFlatRate(aeAmountCodes.getCurFlatRate());
+		pftDetail.setTotalpriSchd(aeAmountCodes.getPri());
+		pftDetail.setEarlyPaidAmt(aeAmountCodes.getPriAP().add(aeAmountCodes.getPftAP()).
+					subtract(aeAmountCodes.getPriSP()).subtract(aeAmountCodes.getPftSP()));
+		
+		//Overdue and penalty details
+		pftDetail.setODPrincipal(aeAmountCodes.getPriOD());
+		pftDetail.setODProfit(aeAmountCodes.getPftOD());
+		pftDetail.setPenaltyPaid(aeAmountCodes.getPenaltyPaid());
+		pftDetail.setPenaltyDue(aeAmountCodes.getPenaltyDue());
+		pftDetail.setPenaltyWaived(aeAmountCodes.getPenaltyWaived());
+		
+		//Next Schedule details
+		pftDetail.setNSchdDate(aeAmountCodes.getNextRepayPftDate());
+		pftDetail.setNSchdPri(aeAmountCodes.getNextSchdPri());
+		pftDetail.setNSchdPft(aeAmountCodes.getNextSchdPft());
+		pftDetail.setNSchdPriDue(aeAmountCodes.getNextSchdPriBal());
+		pftDetail.setNSchdPftDue(aeAmountCodes.getNextSchdPftBal());
+		
+		//Profit Details
+		pftDetail.setFinReference(aeAmountCodes.getFinReference());
+		pftDetail.setAccruePft(aeAmountCodes.getAccrue());
+		pftDetail.setEarnedPft(aeAmountCodes.getPftAP().add(aeAmountCodes.getAccrue()));
+		pftDetail.setUnearned(aeAmountCodes.getPft().subtract(aeAmountCodes.getPftAP().add(aeAmountCodes.getAccrue())));
+		pftDetail.setPftInSusp(aeAmountCodes.isPftInSusp());
+		pftDetail.setSuspPft(aeAmountCodes.getAccrueS());
+		
+		pftDetail.setLastRpySchDate(aeAmountCodes.getLastRpySchDate());
+		pftDetail.setNextRpySchDate(aeAmountCodes.getNextRpySchDate());
+		pftDetail.setLastRpySchPri(aeAmountCodes.getLastRpySchPri());
+		pftDetail.setLastRpySchPft(aeAmountCodes.getLastRpySchPft());
+		pftDetail.setLatestWriteOffDate(aeAmountCodes.getLatestWriteOffDate());
+		pftDetail.setTotalWriteoff(aeAmountCodes.getTotalWriteoff());
+		
+		//Installment Details
+		pftDetail.setNOInst(aeAmountCodes.getTtlTerms());
+		pftDetail.setNOPaidInst(aeAmountCodes.getPaidInst());
+		pftDetail.setNOODInst(aeAmountCodes.getODInst());
+
+		//Repayment Details 
+		pftDetail.setNORepayments(aeAmountCodes.getTtlTerms());
+		pftDetail.setFirstRepayAmt(aeAmountCodes.getFirstRepayAmt());
+		pftDetail.setLastRepayAmt(aeAmountCodes.getLastRepayAmt());
+		
+		//Depreciation Fields
+		pftDetail.setAccumulatedDepPri(aeAmountCodes.getAccumulatedDepPri());
+		pftDetail.setDepreciatePri(aeAmountCodes.getDepreciatePri());
+		
+		//Overdue Details
+		pftDetail.setoDDays(aeAmountCodes.getODDays());
+		if(pftDetail.getFirstODDate() == null){
+			pftDetail.setFirstODDate(aeAmountCodes.getFirstODDate());
+		}
+		
+		if(aeAmountCodes.getLastODDate() != null){
+			pftDetail.setLastODDate(aeAmountCodes.getLastODDate());
+		}
 
 		logger.debug("Leaving");
 		return pftDetail;

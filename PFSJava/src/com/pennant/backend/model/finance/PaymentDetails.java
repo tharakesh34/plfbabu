@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 
 public class PaymentDetails {
 	private String	   finReference;
-	private BigDecimal	disbAmount	      = new BigDecimal(0);
-	private BigDecimal	downPaymentAmount	= new BigDecimal(0);
-	private BigDecimal	cpzAmount	      = new BigDecimal(0);
-	private BigDecimal	schdPriPaid	      = new BigDecimal(0);
-	private BigDecimal	defPrincipal	  = new BigDecimal(0);
-	private BigDecimal	schdPftPaid	      = new BigDecimal(0);
+	private BigDecimal	disbAmount	      = BigDecimal.ZERO;
+	private BigDecimal	downPaymentAmount	= BigDecimal.ZERO;
+	private BigDecimal	cpzAmount	      = BigDecimal.ZERO;
+	private BigDecimal	schdPriPaid	      = BigDecimal.ZERO;
+	private BigDecimal	defPrincipal	  = BigDecimal.ZERO;
+	private BigDecimal	schdPftPaid	      = BigDecimal.ZERO;
 
 	public String getFinReference() {
 		return finReference;
@@ -23,7 +23,7 @@ public class PaymentDetails {
 		if (disbAmount != null) {
 			return disbAmount;
 		}
-		return new BigDecimal(0);
+		return BigDecimal.ZERO;
 	}
 
 	public void setDisbAmount(BigDecimal disbAmount) {
@@ -35,7 +35,7 @@ public class PaymentDetails {
 		if (downPaymentAmount != null) {
 			return downPaymentAmount;
 		}
-		return new BigDecimal(0);
+		return BigDecimal.ZERO;
 	}
 
 	public void setDownPaymentAmount(BigDecimal downPaymentAmount) {
@@ -47,7 +47,7 @@ public class PaymentDetails {
 		if (cpzAmount != null) {
 			return cpzAmount;
 		}
-		return new BigDecimal(0);
+		return BigDecimal.ZERO;
 	}
 
 	public void setCpzAmount(BigDecimal cpzAmount) {
@@ -59,7 +59,7 @@ public class PaymentDetails {
 		if (schdPriPaid != null) {
 			return schdPriPaid;
 		}
-		return new BigDecimal(0);
+		return BigDecimal.ZERO;
 	}
 
 	public void setSchdPriPaid(BigDecimal schdPriPaid) {
@@ -71,7 +71,7 @@ public class PaymentDetails {
 		if (defPrincipal != null) {
 			return defPrincipal;
 		}
-		return new BigDecimal(0);
+		return BigDecimal.ZERO;
 	}
 
 	public void setDefPrincipal(BigDecimal defPrincipal) {
@@ -83,7 +83,7 @@ public class PaymentDetails {
 		if (schdPftPaid != null) {
 			return schdPftPaid;
 		}
-		return new BigDecimal(0);
+		return BigDecimal.ZERO;
 	}
 
 	public void setSchdPftPaid(BigDecimal schdPftPaid) {

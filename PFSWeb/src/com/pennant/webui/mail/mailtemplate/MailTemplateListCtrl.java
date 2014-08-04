@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.mail.mailtemplate;
 
@@ -87,7 +87,7 @@ import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.PTReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
-	
+
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the /WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul
@@ -97,7 +97,7 @@ import com.pennant.webui.util.searching.SearchOperators;
  */
 public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7079846100434942353L;
 	private final static Logger logger = Logger.getLogger(MailTemplateListCtrl.class);
 
 	/*
@@ -107,10 +107,10 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window window_MailTemplateList; // autowired
-	protected Borderlayout borderLayout_MailTemplateList; // autowired
-	protected Paging pagingMailTemplateList; // autowired
-	protected Listbox listBoxMailTemplate; // autowired
+	protected Window 		window_MailTemplateList; 		// autowired
+	protected Borderlayout 	borderLayout_MailTemplateList; 	// autowired
+	protected Paging 		pagingMailTemplateList; 		// autowired
+	protected Listbox 		listBoxMailTemplate; 			// autowired
 
 	// List headers
 	protected Listheader listheader_TemplateCode; 		// autowired
@@ -127,35 +127,35 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	protected Button button_MailTemplateList_PrintList; 			// autowired
 	protected Label  label_MailTemplateList_RecordStatus; 			// autoWired
 	protected Label  label_MailTemplateList_RecordType; 			// autoWired
-	
+
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<MailTemplate> searchObj;
-	
+
 	private transient MailTemplateService mailTemplateService;
 	private transient WorkFlowDetails workFlowDetails=null;
-	
-	
-	protected Textbox templateCode; // autowired
-	protected Listbox sortOperator_templateCode; // autowired
-	protected Textbox templateName; // autowired
-	protected Listbox sortOperator_templateName; // autowired
-	protected Textbox templateType; // autowired
-	protected Listbox sortOperator_templateType; // autowired
-	protected Checkbox active; // autowired
-	protected Listbox sortOperator_active; // autowired
-	protected Textbox recordStatus; // autowired
-	protected Listbox recordType;	// autowired
-	protected Listbox sortOperator_recordStatus; // autowired
-	protected Listbox sortOperator_recordType; // autowired
+
+	protected Textbox 	templateCode; 				// autowired
+	protected Listbox 	sortOperator_templateCode; 	// autowired
+	protected Textbox 	templateName; 				// autowired
+	protected Listbox 	sortOperator_templateName; 	// autowired
+	protected Textbox 	templateType; 				// autowired
+	protected Listbox 	sortOperator_templateType; 	// autowired
+	protected Checkbox 	active; 					// autowired
+	protected Listbox 	sortOperator_active; 		// autowired
+	protected Textbox 	recordStatus; 				// autowired
+	protected Listbox 	recordType;					// autowired
+	protected Listbox 	sortOperator_recordStatus; 	// autowired
+	protected Listbox 	sortOperator_recordType; 	// autowired
+
 	private Grid 			searchGrid;							// autowired
 	protected Textbox 		moduleType; 						// autowired
 	protected Textbox 		templateFor; 						// autowired
 	protected Radio			fromApproved;
 	protected Radio			fromWorkFlow;
 	protected Row			workFlowFrom;
-	
+
 	private transient boolean  approvedList=false;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -168,14 +168,14 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	public void onCreate$window_MailTemplateList(Event event) throws Exception {
-		logger.debug("Entering");
-		
+		logger.debug("Entering" + event.toString());
+
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("MailTemplate");
 		boolean wfAvailable=true;
-		
+
 		if (moduleMapping.getWorkflowType()!=null){
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("MailTemplate");
-			
+
 			if (workFlowDetails==null){
 				setWorkFlowEnabled(false);
 			}else{
@@ -187,24 +187,24 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 			wfAvailable=false;
 		}
 
-	// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
-	
-		this.sortOperator_templateCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_templateCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_templateCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_templateName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_templateName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_templateName.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_templateType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_templateType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_templateType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_active.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+
+		this.sortOperator_active.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_active.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		
+
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{
@@ -215,30 +215,32 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 			this.sortOperator_recordStatus.setVisible(false);
 			this.sortOperator_recordType.setVisible(false);
 		}
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
-		
+
 		this.borderLayout_MailTemplateList.setHeight(getBorderLayoutHeight());
 		this.listBoxMailTemplate.setHeight(getListBoxHeight(searchGrid.getRows().getChildren().size())); 
-		
+
 		// set the paging parameters
 		this.pagingMailTemplateList.setPageSize(getListRows());
 		this.pagingMailTemplateList.setDetailed(true);
 
 		this.listheader_TemplateCode.setSortAscending(new FieldComparator("templateCode", true));
 		this.listheader_TemplateCode.setSortDescending(new FieldComparator("templateCode", false));
-		
+
 		this.listheader_TemplateForSMS.setSortAscending(new FieldComparator("smsTemplate", true));
 		this.listheader_TemplateForSMS.setSortDescending(new FieldComparator("smsTemplate", false));
-		
+
 		this.listheader_TemplateForEMail.setSortAscending(new FieldComparator("emailTemplate", true));
 		this.listheader_TemplateForEMail.setSortDescending(new FieldComparator("emailTemplate", false));
-		
+
 		this.listheader_TemplateActive.setSortAscending(new FieldComparator("active", true));
 		this.listheader_TemplateActive.setSortDescending(new FieldComparator("active", false));
+
 		// set the itemRenderer
 		this.listBoxMailTemplate.setItemRenderer(new MailTemplateListModelItemRenderer());
-		
+
 		if (isWorkFlowEnabled()){
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
@@ -248,13 +250,12 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		this.button_MailTemplateList_NewMailTemplate.setVisible(false);
+
 		if (!isWorkFlowEnabled() && wfAvailable){
-			//this.button_MailTemplateList_NewMailTemplate.setVisible(false);
+			this.button_MailTemplateList_NewMailTemplate.setVisible(false);
 			this.button_MailTemplateList_MailTemplateSearch.setVisible(false);
 			this.button_MailTemplateList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
-
 		}else{
 			doSearch();
 			if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
@@ -262,8 +263,7 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 				this.fromApproved.setSelected(true);
 			}
 		}
-		
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -272,14 +272,17 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("MailTemplateList");
-		
+
 		if(moduleType==null){
-			this.button_MailTemplateList_NewMailTemplate.setVisible(getUserWorkspace().isAllowed("button_MailTemplateList_NewMailTemplate"));
+			this.button_MailTemplateList_NewMailTemplate.setVisible(getUserWorkspace()
+					.isAllowed("button_MailTemplateList_NewMailTemplate"));
 		}else{
 			this.button_MailTemplateList_NewMailTemplate.setVisible(false);
 		}	
-		this.button_MailTemplateList_PrintList.setVisible(getUserWorkspace().isAllowed("button_MailTemplateList_PrintList"));
-	logger.debug("Leaving");
+		this.button_MailTemplateList_PrintList.setVisible(getUserWorkspace()
+				.isAllowed("button_MailTemplateList_PrintList"));
+		
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -289,9 +292,8 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	 * @param event
 	 * @throws Exception
 	 */
-	
 	public void onMailTemplateItemDoubleClicked(Event event) throws Exception {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 
 		// get the selected MailTemplate object
 		final Listitem item = this.listBoxMailTemplate.getSelectedItem();
@@ -301,28 +303,33 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 			final MailTemplate aMailTemplate = (MailTemplate) item.getAttribute("data");
 			MailTemplate mailTemplate = null;
 			if(approvedList){
-				mailTemplate = getMailTemplateService().getApprovedMailTemplateById(aMailTemplate.getId(), aMailTemplate.getTemplateFor());
+				mailTemplate = getMailTemplateService().getApprovedMailTemplateById(aMailTemplate.getId(),
+						aMailTemplate.getTemplateFor());
 			}else{
-				mailTemplate = getMailTemplateService().getMailTemplateById(aMailTemplate.getId(), aMailTemplate.getTemplateFor());
+				mailTemplate = getMailTemplateService().getMailTemplateById(aMailTemplate.getId(), 
+						aMailTemplate.getTemplateFor());
 			}
-			
+
 			if(mailTemplate==null){
 				String[] errParm= new String[1];
 				String[] valueParm= new String[1];
 				valueParm[0]=aMailTemplate.getTemplateCode();
 				errParm[0]=PennantJavaUtil.getLabel("label_TemplateCode")+":"+valueParm[0];
 
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			}else{
 				if(isWorkFlowEnabled()){
 					StringBuilder whereCond = new StringBuilder();
-					
+
 					whereCond.append(" AND TemplateCode='");
 					whereCond.append(mailTemplate.getTemplateCode());
 					whereCond.append("' AND version = ");
 					whereCond.append(mailTemplate.getVersion());
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "MailTemplate", whereCond.toString(), mailTemplate.getTaskId(), mailTemplate.getNextTaskId());
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),
+							getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "MailTemplate", 
+							whereCond.toString(), mailTemplate.getTaskId(), mailTemplate.getNextTaskId());
 
 					if (userAcces){
 						showDetailView(mailTemplate);
@@ -334,19 +341,20 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 				}
 			}	
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Call the MailTemplate dialog with a new empty entry. <br>
 	 */
 	public void onClick$button_MailTemplateList_NewMailTemplate(Event event) throws Exception {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		// create a new MailTemplate object, We GET it from the backend.
 		final MailTemplate aMailTemplate = getMailTemplateService().getNewMailTemplate();
+		aMailTemplate.setEmailTemplate(true);
 		aMailTemplate.setActive(true);  
 		showDetailView(aMailTemplate);
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -363,7 +371,7 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
+
 		if(aMailTemplate.getWorkflowId()==0 && isWorkFlowEnabled()){
 			aMailTemplate.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
@@ -400,9 +408,9 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_MailTemplateList);
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -414,19 +422,15 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
-		logger.debug(event.toString());
-	/*		this.pagingMailTemplateList.setActivePage(0);
-			Events.postEvent("onCreate", this.window_MailTemplateList, event);
-			this.window_MailTemplateList.invalidate();
-	*/		
+		logger.debug("Entering" + event.toString());
 
-	  	this.sortOperator_templateCode.setSelectedIndex(0);
-	  	this.templateCode.setValue("");
-	  	this.sortOperator_templateName.setSelectedIndex(0);
-	  	this.templateName.setValue("");
-	  	this.sortOperator_templateType.setSelectedIndex(0);
-	  	this.templateType.setValue("");
-	  	this.sortOperator_active.setSelectedIndex(0);
+		this.sortOperator_templateCode.setSelectedIndex(0);
+		this.templateCode.setValue("");
+		this.sortOperator_templateName.setSelectedIndex(0);
+		this.templateName.setValue("");
+		this.sortOperator_templateType.setSelectedIndex(0);
+		this.templateType.setValue("");
+		this.sortOperator_active.setSelectedIndex(0);
 		this.active.setChecked(false);
 
 		if (isWorkFlowEnabled()){
@@ -438,20 +442,13 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 		}
 
 		doSearch();
-
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
-	/*
-	 * Invoke Search 
-	 */
-	
-	
 	public void onClick$button_MailTemplateList_MailTemplateSearch(Event event) throws Exception {
-		logger.debug("Entering");
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doSearch();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -462,31 +459,29 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */ 
-	
+
 	public void doSearch() {
 		logger.debug("Entering");
+		
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<MailTemplate>(MailTemplate.class,getListRows());
-		
+
 		// Defualt Sort on the table
 		this.searchObj.addSort("TemplateCode", false);
+		
 		// Workflow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("Templates_View");
-			/*if (isFirstTask() && this.moduleType==null) {
-				button_MailTemplateList_NewMailTemplate.setVisible(true);
-			} else {
-				button_MailTemplateList_NewMailTemplate.setVisible(false);
-			}*/
-			
+
 			if(this.moduleType==null){
-				if(this.templateFor != null){
+				/*if(this.templateFor != null){
 					this.searchObj.addFilter(new Filter("templateFor", PennantConstants.TEMPLATE_FOR_AE));
 				}else {
 					this.searchObj.addFilter(new Filter("templateFor", PennantConstants.TEMPLATE_FOR_CN));
-				}
+				}*/
 				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
 				approvedList=false;
+				
 			}else{
 				if(this.fromApproved.isSelected()){
 					approvedList=true;
@@ -497,11 +492,13 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 		}else{
 			approvedList=true;
 		}
+		
 		if(approvedList){
 			this.searchObj.addTabelName("Templates_AView");
 		}else{
 			this.searchObj.addTabelName("Templates_View");
 		}
+		
 		if (StringUtils.isNotEmpty(this.templateCode.getValue())) {
 
 			// get the search operator
@@ -517,6 +514,7 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 				}
 			}
 		}
+		
 		if (StringUtils.isNotEmpty(this.templateName.getValue())) {
 
 			// get the search operator
@@ -532,6 +530,7 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 				}
 			}
 		}
+		
 		if (StringUtils.isNotEmpty(this.templateType.getValue())) {
 
 			// get the search operator
@@ -547,6 +546,7 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 				}
 			}
 		}
+		
 		// get the search operatorxxx
 		final Listitem item_Active = this.sortOperator_active.getSelectedItem();
 
@@ -560,12 +560,13 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 				}
 			}
 		}
+		
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
 			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
 			if (item_RecordStatus != null) {
 				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
-	
+
 				if (searchOpId == Filter.OP_LIKE) {
 					this.searchObj.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId != -1) {
@@ -573,7 +574,7 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 				}
 			}
 		}
-		
+
 		String selectedValue="";
 		if (this.recordType.getSelectedItem()!=null){
 			selectedValue =this.recordType.getSelectedItem().getValue().toString();
@@ -591,7 +592,7 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 				}
 			}
 		}
-		
+
 		if (logger.isDebugEnabled()) {
 			final List<Filter> lf = this.searchObj.getFilters();
 			for (final Filter filter : lf) {
@@ -615,10 +616,9 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	 * @throws InterruptedException
 	 */
 	public void onClick$button_MailTemplateList_PrintList(Event event) throws InterruptedException {
-		logger.debug("Entering");
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		PTReportUtils.getReport("MailTemplate", getSearchObj());
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -628,7 +628,6 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	public void setMailTemplateService(MailTemplateService mailTemplateService) {
 		this.mailTemplateService = mailTemplateService;
 	}
-
 	public MailTemplateService getMailTemplateService() {
 		return this.mailTemplateService;
 	}
@@ -636,7 +635,6 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 	public JdbcSearchObject<MailTemplate> getSearchObj() {
 		return this.searchObj;
 	}
-
 	public void setSearchObj(JdbcSearchObject<MailTemplate> searchObj) {
 		this.searchObj = searchObj;
 	}

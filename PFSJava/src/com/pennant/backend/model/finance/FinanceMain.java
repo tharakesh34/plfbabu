@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import com.pennant.app.util.FrequencyUtil;
@@ -45,6 +46,7 @@ public class FinanceMain implements java.io.Serializable {
     private static final long serialVersionUID = -3026443763391506067L;
     
 	private String finReference = null;
+	private String investmentRef = "";
 	private String finBranch = null;
 	private String lovDescFinBranchName;
 	private String finType;
@@ -57,25 +59,30 @@ public class FinanceMain implements java.io.Serializable {
 	private String profitDaysBasis;
 	private String lovDescProfitDaysBasisName;
 	private Date finStartDate;
-	private BigDecimal finAmount = new BigDecimal(0);
-	private BigDecimal finAssetValue = new BigDecimal(0);
-	private BigDecimal finCurrAssetValue = new BigDecimal(0);
+	private BigDecimal finAmount = BigDecimal.ZERO;
+	private BigDecimal lovDescFinancingAmount = BigDecimal.ZERO;
+	private BigDecimal finAssetValue = BigDecimal.ZERO;
+	private BigDecimal finCurrAssetValue = BigDecimal.ZERO;
 	private String disbAccountId;
 	private String repayAccountId;
 	private String finAccount;
 	private String finCustPftAccount;
 	private String finSourceID = null;
 	private int numberOfTerms = 0;
-	
+	private int graceTerms = 0;
+	private String finPurpose;
+	private BigDecimal downPayment = BigDecimal.ZERO;
+	private BigDecimal downPayBank = BigDecimal.ZERO;
+	private BigDecimal downPaySupl = BigDecimal.ZERO;
+	private String downPayAccount;
+	private String rcdMaintainSts = "";
+
 	private long custID;
 	private String lovDescCustCIF;
+	private String lovDescCustCoreBank;
 	private String lovDescCustFName;
 	private String lovDescCustLName;
 	private String lovDescCustShrtName;
-	private String lovDescCustAddrLine1;
-	private String lovDescCustAddrLine2;
-	private String lovDescCustAddrCity;
-	private String lovDescCustAddrCountry;
 	private String lovDescSalutationName;
 	private String lovDescCustCtgTypeName;
 	
@@ -88,7 +95,10 @@ public class FinanceMain implements java.io.Serializable {
 	private Date lastDepDate;
 	private Date finContractDate;
 	private BigDecimal feeChargeAmt;
+	private BigDecimal curFeeChargeAmt;
 	private BigDecimal curDisbursementAmt;
+	private String finRepayMethod;
+	private String lovDescFinRepayMethod;
 	
 	private BigDecimal anualizedPercRate;
 	private BigDecimal effectiveRateOfReturn;
@@ -101,11 +111,12 @@ public class FinanceMain implements java.io.Serializable {
 	private String lovDescGraceBaseRateName;
 	private String graceSpecialRate;
 	private String lovDescGraceSpecialRateName;
-	private BigDecimal grcMargin = new BigDecimal(0);
-	private BigDecimal grcPftRate = new BigDecimal(0);
+	private BigDecimal grcMargin = BigDecimal.ZERO;
+	private BigDecimal grcPftRate = BigDecimal.ZERO;
 	private String grcPftFrq;
 	private Date nextGrcPftDate;
 	private boolean allowGrcPftRvw = false;
+	
 	private String grcPftRvwFrq;
 	private Date nextGrcPftRvwDate;
 	private boolean allowGrcCpz = false;
@@ -121,8 +132,8 @@ public class FinanceMain implements java.io.Serializable {
 	private String lovDescRepayBaseRateName;
 	private String repaySpecialRate;
 	private String lovDescRepaySpecialRateName;
-	private BigDecimal repayMargin = new BigDecimal(0);
-	private BigDecimal repayProfitRate = new BigDecimal(0);
+	private BigDecimal repayMargin = BigDecimal.ZERO;
+	private BigDecimal repayProfitRate = BigDecimal.ZERO;
 	private String repayFrq;
 	private Date nextRepayDate;
 	private String repayPftFrq;
@@ -134,19 +145,19 @@ public class FinanceMain implements java.io.Serializable {
 	private String repayCpzFrq;
 	private Date nextRepayCpzDate;
 	private Date maturityDate;
-	private BigDecimal downPayment;
-	private BigDecimal reqRepayAmount = new BigDecimal(0);
+	
+	private BigDecimal reqRepayAmount = BigDecimal.ZERO;
 	private boolean alwIndRate = false;
 	private String indBaseRate;
 
-	private BigDecimal graceFlatAmount = new BigDecimal(0);
-	private BigDecimal totalGracePft = new BigDecimal(0);
-	private BigDecimal totalGraceCpz = new BigDecimal(0);
-	private BigDecimal totalGrossGrcPft = new BigDecimal(0);
-	private BigDecimal totalProfit = new BigDecimal(0);
-	private BigDecimal totalCpz = new BigDecimal(0);
-	private BigDecimal totalGrossPft = new BigDecimal(0);
-	private BigDecimal totalRepayAmt = new BigDecimal(0);
+	private BigDecimal graceFlatAmount = BigDecimal.ZERO;
+	private BigDecimal totalGracePft = BigDecimal.ZERO;
+	private BigDecimal totalGraceCpz = BigDecimal.ZERO;
+	private BigDecimal totalGrossGrcPft = BigDecimal.ZERO;
+	private BigDecimal totalProfit = BigDecimal.ZERO;
+	private BigDecimal totalCpz = BigDecimal.ZERO;
+	private BigDecimal totalGrossPft = BigDecimal.ZERO;
+	private BigDecimal totalRepayAmt = BigDecimal.ZERO;
 	private boolean calculateRepay = false;
 	private boolean equalRepay = true;
 	private int reqTerms;
@@ -156,7 +167,7 @@ public class FinanceMain implements java.io.Serializable {
 	private BigDecimal firstRepay;
 	private BigDecimal lastRepay;
 	private boolean increaseTerms = false;
-	private BigDecimal finRepaymentAmount;
+	private BigDecimal finRepaymentAmount = BigDecimal.ZERO;
 
 	private Date eventFromDate;
 	private Date eventToDate;
@@ -218,7 +229,6 @@ public class FinanceMain implements java.io.Serializable {
 	private String lovDescGrcIndBaseRateName;
 	private String lovDescIndBaseRateName;
 	private BigDecimal lovDescAccruedTillLBD;
-	private BigDecimal lovDescCreditAppMinLimit;
 	private String finRvwRateApplFor;
 	private String finGrcRvwRateApplFor;
 	private String closingStatus;
@@ -227,14 +237,62 @@ public class FinanceMain implements java.io.Serializable {
 	private boolean overrideLimit = false;
 	private boolean lovDescAdjClosingBal;
 	private String	lovDescFinScheduleOn;
+	private String  lovDescFinPurposeName;
+	private BigDecimal availCommitAmount;
+	private BigDecimal securityDeposit;
 	
-	private String lovDescTenorName;
+	/*private BigDecimal disbCcyFinAmount;
+	private BigDecimal ccyConversionRate;
+	private String disbCcy;
+	private int lovDescDisbCcyFormatter;
+	private String lovDescDisbCcyName;
+	private boolean diffDisbCcy;*/
+	
+	//Workflow process Fields
+	//Auto Finance
+	private BigDecimal amount;
+	private boolean exception;
+	
+	//Commercial Finance
+	private boolean securityCollateral;
+	private BigDecimal amountBD = BigDecimal.ZERO;
+	private BigDecimal amountUSD = BigDecimal.ZERO;
+	private BigDecimal  maturity = BigDecimal.ZERO;
+	private String approved;
+	private boolean customerAcceptance;
+	private boolean cbbApprovalRequired;
+	private boolean cbbApproved;
+	private String discrepancy;
+	private String limitStatus;
+	
+	private boolean fundsAvailConfirmed;
+	
+	private boolean limitApproved;
 
+
+	private String lovDescTenorName;
 	private int lovDescNotes;
 	
 	private boolean migratedFinance;
 	private boolean scheduleMaintained;
 	private boolean scheduleRegenerated;	
+	private String finStatus;
+	private String finStsReason;
+	private BigDecimal custDSR;
+	
+	private long authorization1;
+	private String lovDescAuthorization1Name;
+	private String lovDescAuth1DesigName;
+	private long authorization2;
+	private String lovDescAuthorization2Name;
+	private String lovDescAuth2DesigName;
+	
+	private long jointCustId;
+	private String lovDescJointCustCIF;
+	private String lovDescJointCustShrtName;
+	private boolean jointAccount;
+	
+	private String lovDescFinDivision;
 	
 	public void setLovDescNotes(int lovDescNotes) {
 	    this.lovDescNotes = lovDescNotes;
@@ -581,6 +639,27 @@ public class FinanceMain implements java.io.Serializable {
 		this.downPayment = downPayment;
 	}
 
+	public BigDecimal getDownPayBank() {
+    	return downPayBank;
+    }
+	public void setDownPayBank(BigDecimal downPayBank) {
+    	this.downPayBank = downPayBank;
+    }
+
+	public BigDecimal getDownPaySupl() {
+    	return downPaySupl;
+    }
+	public void setDownPaySupl(BigDecimal downPaySupl) {
+    	this.downPaySupl = downPaySupl;
+    }
+
+	public String getDownPayAccount() {
+    	return downPayAccount;
+    }
+	public void setDownPayAccount(String downPayAccount) {
+    	this.downPayAccount = downPayAccount;
+    }
+
 	public BigDecimal getGraceFlatAmount() {
 		return graceFlatAmount;
 	}
@@ -756,6 +835,14 @@ public class FinanceMain implements java.io.Serializable {
 	public void setFinAmount(BigDecimal finAmount) {
 		this.finAmount = finAmount;
 	}
+	
+	public BigDecimal getLovDescFinancingAmount() {
+    	return lovDescFinancingAmount;
+    }
+
+	public void setLovDescFinancingAmount(BigDecimal lovDescFinancingAmount) {
+    	this.lovDescFinancingAmount = lovDescFinancingAmount;
+    }
 
 	public BigDecimal getFinRepaymentAmount() {
 		return finRepaymentAmount;
@@ -1433,7 +1520,7 @@ public class FinanceMain implements java.io.Serializable {
 		this.lovDescIsSchdGenerated = lovDescIsSchdGenerated;
 	}
 
-	public boolean getLovDescIsSchdGenerated() {
+	public boolean isLovDescIsSchdGenerated() {
 		return lovDescIsSchdGenerated;
 	}
 
@@ -1803,38 +1890,6 @@ public class FinanceMain implements java.io.Serializable {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
 
-	public String getLovDescCustAddrLine1() {
-		return lovDescCustAddrLine1;
-	}
-
-	public void setLovDescCustAddrLine1(String lovDescCustAddrLine1) {
-		this.lovDescCustAddrLine1 = lovDescCustAddrLine1;
-	}
-
-	public String getLovDescCustAddrLine2() {
-		return lovDescCustAddrLine2;
-	}
-
-	public void setLovDescCustAddrLine2(String lovDescCustAddrLine2) {
-		this.lovDescCustAddrLine2 = lovDescCustAddrLine2;
-	}
-
-	public String getLovDescCustAddrCity() {
-		return lovDescCustAddrCity;
-	}
-
-	public void setLovDescCustAddrCity(String lovDescCustAddrCity) {
-		this.lovDescCustAddrCity = lovDescCustAddrCity;
-	}
-
-	public String getLovDescCustAddrCountry() {
-		return lovDescCustAddrCountry;
-	}
-
-	public void setLovDescCustAddrCountry(String lovDescCustAddrCountry) {
-		this.lovDescCustAddrCountry = lovDescCustAddrCountry;
-	}
-	
 	public String getLovDescCustCtgTypeName() {
     	return lovDescCustCtgTypeName;
     }
@@ -1913,14 +1968,6 @@ public class FinanceMain implements java.io.Serializable {
 
 	public void setLovDescAccruedTillLBD(BigDecimal lovDescAccruedTillLBD) {
 		this.lovDescAccruedTillLBD = lovDescAccruedTillLBD;
-	}
-
-	public BigDecimal getLovDescCreditAppMinLimit() {
-		return lovDescCreditAppMinLimit;
-	}
-
-	public void setLovDescCreditAppMinLimit(BigDecimal lovDescCreditAppMinLimit) {
-		this.lovDescCreditAppMinLimit = lovDescCreditAppMinLimit;
 	}
 
 	public String getFinRvwRateApplFor() {
@@ -2032,5 +2079,348 @@ public class FinanceMain implements java.io.Serializable {
 	public void setScheduleRegenerated(boolean scheduleRegenerated) {
     	this.scheduleRegenerated = scheduleRegenerated;
     }
-		
+
+	public String getFinPurpose() {
+    	return finPurpose;
+    }
+	public void setFinPurpose(String finPurpose) {
+    	this.finPurpose = finPurpose;
+    }
+
+	public String getLovDescFinPurposeName() {
+    	return lovDescFinPurposeName;
+    }
+	public void setLovDescFinPurposeName(String lovDescFinPurposeName) {
+    	this.lovDescFinPurposeName = lovDescFinPurposeName;
+    }
+
+	public void setAmount(BigDecimal amount) {
+	    this.amount = amount;
+    }
+	public BigDecimal getAmount() {
+	    return amount;
+    }
+
+	public void setException(boolean exception) {
+	    this.exception = exception;
+    }
+	public boolean isException() {
+	    return exception;
+    }
+
+	public String getFinStatus() {
+    	return finStatus;
+    }
+	public void setFinStatus(String finStatus) {
+    	this.finStatus = finStatus;
+    }
+
+	public String getFinStsReason() {
+    	return finStsReason;
+    }
+	public void setFinStsReason(String finStsReason) {
+    	this.finStsReason = finStsReason;
+    }
+
+	public void setCustDSR(BigDecimal custDSR) {
+	    this.custDSR = custDSR;
+    }
+	public BigDecimal getCustDSR() {
+	    return custDSR;
+    }
+
+	public void setAuthorization1(long authorization1) {
+	    this.authorization1 = authorization1;
+    }
+
+	public long getAuthorization1() {
+	    return authorization1;
+    }
+
+	
+	public String getLovDescAuthorization1Name() {
+    	return lovDescAuthorization1Name;
+    }
+
+	public void setLovDescAuthorization1Name(String lovDescAuthorization1Name) {
+    	this.lovDescAuthorization1Name = lovDescAuthorization1Name;
+    }
+
+	public String getLovDescAuth1DesigName() {
+    	return lovDescAuth1DesigName;
+    }
+
+	public void setLovDescAuth1DesigName(String lovDescAuth1DesigName) {
+    	this.lovDescAuth1DesigName = lovDescAuth1DesigName;
+    }
+
+	public void setAuthorization2(long authorization2) {
+	    this.authorization2 = authorization2;
+    }
+
+	public long getAuthorization2() {
+	    return authorization2;
+    }
+
+	public String getLovDescAuthorization2Name() {
+    	return lovDescAuthorization2Name;
+    }
+
+	public void setLovDescAuthorization2Name(String lovDescAuthorization2Name) {
+    	this.lovDescAuthorization2Name = lovDescAuthorization2Name;
+    }
+
+	public String getLovDescAuth2DesigName() {
+    	return lovDescAuth2DesigName;
+    }
+
+	public void setLovDescAuth2DesigName(String lovDescAuth2DesigName) {
+    	this.lovDescAuth2DesigName = lovDescAuth2DesigName;
+    }
+
+	public long getJointCustId() {
+    	return jointCustId;
+    }
+
+	public void setJointCustId(long jointCustId) {
+    	this.jointCustId = jointCustId;
+    }
+
+	public String getLovDescJointCustCIF() {
+    	return lovDescJointCustCIF;
+    }
+
+	public void setLovDescJointCustCIF(String lovDescJointCustCIF) {
+    	this.lovDescJointCustCIF = lovDescJointCustCIF;
+    }
+
+	public String getLovDescJointCustShrtName() {
+    	return lovDescJointCustShrtName;
+    }
+
+	public void setLovDescJointCustShrtName(String lovDescJointCustShrtName) {
+    	this.lovDescJointCustShrtName = lovDescJointCustShrtName;
+    }
+
+	public boolean isJointAccount() {
+    	return jointAccount;
+    }
+
+	public void setJointAccount(boolean jointAccount) {
+    	this.jointAccount = jointAccount;
+    }
+
+	public boolean isSecurityCollateral() {
+    	return securityCollateral;
+    }
+	public void setSecurityCollateral(boolean securityCollateral) {
+    	this.securityCollateral = securityCollateral;
+    }
+
+	public BigDecimal getMaturity() {
+    	return maturity;
+    }
+	public void setMaturity(BigDecimal maturity) {
+    	this.maturity = maturity;
+    }
+
+	public BigDecimal getAmountBD() {
+    	return amountBD;
+    }
+	public void setAmountBD(BigDecimal amountBD) {
+    	this.amountBD = amountBD;
+    }
+
+	public BigDecimal getAmountUSD() {
+    	return amountUSD;
+    }
+	public void setAmountUSD(BigDecimal amountUSD) {
+    	this.amountUSD = amountUSD;
+    }
+
+	public String getApproved() {
+    	return approved;
+    }
+	public void setApproved(String approved) {
+    	this.approved = approved;
+    }
+
+	public boolean isCustomerAcceptance() {
+    	return customerAcceptance;
+    }
+	public void setCustomerAcceptance(boolean customerAcceptance) {
+    	this.customerAcceptance = customerAcceptance;
+    }
+
+	public void setAvailCommitAmount(BigDecimal availCommitAmount) {
+	    this.availCommitAmount = availCommitAmount;
+    }
+
+	public BigDecimal getAvailCommitAmount() {
+	    return availCommitAmount;
+    }
+
+	public BigDecimal getSecurityDeposit() {
+    	return securityDeposit;
+    }
+	public void setSecurityDeposit(BigDecimal securityDeposit) {
+    	this.securityDeposit = securityDeposit;
+    }
+
+	public boolean isCbbApprovalRequired() {
+    	return cbbApprovalRequired;
+    }
+	public void setCbbApprovalRequired(boolean cbbApprovalRequired) {
+    	this.cbbApprovalRequired = cbbApprovalRequired;
+    }
+
+	public boolean isCbbApproved() {
+    	return cbbApproved;
+    }
+	public void setCbbApproved(boolean cbbApproved) {
+    	this.cbbApproved = cbbApproved;
+    }
+
+	public String getDiscrepancy() {
+    	return discrepancy;
+    }
+	public void setDiscrepancy(String discrepancy) {
+    	this.discrepancy = discrepancy;
+    }
+	
+	public String getLimitStatus() {
+    	return limitStatus;
+    }
+
+	public void setLimitStatus(String limitStatus) {
+    	this.limitStatus = limitStatus;
+    }
+
+	public boolean isFundsAvailConfirmed() {
+    	return fundsAvailConfirmed;
+    }
+
+	public void setFundsAvailConfirmed(boolean fundsAvailConfirmed) {
+    	this.fundsAvailConfirmed = fundsAvailConfirmed;
+    }
+
+	public boolean isLimitApproved() {
+    	return limitApproved;
+    }
+	public void setLimitApproved(boolean limitApproved) {
+    	this.limitApproved = limitApproved;
+    }
+
+	public void setCurFeeChargeAmt(BigDecimal curFeeChargeAmt) {
+	    this.curFeeChargeAmt = curFeeChargeAmt;
+    }
+	public BigDecimal getCurFeeChargeAmt() {
+	    return curFeeChargeAmt;
+    }
+	
+	public void setLovDescCustCoreBank(String lovDescCustCoreBank) {
+	    this.lovDescCustCoreBank = lovDescCustCoreBank;
+    }
+	public String getLovDescCustCoreBank() {
+	    return lovDescCustCoreBank;
+    }
+
+	public String getInvestmentRef() {
+    	return investmentRef;
+    }
+	public void setInvestmentRef(String investmentRef) {
+    	this.investmentRef = investmentRef;
+    }
+
+	public int getGraceTerms() {
+    	return graceTerms;
+    }
+	public void setGraceTerms(int graceTerms) {
+    	this.graceTerms = graceTerms;
+    }
+
+	public String getLovDescFinDivision() {
+    	return lovDescFinDivision;
+    }
+	public void setLovDescFinDivision(String lovDescFinDivision) {
+    	this.lovDescFinDivision = lovDescFinDivision;
+    }
+
+	public String getRcdMaintainSts() {
+	    return rcdMaintainSts;
+    }
+	public void setRcdMaintainSts(String rcdMaintainSts) {
+	    this.rcdMaintainSts = rcdMaintainSts;
+    }
+
+	public String getFinRepayMethod() {
+	    return finRepayMethod;
+    }
+	public void setFinRepayMethod(String finRepayMethod) {
+	    this.finRepayMethod = finRepayMethod;
+    }
+
+	public String getLovDescFinRepayMethod() {
+	    return lovDescFinRepayMethod;
+    }
+
+	public void setLovDescFinRepayMethod(String lovDescFinRepayMethod) {
+	    this.lovDescFinRepayMethod = lovDescFinRepayMethod;
+    }
+	
+	public HashMap<String, Object> getDeclaredFieldValues() {
+		HashMap<String, Object> customerScoringMap = new HashMap<String, Object>();	
+		try {
+			for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+				customerScoringMap.put(this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return customerScoringMap;
+	}
+/*	public BigDecimal getDisbCcyFinAmount() {
+    	return disbCcyFinAmount;
+    }
+	public void setDisbCcyFinAmount(BigDecimal disbCcyFinAmount) {
+    	this.disbCcyFinAmount = disbCcyFinAmount;
+    }
+
+	public BigDecimal getCcyConversionRate() {
+    	return ccyConversionRate;
+    }
+	public void setCcyConversionRate(BigDecimal ccyConversionRate) {
+    	this.ccyConversionRate = ccyConversionRate;
+    }
+
+	public String getDisbCcy() {
+    	return disbCcy;
+    }
+	public void setDisbCcy(String disbCcy) {
+    	this.disbCcy = disbCcy;
+    }
+
+	public boolean isDiffDisbCcy() {
+    	return diffDisbCcy;
+    }
+	public void setDiffDisbCcy(boolean diffDisbCcy) {
+    	this.diffDisbCcy = diffDisbCcy;
+    }
+
+	public String getLovDescDisbCcyName() {
+	    return lovDescDisbCcyName;
+    }
+	public void setLovDescDisbCcyName(String lovDescDisbCcyName) {
+	    this.lovDescDisbCcyName = lovDescDisbCcyName;
+    }
+
+	public int getLovDescDisbCcyFormatter() {
+	    return lovDescDisbCcyFormatter;
+    }
+
+	public void setLovDescDisbCcyFormatter(int lovDescDisbCcyFormatter) {
+	    this.lovDescDisbCcyFormatter = lovDescDisbCcyFormatter;
+    }*/
+	
 }

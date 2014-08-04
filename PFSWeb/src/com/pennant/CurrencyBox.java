@@ -14,6 +14,8 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 
+import com.pennant.backend.util.PennantConstants;
+
 public class CurrencyBox extends Hbox {
 	private static final long	    serialVersionUID	= -4246285143621221275L;
 	private final static Logger	    logger	         = Logger.getLogger(CurrencyBox.class);
@@ -21,8 +23,8 @@ public class CurrencyBox extends Hbox {
 	private Textbox	                textbox;
 	private Decimalbox	            decimalbox;
 
-	private static final int	    tb_Width	     = 120;
-	private static final int	    db_Width	     = 120;
+	private static final int	    tb_Width	     = 150;
+	private static final int	    db_Width	     = 150;
 
 	private int	                    scale;
 
@@ -39,12 +41,13 @@ public class CurrencyBox extends Hbox {
 	private static final String	    sClass	         = "mandatory";
 
 	private static final String	    errormesage1	 = "Invalid Fomrat.Allwoed Only Numbers and 'B' 'M' 'T' 'H' In Sequence";
-	private static final String	    errormesage2	 = "Characters Are Not allowed After the Decimal point";
-	private static final String	    errormesage3	 = "Only One Decimal point Allowed";
+	/*private static final String	    errormesage2	 = "Characters Are Not allowed After the Decimal point";
+	private static final String	    errormesage3	 = "Only One Decimal point Allowed";*/
 	private static final String	    errormesage4	 = "Allowed Decimal point are :";
+	private static final String	    errormesage5	 = " A character can't be follwed by another character";
 
 	public CurrencyBox() {
-		logger.debug("Entering ExtenedBox()");
+		logger.debug("Entering");
 		scale = 3;
 		space = new Space();
 		space.setWidth("2px");
@@ -57,27 +60,34 @@ public class CurrencyBox extends Hbox {
 		decimalbox = new Decimalbox();
 		decimalbox.setWidth(db_Width + "px");
 		decimalbox.setReadonly(true);
-		decimalbox.setStyle("border:none; background-color:white ;font-weight:bold;");
+		decimalbox.setStyle("border:none; background-color:white ;font-weight:bold; text-align:left;");
+		decimalbox.setTabindex(-1);
 		this.appendChild(decimalbox);
-		logger.debug("Leaving ExtenedBox()");
+		logger.debug("Leaving");
 	}
 
 	public void onValueChange(Event event) throws Exception {
-		logger.debug("Entering onValueChange()");
+		logger.debug("Entering");
 		try {
-			if (textbox.getValue() != null && textbox.getValue().length() != 0) {
+			String valuWithComma=textbox.getValue();
+			if ( valuWithComma!= null && valuWithComma.length() != 0) {
+				valuWithComma=valuWithComma.replace(",", "");
 				try {
-					decimalbox.setValue(new BigDecimal(textbox.getValue()).setScale(scale));
+					decimalbox.setValue(new BigDecimal(valuWithComma).setScale(scale));
 				} catch (Exception e) {
 					if (e instanceof ArithmeticException) {
-						decimalbox.setValue(new BigDecimal(textbox.getValue()).setScale(scale, RoundingMode.HALF_DOWN));
+						decimalbox.setValue(new BigDecimal(valuWithComma).setScale(scale, RoundingMode.HALF_DOWN));
 						throw new WrongValueException(this.textbox, errormesage4 + scale);
 					} else {
-						calculateNumber(textbox.getValue().toUpperCase());
+						calculateNumber(valuWithComma.toUpperCase());
 					}
 				}
+			}else{
+				decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 			}
 		} catch (Exception e) {
+			decimalbox.setConstraint("");
+			decimalbox.setErrorMessage("");
 			decimalbox.setValue(new BigDecimal(0));
 			if (e instanceof WrongValueException) {
 				throw e;
@@ -85,11 +95,11 @@ public class CurrencyBox extends Hbox {
 		}finally{
 			Events.postEvent("onFulfill", this, null);
 		}
-		logger.debug("Leaving onValueChange()");
+		logger.debug("Leaving");
 	}
 
 	private void calculateNumber(String valueToConvert) throws WrongValueException, Exception {
-		logger.debug("Entering calculateNumber()");
+		logger.debug("Entering");
 		if (isValidString(valueToConvert)) {
 			BigDecimal total = new BigDecimal(0);
 			//calculate Billions
@@ -130,11 +140,11 @@ public class CurrencyBox extends Hbox {
 				total = total.add(new BigDecimal(temp).multiply(HUNDERED));
 			}
 
-			//calculate Decimals
-			String[] decimalVal = valueToConvert.replace(".", "#").split("#");
-			if (decimalVal.length == 2) {
-				total = total.add(new BigDecimal("0." + decimalVal[1]));
-			}
+//			//calculate Decimals
+//			String[] decimalVal = valueToConvert.replace(".", "#").split("#");
+//			if (decimalVal.length == 2) {
+//				total = total.add(new BigDecimal("0." + decimalVal[1]));
+//			}
 			try {
 				//Set total value to the decimal box
 				decimalbox.setValue(total.setScale(scale));
@@ -145,27 +155,27 @@ public class CurrencyBox extends Hbox {
 		} else {
 			decimalbox.setValue(new BigDecimal(0).setScale(scale));
 		}
-		logger.debug("Leaving calculateNumber()");
+		logger.debug("Leaving");
 	}
 
 	private boolean isValidString(String value) throws Exception {
-		logger.debug("Entering isValidString()");
+		logger.debug("Entering");
 		try {
 			String temp = value.replace(B, "").replace(M, "").replace(T, "").replace(H, "");
 			BigDecimal bigDecimal = new BigDecimal(temp);
 			System.out.println(bigDecimal);
 
-			String[] dotCheck = value.replace(".", "#").split("#");
-			if (dotCheck.length != 0 && dotCheck.length != 1) {
-				if (dotCheck.length == 2) {
-					if (!dotCheck[1].matches("[0-9]*")) {
-						throw new WrongValueException(this.textbox, errormesage2);
-					}
-
-				} else {
-					throw new WrongValueException(this.textbox, errormesage3);
-				}
-			}
+//			String[] dotCheck = value.replace(".", "#").split("#");
+//			if (dotCheck.length != 0 && dotCheck.length != 1) {
+//				if (dotCheck.length == 2) {
+//					if (!dotCheck[1].matches("[0-9]*")) {
+//						throw new WrongValueException(this.textbox, errormesage2);
+//					}
+//
+//				} else {
+//					throw new WrongValueException(this.textbox, errormesage3);
+//				}
+//			}
 
 		} catch (Exception e) {
 			if (e instanceof WrongValueException) {
@@ -217,13 +227,42 @@ public class CurrencyBox extends Hbox {
 				throw new WrongValueException(this.textbox, errormesage1);
 			}
 		}
-		logger.debug("Leaving isValidString()");
+		//==============
+		if (IDX_B != 0) {
+			if (IDX_M != 0 && IDX_M - IDX_B == 1) {
+				throw new WrongValueException(this.textbox, errormesage5);
+			}
+			if (IDX_T != 0 && IDX_T - IDX_B == 1) {
+				throw new WrongValueException(this.textbox, errormesage5);
+			}
+			if (IDX_H != 0 && IDX_H - IDX_B == 1) {
+				throw new WrongValueException(this.textbox, errormesage5);
+			}
+		}
+		if (IDX_M != 0) {
+			if (IDX_T != 0 && IDX_T - IDX_M == 1) {
+				throw new WrongValueException(this.textbox, errormesage5);
+			}
+			if (IDX_H != 0 && IDX_H - IDX_M == 1) {
+				throw new WrongValueException(this.textbox, errormesage5);
+			}
+		}
+		if (IDX_T != 0) {
+			if (IDX_H != 0 && IDX_H - IDX_T == 1) {
+				throw new WrongValueException(this.textbox, errormesage5);
+			}
+		}
+		
+		logger.debug("Leaving");
 		return true;
 	}
 
 	
 	public void setFormat(String format) {
 		decimalbox.setFormat(format);
+	}
+	public String getFormat() {
+		return decimalbox.getFormat();
 	}
 
 	public void setScale(int scale) {
@@ -232,6 +271,7 @@ public class CurrencyBox extends Hbox {
 	}
 	public void setMaxlength(int length){
 		decimalbox.setMaxlength(length);
+		textbox.setMaxlength(length);
 	}
 	public void setRoundingMode(int ms){
 		decimalbox.setRenderdefer(ms);
@@ -248,7 +288,12 @@ public class CurrencyBox extends Hbox {
 
 	public void setDisabled(boolean disabled){
 		textbox.setDisabled(disabled);
-		setMandatory(!disabled);
+		textbox.setVisible(!disabled);
+		if(disabled){
+			decimalbox.setStyle("border:normal;");
+		}else{
+			decimalbox.setStyle("border:none; background-color:white ;font-weight:bold; text-align:left;");
+		}
 	}
 	
 	public void setConstraint(String constraint) {
@@ -260,6 +305,7 @@ public class CurrencyBox extends Hbox {
 
 	public void setErrorMessage(String errmsg) {
 		textbox.setErrorMessage(errmsg);
+		decimalbox.setErrorMessage(errmsg);
 	}
 
 	public void clearErrorMessage() {
@@ -273,12 +319,21 @@ public class CurrencyBox extends Hbox {
 			this.space.setSclass("");
 		}
 	}
+	
+	public boolean isMandatory() {
+		if (StringUtils.trimToEmpty(this.space.getSclass()).equals(PennantConstants.mandateSclass)) {
+			return true;
+		}  
+		return false;
+	}
 
 	public void setValue(BigDecimal bigDecimal) {
 		decimalbox.setValue(bigDecimal);
+		textbox.setValue(bigDecimal.toString());
 	}
 	public void setValue(String bigDecimal) {
 		decimalbox.setValue(bigDecimal);
+		textbox.setValue(bigDecimal);
 	}
 
 	public BigDecimal getValue() {
@@ -287,5 +342,18 @@ public class CurrencyBox extends Hbox {
 	//	public Decimalbox getDecimalbox() {
 	//		return decimalbox;
 	//	}
+
+	public boolean isDisabled() {
+		return this.textbox.isDisabled();
+	}
+
+	public void setReadonly(boolean readOnly) {
+		this.textbox.setReadonly(readOnly);
+		
+	}
+	
+	public void setTabindex(int tabIndex){
+		textbox.setTabindex(tabIndex);
+	}
 
 }

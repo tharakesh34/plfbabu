@@ -62,5 +62,6 @@ public interface CustomerRatingDAO {
 	public void initialize(CustomerRating customerRating);
 	public void refresh(CustomerRating entity);
 	public void deleteByCustomer(final long customerId,String type);
+	public List<CustomerRating> getCustomerRatingByCustId(long id, String type);
 	
 }

@@ -42,6 +42,8 @@ public class RateValidator implements Constraint{
 			//rateValue= (Double) value;
 			rateValue= new BigDecimal(value.toString()).doubleValue();
 			
+		}else{
+			throw new WrongValueException(comp, Labels.getLabel("RATE_NO_ZERO",new String[]{fieldParm}));
 		}
 		
 		if (rateValue<0){

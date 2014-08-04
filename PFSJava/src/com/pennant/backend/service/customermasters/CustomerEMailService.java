@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.customermasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 
@@ -61,4 +63,5 @@ public interface CustomerEMailService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	List<String> getCustEmailsByCustId(long custId);
 }

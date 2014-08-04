@@ -53,8 +53,8 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-
 
 /**
  * Item renderer for list items in the list box.
@@ -64,11 +64,9 @@ public class AccountsListModelItemRenderer implements ListitemRenderer<Accounts>
 
 	private static final long serialVersionUID = -1770311750492286100L;
 
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
 	public void render(Listitem item, Accounts acounts, int count) throws Exception {
 
-		//final Accounts acounts = (Accounts) data;
 		Listcell lc;
 	  	lc = new Listcell(acounts.getAccountId());
 		lc.setParent(item);
@@ -85,7 +83,7 @@ public class AccountsListModelItemRenderer implements ListitemRenderer<Accounts>
 	  	lc = new Listcell(acounts.getAcShortName());
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(acounts.getAcPurpose()
-				,PennantAppUtil.getAccountPurpose()));
+				,PennantStaticListUtil.getAccountPurpose()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbInternalAc = new Checkbox();

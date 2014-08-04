@@ -60,6 +60,7 @@ public class RepayInstruction implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private String finReference = null;
 	private Date repayDate;
+	private long logKey;
 	private BigDecimal repayAmount;
 	private String repaySchdMethod;
 	private int version;
@@ -278,4 +279,12 @@ public class RepayInstruction implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public void setLogKey(long logKey) {
+	    this.logKey = logKey;
+    }
+
+	public long getLogKey() {
+	    return logKey;
+    }
 }

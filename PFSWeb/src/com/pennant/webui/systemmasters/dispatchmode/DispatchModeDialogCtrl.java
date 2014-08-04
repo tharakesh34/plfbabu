@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.DispatchModeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -408,6 +409,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -425,7 +427,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.dispatchModeIsActive.setChecked(aDispatchMode.isDispatchModeIsActive());
 		this.recordStatus.setValue(aDispatchMode.getRecordStatus());
 		
-		if(aDispatchMode.isNew() || aDispatchMode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aDispatchMode.isNew() || (aDispatchMode.getRecordType() != null ? aDispatchMode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.dispatchModeIsActive.setChecked(true);
 			this.dispatchModeIsActive.setDisabled(true);
 		}
@@ -595,15 +597,12 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl implements Serializable 
 		setValidationOn(true);
 
 		if (!this.dispatchModeCode.isReadonly()){
-			this.dispatchModeCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_DispatchModeDialog_DispatchModeCode.value")})));
+			this.dispatchModeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DispatchModeDialog_DispatchModeCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.dispatchModeDesc.isReadonly()){
-			this.dispatchModeDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_DispatchModeDialog_DispatchModeDesc.value")})));
+			this.dispatchModeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DispatchModeDialog_DispatchModeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -743,7 +742,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl implements Serializable 
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

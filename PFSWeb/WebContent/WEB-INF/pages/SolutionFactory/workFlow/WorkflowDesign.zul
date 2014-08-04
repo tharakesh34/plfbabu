@@ -6,6 +6,7 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	
 	<script type="text/javascript">
 		function setSave() {
 			//var svg = frames[0].frames[2].ORYX.EDITOR.getCanvas().getSVGRepresentation();
@@ -22,119 +23,113 @@
 			}
 		}
 	</script>
-	<window id="window_workflowDesign"
-		title="${c:l('window_workflowDesign.title')}" border="none"
-		apply="${workflowDesignCtrl}" width="100%" height="100%"
-		closable="true">
+	
+	<window id="window_workflowDesign" border="none"
+		apply="${workflowDesignCtrl}" width="100%" height="100%">
+
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					style="float:left; border-style: none;">
-
+				<toolbar align="start" sclass="toolbar-start">
 					<button id="btnSave" height="24px"
-						image="/images/icons/btn_save2_16x16.gif"
+						label="${c:l('btnSave.label')}"
 						tooltiptext="${c:l('btnSave.tooltiptext')}" />
 					<button id="btnCancel" height="24px"
-						image="/images/icons/btn_cancel2_16x16.gif"
+						label="${c:l('btnCancel.label')}"
 						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
 
 				</toolbar>
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none;">
-					<hbox align="center" style="padding: 2px"></hbox>
+				<toolbar align="center" sclass="toolbar-center">
+					<label value="${c:l('window_workflowDesign.title')}"
+						sclass="label-heading" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
-
+				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnClose" height="24px"
-						image="/images/icons/btn_exitdoor2_16x16.gif"
+						label="${c:l('btnClose.label')}"
 						tooltiptext="${c:l('btnClose.tooltiptext')}" />
 				</toolbar>
 
 			</hbox>
 		</div>
-		<iframe id="iframe" name="iframe" src="http://www.pennanttech.com/"
-			width="100%" height="100%" style="border: 1px solid gray" />
+		
+		<iframe id="iframe" name="iframe"
+			src="http://www.pennanttech.com/" width="100%" height="100%"
+			style="border: 1px solid gray" />
+			
 		<borderlayout>
 			<center border="none" autoscroll="true">
-				<panel>
-					<panelchildren style="padding: 5px;">
-						<groupbox id="gb_basicDetails" width="97%"
-							height="100%">
-							<caption label="Workflow Details" />
-							<grid sclass="GridLayoutNoBorder"
-								fixedLayout="true" style="border:1px; margin-left:3%;"
-								width="100%">
-								<columns>
-									<column width="130px" />
-									<column width="20px" />
-									<column width="600px" />
-								</columns>
-								<rows>
-									<row>
-										<label
-											id="label_WorkFlowDialog_WorkFlowType"
-											value="${c:l('label_WorkFlowDialog_WorkFlowType.value')}" />
-										<label
-											value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
-										<textbox id="workFlowType"
-											width="163px">
-										</textbox>
-									</row>
-									<row>
-										<label
-											id="label_WorkFlowDialog_WorkFlowSubType"
-											value="${c:l('label_WorkFlowDialog_WorkFlowSubType.value')}" />
-										<label
-											value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
-										<textbox id="workFlowSubType"
-											width="200px" />
-									</row>
-									<row>
-										<label
-											id="label_WorkFlowDialog_WorkFlowDesc"
-											value="${c:l('label_WorkFlowDialog_WorkFlowDesc.value')}" />
-										<label
-											value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
-										<textbox id="workFlowDesc"
-											width="300px" height="40px" rows="3" style="overflow:auto;" />
-									</row>
-									<row>
-										<label
-											id="label_WorkFlowDialog_WorkFlowXML"
-											value="${c:l('label_WorkFlowDialog_WorkFlowXML.value')}" />
-										<label
-											value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
-										<hbox>
-											<textbox id="workFlowXML"
-												width="400px" height="80px" multiline="true" rows="8"
-												readonly="true" />
-											<button id="btnUpload"
-												width="50px" height="24px" upload="true"
-												label="${c:l('label_WorkFlowDialog_WorkFlowUpload.value')}" />
-										</hbox>
-									</row>
-									<row>
-										<label
-											id="label_WorkFlowDialog_WorkFlowActive"
-											value="${c:l('label_WorkFlowDialog_WorkFlowActive.value')}" />
-										<label
-											value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
-										<checkbox id="workFlowActive"
-											checked="true" />
-									</row>
-								</rows>
-							</grid>
-						</groupbox>
-					</panelchildren>
-				</panel>
+				<groupbox id="gb_basicDetails" width="97%"
+					height="100%">
+					<caption label="Workflow Details" />
+					<grid sclass="GridLayoutNoBorder"
+						fixedLayout="true" style="border:1px; margin-left:3%;"
+						width="100%">
+						<columns>
+							<column width="130px" />
+							<column width="20px" />
+							<column width="600px" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_WorkFlowDialog_WorkFlowType"
+									value="${c:l('label_WorkFlowDialog_WorkFlowType.value')}" />
+								<label
+									value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
+								<textbox id="workFlowType"
+									width="163px"/>
+							</row>
+							<row>
+								<label
+									id="label_WorkFlowDialog_WorkFlowSubType"
+									value="${c:l('label_WorkFlowDialog_WorkFlowSubType.value')}" />
+								<label
+									value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
+								<textbox id="workFlowSubType"
+									width="200px" />
+							</row>
+							<row>
+								<label
+									id="label_WorkFlowDialog_WorkFlowDesc"
+									value="${c:l('label_WorkFlowDialog_WorkFlowDesc.value')}" />
+								<label
+									value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
+								<textbox id="workFlowDesc"
+									width="300px" height="40px" rows="3" style="overflow:auto;" />
+							</row>
+							<row>
+								<label
+									id="label_WorkFlowDialog_WorkFlowXML"
+									value="${c:l('label_WorkFlowDialog_WorkFlowXML.value')}" />
+								<label
+									value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
+								<hbox>
+									<textbox id="workFlowXML"
+										width="400px" height="80px" multiline="true" rows="8"
+										readonly="true" />
+									<button id="btnUpload"
+										width="50px" height="24px" upload="true"
+										label="${c:l('label_WorkFlowDialog_WorkFlowUpload.value')}" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_WorkFlowDialog_WorkFlowActive"
+									value="${c:l('label_WorkFlowDialog_WorkFlowActive.value')}" />
+								<label
+									value="${c:l('label_WorkFlowDialog_semicolon.value')}" />
+								<checkbox id="workFlowActive"
+									checked="true" />
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
 			</center>
 		</borderlayout>
 	</window>

@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+ *//*
 
 package com.pennant.webui.customermasters.customerDedup;
 
@@ -74,25 +74,25 @@ import com.pennant.webui.customermasters.customer.CustomerQDEDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
 
-/**
+*//**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the
  * /WEB-INF/pages/CustomerMasters/Customer/CustomerDepudList.zul file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
- */
+ *//*
 public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
 		implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(CustomerDedupListCtrl.class);
-	/*
+	
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the zul-file are getting autowired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 */
+	 
 	protected Window window_CustomerDedupList; // autowired
 	protected Panel panel_CustomerDedupList; // autowired
 	protected Borderlayout borderLayout_CustomerDedupList; // autowired
@@ -137,9 +137,9 @@ public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
     protected Button btnHelp; // autowire
     protected Button btnNotes; // autowire	
 
-	/**
+	*//**
 	 * default constructor.<br>
-	 */
+	 *//*
 	public CustomerDedupListCtrl() {
 		super();
 	}
@@ -154,8 +154,8 @@ public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
 		if (args.containsKey("customerDedup")) {
 			dedupArrList =  (List<CustomerDedup>) args.get("customerDedup");		
 			
-		/*	setCustomerDedup(this.customer.getCustomerDedup());		
-			dedupList.add(getCustomerDedup());*/
+			setCustomerDedup(this.customer.getCustomerDedup());		
+			dedupList.add(getCustomerDedup());
 		} else {
 			//setCustomerDedup(null);
 			this.dedupArrList = null;
@@ -190,14 +190,14 @@ public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
 		
 	
 
-		/* set components visible dependent of the users rights */
+		 set components visible dependent of the users rights 
 		doCheckRights();
 
-		/**
+		*//**
 		 * Calculate how many rows have been place in the listbox. Get the
 		 * currentDesktopHeight from a hidden Intbox from the index.zul that are
 		 * filled by onClientInfo() in the indexCtroller
-		 */
+		 *//*
 
 		int panelHeight = 20;
 		// put the logic for working with panel in the ApplicationWorkspace
@@ -223,8 +223,8 @@ public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
 		getPagedListWrapper().initList(this.dedupArrList,
 				this.listBoxCustomerDedup, this.pagingCustomerDedupList);
 		
-		/*getPagedListWrapper().initList(this.dedupList,
-				this.listBoxCustomerDedup, this.pagingCustomerDedupList);*/
+		getPagedListWrapper().initList(this.dedupList,
+				this.listBoxCustomerDedup, this.pagingCustomerDedupList);
 		
 		// set the itemRenderer
 		this.listBoxCustomerDedup.setItemRenderer(new DedupListItemRenderer());
@@ -233,9 +233,9 @@ public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
 		this.window_CustomerDedupList.doModal();
 	}
 
-	/**
+	*//**
 	 * SetVisible for components by checking if there's a right for it.
-	 */
+	 *//*
 	private void doCheckRights() {
 		getUserWorkspace().alocateAuthorities("CustomerDedupList");
 		//this.btnCancel.setVisible(true);
@@ -248,7 +248,7 @@ public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
     // +++++++++++++++++OnClick Button Events++++++++++++++++//
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	/* public void onClick$btnCancel(Event event) throws ParseException {
+	 public void onClick$btnCancel(Event event) throws ParseException {
 			logger.debug("Calling onClick Event for  Cancelling the Customer Creation Process");	
 			
 			if(customerDialogCtrl!= null){
@@ -284,12 +284,12 @@ public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
 			logger.debug("Completed onClick Event for   Proceeding the Customer Creation Process");
 }
 	 
-	 */
+	 
 	
-	/**
+	*//**
 	 * Item renderer for listitems in the listbox.
 	 * 
-	 */	
+	 *//*	
 	final class DedupListItemRenderer implements ListitemRenderer<CustomerDedup> {
 		//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 		public void render(Listitem item, CustomerDedup dedupList,int count) throws Exception {			
@@ -298,12 +298,12 @@ public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
 			//lc = new Listcell(StringUtils.leftPad(dedupList.getCustCIF().trim(), 12, '0'));
 			lc = new Listcell(dedupList.getCustCIF());
 			lc.setParent(item);
-			/*lc = new Listcell(dedupList.getCustCoreBank());
-			lc.setParent(item);*/
+			lc = new Listcell(dedupList.getCustCoreBank());
+			lc.setParent(item);
 			lc = new Listcell(dedupList.getCustFName());
 			lc.setParent(item);
-			/*lc = new Listcell(dedupList.getCustMName());
-			lc.setParent(item);*/
+			lc = new Listcell(dedupList.getCustMName());
+			lc.setParent(item);
 			lc = new Listcell(dedupList.getCustLName());
 			lc.setParent(item);
 			lc = new Listcell(dedupList.getCustShrtName());
@@ -345,4 +345,4 @@ public class CustomerDedupListCtrl extends GFCBaseListCtrl<CustomerDedup>
 	public void setCustomerDedup(CustomerDedup customerDedup) {
 		this.customerDedup = customerDedup;
 	}
-}
+}*/

@@ -118,7 +118,7 @@ public class PropertyDetailDAOImpl extends BasisNextidDaoImpl<PropertyDetail> im
 	@Override
 	public PropertyDetail getPropertyDetailById(final long id, String type) {
 		logger.debug("Entering");
-		PropertyDetail propertyDetail = getPropertyDetail();
+		PropertyDetail propertyDetail = new PropertyDetail();
 		propertyDetail.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

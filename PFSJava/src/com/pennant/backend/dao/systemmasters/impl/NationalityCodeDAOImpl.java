@@ -121,7 +121,7 @@ public class NationalityCodeDAOImpl extends BasisCodeDAO<NationalityCode> implem
 	@Override
 	public NationalityCode getNationalityCodeById(final String id, String type) {
 		logger.debug("Entering");
-		NationalityCode nationalityCodes = getNationalityCode();
+		NationalityCode nationalityCodes = new NationalityCode();
 		nationalityCodes.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

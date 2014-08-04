@@ -50,7 +50,7 @@ public class GlobalVariable implements java.io.Serializable {
 	private String varCode;
 	private String varName;
 	private String varValue;
-	
+	private String varType;
 	
 
 	public GlobalVariable() {
@@ -111,4 +111,12 @@ public class GlobalVariable implements java.io.Serializable {
 	public void setVarValue(String varValue) {
 		this.varValue = varValue;
 	}
+
+	public String getVarType() {
+	    return varType;
+    }
+
+	public void setVarType(String varType) {
+	    this.varType = varType;
+    }
 }

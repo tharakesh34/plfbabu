@@ -70,34 +70,14 @@
 								<label
 									id="label_EducationalExpenseDialog_EduExpDetail"
 									value="${c:l('label_EducationalExpenseDialog_EduExpDetail.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-
-									<hbox>
-										<longbox id="eduExpDetail"
-											width="450px" visible="false">
-										</longbox>
-										<uppercasebox
-											id="lovDescEduExpDetailName" width="250px" readonly="true" />
-										<button
-											id="btnSearchEduExpDetail"
-											image="/images/icons/LOVSearch.png" height="24px">
-										</button>
-									</hbox>
-								</hbox>
+								<extendedcombobox id="eduExpDetail"/>
 							</row>
 							<row visible="true">
 								<label
 									id="label_EducationalExpenseDialog_EduExpAmount"
 									value="${c:l('label_EducationalExpenseDialog_EduExpAmount.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-
-									<decimalbox id="eduExpAmount" style="text-align:right"
-										width="162px" maxlength="25">
-									</decimalbox>
+									<currencyBox id="eduExpAmount" />
 								</hbox>
 							</row>
 							<row visible="true">

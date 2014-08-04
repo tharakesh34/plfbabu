@@ -121,7 +121,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 	@Override
 	public Academic getAcademicById(final long academicID, String type) {
 		logger.debug("Entering");
-		Academic academic = getAcademic();
+		Academic academic = new Academic();
 		academic.setAcademicID(academicID);
 		StringBuilder selectSql = new StringBuilder();
 		
@@ -160,7 +160,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 	@Override
 	public Academic getAcademic(String academicLevel, String academicDecipline, String type) {
 		logger.debug("Entering");
-		Academic academic = getAcademic();
+		Academic academic = new Academic();
 		academic.setAcademicLevel(academicLevel);
 		academic.setAcademicDecipline(academicDecipline);
 		StringBuilder selectSql = new StringBuilder();

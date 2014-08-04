@@ -59,7 +59,7 @@ import com.pennant.common.menu.util.ILabelElement;
 import com.pennant.webui.util.PTMessageUtils;
 
 
-class DefaultDropDownMenu extends Menu implements Serializable, ILabelElement, EventListener {
+class DefaultDropDownMenu extends Menu implements Serializable, ILabelElement, EventListener<Event> {
 
 	private static final long serialVersionUID = -3196075413623639125L;
 

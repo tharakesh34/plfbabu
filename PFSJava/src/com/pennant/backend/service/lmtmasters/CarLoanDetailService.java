@@ -43,6 +43,7 @@
 
 package com.pennant.backend.service.lmtmasters;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.CarLoanDetail;
 
@@ -51,7 +52,6 @@ import com.pennant.backend.model.lmtmasters.CarLoanDetail;
  * 
  */
 public interface CarLoanDetailService {
-	
 	CarLoanDetail getCarLoanDetail();
 	CarLoanDetail getNewCarLoanDetail();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
@@ -61,4 +61,9 @@ public interface CarLoanDetailService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	
+	public AuditDetail saveOrUpdate(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
+	public AuditDetail doApprove(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
+	public AuditDetail validate(CarLoanDetail carLoanDetail, String method, String auditTranType, String  usrLanguage);
+	public AuditDetail delete(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
 }

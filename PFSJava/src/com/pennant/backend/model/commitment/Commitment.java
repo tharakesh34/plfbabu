@@ -83,6 +83,8 @@ public class Commitment implements java.io.Serializable {
 	private String cmtAccountName;
 	private String custCtgCode;
 	private Date custDOB;
+	private String facilityRef;
+	private String facilityRefDesc;
 
 	@XmlTransient
 	private long lastMntBy;
@@ -144,6 +146,7 @@ public class Commitment implements java.io.Serializable {
 		excludeFields.add("custCtgCode");
 		excludeFields.add("custDOB");
 		excludeFields.add("custCIF");
+		excludeFields.add("facilityRefDesc");
 		return excludeFields;
 	}
 
@@ -627,5 +630,21 @@ public class Commitment implements java.io.Serializable {
 
 	public String getCustCIF() {
 	    return custCIF;
+    }
+
+	public void setFacilityRef(String facilityRef) {
+	    this.facilityRef = facilityRef;
+    }
+
+	public String getFacilityRef() {
+	    return facilityRef;
+    }
+
+	public void setFacilityRefDesc(String facilityRefDesc) {
+	    this.facilityRefDesc = facilityRefDesc;
+    }
+
+	public String getFacilityRefDesc() {
+	    return facilityRefDesc;
     }
 }

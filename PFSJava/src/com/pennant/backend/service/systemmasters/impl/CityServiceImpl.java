@@ -131,7 +131,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 		if (city.isNew()) {
 			getCityDAO().save(city,tableType);
 			auditHeader.getAuditDetail().setModelData(city);
-			auditHeader.setAuditReference(String.valueOf(city.getPCCounty()) +PennantConstants.KEY_SEPERATOR
+			auditHeader.setAuditReference(String.valueOf(city.getPCCountry()) +PennantConstants.KEY_SEPERATOR
 					+ city.getPCProvince()+PennantConstants.KEY_SEPERATOR+ city.getPCCity());
 
 		}else{
@@ -182,8 +182,8 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 * @return City
 	 */
 	@Override
-	public City getCityById(String PCCounty, String PCProvince, String PCCity) {
-		return getCityDAO().getCityById(PCCounty, PCProvince, PCCity, "_View");
+	public City getCityById(String pCCountry, String PCProvince, String PCCity) {
+		return getCityDAO().getCityById(pCCountry, PCProvince, PCCity, "_View");
 	}
 	
 	/**
@@ -195,9 +195,9 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 *            (String)
 	 * @return City
 	 */
-	public City getApprovedCityById(String PCCounty, String PCProvince,
+	public City getApprovedCityById(String pCCountry, String PCProvince,
 			String PCCity) {
-		return getCityDAO().getCityById(PCCounty, PCProvince, PCCity, "_AView");
+		return getCityDAO().getCityById(pCCountry, PCProvince, PCCity, "_AView");
 	}
 		
 	/**
@@ -353,10 +353,10 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 		City city = (City) auditDetail.getModelData();
 		City tempCity = null;
 		if (city.isWorkflow()) {
-			tempCity = getCityDAO().getCityById(city.getPCCounty(),
+			tempCity = getCityDAO().getCityById(city.getPCCountry(),
 					city.getPCProvince(), city.getPCCity(), "_Temp");
 		}
-		City befCity = getCityDAO().getCityById(city.getPCCounty(),
+		City befCity = getCityDAO().getCityById(city.getPCCountry(),
 				city.getPCProvince(), city.getPCCity(), "");
 
 		City old_City = city.getBefImage();
@@ -364,11 +364,11 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 		String[] valueParm = new String[3];
 		String[] errParm= new String[3];
 
-		valueParm[0] = city.getPCCounty();
+		valueParm[0] = city.getPCCountry();
 		valueParm[1] = city.getPCProvince();
 		valueParm[2] = city.getPCCity();
 		
-		errParm[0]=PennantJavaUtil.getLabel("label_PCCounty")+":"+valueParm[0];
+		errParm[0]=PennantJavaUtil.getLabel("label_PCCountry")+":"+valueParm[0];
 		errParm[1]=PennantJavaUtil.getLabel("label_PCProvince")+":"+valueParm[1];
 		errParm[2]=PennantJavaUtil.getLabel("label_PCCity")+":"+valueParm[2];
 

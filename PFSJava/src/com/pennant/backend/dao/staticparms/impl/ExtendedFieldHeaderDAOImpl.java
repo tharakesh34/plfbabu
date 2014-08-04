@@ -119,7 +119,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	@Override
 	public ExtendedFieldHeader getExtendedFieldHeaderById(final long id, String type) {
 		logger.debug("Entering");
-		ExtendedFieldHeader extendedFieldHeader = getExtendedFieldHeader();
+		ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
 
 		extendedFieldHeader.setId(id);
 
@@ -151,7 +151,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			String subModuleName, String type) {
 		logger.debug("Entering");
 		
-		ExtendedFieldHeader extendedFieldHeader = getExtendedFieldHeader();
+		ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
 
 		extendedFieldHeader.setModuleName(moduleName);
 		extendedFieldHeader.setSubModuleName(subModuleName);

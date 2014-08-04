@@ -120,7 +120,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 	@Override
 	public CustomerRating getCustomerRatingByID(final long id,String ratingType, String type) {
 		logger.debug("Entering");
-		CustomerRating customerRating = getCustomerRating();
+		CustomerRating customerRating = new CustomerRating();
 		customerRating.setId(id);
 		customerRating.setCustRatingType(ratingType);
 		
@@ -128,7 +128,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType," );
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustRecordType , lovDescCustCIF, lovDescCustShrtName," );
-			selectSql.append(" lovDescCustRatingTypeName, lovDescCustRatingCodeName, ");
+			selectSql.append(" lovDescCustRatingTypeName, lovDesccustRatingCodeDesc,lovDescCustRatingName, ");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
@@ -155,20 +155,43 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 	 */
 	public List<CustomerRating> getCustomerRatingByCustomer(final long id,String type) {
 		logger.debug("Entering");
-		CustomerRating customerRating = getCustomerRating();
+		CustomerRating customerRating = new CustomerRating();
 		customerRating.setId(id);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType," );
+		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType, " );
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustRecordType , lovDescCustCIF, lovDescCustShrtName," );
-			selectSql.append(" lovDescCustRatingTypeName, lovDescCustRatingCodeName, ");
+			selectSql.append(" lovDescCustRatingTypeName, lovDesccustRatingCodeDesc,lovDescCustRatingName, ");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" FROM  CustomerRatings");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :custID ") ;
+				
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
+		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+	}
+	
+	/** 
+	 * Method For getting List of Customer related Ratings for Customer
+	 */
+	@Override
+	public List<CustomerRating> getCustomerRatingByCustId(final long id, String type) {
+		logger.debug("Entering");
+		CustomerRating customerRating = new CustomerRating();
+		customerRating.setId(id);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select CustRatingType, CustRatingCode , LovDescCustRatingCodeDesc " );
+		selectSql.append(" FROM  CustomerRatings");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID = :custID AND CustRatingCode != '' ") ;
 				
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
@@ -250,7 +273,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 	 */
 	public void deleteByCustomer(final long customerId,String type) {
 		logger.debug("Entering");
-		CustomerRating customerRating = getCustomerRating();
+		CustomerRating customerRating = new CustomerRating();
 		customerRating.setId(customerId);
 
 		StringBuilder deleteSql = new StringBuilder();

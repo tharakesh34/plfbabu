@@ -123,7 +123,7 @@ public class ProvisionMovementDAOImpl extends BasisCodeDAO<ProvisionMovement> im
 	@Override
 	public ProvisionMovement getProvisionMovementById(final String id,final Date movementDate, String type) {
 		logger.debug("Entering");
-		ProvisionMovement provisionMovement = getProvisionMovement();
+		ProvisionMovement provisionMovement = new ProvisionMovement();
 		
 		provisionMovement.setId(id);
 		provisionMovement.setProvMovementDate(movementDate);
@@ -166,7 +166,7 @@ public class ProvisionMovementDAOImpl extends BasisCodeDAO<ProvisionMovement> im
 	@Override
 	public List<ProvisionMovement> getProvisionMovementListById(final String id, String type) {
 		logger.debug("Entering");
-		ProvisionMovement provisionMovement = getProvisionMovement();
+		ProvisionMovement provisionMovement = new ProvisionMovement();
 		
 		provisionMovement.setId(id);
 		

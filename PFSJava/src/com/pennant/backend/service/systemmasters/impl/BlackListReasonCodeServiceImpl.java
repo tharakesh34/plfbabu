@@ -65,12 +65,10 @@ import com.pennant.backend.util.PennantJavaUtil;
  * <b>BlackListReasonCode</b>.<br>
  * 
  */
-public class BlackListReasonCodeServiceImpl extends
-		GenericService<BlackListReasonCode> implements
+public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReasonCode> implements
 		BlackListReasonCodeService {
 
-	private static Logger logger = Logger
-			.getLogger(BlackListReasonCodeServiceImpl.class);
+	private static Logger logger = Logger.getLogger(BlackListReasonCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BlackListReasonCodeDAO blackListReasonCodeDAO;
@@ -91,8 +89,7 @@ public class BlackListReasonCodeServiceImpl extends
 		return blackListReasonCodeDAO;
 	}
 
-	public void setBlackListReasonCodeDAO(
-			BlackListReasonCodeDAO blackListReasonCodeDAO) {
+	public void setBlackListReasonCodeDAO(BlackListReasonCodeDAO blackListReasonCodeDAO) {
 		this.blackListReasonCodeDAO = blackListReasonCodeDAO;
 	}
 

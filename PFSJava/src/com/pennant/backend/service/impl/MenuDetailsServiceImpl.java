@@ -44,6 +44,7 @@
 package com.pennant.backend.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.dao.MenuDetailsDAO;
 import com.pennant.backend.model.MenuDetails;
@@ -80,5 +81,8 @@ public class MenuDetailsServiceImpl implements MenuDetailsService {
 		return MenuDetailsDAO.getMenuDetailsByApp(appCode);
 	}
 
-
+	@Override
+    public Map<String, Object> getLastLoginInfo(String procedureName, String UsrLogin, Map<String, Object> inputParamMap,  Map<String, Object> outputParamMap) {
+		return MenuDetailsDAO.getLastLoginInfo(procedureName, UsrLogin, inputParamMap, outputParamMap);	    
+    }
 }

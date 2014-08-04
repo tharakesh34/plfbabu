@@ -80,8 +80,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.reports.ReportListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -166,7 +168,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
 
-	private List<ValueLabel> listReportFileName=PennantAppUtil.getReportListName(); // autoWired
+	private List<ValueLabel> listReportFileName=PennantStaticListUtil.getReportListName(); // autoWired
 	private List<ValueLabel> moduleList = PennantAppUtil.getModuleList();
 
 	/**
@@ -458,7 +460,8 @@ public class ReportListDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.addfields.setValue(aReportList.getAddfields());
 		this.reportHeading.setValue(aReportList.getReportHeading());
 		this.reportFile.setValue(aReportList.getReportFileName());
-		this.reportFileName.setValue(PennantAppUtil.getValueDesc(aReportList.getReportFileName(),PennantAppUtil.getReportListName()));
+		this.reportFileName.setValue(PennantAppUtil.getValueDesc(aReportList.getReportFileName(),
+				PennantStaticListUtil.getReportListName()));
 		this.moduleType.setValue(aReportList.getModuleType());
 
 		this.recordStatus.setValue(aReportList.getRecordStatus());
@@ -689,12 +692,10 @@ public class ReportListDialogCtrl extends GFCBaseCtrl implements Serializable {
 					listReportFileName,Labels.getLabel("label_ReportListDialog_ReportFileName.value")));
 		}
 		if (!this.reportHeading.isReadonly()){
-			this.reportHeading.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_ReportListDialog_ReportHeading.value")}));
+			this.reportHeading.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportListDialog_ReportHeading.value"), null, true));
 		}	
 		if (!this.moduleType.isReadonly()){
-			this.moduleType.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_ReportListDialog_ModuleType.value")}));
+			this.moduleType.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportListDialog_ModuleType.value"), null, true));
 		}
 
 		logger.debug("Leaving");

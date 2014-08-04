@@ -62,11 +62,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerTypeListModelItemRenderer implements ListitemRenderer<CustomerType>, Serializable {
 
 	private static final long serialVersionUID = 4481477716896911264L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, CustomerType customerType, int count) throws Exception {
 
-		//final CustomerType customerType = (CustomerType) data;
 		Listcell lc;
 	  	lc = new Listcell(customerType.getCustTypeCode());
 		lc.setParent(item);
@@ -76,6 +75,8 @@ public class CustomerTypeListModelItemRenderer implements ListitemRenderer<Custo
 			lc = new Listcell(Labels.getLabel("label_Corporate"));
 		}else if(customerType.getCustTypeCtg().equals("I")){
 			lc = new Listcell(Labels.getLabel("label_Individual"));
+		}else if(customerType.getCustTypeCtg().equals("B")){
+			lc = new Listcell(Labels.getLabel("label_Financial"));
 		}else{
 			lc = new Listcell("");
 		}

@@ -74,6 +74,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
@@ -108,18 +109,18 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  * /WEB-INF/pages/Others/JVPostingEntry/jVPostingEntryDialog.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
-public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializable {
+public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializable {/*
 
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(JVPostingEntryDialogCtrl.class);
 
-	/*
+	
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the zul-file are getting  by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 */
+	 
 	protected Window window_JVPostingEntryDialog;
 	protected Row row0;
 	protected Label label_BatchReference;
@@ -140,10 +141,8 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	protected Textbox accountName;
 	protected Label label_TxnCCy;
-	protected Hlayout hlayout_TxnCCy;
-	protected Space space_TxnCCy;
 
-	protected Textbox txnCCy;
+	protected ExtendedCombobox txnCCy;
 	protected Textbox accCcy;
 	protected Textbox baseCCy;
 
@@ -266,8 +265,6 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Button btnHelp;
 	protected Button btnNotes;
 
-	protected Button btnSearchTxnCCy;
-	protected Textbox txnCCyName;
 	private transient String oldVar_TxnCCyName;
 
 	// ServiceDAOs / Domain Classes
@@ -280,9 +277,9 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private int txnCccyFormatter = 0;
 	private String baseCcy = SystemParameterDetails.getSystemParameterValue("EXT_BASE_CCY").toString();
 
-	/**
+	*//**
 	 * default constructor.<br>
-	 */
+	 *//*
 	public JVPostingEntryDialogCtrl() {
 		super();
 	}
@@ -291,14 +288,14 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	/**
+	*//**
 	 * Before binding the data and calling the dialog window we check, if the
 	 * zul-file is called with a parameter for a selected JVPostingEntry object in a
 	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onCreate$window_JVPostingEntryDialog(Event event) throws Exception {
 		logger.debug("Entring" + event.toString());
 		try {
@@ -333,7 +330,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 				getUserWorkspace().alocateAuthorities("JVPostingEntryDialog");
 			}
 
-			/* set components visible dependent of the users rights */
+			 set components visible dependent of the users rights 
 			doCheckRights();
 			if (args.containsKey("role")) {
 				getUserWorkspace().alocateRoleAuthorities(args.get("role").toString(), "JVPostingEntryDialog");
@@ -359,11 +356,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * when the "edit" button is clicked. <br>
 	 * 
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnEdit(Event event) {
 		logger.debug("Entering" + event.toString());
 		doStoreInitValues();
@@ -371,35 +368,35 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * when the "cancel" button is clicked. <br>
 	 * 
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering" + event.toString());
 		doResetInitValues();
@@ -407,24 +404,24 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_JVPostingEntryDialog);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	* when the "close" button is clicked. <br>
 	* 
 	* @param event
 	* @throws InterruptedException
-	*/
+	*//*
 	public void onClick$btnClose(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
@@ -436,26 +433,26 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onClose$window_JVPostingEntryDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doClose();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
 	 *            (Event)
 	 * 
 	 * @throws Exception
-	 */
+	 *//*
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		try {
@@ -470,16 +467,16 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	}
 
-	public void onClick$btnSearchTxnCCy(Event event) {
-		Object dataObject = ExtendedSearchListBox.show(this.window_JVPostingEntryDialog, "Currency");
+	public void onFulfill$txnCCy(Event event) {
+		Object dataObject = txnCCy.getObject();
 		if (dataObject instanceof String) {
 			this.txnCCy.setValue(dataObject.toString());
-			this.txnCCyName.setValue("");
+			this.txnCCy.setDescription("");
 		} else {
 			Currency details = (Currency) dataObject;
 			if (details != null) {
 				this.txnCCy.setValue(details.getCcyCode());
-				this.txnCCyName.setValue(details.getCcyCode() + "-" + details.getCcyDesc());
+				this.txnCCy.setDescription(details.getCcyDesc());
 				txnCccyFormatter = details.getCcyEditField();
 			}
 		}
@@ -497,13 +494,13 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void onClick$btnSearchaccountName(Event event) {
 		Object dataObject = ExtendedSearchListBox.show(this.window_JVPostingEntryDialog, "Accounts");
 		if (dataObject instanceof String) {
-			this.account.setValue(dataObject.toString());
+			this.account.setValue(PennantApplicationUtil.formatAccountNumber(dataObject.toString()));
 			this.accountName.setValue("");
 			this.accCcy.setValue("");
 		} else {
 			Accounts details = (Accounts) dataObject;
 			if (details != null) {
-				this.account.setValue(details.getAccountId());
+				this.account.setValue(PennantApplicationUtil.formatAccountNumber(details.getAccountId()));
 				this.accountName.setValue(details.getAcShortName());
 				this.accCcy.setValue(details.getAcCcy());
 				accCccyFormatter = details.getLovDescFinFormatter();
@@ -518,7 +515,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void calcJVPostings() {
 		try {
 			String txnCode = getTransSelected();
-			Currency baseCurrency = PennantAppUtil.getCuurencyBycode(baseCcy);
+			Currency baseCurrency = PennantAppUtil.getCurrencyBycode(baseCcy);
 			BigDecimal accRate = BigDecimal.ZERO;
 			BigDecimal txnRate = BigDecimal.ZERO;
 			this.txnAmount.setScale(txnCccyFormatter);
@@ -531,7 +528,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 				if (baseCurrency.getCcyCode().equals(StringUtils.trimToEmpty(this.accCcy.getValue()))) {
 					accRate = BigDecimal.ONE;
 				} else {
-					Currency AcCurrency = PennantAppUtil.getCuurencyBycode(StringUtils.trimToEmpty(this.accCcy.getValue()));
+					Currency AcCurrency = PennantAppUtil.getCurrencyBycode(StringUtils.trimToEmpty(this.accCcy.getValue()));
 					if (!txnCode.equals("") && AcCurrency != null) {
 						if (PennantConstants.DEBIT.equals(txnCode)) {
 							accRate = (AcCurrency.getCcyUserRateBuy());
@@ -546,7 +543,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 				if (baseCurrency.getCcyCode().equals(StringUtils.trimToEmpty(this.txnCCy.getValue()))) {
 					txnRate = (BigDecimal.ONE);
 				} else {
-					Currency txnCurrency = PennantAppUtil.getCuurencyBycode(StringUtils.trimToEmpty(this.txnCCy.getValue()));
+					Currency txnCurrency = PennantAppUtil.getCurrencyBycode(StringUtils.trimToEmpty(this.txnCCy.getValue()));
 					if (!txnCode.equals("") && txnCurrency != null) {
 						if (PennantConstants.DEBIT.equals(txnCode)) {
 							txnRate = (txnCurrency.getCcyUserRateBuy());
@@ -587,7 +584,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * Opens the Dialog window modal.
 	 * 
 	 * It checks if the dialog opens with a new or existing object and set the
@@ -595,14 +592,14 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * 
 	 * @param aJVPostingEntry
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void doShowDialog(JVPostingEntry aJVPostingEntry) throws InterruptedException {
 		logger.debug("Entering");
 
 		// if aJVPostingEntry == null then we opened the Dialog without
 		// args for a given entity, so we get a new Obj().
 		if (aJVPostingEntry == null) {
-			/** !!! DO NOT BREAK THE TIERS !!! */
+			*//** !!! DO NOT BREAK THE TIERS !!! *//*
 			// We don't create a new DomainObject() in the frontend.
 			// We GET it from the backend.
 			//aJVPostingEntry = getJVPostingEntryService().getNewJVPostingEntry();
@@ -660,9 +657,9 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Set the components to ReadOnly. <br>
-	 */
+	 *//*
 	public void doReadOnly(boolean readOnly) {
 		logger.debug("Entering");
 
@@ -670,7 +667,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		this.btnSearchaccountName.setDisabled(getUserWorkspace().isReadOnly("JVPostingEntryDialog_Account"));
 		//this.accountName.setReadonly(getUserWorkspace().isReadOnly("JVPostingEntryDialog_AccountName"));
-		this.btnSearchTxnCCy.setDisabled(getUserWorkspace().isReadOnly("JVPostingEntryDialog_TxnCCy"));
+		this.txnCCy.setReadonly(getUserWorkspace().isReadOnly("JVPostingEntryDialog_TxnCCy"));
 
 		this.txnCode.setReadonly(getUserWorkspace().isReadOnly("JVPostingEntryDialog_TxnCode"));
 		this.postingDate.setReadonly(getUserWorkspace().isReadOnly("JVPostingEntryDialog_PostingDate"));
@@ -695,14 +692,14 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
 	 * The rights are get from the spring framework users grantedAuthority(). A
 	 * right is only a string. <br>
-	 */
+	 *//*
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("JVPostingEntryDialog");
@@ -713,16 +710,16 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_JVPostingEntryDialog_btnSave"));
 		}
 
-		/* create the Button Controller. Disable not used buttons during working */
+		 create the Button Controller. Disable not used buttons during working 
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew, this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel,
 		        this.btnClose, this.btnNotes);
 
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Set the properties of the fields, like maxLength.<br>
-	 */
+	 *//*
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		//Empty sent any required attributes
@@ -730,6 +727,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.account.setMaxlength(20);
 		this.accountName.setMaxlength(50);
 		this.txnCCy.setMaxlength(3);
+        this.txnCCy.setMandatoryStyle(true);
+		this.txnCCy.setModuleName("Currency");
+		this.txnCCy.setValueColumn("CcyCode");
+		this.txnCCy.setDescColumn("CcyDesc");
+		this.txnCCy.setValidateColumns(new String[] { "CcyCode" });
 		this.postingDate.setFormat(PennantConstants.dateFormat);
 		this.valueDate.setFormat(PennantConstants.dateFormat);
 		this.txnAmount.setMaxlength(18);
@@ -763,16 +765,16 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Stores the initialinitial values to member variables. <br>
-	 */
+	 *//*
 	private void doStoreInitValues() {
 		logger.debug("Entering");
 		this.oldVar_BatchReference = this.batchReference.getValue();
-		this.oldVar_Account = this.account.getValue();
+		this.oldVar_Account = PennantApplicationUtil.unFormatAccountNumber(this.account.getValue());
 		this.oldVar_AccountName = this.accountName.getValue();
 		this.oldVar_TxnCCy = this.txnCCy.getValue();
-		this.oldVar_TxnCCyName = this.txnCCyName.getValue();
+		this.oldVar_TxnCCyName = this.txnCCy.getDescription();
 		this.oldVar_TxnCode = PennantConstants.List_Select;
 		if (this.txnCode.getSelectedItem() != null) {
 			this.oldVar_TxnCode = this.txnCode.getSelectedItem().getValue().toString();
@@ -793,16 +795,16 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Resets the initial values from member variables. <br>
-	 */
+	 *//*
 	private void doResetInitValues() {
 		logger.debug("Entering");
 		this.batchReference.setValue(this.oldVar_BatchReference);
-		this.account.setValue(this.oldVar_Account);
+		this.account.setValue(PennantApplicationUtil.formatAccountNumber(this.oldVar_Account));
 		this.accountName.setValue(this.oldVar_AccountName);
 		this.txnCCy.setValue(this.oldVar_TxnCCy);
-		this.txnCCyName.setValue(this.oldVar_TxnCCyName);
+		this.txnCCy.setDescription(this.oldVar_TxnCCyName);
 		this.postingDate.setValue(this.oldVar_PostingDate);
 		this.valueDate.setValue(this.oldVar_ValueDate);
 		this.txnAmount.setValue(new BigDecimal(this.oldVar_TxnAmount));
@@ -823,18 +825,18 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aJVPostingEntry
 	 *            JVPostingEntry
-	 */
+	 *//*
 	public void doWriteBeanToComponents(JVPostingEntry aJVPostingEntry) {
 		logger.debug("Entering");
 		this.baseCCy.setValue(this.baseCcy);
 		this.accCcy.setValue(aJVPostingEntry.getAccCCy());
 		this.batchReference.setValue(aJVPostingEntry.getBatchReference());
-		this.account.setValue(aJVPostingEntry.getAccount());
+		this.account.setValue(PennantApplicationUtil.formatAccountNumber(aJVPostingEntry.getAccount()));
 		this.accountName.setValue(aJVPostingEntry.getAccountName());
 		this.txnCCy.setValue(aJVPostingEntry.getTxnCCy());
 		fillComboBox(this.txnCode, aJVPostingEntry.getTxnCode(), listTxnCode, "");
@@ -856,9 +858,9 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.txnAmount_Ac.setValue(PennantAppUtil.formateAmount(aJVPostingEntry.getTxnAmount_Ac(), accCccyFormatter));
 		this.txnAmount_Batch.setValue(PennantAppUtil.formateAmount(aJVPostingEntry.getTxnAmount_Batch(), txnCccyFormatter));
 		if (aJVPostingEntry.isNewRecord()) {
-			this.txnCCyName.setValue("");
+			this.txnCCy.setDescription("");
 		} else {
-			this.txnCCyName.setValue(aJVPostingEntry.getTxnCCyName());
+			this.txnCCy.setDescription(aJVPostingEntry.getTxnCCyName());
 		}
 		calcJVPostings();
 		this.recordStatus.setValue(aJVPostingEntry.getRecordStatus());
@@ -866,11 +868,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aJVPostingEntry
-	 */
+	 *//*
 	public void doWriteComponentsToBean(JVPostingEntry aJVPostingEntry) {
 		logger.debug("Entering");
 		doSetLOVValidation();
@@ -885,7 +887,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		//Account
 		try {
-			aJVPostingEntry.setAccount(this.account.getValue());
+			aJVPostingEntry.setAccount(PennantApplicationUtil.unFormatAccountNumber(this.account.getValue()));
 			aJVPostingEntry.setAccCCy(this.accCcy.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -898,7 +900,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		//Txn C Cy
 		try {
-			aJVPostingEntry.setTxnCCyName(this.txnCCyName.getValue());
+			aJVPostingEntry.setTxnCCyName(this.txnCCy.getDescription());
 			aJVPostingEntry.setTxnCCy(this.txnCCy.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1021,12 +1023,12 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Checks, if data are changed since the last call of <br>
 	 * doStoreInitData() . <br>
 	 * 
 	 * @return true, if data are changed, otherwise false
-	 */
+	 *//*
 	private boolean isDataChanged() {
 		logger.debug("Entering");
 		//To clear the Error Messages
@@ -1036,7 +1038,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 			return true;
 		}
 
-		if (!StringUtils.trimToEmpty(this.oldVar_Account).equals(StringUtils.trimToEmpty(this.account.getValue()))) {
+		if (!StringUtils.trimToEmpty(this.oldVar_Account).equals(StringUtils.trimToEmpty(PennantApplicationUtil.unFormatAccountNumber(this.account.getValue())))) {
 			return true;
 		}
 
@@ -1112,14 +1114,14 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		return false;
 	}
 
-	/**
+	*//**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
-	 */
+	 *//*
 	private void doSetValidation() {
 		logger.debug("Entering");
 		//Account
 		if (!this.btnSearchaccountName.isDisabled()) {
-			this.account.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingEntryDialog_Account.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
+			this.account.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingEntryDialog_Account.value"), PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
 		//Account Name
 		if (!this.accountName.isReadonly()) {
@@ -1181,9 +1183,9 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Remove the Validation by setting empty constraints.
-	 */
+	 *//*
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 		this.batchReference.setConstraint("");
@@ -1205,35 +1207,35 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Set Validations for LOV Fields
-	 */
+	 *//*
 
 	private void doSetLOVValidation() {
 		//Txn C Cy
-		if (!btnSearchTxnCCy.isDisabled()) {
-			this.txnCCyName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_JVPostingEntryDialog_TxnCCy.value") }));
+		if (txnCCy.isButtonVisible()) {
+			this.txnCCy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_JVPostingEntryDialog_TxnCCy.value") }));
 		}
 	}
 
-	/**
+	*//**
 	 * Remove the Validation by setting empty constraints.
-	 */
+	 *//*
 
 	private void doRemoveLOVValidation() {
-		this.txnCCyName.setConstraint("");
+		this.txnCCy.setConstraint("");
 	}
 
-	/**
+	*//**
 	 * Remove Error Messages for Fields
-	 */
+	 *//*
 
 	private void doClearMessage() {
 		logger.debug("Entering");
 		this.batchReference.setErrorMessage("");
 		this.account.setErrorMessage("");
 		this.accountName.setErrorMessage("");
-		this.txnCCyName.setErrorMessage("");
+		this.txnCCy.setErrorMessage("");
 		this.txnCode.setErrorMessage("");
 		this.postingDate.setErrorMessage("");
 		this.valueDate.setErrorMessage("");
@@ -1254,7 +1256,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// +++++++++++++++++++++++++ crud operations +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * Closes the dialog window. <br>
 	 * <br>
 	 * Before closing we check if there are unsaved changes in <br>
@@ -1262,7 +1264,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * 
 	 * @throws InterruptedException
 	 * 
-	 */
+	 *//*
 	private void doClose() throws InterruptedException {
 		logger.debug("Entering");
 		boolean close = true;
@@ -1296,11 +1298,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Deletes a JVPostingEntry object from database.<br>
 	 * 
 	 * @throws InterruptedException
-	 */
+	 *//*
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
 		final JVPostingEntry aJVPostingEntry = new JVPostingEntry();
@@ -1354,9 +1356,9 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Clears the components values. <br>
-	 */
+	 *//*
 	public void doClear() {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
@@ -1365,7 +1367,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.account.setValue("");
 		this.accountName.setValue("");
 		this.txnCCy.setValue("");
-		this.txnCCyName.setValue("");
+		this.txnCCy.setDescription("");
 		this.txnCode.setSelectedIndex(0);
 		this.postingDate.setText("");
 		this.valueDate.setText("");
@@ -1382,11 +1384,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Saves the components to table. <br>
 	 * 
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
 		final JVPostingEntry aJVPostingEntry = new JVPostingEntry();
@@ -1536,23 +1538,23 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// +++++++++++++++++ WorkFlow Components+++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	/**
+	*//**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
 	 * @return
-	 */
+	 *//*
 
 	private AuditHeader getAuditHeader(JVPostingEntry aJVPostingEntry, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aJVPostingEntry.getBefImage(), aJVPostingEntry);
 		return new AuditHeader(aJVPostingEntry.getBatchReference(), null, null, null, auditDetail, aJVPostingEntry.getUserDetails(), getOverideMap());
 	}
 
-	/**
+	*//**
 	 * Display Message in Error Box
 	 * 
 	 * @param e
 	 *            (Exception)
-	 */
+	 *//*
 
 	// Check notes Entered or not
 	public void setNotes_entered(String notes) {
@@ -1609,4 +1611,4 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 	}
 
-}
+*/}

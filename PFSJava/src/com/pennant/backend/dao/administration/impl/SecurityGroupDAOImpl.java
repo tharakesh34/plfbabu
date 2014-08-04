@@ -118,7 +118,7 @@ public class SecurityGroupDAOImpl extends BasisNextidDaoImpl<SecurityGroup> impl
 	@Override
 	public SecurityGroup getSecurityGroupById(final long id, String type) {
 		logger.debug("Entering");
-		SecurityGroup securityGroup = getSecurityGroup();
+		SecurityGroup securityGroup = new SecurityGroup();
 		securityGroup.setId(id);
 
 		StringBuilder   selectSql = new StringBuilder("Select GrpID, GrpCode, GrpDesc , ");
@@ -156,8 +156,7 @@ public class SecurityGroupDAOImpl extends BasisNextidDaoImpl<SecurityGroup> impl
 
 		logger.debug("Entering ");
 
-
-		SecurityGroup securityGroup = getSecurityGroup();
+		SecurityGroup securityGroup = new SecurityGroup();
 		securityGroup.setGrpCode(grpCode);
 
 		StringBuilder selectSql = 	new StringBuilder("Select GrpID, GrpCode, GrpDesc, ");

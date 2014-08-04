@@ -65,11 +65,9 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>IdentityDetails</b>.<br>
  * 
  */
-public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails>
-		implements IdentityDetailsService {
+public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> implements IdentityDetailsService {
 
-	private static Logger logger = Logger
-			.getLogger(IdentityDetailsServiceImpl.class);
+	private static Logger logger = Logger.getLogger(IdentityDetailsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private IdentityDetailsDAO identityDetailsDAO;

@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+ *//*
 package com.pennant.backend.endofday.progressclaim;
 
 import java.lang.reflect.InvocationTargetException;
@@ -132,7 +132,7 @@ public class ProgressClaimAmountPostings implements Tasklet {
 
 				//Postings Preparation for Progress Claims
 				List<Object> returnlist = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, true,
-						false, "Y", dateAppDate, null, false);
+						false, "Y", dateAppDate, null, false,false);
 				
 				//Update Bill Retained for Progress Claim Date for particular Finance
 				FinBillingDetail detail = null;
@@ -169,12 +169,12 @@ public class ProgressClaimAmountPostings implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	/**
+	*//**
 	 * Method for preparation of Select Query To get Progress Claim data
 	 * 
 	 * @param selQuery
 	 * @return
-	 */
+	 *//*
 	private StringBuffer prepareSelectQuery(StringBuffer selQuery) {
 		
 		selQuery.append(" SELECT T1.FinReference , T3.CustId, T3.FinType, T3.FinBranch, T3.FinCcy , T3.FinAmount, T1.ProgClaimDate, " );
@@ -269,4 +269,4 @@ public class ProgressClaimAmountPostings implements Tasklet {
 		this.batchAdminDAO = batchAdminDAO;
 	}
 
-}
+}*/

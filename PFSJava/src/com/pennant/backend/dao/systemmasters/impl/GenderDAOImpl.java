@@ -121,7 +121,7 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 	@Override
 	public Gender getGenderById(final String id, String type) {
 		logger.debug("Entering");
-		Gender gender = getGender();
+		Gender gender = new Gender();
 		gender.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

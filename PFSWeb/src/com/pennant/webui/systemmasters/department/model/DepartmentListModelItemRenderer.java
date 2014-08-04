@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for list items in the list box.
  * 
@@ -63,18 +62,9 @@ public class DepartmentListModelItemRenderer implements ListitemRenderer<Departm
 
 	private static final long serialVersionUID = -6009133907143378134L;
 	
-	/**
-	 * Method to render items in the list box.
-	 * 
-	 * @param item(List item)
-	 * @param data(Object)
-	 * 
-	 * */
 	@Override
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	public void render(Listitem item, Department department, int count) throws Exception {
 		
-		//final Department department = (Department) data;
 		Listcell lc;
 	  	lc = new Listcell(department.getDeptCode());
 		lc.setParent(item);

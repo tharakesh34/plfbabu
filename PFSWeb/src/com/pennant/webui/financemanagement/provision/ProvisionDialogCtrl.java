@@ -44,7 +44,9 @@
 package com.pennant.webui.financemanagement.provision;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +61,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
@@ -70,27 +73,30 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ProvisionCalculationUtil;
+import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.finance.FinanceScheduleDetailService;
 import com.pennant.backend.service.financemanagement.ProvisionService;
-import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -112,7 +118,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	protected Window 		window_ProvisionDialog; 	// autowired
 	
-	protected Textbox 		finReference; 				// autowired
+	protected ExtendedCombobox 		finReference; 				// autowired
 	protected Textbox 		finBranch; 					// autowired
 	protected Textbox 		finType; 					// autowired
 	protected Longbox 		custID; 					// autowired
@@ -125,7 +131,11 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Decimalbox 	dueTotal; 					// autowired
 	protected Decimalbox 	nonFormulaProv;	 			// autowired
 	protected Datebox 		dueFromDate; 				// autowired
-
+	protected Decimalbox 	calProvisionedAmt; 		    // autowired
+	protected Decimalbox 	provisionedAmt; 		    // autowired
+	protected Datebox 		lastFullyPaidDate; 				// autowired
+	
+	
 	protected Label 		recordStatus; 				// autowired
 	protected Radiogroup 	userAction;
 	protected Groupbox 		groupboxWf;
@@ -147,10 +157,13 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient BigDecimal  	oldVar_nonFormulaProv;
 	private transient Date  		oldVar_dueFromDate;
 	private transient Date  		oldVar_lastFullyPaidDate;
-	private transient String oldVar_recordStatus;
+	private transient String        oldVar_recordStatus;
+	private transient BigDecimal  	oldVar_calcProvisionAmt;
+	private transient BigDecimal  	oldVar_provisionedAmt;
 
 	private transient boolean validationOn;
 	private boolean notes_Entered=false;
+	private String menuItemRightName = null;
 
 	// Button controller for the CRUD buttons
 	private transient final String btnCtroller_ClassPrefix = "button_ProvisionDialog_";
@@ -164,18 +177,13 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button btnHelp; 	// autowire
 	protected Button btnNotes; 	// autowire
 
-	protected Button btnSearchFinReference; // autowire
-
 	// ServiceDAOs / Domain Classes
 	private transient ProvisionService provisionService;
-	private transient PagedListService pagedListService;
-	private transient FinanceTypeService financeTypeService;
-	private transient ProvisionCalculationUtil provisionCalculationUtil;
+	private transient FinanceScheduleDetailService financeScheduleDetailService; 
 	
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
-	Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
-	Date appDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
-
+	private MailUtil mailUtil;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -196,14 +204,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * @throws Exception
 	 */
 	public void onCreate$window_ProvisionDialog(Event event) throws Exception {
-		logger.debug(event.toString());
-
-		/* set components visible dependent of the users rights */
-		doCheckRights();
-
-		/* create the Button Controller. Disable not used buttons during working */
-		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew,
-				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose,this.btnNotes);
+		logger.debug("Entering" + event.toString());
 
 		// get the params map that are overhanded by creation.
 		final Map<String, Object> args = getCreationArgsMap(event);
@@ -219,14 +220,24 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		} else {
 			setProvision(null);
 		}
+		
+		if (args.containsKey("menuItemRightName")) {
+			menuItemRightName = (String) args.get("menuItemRightName");
+		}
 
 		doLoadWorkFlow(this.provision.isWorkflow(),this.provision.getWorkflowId(),this.provision.getNextTaskId());
 
 		if (isWorkFlowEnabled()){
 			this.userAction	= setListRecordStatus(this.userAction);
-			getUserWorkspace().alocateRoleAuthorities(getRole(), "ProvisionDialog");
+			getUserWorkspace().alocateMenuRoleAuthorities(getRole(), "ProvisionDialog", menuItemRightName);
 		}
+		
+		/* set components visible dependent of the users rights */
+		doCheckRights();
 
+		/* create the Button Controller. Disable not used buttons during working */
+		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew,
+				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose,this.btnNotes);
 
 		// READ OVERHANDED params !
 		// we get the provisionListWindow controller. So we have access
@@ -241,7 +252,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getProvision());
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -249,8 +260,15 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering") ;
+		
 		//Empty sent any required attributes
-		this.finReference.setMaxlength(20);
+		this.finReference.setInputAllowed(false);
+		this.finReference.setDisplayStyle(3);
+        this.finReference.setMandatoryStyle(true);
+		this.finReference.setModuleName("FinanceMain");
+		this.finReference.setValueColumn("FinReference");
+		this.finReference.setDescColumn("FinType");
+		this.finReference.setValidateColumns(new String[] { "FinReference" });
 		this.finBranch.setMaxlength(8);
 		this.finType.setMaxlength(8);
 		this.custID.setMaxlength(19);
@@ -262,6 +280,8 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.dueTotal.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
 		this.nonFormulaProv.setMaxlength(18);
 		this.nonFormulaProv.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
+		this.calProvisionedAmt.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
+		this.provisionedAmt.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
 		
 		this.dueFromDate.setFormat(PennantConstants.dateFormat);
 
@@ -285,11 +305,11 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doCheckRights() {
 		logger.debug("Entering") ;
 
-		getUserWorkspace().alocateAuthorities("ProvisionDialog");
+		getUserWorkspace().alocateAuthorities("ProvisionDialog",getRole(), menuItemRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ProvisionDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ProvisionDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ProvisionDialog_btnDelete"));
+		this.btnDelete.setVisible(false);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ProvisionDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
@@ -307,21 +327,21 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * @throws Exception
 	 */
 	public void onClose$window_ProvisionDialog(Event event) throws Exception {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doClose();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
+	 * @throws Exception 
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+	public void onClick$btnSave(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -330,11 +350,11 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
 		// remember the old vars
 		doStoreInitValues();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -344,9 +364,9 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_ProvisionDialog);
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -355,9 +375,9 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * @param event
 	 */
 	public void onClick$btnNew(Event event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doNew();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -367,9 +387,9 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -378,26 +398,26 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
+	 * @throws Exception 
 	 */
-	public void onClick$btnClose(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+	public void onClick$btnClose(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
 
 		try {
 			doClose();
 		} catch (final WrongValuesException e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// GUI Process
@@ -408,11 +428,10 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * <br>
 	 * Before closing we check if there are unsaved changes in <br>
 	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
+	 * @throws Exception 
 	 * 
 	 */
-	private void doClose() throws InterruptedException {
+	private void doClose() throws Exception {
 		logger.debug("Entering");
 		boolean close=true;
 		if (isDataChanged()) {
@@ -437,7 +456,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		if(close){
-			closeDialog(this.window_ProvisionDialog, "Provision");	
+			closeDialog(this.window_ProvisionDialog, "ProvisionDialog");	
 		}
 
 		logger.debug("Leaving") ;
@@ -465,7 +484,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteBeanToComponents(Provision aProvision) {
 		logger.debug("Entering") ;
-		this.finReference.setValue(aProvision.getFinReference());
+		this.finReference.setDescription(aProvision.getFinReference());
 		this.finBranch.setValue(aProvision.getFinBranch());
 		this.finType.setValue(aProvision.getFinType());
 		this.custID.setValue(aProvision.getCustID());
@@ -481,8 +500,13 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 				add(aProvision.getProfitDue()),aProvision.getLovDescFinFormatter()));
 		this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvision.getNonFormulaProv(),
 				aProvision.getLovDescFinFormatter()));
+		this.calProvisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionAmtCal(),
+				aProvision.getLovDescFinFormatter()));
+		this.provisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionedAmt(),
+				aProvision.getLovDescFinFormatter()));
 		
 		this.dueFromDate.setValue(aProvision.getDueFromDate());
+		this.lastFullyPaidDate.setValue(aProvision.getLastFullyPaidDate());
 
 		this.recordStatus.setValue(aProvision.getRecordStatus());
 		logger.debug("Leaving");
@@ -500,7 +524,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aProvision.setFinReference(this.finReference.getValue());
+			aProvision.setFinReference(this.finReference.getDescription());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -520,6 +544,11 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
+			aProvision.setLovDescCustShrtName(this.custShrtName.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
 			aProvision.setUseNFProv(this.useNFProv.isChecked());
 		}catch (WrongValueException we ) {
 			wve.add(we);
@@ -531,38 +560,43 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		try {
 
-			if(this.useNFProv.isChecked()) {
+			if(this.useNFProv.isChecked() && !this.nonFormulaProv.isDisabled()) {
 				if(this.nonFormulaProv.getValue()==null || this.nonFormulaProv.doubleValue() < 0){
 					throw new WrongValueException(this.nonFormulaProv, Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO",
 							new String[] { Labels.getLabel("label_ProvisionDialog_ProvisionAmt.value") }));
 				} else if(this.nonFormulaProv.getValue().compareTo(this.principalDue.getValue()) > 0){
-					throw new WrongValueException(this.nonFormulaProv, Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO",
-							new String[] { Labels.getLabel("label_ProvisionDialog_ProvisionAmt.value") }));
-				} else{
-					aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(), 
-							aProvision.getLovDescFinFormatter()));
-				}
-			} else {
-				aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(), 
-						aProvision.getLovDescFinFormatter()));
-			}
+					throw new WrongValueException(this.nonFormulaProv, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+							new String[] { Labels.getLabel("label_ProvisionDialog_ProvisionAmt.value") ,String.valueOf(this.principalDue.getValue())}));
+				} 
+			} 
+			aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(), 
+					aProvision.getLovDescFinFormatter()));
+			
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		
 		try {
-			if(this.principalDue.getValue()!=null){
-				aProvision.setPrincipalDue(PennantAppUtil.unFormateAmount(this.principalDue.getValue(),
-						aProvision.getLovDescFinFormatter()));
-			}
+			aProvision.setPrincipalDue(PennantAppUtil.unFormateAmount(this.principalDue.getValue(),
+					aProvision.getLovDescFinFormatter()));
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			if(this.profitDue.getValue()!=null){
-				aProvision.setProfitDue(PennantAppUtil.unFormateAmount(this.profitDue.getValue(), 
-						aProvision.getLovDescFinFormatter()));
-			}
+			aProvision.setProfitDue(PennantAppUtil.unFormateAmount(this.profitDue.getValue(), 
+					aProvision.getLovDescFinFormatter()));
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aProvision.setProvisionAmtCal(PennantAppUtil.unFormateAmount(this.calProvisionedAmt.getValue(), 
+					aProvision.getLovDescFinFormatter()));
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aProvision.setProvisionedAmt(PennantAppUtil.unFormateAmount(this.provisionedAmt.getValue(), 
+					aProvision.getLovDescFinFormatter()));
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -573,6 +607,12 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
+			aProvision.setLastFullyPaidDate(this.lastFullyPaidDate.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			Date appDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
 			aProvision.setProvisionCalDate(appDate);
 		}catch (WrongValueException we ) {
 			wve.add(we);
@@ -662,7 +702,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doStoreInitValues() {
 		logger.debug("Entering");
-		this.oldVar_finReference = this.finReference.getValue();
+		this.oldVar_finReference = this.finReference.getDescription();
 		this.oldVar_finBranch = this.finBranch.getValue();
 		this.oldVar_finType = this.finType.getValue();
 		this.oldVar_custID = this.custID.longValue();
@@ -671,6 +711,8 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.oldVar_principalDue = this.principalDue.getValue();
 		this.oldVar_profitDue = this.profitDue.getValue();
 		this.oldVar_nonFormulaProv = this.nonFormulaProv.getValue();
+		this.oldVar_calcProvisionAmt = this.calProvisionedAmt.getValue();
+		this.oldVar_provisionedAmt = this.provisionedAmt.getValue();
 		this.oldVar_dueFromDate = this.dueFromDate.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving") ;
@@ -681,7 +723,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doResetInitValues() {
 		logger.debug("Entering");
-		this.finReference.setValue(this.oldVar_finReference);
+		this.finReference.setDescription(this.oldVar_finReference);
 		this.finBranch.setValue(this.oldVar_finBranch);
 		this.finType.setValue(this.oldVar_finType);
 		this.custID.setValue(this.oldVar_custID);
@@ -690,6 +732,8 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.principalDue.setValue(this.oldVar_principalDue);
 		this.profitDue.setValue(this.oldVar_profitDue);
 		this.nonFormulaProv.setValue(this.oldVar_nonFormulaProv);
+		this.calProvisionedAmt.setValue(this.oldVar_calcProvisionAmt);
+		this.provisionedAmt.setValue(this.oldVar_provisionedAmt);
 		this.dueFromDate.setValue(this.oldVar_dueFromDate);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -711,7 +755,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//To clear the Error Messages
 		doClearMessage();
 		
-		if (this.oldVar_finReference != this.finReference.getValue()) {
+		if (this.oldVar_finReference != this.finReference.getDescription()) {
 			return true;
 		}
 		if (this.oldVar_finBranch != this.finBranch.getValue()) {
@@ -738,6 +782,13 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if(this.oldVar_nonFormulaProv != this.nonFormulaProv.getValue()) {
 			return true;
 		}
+		if (this.oldVar_calcProvisionAmt != this.calProvisionedAmt.getValue()) {
+			return true;
+		}
+		if(this.oldVar_provisionedAmt != this.provisionedAmt.getValue()) {
+			return true;
+		}
+		
 		String old_dueFromDate = "";
 		String new_dueFromDate ="";
 		if (this.oldVar_dueFromDate!=null){
@@ -768,7 +819,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.finReference.isReadonly()){
+		if (this.finReference.isButtonVisible()){
 			this.finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[]{Labels.getLabel("label_ProvisionDialog_FinReference.value")}));
 		}	
@@ -788,7 +839,10 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.principalDue.setConstraint("");
 		this.profitDue.setConstraint("");
 		this.nonFormulaProv.setConstraint("");
+		this.calProvisionedAmt.setConstraint("");
+		this.provisionedAmt.setConstraint("");
 		this.dueFromDate.setConstraint("");
+		
 		logger.debug("Leaving");
 	}
 
@@ -872,19 +926,21 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 
 		if (getProvision().isNewRecord()){
-			this.btnSearchFinReference.setVisible(true);
+			this.finReference.setReadonly(false);
 		}else{
-			this.btnSearchFinReference.setVisible(false);
+			this.finReference.setReadonly(true);
 		}
 
-		this.finReference.setReadonly(true);
 		this.finBranch.setReadonly(true);
 		this.finType.setReadonly(true);
 		this.custID.setReadonly(true);
-		this.useNFProv.setDisabled(false);
-		this.autoReleaseNFP.setDisabled(false);
+		this.useNFProv.setDisabled(isReadOnly("ProvisionDialog_useNFProv"));
+		this.autoReleaseNFP.setDisabled(isReadOnly("ProvisionDialog_autoReleaseNFP"));
+		this.nonFormulaProv.setDisabled(isReadOnly("ProvisionDialog_nonFormulaProv"));
 		this.principalDue.setDisabled(true);
 		this.profitDue.setDisabled(true);
+		this.calProvisionedAmt.setDisabled(true);
+		this.provisionedAmt.setDisabled(true);
 		this.dueFromDate.setDisabled(true);
 		
 		if (isWorkFlowEnabled()){
@@ -911,7 +967,8 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchFinReference.setDisabled(true);
+		
+		this.finReference.setReadonly(true);
 		this.finBranch.setReadonly(true);
 		this.finType.setReadonly(true);
 		this.nonFormulaProv.setReadonly(true);
@@ -920,6 +977,8 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.autoReleaseNFP.setDisabled(true);
 		this.principalDue.setReadonly(true);
 		this.profitDue.setReadonly(true);
+		this.calProvisionedAmt.setReadonly(true);
+		this.provisionedAmt.setReadonly(true);
 		this.dueFromDate.setDisabled(true);
 
 		if(isWorkFlowEnabled()){
@@ -951,17 +1010,19 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.autoReleaseNFP.setChecked(false);
 		this.principalDue.setValue("");
 		this.profitDue.setValue("");
+		this.calProvisionedAmt.setValue("");
+		this.provisionedAmt.setValue("");
 		this.dueFromDate.setText("");
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
+	 * @throws Exception 
 	 */
-	public void doSave() throws InterruptedException {
+	public void doSave() throws Exception {
 		logger.debug("Entering");
+		
 		final Provision aProvision = new Provision();
 		BeanUtils.copyProperties(getProvision(), aProvision);
 
@@ -969,64 +1030,287 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// force validation, if on, than execute by component.getValue()
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		doSetValidation();
+		
 		// fill the Provision object with the components data
 		doWriteComponentsToBean(aProvision);
 		
-		//Check Finance is RIA Finance Type or Not
-		boolean isRIAFinance = getFinanceTypeService().checkRIAFinance(this.finType.getValue());
-		
-		boolean isProvRelated = true;
-		if(aProvision.isNewRecord()){
-			isProvRelated = false;
+		// Write the additional validations as per below example
+		String tranType = "";
+		boolean isNew = aProvision.isNewRecord();
+		if (isWorkFlowEnabled()) {
+
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.trimToEmpty(aProvision.getRecordType()).equals("")) {
+				aProvision.setVersion(aProvision.getVersion() + 1);
+				if (isNew) {
+					aProvision.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aProvision.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aProvision.setNewRecord(true);
+				}
+			}
+
+		} else {
+			aProvision.setVersion(aProvision.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
 		}
-		
+		// save it to database
 		try {
-			getProvisionCalculationUtil().processProvCalculations(aProvision, dateValueDate, isProvRelated, true, isRIAFinance);
-			refreshList();
-			closeDialog(this.window_ProvisionDialog, "ProvisionDialog");
-		} catch (final DataAccessException de) {
-			logger.error(de);
-			showMessage(de);
-		} catch (final Exception e) {
+			if (doProcess(aProvision, tranType)) {
+
+				refreshList();
+
+				//Customer Notification for Role Identification
+				if(StringUtils.trimToEmpty(aProvision.getNextTaskId()).equals("")){
+					aProvision.setNextRoleCode("");
+				}
+				String msg = PennantApplicationUtil.getSavingStatus(aProvision.getRoleCode(),aProvision.getNextRoleCode(), 
+						aProvision.getFinReference(), " Provision ", aProvision.getRecordStatus());
+				Clients.showNotification(msg,  "info", null, null, -1);
+
+				//Mail Alert Notification for User
+				if(!StringUtils.trimToEmpty(aProvision.getNextTaskId()).equals("") && 
+						!StringUtils.trimToEmpty(aProvision.getNextRoleCode()).equals(aProvision.getRoleCode())){
+					getMailUtil().sendMail(PennantConstants.MAIL_MODULE_PROVISION,aProvision,this);
+				}
+
+				closeDialog(this.window_ProvisionDialog, "ProvisionDialog");
+			} 
+
+		} catch (final DataAccessException e) {
 			logger.error(e);
-			showMessage(e);
+			showErrorMessage(this.window_ProvisionDialog, e);
 		}
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnSearchFinReference(Event event){
-		FinanceMain financeMain= (FinanceMain) ExtendedSearchListBox.show(this.window_ProvisionDialog,"FinanceMain");
-		if (financeMain!= null) {
-			this.finReference.setValue(financeMain.getFinReference());
-			this.finType.setValue(financeMain.getFinType());
-			this.finBranch.setValue(financeMain.getFinBranch());
-			this.custID.setValue(financeMain.getCustID());
-			this.custShrtName.setValue(financeMain.getLovDescCustShrtName());
-			this.lovDescCustCIF.setValue(financeMain.getLovDescCustCIF());
-			getProvision().setLovDescFinFormatter(financeMain.getLovDescFinFormatter());
-			doSetFieldProperties();
-		}else{
-			this.finReference.setValue("");
+	/**
+	 * Method for Processing Finance Detail Object for Database Operation
+	 * @param afinanceMain
+	 * @param tranType
+	 * @return
+	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws AccountNotFoundException 
+	 */
+	private boolean doProcess(Provision aProvision, String tranType) throws InterruptedException, AccountNotFoundException, IllegalAccessException, InvocationTargetException {
+		logger.debug("Entering");
+
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aProvision.setLastMntBy(getUserWorkspace().getLoginUserDetails().getLoginUsrID());
+		aProvision.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aProvision.setUserDetails(getUserWorkspace().getLoginUserDetails());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getWorkFlow().getTaskId(getRole());
+			String nextTaskId = "";
+			aProvision.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aProvision.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getWorkFlow().getNextTaskIds(taskId, aProvision);
+				}
+
+				if (PennantConstants.WF_Audit_Notes.equals(getWorkFlow().getAuditingReq(taskId, aProvision))) {
+					try {
+						if (!isNotes_Entered()) {
+							PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
+							return false;
+						}
+					} catch (InterruptedException e) {
+						logger.error(e);
+						e.printStackTrace();
+					}
+				}
+			}
+			if (!StringUtils.trimToEmpty(nextTaskId).equals("")) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode + ",";
+						}
+						nextRoleCode = getWorkFlow().getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getWorkFlow().getTaskOwner(nextTaskId);
+				}
+			}
+
+			aProvision.setTaskId(taskId);
+			aProvision.setNextTaskId(nextTaskId);
+			aProvision.setRoleCode(getRole());
+			aProvision.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aProvision, tranType);
+			String operationRefs = getWorkFlow().getOperationRefs(taskId, aProvision);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aProvision, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aProvision, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * 
+	 * @param auditHeader
+	 * @param method
+	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws AccountNotFoundException 
+	 */
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		Provision aProvision = (Provision) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+			while (retValue == PennantConstants.porcessOVERIDE) {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getProvisionService().delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = getProvisionService().saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getProvisionService().doApprove(auditHeader);
+
+						if (aProvision.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getProvisionService().doReject(auditHeader);
+
+						if (aProvision.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
+						}
+
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetails(
+								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_ProvisionDialog, auditHeader);
+						return processCompleted;
+					}
+				}
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_ProvisionDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
+			}
+
+			setOverideMap(auditHeader.getOverideMap());
+		} catch (InterruptedException e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		logger.debug("Leaving");
+		return processCompleted;
+		
+	}
+	
+	public void onFulfill$finReference(Event event){
+		logger.debug("Entering" + event.toString());
+		
+		Object dataObject= finReference.getObject();
+		if (dataObject instanceof String) {
+			this.finReference.setDescription("");
 			this.finType.setValue("");
 			this.finBranch.setValue("");
 			this.custID.setText("");
 			this.custShrtName.setValue("");
 			this.lovDescCustCIF.setValue("");
+		}else{
+			FinanceMain financeMain = (FinanceMain)dataObject;
+			if(financeMain != null){
+				this.finReference.setDescription(financeMain.getFinReference());
+				this.finType.setValue(financeMain.getFinType());
+				this.finBranch.setValue(financeMain.getFinBranch());
+				this.custID.setValue(financeMain.getCustID());
+				this.custShrtName.setValue(financeMain.getLovDescCustShrtName());
+				this.lovDescCustCIF.setValue(financeMain.getLovDescCustCIF());
+				getProvision().setLovDescFinFormatter(financeMain.getLovDescFinFormatter());
+				doSetFieldProperties();
+				OverdueChargeRecovery odcharges = getFinanceScheduleDetailService().getOverdueChargeRecovery(StringUtils.trim(financeMain.getFinReference()));
+				// getFinanceScheduleDetailService();
+				this.principalDue.setValue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPriDue(), financeMain.getLovDescFinFormatter()));
 
+				this.profitDue.setValue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPftDue(), financeMain.getLovDescFinFormatter()));
+				this.dueTotal.setValue(this.principalDue.getValue().add(this.profitDue.getValue()));
+				this.dueFromDate.setValue(new Date());
+				
+				//Last Fully Paid Date Details
+				FinanceProfitDetail detail = getProvisionService().getProfitDetailById(financeMain.getFinReference());
+				this.lastFullyPaidDate.setValue(detail.getFullPaidDate());
+				if(this.lastFullyPaidDate.getValue() == null){
+					this.lastFullyPaidDate.setValue(financeMain.getFinStartDate());
+				}
+			}
 		}
+		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onCheck$useNFProv(Event event) {
-		logger.debug("Entering");
+		logger.debug("Entering" + event.toString());
 		this.nonFormulaProv.setValue(BigDecimal.ZERO);
 		checkNFProv();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 	
 	private void checkNFProv(){
-		this.nonFormulaProv.setReadonly(false);
 		if(this.useNFProv.isChecked()) {
-			this.nonFormulaProv.setDisabled(false);
+			this.nonFormulaProv.setDisabled(isReadOnly("ProvisionDialog_nonFormulaProv"));
 		} else {
 			this.nonFormulaProv.setDisabled(true);
 		}
@@ -1068,21 +1352,12 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return this.provisionListCtrl;
 	}
 
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
-
-
-	@SuppressWarnings("unused")
 	private AuditHeader getAuditHeader(Provision aProvision, String tranType){
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aProvision.getBefImage(), aProvision);   
 		return new AuditHeader(aProvision.getFinReference(),null,null,null,auditDetail,aProvision.getUserDetails(),getOverideMap());
 	}
 
+	@SuppressWarnings("unused")
 	private void showMessage(Exception e){
 		AuditHeader auditHeader= new AuditHeader();
 		try {
@@ -1099,14 +1374,6 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void setNotes_Entered(boolean notes_Entered) {
 		this.notes_Entered = notes_Entered;
-	}
-
-	public ProvisionCalculationUtil getProvisionCalculationUtil() {
-		return provisionCalculationUtil;
-	}
-	public void setProvisionCalculationUtil(
-			ProvisionCalculationUtil provisionCalculationUtil) {
-		this.provisionCalculationUtil = provisionCalculationUtil;
 	}
 
 	public void onClick$btnNotes(Event event) throws Exception {
@@ -1158,6 +1425,8 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.custID.setErrorMessage("");
 		this.principalDue.setErrorMessage("");
 		this.profitDue.setErrorMessage("");
+		this.calProvisionedAmt.setErrorMessage("");
+		this.provisionedAmt.setErrorMessage("");
 		this.dueFromDate.setErrorMessage("");
 		this.nonFormulaProv.setErrorMessage("");
 		logger.debug("Leaving");
@@ -1179,12 +1448,21 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
 		return overideMap;
 	}
-
-	public FinanceTypeService getFinanceTypeService() {
-		return financeTypeService;
+	
+	public FinanceScheduleDetailService getFinanceScheduleDetailService() {
+		return financeScheduleDetailService;
 	}
-	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
-		this.financeTypeService = financeTypeService;
+
+	public void setFinanceScheduleDetailService(
+			FinanceScheduleDetailService financeScheduleDetailService) {
+		this.financeScheduleDetailService = financeScheduleDetailService;
 	}
 	
+	public MailUtil getMailUtil() {
+		return mailUtil;
+	}
+	public void setMailUtil(MailUtil mailUtil) {
+		this.mailUtil = mailUtil;
+	}
+
 }

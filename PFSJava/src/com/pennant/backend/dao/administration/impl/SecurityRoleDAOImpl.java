@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.administration.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -117,7 +119,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 	@Override
 	public SecurityRole getSecurityRoleById(final long id, String type) {
 		logger.debug("Entering");
-		SecurityRole secRoles = getSecurityRole();
+		SecurityRole secRoles = new SecurityRole();
 		secRoles.setId(id);
 		secRoles.setId(id);
 		
@@ -158,7 +160,7 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 	@Override
 	public SecurityRole getSecurityRoleByRoleCd(final String roleCd, String type) {
 		logger.debug("Entering");
-		SecurityRole secRoles = getSecurityRole();
+		SecurityRole secRoles = new SecurityRole();
 		secRoles.setRoleCd(roleCd);
 
 		StringBuilder   selectSql = new StringBuilder  ("Select RoleID, RoleApp, " );
@@ -344,5 +346,33 @@ public class SecurityRoleDAOImpl extends BasisNextidDaoImpl<SecurityRole> implem
 				errorId, parms[0],parms[1]), userLanguage);
 	}
 
-	
+	/**
+	 * Fetch the Record SecurityRole details by key field
+	 * 
+	 * @param roleCode (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return SecurityRole
+	 */
+	@Override
+	public List<SecurityRole> getApprovedSecurityRole() {
+		logger.debug("Entering");
+		String type = "_View"; //AView
+		SecurityRole secRoles = getSecurityRole();
+
+		StringBuilder   selectSql = new StringBuilder  ("Select RoleID, RoleApp, RoleCd, RoleDesc, RoleCategory" );
+		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(" ,lovDescRoleAppName ");	
+		}
+		selectSql.append(" From SecRoles_View"); //SecRoles_AView
+
+		logger.debug("selectSql:" + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
+		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		logger.debug("Leaving");
+
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
 }

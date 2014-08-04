@@ -73,6 +73,7 @@ import com.pennant.search.SearchResult;
  * 
  * 
  */
+@SuppressWarnings("rawtypes")
 public class PagedGridWrapper<E> extends ListModelList implements Serializable {
 
 	private static final long serialVersionUID = -7399727307122148637L;
@@ -108,6 +109,7 @@ public class PagedGridWrapper<E> extends ListModelList implements Serializable {
 		grid.setModel(this);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initModel() {
 		getSearchObject().setFirstResult(0);
 		getSearchObject().setMaxResults(getPageSize());
@@ -127,6 +129,7 @@ public class PagedGridWrapper<E> extends ListModelList implements Serializable {
 	 * @param start
 	 *            Row to start. <br>
 	 */
+	@SuppressWarnings("unchecked")
 	void refreshModel(int start) {
 		getSearchObject().setFirstResult(start);
 		getSearchObject().setMaxResults(getPageSize());
@@ -162,7 +165,7 @@ public class PagedGridWrapper<E> extends ListModelList implements Serializable {
 	 * Calls the method for refreshing the data with the new rowStart and
 	 * pageSize. <br>
 	 */
-	public final class OnPagingEventListener implements EventListener {
+	public final class OnPagingEventListener implements EventListener<Event> {
 		@Override
 		public void onEvent(Event event) throws Exception {
 

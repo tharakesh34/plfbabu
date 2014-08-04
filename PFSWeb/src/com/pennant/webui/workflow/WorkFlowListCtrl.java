@@ -57,7 +57,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
 import com.pennant.UserWorkspace;
@@ -92,7 +91,6 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> implement
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window window_workFlowList; 				// autowired
-	protected Panel panel_workFlowList; 				// autowired
 	protected Borderlayout borderLayout_workFlowList; 	// autowired
 	protected Paging pagingWorkFlowList; 				// autowired
 	
@@ -114,7 +112,6 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> implement
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<WorkFlowDetails> searchObj;
 	// row count for listbox
-	private int countRows;
 	/**
 	 * default constructor.<br>
 	 */
@@ -320,11 +317,5 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> implement
 		this.workFlowDetailsService = workFlowDetailsService;
 	}
 
-	public int getCountRows() {
-		return countRows;
-	}
-	public void setCountRows(int countRows) {
-		this.countRows = countRows;
-	}
 	
 }

@@ -49,6 +49,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
@@ -110,7 +112,8 @@ public class Workflow {
 
 	private enum UserTask {
 		OWNER("potentialOwner/resourceAssignmentExpression/formalExpression"), SCOPE(
-				"extensionElements/onEntry-script/script/scope=");
+				"extensionElements/onEntry-script/script/scope="), SHOW_TABS(
+				"extensionElements/onEntry-script/script/show_tabs");
 
 		private String element;
 
@@ -201,6 +204,47 @@ public class Workflow {
 				if (StringUtils.startsWith(value, elements[3])) {
 					result = StringUtils.substring(value, elements[3].length());
 					break;
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public String getTaskTabs(String taskId) {
+		return getTaskTabs(getElementById(taskId));
+	}
+
+	@SuppressWarnings("unchecked")
+	public String getTaskTabs(OMElement task) {
+		String[] elements = UserTask.SHOW_TABS.getElement().split("/");
+
+		OMElement element = getElement(task, elements[0]);
+
+		if (null == element) {
+			return "";
+		}
+
+		Iterator<OMElement> iterator = element.getChildElements();
+		String result = "";
+		String value = "";
+
+		while (iterator.hasNext()) {
+			element = iterator.next();
+
+			if (elements[1].equalsIgnoreCase(element.getLocalName())) {
+				value = getElementContent(element, elements[2],
+						Namespace.DROOLS.getUri());
+
+				String[] actions = value.split("\\|");
+
+				for (String action : actions) {
+					String[] pair = action.split("=");
+
+					if (elements[3].equals(pair[0])) {
+						result = pair[1];
+						break;
+					}
 				}
 			}
 		}
@@ -715,7 +759,14 @@ public class Workflow {
 	private static final String pbpmPackage = "PFS";
 
 	public static String getPbpmUrl() {
-		return pbpmUrl;
+		String ipAddress[] = new String[2];
+		try {
+			 ipAddress = InetAddress.getLocalHost().toString().split("/");
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			return pbpmUrl;
+		}
+	     return "http://"+ipAddress[1]+":8081/designer/editor?profile=pbpm";
 	}
 
 	public static String getPbpmRepository() {

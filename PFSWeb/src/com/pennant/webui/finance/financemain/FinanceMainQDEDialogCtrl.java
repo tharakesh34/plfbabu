@@ -45,6 +45,7 @@ package com.pennant.webui.finance.financemain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,7 +85,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.model.CustomerCalData;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PennantReferenceIDUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -94,7 +94,6 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -799,7 +798,21 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescCustFName(StringUtils.trimToEmpty(aCustomer.getCustFName()));
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescCustLName(StringUtils.trimToEmpty(aCustomer.getCustLName()));
 		// Set Customer Data to check the eligibility
-		setCustomerEligibilityData(aCustomer);
+		
+		//Current Finance Monthly Installment Calculation
+		BigDecimal totalRepayAmount = getFinanceDetail().getFinScheduleData().getFinanceMain().getTotalRepayAmt();
+		int installmentMnts = DateUtility.getMonthsBetween(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate(),
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), true);
+		
+		BigDecimal curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
+		int months = DateUtility.getMonthsBetween(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate(), 
+				financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate());
+		
+		getFinanceDetail().setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(aCustomer,"",
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(), curFinRepayAmt,
+				months, financeDetail.getFinScheduleData().getFinanceMain().getFinAmount(),
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getCustDSR()));
+		
 		// Set Customer Data to Calculate the Score
 		//setCustomerScoringData(aCustomer);
 		// Execute Eligibility Rule and Display Result
@@ -1542,6 +1555,8 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 		overriddenRuleCount = 0;
 		finMinElgAmt = null;
 		finMinOvrElgAmt = null;
+		String finccy = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy();
+		
 		if (financeReferenceDetail != null) {
 			this.financeElgreferenceTab.setVisible(false);
 			for (int i = 0; i < financeReferenceDetail.size(); i++) {
@@ -1573,7 +1588,7 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 					BigDecimal originalVal = null;
 					if (execute) {
 						lc = new Listcell();
-						originalVal =  getElgResult(finrefdet).getLovDescRuleResult();
+						originalVal =  getElgResult(finrefdet, finccy).getLovDescRuleResult();
 						if(originalVal != null) {
 							if(finMinElgAmt == null) {
 								finMinElgAmt = originalVal;
@@ -1717,17 +1732,13 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * @param financeReferenceDetail
 	 * @return String
 	 */
-	private FinanceReferenceDetail getElgResult(FinanceReferenceDetail financeReferenceDetail) {
+	private FinanceReferenceDetail getElgResult(FinanceReferenceDetail financeReferenceDetail, String finccy) {
 		logger.debug("Entering ");
 		try {
-			getFinanceDetail().getCustomerEligibilityCheck().setReqFinAmount(this.finAmount.getValue());
-			getFinanceDetail().getCustomerEligibilityCheck().setReqFinAssetVal(new BigDecimal(1000000));
-			//getFinanceDetail().getCustomerEligibilityCheck().setReqPftRate(this.repayEffectiveRate.getValue());
-			getFinanceDetail().getCustomerEligibilityCheck().setReqTerms(this.numberOfTerms.intValue());
 			getFinanceDetail().getCustomerEligibilityCheck().setCustTotalIncome(
 					getCustomerIncomeService().getTotalIncomeByCustomer(this.custID.longValue()));
 			String result = getRuleExecutionUtil().executeRule(financeReferenceDetail.getLovDescElgRuleValue(), 
-					getFinanceDetail().getCustomerEligibilityCheck(),SystemParameterDetails.getGlobaVariableList()).toString();
+					getFinanceDetail().getCustomerEligibilityCheck(),SystemParameterDetails.getGlobaVariableList(), finccy).toString();
 			if(new BigDecimal(result).compareTo(new BigDecimal(-1))==0 && !financeReferenceDetail.isOverRide()){
 				setEligible(false);
 			}
@@ -1822,48 +1833,9 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method to prepare customer eligibilty check data .<br>
-	 * @param customer
-	 */
-	private void setCustomerEligibilityData(Customer customer) {
-		logger.debug("Entering");
-		CustomerEligibilityCheck custElgCheck = new CustomerEligibilityCheck();
-		if (this.finType.getValue() != null) {
-			custElgCheck.setReqFinType(this.finType.getValue());
-		}
-		if (this.finStartDate.getValue() != null) {
-			custElgCheck.setReqFinStartDate(this.finStartDate.getValue());
-		}
-		if (this.finAmount.getValue() != null) {
-			custElgCheck.setReqFinAmount(this.finAmount.getValue());
-		}
-		if (this.numberOfTerms.getValue() != null) {
-			custElgCheck.setReqTerms(this.numberOfTerms.getValue());
-		}
-		if (this.finCcy.getValue() != null) {
-			custElgCheck.setReqFinccy(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy());
-		}
-		custElgCheck.setReqProduct(getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName());
-		custElgCheck.setReqCampaign("");
-		// Customer Data
-		BeanUtils.copyProperties(customer, custElgCheck);
-		// Set Calculated values for Eligibility BY customer
-		CustomerCalData calData = new CustomerCalData();
-		calData.setCustCIF(custElgCheck.getCustCIF());
-		calData.setFinType(this.finType.getValue());
-		calData.setCustID(customer.getCustID());
-		getFinanceDetailService().getCalculatedData(calData, "_AView");		
-		BeanUtils.copyProperties(calData, custElgCheck);
-		custElgCheck.setCustAge(DateUtility.getYearsBetween(customer.getCustDOB(), DateUtility.today()));
-		getFinanceDetail().setCustomerEligibilityCheck(custElgCheck);
-		logger.debug("Leaving");
-	}
-
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
-
 	public RuleExecutionUtil getRuleExecutionUtil() {
 		return ruleExecutionUtil;
 	}

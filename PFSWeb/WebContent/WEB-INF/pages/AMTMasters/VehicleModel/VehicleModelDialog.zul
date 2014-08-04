@@ -81,7 +81,7 @@
 									<textbox id="lovDescManufacter"
 										readonly="true" width="150px" />
 									<button
-										label="${c:l('btnSearch.label')}" id="btnSearchManufacter"
+										id="btnSearchManufacter"
 										image="/images/icons/LOVSearch.png" height="24px" />
 								</hbox>
 							</row>

@@ -117,7 +117,7 @@ public class LovFieldCodeDAOImpl extends BasisCodeDAO<LovFieldCode> implements L
 	@Override
 	public LovFieldCode getLovFieldCodeById(final String id, String type) {
 		logger.debug("Entering");
-		LovFieldCode lovFieldCode = getLovFieldCode();
+		LovFieldCode lovFieldCode = new LovFieldCode();
 		lovFieldCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

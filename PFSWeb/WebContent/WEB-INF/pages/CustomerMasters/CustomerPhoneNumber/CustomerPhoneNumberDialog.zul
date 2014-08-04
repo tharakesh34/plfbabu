@@ -15,7 +15,7 @@
 			<north>
 				<div sclass="z-toolbar">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-						width="100%" widths="35%,30%,35%">
+						width="100%" widths="30%,35%,30%">
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
@@ -92,39 +92,15 @@
 								<label
 									id="label_CustomerPhoneNumberDialog_PhoneTypeCode"
 									value="${c:l('label_CustomerPhoneNumberDialog_PhoneTypeCode.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="phoneTypeCode"
-										width="72px" visible="false" />
-									<textbox id="phoneTypeCodeDesc"
-										width="72px" visible="false" />
-									<textbox
-										id="lovDescPhoneTypeCodeName" width="250px" readonly="true" />
-									<button id="btnSearchPhoneTypeCode"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="phoneTypeCode"/>
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label
 									id="label_CustomerPhoneNumberDialog_PhoneCountryCode"
 									value="${c:l('label_CustomerPhoneNumberDialog_PhoneCountryCode.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="phoneCountryCode"
-										maxlength="2" width="72px" visible="false" />
-									<textbox id="phoneCountryDesc"
-										width="72px" visible="false" />
-									<textbox
-										id="lovDescPhoneCountryName" style="overflow: hidden;"
-										width="250px" readonly="true" />
-									<button
-										id="btnSearchCustPhoneCountryCode"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="phoneCountryCode"/>
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label
 									id="label_CustomerPhoneNumberDialog_PhoneAreaCode"
 									value="${c:l('label_CustomerPhoneNumberDialog_PhoneAreaCode.value')}" />
@@ -153,7 +129,7 @@
 
 			</center>
 
-			<south sclass="south-dialog">
+			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />
 					<hbox width="75%">

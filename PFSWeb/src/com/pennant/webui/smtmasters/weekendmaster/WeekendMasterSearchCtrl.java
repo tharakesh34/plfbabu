@@ -152,17 +152,17 @@ Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_weekendCode.setModel(new ListModelList(
+		this.sortOperator_weekendCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_weekendCode
 		.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_weekendDesc.setModel(new ListModelList(
+		this.sortOperator_weekendDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_weekendDesc
 		.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_weekend.setModel(new ListModelList(
+		this.sortOperator_weekend.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_weekend
 		.setItemRenderer(new SearchOperatorListModelItemRenderer());

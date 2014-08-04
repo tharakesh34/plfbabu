@@ -56,6 +56,7 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.diarynotes.DiaryNotes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 
@@ -72,7 +73,7 @@ public class DiaryNotesListModelItemRenderer implements ListitemRenderer<DiaryNo
 
 		//final DiaryNotes diaryNotes = (DiaryNotes) data;
 		Listcell lc;
-		lc = new Listcell(PennantAppUtil.getlabelDesc(diaryNotes.getDnType(),PennantAppUtil.getNotesType()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(diaryNotes.getDnType(),PennantStaticListUtil.getNotesType()));
 	  	lc.setParent(item);
 	  	lc = new Listcell(diaryNotes.getDnCreatedNo());
 		lc.setParent(item);

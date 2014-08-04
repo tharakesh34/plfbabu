@@ -53,26 +53,63 @@
 			<north border="none" />
 
 			<center border="none">
-
-				<listbox id="listBoxExtendedFieldDetail" vflex="true"
+<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true" style="border:0px">
+						<columns>
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_ExtendedFieldDetailSearch_ModuleName"
+									value="${c:l('label_ExtendedFieldDetailSearch_ModuleName.value')}" />
+								<listbox id="sortOperator_moduleName"
+									width="43px" mold="select" rows="1" />
+								<textbox id="moduleName" width="250px"
+									maxlength="50" />
+								<label
+									id="label_ExtendedFieldDetailSearch_SubModuleName"
+									value="${c:l('label_ExtendedFieldDetailSearch_SubModuleName.value')}" />
+								<listbox id="sortOperator_subModuleName"
+									width="43px" mold="select" rows="1" />
+								<textbox id="subModuleName"
+									width="250px" maxlength="50" />
+							</row>
+							<row>
+								<label id="label_ExtendedFieldDetailSearch_RecordStatus" value="${c:l('label_ExtendedFieldDetailSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+								<label id="label_ExtendedFieldDetailSearch_RecordType" value="${c:l('label_ExtendedFieldDetailSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+							</row>
+						</rows>
+					</grid>
+				<listbox id="listBoxExtendedFieldDetail" fixedLayout="true" vflex="true" span="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 					height="100%" multiple="false">
 					<listhead sizable="true">
 						<listheader id="listheader_FieldName"
 							label="${c:l('listheader_ModuleName.label')}" sort="auto"
-							width="30%" />
+							hflex="min" />
 						<listheader id="listheader_FieldType"
 							label="${c:l('listheader_SubModuleName.label')}" sort="auto"
-							width="50%" />
+							hflex="min" />
 						<listheader id="listheader_RecordStatus"
 							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_RecordType"
 							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 					</listhead>
 				</listbox>
-				
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingExtendedFieldDetailList"

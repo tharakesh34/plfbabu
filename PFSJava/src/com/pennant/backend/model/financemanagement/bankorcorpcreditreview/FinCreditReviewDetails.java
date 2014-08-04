@@ -9,7 +9,9 @@ import java.util.List;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
+import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 
 public class FinCreditReviewDetails implements java.io.Serializable,Entity {
 
@@ -20,7 +22,7 @@ public class FinCreditReviewDetails implements java.io.Serializable,Entity {
 	private String auditYear;
 	private String bankName;
 	private String auditors;
-	private boolean consolOrUnConsol;
+    private boolean consolidated;
 	private String location;	
 	private BigDecimal conversionRate;
 	private Date auditedDate;
@@ -28,10 +30,14 @@ public class FinCreditReviewDetails implements java.io.Serializable,Entity {
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private boolean newRecord = false;
+	private int lovDescCcyEditField;
 	private String lovValue;
 	private FinCreditReviewDetails befImage;
 	private LoginUserDetails userDetails;
 	private List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries =new ArrayList<FinCreditReviewSummary>();
+	private List<FinCreditRevSubCategory> lovDescFinCreditRevSubCategory =new ArrayList<FinCreditRevSubCategory>();
+	private List<CustomerDocument> customerDocumentList =new ArrayList<CustomerDocument>();
+	
 	private String recordStatus;
 	private String roleCode = "";
 	private String nextRoleCode = "";
@@ -44,8 +50,17 @@ public class FinCreditReviewDetails implements java.io.Serializable,Entity {
 	private String lovDescCustCIF;
 	private String lovDescCustCtgCode;
 	private String lovDescCustShrtName;
-	private int 	noOfShares;
+	private long 	noOfShares;
 	private BigDecimal marketPrice;
+	private int auditPeriod;
+	private String auditType;
+	private boolean qualified;
+	private String currency;
+	private String lovDescMaxAuditYear;
+	private String lovDescMinAuditYear;
+	
+	
+	private List<Notes> notesList;
 	
 	public String getLovDescCustCIF() {
     	return lovDescCustCIF;
@@ -110,12 +125,7 @@ public class FinCreditReviewDetails implements java.io.Serializable,Entity {
 	public void setAuditors(String auditors) {
     	this.auditors = auditors;
     }
-	public boolean isConsolOrUnConsol() {
-    	return consolOrUnConsol;
-    }
-	public void setConsolOrUnConsol(boolean consolOrUnConsol) {
-    	this.consolOrUnConsol = consolOrUnConsol;
-    }
+	
 	public String getLocation() {
     	return location;
     }
@@ -256,6 +266,23 @@ public class FinCreditReviewDetails implements java.io.Serializable,Entity {
 	public void setCreditReviewSummaryEntries(List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries) {
 	    this.lovDescCreditReviewSummaryEntries = lovDescCreditReviewSummaryEntries;
     }
+	public List<FinCreditRevSubCategory> getLovDescFinCreditRevSubCategory() {
+    	return lovDescFinCreditRevSubCategory;
+    }
+
+	public void setLovDescFinCreditRevSubCategory(
+            List<FinCreditRevSubCategory> lovDescFinCreditRevSubCategory) {
+    	this.lovDescFinCreditRevSubCategory = lovDescFinCreditRevSubCategory;
+    }
+
+	public void setCustomerDocumentList(List<CustomerDocument> customerDocumentList) {
+	    this.customerDocumentList = customerDocumentList;
+    }
+
+	public List<CustomerDocument> getCustomerDocumentList() {
+	    return customerDocumentList;
+    }
+
 	public List<FinCreditReviewSummary> getCreditReviewSummaryEntries() {
 	    return lovDescCreditReviewSummaryEntries;
     }
@@ -280,11 +307,11 @@ public class FinCreditReviewDetails implements java.io.Serializable,Entity {
 	    
     }
 
-	public void setNoOfShares(int noOfShares) {
+	public void setNoOfShares(long noOfShares) {
 	    this.noOfShares = noOfShares;
     }
 
-	public int getNoOfShares() {
+	public long getNoOfShares() {
 	    return noOfShares;
     }
 
@@ -294,6 +321,85 @@ public class FinCreditReviewDetails implements java.io.Serializable,Entity {
 
 	public BigDecimal getMarketPrice() {
 	    return marketPrice;
+    }
+
+	public void setAuditPeriod(int auditPeriod) {
+	    this.auditPeriod = auditPeriod;
+    }
+
+	public int getAuditPeriod() {
+	    return auditPeriod;
+    }
+
+	public String getAuditType() {
+    	return auditType;
+    }
+
+	public void setAuditType(String auditType) {
+    	this.auditType = auditType;
+    }
+
+	public List<Notes> getNotesList() {
+    	return notesList;
+    }
+
+	public void setNotesList(List<Notes> notesList) {
+    	this.notesList = notesList;
+    }
+	
+	public boolean isConsolidated() {
+	    return consolidated;
+    }
+
+	public void setConsolidated(boolean consolidated) {
+	    this.consolidated = consolidated;
+    }
+
+	public String getCurrency() {
+	    return currency;
+    }
+
+	public void setCurrency(String currency) {
+	    this.currency = currency;
+    }
+
+	public boolean isQualified() {
+	    return qualified;
+    }
+
+	public int getLovDescCcyEditField() {
+    	return lovDescCcyEditField;
+    }
+
+	public void setLovDescCcyEditField(int lovDescCcyEditField) {
+    	this.lovDescCcyEditField = lovDescCcyEditField;
+    }
+
+	public List<FinCreditReviewSummary> getLovDescCreditReviewSummaryEntries() {
+    	return lovDescCreditReviewSummaryEntries;
+    }
+
+	public void setLovDescCreditReviewSummaryEntries(
+            List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries) {
+    	this.lovDescCreditReviewSummaryEntries = lovDescCreditReviewSummaryEntries;
+    }
+
+	public void setQualified(boolean qualified) {
+	    this.qualified = qualified;
+    }
+
+	public String getLovDescMaxAuditYear() {
+    	return lovDescMaxAuditYear;
+    }
+	public void setLovDescMaxAuditYear(String lovDescMaxAuditYear) {
+    	this.lovDescMaxAuditYear = lovDescMaxAuditYear;
+    }
+
+	public String getLovDescMinAuditYear() {
+    	return lovDescMinAuditYear;
+    }
+	public void setLovDescMinAuditYear(String lovDescMinAuditYear) {
+    	this.lovDescMinAuditYear = lovDescMinAuditYear;
     }
 
 }

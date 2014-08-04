@@ -118,7 +118,7 @@ public class PenaltyCodeDAOImpl extends BasisCodeDAO<PenaltyCode> implements Pen
 	@Override
 	public PenaltyCode getPenaltyCodeById(final String id, String type) {
 		logger.debug("Entering");
-		PenaltyCode penaltyCode = getPenaltyCode();
+		PenaltyCode penaltyCode = new PenaltyCode();
 		penaltyCode.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select PenaltyType, PenaltyDesc, PenaltyIsActive,");

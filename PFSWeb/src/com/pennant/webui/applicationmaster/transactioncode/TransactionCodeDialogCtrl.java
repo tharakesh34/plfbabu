@@ -80,8 +80,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -148,7 +151,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
 	
-	private List<ValueLabel> listTranType=PennantAppUtil.getTranType(); // autoWired
+	private List<ValueLabel> listTranType=PennantStaticListUtil.getTranType(); // autoWired
 
 	/**
 	 * default constructor.<br>
@@ -421,6 +424,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving") ;
 	}
 
@@ -438,7 +442,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.tranIsActive.setChecked(aTransactionCode.isTranIsActive());
 		this.recordStatus.setValue(aTransactionCode.getRecordStatus());
 		
-		if(aTransactionCode.isNew() || aTransactionCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aTransactionCode.isNew() || (aTransactionCode.getRecordType() != null ? aTransactionCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.tranIsActive.setChecked(true);
 			this.tranIsActive.setDisabled(true);
 		}
@@ -634,13 +638,12 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 		setValidationOn(true);
 		
 		if (!this.tranCode.isReadonly()){
-			this.tranCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_TransactionCodeDialog_TranCode.value")}));
-		}	
+			this.tranCode.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionCodeDialog_TranCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
+		}
 		if (!this.tranDesc.isReadonly()){
-			this.tranDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_TransactionCodeDialog_TranDesc.value")}));
-		}	
+			this.tranDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionCodeDialog_TranDesc.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 		if (!this.tranType.isDisabled()){
 			this.tranType.setConstraint(new StaticListValidator(listTranType,
 					Labels.getLabel("label_TransactionCodeDialog_TranType.value")));
@@ -801,7 +804,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 			}
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		
 		logger.debug("Leaving");

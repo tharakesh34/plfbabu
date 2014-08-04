@@ -89,16 +89,7 @@
 								<label
 									id="label_CustomerAddresDialog_CustAddrType"
 									value="${c:l('label_CustomerAddresDialog_CustAddrType.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="custAddrType"
-										width="72px" visible="false" readonly="true" />
-									<textbox
-										id="lovDescCustAddrTypeName" width="200px" readonly="true" />
-									<button id="btnSearchCustAddrType"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="custAddrType"/>
 							</row>
 							<row>
 								<label
@@ -157,8 +148,7 @@
 									id="label_CustomerAddresDialog_CustPOBox"
 									value="${c:l('label_CustomerAddresDialog_CustPOBox.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px"  />
 									<textbox id="custPOBox"
 										maxlength="8" width="72px" />
 								</hbox>
@@ -167,57 +157,26 @@
 								<label
 									id="label_CustomerAddresDialog_CustAddrCountry"
 									value="${c:l('label_CustomerAddresDialog_CustAddrCountry.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="custAddrCountry"
-										width="18px" visible="false" readonly="true" />
-									<textbox
-										id="lovDescCustAddrCountryName" width="200px" readonly="true" />
-									<button
-										id="btnSearchCustAddrCountry"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="custAddrCountry"/>
 							</row>
 							<row>
 								<label
 									id="label_CustomerAddresDialog_CustAddrProvince"
 									value="${c:l('label_CustomerAddresDialog_CustAddrProvince.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="custAddrProvince"
-										width="72px" visible="false" readonly="true" />
-									<textbox
-										id="lovDescCustAddrProvinceName" width="200px"
-										readonly="true" />
-									<button
-										id="btnSearchCustAddrProvince"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="custAddrProvince"/>
 							</row>
 							<row>
 								<label
 									id="label_CustomerAddresDialog_CustAddrCity"
 									value="${c:l('label_CustomerAddresDialog_CustAddrCity.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="custAddrCity"
-										width="72px" visible="false" readonly="true" />
-									<textbox
-										id="lovDescCustAddrCityName" width="200px" readonly="true" />
-									<button id="btnSearchCustAddrCity"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="custAddrCity"/>
 							</row>
 							<row>
 								<label
 									id="label_CustomerAddresDialog_CustAddrZIP"
 									value="${c:l('label_CustomerAddresDialog_CustAddrZIP.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px" />
 									<textbox id="custAddrZIP"
 										maxlength="50" width="250px" />
 								</hbox>
@@ -227,8 +186,7 @@
 									id="label_CustomerAddresDialog_CustAddrPhone"
 									value="${c:l('label_CustomerAddresDialog_CustAddrPhone.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px"  />
 									<textbox id="custAddrPhone"
 										maxlength="50" width="250px" />
 								</hbox>
@@ -237,7 +195,7 @@
 					</grid>
 				</groupbox>
 			</center>
-			<south sclass="south-dialog">
+			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />
 					<hbox width="75%">

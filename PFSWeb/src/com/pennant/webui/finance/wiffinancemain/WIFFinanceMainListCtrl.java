@@ -76,8 +76,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.finance.wiffinancemain.model.WIFFinanceMainListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -113,6 +113,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	protected Listheader listheader_StartDate; 				// autowired
 	protected Listheader listheader_GraceEndDate; 			// autowired
 	protected Listheader listheader_MaturityDate; 			// autowired
+	protected Listheader listheader_RecordStatus; 			// autowired
 
 	// checkRights
 	protected Button btnHelp; 												// autowired
@@ -127,7 +128,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	private transient WorkFlowDetails workFlowDetails=null;
 	
 	private Textbox loanType;//Field for Maintain Different Finance Product Types
-	
+	private boolean isFacilityWIF = false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -136,12 +137,13 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	}
 
 	public void onCreate$window_WIFFinanceMainList(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug("Entering" + event.toString());
 		
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("WIFFinanceMain");
 		boolean wfAvailable=true;
-		
-		if (moduleMapping.getWorkflowType()!=null){
+		isFacilityWIF = StringUtils.trimToEmpty(this.loanType.getValue()).equals(PennantConstants.FIN_DIVISION_FACILITY);
+
+		if (isFacilityWIF && moduleMapping.getWorkflowType() != null){
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("WIFFinanceMain");
 			
 			if (workFlowDetails==null){
@@ -183,11 +185,25 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 		this.listheader_MaturityDate.setSortAscending(new FieldComparator("maturityDate", true));
 		this.listheader_MaturityDate.setSortDescending(new FieldComparator("maturityDate", false));
 		
+		if(isFacilityWIF){
+			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
+			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
+		}
+		
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class,getListRows());
 		this.searchObj.addSort("FinReference", false);
-		if(!StringUtils.trimToEmpty(this.loanType.getValue()).equals("")){
-			this.searchObj.addFilter(new Filter("lovDescProductCodeName", this.loanType.getValue().trim(), Filter.OP_EQUAL));
+		if(StringUtils.trimToEmpty(this.loanType.getValue()).equals(PennantConstants.FIN_DIVISION_RETAIL)){
+			this.searchObj.addFilter(new Filter("LovDescFinDivisionName", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL));
+		}else if(StringUtils.trimToEmpty(this.loanType.getValue()).equals(PennantConstants.FIN_DIVISION_FACILITY)){
+			this.searchObj.addFilter(new Filter("LovDescFinDivisionName", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_NOT_EQUAL));
+		}else if(StringUtils.trimToEmpty(this.loanType.getValue()).equals(PennantConstants.FIN_DIVISION_COMMERCIAL)){
+			this.searchObj.addFilter(new Filter("LovDescFinDivisionName", PennantConstants.FIN_DIVISION_COMMERCIAL, Filter.OP_EQUAL));
+		}
+		if(isFacilityWIF){
+			this.searchObj.addFilter(Filter.isNotNull("FacilityType"));
+		}else{
+			this.searchObj.addFilter(Filter.isNull("FacilityType"));
 		}
 		
 		// Workflow
@@ -216,7 +232,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 			// set the itemRenderer
 			this.listBoxWIFFinanceMain.setItemRenderer(new WIFFinanceMainListModelItemRenderer());
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -240,16 +256,24 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	 */
 	
 	public void onWIFFinanceMainItemDoubleClicked(Event event) throws Exception {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 
 		// get the selected WIFFinanceMain object
 		final Listitem item = this.listBoxWIFFinanceMain.getSelectedItem();
 
 		if (item != null) {
+			
+			boolean reqCustDetails = false;
+			if(!this.loanType.getValue().equals("") && !this.loanType.getValue().equals(PennantConstants.FIN_DIVISION_COMMERCIAL)){
+				reqCustDetails = true;
+			}
+			
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aWIFFinanceMain = (FinanceMain) item.getAttribute("data");
-			final FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailById(aWIFFinanceMain.getId(),true, "");
-			
+			final FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailById(aWIFFinanceMain.getId(),true, "",reqCustDetails);
+			if(!isFacilityWIF){
+				financeDetail.getFinScheduleData().getFinanceMain().setWorkflowId(0);
+			}
 			if(financeDetail==null){
 				String[] errParm= new String[1];
 				String[] valueParm= new String[1];
@@ -283,9 +307,11 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	public void onClick$button_WIFFinanceMainList_NewWIFFinanceMain(Event event) throws Exception {
 		logger.debug("Entering" +event.toString());
 		// create a new WIFFinanceMain object, We GET it from the backend.
-		final FinanceDetail aFinanceDetail = getFinanceDetailService().getNewFinanceDetail(false);
+		final FinanceDetail aFinanceDetail = getFinanceDetailService().getNewFinanceDetail(true);
 		aFinanceDetail.setNewRecord(true);
-
+		if(!isFacilityWIF){
+			aFinanceDetail.getFinScheduleData().getFinanceMain().setWorkflowId(0);
+		}
 		/*
 		 * we can call our SelectFinanceType ZUL-file with parameters. So we can
 		 * call them with a object of the selected FinanceMain. For handed over
@@ -338,10 +364,19 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 		 * dialog when we do a delete, edit or insert a WIFFinanceMain.
 		 */
 		map.put("wIFFinanceMainListCtrl", this);
+		map.put("loanType", this.loanType.getValue());
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/WIFFinanceMain/WIFFinanceMainDialog.zul",null,map);
+			
+			String productType = this.loanType.getValue();
+
+			if(!productType.equals(PennantConstants.FIN_DIVISION_RETAIL)){
+				productType = "";
+			}else{
+				productType = (productType.substring(0, 1)).toUpperCase()+(productType.substring(1)).toLowerCase();
+			}
+			Executions.createComponents("/WEB-INF/pages/Finance/WIFFinanceMain/"+productType+"WIFFinanceMainDialog.zul",null,map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -356,9 +391,9 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_WIFFinanceMainList);
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -370,11 +405,11 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		this.pagingWIFFinanceMainList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_WIFFinanceMainList, event);
 		this.window_WIFFinanceMainList.invalidate();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/*
@@ -382,8 +417,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	 */
 	
 	public void onClick$button_WIFFinanceMainList_WIFFinanceMainSearchDialog(Event event) throws Exception {
-		logger.debug("Entering");
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		/*
 		 * we can call our WIFFinanceMainDialog zul-file with parameters. So we can
 		 * call them with a object of the selected WIFFinanceMain. For handed over
@@ -393,6 +427,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("wIFFinanceMainCtrl", this);
 		map.put("searchObject", this.searchObj);
+		map.put("loanType", this.loanType.getValue());
 
 		// call the zul-file with the parameters packed in a map
 		try {
@@ -401,7 +436,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -411,16 +446,18 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	 * @throws InterruptedException
 	 */
 	public void onClick$button_WIFFinanceMainList_PrintList(Event event) throws InterruptedException {
-		logger.debug("Entering");
-		logger.debug(event.toString());
-		PTReportUtils.getReport("WIFFinanceMain", getSearchObj());
-		logger.debug("Leaving");
+		logger.debug("Entering" + event.toString());
+		new PTListReportUtils("WIFFinanceMain", getSearchObj(),this.pagingWIFFinanceMainList.getTotalSize()+1);
+		logger.debug("Leaving" + event.toString());
 	}
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 	public JdbcSearchObject<FinanceMain> getSearchObj() {
 		return this.searchObj;
 	}
-
 	public void setSearchObj(JdbcSearchObject<FinanceMain> so) {
 		this.searchObj = so;
 	}
@@ -428,7 +465,6 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
-
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}

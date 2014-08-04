@@ -43,6 +43,9 @@
 
 package com.pennant.backend.service.rmtmasters;
 
+import java.util.List;
+
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.AccountType;
 
@@ -61,5 +64,5 @@ public interface AccountTypeService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-
+	List<ValueLabel> getAccountTypeDesc(List<String> acTypeList);
 }

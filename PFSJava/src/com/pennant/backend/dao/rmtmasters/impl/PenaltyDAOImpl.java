@@ -120,7 +120,7 @@ public class PenaltyDAOImpl extends BasisCodeDAO<Penalty> implements PenaltyDAO 
 	@Override
 	public Penalty getPenaltyById(final String id, String type) {
 		logger.debug("Entering");
-		Penalty penalty = getPenalty();
+		Penalty penalty = new Penalty();
 		penalty.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("SELECT PenaltyType, PenaltyEffDate," );

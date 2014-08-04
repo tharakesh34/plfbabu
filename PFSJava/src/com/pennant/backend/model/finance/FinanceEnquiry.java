@@ -74,15 +74,19 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private long custID;
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
-	private BigDecimal finAmount = new BigDecimal(0);
-	private BigDecimal finRepaymentAmount = new BigDecimal(0);
+	private BigDecimal finAmount =BigDecimal.ZERO;
+	private BigDecimal feeChargeAmt =BigDecimal.ZERO;
+	private BigDecimal finRepaymentAmount =BigDecimal.ZERO;
 	private Date grcPeriodEndDate;
 	private Date maturityDate;
 	private int lovDescFinFormatter;
-	private BigDecimal currentFinAmount = new BigDecimal(0);
+	private BigDecimal currentFinAmount =BigDecimal.ZERO;
 	private int noOfDays;
 	private Date nextDueDate;
-	private BigDecimal nextDueAmount = new BigDecimal(0);
+	private BigDecimal nextDueAmount =BigDecimal.ZERO;
+	private String closingStatus;
+	private String custTypeCtg;
+	private String assetCode;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -233,6 +237,13 @@ public class FinanceEnquiry implements java.io.Serializable {
     	this.finAmount = finAmount;
     }
 	
+	public BigDecimal getFeeChargeAmt() {
+    	return feeChargeAmt;
+    }
+	public void setFeeChargeAmt(BigDecimal feeChargeAmt) {
+    	this.feeChargeAmt = feeChargeAmt;
+    }
+	
 	public BigDecimal getFinRepaymentAmount() {
     	return finRepaymentAmount;
     }
@@ -260,28 +271,55 @@ public class FinanceEnquiry implements java.io.Serializable {
 	public void setLovDescFinFormatter(int lovDescFinFormatter) {
     	this.lovDescFinFormatter = lovDescFinFormatter;
     }
+	
 	public BigDecimal getCurrentFinAmount() {
     	return currentFinAmount;
     }
 	public void setCurrentFinAmount(BigDecimal currentFinAmount) {
     	this.currentFinAmount = currentFinAmount;
     }
+	
 	public int getNoOfDays() {
     	return noOfDays;
     }
 	public void setNoOfDays(int noOfDays) {
     	this.noOfDays = noOfDays;
     }
+	
 	public Date getNextDueDate() {
     	return nextDueDate;
     }
 	public void setNextDueDate(Date nextDueDate) {
     	this.nextDueDate = nextDueDate;
     }
+	
 	public BigDecimal getNextDueAmount() {
     	return nextDueAmount;
     }
 	public void setNextDueAmount(BigDecimal nextDueAmount) {
     	this.nextDueAmount = nextDueAmount;
     }
+	
+	public void setClosingStatus(String closingStatus) {
+	    this.closingStatus = closingStatus;
+    }
+	public String getClosingStatus() {
+	    return closingStatus;
+    }
+	
+	public String getCustTypeCtg() {
+    	return custTypeCtg;
+    }
+	public void setCustTypeCtg(String custTypeCtg) {
+    	this.custTypeCtg = custTypeCtg;
+    }
+	public void setAssetCode(String assetCode) {
+	    this.assetCode = assetCode;
+    }
+	public String getAssetCode() {
+	    return assetCode;
+    }
+	
+	
+	
 }

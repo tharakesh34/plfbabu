@@ -23,6 +23,8 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRuleConstants;
+import com.pennant.webui.customermasters.fincreditrevsubcategory.FinCreditRevSubCategoryDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 
@@ -54,6 +56,8 @@ public class RuleResultViewCtrl extends GFCBaseCtrl implements Serializable {
 	String[] Variables ={};
 	String Values;
 	protected RuleResultDialogCtrl ruleResultDialogCtrl;  
+	protected NotificationsRuleResultDialogCtrl notificationsRuleResultDialogCtrl;  
+	protected FinCreditRevSubCategoryDialogCtrl finCreditRevSubCategoryDialogCtrl;
 
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -71,66 +75,94 @@ public class RuleResultViewCtrl extends GFCBaseCtrl implements Serializable {
 	public void onCreate$window_RuleResultValues(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final Map<String, Object> args = getCreationArgsMap(event);
+		try {
+			final Map<String, Object> args = getCreationArgsMap(event);
 
-		// READ OVERHANDED params !
-		if (args.containsKey("Variables")) {
-			this.Variables = (String[]) args.get("Variables");
-		}
-		// READ OVERHANDED params !
-		if (args.containsKey("ruleResultDialogCtrl")) {
-			this.ruleResultDialogCtrl = (RuleResultDialogCtrl) args.get("ruleResultDialogCtrl");
-		}
-		String unKnwVar = "Math,round,pow,sqrt";
-		Label label;
-		Row row ;
-		for(int i=0;i< Variables.length;i++){
-			if(!unKnwVar.contains(Variables[i])){
-				row = new Row();
-				label = new Label(Variables[i]);	
-				row.appendChild(label);
-				label = new Label(":");
-				row.appendChild(label);
-				decimalbox = new Decimalbox();
-				decimalbox.setWidth("160px");
-				decimalbox.setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
-				decimalbox.setMaxlength(15);
-				decimalbox.setFormat(PennantConstants.rateFormate9);
-				decimalbox.setId(Variables[i].trim());
-				row.appendChild(decimalbox);
-				row.setParent(rows_ruleValues);
+			// READ OVERHANDED params !
+			if (args.containsKey("Variables")) {
+				this.Variables = (String[]) args.get("Variables");
 			}
-		}
-		if(rows_ruleValues.getVisibleItemCount() == 0){
-			
-			// create a script engine manager
-			ScriptEngineManager factory = new ScriptEngineManager();
-			// create a JavaScript engine
-			ScriptEngine engine = factory.getEngineByName("JavaScript");
-			// evaluate JavaScript code from String
+			// READ OVERHANDED params !
+			if (args.containsKey("ruleResultDialogCtrl")) {
+				this.ruleResultDialogCtrl = (RuleResultDialogCtrl) args.get("ruleResultDialogCtrl");
+			}
+			if (args.containsKey("notificationsRuleResultDialogCtrl")) {
+				this.notificationsRuleResultDialogCtrl = (NotificationsRuleResultDialogCtrl) args.get("notificationsRuleResultDialogCtrl");
+			}
+			// READ OVERHANDED params !
+			if (args.containsKey("finCreditRevSubCategoryDialogCtrl")) {
+				this.finCreditRevSubCategoryDialogCtrl = (FinCreditRevSubCategoryDialogCtrl) args.get("finCreditRevSubCategoryDialogCtrl");
+			}
 
-			// Execute the engine
-			String rule="function Rule(){Result = "+ this.ruleResultDialogCtrl.formula.getValue() +"}Rule();";
-			BigDecimal tempResult=new BigDecimal("0");		
-			String result="0";		
-
-			if (engine.eval(rule)!=null) {
-				tempResult=new BigDecimal(engine.eval(rule).toString());
-				result = tempResult.toString();
-			}else{
-				if(engine.get("Result")!=null){
-					result=engine.get("Result").toString();
-					tempResult=new BigDecimal(result);
-					tempResult = tempResult.setScale(2,RoundingMode.UP);
-					result = tempResult.toString();
+			String unKnwVar = "Math,round,pow,sqrt";
+			Label label;
+			Row row ;
+			 String amountRuleFormula="";
+			if(this.ruleResultDialogCtrl != null){
+			      amountRuleFormula = this.ruleResultDialogCtrl.formula.getValue().trim();
+			   } else if(this.finCreditRevSubCategoryDialogCtrl != null){
+				   amountRuleFormula = this.finCreditRevSubCategoryDialogCtrl.formula.getValue().trim();
+			    }else if(this.notificationsRuleResultDialogCtrl != null){
+					   amountRuleFormula = this.notificationsRuleResultDialogCtrl.formula.getValue().trim();
 				}
-			}	
-			this.btn_Stimulate.setVisible(false);
-			// make result row visible and set value
-			this.result_row.setVisible(true);
-			this.result_label.setValue(result.toString());
+			for(int i=0;i< Variables.length;i++){
+				if(!unKnwVar.contains(Variables[i]) && !Variables[i].startsWith(PennantRuleConstants.RULEFIELD_CCY)){
+					row = new Row();
+					label = new Label(Variables[i]);	
+					row.appendChild(label);
+					label = new Label(":");
+					row.appendChild(label);
+					decimalbox = new Decimalbox();
+					decimalbox.setWidth("160px");
+					decimalbox.setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
+					decimalbox.setMaxlength(15);
+					decimalbox.setFormat(PennantConstants.rateFormate9);
+					decimalbox.setId(Variables[i].trim());
+					row.appendChild(decimalbox);
+					row.setParent(rows_ruleValues);
+				}else if(Variables[i].startsWith(PennantRuleConstants.RULEFIELD_CCY)){
+					String ruleField = Variables[i];
+					String ruleValue = String.valueOf(Integer.parseInt(ruleField.replace(
+							PennantRuleConstants.RULEFIELD_CCY, ""))*PennantRuleConstants.RULEFIELD_CCY_AMT);
+					amountRuleFormula = amountRuleFormula.replace(ruleField, ruleValue);
+				}
+			}
+
+			if(rows_ruleValues.getVisibleItemCount() == 0){
+
+				// create a script engine manager
+				ScriptEngineManager factory = new ScriptEngineManager();
+				// create a JavaScript engine
+				ScriptEngine engine = factory.getEngineByName("JavaScript");
+				// evaluate JavaScript code from String
+
+				// Execute the engine
+				String rule="function Rule(){Result = "+ amountRuleFormula +"}Rule();";
+				BigDecimal tempResult=new BigDecimal("0");		
+				String result="0";		
+
+				if (engine.eval(rule)!=null) {
+					tempResult=new BigDecimal(engine.eval(rule).toString());
+					result = tempResult.toString();
+				}else{
+					if(engine.get("Result")!=null){
+						result=engine.get("Result").toString();
+						tempResult=new BigDecimal(result);
+						tempResult = tempResult.setScale(2,RoundingMode.UP);
+						result = tempResult.toString();
+					}
+				}	
+				this.btn_Stimulate.setVisible(false);
+				// make result row visible and set value
+				this.result_row.setVisible(true);
+				this.result_label.setValue(result.toString());
+			}
+			this.window_RuleResultValues.doModal(); // open the dialog in
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			this.window_RuleResultValues.onClose();
 		}
-		this.window_RuleResultValues.doModal(); // open the dialog in
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -199,7 +231,16 @@ public class RuleResultViewCtrl extends GFCBaseCtrl implements Serializable {
 			this.result_row.setVisible(false);
 
 			// Execute the engine
-			String rule="function Rule(){ Result = "+ this.ruleResultDialogCtrl.formula.getValue() +"}Rule();";
+			String rule = null;
+			if(this.ruleResultDialogCtrl != null){
+			 rule="function Rule(){ Result = "+ this.ruleResultDialogCtrl.formula.getValue() +"}Rule();";
+			}
+			if (this.finCreditRevSubCategoryDialogCtrl != null){
+			 rule="function Rule(){ Result = "+ this.finCreditRevSubCategoryDialogCtrl.formula.getValue() +"}Rule();";
+			}
+			if (this.notificationsRuleResultDialogCtrl != null){
+				rule="function Rule(){ Result = "+ this.notificationsRuleResultDialogCtrl.formula.getValue() +"}Rule();";
+			}
 			BigDecimal tempResult=new BigDecimal("0");		
 			String result="0";		
 

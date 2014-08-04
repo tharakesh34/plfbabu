@@ -10,10 +10,15 @@ public class CustomerLimit implements Serializable {
 	private String custMnemonic;
 	private String custName;
 	private String custLocation;
+	private String custGrpCode;
+	private String custGrpDesc;
+	private String custCountry;
+	private String custCountryDesc;
 	private String limitCountry;
 	private String limitCategory;
 	private String limitCategoryDesc;
-	private String limitCurrency;
+	private String limitCurrency; 
+	private int    limitCcyEdit; 
 	
 	private Date limitExpiry;
 	private BigDecimal limitAmount;
@@ -28,6 +33,7 @@ public class CustomerLimit implements Serializable {
 	private String groupLimit;
 	private String errorId;
 	private String errorMsg;
+	private String remarks;
 
 	public String getCustMnemonic() {
 		return custMnemonic;
@@ -171,6 +177,54 @@ public class CustomerLimit implements Serializable {
 
 	public void setSeqNum(String seqNum) {
 		this.seqNum = seqNum;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setLimitCcyEdit(int limitCcyEdit) {
+		this.limitCcyEdit = limitCcyEdit;
+	}
+
+	public int getLimitCcyEdit() {
+		return limitCcyEdit;
+	}
+
+	public String getCustGrpCode() {
+		return custGrpCode;
+	}
+
+	public void setCustGrpCode(String custGrpCode) {
+		this.custGrpCode = custGrpCode;
+	}
+
+	public String getCustGrpDesc() {
+		return custGrpDesc;
+	}
+
+	public void setCustGrpDesc(String custGrpDesc) {
+		this.custGrpDesc = custGrpDesc;
+	}
+
+	public String getCustCountry() {
+		return custCountry;
+	}
+
+	public void setCustCountry(String custCountry) {
+		this.custCountry = custCountry;
+	}
+
+	public String getCustCountryDesc() {
+		return custCountryDesc;
+	}
+
+	public void setCustCountryDesc(String custCountryDesc) {
+		this.custCountryDesc = custCountryDesc;
 	}
 	
 	

@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,7 +77,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -423,6 +424,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -447,7 +449,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		}
 		this.recordStatus.setValue(aRelationshipOfficer.getRecordStatus());
 		
-		if(aRelationshipOfficer.isNew() || aRelationshipOfficer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aRelationshipOfficer.isNew() || (aRelationshipOfficer.getRecordType() != null ? aRelationshipOfficer.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.rOfficerIsActive.setChecked(true);
 			this.rOfficerIsActive.setDisabled(true);
 		}
@@ -627,15 +629,12 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		setValidationOn(true);
 
 		if (!this.rOfficerCode.isReadonly()){
-			this.rOfficerCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_RelationshipOfficerDialog_ROfficerCode.value")})));
+			this.rOfficerCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.rOfficerDesc.isReadonly()){
-			this.rOfficerDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_RelationshipOfficerDialog_ROfficerDesc.value")})));
+			this.rOfficerDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDesc.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -656,8 +655,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescROfficerDeptCodeName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDeptCode.value") }));
+		this.lovDescROfficerDeptCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDeptCode.value"), null, true));
 	}
 
 	/**
@@ -784,7 +782,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		// remember the old variables
 		doStoreInitValues();

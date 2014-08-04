@@ -62,4 +62,5 @@ public interface CustomerEMailDAO {
 	public long save(CustomerEMail customerEMail,String type);
 	public void initialize(CustomerEMail customerEMail);
 	public void refresh(CustomerEMail entity);
+	public List<String> getCustEmailsByCustId(long custId);
 }

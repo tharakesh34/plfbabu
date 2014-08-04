@@ -62,11 +62,10 @@ public class EmpStsCodeListModelItemRenderer implements ListitemRenderer<EmpStsC
 		Serializable {
 
 	private static final long serialVersionUID = 6423359151100839127L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, EmpStsCode empStsCode, int count) throws Exception {
 		
-		//final EmpStsCode empStsCode = (EmpStsCode) data;
 		Listcell lc;
 		lc = new Listcell(empStsCode.getEmpStsCode());
 		lc.setParent(item);

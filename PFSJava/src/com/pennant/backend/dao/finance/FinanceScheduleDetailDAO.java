@@ -48,7 +48,9 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.PaymentDetails;
+import com.pennant.backend.model.finance.ScheduleMapDetails;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 
 public interface FinanceScheduleDetailDAO {
@@ -57,19 +59,17 @@ public interface FinanceScheduleDetailDAO {
 	public FinanceScheduleDetail getNewFinanceScheduleDetail(boolean isWIF);
 	public FinanceScheduleDetail getFinanceScheduleDetailById(String id,Date schdDate,String type,boolean isWIF);
 	public void update(FinanceScheduleDetail financeScheduleDetail,String type,boolean isWIF);
-	public void deleteByFinReference(String id,String type,boolean isWIF);
+	public void deleteByFinReference(String id,String type,boolean isWIF, long logKey);
 	public String save(FinanceScheduleDetail financeScheduleDetail,String type,boolean isWIF);
 	public void initialize(FinanceScheduleDetail financeScheduleDetail);
 	public void refresh(FinanceScheduleDetail entity);
+	public List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type,boolean isWIF, long logKey);	
 	public List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type,boolean isWIF);	
 	public void delete(FinanceScheduleDetail financeScheduleDetail,String type,boolean isWIF);	
 	public int getFrqDfrCount(String finReference,String schdDate );
 	public void deleteFromWork(String finReference,long userId);
 	public PaymentDetails getPaymentDetails(String finReference,Date date,String type);
-	public List<FinanceScheduleDetail> getRepaySchdByFinRef(String finReference, String type,boolean paid);
 	public void maintainWorkSchedules(String finReference, long userId, List<FinanceScheduleDetail> financeScheduleDetails);
-	public List<FinanceScheduleDetail> getRepayQueueDetails(String finType, Date date, String type);
-	public List<String> getRateRvwSchd(String baseRate,String splRate, String type);
 	public void updateList(List<FinanceScheduleDetail> financeScheduleDetail, String type);
 	public void saveList(List<FinanceScheduleDetail> financeScheduleDetail,String type, boolean isWIF);
 	public OverdueChargeRecovery getODCRecoveryDetails(OverdueChargeRecovery ocr);
@@ -78,4 +78,10 @@ public interface FinanceScheduleDetailDAO {
 	public BigDecimal getTotalRepayAmount(String finReference);
 	public BigDecimal getTotalUnpaidPriAmount(String finReference);
 	public BigDecimal getTotalUnpaidPftAmount(String finReference);
+	public FinanceWriteoff getWriteoffTotals(String finReference);
+	public List<FinanceScheduleDetail> getFinSchdDetailsForBatch(String finReference);
+	public FinanceScheduleDetail getFinSchdDetailForRpy(String finReference, Date rpyDate, String finRpyFor);
+	public void updateForRpy(FinanceScheduleDetail financeScheduleDetail, String rpyFor);
+	public Date getFirstRepayDate(String finReference);
+	public List<ScheduleMapDetails> getFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate, Date schdTodate);
 }

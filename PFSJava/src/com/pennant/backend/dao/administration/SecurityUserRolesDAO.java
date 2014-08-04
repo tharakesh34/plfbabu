@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2011 - Pennant Technologies
  * 
@@ -39,7 +40,9 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
+
+
 
 package com.pennant.backend.dao.administration;
 
@@ -50,21 +53,30 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserRoles;
 
 public interface  SecurityUserRolesDAO {
-	
+
 	public SecurityUserRoles getSecurityUserRoles();
-
-	public List<SecurityUserRoles> getSecUserRolesByUsrID(SecurityUser secUser);
-
-	public void delete(SecurityUserRoles securityUserRoles);
-
-	public void save(SecurityUserRoles securityUserRoles);
-
-	public int getRoleIdCount(long RoleId);
-
-	public List<SecurityRole> getRolesByUserId(long userId, boolean assigned);
-
-	public SecurityUserRoles getUserRolesByUsrAndRoleIds(long userId, long RoleId);
-
+	
+	public List<SecurityUserRoles> getSecUserRolesByUsrID(SecurityUser secUser,String type);
+	
+	public void delete(SecurityUserRoles securityUserRoles,String type);
+	
+	public void deleteById(final long usrID,String type);
+	
+	public long save(SecurityUserRoles securityUserRoles,String type);
+	
+	public int  getRoleIdCount(long RoleId);
+	
+	public List<SecurityRole> getRolesByUserId(long userId,boolean assigned);
+	
+	public SecurityUserRoles getUserRolesByUsrAndRoleIds(long userId,long RoleId);
+	
 	public int getUserIdCount(long userId);
+	
+	public SecurityUserRoles getNewSecurityUserRoles();
+	
+	public void update(SecurityUserRoles securityUserRoles,String type);
+	
+	public  List<String> getUsrMailsByRoleCd(String roleCode);
 
+	public  List<String> getUsrMailsByRoleIds(String roleCode);
 }

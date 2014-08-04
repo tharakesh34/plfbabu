@@ -95,6 +95,11 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 	protected Listbox recordType;	// autowired
 	protected Listbox sortOperator_recordStatus; // autowired
 	protected Listbox sortOperator_recordType; // autowired
+	protected Textbox dealerType; // autowired
+	protected Listbox sortOperator_dealerType; // autowired
+	protected Textbox dealerTelephone; // autowired
+	protected Listbox sortOperator_dealerTelephone; // autowired
+	
 	
 	protected Label label_VehicleDealerSearch_RecordStatus; // autowired
 	protected Label label_VehicleDealerSearch_RecordType; // autowired
@@ -138,16 +143,22 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_dealerId.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_dealerId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_dealerId.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_dealerName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_dealerName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_dealerName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
+		this.sortOperator_dealerType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_dealerType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		this.sortOperator_dealerTelephone.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_dealerTelephone.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{
@@ -177,6 +188,12 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 			    } else if (filter.getProperty().equals("dealerName")) {
 					SearchOperators.restoreStringOperator(this.sortOperator_dealerName, filter);
 					this.dealerName.setValue(filter.getValue().toString());
+				} else if (filter.getProperty().equals("dealerType")) {
+					SearchOperators.restoreStringOperator(this.sortOperator_dealerType, filter);
+					this.dealerType.setValue(filter.getValue().toString());
+				}  else if (filter.getProperty().equals("dealerTelephone")) {
+					SearchOperators.restoreStringOperator(this.sortOperator_dealerTelephone, filter);
+					this.dealerTelephone.setValue(filter.getValue().toString());
 				} else if (filter.getProperty().equals("recordStatus")) {
 					SearchOperators.restoreStringOperator(this.sortOperator_recordStatus, filter);
 					this.recordStatus.setValue(filter.getValue().toString());
@@ -297,6 +314,40 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 					// do nothing
 				} else {
 					so.addFilter(new Filter("dealerName", this.dealerName.getValue(), searchOpId));
+				}
+			}
+		}
+		if (StringUtils.isNotEmpty(this.dealerType.getValue())) {
+
+			// get the search operator
+			final Listitem item_DealerType = this.sortOperator_dealerType.getSelectedItem();
+
+			if (item_DealerType != null) {
+				final int searchOpId = ((SearchOperators) item_DealerType.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == Filter.OP_LIKE) {
+					so.addFilter(new Filter("dealerType", "%" + this.dealerType.getValue().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == -1) {
+					// do nothing
+				} else {
+					so.addFilter(new Filter("dealerType", this.dealerType.getValue(), searchOpId));
+				}
+			}
+		}
+		if (StringUtils.isNotEmpty(this.dealerTelephone.getValue())) {
+
+			// get the search operator
+			final Listitem item_DealerTelephone = this.sortOperator_dealerTelephone.getSelectedItem();
+
+			if (item_DealerTelephone != null) {
+				final int searchOpId = ((SearchOperators) item_DealerTelephone.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == Filter.OP_LIKE) {
+					so.addFilter(new Filter("dealerTelephone", "%" + this.dealerTelephone.getValue().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == -1) {
+					// do nothing
+				} else {
+					so.addFilter(new Filter("dealerTelephone", this.dealerTelephone.getValue(), searchOpId));
 				}
 			}
 		}

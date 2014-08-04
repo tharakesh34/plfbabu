@@ -52,12 +52,12 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.GroupsModelArray;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -67,11 +67,10 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.customermasters.customerprelation.model.CustomerPRComparater;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -173,69 +172,69 @@ public class CustomerPRelationSearchCtrl extends GFCBaseCtrl implements Serializ
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_pRCustCIF.setModel(new ListModelList(
+		this.sortOperator_pRCustCIF.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRCustCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRCustPRSNo.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_pRCustPRSNo.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_pRCustPRSNo.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRRelationCode.setModel(new ListModelList(
+		this.sortOperator_pRRelationCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRRelationCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRRelationCustID.setModel(new ListModelList(
+		this.sortOperator_pRRelationCustID.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRRelationCustID.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRisGuardian.setModel(new ListModelList(
+		this.sortOperator_pRisGuardian.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_pRisGuardian.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRFName.setModel(new ListModelList(
+		this.sortOperator_pRFName.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRFName.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRMName.setModel(new ListModelList(
+		this.sortOperator_pRMName.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRMName.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRLName.setModel(new ListModelList(
+		this.sortOperator_pRLName.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRLName.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRSName.setModel(new ListModelList(
+		this.sortOperator_pRSName.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRSName.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRFNameLclLng.setModel(new ListModelList(
+		this.sortOperator_pRFNameLclLng.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRFNameLclLng.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRMNameLclLng.setModel(new ListModelList(
+		this.sortOperator_pRMNameLclLng.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRMNameLclLng.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pRLNameLclLng.setModel(new ListModelList(
+		this.sortOperator_pRLNameLclLng.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_pRLNameLclLng.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
@@ -384,6 +383,7 @@ public class CustomerPRelationSearchCtrl extends GFCBaseCtrl implements Serializ
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */ 
+	@SuppressWarnings("unchecked")
 	public void doSearch() {
 		logger.debug("Entering");
 		final JdbcSearchObject<CustomerPRelation> so = new JdbcSearchObject<CustomerPRelation>(CustomerPRelation.class);
@@ -651,11 +651,13 @@ public class CustomerPRelationSearchCtrl extends GFCBaseCtrl implements Serializ
 		this.customerPRelationCtrl.setSearchObj(so);
 
 		// set the model to the listBox with the initial resultSet get by the DAO method.
-		final SearchResult<CustomerPRelation> searchResult = this.customerPRelationCtrl.getPagedListService().getSRBySearchObject(so);
-		this.customerPRelationCtrl.listBoxCustomerPRelation.setModel(new GroupsModelArray(searchResult.getResult().toArray(),new CustomerPRComparater()));
-
+		 final Listbox listBox = this.customerPRelationCtrl.listBoxCustomerPRelation;
+			final Paging paging = this.customerPRelationCtrl.pagingCustomerPRelationList;
+			
+			((PagedListWrapper<CustomerPRelation>) listBox.getModel()).init(so, listBox, paging);
+			
 		this.label_CustomerPRelationSearchResult.setValue(Labels.getLabel("label_CustomerPRelationSearchResult.value") + " "
-				+ String.valueOf(searchResult.getTotalCount()));
+				+ String.valueOf(paging.getTotalSize()));
 	}
 
 }

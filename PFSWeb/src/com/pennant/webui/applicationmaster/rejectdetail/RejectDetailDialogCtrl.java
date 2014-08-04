@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.RejectDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -403,6 +404,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl implements Serializable 
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -419,7 +421,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.rejectIsActive.setChecked(aRejectDetail.isRejectIsActive());
 		this.recordStatus.setValue(aRejectDetail.getRecordStatus());
 		
-		if(aRejectDetail.isNew() || aRejectDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aRejectDetail.isNew() || (aRejectDetail.getRecordType() != null ? aRejectDetail.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.rejectIsActive.setChecked(true);
 			this.rejectIsActive.setDisabled(true);
 		}
@@ -589,16 +591,11 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl implements Serializable 
 		setValidationOn(true);
 
 		if (!this.rejectCode.isReadonly()){
-			this.rejectCode.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-							"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-							"label_RejectDetailDialog_RejectCode.value")})));
+			this.rejectCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RejectDetailDialog_RejectCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}			
 		if (!this.rejectDesc.isReadonly()){
-			this.rejectDesc.setConstraint(new SimpleConstraint(
-					PennantConstants.DESC_REGEX, Labels.getLabel(
-							"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_RejectDetailDialog_RejectDesc.value")})));
+			this.rejectDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_RejectDetailDialog_RejectDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -738,7 +735,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl implements Serializable 
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

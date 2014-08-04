@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,7 +77,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.SubSegmentService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -619,15 +620,12 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.subSegmentCode.isReadonly()){
-			this.subSegmentCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_SubSegmentDialog_SubSegmentCode.value")})));
+			this.subSegmentCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSegmentDialog_SubSegmentCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 
 		if (!this.subSegmentDesc.isReadonly()){
-			this.subSegmentDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_SubSegmentDialog_SubSegmentDesc.value")})));
+			this.subSegmentDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSegmentDialog_SubSegmentDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -649,8 +647,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescSegmentCodeName.setConstraint("NO EMPTY:"+ Labels.getLabel(
-				"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_SubSegmentDialog_SegmentCode.value") }));
+		this.lovDescSegmentCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSegmentDialog_SegmentCode.value"), null, true));
 		logger.debug("Leaving");
 	}
 

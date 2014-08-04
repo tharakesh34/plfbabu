@@ -126,6 +126,7 @@ public class ButtonStatusCtrl implements Serializable  {
 	/**
 	 * Set the images fore the buttons.<br>
 	 */
+	@SuppressWarnings("unused")
 	private void setBtnImages() {
 		String sclass = Labels.getLabel("CSS_BUTTON_CLASS_NAME");
 //		buttons.get(ButtonEnum.New).setSclass(sclass);
@@ -348,6 +349,7 @@ public class ButtonStatusCtrl implements Serializable  {
 	 * @param imagePath
 	 *            path and image name
 	 */
+	@SuppressWarnings("unused")
 	private void setImage(ButtonEnum b, String imagePath) {
 		buttons.get(b).setImage(imagePath);
 	}

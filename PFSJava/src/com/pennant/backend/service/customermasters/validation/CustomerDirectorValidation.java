@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
@@ -61,19 +62,29 @@ public class CustomerDirectorValidation {
 		DirectorDetail tempDirectorDetail= null;
 		if (directorDetail.isWorkflow()){
 			tempDirectorDetail = getDirectorDetailDAO().getDirectorDetailById(
-					directorDetail.getId(), "_Temp");
+					directorDetail.getDirectorId(),directorDetail.getCustID(), "_Temp");
 		}
 		DirectorDetail befDirectorDetail= getDirectorDetailDAO().getDirectorDetailById(
-				directorDetail.getId(), "");
+				directorDetail.getDirectorId(),directorDetail.getCustID(), "");
 
 		DirectorDetail old_DirectorDetail= directorDetail.getBefImage();
 
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=String.valueOf(directorDetail.getId());
-		errParm[0]=PennantJavaUtil.getLabel("label_DirectorId")+":"+valueParm[0];
-
+		String[] errParm= new String[2];
+		String[] valueParm= new String[2];
+		String name = "";
+        if(!StringUtils.trimToEmpty(directorDetail.getShortName()).equals("")){
+        	name = directorDetail.getShortName();
+        }else{
+        	 name = directorDetail.getFirstName() + "  " + directorDetail.getLastName();
+        }
+		
+		valueParm[0] = StringUtils.trimToEmpty(directorDetail.getLovDescCustCIF());
+		valueParm[1]=String.valueOf(name);
+	
+		errParm[0] = PennantJavaUtil.getLabel("DirectorDetails") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
+	    errParm[1] = PennantJavaUtil.getLabel("label_DirectorDetailDialog_ShortName.value") + "-" + valueParm[1];
+		
 		if (directorDetail.isNew()){ // for New record or new record into work flow
 
 			if (!directorDetail.isWorkflow()){// With out Work flow only new records  
@@ -128,7 +139,7 @@ public class CustomerDirectorValidation {
 									errParm,valueParm), usrLanguage));
 				}
 
-				if (old_DirectorDetail!=null && !old_DirectorDetail.getLastMntOn().equals(
+				if (tempDirectorDetail != null && old_DirectorDetail!=null && !old_DirectorDetail.getLastMntOn().equals(
 						tempDirectorDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
@@ -137,6 +148,8 @@ public class CustomerDirectorValidation {
 			}
 		}
 
+		auditDetail.setErrorDetail(screenValidations(directorDetail));
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if(StringUtils.trimToEmpty(method).equals("doApprove") || !directorDetail.isWorkflow()){
@@ -146,5 +159,53 @@ public class CustomerDirectorValidation {
 		return auditDetail;
 	}
 
+	/**
+	 * Method For Screen Level Validations
+	 * 
+	 * @param auditHeader
+	 * @param usrLanguage
+	 * @return
+	 */
+	public ErrorDetails  screenValidations(DirectorDetail directorDetail){
+		
+		String shareHolderName = "";
+        if(!StringUtils.trimToEmpty(directorDetail.getShortName()).equals("")){
+        	shareHolderName = directorDetail.getShortName();
+        }else if(!StringUtils.trimToEmpty(directorDetail.getFirstName()).equals("") && !StringUtils.trimToEmpty(directorDetail.getLastName()).equals("")){
+        	shareHolderName = directorDetail.getFirstName() + "  " + directorDetail.getLastName();
+        }
+		
+		if(StringUtils.trimToEmpty(directorDetail.getShortName()).equals("") && 
+				StringUtils.trimToEmpty(directorDetail.getFirstName()).equals("") && 
+				StringUtils.trimToEmpty(directorDetail.getLastName()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("DirectorDetails"),
+					Labels.getLabel("label_DirectorDetailDialog_ShortName.value"),
+					Labels.getLabel("listheader_ShortName.label"),
+					shareHolderName},
+					new String[] {});	
+		}
+		
+		if(directorDetail.getSharePerc() == null){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("DirectorDetails"),
+					Labels.getLabel("label_DirectorDetailDialog_SharePerc.value"),
+					Labels.getLabel("listheader_ShortName.label"),
+					shareHolderName},
+					new String[] {});		
+		}
+		
+		if(StringUtils.trimToEmpty(directorDetail.getCustAddrCountry()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("DirectorDetails"),
+					Labels.getLabel("label_DirectorDetailDialog_CustAddrCountry.value"),
+					Labels.getLabel("listheader_ShortName.label"),
+					shareHolderName},
+					new String[] {});	
+		}
+		
+	
+		return null;
+	}
 	
 }

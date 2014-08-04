@@ -62,10 +62,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class SubSectorListModelItemRenderer implements ListitemRenderer<SubSector>, Serializable {
 
 	private static final long serialVersionUID = -7933062641604193890L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, SubSector subSector, int count) throws Exception {
-		//final SubSector subSector = (SubSector) data;
+
 		Listcell lc;
 		lc = new Listcell(subSector.getSectorCode());
 		lc.setParent(item);

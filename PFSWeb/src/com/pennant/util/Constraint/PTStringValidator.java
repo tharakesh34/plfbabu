@@ -145,59 +145,48 @@ public class PTStringValidator implements Constraint{
 		return "";
 	}
 
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	String getFieldParm() {
+	public String getFieldParm() {
 		return fieldParm;
 	}
-
-
-	void setFieldParm(String fieldParm) {
+	public void setFieldParm(String fieldParm) {
 		this.fieldParm = fieldParm;
 	}
 
-
-	String getRegExp() {
+	public String getRegExp() {
 		return regExp;
 	}
-
-
-	void setRegExp(String regExp) {
+	public void setRegExp(String regExp) {
 		this.regExp = regExp;
 	}
 
-
-	int getMinLength() {
+	public int getMinLength() {
 		return minLength;
 	}
-
-
-	void setMinLength(int minLength) {
+	public void setMinLength(int minLength) {
 		this.minLength = minLength;
 		if(minLength!=0){
 			minLenValid=true;
 		}
 	}
 
-
-	int getMaxLength() {
+	public int getMaxLength() {
 		return maxLength;
 	}
-
-
-	void setMaxLength(int maxLength) {
+	public void setMaxLength(int maxLength) {
 		this.maxLength = maxLength;
 		if(maxLength!=0){
 			maxLenValid=true;
 		}
 	}
 
-
-	boolean isMandatory() {
+	public boolean isMandatory() {
 		return mandatory;
 	}
-
-
-	void setMandatory(boolean mandatory) {
+	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
 	}
 }

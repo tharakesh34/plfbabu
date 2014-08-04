@@ -65,11 +65,9 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>Designation</b>.<br>
  * 
  */
-public class DesignationServiceImpl extends GenericService<Designation>
-		implements DesignationService {
+public class DesignationServiceImpl extends GenericService<Designation> implements DesignationService {
 
-	private static Logger logger = Logger
-			.getLogger(DesignationServiceImpl.class);
+	private static Logger logger = Logger.getLogger(DesignationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DesignationDAO designationDAO;

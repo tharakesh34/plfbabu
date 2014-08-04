@@ -64,11 +64,9 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
-import com.pennant.webui.finance.wiffinancemain.WIFFinanceMainDialogCtrl;
+import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
@@ -95,7 +93,8 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 	protected Combobox cbProfitFromDate; 			// autowired
 	protected Combobox cbProfitToDate; 				// autowired
 	protected Decimalbox wIAmount; 					// autowired
-
+	protected Date actPftFromDate = null;
+	
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
 	private transient int oldVar_wIProfitChangeFromDate;
@@ -105,9 +104,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 	// not auto wired vars
 	private FinScheduleData finScheduleData = null; 				// overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail = null; 	// overhanded per param
-	private transient WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl = null;
-	private transient FinanceMainDialogCtrl financeMainDialogCtrl = null;
-	private transient PagedListService pagedListService;
+	private ScheduleDetailDialogCtrl scheduleDetailDialogCtrl = null;
 
 	/**
 	 * default constructor.<br>
@@ -147,12 +144,8 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 		// we get the WIFFinanceMainDialogCtrl controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete WIFFinanceMain here.
-		if (args.containsKey("wIFFinanceMainDialogCtrl")) {
-			setWIFFinanceMainDialogCtrl((WIFFinanceMainDialogCtrl) args.get("wIFFinanceMainDialogCtrl"));
-		} 
-		
 		if (args.containsKey("financeMainDialogCtrl")) {
-			setFinanceMainDialogCtrl((FinanceMainDialogCtrl) args.get("financeMainDialogCtrl"));
+			setScheduleDetailDialogCtrl((ScheduleDetailDialogCtrl) args.get("financeMainDialogCtrl"));
 		} 
 
 		// set Field Properties
@@ -374,6 +367,8 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering");
 		fillSchFromDates(this.cbProfitFromDate,
 				aFinSchData.getFinanceScheduleDetails());
+		
+		actPftFromDate = aFinSchData.getFinanceMain().getFinStartDate();
 
 		if(getFinanceScheduleDetail() != null ) {
 			fillSchToDates(this.cbProfitToDate,
@@ -412,20 +407,33 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 		dateCombobox.setSelectedItem(comboitem);
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				if (financeScheduleDetails.get(i).isRepayOnSchDate()) {
-					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate)+" "+financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setAttribute("fromSpecifier",financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
+
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+
+				//Not Allowed for Repayment
+				/*if (!curSchd.isRepayOnSchDate() ) {
+					continue;
+				}*/
+
+				//Profit Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				//Principal Paid (Partial/Full)
+				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				comboitem = new Comboitem();
+				comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
+				comboitem.setAttribute("fromSpecifier",curSchd.getSpecifier());
+				comboitem.setValue(curSchd.getSchDate());
+				dateCombobox.appendChild(comboitem);
+				if (getFinanceScheduleDetail() != null) {
 					dateCombobox.appendChild(comboitem);
-					if (getFinanceScheduleDetail() != null) {
-						dateCombobox.appendChild(comboitem);
-						if(financeScheduleDetails.get(i).getSchDate()
-								.compareTo(getFinanceScheduleDetail().getSchDate())==0) {
-							dateCombobox.setSelectedItem(comboitem);
-						}
+					if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+						dateCombobox.setSelectedItem(comboitem);
 					}
 				}
 			}
@@ -448,22 +456,37 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 		dateCombobox.setSelectedItem(comboitem);
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				if (financeScheduleDetails.get(i).isRepayOnSchDate()) {
-					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate)+" "+financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setAttribute("toSpecifier",financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
-					if (getFinanceScheduleDetail() != null) {
-						dateCombobox.appendChild(comboitem);
-						if(financeScheduleDetails.get(i).getSchDate()
-								.compareTo(getFinanceScheduleDetail().getSchDate())==0) {
-							dateCombobox.setSelectedItem(comboitem);
-						}
-					} else if(financeScheduleDetails.get(i).getSchDate().compareTo(fillAfter) >= 0) {
-						dateCombobox.appendChild(comboitem);
+
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+
+				/*//Not Allowed for Repayment
+				if (!curSchd.isRepayOnSchDate() ) {
+					continue;
+				}*/
+
+				//Profit Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				//Principal Paid (Partial/Full)
+				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				comboitem = new Comboitem();
+				comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
+				comboitem.setAttribute("toSpecifier",curSchd.getSpecifier());
+				comboitem.setValue(curSchd.getSchDate());
+				if (getFinanceScheduleDetail() != null) {
+					dateCombobox.appendChild(comboitem);
+					if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+						dateCombobox.setSelectedItem(comboitem);
 					}
+				} else if(curSchd.getSchDate().compareTo(fillAfter) >= 0) {
+					dateCombobox.appendChild(comboitem);
+				} else if(curSchd.getSchDate().compareTo(fillAfter) < 0) {
+					actPftFromDate = curSchd.getSchDate();
 				}
 			}
 		}
@@ -498,6 +521,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 					this.cbProfitFromDate,
 					Labels.getLabel("label_ChangeProfitDialog_FromDate.value"))) {
 				getFinScheduleData().getFinanceMain().setEventFromDate((Date)this.cbProfitFromDate.getSelectedItem().getValue());
+				getFinScheduleData().getFinanceMain().setEventFromDate((Date)actPftFromDate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -539,11 +563,18 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 						this.wIAmount.getValue(),
 						getFinScheduleData().getFinanceMain().getLovDescFinFormatter())));
 		
-		getFinScheduleData().setSchduleGenerated(true);
-		if(getFinanceMainDialogCtrl()!=null){
-			this.financeMainDialogCtrl.doFillScheduleList(getFinScheduleData(), null);
-		}else {
-			this.wIFFinanceMainDialogCtrl.doFillScheduleList(getFinScheduleData());
+		//Show Error Details in Schedule Maintainance
+		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+		}else{
+			getFinScheduleData().setSchduleGenerated(true);
+			if(getScheduleDetailDialogCtrl()!=null){
+				try {
+					getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
 		}
 	
 		logger.debug("Leaving");
@@ -591,14 +622,6 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.finScheduleData = finScheduleData;
 	}
 	
-	public void setWIFFinanceMainDialogCtrl(
-			WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl) {
-		this.wIFFinanceMainDialogCtrl = wIFFinanceMainDialogCtrl;
-	}
-	public WIFFinanceMainDialogCtrl getWIFFinanceMainDialogCtrl() {
-		return wIFFinanceMainDialogCtrl;
-	}
-
 	public FinanceScheduleDetail getFinanceScheduleDetail() {
 		return financeScheduleDetail;
 	}
@@ -606,18 +629,11 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.financeScheduleDetail = financeScheduleDetail;
 	}
 
-	public PagedListService getPagedListService() {
-		return pagedListService;
+	public ScheduleDetailDialogCtrl getScheduleDetailDialogCtrl() {
+		return scheduleDetailDialogCtrl;
 	}
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
-
-	public FinanceMainDialogCtrl getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
-	}
-	public void setFinanceMainDialogCtrl(FinanceMainDialogCtrl financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
+	public void setScheduleDetailDialogCtrl(ScheduleDetailDialogCtrl scheduleDetailDialogCtrl) {
+		this.scheduleDetailDialogCtrl = scheduleDetailDialogCtrl;
 	}
 	
 }

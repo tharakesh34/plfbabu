@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Path;
@@ -94,6 +95,13 @@ public class SqlViewResultCtrl extends GFCBaseCtrl implements Serializable {
 		if (args.containsKey("fields")) {
 			fieldMap =  (LinkedHashMap<String, String>) args.get("fields");
 		}
+		if (fieldMap.containsKey(PennantConstants.CUST_DEDUP_LISTFILED1)) {
+			fieldMap.remove(PennantConstants.CUST_DEDUP_LISTFILED1);
+			fieldMap.put(PennantConstants.CUST_DEDUP_LISTFILED2, "nvarchar");
+			fieldMap.put(PennantConstants.CUST_DEDUP_LISTFILED3, "nvarchar");
+		}
+		
+		
 		
 		Label label;
  		Row row ;
@@ -134,6 +142,8 @@ public class SqlViewResultCtrl extends GFCBaseCtrl implements Serializable {
 		final int maxListBoxHeight = height- 25;
 		this.borderLayout_SqlViewResult.setHeight(String.valueOf(maxListBoxHeight) +"px");
 		this.listBoxSqlView.setHeight(maxListBoxHeight- gridHeight +"px");
+		this.listBoxSqlView.setSizedByContent(true);
+		this.listBoxSqlView.setSpan(true);
 		setCountRows(Math.round((maxListBoxHeight- gridHeight) / 22)-1);
 		
 		this.window_SqlViewResult.doModal();
@@ -161,13 +171,13 @@ public class SqlViewResultCtrl extends GFCBaseCtrl implements Serializable {
 			rowCount++;
 		}
 		Listhead listHead = new Listhead();
-		listHead.setHeight("25px");
 		Listheader listheader;
 		int columnCount =keyList.size(); 
 		if(isExecuted){
 			for(int k=0;k<columnCount;k++){
 				listheader = new Listheader();
-				listheader.setLabel(keyList.get(k).toString());
+				listheader.setLabel(getLabel(keyList.get(k).toString()));
+				listheader.setHflex("min");
 				listHead.appendChild(listheader);
 				listHead.setSizable(true);
 				listBoxSqlView.appendChild(listHead);
@@ -223,7 +233,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl implements Serializable {
 	}
 	
 	//paging Event Class for pagination
-	public final class OnPagingEventListener implements EventListener {
+	public final class OnPagingEventListener implements EventListener<Event> {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			
@@ -301,5 +311,12 @@ public class SqlViewResultCtrl extends GFCBaseCtrl implements Serializable {
 	}
 	public void setDedupParmService(DedupParmService dedupParmService) {
 		this.dedupParmService = dedupParmService;
+	}
+	private String getLabel(String value){
+		String label=Labels.getLabel(value+"_label");
+		if (StringUtils.trimToEmpty(label).equals("")) {
+			return value;
+		}
+		return label;
 	}
 }

@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listItems in the listBox.
  * 
@@ -62,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class RelationshipOfficerListModelItemRenderer implements ListitemRenderer<RelationshipOfficer>, Serializable {
 
 	private static final long serialVersionUID = 6660192448428639124L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, RelationshipOfficer relationshipOfficer, int count) throws Exception {
 
-		//final RelationshipOfficer relationshipOfficer = (RelationshipOfficer) data;
 		Listcell lc;
 	  	lc = new Listcell(relationshipOfficer.getROfficerCode());
 		lc.setParent(item);

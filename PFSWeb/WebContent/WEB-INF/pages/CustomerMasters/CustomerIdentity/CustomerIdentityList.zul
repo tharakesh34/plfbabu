@@ -21,12 +21,12 @@
 				<toolbar align="center" style="border-style: none;">
 					<button
 						id="button_CustomerIdentityList_CustomerIdentitySearchDialog"
-						height="24px" label = "${c:l('label_Filter')}"
+						height="24px" label="${c:l('label_Filter')}"
 						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,button_CustomerIdentityList_PrintList,
 											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, btnHelp"
 						tooltiptext="${c:l('button_CustomerIdentityList_CustomerIdentitySearchDialog.tooltiptext')}" />
 					<button id="button_CustomerIdentityList_PrintList"
-						height="24px" label = "${c:l('label_Print')}"
+						height="24px" label="${c:l('label_Print')}"
 						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,button_CustomerIdentityList_PrintList,
 											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, btnHelp"
 						tooltiptext="${c:l('button_CustomerIdentityList_PrintList.tooltiptext')}" />
@@ -36,17 +36,17 @@
 				<toolbar align="end" style="border-style: none;">
 					<button
 						id="button_CustomerIdentityList_NewCustomerIdentity" height="24px"
-						label = "${c:l('label_New')}"
+						label="${c:l('label_New')}"
 						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,button_CustomerIdentityList_PrintList,
 											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, btnHelp"
 						tooltiptext="${c:l('button_CustomerIdentityList_NewCustomerIdentity.tooltiptext')}" />
 					<button id="btnRefresh" height="24px"
-						label = "${c:l('label_Refresh')}"
+						label="${c:l('label_Refresh')}"
 						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,button_CustomerIdentityList_PrintList,
 											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, btnHelp"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 					<button id="btnHelp" height="24px"
-						label = "${c:l('label_Help')}"
+						label="${c:l('label_Help')}"
 						autodisable="button_CustomerIdentityList_CustomerIdentitySearchDialog,button_CustomerIdentityList_PrintList,
 											 button_CustomerIdentityList_NewCustomerIdentity, btnRefresh, btnHelp"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
@@ -58,34 +58,109 @@
 			<north border="none" />
 
 			<center border="none">
-
-				<listbox id="listBoxCustomerIdentity" vflex="true"
-					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
-					<listhead sizable="true">
-						<listheader id="listheader_CustIdCIF"
-							label="${c:l('listheader_CustIdCIF.label')}" sort="auto"
-							width="11%" />
-						<listheader id="listheader_IdType"
-							label="${c:l('listheader_IdType.label')}" sort="auto"
-							width="20%" />
-						<listheader id="listheader_IdIssuedBy"
-							label="${c:l('listheader_IdIssuedBy.label')}" sort="auto"
-							width="16%" />
-						<listheader id="listheader_IdRef"
-							label="${c:l('listheader_IdRef.label')}" sort="auto" width="16%" />
-						<listheader id="listheader_IdIssueCountry"
-							label="${c:l('listheader_IdIssueCountry.label')}" sort="auto"
-							width="20%" />
-						<listheader id="listheader_RecordStatus"
-							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
-						<listheader id="listheader_RecordType"
-							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
-					</listhead>
-				</listbox>
-
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true"
+						style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_CustomerIdentitySearch_IdCustCIF"
+									value="${c:l('label_CustomerIdentitySearch_IdCustCIF.value')}" />
+								<listbox id="sortOperator_idCustCIF"
+									width="43px" mold="select" rows="1" />
+								<textbox id="idCustCIF" width="150px"
+									maxlength="19" />
+								<label
+									id="label_CustomerIdentitySearch_IdType"
+									value="${c:l('label_CustomerIdentitySearch_IdType.value')}" />
+								<listbox id="sortOperator_idType"
+									width="43px" mold="select" rows="1" />
+								<textbox id="idType" width="150px"
+									maxlength="8" />
+							</row>
+							<row>
+								<label
+									id="label_CustomerIdentitySearch_IdIssuedBy"
+									value="${c:l('label_CustomerIdentitySearch_IdIssuedBy.value')}" />
+								<listbox id="sortOperator_idIssuedBy"
+									width="43px" mold="select" rows="1" />
+								<textbox id="idIssuedBy" width="150px"
+									maxlength="50" />
+								<label
+									id="label_CustomerIdentitySearch_IdRef"
+									value="${c:l('label_CustomerIdentitySearch_IdRef.value')}" />
+								<listbox id="sortOperator_idRef"
+									width="43px" mold="select" rows="1" />
+								<textbox id="idRef" width="150px"
+									maxlength="50" />
+							</row>
+							<row>
+								<label
+									id="label_CustomerIdentitySearch_IdIssueCountry"
+									value="${c:l('label_CustomerIdentitySearch_IdIssueCountry.value')}" />
+								<listbox
+									id="sortOperator_idIssueCountry" width="43px" mold="select"
+									rows="1" />
+								<textbox id="idIssueCountry"
+									width="150px" maxlength="2" />
+								
+							</row>
+							
+							<row>
+								<label
+									id="label_CustomerIdentitySearch_RecordStatus"
+									value="${c:l('label_CustomerIdentitySearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_recordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="150px"
+									maxlength="50" />
+								<label
+									id="label_CustomerIdentitySearch_RecordType"
+									value="${c:l('label_CustomerIdentitySearch_RecordType.value')}" />
+								<listbox id="sortOperator_recordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="150px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxCustomerIdentity" vflex="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+						<listhead sizable="true">
+							<listheader id="listheader_CustIdCIF"
+								label="${c:l('listheader_CustIdCIF.label')}" sort="auto"
+								width="11%" />
+							<listheader id="listheader_IdType"
+								label="${c:l('listheader_IdType.label')}" sort="auto"
+								width="20%" />
+							<listheader id="listheader_IdIssuedBy"
+								label="${c:l('listheader_IdIssuedBy.label')}" sort="auto"
+								width="16%" />
+							<listheader id="listheader_IdRef"
+								label="${c:l('listheader_IdRef.label')}" sort="auto"
+								width="16%" />
+							<listheader id="listheader_IdIssueCountry"
+								label="${c:l('listheader_IdIssueCountry.label')}" sort="auto"
+								width="20%" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								width="10%" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								width="10%" />
+						</listhead>
+					</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingCustomerIdentityList" />

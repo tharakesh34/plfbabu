@@ -1,4 +1,4 @@
-package com.pennant.app.util;
+/*package com.pennant.app.util;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -84,7 +84,7 @@ public class FinanceRateReviewUtil {
 
 	}
 
-	/**	Identifies the rate review start date and end date of the schedule  */
+	*//**	Identifies the rate review start date and end date of the schedule  *//*
 
 	private static FinScheduleData rvwStartEndDateFinder(FinScheduleData scheduleData, Date ChangeDate) {
 		Date start = null;
@@ -236,3 +236,4 @@ public class FinanceRateReviewUtil {
 	}
 
 }
+*/

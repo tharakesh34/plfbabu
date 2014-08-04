@@ -22,14 +22,14 @@
 				<toolbar align="center" style=" border-style: none;">
 					<button
 						id="button_CustomerAdditionalDetailList_CustomerAdditionalDetailSearchDialog"
-						height="24px" label = "${c:l('label_Filter')}"
+						height="24px" label="${c:l('label_Filter')}"
 						autodisable="button_CustomerAdditionalDetailList_CustomerAdditionalDetailSearchDialog,
 								button_CustomerAdditionalDetailList_PrintList,button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail,
 								btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_CustomerAdditionalDetailList_CustomerAdditionalDetailSearchDialog.tooltiptext')}" />
 					<button
 						id="button_CustomerAdditionalDetailList_PrintList" height="24px"
-						label = "${c:l('label_Print')}"
+						label="${c:l('label_Print')}"
 						autodisable="button_CustomerAdditionalDetailList_CustomerAdditionalDetailSearchDialog,
 								button_CustomerAdditionalDetailList_PrintList,button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail,
 								btnRefresh,btnHelp"
@@ -40,19 +40,19 @@
 				<toolbar align="end" style=" border-style: none;">
 					<button
 						id="button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail"
-						height="24px" label = "${c:l('label_New')}"
+						height="24px" label="${c:l('label_New')}"
 						autodisable="button_CustomerAdditionalDetailList_CustomerAdditionalDetailSearchDialog,
 								button_CustomerAdditionalDetailList_PrintList,button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail,
 								btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail.tooltiptext')}" />
 					<button id="btnRefresh" height="24px"
-						label = "${c:l('label_Refresh')}"
+						label="${c:l('label_Refresh')}"
 						autodisable="button_CustomerAdditionalDetailList_CustomerAdditionalDetailSearchDialog,
 								button_CustomerAdditionalDetailList_PrintList,button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail,
 								btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 					<button id="btnHelp" height="24px"
-						label = "${c:l('label_Help')}"
+						label="${c:l('label_Help')}"
 						autodisable="button_CustomerAdditionalDetailList_CustomerAdditionalDetailSearchDialog,
 								button_CustomerAdditionalDetailList_PrintList,button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail,
 								btnRefresh,btnHelp"
@@ -65,35 +65,122 @@
 			<north border="none" />
 
 			<center border="none">
+				<div>
 
-				<listbox id="listBoxCustomerAdditionalDetail"
-					vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-					width="100%" height="100%" multiple="false">
-					<listhead sizable="true">
-						<listheader id="listheader_CustAdditionalCIF"
-							label="${c:l('listheader_CustAdditionalCIF.label')}" sort="auto"
-							width="15%" />
-						<listheader id="listheader_CustAcademicLevel"
-							label="${c:l('listheader_CustAcademicLevel.label')}" sort="auto"
-							width="15%" />
-						<listheader id="listheader_AcademicDecipline"
-							label="${c:l('listheader_AcademicDecipline.label')}" sort="auto"
-							width="15%" />
-						<listheader id="listheader_CustRefCustID"
-							label="${c:l('listheader_CustRefCustID.label')}" sort="auto"
-							align="right" width="20%" />
-						<listheader id="listheader_CustRefStaffID"
-							label="${c:l('listheader_CustRefStaffID.label')}" sort="auto"
-							width="15%" />
-						<listheader id="listheader_RecordStatus"
-							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
-						<listheader id="listheader_RecordType"
-							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
-					</listhead>
-				</listbox>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true"
+						style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_CustomerAdditionalDetailSearch_CustCIF"
+									value="${c:l('label_CustomerAdditionalDetailSearch_CustCIF.value')}" />
+								<listbox id="sortOperator_custCIF"
+									width="43px" mold="select" rows="1" />
+								<textbox id="custCIF" width="150px"
+									maxlength="19" />
 
+								<label
+									id="label_CustomerAdditionalDetailSearch_CustAcademicLevel"
+									value="${c:l('label_CustomerAdditionalDetailSearch_CustAcademicLevel.value')}" />
+								<listbox
+									id="sortOperator_custAcademicLevel" width="43px" mold="select"
+									rows="1" />
+								<textbox id="custAcademicLevel"
+									width="150px" maxlength="8" />
+
+							</row>
+							<row>
+								<label
+									id="label_CustomerAdditionalDetailSearch_AcademicDecipline"
+									value="${c:l('label_CustomerAdditionalDetailSearch_AcademicDecipline.value')}" />
+								<listbox
+									id="sortOperator_academicDecipline" width="43px" mold="select"
+									rows="1" />
+								<textbox id="academicDecipline"
+									width="150px" maxlength="8" />
+
+								<label
+									id="label_CustomerAdditionalDetailSearch_CustRefCustID"
+									value="${c:l('label_CustomerAdditionalDetailSearch_CustRefCustID.value')}" />
+								<listbox id="sortOperator_custRefCustID"
+									width="43px" mold="select" rows="1" />
+								<longbox id="custRefCustID"
+									width="150px" maxlength="19" />
+							</row>
+							<row>
+
+								<label
+									id="label_CustomerAdditionalDetailSearch_CustRefStaffID"
+									value="${c:l('label_CustomerAdditionalDetailSearch_CustRefStaffID.value')}" />
+								<listbox
+									id="sortOperator_custRefStaffID" width="43px" mold="select"
+									rows="1" />
+								<textbox id="custRefStaffID"
+									width="150px" maxlength="8" />
+
+
+							</row>
+							<row>
+								<label
+									id="label_CustomerAdditionalDetailSearch_RecordStatus"
+									value="${c:l('label_CustomerAdditionalDetailSearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_recordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="100px"
+									maxlength="50" />
+								<label
+									id="label_CustomerAdditionalDetailSearch_RecordType"
+									value="${c:l('label_CustomerAdditionalDetailSearch_RecordType.value')}" />
+								<listbox id="sortOperator_recordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="100px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
+
+
+					<listbox id="listBoxCustomerAdditionalDetail"
+						fixedLayout="true" vflex="true" span="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+						<listhead sizable="true">
+							<listheader
+								id="listheader_CustAdditionalCIF"
+								label="${c:l('listheader_CustAdditionalCIF.label')}" sort="auto"
+								hflex="min" />
+							<listheader
+								id="listheader_CustAcademicLevel"
+								label="${c:l('listheader_CustAcademicLevel.label')}" sort="auto"
+								hflex="min" />
+							<listheader
+								id="listheader_AcademicDecipline"
+								label="${c:l('listheader_AcademicDecipline.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_CustRefCustID"
+								label="${c:l('listheader_CustRefCustID.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_CustRefStaffID"
+								label="${c:l('listheader_CustRefStaffID.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingCustomerAdditionalDetailList" />

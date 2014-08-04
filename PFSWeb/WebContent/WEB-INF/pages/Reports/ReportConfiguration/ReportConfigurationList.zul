@@ -27,7 +27,7 @@
 							tooltiptext="${c:l('button_ReportConfigurationList_NewReportConfiguration.tooltiptext')}" />
 						<button
 							id="button_ReportConfigurationList_ReportConfigurationSearch"
-							height="24px" image="/images/icons/search.png"
+							height="24px" label = "${c:l('label_Filter')}"
 							autodisable="button_ReportConfigurationList_ReportConfigurationSearch,button_ReportConfigurationList_PrintList,
 										 button_ReportConfigurationList_NewReportConfiguration, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_ReportConfigurationList_ReportConfigurationSearch.tooltiptext')}" />

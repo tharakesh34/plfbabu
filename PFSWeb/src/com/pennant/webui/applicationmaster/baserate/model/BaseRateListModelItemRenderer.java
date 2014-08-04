@@ -51,6 +51,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.applicationmaster.BaseRate;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
@@ -62,17 +63,16 @@ import com.pennant.util.PennantAppUtil;
 public class BaseRateListModelItemRenderer implements ListitemRenderer<BaseRate>, Serializable {
 
 	private static final long serialVersionUID = -6273517593116519304L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, BaseRate baseRate, int count) throws Exception {
 		
-		//final BaseRate baseRate = (BaseRate) data;
 		Listcell lc;
 		lc = new Listcell(baseRate.getBRType()+"-"+baseRate.getLovDescBRTypeName());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.formateDate(baseRate.getBREffDate(), PennantConstants.dateFormat));
+	  	lc = new Listcell(PennantAppUtil.formateDate(baseRate.getBREffDate(), PennantConstants.dateFormate));
 	  	lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.formatRate(baseRate.getBRRate().doubleValue(),9));
+	  	lc = new Listcell(PennantApplicationUtil.formatRate(baseRate.getBRRate().doubleValue(),9));
 	  	lc.setStyle("text-align:right;");
 	  	lc.setParent(item);
 	  	lc = new Listcell(baseRate.getRecordStatus());

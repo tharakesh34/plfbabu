@@ -43,6 +43,8 @@
 package com.pennant.webui.finance.additional;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,16 +69,18 @@ import com.pennant.backend.model.finance.DefermentDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
-import com.pennant.webui.finance.wiffinancemain.WIFFinanceMainDialogCtrl;
+import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
+import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 
 public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -7778031557272602004L;
 	private final static Logger logger = Logger.getLogger(AddRmvDeffermentDialogCtrl.class);
 
 	/*
@@ -99,10 +103,11 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	protected Row excDefDateRow;						// autowired
 	protected Row addTermRow;							// autowired
 	private Button btnAddDefferment; 					// autowired
+	
 	// not auto wired vars
 	private FinScheduleData finScheduleData; // overhanded per param
-	private transient WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl;
-	private transient FinanceMainDialogCtrl financeMainDialogCtrl;
+	private ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
+	private transient FeeDetailDialogCtrl feeDetailDialogCtrl;
 	
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
@@ -115,8 +120,8 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	private transient boolean validationOn;
 	private boolean addDefferment;
 
-	static final List<ValueLabel>	      recalTypes	              = PennantAppUtil.getSchCalCodes();
-	static final List<ValueLabel>	      addTermCodes	              = PennantAppUtil.getAddTermCodes();
+	static final List<ValueLabel>	      recalTypes	              = PennantStaticListUtil.getSchCalCodes();
+	static final List<ValueLabel>	      addTermCodes	              = PennantStaticListUtil.getAddTermCodes();
 	/**
 	 * default constructor.<br>
 	 */
@@ -136,8 +141,7 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_AddRmvDeffermentDialog(Event event)
-	throws Exception {
+	public void onCreate$window_AddRmvDeffermentDialog(Event event) throws Exception {
 		logger.debug(event.toString());
 
 		// get the params map that are overhanded by creation.
@@ -155,30 +159,25 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 		// we get the WIFFinanceMainDialogCtrl controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete WIFFinanceMain here.
-		if (args.containsKey("wIFFinanceMainDialogCtrl")) {
-			setwIFFinanceMainDialogCtrl((WIFFinanceMainDialogCtrl) args
-					.get("wIFFinanceMainDialogCtrl"));
-		} else {
-			setwIFFinanceMainDialogCtrl(null);
-		}
 		if (args.containsKey("addDeff")) {
 			this.setAddDefferment((Boolean) args.get("addDeff"));
 		}
 
 		if (args.containsKey("financeMainDialogCtrl")) {
-			setFinanceMainDialogCtrl((FinanceMainDialogCtrl) args
-					.get("financeMainDialogCtrl"));
-		} else {
-			setFinanceMainDialogCtrl(null);
-		}
+			setScheduleDetailDialogCtrl((ScheduleDetailDialogCtrl) args.get("financeMainDialogCtrl"));
+		} 
+		
+		if (args.containsKey("feeDetailDialogCtrl")) {
+			setFeeDetailDialogCtrl((FeeDetailDialogCtrl) args.get("feeDetailDialogCtrl"));
+		} 
 
-		// set Field Properties
-		doSetFieldProperties();
 		if(isAddDefferment()) {
 			if(getFinScheduleData().getFinanceMain().getDefferments() == 0) {
+				this.window_AddRmvDeffermentDialog.onClose();
 				PTMessageUtils.showErrorMessage("Deferments not allowed.");
 				return;
 			}else if(getFinScheduleData().getDefermentHeaders().size() >= getFinScheduleData().getFinanceMain().getDefferments()) {
+				this.window_AddRmvDeffermentDialog.onClose();
 				PTMessageUtils.showErrorMessage("Max deferments limit reached.");
 				return;
 			}else { 
@@ -187,6 +186,7 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 			}
 		}else {
 			if(getFinScheduleData().getDefermentHeaders().size() <= 0) {
+				this.window_AddRmvDeffermentDialog.onClose();
 				PTMessageUtils.showErrorMessage("No Deferments to delete.");
 				return;
 			}else { 
@@ -194,80 +194,6 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 				this.window_AddRmvDeffermentDialog.doModal();
 			}			
 		}
-		logger.debug("Leaving");
-	}
-
-	public FinScheduleData getFinScheduleData() {
-		return finScheduleData;
-	}
-
-	public void setFinScheduleData(FinScheduleData finScheduleData) {
-		this.finScheduleData = finScheduleData;
-	}
-
-	/**
-	 * @return the wIFFinanceMainDialogCtrl
-	 */
-	public WIFFinanceMainDialogCtrl getwIFFinanceMainDialogCtrl() {
-		return wIFFinanceMainDialogCtrl;
-	}
-
-	/**
-	 * @param wIFFinanceMainDialogCtrl the wIFFinanceMainDialogCtrl to set
-	 */
-	public void setwIFFinanceMainDialogCtrl(
-			WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl) {
-		this.wIFFinanceMainDialogCtrl = wIFFinanceMainDialogCtrl;
-	}
-
-	/**
-	 * @return the financeMainDialogCtrl
-	 */
-	public FinanceMainDialogCtrl getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
-	}
-
-	/**
-	 * @param financeMainDialogCtrl the financeMainDialogCtrl to set
-	 */
-	public void setFinanceMainDialogCtrl(FinanceMainDialogCtrl financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
-	}
-	
-	/**
-	 * @return the validationOn
-	 */
-	public boolean isValidationOn() {
-		return validationOn;
-	}
-
-	/**
-	 * @param validationOn the validationOn to set
-	 */
-	public void setValidationOn(boolean validationOn) {
-		this.validationOn = validationOn;
-	}
-
-
-	/**
-	 * @return the addDefferment
-	 */
-	public boolean isAddDefferment() {
-		return addDefferment;
-	}
-
-	/**
-	 * @param addDefferment the addDefferment to set
-	 */
-	public void setAddDefferment(boolean addDefferment) {
-		this.addDefferment = addDefferment;
-	}
-
-	/**
-	 * Set the properties of the fields, like maxLength.<br>
-	 */
-	private void doSetFieldProperties() {
-		logger.debug("Entering");
 		logger.debug("Leaving");
 	}
 
@@ -279,8 +205,10 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	 * when the "Apply" button is clicked. <br>
 	 * 
 	 * @param event
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnAddDefferment(Event event) throws InterruptedException {
+	public void onClick$btnAddDefferment(Event event) throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 		if(getFinScheduleData().getFinanceScheduleDetails()!=null){
 			doSave();
@@ -293,8 +221,10 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	 * 
 	 * @param event
 	 * @throws InterruptedException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnClose(Event event) throws InterruptedException {
+	public void onClick$btnClose(Event event) throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 		doClose();
 		logger.debug("Leaving" + event.toString());
@@ -305,8 +235,10 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	 * 
 	 * @param event
 	 * @throws InterruptedException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * */
-	public void onClose(Event event)throws InterruptedException{
+	public void onClose(Event event)throws InterruptedException, IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering" + event.toString());
 		doClose();
 		logger.debug("Leaving" + event.toString());
@@ -320,9 +252,11 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	 * the components and ask the user if saving the modifications. <br>
 	 * 
 	 * @throws InterruptedException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * 
 	 */
-	private void doClose() throws InterruptedException {
+	private void doClose() throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean close = true;
 		doClearMessage();
@@ -361,8 +295,10 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	 * Saves the components to table. <br>
 	 * 
 	 * @throws InterruptedException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void doSave() throws InterruptedException {
+	public void doSave() throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		doWriteComponentsToBean();
 		this.window_AddRmvDeffermentDialog.onClose();
@@ -410,9 +346,9 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 		logger.debug("Entering");
 
 		this.cbDate.setVisible(true);
-		fillSchDates(this.cbDate,aFinSchData, false,aFinSchData.getFinanceMain().getFinStartDate());
-		fillSchDates(this.cbTillDateFrom,aFinSchData, false, aFinSchData.getFinanceMain().getFinStartDate());
-		fillSchDates(this.cbTillDateTo,aFinSchData, false, aFinSchData.getFinanceMain().getFinStartDate());
+		fillSchDates(this.cbDate,aFinSchData, false,aFinSchData.getFinanceMain().getFinStartDate(), true);
+		fillSchDates(this.cbTillDateFrom,aFinSchData, false, aFinSchData.getFinanceMain().getFinStartDate(), false);
+		fillSchDates(this.cbTillDateTo,aFinSchData, false, aFinSchData.getFinanceMain().getFinStartDate(), true);
 		if(isAddDefferment()){
 			recalTypeRow.setVisible(true);
 			fillComboBox(this.cbReCalType, "", recalTypes, ",CURPRD,ADDLAST,");
@@ -423,7 +359,7 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 				this.excDefDateRow.setVisible(true);
 				if(getFinScheduleData().getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLMDT)){
 					this.cbTillDateTo.setDisabled(true);
-					fillSchDates(this.cbTillDateTo,getFinScheduleData(),true,getFinScheduleData().getFinanceMain().getFinStartDate());
+					fillSchDates(this.cbTillDateTo,getFinScheduleData(),true,getFinScheduleData().getFinanceMain().getFinStartDate(), false);
 				}else {
 					this.cbTillDateTo.setDisabled(false);
 				}
@@ -440,7 +376,7 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 
 	/** To fill schedule dates */
 	public void fillSchDates(Combobox dateCombobox,
-			FinScheduleData financeDetail, boolean disbField, Date fillAfter) {
+			FinScheduleData financeDetail, boolean disbField, Date fillAfter, boolean includeDate) {
 		logger.debug("Entering");
 		dateCombobox.getItems().clear();
 		Comboitem comboitem = new Comboitem();
@@ -454,9 +390,7 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 				List<DefermentDetail> defDetail =  financeDetail.getDefermentDetails();
 				for (int i = 0; i < defDetail.size(); i++) {
 					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							defDetail.get(i).getDeferedSchdDate(),
-							PennantConstants.dateFormate));
+					comboitem.setLabel(PennantAppUtil.formateDate(defDetail.get(i).getDeferedSchdDate(),PennantConstants.dateFormate));
 					comboitem.setValue(defDetail.get(i).getDeferedSchdDate());
 					if(i>0){
 						prvDD = defDetail.get(i-1);
@@ -471,26 +405,52 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 			}
 		}else {
 			if (financeDetail.getFinanceScheduleDetails() != null) {
+				
+				//Disabled Combo Condition
+				if(disbField){
+					dateCombobox.setDisabled(true);
+					return;
+				}
+				//Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
+				
 				List<FinanceScheduleDetail> financeScheduleDetails = financeDetail.getFinanceScheduleDetails();
 				for (int i = 0; i < financeScheduleDetails.size(); i++) {
-					if(financeScheduleDetails.get(i).isRepayOnSchDate()){
-						comboitem = new Comboitem();
-						comboitem.setLabel(PennantAppUtil.formateDate(
-								financeScheduleDetails.get(i).getSchDate(),
-								PennantConstants.dateFormate));
-						comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
-						if(fillAfter.compareTo(financeDetail.getFinanceMain().getFinStartDate())==0) {
-							dateCombobox.appendChild(comboitem);
-							if (financeDetail.getFinanceMain().getMaturityDate().compareTo(
-									financeScheduleDetails.get(i).getSchDate())==0) {
-								dateCombobox.setSelectedItem(comboitem);
-								if(disbField){
-									dateCombobox.setDisabled(true);
-								}
+
+					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+
+					//Not Allowed for Repayment
+					if (!curSchd.isRepayOnSchDate() ) {
+						continue;
+					}
+
+					//Profit Paid (Partial/Full)
+					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+						continue;
+					}
+
+					//Principal Paid (Partial/Full)
+					if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+						continue;
+					}
+					
+					/*if(curSchd.getSchDate().before(curBussDate)){
+						continue;
+					}*/
+
+					comboitem = new Comboitem();
+					comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate));
+					comboitem.setValue(curSchd.getSchDate());
+					if(fillAfter.compareTo(financeDetail.getFinanceMain().getFinStartDate())==0) {
+						dateCombobox.appendChild(comboitem);
+						if (financeDetail.getFinanceMain().getMaturityDate().compareTo(curSchd.getSchDate())==0) {
+							if(disbField){
+								dateCombobox.setDisabled(true);
 							}
-						}else if(financeScheduleDetails.get(i).getSchDate().compareTo(fillAfter) >= 0) {
-							dateCombobox.appendChild(comboitem);
 						}
+					}else if(includeDate && curSchd.getSchDate().compareTo(fillAfter) >= 0) {
+						dateCombobox.appendChild(comboitem);
+					}else if(!includeDate && curSchd.getSchDate().compareTo(fillAfter) > 0) {
+						dateCombobox.appendChild(comboitem);
 					}
 				}
 			}
@@ -502,40 +462,39 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
+	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void doWriteComponentsToBean() {
+	public void doWriteComponentsToBean() throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		Date deffermentDate = null;
+		Date fromDate = null;
+		Date toDate = null;
 		try {
-			if (isValidComboValue(
-					this.cbDate,
-					Labels.getLabel("label_AddDeffermentDialog_FromDate.value"))) {
+			if (isValidComboValue(this.cbDate, Labels.getLabel("label_AddDeffermentDialog_FromDate.value"))) {
+				deffermentDate = (Date)this.cbDate.getSelectedItem().getValue();
 				if(isAddDefferment()){
-				for(int i=0;i<getFinScheduleData().getDefermentDetails().size();i++){
-					if(getFinScheduleData().getDefermentDetails().get(i).getDeferedSchdDate().compareTo(
-							(Date)this.cbDate.getSelectedItem().getValue())==0){
-						throw new WrongValueException(
-								this.cbDate,
-								Labels.getLabel(
-										"label_AddDeffermentDialog_Exists.value",
-										new String[]{
-												Labels.getLabel("label_AddDeffermentDialog_FromDate.value"),
-												PennantAppUtil.formateDate((Date)this.cbDate.getSelectedItem().getValue(),
-														PennantConstants.dateFormate)}));
+					for(int i=0;i<getFinScheduleData().getDefermentDetails().size();i++){
+						if(getFinScheduleData().getDefermentDetails().get(i).getDeferedSchdDate().compareTo(
+								deffermentDate	)==0){
+							throw new WrongValueException(this.cbDate, 
+								Labels.getLabel("label_AddDeffermentDialog_Exists.value",
+								new String[]{Labels.getLabel("label_AddDeffermentDialog_FromDate.value"),
+								PennantAppUtil.formateDate(deffermentDate,PennantConstants.dateFormate)}));
+						}
 					}
 				}
-				}
-				getFinScheduleData().getFinanceMain().setEventFromDate((Date)this.cbDate.getSelectedItem().getValue());
-				getFinScheduleData().getFinanceMain().setEventToDate((Date)this.cbDate.getSelectedItem().getValue());
+				getFinScheduleData().getFinanceMain().setEventFromDate(deffermentDate);
+				getFinScheduleData().getFinanceMain().setEventToDate(deffermentDate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		if(this.recalTypeRow.isVisible()){
 			try{
-				if (isValidComboValue(
-						this.cbReCalType,
-						Labels.getLabel("label_AddDeffermentDialog_RecalType.value"))
+				if (isValidComboValue(this.cbReCalType,Labels.getLabel("label_AddDeffermentDialog_RecalType.value"))
 						&& this.cbReCalType.getSelectedIndex() != 0) {
 					getFinScheduleData().getFinanceMain().setRecalType(this.cbReCalType.getSelectedItem().getValue().toString());
 				}
@@ -549,23 +508,11 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 					throw new WrongValueException(this.cbTillDateFrom, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_AddDeffermentDialog_TillDateFrom.value") }));
 				}
-				if((this.cbDate.getSelectedIndex()>0 && ((Date) this.cbTillDateFrom.getSelectedItem()
-						.getValue())
-						.compareTo((Date) this.cbDate
-								.getSelectedItem().getValue()) < 0) ||
-								(this.cbDate.getSelectedIndex()>0 && ((Date) this.cbTillDateFrom.getSelectedItem()
-										.getValue())
-										.compareTo((Date) this.cbDate
-												.getSelectedItem().getValue()) == 0)){
-					throw new WrongValueException(
-							this.cbTillDateFrom,
-							Labels.getLabel(
-									"DATE_ALLOWED_AFTER",
-									new String[]{
-											Labels.getLabel("label_AddDeffermentDialog_TillDateFrom.value"),
-											PennantAppUtil.formateDate((Date)this.cbDate.getSelectedItem().getValue(),
-													PennantConstants.dateFormate)
-									}));
+				fromDate = (Date) this.cbTillDateFrom.getSelectedItem().getValue();
+				if((this.cbDate.getSelectedIndex()>0 && fromDate.compareTo(deffermentDate) <= 0)){
+					throw new WrongValueException(this.cbTillDateFrom, Labels.getLabel("DATE_ALLOWED_AFTER",
+					new String[]{Labels.getLabel("label_AddDeffermentDialog_TillDateFrom.value"),
+								PennantAppUtil.formateDate(deffermentDate,PennantConstants.dateFormate)}));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -577,19 +524,11 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 					throw new WrongValueException(this.cbTillDateTo, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_AddDeffermentDialog_TillDateTo.value") }));
 				}
-				if((this.cbTillDateFrom.getSelectedIndex()>0 && ((Date) this.cbTillDateTo.getSelectedItem()
-						.getValue()).compareTo((Date) this.cbTillDateFrom.getSelectedItem().getValue()) < 0) ||
-								(this.cbTillDateFrom.getSelectedIndex()>0 && ((Date) this.cbTillDateTo.getSelectedItem()
-										.getValue()).compareTo((Date) this.cbTillDateFrom.getSelectedItem().getValue()) == 0)){
-					throw new WrongValueException(
-							this.cbTillDateTo,
-							Labels.getLabel(
-									"DATE_ALLOWED_AFTER",
-									new String[]{
-											Labels.getLabel("label_AddDeffermentDialog_TillDateTo.value"),
-											PennantAppUtil.formateDate((Date)this.cbTillDateFrom.getSelectedItem().getValue(),
-													PennantConstants.dateFormate)
-									}));
+				toDate = (Date) this.cbTillDateTo.getSelectedItem().getValue();
+				if((this.cbTillDateFrom.getSelectedIndex()>0 && toDate.compareTo(fromDate) < 0) ){
+					throw new WrongValueException(this.cbTillDateTo,Labels.getLabel("DATE_ALLOWED_AFTER",
+							new String[]{Labels.getLabel("label_AddDeffermentDialog_TillDateTo.value"),
+									PennantAppUtil.formateDate(fromDate,PennantConstants.dateFormate)}));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -625,10 +564,21 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 			}
 			throw new WrongValuesException(wvea);
 		}
+		
+		if(getFeeDetailDialogCtrl() != null){
+			try {
+				setFinScheduleData(getFeeDetailDialogCtrl().doExecuteFeeCharges(true, false, getFinScheduleData(),true,deffermentDate));
+			} catch (AccountNotFoundException e) {
+				logger.error(e.getMessage());
+			}
+		}
+		
 		if(isAddDefferment()){
-			if(this.recallFromDateRow.isVisible() && this.cbTillDateFrom.getSelectedIndex() > 0 && this.cbTillDateTo.getSelectedIndex() > 0){
-				getFinScheduleData().getFinanceMain().setRecalFromDate((Date)this.cbTillDateFrom.getSelectedItem().getValue());
-				getFinScheduleData().getFinanceMain().setRecalToDate((Date)this.cbTillDateTo.getSelectedItem().getValue());
+			if(this.recallFromDateRow.isVisible() && this.cbTillDateFrom.getSelectedIndex() > 0){
+				getFinScheduleData().getFinanceMain().setRecalFromDate(fromDate);
+				if(this.cbTillDateTo.getSelectedIndex() > 0){
+					getFinScheduleData().getFinanceMain().setRecalToDate(toDate);
+				}
 				setFinScheduleData(ScheduleCalculator.addDeferment(getFinScheduleData()));
 			}else {
 				setFinScheduleData(ScheduleCalculator.addDeferment(getFinScheduleData()));
@@ -636,11 +586,23 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 		}else{
 			setFinScheduleData(ScheduleCalculator.rmvDeferment(getFinScheduleData()));
 		}
-		getFinScheduleData().setSchduleGenerated(true);
-		if(getFinanceMainDialogCtrl()!=null){
-			this.financeMainDialogCtrl.doFillScheduleList(getFinScheduleData(), null);
-		}else {
-			this.wIFFinanceMainDialogCtrl.doFillScheduleList(getFinScheduleData());
+		
+		//Show Error Details in Schedule Maintainance
+		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+		}else{
+
+			getFinScheduleData().setSchduleGenerated(true);
+			int availedDefRpyChange = getFinScheduleData().getFinanceMain().getAvailedDefRpyChange();
+			if(isAddDefferment()){
+				getFinScheduleData().getFinanceMain().setAvailedDefRpyChange(availedDefRpyChange + 1);
+			}else{
+				getFinScheduleData().getFinanceMain().setAvailedDefRpyChange(availedDefRpyChange - 1);
+			}
+				
+			if(getScheduleDetailDialogCtrl()!=null){
+				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -738,14 +700,28 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 			this.addTermRow.setVisible(false);
 			this.cbAddTermAfter.setSelectedIndex(0);
 			if(recalType.equals(CalculationConstants.RPYCHG_TILLMDT)){
+				this.recallToDateRow.setVisible(false);
 				this.cbTillDateTo.setDisabled(true);
-				fillSchDates(this.cbTillDateTo,getFinScheduleData(),true,getFinScheduleData().getFinanceMain().getFinStartDate());
+				if(this.cbDate.getSelectedItem() == null || this.cbDate.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)){
+					fillSchDates(this.cbTillDateFrom,getFinScheduleData(),false,getFinScheduleData().getFinanceMain().getFinStartDate(), true);
+				}else{
+					fillSchDates(this.cbTillDateFrom,getFinScheduleData(),false,(Date)this.cbDate.getSelectedItem().getValue(), false);
+				}
 			}else {
 				this.cbTillDateTo.setDisabled(false);
+				if(this.cbTillDateFrom.getSelectedItem() == null || this.cbTillDateFrom.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)){
+					if(this.cbDate.getSelectedItem() == null || this.cbDate.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)){
+						fillSchDates(this.cbTillDateTo,getFinScheduleData(),false,getFinScheduleData().getFinanceMain().getFinStartDate(), true);
+					}else{
+						fillSchDates(this.cbTillDateTo,getFinScheduleData(),false,(Date)this.cbDate.getSelectedItem().getValue(), true);
+					}
+				}else{
+					fillSchDates(this.cbTillDateTo,getFinScheduleData(),false,(Date)this.cbTillDateFrom.getSelectedItem().getValue(), true);
+				}
 			}
 		}else if(recalType.equals(CalculationConstants.RPYCHG_ADDTERM)) {
-			this.addTermRow.setVisible(true);
-			this.cbAddTermAfter.setSelectedIndex(0);
+			this.addTermRow.setVisible(false);
+			this.cbAddTermAfter.setSelectedIndex(1);
 			this.recallFromDateRow.setVisible(false);
 			this.cbTillDateFrom.setSelectedIndex(0);
 			this.recallToDateRow.setVisible(false);
@@ -776,7 +752,7 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 			this.cbTillDateTo.getItems().clear();		
 			if (isValidComboValue(this.cbTillDateFrom,Labels.getLabel("label_AddDeffermentDialog_TillDateFrom.value"))) {
 				fillSchDates(this.cbTillDateTo, getFinScheduleData(),false,
-						(Date) this.cbTillDateFrom.getSelectedItem().getValue());
+						(Date) this.cbTillDateFrom.getSelectedItem().getValue(), true);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -791,12 +767,12 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 		logger.debug("Entering" + event.toString());
 		if(this.cbDate.getSelectedIndex() > 0) {
 			this.cbReCalType.setDisabled(false);
-			if(this.recallFromDateRow.isVisible()) {
-				this.cbTillDateFrom.getItems().clear();		
-				if (isValidComboValue(this.cbDate,Labels.getLabel("label_AddDeffermentDialog_FromDate.value"))) {
-					fillSchDates(this.cbTillDateFrom, getFinScheduleData(),false,
-							(Date) this.cbDate.getSelectedItem().getValue());
-				}
+			this.cbTillDateFrom.getItems().clear();		
+			if (isValidComboValue(this.cbDate,Labels.getLabel("label_AddDeffermentDialog_FromDate.value"))) {
+				fillSchDates(this.cbTillDateFrom, getFinScheduleData(),false,
+						(Date) this.cbDate.getSelectedItem().getValue(), false);
+				fillSchDates(this.cbTillDateTo, getFinScheduleData(),false,
+						(Date) this.cbDate.getSelectedItem().getValue(), true);
 			}
 		}else {
 			this.cbReCalType.setSelectedIndex(0);
@@ -812,5 +788,46 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+	
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	public FinScheduleData getFinScheduleData() {
+		return finScheduleData;
+	}
+	public void setFinScheduleData(FinScheduleData finScheduleData) {
+		this.finScheduleData = finScheduleData;
+	}
+
+	public boolean isValidationOn() {
+		return validationOn;
+	}
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
+	}
+
+	public boolean isAddDefferment() {
+		return addDefferment;
+	}
+	public void setAddDefferment(boolean addDefferment) {
+		this.addDefferment = addDefferment;
+	}
+	
+	public ScheduleDetailDialogCtrl getScheduleDetailDialogCtrl() {
+		return scheduleDetailDialogCtrl;
+	}
+	public void setScheduleDetailDialogCtrl(ScheduleDetailDialogCtrl scheduleDetailDialogCtrl) {
+		this.scheduleDetailDialogCtrl = scheduleDetailDialogCtrl;
+	}	
+	
+	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
+		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
+	}
+	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
+		return feeDetailDialogCtrl;
+	}
+
 }
 

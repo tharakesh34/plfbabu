@@ -84,6 +84,8 @@ import com.pennant.backend.service.applicationmaster.BaseRateService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -429,6 +431,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -561,7 +564,6 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 				btnCancel.setVisible(false);
 			}
 			
-			this.btnDelete.setVisible(false);
 			//Checking condition for deletion of Object or not
 			/*if(baseRate.getRecordStatus().equals(Labels.getLabel("Approved"))){
 				final boolean  baseRateDel= getBaseRateService().getBaseRateListById(
@@ -667,10 +669,10 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 		
 		if (!this.bREffDate.isDisabled()){
-			this.bREffDate.setConstraint("NO EMPTY :" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-							"label_BaseRateDialog_BREffDate.value")}));
-		}
+			this.bREffDate.setConstraint(new PTDateValidator(Labels.getLabel(
+					"label_BaseRateDialog_BREffDate.value"), true));
+     		
+			}
 		if (!this.bRRate.isReadonly()){
 			this.bRRate.setConstraint(new RateValidator(13,9,
 					Labels.getLabel("label_BaseRateDialog_BRRate.value"),true));
@@ -694,9 +696,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */	
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescBRTypeName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-						"label_BaseRateDialog_BRType.value")}));
+		this.lovDescBRTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_BaseRateDialog_BRType.value"),
+				null, true));
 		logger.debug("Leaving");
 	}
 	
@@ -859,7 +860,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

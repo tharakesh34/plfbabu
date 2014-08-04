@@ -57,6 +57,7 @@ public class ExpenseType implements java.io.Serializable, Entity {
 	private static final long serialVersionUID = 1L;
 	private long expenceTypeId = Long.MIN_VALUE;
 	private String expenceTypeName;
+	private String expenseFor;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -103,9 +104,6 @@ public class ExpenseType implements java.io.Serializable, Entity {
 		this.expenceTypeId = expenceTypeId;
 	}
 	
-	
-		
-	
 	public String getExpenceTypeName() {
 		return expenceTypeName;
 	}
@@ -113,9 +111,14 @@ public class ExpenseType implements java.io.Serializable, Entity {
 		this.expenceTypeName = expenceTypeName;
 	}
 	
-	
-		
-	
+	public String getExpenseFor() {
+    	return expenseFor;
+    }
+
+	public void setExpenseFor(String expenseFor) {
+    	this.expenseFor = expenseFor;
+    }
+
 	public int getVersion() {
 		return version;
 	}

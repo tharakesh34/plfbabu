@@ -12,8 +12,8 @@ import org.zkoss.zul.Constraint;
 public class PTPhoneNumberValidator implements Constraint{
 	private String fieldParm;
 	private boolean mandatory=false;
-	private final String PHONE_REGEX = "[0-9]*";
-	private int maxLength=8;
+	private final String PHONE_REGEX = "^[0-9]{11}";
+	private int maxLength=11;
 	
 	public PTPhoneNumberValidator(String fieldParm,boolean mandatory) {
 		setFieldParm(fieldParm);

@@ -103,7 +103,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	private Button _searchButton;
 	private Paging _paging;
 
-	private int pageSize = PennantConstants.listGridSize;
+	private int pageSize = PennantConstants.searchGridSize;
 	private Listbox listbox;
 	private ListModelList listModelList;
 	private final int _height = 430;

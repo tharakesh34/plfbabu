@@ -84,11 +84,11 @@
 		    border-width: 2px;
 		}
 		 
-		div.z-listcell-cnt{
+		<!-- div.z-listcell-cnt{
 		 	height:auto;
 		 	margin-bottom :-30px;
 		 	margin-top : -12px;
-		}
+		} -->
 		
 		tr.z-listitem-over  {
 			background:none;
@@ -99,56 +99,66 @@
 		apply="${notesCtrl}" width="50%"
 		height="75%" sizable="false" closable="false" >
 		
-		<div sclass="z-toolbar" style="padding:0px">
+		<div id="div_toolbar" sclass="z-toolbar" style="padding:0px">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="30%,40%,30%">
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
 					sclass="toolbar-start" >
 					<button id="btnSave" height="24px"
-						image="/images/icons/btn_save2_16x16.gif"
+						label="${c:l('label_Save')}"
 						tooltiptext="${c:l('btnSave.tooltiptext')}" />
 				</toolbar>
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center"
 					sclass="toolbar-center">
-					<label value="${c:l('window_notes.title')}"
+					<label id="label_title" value="${c:l('window_notes.title')}"
 						sclass="label-heading" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnClose" height="24px"
-						image="/images/icons/btn_exitdoor2_16x16.gif"
+						label="${c:l('label_Close')}"
 						tooltiptext="${c:l('btnClose.tooltiptext')}" />
 				</toolbar>
 			</hbox>
 		</div>
 		
-		<borderlayout>
+		<borderlayout style="border:none;">
 			<center border="none" autoscroll="false">
-					<groupbox sclass="gb-dialog">
-						<hlayout id="hlayout_cbType">
-							<label id="label_NotesDialog_AlignType" 
-									value="${c:l('label_NotesDialog_AlignType.value')}" />
-							<radiogroup id="alignType" />
-							<space width="200px" />
-							<label id="label_NotesDialog_Type" style="float:right;"
-									value="${c:l('label_NotesDialog_RemarkType.value')}" />
-							<radiogroup id="remarkType" style="float:right;"/>
-						</hlayout>
-						<separator />
-						<textbox id="remarks" multiline="true" rows="3" maxlength="180" 
-							height="50px" width="99%" style="resize:none;" />
-						<separator />
-						<listbox id="listboxNotes" fixedLayout="true"
-							vflex="true" span="true">
-							<listhead id="listheadNotes" sizable="true" />
-						</listbox>
-					</groupbox>
+				<groupbox style="border:none;">
+					<hlayout id="hlayout_cbType">
+						<label id="label_NotesDialog_AlignType"
+							value="${c:l('label_NotesDialog_AlignType.value')}" />
+						<radiogroup id="alignType" />
+						<space width="200px" />
+						<label id="label_NotesDialog_Type"
+							style="float:right;"
+							value="${c:l('label_NotesDialog_RemarkType.value')}" />
+						<radiogroup id="remarkType"
+							style="float:right;" />
+					</hlayout>
+					<separator id="separator1"/>
+					<ptCKeditor id="remarks"  width="99%" height="75px"/>
+					<textbox id="remarksText" multiline="true" rows="3" maxlength="180" height="50px" width="99%" style="resize:none;" />
+					<separator id="separator2"/>
+					<listbox id="listboxNotes"
+						emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+						vflex="true" span="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
+						<listhead id="listheadNotes" sizable="true" >
+							<listheader width="10%" />
+							<listheader width="10%"/>
+							<listheader width="15%" />
+							<listheader width="65%" />
+						</listhead>
+					</listbox>
+				</groupbox>
 			</center>
 		</borderlayout>
-</window>
+	</window>
 </zk>

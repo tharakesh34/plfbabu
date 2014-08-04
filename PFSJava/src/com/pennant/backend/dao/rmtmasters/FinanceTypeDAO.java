@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.rmtmasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.rmtmasters.FinanceType;
 
 /**
@@ -63,5 +65,6 @@ public interface FinanceTypeDAO {
 	public FinanceType getCommodityFinanceType();
 	public FinanceType getNewCommodityFinanceType();
 	public boolean checkRIAFinance(String finType);
+	public List<FinanceType> getFinTypeDetailForBatch();
 
 }

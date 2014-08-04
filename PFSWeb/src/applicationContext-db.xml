@@ -72,11 +72,45 @@
 	</bean>
 	
 	<!-- ====================================================== -->
-	<!--        Define the property placeholder configurer      -->
+	<!-- Define the property placeholder configurer -->
 	<!-- ====================================================== -->
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:jdbc.properties" />
-	</bean>
-
+	 
+	 <!--                                                                      -->
+	 <!-- The EncryptablePropertyPlaceholderConfigurer will read the           -->
+	 <!-- .properties files and make their values accessible as ${var}         -->
+	 <!--                                                                      -->
+	 <!-- Our "configurationEncryptor" bean (which implements                  --> 
+	 <!-- org.jasypt.encryption.StringEncryptor) is set as a constructor arg.  -->
+	 <!--                                                                      -->
+	 <bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+	   <constructor-arg ref="configurationEncryptor" />
+		<property name="locations">
+		<list>
+			<value>classpath:jdbc.properties</value>
+			<value>classpath:mail.properties</value>
+		</list>
+	</property>
+	 </bean>
+	 
+	 <!--                                                                      -->
+	 <!-- Configuration for encryptor, based on environment variables.         -->
+	 <!--                                                                      -->
+	 <!-- In this example, the encryption password will be read from an        -->
+	 <!-- environment variable called "APP_ENCRYPTION_PASSWORD" which, once    --> 
+	 <!-- the application has been started, could be safely unset.             -->
+	 <!--                                                                      -->
+     <bean id="environmentVariablesConfiguration"
+	     class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+	   <property name="algorithm" value="PBEWithMD5AndDES" />
+	   <property name="password" value="AIBPFF#123" />
+	 </bean>
+	  
+	 <!--                                                                      -->
+	 <!-- The will be the encryptor used for decrypting configuration values.  -->
+	 <!--                                                                      -->
+	 
+	 <bean id="configurationEncryptor"
+	     class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+	   <property name="config" ref="environmentVariablesConfiguration" />
+	 </bean>
 </beans>

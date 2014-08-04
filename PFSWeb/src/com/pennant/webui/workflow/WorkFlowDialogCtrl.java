@@ -337,8 +337,7 @@ public class WorkFlowDialogCtrl extends GFCBaseCtrl implements Serializable{
 			// fill the components with the data
 			doWriteBeanToComponents(aWorkFlowDetails);
 			doStoreInitValues();
-			this.window_workFlowDialog.doModal(); // open the dialog in modal
-			// mode
+			setDialog(this.window_workFlowDialog);
 		} catch (final Exception e) {
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
@@ -415,7 +414,7 @@ public class WorkFlowDialogCtrl extends GFCBaseCtrl implements Serializable{
 					getWorkFlowListCtrl().listBoxWorkFlow.getListModel();
 				}
 
-				this.window_workFlowDialog.onClose();
+				closeDialog(this.window_workFlowDialog, "WorkFlowDialog");
 			}
 			
 		} catch (final DataAccessException e) {
@@ -492,7 +491,7 @@ public class WorkFlowDialogCtrl extends GFCBaseCtrl implements Serializable{
 			doClose();
 		} catch (final Exception e) {
 			// close anyway
-			this.window_workFlowDialog.onClose();
+			closeDialog(this.window_workFlowDialog, "WorkFlowDialog");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -516,7 +515,7 @@ public class WorkFlowDialogCtrl extends GFCBaseCtrl implements Serializable{
 
 			MultiLineMessageBox.doSetTemplate();
 			if (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					MultiLineMessageBox.QUESTION, true, new EventListener() {
+					MultiLineMessageBox.QUESTION, true, new EventListener<Event>() {
 				@Override
 				public void onEvent(Event evt) {
 					switch (((Integer) evt.getData()).intValue()) {
@@ -538,7 +537,7 @@ public class WorkFlowDialogCtrl extends GFCBaseCtrl implements Serializable{
 		}
 		final UserWorkspace workspace = getUserWorkspace();
 		workspace.deAlocateAuthorities("WorkFlowDialog");
-		this.window_workFlowDialog.onClose();
+		closeDialog(this.window_workFlowDialog, "WorkFlowDialog");
 		logger.debug("Leaving ");
 	}
 

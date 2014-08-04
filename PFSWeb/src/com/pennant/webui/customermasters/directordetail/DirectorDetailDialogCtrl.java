@@ -44,6 +44,7 @@
 package com.pennant.webui.customermasters.directordetail;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,45 +62,51 @@ import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.DirectorDetail;
-import com.pennant.backend.model.systemmasters.City;
-import com.pennant.backend.model.systemmasters.Country;
-import com.pennant.backend.model.systemmasters.Gender;
-import com.pennant.backend.model.systemmasters.Province;
-import com.pennant.backend.model.systemmasters.Salutation;
+import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTPhoneNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -121,26 +128,35 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	protected Window  window_DirectorDetailDialog; 	// autowired
 	protected Longbox custID; 						// autowired
+	protected Longbox directorID; 						// autowired
 	protected Textbox firstName; 					// autowired
-	protected Textbox middleName; 					// autowired
 	protected Textbox lastName; 					// autowired
 	protected Textbox shortName; 					// autowired
-	protected Textbox custGenderCode; 				// autowired
-	protected Textbox custSalutationCode; 			// autowired
+	protected Decimalbox sharePerc;                 // autowired
+	protected Space space_SharePerc;                // autowired
+	protected Combobox custGenderCode; 				// autowired
+	protected Combobox custSalutationCode; 			// autowired
 	protected Textbox custAddrHNbr; 				// autowired
 	protected Textbox custFlatNbr;	 				// autowired
 	protected Textbox custAddrStreet; 				// autowired
 	protected Textbox custAddrLine1; 				// autowired
 	protected Textbox custAddrLine2; 				// autowired
 	protected Textbox custPOBox; 					// autowired
-	protected Textbox custAddrCity; 				// autowired
-	protected Textbox custAddrProvince; 			// autowired
-	protected Textbox custAddrCountry; 				// autowired
+	protected ExtendedCombobox custAddrCity; 				// autowired
+	protected ExtendedCombobox custAddrProvince; 			// autowired
+	protected ExtendedCombobox custAddrCountry; 				// autowired
 	protected Textbox custAddrZIP; 					// autowired
 	protected Textbox custAddrPhone; 				// autowired
 	protected Datebox custAddrFrom; 				// autowired
 	protected Textbox custCIF;						// autowired
 	protected Label   custShrtName;					// autowired
+	protected Checkbox shareholder;                 // autowired
+	protected Checkbox director;                    // autowired
+	protected ExtendedCombobox designation;         // autowired
+	protected ExtendedCombobox idType;                       // autowired
+	protected Textbox idReference;                  // autowired
+	protected ExtendedCombobox nationality;                  // autowired
+	protected Datebox  dob;                  // autowired
 
 	protected Label    		recordStatus; 			// autowired
 	protected Radiogroup 	userAction;
@@ -154,7 +170,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// on the values are edited since the last init.
 	private transient long  		oldVar_custID;
 	private transient String  		oldVar_firstName;
-	private transient String  		oldVar_middleName;
 	private transient String  		oldVar_lastName;
 	private transient String  		oldVar_shortName;
 	private transient String  		oldVar_custGenderCode;
@@ -171,6 +186,15 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private transient String  		oldVar_custAddrZIP;
 	private transient String  		oldVar_custAddrPhone;
 	private transient Date  		oldVar_custAddrFrom;
+	private transient boolean       oldVar_shareHolder;
+	private transient boolean       oldVar_director;
+	private transient String 		oldVar_designation;
+
+	private transient String 		oldVar_idType;
+	private transient String 		oldVar_idReference;
+	private transient String 		oldVar_nationality;
+	private transient Date  		oldVar_dob;
+	
 	private transient String 		oldVar_recordStatus;
 
 	private transient boolean validationOn;
@@ -188,25 +212,12 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Button btnHelp; 	// autowire
 	protected Button btnNotes;	// autowire
 	
-	protected Button btnSearchCustGenderCode; 	// autowire
-	protected Textbox lovDescCustGenderCodeName;
-	private transient String 		oldVar_lovDescCustGenderCodeName;
 	
-	protected Button btnSearchCustSalutationCode;// autowire
-	protected Textbox lovDescCustSalutationCodeName;
-	private transient String 		oldVar_lovDescCustSalutationCodeName;
-	
-	protected Button btnSearchCustAddrCity; 	// autowire
-	protected Textbox lovDescCustAddrCityName;
 	private transient String 		oldVar_lovDescCustAddrCityName;
-	
-	protected Button btnSearchCustAddrProvince; // autowire
-	protected Textbox lovDescCustAddrProvinceName;
 	private transient String 		oldVar_lovDescCustAddrProvinceName;
-	
-	protected Button btnSearchCustAddrCountry; 	// autowire
-	protected Textbox lovDescCustAddrCountryName;
 	private transient String 		oldVar_lovDescCustAddrCountryName;
+	private transient String 		oldVar_lovDescNationalityName;
+	private transient String 		oldVar_lovDescCustDocTypeName;
 	
 	// ServiceDAOs / Domain Classes
 	private transient DirectorDetailService directorDetailService;
@@ -215,10 +226,21 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	private boolean newRecord=false;
 	private boolean newCustomer=false;
-	private List<DirectorDetail> customerDirectors;
 	private CustomerDialogCtrl customerDialogCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	protected Button btnSearchPRCustid;
+	
+	private List<DirectorDetail> directorDetailList;
+	private List<ValueLabel>	genderCodes	      = PennantAppUtil.getGenderCodes();
+	private String sCustGenderCode;
+	private String sCustAddrCountry;
+	private String sCustAddrProvince;
+	protected Row Row_Gender;
+	
+	private BigDecimal totSharePerc;
+	private String userRole="";
+	private boolean isEnquiry = false;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -241,8 +263,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void onCreate$window_DirectorDetailDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
 		
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, 
@@ -263,7 +283,15 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		} else {
 			setDirectorDetail(null);
 		}
-
+        
+		if(args.containsKey("totSharePerc")){
+        	this.totSharePerc = (BigDecimal) args.get("totSharePerc");
+        }
+		
+		if(args.containsKey("isEnquiry")){
+			isEnquiry = (Boolean) args.get("isEnquiry");
+		}
+        
 		if(getDirectorDetail().isNewRecord()){
 			setNewRecord(true);
 		}
@@ -279,13 +307,16 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 				setNewRecord(false);
 			}
 			this.directorDetail.setWorkflowId(0);
-			if(args.containsKey("roleCode")){
-				getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "DirectorDetailDialog");
-			}
 		}
-	
 		doLoadWorkFlow(this.directorDetail.isWorkflow(),this.directorDetail.getWorkflowId(),
 				this.directorDetail.getNextTaskId());
+		
+		if(args.containsKey("roleCode")){
+			userRole = (String) args.get("roleCode");
+			getUserWorkspace().alocateRoleAuthorities(userRole,"DirectorDetailDialog");
+		}
+		/* set components visible dependent of the users rights */
+		doCheckRights();
 		
 		if (isWorkFlowEnabled()){
 			this.userAction	= setListRecordStatus(this.userAction);
@@ -307,10 +338,18 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		doShowDialog(getDirectorDetail());
 		
 		//Calling SelectCtrl For proper selection of Customer
-		if(isNewRecord() & !isNewCustomer()){
+		/*if(isNewRecord() & !isNewCustomer()){
 			onload();
-		}
+		}*/
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private void doCheckEnquiry() {
+		if(isEnquiry){
+			this.btnSave.setVisible(false);
+			this.btnDelete.setVisible(false);
+			this.btnHelp.setVisible(false);
+		}
 	}
 
 	/**
@@ -320,31 +359,65 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
 		this.custID.setMaxlength(19);
-		this.firstName.setMaxlength(20);
-		this.middleName.setMaxlength(20);
-		this.lastName.setMaxlength(20);
-		this.shortName.setMaxlength(20);
-		this.custGenderCode.setMaxlength(8);
-		this.custSalutationCode.setMaxlength(8);
+		this.firstName.setMaxlength(50);
+		this.lastName.setMaxlength(50);
+		this.shortName.setMaxlength(50);
 		this.custAddrHNbr.setMaxlength(50);
 		this.custFlatNbr.setMaxlength(50);
 		this.custAddrStreet.setMaxlength(50);
 		this.custAddrLine1.setMaxlength(50);
 		this.custAddrLine2.setMaxlength(50);
 		this.custPOBox.setMaxlength(8);
+		
 		this.custAddrCity.setMaxlength(8);
+		this.custAddrCity.setModuleName("City");
+		this.custAddrCity.setValueColumn("PCCity");
+		this.custAddrCity.setDescColumn("PCCityName");
+		this.custAddrCity.setValidateColumns(new String[] { "PCCity" });
+		
 		this.custAddrProvince.setMaxlength(8);
+		this.custAddrProvince.setModuleName("Province");
+		this.custAddrProvince.setValueColumn("CPProvince");
+		this.custAddrProvince.setDescColumn("CPProvinceName");
+		this.custAddrProvince.setValidateColumns(new String[] { "CPProvince" });
+		
 		this.custAddrCountry.setMaxlength(2);
+		this.custAddrCountry.setMandatoryStyle(true);
+		this.custAddrCountry.setModuleName("Country");
+		this.custAddrCountry.setValueColumn("CountryCode");
+		this.custAddrCountry.setDescColumn("CountryDesc");
+		this.custAddrCountry.setValidateColumns(new String[] {"CountryCode"});
+		
 		this.custAddrZIP.setMaxlength(10);
-		this.custAddrPhone.setMaxlength(50);
+		this.custAddrPhone.setMaxlength(11);
 	 	this.custAddrFrom.setFormat(PennantConstants.dateFormat);
+	 	
+		this.designation.setMaxlength(8);
+		this.designation.setModuleName("Designation");
+		this.designation.setValueColumn("DesgCode");
+		this.designation.setDescColumn("DesgDesc");
+		this.designation.setValidateColumns(new String[] { "DesgCode" });
+		
+		this.idType.setMaxlength(2);
+		this.idType.setModuleName("CustDocumentType");
+		this.idType.setValueColumn("DocTypeCode");
+		this.idType.setDescColumn("DocTypeDesc");
+		this.idType.setValidateColumns(new String[] { "DocTypeCode" });
+		
+		this.idReference.setMaxlength(35);
+		
+		this.nationality.setMaxlength(2);
+		this.nationality.setMandatoryStyle(false);
+		this.nationality.setModuleName("Country");
+		this.nationality.setValueColumn("CountryCode");
+		this.nationality.setDescColumn("CountryDesc");
+		this.nationality.setValidateColumns(new String[] {"CountryCode"});
 		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 			
 		}else{
 			this.groupboxWf.setVisible(false);
-			
 		}
 		
 		logger.debug("Leaving") ;
@@ -361,7 +434,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doCheckRights() {
 		logger.debug("Entering") ;
 		
-		getUserWorkspace().alocateAuthorities("DirectorDetailDialog");
+		getUserWorkspace().alocateAuthorities("DirectorDetailDialog",userRole);
 		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_DirectorDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DirectorDetailDialog_btnEdit"));
@@ -514,25 +587,11 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			logger.debug("isDataChanged : false");
 		}
 		if(close){
-			closeWindow();
+			closePopUpWindow(this.window_DirectorDetailDialog,"DirectorDetailDialog");
 		}
 		logger.debug("Leaving") ;
 	}
 
-	/**
-	 * Method for closing Customer Selection Window 
-	 * @throws InterruptedException
-	 */
-	public void closeWindow() throws InterruptedException{
-		logger.debug("Entering");
-		
-		if(isNewCustomer()){
-			window_DirectorDetailDialog.onClose();	
-		}else{
-			closeDialog(this.window_DirectorDetailDialog, "DirectorDetail");
-		}
-		logger.debug("Leaving");
-	}
 	
 	/**
 	 * Cancel the actual operation. <br>
@@ -556,16 +615,18 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	public void doWriteBeanToComponents(DirectorDetail aDirectorDetail) {
 		logger.debug("Entering") ;
+		fillComboBox(this.custGenderCode, aDirectorDetail.getCustGenderCode(), genderCodes, "");
+		fillComboBox(this.custSalutationCode, aDirectorDetail.getCustSalutationCode(), PennantAppUtil.getSalutationCodes(aDirectorDetail.getCustGenderCode()), "");
 		if(aDirectorDetail.getCustID()!=Long.MIN_VALUE){
 			this.custID.setValue(aDirectorDetail.getCustID());	
 		}
-
 		this.firstName.setValue(aDirectorDetail.getFirstName());
-		this.middleName.setValue(aDirectorDetail.getMiddleName());
 		this.lastName.setValue(aDirectorDetail.getLastName());
-		this.shortName.setValue(aDirectorDetail.getShortName());
-		this.custGenderCode.setValue(aDirectorDetail.getCustGenderCode());
-		this.custSalutationCode.setValue(aDirectorDetail.getCustSalutationCode());
+		this.shortName.setValue(StringUtils.trimToEmpty(aDirectorDetail.getShortName()));
+		this.shareholder.setChecked(aDirectorDetail.isShareholder());
+		this.director.setChecked(aDirectorDetail.isDirector());
+		this.designation.setValue(aDirectorDetail.getDesignation());
+		this.sharePerc.setValue(aDirectorDetail.getSharePerc());
 		this.custAddrHNbr.setValue(aDirectorDetail.getCustAddrHNbr());
 		this.custFlatNbr.setValue(aDirectorDetail.getCustFlatNbr());
 		this.custAddrStreet.setValue(aDirectorDetail.getCustAddrStreet());
@@ -574,7 +635,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custPOBox.setValue(aDirectorDetail.getCustPOBox());
 		this.custAddrCity.setValue(aDirectorDetail.getCustAddrCity());
 		this.custAddrProvince.setValue(aDirectorDetail.getCustAddrProvince());
-		this.custAddrCountry.setValue(aDirectorDetail.getCustAddrCountry());
+		this.custAddrCountry.setValue(StringUtils.trimToEmpty(aDirectorDetail.getCustAddrCountry()));
 		this.custAddrZIP.setValue(aDirectorDetail.getCustAddrZIP());
 		this.custAddrPhone.setValue(aDirectorDetail.getCustAddrPhone());
 		this.custAddrFrom.setValue(aDirectorDetail.getCustAddrFrom());
@@ -582,38 +643,40 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			aDirectorDetail.getLovDescCustCIF().trim());
 		this.custShrtName.setValue(aDirectorDetail.getLovDescCustShrtName()==null?"":
 			aDirectorDetail.getLovDescCustShrtName().trim());
-
+		this.idType.setValue(StringUtils.trimToEmpty(aDirectorDetail.getIdType()));
+		this.idReference.setValue(StringUtils.trimToEmpty(aDirectorDetail.getIdReference()));
+		this.nationality.setValue(StringUtils.trimToEmpty(aDirectorDetail.getNationality()));
+		this.dob.setValue(aDirectorDetail.getDob());
 		if (isNewRecord()){
-			this.lovDescCustGenderCodeName.setValue("");
-			this.lovDescCustSalutationCodeName.setValue("");
-			this.lovDescCustAddrCityName.setValue("");
-			this.lovDescCustAddrProvinceName.setValue("");
-			this.lovDescCustAddrCountryName.setValue("");
+			this.custAddrCity.setDescription("");
+			this.custAddrProvince.setDescription("");
+			this.custAddrCountry.setDescription("");
+			this.designation.setDescription("");
+			this.nationality.setDescription("");
+			this.idType.setDescription("");
 		}else{
-			if(isNewCustomer()){
-				this.lovDescCustGenderCodeName.setValue(aDirectorDetail.getLovDescCustGenderCodeName());
-				this.lovDescCustSalutationCodeName.setValue(aDirectorDetail.getLovDescCustSalutationCodeName());
-				this.lovDescCustAddrCityName.setValue(aDirectorDetail.getLovDescCustAddrCityName());
-				this.lovDescCustAddrProvinceName.setValue(aDirectorDetail.getLovDescCustAddrProvinceName());
-				this.lovDescCustAddrCountryName.setValue(aDirectorDetail.getLovDescCustAddrCountryName());
-			}else{
-				this.lovDescCustGenderCodeName.setValue(aDirectorDetail.getCustGenderCode()+"-"+
-						aDirectorDetail.getLovDescCustGenderCodeName());
-				this.lovDescCustSalutationCodeName.setValue(aDirectorDetail.getCustSalutationCode()+"-"+
-						aDirectorDetail.getLovDescCustSalutationCodeName());
-				this.lovDescCustAddrCityName.setValue(aDirectorDetail.getCustAddrCity()+"-"+
-						aDirectorDetail.getLovDescCustAddrCityName());
-				this.lovDescCustAddrProvinceName.setValue(aDirectorDetail.getCustAddrProvince()+"-"+
-						aDirectorDetail.getLovDescCustAddrProvinceName());
-				this.lovDescCustAddrCountryName.setValue(aDirectorDetail.getCustAddrCountry()+"-"+
-						aDirectorDetail.getLovDescCustAddrCountryName());
-			}
-			
+				this.custAddrCity.setDescription(aDirectorDetail.getLovDescCustAddrCityName());
+				this.custAddrProvince.setDescription(aDirectorDetail.getLovDescCustAddrProvinceName());
+				this.custAddrCountry.setDescription(aDirectorDetail.getLovDescCustAddrCountryName());
+				this.designation.setDescription(aDirectorDetail.getLovDescDesignationName());
+				this.nationality.setDescription(aDirectorDetail.getLovDescNationalityName());
+				this.idType.setDescription(aDirectorDetail.getLovDescCustDocCategoryName());
+				isShareHolderChecked(aDirectorDetail.isShareholder());
+				isDirectorChecked(aDirectorDetail.isDirector());
 		}
+		if(aDirectorDetail.getSharePerc() != null && aDirectorDetail.getSharePerc().intValue() != new Integer(0)){
+			this.shareholder.setChecked(true);
+		}
+		if(!StringUtils.trimToEmpty(aDirectorDetail.getDesignation()).equals("")){
+			this.director.setChecked(true);
+		}
+		this.custAddrProvince.setFilters(new Filter[]{new Filter("CPCountry", this.custAddrCountry.getValue(),Filter.OP_EQUAL)});
+		this.custAddrCity.setFilters(new Filter[]{new Filter("PCCountry", this.custAddrCountry.getValue(),Filter.OP_EQUAL),
+				             new Filter("PCProvince", this.custAddrProvince.getValue(),Filter.OP_EQUAL)});
 		this.recordStatus.setValue(aDirectorDetail.getRecordStatus());
 		logger.debug("Leaving");
 	}
-
+	
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -637,11 +700,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			wve.add(we);
 		}
 		try {
-		    aDirectorDetail.setMiddleName(this.middleName.getValue());
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
 		    aDirectorDetail.setLastName(this.lastName.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
@@ -652,14 +710,63 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			wve.add(we);
 		}
 		try {
-	 		aDirectorDetail.setLovDescCustGenderCodeName(this.lovDescCustGenderCodeName.getValue());
-	 		aDirectorDetail.setCustGenderCode(this.custGenderCode.getValue());	
+			if(getComboboxValue(this.custGenderCode).equals("#")) {
+				aDirectorDetail.setCustGenderCode("");				
+			}else{
+				aDirectorDetail.setCustGenderCode(getComboboxValue(this.custGenderCode));	
+			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-	 		aDirectorDetail.setLovDescCustSalutationCodeName(this.lovDescCustSalutationCodeName.getValue());
-	 		aDirectorDetail.setCustSalutationCode(this.custSalutationCode.getValue());	
+			if(getComboboxValue(this.custSalutationCode).equals("#")) {
+				aDirectorDetail.setCustSalutationCode("");	
+			}else{
+				aDirectorDetail.setCustSalutationCode(getComboboxValue(this.custSalutationCode));
+			}
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			if((!this.shareholder.isDisabled() || !this.director.isDisabled()) && (!this.shareholder.isChecked() && !this.director.isChecked())){
+				throw new WrongValueException(this.shareholder, Labels.getLabel("label_DirectorDetailDialog_ShareOrDirector.value"));
+			}
+			if(this.sharePerc.getValue() != null){
+			if((this.totSharePerc.add(this.sharePerc.getValue())).compareTo(new BigDecimal(100)) > 0){
+				BigDecimal availableSharePerc = new BigDecimal(100).subtract(this.totSharePerc);
+				throw new WrongValueException(this.sharePerc, Labels.getLabel("Total_Percentage",
+						new String[] { Labels.getLabel("label_DirectorDetailDialog_SharePerc.value"),availableSharePerc.toString() }));
+			}
+			}
+			aDirectorDetail.setSharePerc(this.sharePerc.getValue() == null ? BigDecimal.ZERO : this.sharePerc.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+	 		aDirectorDetail.setLovDescCustAddrCityName(this.custAddrCity.getDescription());
+	 		aDirectorDetail.setCustAddrCity(this.custAddrCity.getValidatedValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+	 		aDirectorDetail.setLovDescCustAddrProvinceName(this.custAddrProvince.getDescription());
+	 		aDirectorDetail.setCustAddrProvince(this.custAddrProvince.getValidatedValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+	 		aDirectorDetail.setLovDescCustAddrCountryName(this.custAddrCountry.getDescription());
+	 		aDirectorDetail.setCustAddrCountry(this.custAddrCountry.getValidatedValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+		    aDirectorDetail.setCustAddrZIP(this.custAddrZIP.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+		    aDirectorDetail.setCustAddrPhone(this.custAddrPhone.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -693,36 +800,60 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		
 		try {
-	 		aDirectorDetail.setLovDescCustAddrCityName(this.lovDescCustAddrCityName.getValue());
-	 		aDirectorDetail.setCustAddrCity(this.custAddrCity.getValue());	
+		if(this.custAddrFrom.getValue() != null){
+			Date appDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			if(appDate.compareTo(this.custAddrFrom.getValue()) != 1){
+				throw new WrongValueException(this.custAddrFrom, Labels.getLabel("NUMBER_MAXVALUE",
+						new String[] {Labels.getLabel("label_DirectorDetailDialog_CustAddrFrom.value"), 
+						"Application Date"}));
+			}
+			aDirectorDetail.setCustAddrFrom(new Timestamp(this.custAddrFrom.getValue().getTime()));
+		}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		
+		aDirectorDetail.setShareholder(this.shareholder.isChecked());
+		aDirectorDetail.setDirector(this.director.isChecked());
+		
 		try {
-	 		aDirectorDetail.setLovDescCustAddrProvinceName(this.lovDescCustAddrProvinceName.getValue());
-	 		aDirectorDetail.setCustAddrProvince(this.custAddrProvince.getValue());	
+		    aDirectorDetail.setLovDescDesignationName(this.designation.getDescription());
+		    aDirectorDetail.setDesignation(this.designation.getValidatedValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		
 		try {
-	 		aDirectorDetail.setLovDescCustAddrCountryName(this.lovDescCustAddrCountryName.getValue());
-	 		aDirectorDetail.setCustAddrCountry(this.custAddrCountry.getValue());	
+			aDirectorDetail.setLovDescCustDocCategoryName(this.idType.getDescription());
+			aDirectorDetail.setIdType(this.idType.getValidatedValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		
 		try {
-		    aDirectorDetail.setCustAddrZIP(this.custAddrZIP.getValue());
+			aDirectorDetail.setIdReference(this.idReference.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		
 		try {
-		    aDirectorDetail.setCustAddrPhone(this.custAddrPhone.getValue());
+			aDirectorDetail.setLovDescNationalityName(this.nationality.getDescription());
+			aDirectorDetail.setNationality(this.nationality.getValidatedValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		
 		try {
-	 		aDirectorDetail.setCustAddrFrom(new Timestamp(this.custAddrFrom.getValue().getTime()));
+			aDirectorDetail.setDob(this.dob.getValue());
+			if(this.dob.getValue() != null){
+			if (DateUtility.compare(this.dob.getValue(),
+					(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE")) != -1) {
+				throw new WrongValueException(this.dob,Labels.getLabel("DATE_FUTURE_TODAY",
+						new String[] {Labels.getLabel("label_DirectorDetailDialog_DOB.value") }));
+			}
+			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -781,9 +912,10 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
+			doCheckEnquiry();
 			if(isNewCustomer()){
-				this.window_DirectorDetailDialog.setHeight("580px");
-				this.window_DirectorDetailDialog.setWidth("800px");
+				this.window_DirectorDetailDialog.setHeight("530px");
+				this.window_DirectorDetailDialog.setWidth("85%");
 				this.groupboxWf.setVisible(false);
 				this.window_DirectorDetailDialog.doModal() ;
 			}else{
@@ -791,7 +923,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 				this.window_DirectorDetailDialog.setHeight("100%");
 				setDialog(this.window_DirectorDetailDialog);
 			}
-		
 		} catch (final Exception e) {
 			logger.error(e);
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -810,13 +941,10 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
  		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_firstName = this.firstName.getValue();
-		this.oldVar_middleName = this.middleName.getValue();
 		this.oldVar_lastName = this.lastName.getValue();
 		this.oldVar_shortName = this.shortName.getValue();
  		this.oldVar_custGenderCode = this.custGenderCode.getValue();
- 		this.oldVar_lovDescCustGenderCodeName = this.lovDescCustGenderCodeName.getValue();
  		this.oldVar_custSalutationCode = this.custSalutationCode.getValue();
- 		this.oldVar_lovDescCustSalutationCodeName = this.lovDescCustSalutationCodeName.getValue();
 		this.oldVar_custAddrHNbr = this.custAddrHNbr.getValue();
 		this.oldVar_custFlatNbr = this.custFlatNbr.getValue();
 		this.oldVar_custAddrStreet = this.custAddrStreet.getValue();
@@ -824,14 +952,23 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.oldVar_custAddrLine2 = this.custAddrLine2.getValue();
 		this.oldVar_custPOBox = this.custPOBox.getValue();
  		this.oldVar_custAddrCity = this.custAddrCity.getValue();
- 		this.oldVar_lovDescCustAddrCityName = this.lovDescCustAddrCityName.getValue();
+ 		this.oldVar_lovDescCustAddrCityName = this.custAddrCity.getDescription();
  		this.oldVar_custAddrProvince = this.custAddrProvince.getValue();
- 		this.oldVar_lovDescCustAddrProvinceName = this.lovDescCustAddrProvinceName.getValue();
+ 		this.oldVar_lovDescCustAddrProvinceName = this.custAddrProvince.getDescription();
  		this.oldVar_custAddrCountry = this.custAddrCountry.getValue();
- 		this.oldVar_lovDescCustAddrCountryName = this.lovDescCustAddrCountryName.getValue();
+ 		this.oldVar_lovDescCustAddrCountryName = this.custAddrCountry.getDescription();
 		this.oldVar_custAddrZIP = this.custAddrZIP.getValue();
 		this.oldVar_custAddrPhone = this.custAddrPhone.getValue();
-		this.oldVar_custAddrFrom = PennantAppUtil.getTimestamp(this.custAddrFrom.getValue());	
+		this.oldVar_custAddrFrom = PennantAppUtil.getTimestamp(this.custAddrFrom.getValue());
+		this.oldVar_shareHolder = this.shareholder.isChecked();
+		this.oldVar_director = this.director.isChecked();
+		this.oldVar_designation = this.designation.getValue();
+		this.oldVar_idType = this.idType.getValue();
+		this.oldVar_idReference = this.idReference.getValue();
+		this.oldVar_nationality = this.nationality.getValue();
+		this.oldVar_dob = this.dob.getValue();
+		this.oldVar_lovDescCustDocTypeName = this.idType.getDescription();
+		this.oldVar_lovDescNationalityName = this.nationality.getDescription();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving") ;
 	}
@@ -843,13 +980,10 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
  		this.custID.setValue(this.oldVar_custID);
 		this.firstName.setValue(this.oldVar_firstName);
-		this.middleName.setValue(this.oldVar_middleName);
 		this.lastName.setValue(this.oldVar_lastName);
 		this.shortName.setValue(this.oldVar_shortName);
  		this.custGenderCode.setValue(this.oldVar_custGenderCode);
- 		this.lovDescCustGenderCodeName.setValue(this.oldVar_lovDescCustGenderCodeName);
  		this.custSalutationCode.setValue(this.oldVar_custSalutationCode);
- 		this.lovDescCustSalutationCodeName.setValue(this.oldVar_lovDescCustSalutationCodeName);
 		this.custAddrHNbr.setValue(this.oldVar_custAddrHNbr);
 		this.custFlatNbr.setValue(this.oldVar_custFlatNbr);
 		this.custAddrStreet.setValue(this.oldVar_custAddrStreet);
@@ -857,14 +991,23 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custAddrLine2.setValue(this.oldVar_custAddrLine2);
 		this.custPOBox.setValue(this.oldVar_custPOBox);
  		this.custAddrCity.setValue(this.oldVar_custAddrCity);
- 		this.lovDescCustAddrCityName.setValue(this.oldVar_lovDescCustAddrCityName);
+ 		this.custAddrCity.setDescription(this.oldVar_lovDescCustAddrCityName);
  		this.custAddrProvince.setValue(this.oldVar_custAddrProvince);
- 		this.lovDescCustAddrProvinceName.setValue(this.oldVar_lovDescCustAddrProvinceName);
+ 		this.custAddrProvince.setDescription(this.oldVar_lovDescCustAddrProvinceName);
  		this.custAddrCountry.setValue(this.oldVar_custAddrCountry);
- 		this.lovDescCustAddrCountryName.setValue(this.oldVar_lovDescCustAddrCountryName);
+ 		this.custAddrCountry.setDescription(this.oldVar_lovDescCustAddrCountryName);
 		this.custAddrZIP.setValue(this.oldVar_custAddrZIP);
 		this.custAddrPhone.setValue(this.oldVar_custAddrPhone);
 		this.custAddrFrom.setValue(this.oldVar_custAddrFrom);
+		this.shareholder.setChecked(this.oldVar_shareHolder);
+		this.director.setChecked(this.oldVar_director);
+		this.designation.setValue(this.oldVar_designation);
+		this.idType.setValue(this.oldVar_idType);
+		this.idReference.setValue(this.oldVar_idReference);
+		this.nationality.setValue(this.oldVar_nationality);
+		this.dob.setValue(this.oldVar_dob);
+		this.nationality.setDescription(this.oldVar_lovDescNationalityName);
+		this.idType.setDescription(this.oldVar_lovDescCustDocTypeName);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 		
 		if(isWorkFlowEnabled()){
@@ -888,9 +1031,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			return true;
 		}
 		if (this.oldVar_firstName != this.firstName.getValue()) {
-			return true;
-		}
-		if (this.oldVar_middleName != this.middleName.getValue()) {
 			return true;
 		}
 		if (this.oldVar_lastName != this.lastName.getValue()) {
@@ -938,6 +1078,27 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.oldVar_custAddrPhone != this.custAddrPhone.getValue()) {
 			return true;
 		}
+		if (this.oldVar_shareHolder != this.shareholder.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_director != this.director.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_designation != this.designation.getValue()) {
+			return true;
+		}
+		if (this.oldVar_idType != this.idType.getValue()) {
+			return true;
+		}
+		if (this.oldVar_idReference != this.idReference.getValue()) {
+			return true;
+		}
+		if (this.oldVar_nationality != this.nationality.getValue()) {
+			return true;
+		}
+		if (this.oldVar_dob != this.dob.getValue()) {
+			return true;
+		}
 		String old_custAddrFrom = "";
 		String new_custAddrFrom = "";
 		if (this.oldVar_custAddrFrom != null) {
@@ -959,75 +1120,74 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
+		clearShareDirector();
 		if (!this.custID.isReadonly()){
 			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[]{Labels.getLabel("label_DirectorDetailDialog_CustID.value")}));
 		}
 		if (!this.firstName.isReadonly()){
-			this.firstName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",	new String[] { Labels.getLabel(
-							"label_DirectorDetailDialog_FirstName.value") })));
-		}	
-		if (!this.middleName.isReadonly()){
-			this.middleName.setConstraint(new SimpleConstraint(PennantConstants.NM_NAME_REGEX,
-					Labels.getLabel("FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_DirectorDetailDialog_MiddleName.value") })));
+			this.firstName.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_FirstName.value"),
+					PennantRegularExpressions.REGEX_NAME, false));
 		}	
 		if (!this.lastName.isReadonly()){
-			this.lastName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_DirectorDetailDialog_LastName.value") })));
+			this.lastName.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_LastName.value"),
+					PennantRegularExpressions.REGEX_NAME, false));
 		}	
 		if (!this.shortName.isReadonly()){
-			this.shortName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_DirectorDetailDialog_ShortName.value") })));
-		}	
+			this.shortName.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_ShortName.value"), 
+					PennantRegularExpressions.REGEX_NAME, false));
+		}
+		if (!this.firstName.isReadonly() && !this.lastName.isReadonly() && !this.shortName.isReadonly()){
+			if(StringUtils.trimToEmpty(this.firstName.getValue()).equals("") && StringUtils.trimToEmpty(this.lastName.getValue()).equals("")
+					&& StringUtils.trimToEmpty(this.shortName.getValue()).equals("")){
+				
+				this.shortName.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_AnyName.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
+			}
+		}
+		if(this.shareholder.isChecked()){
+			if(!this.sharePerc.isReadonly() && !this.sharePerc.isDisabled()){
+				this.sharePerc.setConstraint("NO EMPTY,NO ZERO:" + Labels.getLabel("FIELD_NO_EMPTY",
+						new String[]{Labels.getLabel("label_DirectorDetailDialog_SharePerc.value")}));
+			}
+		}
+		if(this.director.isChecked()){
+			if(!this.designation.isReadonly()){
+				this.designation.setConstraint("NO EMPTY,NO ZERO:" + Labels.getLabel("FIELD_NO_EMPTY",
+						new String[]{Labels.getLabel("label_DirectorDetailDialog_Designation.value")}));
+			}
+		}
 		if (!this.custAddrHNbr.isReadonly()){
-			this.custAddrHNbr.setConstraint(new SimpleConstraint(PennantConstants.HNO_FNO_REGEX,
-					Labels.getLabel("MAND_FIELD_ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
-								"label_DirectorDetailDialog_CustAddrHNbr.value")})));
+			this.custAddrHNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrHNbr.value"),
+					PennantRegularExpressions.REGEX_ADDRESS, false));
 		}	
 		if (!this.custFlatNbr.isReadonly()){
-			this.custFlatNbr.setConstraint(new SimpleConstraint(PennantConstants.NM_HNO_FNO_REGEX, 
-					Labels.getLabel("ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
-								"label_DirectorDetailDialog_CustFlatNbr.value")})));
+			this.custFlatNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustFlatNbr.value"),
+					PennantRegularExpressions.REGEX_ADDRESS, false));
 		}	
 		if (!this.custAddrStreet.isReadonly()){
-			this.custAddrStreet.setConstraint(new SimpleConstraint(PennantConstants.ADDRESS_LINE1_REGEX,
-					Labels.getLabel("MAND_FIELD_CHAR_NUMBER",new String[]{Labels.getLabel(
-							"label_DirectorDetailDialog_CustAddrStreet.value")})));
+			this.custAddrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrStreet.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
 		}	
 		if (!this.custAddrLine1.isReadonly()){
-			this.custAddrLine1.setConstraint(new SimpleConstraint(PennantConstants.NM_ADDRESS_LINE1_REGEX,
-					Labels.getLabel("FIELD_CHAR_NUMBER",new String[]{Labels.getLabel(
-								"label_DirectorDetailDialog_CustAddrLine1.value")})));
+			this.custAddrLine1.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrLine1.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
 		}	
 		if (!this.custAddrLine2.isReadonly()){
-			this.custAddrLine2.setConstraint(new SimpleConstraint(PennantConstants.NM_ADDRESS_LINE1_REGEX,
-					Labels.getLabel("FIELD_CHAR_NUMBER",new String[]{Labels.getLabel(
-								"label_DirectorDetailDialog_CustAddrLine2.value")})));
+			this.custAddrLine2.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrLine2.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
 		}	
 		if (!this.custPOBox.isReadonly()){
-			this.custPOBox.setConstraint(new SimpleConstraint(PennantConstants.NUM_REGEX, 
-					Labels.getLabel("FIELD_NUMBER",new String[]{Labels.getLabel(
-								"label_DirectorDetailDialog_CustPOBox.value")})));
+			this.custPOBox.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustPOBox.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, false));
 		}	
 		if (!this.custAddrZIP.isReadonly()){
-			this.custAddrZIP.setConstraint(new SimpleConstraint(PennantConstants.ZIP_REGEX,
-					Labels.getLabel("FIELD_NUMBER",new String[]{Labels.getLabel(
-							"label_DirectorDetailDialog_CustAddrZIP.value")})));
+			this.custAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, false));
 		}	
 		if (!this.custAddrPhone.isReadonly()){
-			this.custAddrPhone.setConstraint(new SimpleConstraint(PennantConstants.PH_REGEX, 
-					Labels.getLabel("FIELD_NUMBER",new String[]{Labels.getLabel(
-								"label_DirectorDetailDialog_CustAddrPhone.value")})));
+			this.custAddrPhone.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrPhone.value"),false));
 		}	
-		if (!this.custAddrFrom.isDisabled()){
-			this.custAddrFrom.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:"+ Labels.getLabel(
-					"DATE_EMPTY_FUTURE_TODAY",new String[] { Labels.getLabel(
-							"label_DirectorDetailDialog_CustAddrFrom.value") }));
-		}
+		if (!this.idReference.isReadonly()){
+			this.idReference.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_IDReference.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, false));
+		}	
 	logger.debug("Leaving");
 	}
 
@@ -1039,7 +1199,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(false);
 		this.custCIF.setConstraint("");
 		this.firstName.setConstraint("");
-		this.middleName.setConstraint("");
 		this.lastName.setConstraint("");
 		this.shortName.setConstraint("");
 		this.custAddrHNbr.setConstraint("");
@@ -1051,6 +1210,11 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custAddrZIP.setConstraint("");
 		this.custAddrPhone.setConstraint("");
 		this.custAddrFrom.setConstraint("");
+		this.designation.setConstraint("");
+		this.idType.setConstraint("");
+		this.idReference.setConstraint("");
+		this.nationality.setConstraint("");
+		this.dob.setConstraint("");
 		logger.debug("Leaving");
 	}
 	/**
@@ -1058,15 +1222,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustGenderCodeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_DirectorDetailDialog_CustGenderCode.value")}));
-		this.lovDescCustSalutationCodeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_DirectorDetailDialog_CustSalutationCode.value")}));
-		this.lovDescCustAddrCityName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_DirectorDetailDialog_CustAddrCity.value")}));
-		this.lovDescCustAddrProvinceName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_DirectorDetailDialog_CustAddrProvince.value")}));
-		this.lovDescCustAddrCountryName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+		this.custAddrCountry.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 				new String[]{Labels.getLabel("label_DirectorDetailDialog_CustAddrCountry.value")}));
 		logger.debug("Leaving");
 	}
@@ -1076,11 +1232,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustGenderCodeName.setConstraint("");
-		this.lovDescCustSalutationCodeName.setConstraint("");
-		this.lovDescCustAddrCityName.setConstraint("");
-		this.lovDescCustAddrProvinceName.setConstraint("");
-		this.lovDescCustAddrCountryName.setConstraint("");
+		this.custAddrCity.setConstraint("");
+		this.custAddrProvince.setConstraint("");
+		this.custAddrCountry.setConstraint("");
 		logger.debug("Leaving");
 	}
 	
@@ -1089,35 +1243,44 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doClearMessage() {
 		logger.debug("Entering");
+		this.sharePerc.setErrorMessage("");
 		this.custCIF.setErrorMessage("");
 		this.firstName.setErrorMessage("");
-		this.middleName.setErrorMessage("");
 		this.lastName.setErrorMessage("");
 		this.shortName.setErrorMessage("");
-		this.lovDescCustGenderCodeName.setErrorMessage("");
-		this.lovDescCustSalutationCodeName.setErrorMessage("");
+		this.custGenderCode.setErrorMessage("");
+		this.custSalutationCode.setErrorMessage("");
 		this.custAddrHNbr.setErrorMessage("");
 		this.custFlatNbr.setErrorMessage("");
 		this.custAddrStreet.setErrorMessage("");
 		this.custAddrLine1.setErrorMessage("");
 		this.custAddrLine2.setErrorMessage("");
 		this.custPOBox.setErrorMessage("");
-		this.lovDescCustAddrCityName.setErrorMessage("");
-		this.lovDescCustAddrProvinceName.setErrorMessage("");
-		this.lovDescCustAddrCountryName.setErrorMessage("");
+		this.custAddrCity.setErrorMessage("");
+		this.custAddrProvince.setErrorMessage("");
+		this.custAddrCountry.setErrorMessage("");
 		this.custAddrZIP.setErrorMessage("");
 		this.custAddrPhone.setErrorMessage("");
 		this.custAddrFrom.setErrorMessage("");
+		this.designation.setErrorMessage("");
+		this.idType.setErrorMessage("");
+		this.idReference.setErrorMessage("");
+		this.nationality.setErrorMessage("");
+		this.dob.setErrorMessage("");
 		logger.debug("Leaving");
 	
 	}
 	
 	// Method for refreshing the list after successful updating
 	private void refreshList() {
-		getDirectorDetailListCtrl().findSearchObject();
+		logger.debug("Entering");
+		final JdbcSearchObject<DirectorDetail> soDirectorDetail = getDirectorDetailListCtrl().getSearchObj();
+		getDirectorDetailListCtrl().pagingDirectorDetailList.setActivePage(0);
+		getDirectorDetailListCtrl().getPagedListWrapper().setSearchObject(soDirectorDetail);
 		if (getDirectorDetailListCtrl().listBoxDirectorDetail != null) {
 			getDirectorDetailListCtrl().listBoxDirectorDetail.getListModel();
 		}
+		logger.debug("Leaving");
 	}
 	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1136,7 +1299,13 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aDirectorDetail.getDirectorId();
+		String name = "";
+        if(!StringUtils.trimToEmpty(aDirectorDetail.getShortName()).equals("")){
+        	name = aDirectorDetail.getShortName();
+        }else{
+        	 name = aDirectorDetail.getFirstName() + "  " + aDirectorDetail.getLastName();
+        }
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + name;
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 		
@@ -1148,8 +1317,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if (StringUtils.trimToEmpty(aDirectorDetail.getRecordType()).equals("")){
 				aDirectorDetail.setVersion(aDirectorDetail.getVersion()+1);
 				aDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aDirectorDetail.setNewRecord(true);
-				
+				if(getCustomerDialogCtrl() != null &&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
+						aDirectorDetail.setNewRecord(true);	
+				}
 				if (isWorkFlowEnabled()){
 					aDirectorDetail.setNewRecord(true);
 					tranType=PennantConstants.TRAN_WF;
@@ -1161,20 +1331,20 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				if(isNewCustomer()){
 					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newCusomerProcess(aDirectorDetail,tranType);
+					AuditHeader auditHeader =  newDirectorProcess(aDirectorDetail,tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_DirectorDetailDialog,
 							auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue==PennantConstants.porcessCONTINUE || 
 							retValue==PennantConstants.porcessOVERIDE){
-						getCustomerDialogCtrl().doFillCustomerDirectors(this.customerDirectors);
+						getCustomerDialogCtrl().doFillCustomerDirectory(this.directorDetailList);
 						// send the data back to customer
-						closeWindow();
+						closePopUpWindow(this.window_DirectorDetailDialog,"DirectorDetailDialog");
 					}	
 
 				}else if(doProcess(aDirectorDetail,tranType)){
 					refreshList();
-					closeWindow();
+					closePopUpWindow(this.window_DirectorDetailDialog,"DirectorDetailDialog");
 				}
 			}catch (DataAccessException e){
 				logger.error("doDelete " + e);
@@ -1217,36 +1387,40 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}else{
 				this.btnSearchPRCustid.setVisible(true);
 			}
-			this.btnSearchCustSalutationCode.setDisabled(true);
-			this.btnSearchCustAddrCity.setDisabled(true);
-			this.btnSearchCustAddrProvince.setDisabled(true);
-			this.firstName.setReadonly(isReadOnly("DirectorDetailDialog_firstName"));
-			this.lastName.setReadonly(isReadOnly("DirectorDetailDialog_lastName"));
+			this.custSalutationCode.setDisabled(true);
 
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
-			this.btnSearchCustSalutationCode.setDisabled(isReadOnly("DirectorDetailDialog_custSalutationCode"));
-			this.btnSearchCustAddrCity.setDisabled(isReadOnly("DirectorDetailDialog_custAddrCity"));
-			this.btnSearchCustAddrProvince.setDisabled(isReadOnly("DirectorDetailDialog_custAddrProvince"));
-			this.firstName.setReadonly(true);
-			this.lastName.setReadonly(true);
+			this.custSalutationCode.setDisabled(isReadOnly("DirectorDetailDialog_custSalutationCode"));
+			this.custAddrCity.setReadonly(isReadOnly("DirectorDetailDialog_custAddrCity"));
+			this.custAddrProvince.setReadonly(isReadOnly("DirectorDetailDialog_custAddrProvince"));
 		}
 
 		this.custCIF.setReadonly(true);
-		this.middleName.setReadonly(isReadOnly("DirectorDetailDialog_middleName"));
 		this.shortName.setReadonly(isReadOnly("DirectorDetailDialog_shortName"));
-		this.btnSearchCustGenderCode.setDisabled(isReadOnly("DirectorDetailDialog_custGenderCode"));
+		this.firstName.setReadonly(isReadOnly("DirectorDetailDialog_firstName"));
+		this.lastName.setReadonly(isReadOnly("DirectorDetailDialog_lastName"));
+		this.custGenderCode.setDisabled(isReadOnly("DirectorDetailDialog_custGenderCode"));
 		this.custAddrHNbr.setReadonly(isReadOnly("DirectorDetailDialog_custAddrHNbr"));
 		this.custFlatNbr.setReadonly(isReadOnly("DirectorDetailDialog_custFlatNbr"));
 		this.custAddrStreet.setReadonly(isReadOnly("DirectorDetailDialog_custAddrStreet"));
 		this.custAddrLine1.setReadonly(isReadOnly("DirectorDetailDialog_custAddrLine1"));
 		this.custAddrLine2.setReadonly(isReadOnly("DirectorDetailDialog_custAddrLine2"));
 		this.custPOBox.setReadonly(isReadOnly("DirectorDetailDialog_custPOBox"));
-		this.btnSearchCustAddrCountry.setDisabled(isReadOnly("DirectorDetailDialog_custAddrCountry"));
+		this.custAddrCountry.setReadonly(isReadOnly("DirectorDetailDialog_custAddrCountry"));
+		this.custAddrCountry.setMandatoryStyle(!(isReadOnly("DirectorDetailDialog_custAddrCountry")));
 		this.custAddrZIP.setReadonly(isReadOnly("DirectorDetailDialog_custAddrZIP"));
 		this.custAddrPhone.setReadonly(isReadOnly("DirectorDetailDialog_custAddrPhone"));
 		this.custAddrFrom.setDisabled(isReadOnly("DirectorDetailDialog_custAddrFrom"));
+		this.sharePerc.setReadonly(isReadOnly("DirectorDetailDialog_sharePerc"));
+		this.shareholder.setDisabled(isReadOnly("DirectorDetailDialog_shareholder"));
+		this.director.setDisabled(isReadOnly("DirectorDetailDialog_director"));
+		this.designation.setReadonly(isReadOnly("DirectorDetailDialog_designation"));
+		this.idType.setReadonly(isReadOnly("DirectorDetailDialog_idType"));
+		this.idReference.setReadonly(isReadOnly("DirectorDetailDialog_idReference"));
+		this.nationality.setReadonly(isReadOnly("DirectorDetailDialog_nationality"));
+		this.dob.setDisabled(isReadOnly("DirectorDetailDialog_dob"));
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1277,7 +1451,11 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	//Check Rights for Each Component
 	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewCustomer()){
+		boolean isCustomerWorkflow = false;
+		if(getCustomerDialogCtrl() != null){
+			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -1291,23 +1469,30 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custCIF.setReadonly(true);
 		this.btnSearchPRCustid.setDisabled(true);
 		this.firstName.setReadonly(true);
-		this.middleName.setReadonly(true);
 		this.lastName.setReadonly(true);
 		this.shortName.setReadonly(true);
-		this.btnSearchCustGenderCode.setDisabled(true);
-		this.btnSearchCustSalutationCode.setDisabled(true);
+		this.custGenderCode.setDisabled(true);
+		this.custSalutationCode.setDisabled(true);
 		this.custAddrHNbr.setReadonly(true);
 		this.custFlatNbr.setReadonly(true);
 		this.custAddrStreet.setReadonly(true);
 		this.custAddrLine1.setReadonly(true);
 		this.custAddrLine2.setReadonly(true);
 		this.custPOBox.setReadonly(true);
-		this.btnSearchCustAddrCity.setDisabled(true);
-		this.btnSearchCustAddrProvince.setDisabled(true);
-		this.btnSearchCustAddrCountry.setDisabled(true);
+		this.custAddrCity.setReadonly(true);
+		this.custAddrProvince.setReadonly(true);
+		this.custAddrCountry.setReadonly(true);
 		this.custAddrZIP.setReadonly(true);
 		this.custAddrPhone.setReadonly(true);
 		this.custAddrFrom.setDisabled(true);
+		this.shareholder.setDisabled(true);
+		this.director.setDisabled(true);
+		this.designation.setReadonly(true);
+		this.idType.setReadonly(true);
+		this.idReference.setReadonly(true);
+		this.nationality.setReadonly(true);
+		this.dob.setDisabled(true);
+		this.sharePerc.setDisabled(true);
 
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1329,16 +1514,15 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		
 		// remove validation, if there are a save before
+		this.sharePerc.setValue("");
 		this.custCIF.setValue("");
 		this.custShrtName.setValue("");
 		this.firstName.setValue("");
-		this.middleName.setValue("");
 		this.lastName.setValue("");
 		this.shortName.setValue("");
 		this.custGenderCode.setValue("");
-		this.lovDescCustGenderCodeName.setValue("");
 		this.custSalutationCode.setValue("");
-		this.lovDescCustSalutationCodeName.setValue("");
+		this.custSalutationCode.setValue("");
 		this.custAddrHNbr.setValue("");
 		this.custFlatNbr.setValue("");
 		this.custAddrStreet.setValue("");
@@ -1346,14 +1530,23 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custAddrLine2.setValue("");
 		this.custPOBox.setValue("");
 		this.custAddrCity.setValue("");
-		this.lovDescCustAddrCityName.setValue("");
+		this.custAddrCity.setDescription("");
 		this.custAddrProvince.setValue("");
-		this.lovDescCustAddrProvinceName.setValue("");
+		this.custAddrProvince.setDescription("");
 		this.custAddrCountry.setValue("");
-		this.lovDescCustAddrCountryName.setValue("");
+		this.custAddrCountry.setDescription("");
 		this.custAddrZIP.setValue("");
 		this.custAddrPhone.setValue("");
 		this.custAddrFrom.setText("");
+		this.shareholder.setChecked(false);
+		this.director.setChecked(false);
+		this.designation.setValue("");
+		this.idType.setValue("");
+		this.idType.setDescription("");
+		this.idReference.setValue("");
+		this.nationality.setValue("");
+		this.nationality.setDescription("");
+		this.dob.setText("");
 		logger.debug("Leaving");
 	}
 
@@ -1426,19 +1619,19 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		// save it to database
 		try {
 			if(isNewCustomer()){
-				AuditHeader auditHeader =  newCusomerProcess(aDirectorDetail,tranType);
+				AuditHeader auditHeader =  newDirectorProcess(aDirectorDetail,tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_DirectorDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue==PennantConstants.porcessCONTINUE || 
 						retValue==PennantConstants.porcessOVERIDE){
-					getCustomerDialogCtrl().doFillCustomerDirectors(this.customerDirectors);
+					getCustomerDialogCtrl().doFillCustomerDirectory(this.directorDetailList);
 					// send the data back to customer
-					closeWindow();
+					closePopUpWindow(this.window_DirectorDetailDialog,"DirectorDetailDialog");
 				}
 			}else if(doProcess(aDirectorDetail,tranType)){
 				refreshList();
 				// Close the Existing Dialog
-				closeWindow();
+				closePopUpWindow(this.window_DirectorDetailDialog,"DirectorDetailDialog");
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);
@@ -1447,35 +1640,34 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving");
 	}
 
-	private AuditHeader newCusomerProcess(DirectorDetail aDirectorDetail,String tranType){
+	private AuditHeader newDirectorProcess(DirectorDetail aDirectorDetail,String tranType){
 		boolean recordAdded=false;
 		
 		AuditHeader auditHeader= getAuditHeader(aDirectorDetail, tranType);
-		customerDirectors = new ArrayList<DirectorDetail>();
+		directorDetailList = new ArrayList<DirectorDetail>();
 		
-		String[] valueParm = new String[3];
+		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
-		valueParm[0] = String.valueOf(aDirectorDetail.getCustID());
-		valueParm[1] = aDirectorDetail.getFirstName();
-		valueParm[2] = aDirectorDetail.getLastName();
+		valueParm[0] = String.valueOf(aDirectorDetail.getLovDescCustCIF());
+		String name = "";
+        if(!StringUtils.trimToEmpty(aDirectorDetail.getShortName()).equals("")){
+        	name = aDirectorDetail.getShortName();
+        }else{
+        	 name = aDirectorDetail.getFirstName() + "  " + aDirectorDetail.getLastName();
+        }
+		valueParm[1] = String.valueOf(name);;
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0]+" "+
-							PennantJavaUtil.getLabel("label_FirstName") + ":"+ valueParm[1];;
-		errParm[1] = PennantJavaUtil.getLabel("label_LastName") + ":"+valueParm[2];
+		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0] + " , ";
+		errParm[1] = PennantJavaUtil.getLabel("label_DirectorDetailDialog_ShortName.value") + ":"+valueParm[1];
 		
-		if(getCustomerDialogCtrl().getDirectorsList()!=null && 
-				getCustomerDialogCtrl().getDirectorsList().size()>0){
-			for (int i = 0; i < getCustomerDialogCtrl().getDirectorsList().size(); i++) {
-				DirectorDetail directorDetail = getCustomerDialogCtrl().getDirectorsList().get(i);
+		if(getCustomerDialogCtrl().getDirectorList()!=null && getCustomerDialogCtrl().getDirectorList().size()>0){
+			for (int i = 0; i < getCustomerDialogCtrl().getDirectorList().size(); i++) {
+				DirectorDetail directorDetail = getCustomerDialogCtrl().getDirectorList().get(i);
 				
-				if(directorDetail.getFirstName().equals(aDirectorDetail.getFirstName()) && 
-						directorDetail.getLastName().equals(aDirectorDetail.getLastName())){ // Both Current and Existing list directorDetail same
-					
+				if(aDirectorDetail.getId() == directorDetail.getId()){ // Both Current and Existing list director same
 					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD,"41001",
-										errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					
@@ -1483,36 +1675,34 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 						if(aDirectorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
 							aDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded=true;
-							customerDirectors.add(aDirectorDetail);
+							directorDetailList.add(aDirectorDetail);
 						}else if(aDirectorDetail.getRecordType().equals(PennantConstants.RCD_ADD)){
 							recordAdded=true;
 						}else if(aDirectorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
 							aDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 							recordAdded=true;
-							customerDirectors.add(aDirectorDetail);
+							directorDetailList.add(aDirectorDetail);
 						}else if(aDirectorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
 							recordAdded=true;
-							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getDirectorsList().size(); j++) {
-								DirectorDetail detail =  getCustomerDialogCtrl().getCustomerDetails().getDirectorsList().get(j);
-								if(detail.getCustID() == aDirectorDetail.getCustID() && 
-										directorDetail.getFirstName().equals(aDirectorDetail.getFirstName()) && 
-											directorDetail.getLastName().equals(aDirectorDetail.getLastName())){
-									customerDirectors.add(detail);
+							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getCustomerDirectorList().size(); j++) {
+								DirectorDetail director =  getCustomerDialogCtrl().getCustomerDetails().getCustomerDirectorList().get(j);
+								if(director.getCustID() == aDirectorDetail.getCustID() && director.getId() == aDirectorDetail.getId()){
+									directorDetailList.add(director);
 								}
 							}
 						}
 					}else{
 						if(tranType!=PennantConstants.TRAN_UPD){
-							customerDirectors.add(directorDetail);
+							directorDetailList.add(directorDetail);
 						}
 					}
 				}else{
-					customerDirectors.add(directorDetail);
+					directorDetailList.add(directorDetail);
 				}
 			}
 		}
 		if(!recordAdded){
-			customerDirectors.add(aDirectorDetail);
+			directorDetailList.add(aDirectorDetail);
 		}
 		return auditHeader;
 	} 
@@ -1705,145 +1895,96 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// ++++++++++++ Search Button Component Events+++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchCustGenderCode(Event event){
-
-		String sCustGenderCode= this.custGenderCode.getValue();
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_DirectorDetailDialog,"Gender");
-		if (dataObject instanceof String){
-			this.custGenderCode.setValue(dataObject.toString());
-			this.lovDescCustGenderCodeName.setValue("");
-		}else{
-			Gender details= (Gender) dataObject;
-			if (details != null) {
-				this.custGenderCode.setValue(details.getGenderCode());
-				this.lovDescCustGenderCodeName.setValue(details.getGenderCode()
-						+ "-" + details.getGenderDesc());
-			}
-		}
+	public void onSelect$custGenderCode(Event event){
+		logger.debug("Entering");
 		if (!StringUtils.trimToEmpty(sCustGenderCode).equals(
 				this.custGenderCode.getValue())) {
 			this.custSalutationCode.setValue("");
-			this.lovDescCustSalutationCodeName.setValue("");
 		}
 		if (this.custGenderCode.getValue() != "") {
-			this.btnSearchCustSalutationCode.setDisabled(false);
+			this.custSalutationCode.setDisabled(false);
 		} else {
-			this.btnSearchCustSalutationCode.setDisabled(true);
+			this.custSalutationCode.setDisabled(true);
 		}
+		sCustGenderCode = this.custGenderCode.getValue();
+		String genderCodeTemp = this.custGenderCode.getSelectedItem().getValue().toString();
+		fillComboBox(this.custSalutationCode, this.custSalutationCode.getValue(), PennantAppUtil.getSalutationCodes(genderCodeTemp), "");
+		logger.debug("Leaving");
 	}
 
-	public void onClick$btnSearchCustSalutationCode(Event event){
 
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("SalutationGenderCode",
-				this.custGenderCode.getValue(), Filter.OP_EQUAL);
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_DirectorDetailDialog,"Salutation",
-				filters);
-		if (dataObject instanceof String){
-			this.custSalutationCode.setValue(dataObject.toString());
-			this.lovDescCustSalutationCodeName.setValue("");
-		}else{
-			Salutation details= (Salutation) dataObject;
-			if (details != null) {
-				this.custSalutationCode.setValue(details.getSalutationCode());
-				this.lovDescCustSalutationCodeName.setValue(details.getSalutationCode() + "-"
-						+ details.getSaluationDesc());
-			}
-		}
-	}
-
-	public void onClick$btnSearchCustAddrCity(Event event){
+	public void onFulfill$custAddrProvince(Event event){
 		logger.debug("Entering" + event.toString());
-
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("PCProvince", this.custAddrProvince.getValue(),
-				Filter.OP_EQUAL);
-
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_DirectorDetailDialog, "City", filters);
-		if (dataObject instanceof String) {
-			this.custAddrCity.setValue(dataObject.toString());
-			this.lovDescCustAddrCityName.setValue("");
-		} else {
-			City details = (City) dataObject;
-			if (details != null) {
-				this.custAddrCity.setValue(details.getPCCity());
-				this.lovDescCustAddrCityName.setValue(details.getPCCity()
-						+ "-" + details.getPCCityName());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchCustAddrProvince(Event event){
-		logger.debug("Entering" + event.toString());
-		String sCustAddrProvince = this.custAddrProvince.getValue();
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("CPCountry", this.custAddrCountry.getValue(),
-				Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_DirectorDetailDialog, "Province", filters);
-		if (dataObject instanceof String) {
-			this.custAddrProvince.setValue(dataObject.toString());
-			this.lovDescCustAddrProvinceName.setValue("");
-		} else {
-			Province details = (Province) dataObject;
-			if (details != null) {
-				this.custAddrProvince.setValue(details.getCPProvince());
-				this.lovDescCustAddrProvinceName.setValue(details.getLovValue()
-						+ "-" + details.getCPProvinceName());
-			}
-		}
+		this.custAddrCity.setErrorMessage("");
 		if (!StringUtils.trimToEmpty(sCustAddrProvince).equals(
 				this.custAddrProvince.getValue())) {
 			this.custAddrCity.setValue("");
-			this.lovDescCustAddrCityName.setValue("");
-			this.btnSearchCustAddrCity.setDisabled(true);
+			this.custAddrCity.setDescription("");
+			this.custAddrCity.setFocus(true);
 		}
-		if (this.custAddrProvince.getValue() != "") {
-			this.btnSearchCustAddrCity.setDisabled(false);
-		} else {
-			this.btnSearchCustAddrCity.setDisabled(true);
-		}
+		sCustAddrProvince = this.custAddrProvince.getValue();
+		Filter[] filtersCity = new Filter[2];
+		filtersCity[0] = new Filter("PCCountry", this.custAddrCountry.getValue(),Filter.OP_EQUAL);
+		filtersCity[1] = new Filter("PCProvince", this.custAddrProvince.getValue(),Filter.OP_EQUAL);
+		this.custAddrCity.setFilters(filtersCity);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchCustAddrCountry(Event event){
+	public void onFulfill$custAddrCountry(Event event){
 		logger.debug("Entering" + event.toString());
-		String sCustAddrCountry = this.custAddrCountry.getValue();
-
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_DirectorDetailDialog, "Country");
-		if (dataObject instanceof String) {
-			this.custAddrCountry.setValue(dataObject.toString());
-			this.lovDescCustAddrCountryName.setValue("");
-		} else {
-			Country details = (Country) dataObject;
-			if (details != null) {
-				this.custAddrCountry.setValue(details.getCountryCode());
-				this.lovDescCustAddrCountryName.setValue(details.getCountryCode()
-						+ "-" + details.getCountryDesc());
-			}
-		}
+		this.custAddrProvince.setErrorMessage("");
+		this.custAddrCity.setErrorMessage("");
 		if (!StringUtils.trimToEmpty(sCustAddrCountry).equals(
 				this.custAddrCountry.getValue())) {
 			this.custAddrProvince.setValue("");
 			this.custAddrCity.setValue("");
-			this.lovDescCustAddrProvinceName.setValue("");
-			this.lovDescCustAddrCityName.setValue("");
-			this.btnSearchCustAddrCity.setDisabled(true);
+			this.custAddrProvince.setDescription("");
+			this.custAddrCity.setDescription("");
 		}
-		if (this.custAddrCountry.getValue() != "") {
-			this.btnSearchCustAddrProvince.setDisabled(false);
-		} else {
-			this.btnSearchCustAddrCity.setDisabled(true);
-			this.btnSearchCustAddrProvince.setDisabled(true);
-		}
+		sCustAddrCountry = this.custAddrCountry.getValue();
+		Filter[] filtersProvince = new Filter[1];
+		filtersProvince[0] = new Filter("CPCountry", this.custAddrCountry.getValue(),
+				Filter.OP_EQUAL);
+		this.custAddrProvince.setFilters(filtersProvince);
 		logger.debug("Leaving" + event.toString());
 	}
-
+	
+	public void onFulfill$designation(Event event) {
+		logger.debug("Entering");
+		clearShareDirector();
+		Object dataObject = designation.getObject();
+		if (dataObject instanceof String) {
+			//
+		} else {
+			Designation details = (Designation) dataObject;
+			if (details != null) {
+				this.director.setChecked(true);
+				isDirectorChecked(true);
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void onChange$sharePerc(Event event){
+		logger.debug("Entering");
+		if(this.sharePerc.getValue() != null){
+		clearShareDirector();
+		isShareHolderChecked(true);
+		this.shareholder.setChecked(true);
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void clearShareDirector(){
+		doClearMessage();
+		Clients.clearWrongValue(this.shortName);
+		Clients.clearWrongValue(this.shareholder);
+		Clients.clearWrongValue(this.sharePerc);
+		Clients.clearWrongValue(this.designation);
+		this.sharePerc.setConstraint("");
+		this.designation.setConstraint("");
+		this.shortName.setConstraint(""); 	
+	}
  /**
     * Method for Calling list Of existed Customers
     * @param event
@@ -1888,6 +2029,42 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
 		this.newSearchObject = newSearchObject;
 		logger.debug("Leaving");
+	}
+	
+	
+	private void isShareHolderChecked(boolean isShareHolder){
+		logger.debug("Entering"); 
+		if(isShareHolder){
+			this.space_SharePerc.setSclass("mandatory");
+		}else{ 
+			this.space_SharePerc.setSclass("");
+		}
+		logger.debug("Leaving"); 
+	}
+	
+	private void isDirectorChecked(boolean isDirector){
+		logger.debug("Entering"); 
+		if(isDirector){
+			this.designation.setMandatoryStyle(true);
+		}else{ 
+			this.designation.setMandatoryStyle(false);
+		}
+		logger.debug("Leaving"); 
+	}
+	
+	public void onCheck$shareholder(Event event){
+		logger.debug("Entering"); 
+		Clients.clearWrongValue(this.shareholder);
+		Clients.clearWrongValue(this.sharePerc);
+		isShareHolderChecked(this.shareholder.isChecked());
+		logger.debug("Leaving"); 
+	}
+	public void onCheck$director(Event event){
+		logger.debug("Entering"); 
+		Clients.clearWrongValue(this.shareholder);
+		this.designation.setErrorMessage("");
+		isDirectorChecked(this.director.isChecked());
+		logger.debug("Leaving"); 
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

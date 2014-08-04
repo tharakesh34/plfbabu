@@ -123,7 +123,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 	@Override
 	public CustomerAddres getCustomerAddresById(final long id, String addType, String type) {
 		logger.debug("Entering");
-		CustomerAddres customerAddres = getCustomerAddres();
+		CustomerAddres customerAddres = new CustomerAddres();
 		customerAddres.setId(id);
 		customerAddres.setCustAddrType(addType);
 
@@ -162,7 +162,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 	 */
 	public List<CustomerAddres> getCustomerAddresByCustomer(final long custId, String type) {
 		logger.debug("Entering");
-		CustomerAddres customerAddres = getCustomerAddres();
+		CustomerAddres customerAddres = new CustomerAddres();
 		customerAddres.setId(custId);
 
 		StringBuilder selectSql = new StringBuilder();
@@ -270,7 +270,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 	public void deleteByCustomer(final long customerId,String type) {
 		logger.debug("Entering");
 		
-		CustomerAddres customerAddres = getCustomerAddres();
+		CustomerAddres customerAddres = new CustomerAddres();
 		customerAddres.setId(customerId);
 		
 		StringBuilder deleteSql = new StringBuilder();

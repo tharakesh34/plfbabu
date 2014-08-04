@@ -119,7 +119,7 @@ public class OwnerShipTypeDAOImpl extends BasisNextidDaoImpl<OwnerShipType> impl
 	@Override
 	public OwnerShipType getOwnerShipTypeById(final long id, String type) {
 		logger.debug("Entering");
-		OwnerShipType ownerShipType = getOwnerShipType();
+		OwnerShipType ownerShipType = new OwnerShipType();
 		ownerShipType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

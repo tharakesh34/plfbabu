@@ -69,10 +69,13 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
@@ -93,7 +96,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
+import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -118,7 +121,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window	                  window_DocumentDetailDialog;	                                                 // autowired
+	protected Window	                  window_FinDocumentDetailDialog;	                                                 // autowired
 
 	protected Combobox	                  docCategory;	                                                                 // autowired
 	protected Textbox	                  documnetName;	                                                             // autowired
@@ -130,7 +133,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	protected Row	                      statusRow;
 
 	// not auto wired vars
-	private DocumentDetails	              finContributorDetail;	                                                     // overhanded per param
+	private DocumentDetails	              finDocumentDetail;	                                                     // overhanded per param
 
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
@@ -157,15 +160,20 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	private transient CustomerSelectCtrl	customerSelectCtrl;
 
 	private boolean	                      newRecord	              = false;
-	private boolean	                      newContributor	      = false;
-	private List<DocumentDetails>	      contributorDetails;
-	private FinanceMainDialogCtrl	      financeMainDialogCtrl;
+	private boolean	                      newDocument	      = false;
+	private List<DocumentDetails>	      documentDetailList;
+	private DocumentDetailDialogCtrl	  documentDetailDialogCtrl;
 	protected JdbcSearchObject<Customer>	newSearchObject;
 	private String	                      moduleType	          = "";
-	protected Button	                  brwDDASignCopy;
+	private boolean 					  viewProcess = false;
+	private boolean 					  isCheckList = false;
+	private boolean 					  isDocAllowedForInput = false;
+	protected Button	                  btnUploadDoc;
 	protected Iframe	                  finDocumentPdfView;
-	private static final List<ValueLabel>	documentTypes	      = PennantAppUtil.getDocumentTypes();
+	private List<ValueLabel>	documentTypes	      = PennantAppUtil.getDocumentTypes();
+	private Map<String, List<Listitem>>  checkListDocTypeMap = null;
 	public int borderLayoutHeight = 0;
+	protected Div docDiv;
 
 	/**
 	 * default constructor.<br>
@@ -186,7 +194,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_DocumentDetailDialog(Event event) throws Exception {
+	@SuppressWarnings("unchecked")
+	public void onCreate$window_FinDocumentDetailDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
 		/* set components visible dependent of the users rights */
@@ -199,12 +208,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		final Map<String, Object> args = getCreationArgsMap(event);
 
 		// READ OVERHANDED params !
-		if (args.containsKey("finContributorDetail")) {
-			this.finContributorDetail = (DocumentDetails) args.get("finContributorDetail");
+		if (args.containsKey("finDocumentDetail")) {
+			this.finDocumentDetail = (DocumentDetails) args.get("finDocumentDetail");
 			DocumentDetails befImage = new DocumentDetails();
-			BeanUtils.copyProperties(this.finContributorDetail, befImage);
-			this.finContributorDetail.setBefImage(befImage);
-			setDocumentDetails(this.finContributorDetail);
+			BeanUtils.copyProperties(this.finDocumentDetail, befImage);
+			this.finDocumentDetail.setBefImage(befImage);
+			setDocumentDetails(this.finDocumentDetail);
 		} else {
 			setDocumentDetails(null);
 		}
@@ -212,28 +221,43 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		if (args.containsKey("moduleType")) {
 			this.moduleType = (String) args.get("moduleType");
 		}
+		
+		if (args.containsKey("viewProcess")) {
+			this.viewProcess = (Boolean) args.get("viewProcess");
+		}
+		if (args.containsKey("isCheckList")) {
+			this.isCheckList = (Boolean) args.get("isCheckList");
+		}
+		
+		if (args.containsKey("checkListDocTypeMap")) {
+			checkListDocTypeMap = (Map<String, List<Listitem>>) args.get("checkListDocTypeMap");
+		}
+		
+		if (args.containsKey("isDocAllowedForInput")) {
+			isDocAllowedForInput = (Boolean) args.get("isDocAllowedForInput");
+		}
 
 		if (getDocumentDetails().isNewRecord()) {
 			setNewRecord(true);
 		}
+	
+		if (args.containsKey("DocumentDetailDialogCtrl")) {
 
-		if (args.containsKey("financeMainDialogCtrl")) {
-
-			setFinanceMainDialogCtrl((FinanceMainDialogCtrl) args.get("financeMainDialogCtrl"));
-			setNewContributor(true);
+			setDocumentDetailDialogCtrl((DocumentDetailDialogCtrl) args.get("DocumentDetailDialogCtrl"));
+			setNewDocument(true);
 
 			if (args.containsKey("newRecord")) {
 				setNewRecord(true);
 			} else {
 				setNewRecord(false);
 			}
-			this.finContributorDetail.setWorkflowId(0);
+			this.finDocumentDetail.setWorkflowId(0);
 			if (args.containsKey("roleCode")) {
 				getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "DocumentDetailsDialog");
 			}
 		}
 
-		doLoadWorkFlow(this.finContributorDetail.isWorkflow(), this.finContributorDetail.getWorkflowId(), this.finContributorDetail.getNextTaskId());
+		doLoadWorkFlow(this.finDocumentDetail.isWorkflow(), this.finDocumentDetail.getWorkflowId(), this.finDocumentDetail.getNextTaskId());
 
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
@@ -249,10 +273,6 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		doSetFieldProperties();
 		doShowDialog(getDocumentDetails());
 
-		//Calling SelectCtrl For proper selection of Customer
-		if (isNewRecord() & !isNewContributor()) {
-			onload();
-		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -345,7 +365,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTMessageUtils.showHelpWindow(event, window_DocumentDetailDialog);
+		PTMessageUtils.showHelpWindow(event, window_FinDocumentDetailDialog);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -367,8 +387,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
+		String doctype = this.docCategory.getSelectedItem().getValue().toString(); 
 		logger.debug("Entering" + event.toString());
-		doDelete();
+		doDelete(doctype);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -438,6 +459,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 			logger.debug("Data Changed(): false");
 		}
 		if (close) {
+			BeanUtils.copyProperties(getDocumentDetails().getBefImage(),getDocumentDetails());
 			closeWindow();
 		}
 		logger.debug("Leaving");
@@ -450,10 +472,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	public void closeWindow() throws InterruptedException {
 		logger.debug("Entering");
 
-		if (isNewContributor()) {
-			window_DocumentDetailDialog.onClose();
+		if (isNewDocument()) {
+			window_FinDocumentDetailDialog.onClose();
 		} else {
-			closeDialog(this.window_DocumentDetailDialog, "DocumentDetails");
+			closeDialog(this.window_FinDocumentDetailDialog, "DocumentDetails");
 		}
 		logger.debug("Leaving");
 	}
@@ -480,10 +502,16 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	 */
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
+		
 		fillComboBox(this.docCategory, aDocumentDetails.getDocCategory(), documentTypes, "");
-
+		if(checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())){
+			this.docCategory.setDisabled(true);
+		}
+		this.docCategory.setDisabled(true);
+		
 		this.documnetName.setValue(aDocumentDetails.getDocName());
 		this.documnetName.setAttribute("data", aDocumentDetails);
+		
 		AMedia amedia = null;
 		if (aDocumentDetails.getDocImage() != null) {
 			final InputStream data = new ByteArrayInputStream(aDocumentDetails.getDocImage());
@@ -491,6 +519,18 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 				amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
 			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)) {
 				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
+			}else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD) || aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
+				this.docDiv.getChildren().clear();
+				Html ageementLink = new Html();
+				ageementLink.setStyle("padding:10px;");
+				ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + aDocumentDetails.getDocName()+ "</a> ");
+				
+				List<Object> list = new ArrayList<Object>();
+				list.add(aDocumentDetails.getDoctype());
+				list.add(aDocumentDetails.getDocImage());
+				
+				ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
+				this.docDiv.appendChild(ageementLink);
 			}
 			finDocumentPdfView.setContent(amedia);
 		}
@@ -513,8 +553,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		try {
 			if (this.docCategory.getSelectedItem() == null || this.docCategory.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
 				throw new WrongValueException(this.docCategory, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value") }));
+			} else {
+				this.docCategory.getSelectedItem().setDisabled(true);
 			}
 			aDocumentDetails.setDocCategory(this.docCategory.getSelectedItem().getValue().toString());
+			aDocumentDetails.setLovDescDocCategoryName(this.docCategory.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -569,7 +612,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 			this.documnetName.focus();
 		} else {
 
-			if (isNewContributor()) {
+			if (isNewDocument()) {
 				doEdit();
 			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
@@ -588,16 +631,33 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
-
-			if (isNewContributor()) {
-				this.window_DocumentDetailDialog.setHeight("70%");
-				this.window_DocumentDetailDialog.setWidth("70%");
+			
+			if (isCheckList && StringUtils.trimToEmpty(aDocumentDetails.getRecordType()).equals(PennantConstants.RECORD_TYPE_CAN)) {
+				viewProcess=true;
+			}
+			if(isCheckList && viewProcess){
+				this.btnDelete.setVisible(false);
+				this.btnSave.setVisible(false);
+				this.btnUploadDoc.setVisible(false);
+			}
+			if(checkListDocTypeMap!= null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())){
+				if(!isDocAllowedForInput){
+					this.btnDelete.setVisible(false);
+					this.btnSave.setVisible(false);
+					this.btnUploadDoc.setVisible(false);
+				}
+			}
+		
+			 //doCheckDocumentOwner();
+			if (isNewDocument()) {
+				this.window_FinDocumentDetailDialog.setHeight("70%");
+				this.window_FinDocumentDetailDialog.setWidth("70%");
 				this.groupboxWf.setVisible(false);
-				this.window_DocumentDetailDialog.doModal();
+				this.window_FinDocumentDetailDialog.doModal();
 			} else {
-				this.window_DocumentDetailDialog.setWidth("100%");
-				this.window_DocumentDetailDialog.setHeight("100%");
-				setDialog(this.window_DocumentDetailDialog);
+				this.window_FinDocumentDetailDialog.setWidth("100%");
+				this.window_FinDocumentDetailDialog.setHeight("100%");
+				setDialog(this.window_FinDocumentDetailDialog);
 			}
 
 		} catch (final Exception e) {
@@ -703,7 +763,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	 * 
 	 * @throws InterruptedException
 	 */
-	private void doDelete() throws InterruptedException {
+	private void doDelete(String doctype) throws InterruptedException {
 		logger.debug("Entering");
 		final DocumentDetails aDocumentDetails = new DocumentDetails();
 		BeanUtils.copyProperties(getDocumentDetails(), aDocumentDetails);
@@ -732,13 +792,20 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 				}
 			}
 			try {
-				if (isNewContributor()) {
+				if (isNewDocument()) {
 					tranType = PennantConstants.TRAN_DEL;
 					AuditHeader auditHeader = newDocumentProcess(aDocumentDetails, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_DocumentDetailDialog, auditHeader);
+					auditHeader = ErrorControl.showErrorDetails(this.window_FinDocumentDetailDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinanceMainDialogCtrl().doFillDocumentDetails(this.contributorDetails);
+						getDocumentDetailDialogCtrl().doFillDocumentDetails(this.documentDetailList);
+						
+						if(checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())){
+							List<Listitem>  list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
+							for (int i = 0; i < list.size(); i++) {
+								list.get(i).setSelected(false);
+							}
+						}
 						// send the data back to customer
 						closeWindow();
 					}
@@ -781,7 +848,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		logger.debug("Entering");
 		if (isNewRecord()) {
 			this.docCategory.setDisabled(false);
-			if (isNewContributor()) {
+			if (isNewDocument()) {
 				this.btnCancel.setVisible(false);
 			}
 		} else {
@@ -794,7 +861,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.finContributorDetail.isNewRecord()) {
+			if (this.finDocumentDetail.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 			} else {
@@ -802,7 +869,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 			}
 		} else {
 
-			if (newContributor) {
+			if (newDocument) {
 				if ("ENQ".equals(this.moduleType)) {
 					this.btnCtrl.setBtnStatus_New();
 					this.btnSave.setVisible(false);
@@ -811,7 +878,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
 				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(newContributor);
+					this.btnCtrl.setWFBtnStatus_Edit(newDocument);
 				}
 			} else {
 				this.btnCtrl.setBtnStatus_Edit();
@@ -829,7 +896,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	}
 
 	public boolean isReadOnly(String componentName) {
-		if (isWorkFlowEnabled() || isNewContributor()) {
+		if (isWorkFlowEnabled() || isNewDocument()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -904,7 +971,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 			}
 		} else {
 
-			if (isNewContributor()) {
+			if (isNewDocument()) {
 				if (isNewRecord()) {
 					aDocumentDetails.setVersion(1);
 					aDocumentDetails.setRecordType(PennantConstants.RCD_ADD);
@@ -935,14 +1002,19 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 
 		// save it to database
 		try {
-			if (isNewContributor()) {
+			if (isNewDocument()) {
 				AuditHeader auditHeader = newDocumentProcess(aDocumentDetails, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_DocumentDetailDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_FinDocumentDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getFinanceMainDialogCtrl().doFillDocumentDetails(this.contributorDetails);
-					//true;
+					getDocumentDetailDialogCtrl().doFillDocumentDetails(this.documentDetailList);
 					// send the data back to customer
+					if(checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())){
+						List<Listitem>  list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
+						for (int i = 0; i < list.size(); i++) {
+							list.get(i).setSelected(true);
+						}
+					}
 					closeWindow();
 				}
 			}
@@ -957,7 +1029,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		boolean recordAdded = false;
 
 		AuditHeader auditHeader = getAuditHeader(aDocumentDetails, tranType);
-		contributorDetails = new ArrayList<DocumentDetails>();
+		documentDetailList = new ArrayList<DocumentDetails>();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -965,12 +1037,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		valueParm[0] = aDocumentDetails.getDocName();
 		valueParm[1] = aDocumentDetails.getReferenceId();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_ContributorCIF") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_ContributorName") + ":" + valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_DocumnetName") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[1];
 
-		if (getFinanceMainDialogCtrl().getDocumentDetailsList() != null && getFinanceMainDialogCtrl().getDocumentDetailsList().size() > 0) {
-			for (int i = 0; i < getFinanceMainDialogCtrl().getDocumentDetailsList().size(); i++) {
-				DocumentDetails documentDetails = getFinanceMainDialogCtrl().getDocumentDetailsList().get(i);
+		if (getDocumentDetailDialogCtrl().getDocumentDetailsList() != null && getDocumentDetailDialogCtrl().getDocumentDetailsList().size() > 0) {
+			for (int i = 0; i < getDocumentDetailDialogCtrl().getDocumentDetailsList().size(); i++) {
+				DocumentDetails documentDetails = getDocumentDetailDialogCtrl().getDocumentDetailsList().get(i);
 
 				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both Current and Existing list rating same
 
@@ -983,13 +1055,13 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 						if (aDocumentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 							aDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded = true;
-							contributorDetails.add(aDocumentDetails);
+							documentDetailList.add(aDocumentDetails);
 						} else if (aDocumentDetails.getRecordType().equals(PennantConstants.RCD_ADD)) {
 							recordAdded = true;
 						} else if (aDocumentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							aDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 							recordAdded = true;
-							contributorDetails.add(aDocumentDetails);
+							documentDetailList.add(aDocumentDetails);
 						} else if (aDocumentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
 							/*		for (int j = 0; j < getFinanceMainDialogCtrl().getFinanceDetail().getFinContributorHeader().getContributorDetailList().size(); j++) {
@@ -1001,52 +1073,20 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 						}
 					} else {
 						if (tranType != PennantConstants.TRAN_UPD) {
-							contributorDetails.add(documentDetails);
+							documentDetailList.add(documentDetails);
 						}
 					}
 				} else {
-					contributorDetails.add(documentDetails);
+					documentDetailList.add(documentDetails);
 				}
 			}
 		}
 		if (!recordAdded) {
-			contributorDetails.add(aDocumentDetails);
+			documentDetailList.add(aDocumentDetails);
 		}
 		return auditHeader;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++ Search Button Component Events+++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	/**
-	 * Method for Calling list Of existed Customers
-	 * @param event
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
-	 */
-	public void onClick$btnSearchCustId(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering" + event.toString());
-		onload();
-		logger.debug("Leaving" + event.toString());
-	}
-
-	/**
-	 * To load the customerSelect filter dialog
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
-	 */
-	private void onload() throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("DialogCtrl", this);
-		map.put("filtertype", "Extended");
-		map.put("searchObject", this.newSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-		logger.debug("Leaving");
-	}
-
-	/**
-	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1075,7 +1115,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_DocumentDetailDialog, auditHeader);
+			ErrorControl.showErrorControl(this.window_FinDocumentDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error(exp);
 		}
@@ -1107,6 +1147,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void onSelect$docCategory(Event  event){
+		
+		
+	}
+	
 	// Check notes Entered or not
 	public void setNotes_entered(String notes) {
 		logger.debug("Entering");
@@ -1151,11 +1196,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	}
 
 	public DocumentDetails getDocumentDetails() {
-		return this.finContributorDetail;
+		return this.finDocumentDetail;
 	}
 
 	public void setDocumentDetails(DocumentDetails customerRating) {
-		this.finContributorDetail = customerRating;
+		this.finDocumentDetail = customerRating;
 	}
 
 	public boolean isNotes_Entered() {
@@ -1182,23 +1227,25 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		this.newRecord = newRecord;
 	}
 
-	public boolean isNewContributor() {
-		return newContributor;
+	public boolean isNewDocument() {
+		return newDocument;
 	}
 
-	public void setNewContributor(boolean newContributor) {
-		this.newContributor = newContributor;
+	public void setNewDocument(boolean newDocument) {
+		this.newDocument = newDocument;
 	}
 
-	public FinanceMainDialogCtrl getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
+	
+	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
+		return documentDetailDialogCtrl;
 	}
 
-	public void setFinanceMainDialogCtrl(FinanceMainDialogCtrl financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
+	public void setDocumentDetailDialogCtrl(
+			DocumentDetailDialogCtrl documentDetailDialogCtrl) {
+		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
 	}
 
-	public void onUpload$brwDDASignCopy(UploadEvent event) throws InterruptedException {
+	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
 		browseDoc(media, this.documnetName);
@@ -1208,13 +1255,16 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
 		try {
-
 			boolean isSupported = true;
 			String docType = "";
 			if (media.getContentType().equals("application/pdf")) {
 				docType = PennantConstants.DOC_TYPE_PDF;
 			} else if (media.getContentType().equals("image/jpeg") || media.getContentType().equals("image/png")) {
 				docType = PennantConstants.DOC_TYPE_IMAGE;
+			} else if (media.getName().endsWith(".doc") || media.getName().endsWith(".docx")) {
+				docType = PennantConstants.DOC_TYPE_WORD;
+			} else if (media.getName().endsWith(".msg")) {
+				docType = PennantConstants.DOC_TYPE_MSG;
 			} else {
 				isSupported = false;
 				PTMessageUtils.showErrorMessage(Labels.getLabel("UnSupported_Document"));
@@ -1228,8 +1278,29 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 
 				} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
 					this.finDocumentPdfView.setContent(new AMedia("document.jpg", "jpg", "image", new ByteArrayInputStream(ddaImageData)));
+				}else if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
+					this.docDiv.getChildren().clear();
+					Html ageementLink = new Html();
+					ageementLink.setStyle("padding:10px;");
+					ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + fileName+ "</a> ");
+
+					List<Object> list = new ArrayList<Object>();
+					list.add(docType);
+					list.add(ddaImageData);
+					
+					ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
+					this.docDiv.appendChild(ageementLink);
 				}
 
+				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
+					this.docDiv.setVisible(true);
+					this.finDocumentPdfView.setVisible(false);
+				}else{
+					this.docDiv.setVisible(false);
+					this.finDocumentPdfView.setVisible(true);
+				}
+				
+				
 				textbox.setValue(fileName);
 				if (textbox.getAttribute("data") == null) {
 					DocumentDetails documentDetails = new DocumentDetails("FINANCEMAIN", "", docType, fileName, ddaImageData);
@@ -1246,5 +1317,29 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		}
 		logger.debug("Leaving");
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public void onDocumentClicked(Event event) throws Exception {
+		List<Object> list  = (List<Object>) event.getData();
+		
+		String docType = (String) list.get(0);
+		byte[] ddaImageData= (byte[]) list.get(1);
+		
+		if(docType.equals(PennantConstants.DOC_TYPE_WORD)){
+			Filedownload.save(ddaImageData, "application/msword", this.documnetName.getValue());
+		}else if(docType.equals(PennantConstants.DOC_TYPE_MSG)){
+			Filedownload.save(ddaImageData, "application/octet-stream", this.documnetName.getValue());
+		}
+	}
+	
+	/*private void doCheckDocumentOwner(){
+		if (getDocumentDetails().getLastMntBy() !=0 && getUserWorkspace().getLoginUserDetails().getLoginUsrID() !=getDocumentDetails().getLastMntBy()) {
+			this.btnDelete.setVisible(false);
+			this.btnSave.setVisible(false);
+			this.btnUploadDoc.setVisible(false);
+		}
+	} 
+	*/
+	
+	
 }

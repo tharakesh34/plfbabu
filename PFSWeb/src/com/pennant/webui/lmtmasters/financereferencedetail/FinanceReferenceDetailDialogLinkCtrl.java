@@ -129,6 +129,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 	protected Groupbox groupboxWf;
 	protected Row statusRow;
 	
+	
 	// not auto wired variables
 	private FinanceReferenceDetail financeReferenceDetail; // over handed per parameter
 	private FinanceReferenceDetail prvFinanceReferenceDetail; // over handed per parameter
@@ -188,6 +189,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 	protected Row rowSingleListbox;
 	protected Row rowDoubleListbox;
 	protected Row rowOverRide;
+	
+	protected Label label_FinanceReferenceDetailDialogLink;
 	
 	protected Label label_FinanceReferenceDetailDialog_ShowInStage;
 	protected Label label_FinanceReferenceDetailDialog_AllowInputInStage;
@@ -919,8 +922,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.btnSearchCorpScoringGroup.setDisabled(true);
 			this.isActive.setDisabled(isReadOnly("FinanceReferenceDetailDialog_isActive"));
 		}
-		if (getFinanceReferenceDetail().getFinRefType() == PennantConstants.Eligibility || 
-				getFinanceReferenceDetail().getFinRefType() == PennantConstants.ScoringGroup ||
+		if (getFinanceReferenceDetail().getFinRefType() == PennantConstants.ScoringGroup ||
 				getFinanceReferenceDetail().getFinRefType() == PennantConstants.CorpScoringGroup ||
 				getFinanceReferenceDetail().getFinRefType() == PennantConstants.Accounting ||
 				getFinanceReferenceDetail().getFinRefType() == PennantConstants.Template) {
@@ -1246,7 +1248,11 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 	
 	public void onClick$btnSearchTemplate(Event event) {
 		logger.debug("Entering");
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "MailTemplate");
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("TemplateFor", PennantConstants.TEMPLATE_FOR_CN, Filter.OP_EQUAL);
+		filters[1] = new Filter("Module", PennantConstants.MAIL_MODULE_FIN, Filter.OP_EQUAL);
+		
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "MailTemplate", filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1304,7 +1310,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 
 	}
 
-	public final class onCheckBoxCheked implements EventListener {
+	public final class onCheckBoxCheked implements EventListener<Event> {
 
 		public void onEvent(Event event) throws Exception {
 			logger.debug("onEvent()");
@@ -1346,6 +1352,10 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.showInStage.setReadonly(false);
 			this.allowInputInStage.setReadonly(false);
 			this.mandInputInStage.setReadonly(false);
+			this.overRide.setDisabled(false);
+			this.overRideValue.setReadonly(false);
+			this.rowOverRide.setVisible(true);
+			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
 			
 			// error labels
 			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
@@ -1374,7 +1384,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			
 			doEnableByChecked(this.listboxallowInputInStage);
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.window_FinanceReferenceDetailDialogLink.setTitle(Labels.getLabel("label_Window_FinanceCheckListList.title"));
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceCheckListList.title"));
 			break;
 			
 		case PennantConstants.Aggrement:
@@ -1385,8 +1395,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.mandInputInStage.setReadonly(true);// not required
 			
 			// error labels
-			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			this.allowInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
+			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
+			this.allowInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.mandInputInStage.setLeft("");
 			
 			// LOV List
@@ -1409,24 +1419,30 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.listheadMandInputInStage.setLabel("");// not required
 			
 			doEnableByChecked(this.listboxallowInputInStage);
-			this.window_FinanceReferenceDetailDialogLink.setTitle(Labels.getLabel("label_Window_FinanceAgreementList.title"));
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceAgreementList.title"));
 			break;
 			
 		case PennantConstants.Eligibility:
 			
+			// error labels
+			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
+			this.allowInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+			this.mandInputInStage.setLeft("");
 			// For validations
-			this.showInStage.setReadonly(true);// not required
-			this.allowInputInStage.setReadonly(true);// not required
-			this.mandInputInStage.setReadonly(false);
+			this.showInStage.setReadonly(false);
+			this.allowInputInStage.setReadonly(false); 
+			this.mandInputInStage.setReadonly(true);
+			
 			this.overRide.setDisabled(false);
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(true);
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
 			
 			// error labels
-			this.showInStage.setLeft("");
-			this.allowInputInStage.setLeft("");
-			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+			// error labels
+			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
+			this.allowInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+			this.mandInputInStage.setLeft("");
 			
 			// LOV List
 			this.btnSearchElgRule.setVisible(true);// show
@@ -1435,20 +1451,21 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinReferDialogLink_Eligibility.value"));
 			
 			// ROWS WITH LIST Boxes
-			this.rowSingleListbox.setVisible(true);// Show
+			this.rowDoubleListbox.setVisible(true);// Show
+
 			
 			// labels of list boxes
-			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
+			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue("");// not required
 			
 			// List headers of list boxes
-			this.listheadShowInStage.setLabel("");// not required
-			this.listheadAllowInputInStage.setLabel("");// not required
-			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			doEnableByChecked(this.listboxmandInputInStage);
-			this.window_FinanceReferenceDetailDialogLink.setTitle(Labels.getLabel("label_Window_FinanceEligibilityList.title"));			
-			CheckOverride();
+			this.listheadShowInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+			this.listheadAllowInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
+			this.listheadMandInputInStage.setLabel("");// not required
+			
+			doEnableByChecked(this.listboxallowInputInStage);
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceAgreementList.title"));
 			break;
 			
 		case PennantConstants.ScoringGroup:
@@ -1482,7 +1499,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.window_FinanceReferenceDetailDialogLink.setTitle(Labels.getLabel("label_Window_FinanceScoringList.title"));
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceScoringList.title"));
 			break;
 			
 		case PennantConstants.CorpScoringGroup:
@@ -1516,7 +1533,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.window_FinanceReferenceDetailDialogLink.setTitle(Labels.getLabel("label_Window_FinanceCorpScoringList.title"));
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceCorpScoringList.title"));
 			break;
 			
 		case PennantConstants.Accounting:
@@ -1551,7 +1568,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
 			
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.window_FinanceReferenceDetailDialogLink.setTitle(Labels.getLabel("label_Window_FinanceAccountingList.title"));			
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceAccountingList.title"));			
 			CheckOverride();
 			break;
 			
@@ -1587,7 +1604,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
 			
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.window_FinanceReferenceDetailDialogLink.setTitle(Labels.getLabel("label_Window_FinanceMailTemplateList.title"));			
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceMailTemplateList.title"));			
 			CheckOverride();
 			break;
 			

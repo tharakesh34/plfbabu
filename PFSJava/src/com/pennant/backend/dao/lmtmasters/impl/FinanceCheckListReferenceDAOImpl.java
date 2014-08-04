@@ -127,7 +127,7 @@ implements FinanceCheckListReferenceDAO {
 	public FinanceCheckListReference getFinanceCheckListReferenceById(final String id,long questionId
 			,long answer ,String type) {
 		logger.debug("Entering");
-		FinanceCheckListReference financeCheckListReference = getFinanceCheckListReference();
+		FinanceCheckListReference financeCheckListReference = new FinanceCheckListReference();
 
 		financeCheckListReference.setId(id);
 		financeCheckListReference.setQuestionId(questionId);
@@ -137,7 +137,7 @@ implements FinanceCheckListReferenceDAO {
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		selectSql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",lovDescQuesDesc");
+			selectSql.append(",lovDescQuesDesc, lovDescAnswerDesc ");
 		}
 		selectSql.append(" From FinanceCheckListRef");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -161,31 +161,36 @@ implements FinanceCheckListReferenceDAO {
 	/**
 	 * Fetch the Record  Finance Check List Details details by key field
 	 * 
-	 * @param id (String)
+	 * @param finReference (String)
 	 * @param  type (String)
 	 * 			""/_Temp/_View          
 	 * @return FinanceCheckListReference
 	 */
 	@Override
-	public List<FinanceCheckListReference> getFinanceCheckListReferenceByFinRef(final String id, String type) {
+	public List<FinanceCheckListReference> getCheckListByFinRef(final String finReference,String showStageCheckListIds, String type) {
 		logger.debug("Entering");
-		FinanceCheckListReference financeCheckListReference = getFinanceCheckListReference();
-		financeCheckListReference.setId(id);
-		List<FinanceCheckListReference>  finCheckListRefList;
+		
+		FinanceCheckListReference financeCheckListReference = new FinanceCheckListReference();
+		financeCheckListReference.setId(finReference);
+		List<FinanceCheckListReference>  finCheckListRefList= null;
+		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, QuestionId, Answer,Remarks");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",lovDescQuesDesc");
+			selectSql.append(" ,lovDescQuesDesc, lovDescAnswerDesc ");
 		}
 		selectSql.append(" From FinanceCheckListRef");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
-
+		selectSql.append(" Where FinReference =:FinReference"); 
+		
+		if(!StringUtils.trimToEmpty(showStageCheckListIds).equals("")){
+			selectSql.append(" AND QuestionId IN("+showStageCheckListIds+") "); 
+		}
+		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeCheckListReference);
-		RowMapper<FinanceCheckListReference> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		.newInstance(FinanceCheckListReference.class);
+		RowMapper<FinanceCheckListReference> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceCheckListReference.class);
 
 		try{
 			finCheckListRefList= this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);		

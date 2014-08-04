@@ -62,11 +62,10 @@ import com.pennant.util.PennantAppUtil;
 public class CountryListModelItemRenderer implements ListitemRenderer<Country>, Serializable {
 
 	private static final long serialVersionUID = 4901084385021031196L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, Country country, int count) throws Exception {
 		
-		//final Country country = (Country) data;
 		Listcell lc;
 	  	lc = new Listcell(country.getCountryCode());
 		lc.setParent(item);

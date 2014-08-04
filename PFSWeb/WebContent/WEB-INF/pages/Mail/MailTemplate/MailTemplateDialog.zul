@@ -9,213 +9,222 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<script type="text/javascript">
-
 		
-		<![CDATA[ function addStringContent(strContent) { try{
-		zk.Widget.$(jq('$htmlArtifact'))._editor.insertText(strContent);
-		}catch(err){ alert(err); } } function displayContent(strContent)
-		{ alert(strContent); } ]]>
-		
-		
+	<![CDATA[ 
+         function addStringContent(strContent) { 
+        	try{
+				zk.Widget.$(jq('$htmlArtifact'))._editor.insertText(strContent);
+			}catch(err){ 
+				alert(err); 
+			} 
+		 } 
+         function displayContent(strContent){ 
+        	 alert(strContent); 
+       	 } 
+         
+         function addStringSubject(strSubject) { 
+         	try{
+ 				zk.Widget.$(jq('$emailSubject'))._editor.replaceSelection(strSubject);
+ 			}catch(err){ 
+ 				alert(err); 
+ 			} 
+ 		 } 
+          function displaySubject(strSubject){ 
+         	 alert(strSubject); 
+        	 } 
+	]]>
     </script>
+
 	<window>
 		<window id="window_MailTemplateDialog" border="normal"
 			apply="${mailTemplateDialogCtrl}" width="100%" height="100%"
 			sizable="false">
-			<div sclass="z-toolbar">
-				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%" widths="35%,30%,35%">
-
-					<!-- COMMON BUTTONS -->
-					<toolbar align="start" sclass="toolbar-start">
-						<button id="btnNew" visible="false"
-							height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnEdit" visible="false"
-							height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnDelete" visible="false"
-							height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnSave" visible="false"
-							height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnCancel" visible="false"
-							height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-						<button id="btnNotes" visible="false"
-							height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnSimulate" tooltiptext="simulate"
-							visible="false" image="/images/icons/gear_16.png" />
-					</toolbar>
-
-					<!-- SEARCH AREA -->
-					<toolbar align="center" sclass="toolbar-center">
-						<label
-							value="${c:l('window_MailTemplateDialog.title')}"
-							sclass="label-heading" />
-					</toolbar>
-
-					<!-- CRUD BUTTONS -->
-					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnHelp" height="24px"
-							label="${c:l('label_Help')}"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnClose" height="24px"
-							tooltiptext="${c:l('btnClose.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-					</toolbar>
-				</hbox>
-			</div>
 
 			<borderlayout id="borderlayoutMailTemplate">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew" visible="false"
+									height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSimulate" />
+								<button id="btnEdit" visible="false"
+									height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSimulate" />
+								<button id="btnDelete" visible="false"
+									height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSimulate" />
+								<button id="btnSave" visible="false"
+									height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSimulate" />
+								<button id="btnCancel" visible="false"
+									height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+								<button id="btnNotes" visible="false"
+									height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSimulate" />
+								<button id="btnSimulate"
+									label="${c:l('label_Simulate')}" tooltiptext="simulate"
+									visible="false"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSimulate" />
+							</toolbar>
+
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label
+									value="${c:l('window_MailTemplateDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" height="24px"
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSimulate" />
+								<button id="btnClose" height="24px"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSimulate" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+
 				<center border="none">
 					<tabbox width="100%" height="98%">
 						<tabs>
 							<tab label="Basic and SMS Template Details"
 								id="basicDetailsTab" />
-							<tab label="Email  Template Details"
+							<tab label="Email Template Details"
 								id="emailDetailsTab" disabled="true" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto">
-								<div id="basicDetailTabDiv">
-									<groupbox id="gb_basicDetails"
-										sclass="gb-dialog">
+									<groupbox sclass="gb-dialog">
 										<grid
 											sclass="GridLayoutNoBorder" fixedLayout="true">
 											<columns>
 												<column width="190px" />
 												<column />
-												<column width="190px" />
-												<column />
 											</columns>
 											<rows>
-												<row id="row_Code">
+												<row>
 													<label
 														id="label_MailTemplateDialog_TemplateCode"
-														value="${c:l('label_MailTemplateDialog_TemplateCode.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_templateCode" spacing="0px" visible="true">
-														<space
-															id="space_templateCode" spacing="2px" sclass="mandatory" />
+														value="${c:l('label_MailTemplateDialog_TemplateCode.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
 														<textbox
-															id="templateModule" width="300px">
-														</textbox>
-													</hlayout>
+															id="templateCode" width="300px" />
+													</hbox>
 												</row>
 												<row>
 													<label
 														id="label_MailTemplateDialog_TemplateDesc"
-														value="${c:l('label_MailTemplateDialog_TemplateDesc.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_templateDesc" spacing="0px" visible="true">
+														value="${c:l('label_MailTemplateDialog_TemplateDesc.value')}" />
+													<hbox>
 														<space
-															id="space_templateDesc" spacing="2px" sclass="" />
+															spacing="2px" sclass="" />
 														<textbox
 															id="templateDesc" width="300px" multiline="true"
 															rows="3" />
-													</hlayout>
+													</hbox>
 												</row>
 												<row
 													id="row_turnAroundTime" visible="false">
 													<label
 														id="label_MailTemplateDialog_turnAroundTime"
-														value="${c:l('label_MailTemplateDialog_turnAroundTime.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_turnAroundTime" spacing="0px"
-														visible="true">
-														<space
-															id="space_turnAroundTime" spacing="2px"
+														value="${c:l('label_MailTemplateDialog_turnAroundTime.value')}" />
+													<hbox>
+														<space spacing="2px"
 															sclass="mandatory" />
 														<intbox
 															id="turnAroundTime" />
-													</hlayout>
+													</hbox>
 												</row>
 												<row
 													id="row_templateRepeat" visible="false">
 													<label
 														id="label_MailTemplateDialog_TemplateRepeat"
-														value="${c:l('label_MailTemplateDialog_TemplateRepeat.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_templateRepeat" spacing="0px"
-														visible="true">
-														<space
-															id="space_templateRepeat" spacing="2px" sclass="" />
+														value="${c:l('label_MailTemplateDialog_TemplateRepeat.value')}"/>
+													<hbox>
+														<space spacing="2px" />
 														<checkbox
 															id="templateRepeat" checked="false" />
-													</hlayout>
+													</hbox>
 												</row>
-												<row
-													id="row_templateFor">
+												<row visible="false">
 													<label
 														id="label_MailTemplateDialog_TemplateForSMS"
-														value="${c:l('label_MailTemplateDialog_TemplateForSMS.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_templateForSMS" spacing="0px"
-														visible="true">
-														<space
-															id="space_templateForSMS" spacing="2px" sclass="" />
+														value="${c:l('label_MailTemplateDialog_TemplateForSMS.value')}"/>
+													<hbox>
+														<space spacing="2px" />
 														<checkbox
 															id="templateForSMS" checked="false" />
-													</hlayout>
-
+													</hbox>
 												</row>
 												<row id="row_SMSContent"
 													visible="false">
 													<label
 														id="label_MailTemplateDialog_SMSContent"
-														value="${c:l('label_MailTemplateDialog_SMSContent.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_SMSContent" spacing="0px" visible="true">
-														<space
-															id="space_SMSContent" spacing="2px" sclass="mandatory" />
+														value="${c:l('label_MailTemplateDialog_SMSContent.value')}"/>
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
 														<textbox
 															id="smsContent" width="300px" multiline="true" rows="3" />
-													</hlayout>
+													</hbox>
 												</row>
-
-												<row>
+												<row visible="false">
 													<label
 														id="label_MailTemplateDialog_TemplateForEmail"
-														value="${c:l('label_MailTemplateDialog_TemplateForEmail.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_templateForEmail" spacing="0px"
-														visible="true">
-														<space
-															id="space_templateForEmail" spacing="2px" sclass="" />
+														value="${c:l('label_MailTemplateDialog_TemplateForEmail.value')}"/>
+													<hbox>
+														<space spacing="2px" />
 														<checkbox
 															id="templateForEmail" checked="false" />
-													</hlayout>
+													</hbox>
 												</row>
-												<row id="row_Active">
+												<row>
+													<label
+														id="label_MailTemplateDialog_templateFor"
+														value="${c:l('label_MailTemplateDialog_templateFor.value')}"/>
+													<hbox>
+														<space spacing="2px" 
+														        sclass="mandatory"/>
+														<combobox id="templateFor"/>
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_MailTemplateDialog_templateModule"
+														value="${c:l('label_MailTemplateDialog_templateModule.value')}"/>
+													<hbox>
+														<space spacing="2px" 
+														        sclass="mandatory"/>
+														<combobox id="templateModule"/>
+													</hbox>
+												</row>
+												<row>
 													<label
 														id="label_MailTemplateDialog_Active"
-														value="${c:l('label_MailTemplateDialog_Active.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_active" spacing="0px" visible="true">
-														<space
-															id="space_active" spacing="2px" sclass="" />
+														value="${c:l('label_MailTemplateDialog_Active.value')}"/>
+													<hbox>
+														<space spacing="2px" />
 														<checkbox
 															id="active" checked="false" />
-													</hlayout>
+													</hbox>
 												</row>
 											</rows>
 										</grid>
 									</groupbox>
-								</div>
 							</tabpanel>
+
 							<tabpanel style="overflow:auto">
-								<div id="div_emailDetailsTab">
 									<groupbox id="gb_emailDetails"
 										sclass="gb-dialog">
 										<grid
@@ -231,95 +240,67 @@
 													id="row_EmailFormat" visible="false">
 													<label
 														id="label_MailTemplateDialog_EmailFormat"
-														value="${c:l('label_MailTemplateDialog_EmailFormat.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_emailFormat" spacing="0px" visible="true">
-														<space
-															id="space_emailFormat" spacing="2px" sclass="mandatory" />
+														value="${c:l('label_MailTemplateDialog_EmailFormat.value')}"/>
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
 														<combobox
-															id="emailFormat" width="150px">
-														</combobox>
-													</hlayout>
+															id="emailFormat" width="150px" />
+													</hbox>
 												</row>
 												<row
 													id="row_EmailSendTo" visible="false">
 													<label
 														id="label_MailTemplateDialog_EmailSendTo"
-														value="${c:l('label_MailTemplateDialog_EmailSendTo.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_emailSendTo" spacing="0px" visible="true">
-														<space
-															id="space_SendTo" spacing="2px" sclass="mandatory" />
-														<hbox
-															id="hboxPSH">
-															<checkbox
-																name="sendTo" label="Primary" id="emailSendToPrimary"
-																checked="false" />
-															<space
-																width="10px" />
-															<checkbox
-																name="sendTo" label="Secondary"
-																id="emailSendToSecondary" checked="false" />
-															<space
-																width="10px" />
-															<checkbox
-																name="sendTo" label="Helpdesk" id="emailSendToHelpdesk"
-																checked="false" />
-														</hbox>
-														<hbox
-															id="hboxUsers" visible="false">
+														value="${c:l('label_MailTemplateDialog_EmailSendTo.value')}"/>
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
 															<textbox
-																id="userIds" visible="false">
-															</textbox>
+																id="userIds" visible="false" />
 															<textbox
-																id="lovDescUserNames" readonly="true" width="250px">
-															</textbox>
+																id="lovDescUserNames" readonly="true" width="250px" />
 															<button
 																id="btnUserIds" image="/images/icons/LOVSearch.png"
-																height="24px">
-															</button>
-														</hbox>
-													</hlayout>
+																height="24px" />
+													</hbox>
 												</row>
-												<row
-													id="row_EmailSubject" visible="false">
+												<row>
 													<label
 														id="label_MailTemplateDialog_EmailSubject"
-														value="${c:l('label_MailTemplateDialog_EmailSubject.value')}"
-														visible="true" />
-													<hlayout
-														id="hlayout_emailSubject" spacing="0px" visible="true">
+														value="${c:l('label_MailTemplateDialog_EmailSubject.value')}"/>
+													<hbox>
 														<space
-															id="space_emailSubject" spacing="2px" sclass="mandatory" />
-														<textbox
-															id="emailSubject" maxlength="100" width="350px" />
-													</hlayout>
+															spacing="2px" sclass="mandatory"/>
+														<codemirror id="emailSubject"  width="700px"  />
+													</hbox>
+													<space />
+													<listbox
+														id="templateData1" height="480px" style="text-align:left;"
+														mold="default"
+														w:onDoubleClick="addStringSubject(this.getSelectedItem().getLabel())" >
+														<listhead>
+															<listheader
+																label="Expression Fields for E-Mail Subject" width="100%" />
+														</listhead>
+													</listbox>
 												</row>
-												<row
-													id="row_EmailContent" visible="false">
+												<row>
 													<label
 														id="label_MailTemplateDialog_TemplateContent"
-														value="${c:l('label_MailTemplateDialog_EMailContent.value')}"
-														visible="true" />
-													<hlayout
-														spacing="0px" id="hlayout_templateContent" width="100%">
+														value="${c:l('label_MailTemplateDialog_EMailContent.value')}"/>
+													<hbox>
 														<space
-															spacing="2px" sclass="mandatory"
-															id="space_templateContent" />
+															spacing="2px" sclass="mandatory"/>
 														<div
 															id="divHtmlArtifact" visible="false" width="600px"
 															height="300px"
-															style="border:1px solid #A3A3A3;padding:2px;overflow:auto;">
-														</div>
-														<ckeditor
-															id="htmlArtifact" width="100%" height="350px"
+															style="border:1px solid #A3A3A3;padding:2px;overflow:auto;" />
+														<ptCKeditor
+															id="htmlArtifact" width="700px" height="350px"
 															customConfigurationsPath="/ptjs/customizedConfig.js"
 															w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
 														<textbox
 															id="plainText" width="300px" visible="false" />
-													</hlayout>
+													</hbox>
 													<space />
 													<listbox
 														id="templateData" height="480px" style="text-align:left;"
@@ -328,18 +309,18 @@
 														visible="false">
 														<listhead>
 															<listheader
-																label="Expression Fields" width="100%" />
+																label="Expression Fields for E-Mail Content" width="100%" />
 														</listhead>
 													</listbox>
 												</row>
 											</rows>
 										</grid>
 									</groupbox>
-								</div>
 							</tabpanel>
 						</tabpanels>
 					</tabbox>
 				</center>
+
 				<south sclass="south-dialog">
 					<groupbox id="groupboxWf" width="99%">
 						<caption label="${c:l('Action')}" />
@@ -355,6 +336,7 @@
 						</hbox>
 					</groupbox>
 				</south>
+
 			</borderlayout>
 		</window>
 	</window>

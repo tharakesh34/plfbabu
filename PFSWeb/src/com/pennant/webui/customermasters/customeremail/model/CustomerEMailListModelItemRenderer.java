@@ -60,16 +60,14 @@ import com.pennant.util.PennantAppUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CustomerEMailListModelItemRenderer implements ListitemRenderer, Serializable {
+public class CustomerEMailListModelItemRenderer implements ListitemRenderer<CustomerEMail>, Serializable {
 
 	private static final long serialVersionUID = -292319041377555951L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, CustomerEMail customerEMail, int count) throws Exception {
 
 		if (item instanceof Listgroup) { 
-			Object groupData = (Object) data; 
-			final CustomerEMail customerEMail= (CustomerEMail)groupData;
 			item.appendChild(new Listcell(String.valueOf(customerEMail.getLovDescCustCIF()))); 
 		}else if (item instanceof Listgroupfoot) { 
 			Listcell cell = new Listcell("");
@@ -77,9 +75,10 @@ public class CustomerEMailListModelItemRenderer implements ListitemRenderer, Ser
 			item.appendChild(cell); 
 		} else { 
 
-			final CustomerEMail customerEMail = (CustomerEMail) data;
 			Listcell lc;
-			lc = new Listcell(customerEMail.getCustEMailTypeCode()+"-"+customerEMail.getLovDescCustEMailTypeCode());
+			lc = new Listcell(customerEMail.getLovDescCustCIF());
+			lc.setParent(item);
+			lc = new Listcell(customerEMail.getCustEMailTypeCode());
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.formateInt(customerEMail.getCustEMailPriority()));
 			lc.setParent(item);
@@ -89,7 +88,7 @@ public class CustomerEMailListModelItemRenderer implements ListitemRenderer, Ser
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(customerEMail.getRecordType()));
 			lc.setParent(item);
-			item.setAttribute("data", data);
+			item.setAttribute("data", customerEMail);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerEMailItemDoubleClicked");
 		}}
 }

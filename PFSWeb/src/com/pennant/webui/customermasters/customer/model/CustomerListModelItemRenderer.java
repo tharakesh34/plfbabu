@@ -60,11 +60,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerListModelItemRenderer implements ListitemRenderer<Customer>, Serializable {
 
 	private static final long serialVersionUID = 2274326782681085785L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+	
 	@Override
 	public void render(Listitem item, Customer customer, int count) throws Exception {
 
-//		final Customer customer = (Customer) data;
 		Listcell lc;
 		lc = new Listcell(customer.getCustCIF().trim());
 		lc.setParent(item);
@@ -82,6 +81,7 @@ public class CustomerListModelItemRenderer implements ListitemRenderer<Customer>
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(customer.getRecordType()));
 		lc.setParent(item);
+		
 		item.setAttribute("data", customer);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerItemDoubleClicked");
 	}

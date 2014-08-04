@@ -45,19 +45,27 @@ package com.pennant.webui.customermasters.customergroup;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +78,14 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customergroup.model.CustomerGroupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -106,6 +118,34 @@ public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> implem
 	protected Listheader listheader_CustGrpIsActive; 	// autoWired
 	protected Listheader listheader_RecordStatus; 		// autoWired
 	protected Listheader listheader_RecordType;
+	
+	//Search
+	protected Textbox	custCIF; 							// autoWired
+	protected Listbox 	sortOperator_custCIF; 				// autoWired
+	protected Textbox	custGrpCode; 							// autoWired
+	protected Listbox 	sortOperator_custGrpCode; 				// autoWired
+	protected Textbox 	custGrpDesc;							// autoWired
+	protected Listbox 	sortOperator_custGrpDesc;				// autoWired
+	protected Textbox 	custGrpRO1;							// autoWired
+	protected Listbox 	sortOperator_custGrpRO1;				// autoWired
+	protected Checkbox 	custGrpIsActive; 						// autoWired
+	protected Listbox 	sortOperator_custGrpIsActive; 			// autoWired
+	protected Textbox 	recordStatus; 							// autoWired
+	protected Listbox 	recordType;								// autoWired
+	protected Listbox 	sortOperator_recordStatus; 				// autoWired
+	protected Listbox 	sortOperator_recordType; 				// autoWired
+
+	protected Label label_CustomerGroupSearch_RecordStatus; 	// autoWired
+	protected Label label_CustomerGroupSearch_RecordType; 		// autoWired
+	protected Label label_CustomerGroupSearchResult; 			// autoWired
+	
+	protected Grid	                       searchGrid;	 
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+
+	private transient boolean	           approvedList	    = false;
 
 	// checkRights
 	protected Button btnHelp; 												// autoWired
@@ -156,6 +196,34 @@ public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> implem
 		}else{
 			wfAvailable=false;
 		}
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_custGrpCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custGrpCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custGrpDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custGrpDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		this.sortOperator_custGrpRO1.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custGrpRO1.setItemRenderer(new SearchOperatorListModelItemRenderer());		
+		
+		this.sortOperator_custGrpIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_custGrpIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+		}else{
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CustomerGroupSearch_RecordStatus.setVisible(false);
+			this.label_CustomerGroupSearch_RecordType.setVisible(false);
+		}
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -165,8 +233,8 @@ public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> implem
 		 * currentDesktopHeight from a hidden IntBox from the index.zul that are
 		 * filled by onClientInfo() in the indexCtroller
 		 */
-
 		this.borderLayout_CustomerGroupList.setHeight(getBorderLayoutHeight());
+		this.listBoxCustomerGroup.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCustomerGroupList.setPageSize(getListRows());
@@ -191,35 +259,20 @@ public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> implem
 			this.listheader_RecordType.setVisible(false);
 		}
 
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<CustomerGroup>(CustomerGroup.class,getListRows());
-		this.searchObj.addSort("CustGrpID", false);
-
-		// Work flow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("CustomerGroups_View");
-			if (isFirstTask()) {
-				button_CustomerGroupList_NewCustomerGroup.setVisible(true);
-			} else {
-				button_CustomerGroupList_NewCustomerGroup.setVisible(false);
-			}
-
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}else{
-			this.searchObj.addTabelName("CustomerGroups_AView");
-		}
-
-		setSearchObj(this.searchObj);
+		// set the itemRenderer
+		this.listBoxCustomerGroup.setItemRenderer(new CustomerGroupListModelItemRenderer());
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_CustomerGroupList_NewCustomerGroup.setVisible(false);
 			this.button_CustomerGroupList_CustomerGroupSearchDialog.setVisible(false);
 			this.button_CustomerGroupList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxCustomerGroup,this.pagingCustomerGroupList);
-			// set the itemRenderer
-			this.listBoxCustomerGroup.setItemRenderer(new CustomerGroupListModelItemRenderer());
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
+			
 		}	
 		logger.debug("Leaving" +event.toString());
 	}
@@ -362,9 +415,27 @@ public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> implem
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" +event.toString());
-		this.pagingCustomerGroupList.setActivePage(0);
+		this.sortOperator_custGrpCode.setSelectedIndex(0);
+		this.custGrpCode.setValue("");
+		this.sortOperator_custGrpDesc.setSelectedIndex(0);
+		this.custGrpDesc.setValue("");
+		this.sortOperator_custGrpRO1.setSelectedIndex(0);
+		this.custGrpRO1.setValue("");
+		this.sortOperator_custGrpIsActive.setSelectedIndex(0);
+		this.custGrpIsActive.setValue("");
+		
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		doSearch();
+		/*this.pagingCustomerGroupList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_CustomerGroupList, event);
-		this.window_CustomerGroupList.invalidate();
+		this.window_CustomerGroupList.invalidate();*/
 		logger.debug("Leaving" +event.toString());
 	}
 
@@ -373,24 +444,7 @@ public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> implem
 	 */
 	public void onClick$button_CustomerGroupList_CustomerGroupSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" +event.toString());
-		/*
-		 * we can call our CustomerGroupDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected CustomerGroup. For handed over
-		 * these parameter only a Map is accepted. So we put the CustomerGroup object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerGroupCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerGroup/CustomerGroupSearchDialog.zul",
-					null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" +event.toString());
 	}
 
@@ -400,10 +454,86 @@ public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> implem
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_CustomerGroupList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" +event.toString());
-		PTReportUtils.getReport("CustomerGroup", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("CustomerGroups", getSearchObj(),this.pagingCustomerGroupList.getTotalSize()+1);
 		logger.debug("Leaving" +event.toString());
+	}
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<CustomerGroup>(CustomerGroup.class, getListRows());
+		this.searchObj.addSort("custGrpCode", false);
+		this.searchObj.addTabelName("CustomerGroups_View");
+		if (isWorkFlowEnabled()) {
+
+			if (isFirstTask() && this.moduleType == null) {
+				button_CustomerGroupList_NewCustomerGroup.setVisible(true);
+			} else {
+				button_CustomerGroupList_NewCustomerGroup.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("CustomerGroups_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("CustomerGroups_AView");
+		}
+		// Customer GrpCode
+		if (!StringUtils.trimToEmpty(this.custGrpCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custGrpCode.getSelectedItem(), this.custGrpCode.getValue(), "custGrpCode");
+		}
+		
+		// Customer GrpDesc
+		if (!StringUtils.trimToEmpty(this.custGrpDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custGrpDesc.getSelectedItem(), this.custGrpDesc.getValue(), "custGrpDesc");
+		}
+		// Customer GrpRO1
+		if (!StringUtils.trimToEmpty(this.custGrpRO1.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custGrpRO1.getSelectedItem(), this.custGrpRO1.getValue(), "custGrpRO1");
+		}
+
+		// Customer GrpIsActive
+		if (custGrpIsActive.isChecked()) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custGrpIsActive.getSelectedItem(), 1,"custGrpIsActive");
+		} else {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custGrpIsActive.getSelectedItem(), 0,"custGrpIsActive");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxCustomerGroup,this.pagingCustomerGroupList);
+		logger.debug("Leaving");
+	
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

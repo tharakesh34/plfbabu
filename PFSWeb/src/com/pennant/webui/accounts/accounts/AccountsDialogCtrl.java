@@ -71,7 +71,6 @@ import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -86,10 +85,13 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.LongValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -581,7 +583,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.acShortName.setValue(aAccounts.getAcShortName());
 		this.acPurpose.setValue(aAccounts.getAcPurpose());
 		this.lovDescAcPurpose.setValue(PennantAppUtil.getlabelDesc(aAccounts.getAcPurpose()
-				,PennantAppUtil.getAccountPurpose()));
+				,PennantStaticListUtil.getAccountPurpose()));
 		this.internalAc.setChecked(aAccounts.isInternalAc());
 		this.custSysAc.setChecked(aAccounts.isCustSysAc());
 		if(this.custSysAc.isChecked()){
@@ -908,15 +910,13 @@ public class AccountsDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (!this.accounts.isInternalAc() && this.accounts.isNew()){	
 			if(!StringUtils.trimToEmpty(this.acSeqNumber.getValue()).equals("")){
-				this.acSeqNumber.setConstraint(new SimpleConstraint(PennantConstants.NUM_REGEX , 
-						Labels.getLabel("MAND_NUMBER" 
-								,new String[]{Labels.getLabel("label_AcountsDialog_AccountId.value")})));
+				this.acSeqNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AccountId.value"),
+						PennantRegularExpressions.REGEX_NUMERIC, true));
 			}
 		}else if(this.accounts.isInternalAc() && this.accounts.isNew()){
 
-			this.acSeqNumber.setConstraint(new SimpleConstraint(PennantConstants.NUM_REGEX , 
-					Labels.getLabel("FIELD_NUMBER"
-							,new String[]{Labels.getLabel("label_AcountsDialog_AccountId.value")})));
+			this.acSeqNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AccountId.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 		if (!this.acCcy.isReadonly()){
 			this.acCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
@@ -980,9 +980,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl implements Serializable {
 					,new String[]{Labels.getLabel("label_AcountsDialog_AcLastSysTrnDate.value")}));
 		}
 		if (!this.hostAcNumber.isReadonly()){
-			this.hostAcNumber.setConstraint(new SimpleConstraint(PennantConstants.NM_NUM_REGEX , 
-					Labels.getLabel("MAND_NUMBER" 
-							,new String[]{Labels.getLabel("label_AcountsDialog_HostAcNumber.value")})));
+			this.hostAcNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_HostAcNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 		logger.debug("Leaving");
 	}

@@ -73,7 +73,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -125,7 +124,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	protected Label recordStatus; // auto wired
 	protected Radiogroup userAction;
 	protected Groupbox groupboxWf;
-	protected Row statusRow;
 
 	// not auto wired variables
 	private FinanceReferenceDetail financeReferenceDetail; // over handed per parameters
@@ -214,12 +212,12 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	public void onCreate$window_FinanceReferenceDetailDialog(Event event) throws Exception {
 		logger.debug(event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
-
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew, this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel,
 				this.btnClose, this.btnNotes);
+
+		/* set components visible dependent of the users rights */
+		doCheckRights();
 
 		// get the parameters map that are over handed by creation.
 		final Map<String, Object> args = getCreationArgsMap(event);
@@ -295,10 +293,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			this.statusRow.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
-			this.statusRow.setVisible(false);
 		}
 
 		logger.debug("Leaving");
@@ -316,9 +312,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		logger.debug("Entering");
 
 		getUserWorkspace().alocateAuthorities("FinanceReferenceDetailDialog");
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnDelete"));
+		this.btnNew.setVisible(false);//getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnNew")
+		this.btnEdit.setVisible(false);//getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnEdit")
+		this.btnDelete.setVisible(false);//getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnDelete")
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
@@ -360,6 +356,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	public void onClick$btnEdit(Event event) {
 		logger.debug(event.toString());
 		doEdit();
+		// remember the old variables
+		doStoreInitValues();
 		logger.debug("Leaving");
 	}
 
@@ -462,7 +460,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		}
 
 		if (close) {
-			closeDialog(this.window_FinanceReferenceDetailDialog, "FinanceReferenceDetail");
+			closeDialog(this.window_FinanceReferenceDetailDialog, "FinanceReferenceDetailDialog");
 		}
 
 		logger.debug("Leaving");
@@ -622,20 +620,22 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 			// fill the components with the data
 			doWriteBeanToComponents(aFinanceReference);
 			// stores the initial data for comparing if they are changed
-			// during user action.
-			doStoreInitValues();
 			this.isActive.focus();
 			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
 			} else {
-				this.btnCtrl.setInitEdit();
+				//this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
 				btnSave.setVisible(true);
 	
 			}
+			
+			// during user action.
+			doStoreInitValues();
 			setDialog(this.window_FinanceReferenceDetailDialog);
+			
 		} catch (final Exception e) {
 			logger.error(e);
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -822,7 +822,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 			try {
 				if (doProcess(aFinanceReferenceDetail, tranType)) {
 					// refreshList();
-					closeDialog(this.window_FinanceReferenceDetailDialog, "FinanceReferenceDetail");
+					closeDialog(this.window_FinanceReferenceDetailDialog, "FinanceReferenceDetailDialog");
 				}
 
 			} catch (DataAccessException e) {
@@ -839,15 +839,15 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	 */
 	private void doNew() {
 		logger.debug("Entering");
+		
+		// remember the old variables
+		doStoreInitValues();
 
 		final FinanceReferenceDetail aFinanceReferenceDetail = getFinanceReferenceDetailService().getNewFinanceReferenceDetail();
 		setFinanceReferenceDetail(aFinanceReferenceDetail);
 		doClear(); // clear all components
 		doEdit(); // edit mode
 		this.btnCtrl.setBtnStatus_New();
-
-		// remember the old variables
-		doStoreInitValues();
 
 		// setFocus
 		this.isActive.focus();
@@ -905,8 +905,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
-		// remember the old variables
-		doStoreInitValues();
+		
 		logger.debug("Leaving");
 	}
 
@@ -1016,7 +1015,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		try {
 			items.clear();
 			items = null;
-			closeDialog(this.window_FinanceReferenceDetailDialog, "FinanceReferenceDetail");
+			closeDialog(this.window_FinanceReferenceDetailDialog, "FinanceReferenceDetailDialog");
 
 		} catch (final DataAccessException e) {
 			logger.error(e);

@@ -74,12 +74,14 @@ import com.pennant.backend.service.rmtmasters.FinanceMarginSlabService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.commodityFinanceType.model.FinanceMarginSlabListModelItemRenderer;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -607,8 +609,13 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setLovDescFinCcyName(this.lovDescFinCcyName.getValue());
-			aFinanceType.setFinCcy(this.finCcy.getValue());
+			aFinanceType.setLovDescFinCcyName(this.lovDescFinCcyName.getValue());			
+			if(this.finCcy.getValue().equals("")) {
+				wve.add(new WrongValueException(this.lovDescFinCcyName, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommodityFinanceTypeDialog_FinCcy") })));
+			} else {
+				aFinanceType.setFinCcy(this.finCcy.getValue());
+			}			
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -942,15 +949,15 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 		// ++++++++++++ Finance Type tab +++++++++++++++++++//
 		
 		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels
-						.getLabel("label_CommodityFinanceTypeDialog_FinType.value") }));
+			this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityFinanceTypeDialog_FinType.value"),
+					         PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		
 		if (validate) {// To Check Whether it is save or submit
 						// if save no validation else it should validate
 			if (!this.finTypeDesc.isReadonly()) {
-				this.finTypeDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels
-						.getLabel("label_CommodityFinanceTypeDialog_FinTypeDesc.value") }));
+				this.finTypeDesc.setConstraint(new PTStringValidator(Labels
+						.getLabel("label_CommodityFinanceTypeDialog_FinTypeDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			}
 			if (!this.finMaxAmount.isReadonly() && this.finMaxAmount.getValue() != null
 					&& this.finMaxAmount.getValue().intValue() != 0) {
@@ -988,25 +995,22 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 
 		// +++++++ Finance Type Tab +++++++++++++//
 		
-		this.lovDescFinCcyName.setConstraint("NO EMPTY:"
-				+ Labels.getLabel("FIELD_NO_EMPTY",	new String[] { Labels.getLabel(
-						"label_CommodityFinanceTypeDialog_FinCcy.value") }));
+		this.lovDescFinCcyName.setConstraint(new PTStringValidator(Labels.getLabel(
+						"label_CommodityFinanceTypeDialog_FinCcy.value"), null, true));
 		if (validate) {
-			this.lovDescFinAcTypeName.setConstraint("NO EMPTY:"
-				+ Labels.getLabel("FIELD_NO_EMPTY",	new String[] { Labels.getLabel(
-						"label_CommodityFinanceTypeDialog_FinAcType.value") }));
-			this.lovDescFinContingentAcTypeName.setConstraint("NO EMPTY:"
-				+ Labels.getLabel("FIELD_NO_EMPTY",	new String[] { Labels.getLabel(
-						"label_CommodityFinanceTypeDialog_FinContingentAcType.value") }));
+			this.lovDescFinAcTypeName.setConstraint(new PTStringValidator(Labels.getLabel(
+						"label_CommodityFinanceTypeDialog_FinAcType.value"), null, true));
+			this.lovDescFinContingentAcTypeName.setConstraint(new PTStringValidator(Labels.getLabel(
+						"label_CommodityFinanceTypeDialog_FinContingentAcType.value"), null, true));
 
 		// ++++++++++ Accounting Events tab ++++++++++++++//
 			
-			this.lovDescFinAEAmzNormName.setConstraint("NO EMPTY:"+ Labels.getLabel(
-					"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CommodityFinanceTypeDialog_FinAEAmzNorm.value") }));
-			this.lovDescFinAEBuyOrInceptionName.setConstraint("NO EMPTY:"+ Labels.getLabel(
-					"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CommodityFinanceTypeDialog_FinAEBuyOrInception.value") }));
-			this.lovDescFinAESellOrMaturityName.setConstraint("NO EMPTY:"+ Labels.getLabel(
-					"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CommodityFinanceTypeDialog_FinAESellOrMaturity.value") }));
+			this.lovDescFinAEAmzNormName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityFinanceTypeDialog_FinAEAmzNorm.value")
+					, null, true));
+			this.lovDescFinAEBuyOrInceptionName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityFinanceTypeDialog_FinAEBuyOrInception.value"),
+					null, true));
+			this.lovDescFinAESellOrMaturityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityFinanceTypeDialog_FinAESellOrMaturity.value"),
+					null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -1041,6 +1045,7 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 	/** Deletes a FinanceType object from database.<br>
 	 * 
 	 * @throws InterruptedException */
+	@SuppressWarnings("rawtypes")
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
 		final FinanceType aFinanceType = new FinanceType("");
@@ -1132,6 +1137,7 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 
 		this.finTypeDesc.setReadonly(isReadOnly("CommodityFinanceTypeDialog_finTypeDesc"));
 		this.btnSearchFinCcy.setDisabled(isReadOnly("CommodityFinanceTypeDialog_finCcy"));
+		this.lovDescFinCcyName.setReadonly(isReadOnly("CommodityFinanceTypeDialog_finCcy"));
 		this.btnSearchFinAcType.setDisabled(isReadOnly("CommodityFinanceTypeDialog_finAcType"));
 		this.btnSearchFinContingentAcType.setDisabled(isReadOnly("CommodityFinanceTypeDialog_finContingentAcType"));
 		this.finIsGenRef.setDisabled(isReadOnly("CommodityFinanceTypeDialog_finIsGenRef"));
@@ -1168,6 +1174,7 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finType.setReadonly(true);
 		this.finTypeDesc.setReadonly(true);
 		this.btnSearchFinCcy.setDisabled(true);
+		this.lovDescFinCcyName.setReadonly(true);
 		this.btnSearchFinAcType.setDisabled(true);
 		this.btnSearchFinContingentAcType.setDisabled(true);
 		this.finIsGenRef.setDisabled(true);
@@ -1463,6 +1470,39 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 		return processCompleted;
 	}
 
+	/** 
+	 * To get the currency LOV List From RMTCurrencies Table And Amount is
+	 * formatted based on the currency 
+	 *
+	 **/
+	public void onChange$lovDescFinCcyName(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		this.lovDescFinCcyName.clearErrorMessage();
+
+		Currency details = (Currency)PennantAppUtil.getCurrencyBycode(this.lovDescFinCcyName.getValue());
+
+		if(details == null) {	
+			this.finCcy.setValue("");
+			throw new WrongValueException(this.lovDescFinCcyName, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommodityFinanceTypeDialog_FinCcy") }));
+		} else {
+			if (details != null) {
+				this.finCcy.setValue(details.getCcyCode());
+				this.lovDescFinCcyName.setValue(details.getCcyCode() + "-" + details.getCcyDesc());
+				fillProfitDaysBasis(this.cbfinDaysCalType, details.getCcyDrRateBasisCode());
+				// To Format Amount based on the currency
+
+				getFinanceType().setLovDescFinFormetter(details.getCcyEditField());
+				this.finMaxAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+				this.finMinAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+
+			}
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	
 	/** 
 	 * To get the currency LOV List From RMTCurrencies Table And Amount is
 	 * formatted based on the currency 

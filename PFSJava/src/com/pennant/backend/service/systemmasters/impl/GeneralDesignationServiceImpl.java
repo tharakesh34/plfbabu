@@ -65,8 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class GeneralDesignationServiceImpl extends GenericService<GeneralDesignation> implements GeneralDesignationService {
 
-	private static Logger logger = Logger
-			.getLogger(GeneralDesignationServiceImpl.class);
+	private static Logger logger = Logger.getLogger(GeneralDesignationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private GeneralDesignationDAO generalDesignationDAO;

@@ -49,35 +49,36 @@
 
 			<center border="none">
 				<listbox id="listBoxDiaryNotes" vflex="true"
-					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
+					    emptyMessage="${c:l('listbox.emptyMessage')}"
+						fixedLayout="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+						width="100%" span="true" height="100%" multiple="false">
 					<listhead sizable="true">
 						<listheader id="listheader_DnType"
-							label="${c:l('listheader_DnType.label')}" sort="auto" width="6%" />
+							label="${c:l('listheader_DnType.label')}" sort="auto" hflex="min" />
 						<listheader id="listheader_DnCreatedNo"
 							label="${c:l('listheader_DnCreatedNo.label')}" sort="auto"
-							width="14%" />
+							hflex="min" />
 						<listheader id="listheader_DnCreatedName"
 							label="${c:l('listheader_DnCreatedName.label')}" sort="auto"
-							width="28%" />
+							hflex="min" />
 						<listheader id="listheader_FrqCode"
 							label="${c:l('listheader_FrqCode.label')}" sort="auto"
-							width="17%" />
+							hflex="min" />
 						<listheader id="listheader_NextActionDate"
 							label="${c:l('listheader_NextActionDate.label')}" sort="auto"
-							width="9%" />
+							hflex="min" />
 						<listheader id="listheader_FinalActionDate"
 							label="${c:l('listheader_FinalActionDate.label')}" sort="auto"
-							width="9%" />
+							hflex="min" />
 						<listheader id="listheader_Suspend"
 							label="${c:l('listheader_Suspend.label')}" sort="auto"
-							width="7%" />
+							hflex="min" />
 						<listheader id="listheader_RecordStatus"
 							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_RecordType"
 							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 					</listhead>
 				</listbox>
 			</center>

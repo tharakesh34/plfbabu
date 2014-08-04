@@ -92,6 +92,8 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 		if (workFlowDetails!=null){
 			directorDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
+		directorDetail.setId(getNextidviewDAO().getNextId("SeqCustomerDirectorDetail"));
+		logger.debug("get NextID:"+directorDetail.getId());
 		logger.debug("Leaving");
 		return directorDetail;
 	}
@@ -120,27 +122,29 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 	 * @return DirectorDetail
 	 */
 	@Override
-	public DirectorDetail getDirectorDetailById(final long id, String type) {
+	public DirectorDetail getDirectorDetailById(final long id,final long custID, String type) {
 		logger.debug("Entering");
-		DirectorDetail directorDetail = getDirectorDetail();
+		DirectorDetail directorDetail = new DirectorDetail();
 		
 		directorDetail.setId(id);
+		directorDetail.setCustID(custID);
 		
 		StringBuilder selectSql = new StringBuilder("Select DirectorId, CustID, FirstName," );
-		selectSql.append(" MiddleName, LastName, ShortName, CustGenderCode, CustSalutationCode," );
+		selectSql.append(" MiddleName, LastName, ShortName, CustGenderCode, CustSalutationCode,SharePerc,Shareholder,Director,Designation, " );
 		selectSql.append(" CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1, CustAddrLine2," );
 		selectSql.append(" CustPOBox, CustAddrCity, CustAddrProvince, CustAddrCountry, CustAddrZIP," );
-		selectSql.append(" CustAddrPhone, CustAddrFrom,");
+		selectSql.append(" CustAddrPhone, CustAddrFrom, IdType, IdReference, Nationality, Dob,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescCustGenderCodeName,lovDescCustSalutationCodeName," );
-			selectSql.append("lovDescCustAddrCityName,lovDescCustAddrProvinceName,lovDescCustCIF," );
-			selectSql.append(" lovDescCustAddrCountryName, lovDescCustRecordType , lovDescCustShrtName,");
+			selectSql.append(" lovDescCustAddrCityName,lovDescCustAddrProvinceName,lovDescCustCIF," );
+			selectSql.append(" lovDescCustAddrCountryName, lovDescCustRecordType , lovDescCustShrtName,lovDescDesignationName,");
+			selectSql.append(" lovDescNationalityName,lovDescCustDocCategoryName,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From CustomerDirectorDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DirectorId =:DirectorId");
+		selectSql.append(" Where DirectorId =:DirectorId AND CustID =:CustID");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(directorDetail);
@@ -168,18 +172,19 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 	@Override
 	public List<DirectorDetail> getCustomerDirectorByCustomer(final long id, String type) {
 		logger.debug("Entering");
-		DirectorDetail directorDetail = getDirectorDetail();
+		DirectorDetail directorDetail = new DirectorDetail();
 		directorDetail.setCustID(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select DirectorId, CustID, FirstName," );
-		selectSql.append(" MiddleName, LastName, ShortName, CustGenderCode, CustSalutationCode," );
+		selectSql.append(" MiddleName, LastName, ShortName, CustGenderCode, CustSalutationCode,SharePerc,Shareholder,Director,Designation," );
 		selectSql.append(" CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1, CustAddrLine2," );
 		selectSql.append(" CustPOBox, CustAddrCity, CustAddrProvince, CustAddrCountry, CustAddrZIP," );
-		selectSql.append(" CustAddrPhone, CustAddrFrom,");
+		selectSql.append(" CustAddrPhone, CustAddrFrom, IdType, IdReference, Nationality, Dob,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescCustGenderCodeName,lovDescCustSalutationCodeName," );
 			selectSql.append("lovDescCustAddrCityName,lovDescCustAddrProvinceName,lovDescCustCIF," );
-			selectSql.append(" lovDescCustAddrCountryName, lovDescCustRecordType , lovDescCustShrtName,");
+			selectSql.append(" lovDescCustAddrCountryName, lovDescCustRecordType , lovDescCustShrtName,lovDescDesignationName,");
+			selectSql.append(" lovDescNationalityName,lovDescCustDocCategoryName,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
@@ -242,7 +247,7 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerDirectorDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where DirectorId =:DirectorId");
+		deleteSql.append(" Where DirectorId =:DirectorId AND CustID = :CustID");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(directorDetail);
@@ -276,7 +281,7 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 	public void delete(final long customerId,String type) {
 		logger.debug("Entering");
 		
-		DirectorDetail directorDetail = getDirectorDetail();
+		DirectorDetail directorDetail = new DirectorDetail();
 		directorDetail.setCustID(customerId);
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerDirectorDetail");
@@ -315,16 +320,18 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 		StringBuilder insertSql =new StringBuilder("Insert Into CustomerDirectorDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (DirectorId, CustID, FirstName, MiddleName, LastName, ShortName," );
-		insertSql.append(" CustGenderCode, CustSalutationCode, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
+		insertSql.append(" CustGenderCode, CustSalutationCode,SharePerc, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
 		insertSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince," );
 		insertSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom ,");
+		insertSql.append(" Shareholder, Director, Designation, IdType, IdReference, Nationality, Dob,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:DirectorId, :CustID, :FirstName, :MiddleName, :LastName," );
-		insertSql.append(" :ShortName, :CustGenderCode, :CustSalutationCode, :CustAddrHNbr," );
+		insertSql.append(" :ShortName, :CustGenderCode, :CustSalutationCode, :SharePerc, :CustAddrHNbr," );
 		insertSql.append(" :CustFlatNbr, :CustAddrStreet, :CustAddrLine1, :CustAddrLine2, :CustPOBox," );
 		insertSql.append(" :CustAddrCity, :CustAddrProvince, :CustAddrCountry, :CustAddrZIP," );
-		insertSql.append(" :CustAddrPhone, :CustAddrFrom,");
+		insertSql.append(" :CustAddrPhone, :CustAddrFrom, :Shareholder, :Director, :Designation,");
+		insertSql.append(" :IdType, :IdReference, :Nationality, :Dob,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -358,17 +365,19 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 		updateSql.append(" Set DirectorId = :DirectorId, CustID = :CustID, FirstName = :FirstName," );
 		updateSql.append(" MiddleName = :MiddleName, LastName = :LastName, ShortName = :ShortName," );
 		updateSql.append(" CustGenderCode = :CustGenderCode, CustSalutationCode = :CustSalutationCode,");
-		updateSql.append(" CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr," );
+		updateSql.append(" SharePerc = :SharePerc, CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr," );
 		updateSql.append(" CustAddrStreet = :CustAddrStreet, CustAddrLine1 = :CustAddrLine1," );
 		updateSql.append(" CustAddrLine2 = :CustAddrLine2, CustPOBox = :CustPOBox," );
 		updateSql.append(" CustAddrCity = :CustAddrCity, CustAddrProvince = :CustAddrProvince," );
 		updateSql.append(" CustAddrCountry = :CustAddrCountry, CustAddrZIP = :CustAddrZIP," );
 		updateSql.append(" CustAddrPhone = :CustAddrPhone, CustAddrFrom = :CustAddrFrom,");
+		updateSql.append(" Shareholder =  :Shareholder, Director = :Director, Designation = :Designation,");
+		updateSql.append(" IdType =  :IdType, IdReference = :IdReference, Nationality = :Nationality, Dob = :Dob,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where DirectorId =:DirectorId");
+		updateSql.append(" Where DirectorId =:DirectorId AND CustID = :CustID");
 		
 		if (!type.endsWith("_TEMP")){
 			updateSql.append(" AND Version= :Version-1");

@@ -122,7 +122,7 @@ public class ScheduleMethodDAOImpl extends BasisCodeDAO<ScheduleMethod> implemen
 	@Override
 	public ScheduleMethod getScheduleMethodById(final String id, String type) {
 		logger.debug("Entering");
-		ScheduleMethod scheduleMethod = getScheduleMethod();
+		ScheduleMethod scheduleMethod = new ScheduleMethod();
 		scheduleMethod.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

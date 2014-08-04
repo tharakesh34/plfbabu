@@ -48,7 +48,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
@@ -145,16 +144,6 @@ public class LoginDialogCtrl extends WindowBaseCtrl implements Serializable {
 		this.lbl_ServerTime.setMultiline(true);
 		this.lbl_ServerTime.setValue("time on synchronization-server:\n" + dateStr);
 		logger.debug("Leaving ");
-	}
-
-	/**
-	 * Get the actual date/time on server. <br>
-	 * Not used at time.<br>
-	 * 
-	 * @return String of date/time
-	 */
-	private String getDateTime() {
-		return PTDateFormat.getDateTimeLongFormater().format(new Date());
 	}
 
 	/**

@@ -62,15 +62,19 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.South;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -78,7 +82,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerIncome;
-import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -94,7 +97,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -117,15 +119,18 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Window window_CustomerIncomeDialog; 		// autoWired
 
 	protected Longbox 	 custID; 						// autoWired
-	protected Textbox 	 custIncomeType; 				// autoWired
+	protected ExtendedCombobox 	 custIncomeType; 		// autoWired
 	protected Decimalbox custIncome; 					// autoWired
-	protected Textbox 	 custIncomeCountry; 			// autoWired
 	protected Textbox 	 custCIF;						// autoWired
 	protected Label   	 custShrtName;					// autoWired
+	protected Checkbox   jointCust;
+
+	protected Row   	 row_isJoint;					// autoWired
 
 	protected Label 	 recordStatus; 					// autoWired
 	protected Radiogroup userAction;
 	protected Groupbox   groupboxWf;
+	protected South		 south;
 
 	// not auto wired variables
 	private CustomerIncome customerIncome; // overHanded per parameter
@@ -136,7 +141,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private transient long  		oldVar_custID;
 	private transient String  		oldVar_custIncomeType;
 	private transient BigDecimal  	oldVar_custIncome;
-	private transient String  		oldVar_custIncomeCountry;
+	private transient boolean  	    oldVar_jointCust;
 	private transient String 		oldVar_recordStatus;
 
 	private transient boolean validationOn;
@@ -155,13 +160,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Button btnNotes;		// autoWire
 	protected Button btnSearchPRCustid; // autoWire
 
-	protected Button btnSearchCustIncomeType; 	// autoWire
-	protected Textbox lovDescCustIncomeTypeName;
 	private transient String 		oldVar_lovDescCustIncomeTypeName;
 
-	protected Button btnSearchCustIncomeCountry; // autoWire
-	protected Textbox lovDescCustIncomeCountryName;
-	private transient String 		oldVar_lovDescCustIncomeCountryName;
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerIncomeService customerIncomeService;
@@ -175,6 +175,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private int ccyFormatter = 0;
 	private String moduleType="";
+	private boolean custIsJointCust = false;
+	private String userRole="";
 
 	/**
 	 * default constructor.<br>
@@ -198,8 +200,6 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void onCreate$window_CustomerIncomeDialog(Event event)throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
 
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(),
@@ -223,6 +223,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (args.containsKey("moduleType")) {
 			this.moduleType = (String) args.get("moduleType");
 		}
+		if (args.containsKey("jointCust")) {
+			this.custIsJointCust = (Boolean) args.get("jointCust");
+		}
 		
 		if(getCustomerIncome().isNewRecord()){
 			setNewRecord(true);
@@ -244,7 +247,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 			this.customerIncome.setWorkflowId(0);
 			if(args.containsKey("roleCode")){
-				getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "CustomerIncomeDialog");
+				userRole = args.get("roleCode").toString();
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerIncomeDialog");
 			}
 		}else{
 			ccyFormatter = customerIncome.getLovDescCcyEditField();
@@ -253,6 +257,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		doLoadWorkFlow(this.customerIncome.isWorkflow(),
 				this.customerIncome.getWorkflowId(), this.customerIncome.getNextTaskId());
 
+		/* set components visible dependent of the users rights */
+		doCheckRights();
+		
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().alocateRoleAuthorities(getRole(),"CustomerIncomeDialog");
@@ -286,14 +293,21 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.custIncomeType.setMaxlength(8);
+		this.custIncomeType.setMandatoryStyle(true);
+		this.custIncomeType.getTextbox().setWidth("110px");
+		this.custIncomeType.setModuleName("IncomeExpense");
+		this.custIncomeType.setValueColumn("IncomeExpense");
+		this.custIncomeType.setDescColumn("IncomeTypeDesc");
+		this.custIncomeType.setValidateColumns(new String[] { "IncomeExpense" });
+		
 		this.custIncome.setMaxlength(18);
 		this.custIncome.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
-		this.custIncomeCountry.setMaxlength(2);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
+			this.south.setHeight("0px");
 		}
 		logger.debug("Leaving");
 	}
@@ -308,7 +322,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("CustomerIncomeDialog");
+		getUserWorkspace().alocateAuthorities("CustomerIncomeDialog",userRole);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerIncomeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerIncomeDialog_btnEdit"));
@@ -509,18 +523,16 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.custID.setValue(aCustomerIncome.getCustID());	
 		}
 
-		this.custIncomeType.setValue(aCustomerIncome.getCustIncomeType());
+		this.custIncomeType.setValue(aCustomerIncome.getCustIncomeType()==null?"":aCustomerIncome.getCustIncomeType());
 		this.custIncome.setValue(PennantAppUtil.formateAmount(aCustomerIncome.getCustIncome(), ccyFormatter));
-		this.custIncomeCountry.setValue(aCustomerIncome.getCustIncomeCountry());
 		this.custCIF.setValue(aCustomerIncome.getLovDescCustCIF()==null?"":aCustomerIncome.getLovDescCustCIF().trim());
 		this.custShrtName.setValue(aCustomerIncome.getLovDescCustShrtName()==null?"":aCustomerIncome.getLovDescCustShrtName().trim());
+		this.jointCust.setChecked(aCustomerIncome.isJointCust());
 
 		if (isNewRecord()) {
-			this.lovDescCustIncomeTypeName.setValue("");
-			this.lovDescCustIncomeCountryName.setValue("");
+			this.custIncomeType.setDescription("");
 		} else {
-			this.lovDescCustIncomeTypeName.setValue(aCustomerIncome.getLovDescCustIncomeTypeName());
-			this.lovDescCustIncomeCountryName.setValue(aCustomerIncome.getLovDescCustIncomeCountryName());
+			this.custIncomeType.setDescription(aCustomerIncome.getLovDescCustIncomeTypeName());
 		}
 		this.recordStatus.setValue(aCustomerIncome.getRecordStatus());
 		logger.debug("Leaving");
@@ -544,8 +556,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 			wve.add(we);
 		}
 		try {
-			aCustomerIncome.setLovDescCustIncomeTypeName(this.lovDescCustIncomeTypeName.getValue());
-			aCustomerIncome.setCustIncomeType(this.custIncomeType.getValue());
+			this.custIncomeType.getDescription();
+			aCustomerIncome.setCustIncomeType(this.custIncomeType.getValue().trim());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -556,12 +568,14 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		try {
-			aCustomerIncome.setLovDescCustIncomeCountryName(this.lovDescCustIncomeCountryName.getValue());
-			aCustomerIncome.setCustIncomeCountry(this.custIncomeCountry.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+
+		aCustomerIncome.setJointCust(this.jointCust.isChecked());
+//		try {
+//			aCustomerIncome.setLovDescCustIncomeCountryName(this.lovDescCustIncomeCountryName.getValue());
+//			aCustomerIncome.setCustIncomeCountry(this.custIncomeCountry.getValue());
+//		} catch (WrongValueException we) {
+//			wve.add(we);
+//		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -618,7 +632,11 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
-
+			
+			if(!custIsJointCust){
+				this.row_isJoint.setVisible(false);
+			}
+			
 			if(isNewCustomer()){
 				this.window_CustomerIncomeDialog.setHeight("228px");
 				this.window_CustomerIncomeDialog.setWidth("800px");
@@ -647,11 +665,11 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_custIncomeType = this.custIncomeType.getValue();
-		this.oldVar_lovDescCustIncomeTypeName = this.lovDescCustIncomeTypeName.getValue();
+		this.oldVar_lovDescCustIncomeTypeName = this.custIncomeType.getDescription();
 		this.oldVar_custIncome = this.custIncome.getValue();
-		this.oldVar_custIncomeCountry = this.custIncomeCountry.getValue();
-		this.oldVar_lovDescCustIncomeCountryName = this.lovDescCustIncomeCountryName.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
+		this.oldVar_jointCust = this.jointCust.isChecked();
+		
 		logger.debug("Leaving");
 	}
 
@@ -662,10 +680,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.custID.setValue(this.oldVar_custID);
 		this.custIncomeType.setValue(this.oldVar_custIncomeType);
-		this.lovDescCustIncomeTypeName.setValue(this.oldVar_lovDescCustIncomeTypeName);
+		this.custIncomeType.setDescription(this.oldVar_lovDescCustIncomeTypeName);
 		this.custIncome.setValue(this.oldVar_custIncome);
-		this.custIncomeCountry.setValue(this.oldVar_custIncomeCountry);
-		this.lovDescCustIncomeCountryName.setValue(this.oldVar_lovDescCustIncomeCountryName);
+		this.jointCust.setChecked(this.oldVar_jointCust);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
 		if (isWorkFlowEnabled()) {
@@ -694,7 +711,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.oldVar_custIncome != this.custIncome.getValue()) {
 			return true;
 		}
-		if (this.oldVar_custIncomeCountry != this.custIncomeCountry.getValue()) {
+		if (this.oldVar_jointCust != this.jointCust.isChecked()) {
 			return true;
 		}
 		return false;
@@ -735,11 +752,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustIncomeTypeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
+		this.custIncomeType.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
 				new String[] { Labels.getLabel("label_CustomerIncomeDialog_CustIncomeType.value") }));
 
-		this.lovDescCustIncomeCountryName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerIncomeDialog_CustIncomeCountry.value") }));
 		logger.debug("Leaving");
 	}
 
@@ -748,8 +763,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustIncomeTypeName.setConstraint("");
-		this.lovDescCustIncomeCountryName.setConstraint("");
+		this.custIncomeType.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -760,15 +774,16 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.custCIF.setErrorMessage("");
 		this.custIncome.setErrorMessage("");
-		this.lovDescCustIncomeTypeName.setErrorMessage("");
-		this.lovDescCustIncomeCountryName.setErrorMessage("");
+		this.custIncomeType.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
 	// Method for refreshing the list after successful updating
 	private void refreshList() {
 		logger.debug("Entering");
-		getCustomerIncomeListCtrl().findSearchObject();
+		final JdbcSearchObject<CustomerIncome> soCustomerIncome = getCustomerIncomeListCtrl().getSearchObj();
+		getCustomerIncomeListCtrl().pagingCustomerIncomeList.setActivePage(0);
+		getCustomerIncomeListCtrl().getPagedListWrapper().setSearchObject(soCustomerIncome);
 		if (getCustomerIncomeListCtrl().listBoxCustomerIncome != null) {
 			getCustomerIncomeListCtrl().listBoxCustomerIncome.getListModel();
 		}
@@ -805,8 +820,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if (StringUtils.trimToEmpty(aCustomerIncome.getRecordType()).equals("")) {
 				aCustomerIncome.setVersion(aCustomerIncome.getVersion() + 1);
 				aCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aCustomerIncome.setNewRecord(true);
-
+				if(getCustomerDialogCtrl() != null &&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
+					aCustomerIncome.setNewRecord(true);	
+				}
 				if (isWorkFlowEnabled()) {
 					aCustomerIncome.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
@@ -875,13 +891,13 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}else{
 				this.btnSearchPRCustid.setVisible(true);
 			}
-			this.btnSearchCustIncomeType.setDisabled(isReadOnly("CustomerIncomeDialog_custIncomeType"));
-			this.btnSearchCustIncomeCountry.setDisabled(isReadOnly("CustomerIncomeDialog_custIncomeCountry"));
+			this.custIncomeType.setReadonly(isReadOnly("CustomerIncomeDialog_custIncomeType"));
+			this.jointCust.setDisabled(isReadOnly("CustomerIncomeDialog_custIncomeType"));
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
-			this.btnSearchCustIncomeType.setVisible(false);
-			this.btnSearchCustIncomeCountry.setVisible(false);
+			this.custIncomeType.setReadonly(true);
+			this.jointCust.setDisabled(true);
 		}
 
 		this.custCIF.setReadonly(true);
@@ -920,7 +936,11 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	}
 
 	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewCustomer()){
+		boolean isCustomerWorkflow = false;
+		if(getCustomerDialogCtrl() != null){
+			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -933,9 +953,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 
 		this.custCIF.setReadonly(true);
-		this.btnSearchCustIncomeType.setDisabled(true);
+		this.custIncomeType.setReadonly(true);
 		this.custIncome.setReadonly(true);
-		this.btnSearchCustIncomeCountry.setDisabled(true);
+		this.jointCust.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -960,10 +980,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custCIF.setValue("");
 		this.custShrtName.setValue("");
 		this.custIncomeType.setValue("");
-		this.lovDescCustIncomeTypeName.setValue("");
+		this.custIncomeType.setDescription("");
 		this.custIncome.setValue("");
-		this.custIncomeCountry.setValue("");
-		this.lovDescCustIncomeCountryName.setValue("");
+		this.jointCust.setChecked(false);
 		logger.debug("Leaving");
 	}
 
@@ -1063,25 +1082,30 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		AuditHeader auditHeader= getAuditHeader(aCustomerIncome, tranType);
 		customerIncomes = new ArrayList<CustomerIncome>();
 
-		String[] valueParm = new String[3];
-		String[] errParm = new String[3];
+		String[] valueParm = new String[4];
+		String[] errParm = new String[4];
 
 		valueParm[0] = String.valueOf(aCustomerIncome.getId());
 		valueParm[1] = aCustomerIncome.getCustIncomeType();
-		valueParm[2] = aCustomerIncome.getCustIncomeCountry();
+		valueParm[2] = String.valueOf(aCustomerIncome.isJointCust());
+		valueParm[3] = aCustomerIncome.getCategory();
 
 		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustIncomeType") + ":"+valueParm[1];
-		errParm[2] = PennantJavaUtil.getLabel("label_CustIncomeCountry") + ":"+valueParm[2];
+		errParm[2] = PennantJavaUtil.getLabel("label_JointCust") + ":"+valueParm[3];
+		errParm[3] = PennantJavaUtil.getLabel("label_CustIncomeCountry") + ":"+valueParm[2];
 
 		if(getCustomerDialogCtrl().getIncomeList()!=null && getCustomerDialogCtrl().getIncomeList().size()>0){
 			for (int i = 0; i < getCustomerDialogCtrl().getIncomeList().size(); i++) {
 				CustomerIncome customerIncome = getCustomerDialogCtrl().getIncomeList().get(i);
 
-				if(aCustomerIncome.getCustIncomeType().equals(customerIncome.getCustIncomeType()) && (aCustomerIncome.getCustIncomeCountry().equals(customerIncome.getCustIncomeCountry()))){ // Both Current and Existing list rating same
+				if(aCustomerIncome.getCustIncomeType().equals(customerIncome.getCustIncomeType()) && 
+						(aCustomerIncome.getCategory().equals(customerIncome.getCategory()))&& 
+						(aCustomerIncome.isJointCust() == customerIncome.isJointCust())&& 
+						(aCustomerIncome.getIncomeExpense().equals(customerIncome.getIncomeExpense()))){ // Both Current and Existing list rating same
 
 					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -1100,7 +1124,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 							recordAdded=true;
 							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList().size(); j++) {
 								CustomerIncome income =  getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList().get(j);
-								if(income.getCustID() == aCustomerIncome.getCustID() && income.getCustIncomeType().equals(aCustomerIncome.getCustIncomeType()) && income.getCustIncomeCountry().equals(aCustomerIncome.getCustIncomeCountry())){
+								if(income.getCustID() == aCustomerIncome.getCustID() && income.getCustIncomeType().equals(aCustomerIncome.getCustIncomeType()) && income.getCategory().equals(aCustomerIncome.getCategory()) && income.getIncomeExpense().equals(aCustomerIncome.getIncomeExpense())){
 									customerIncomes.add(income);
 								}
 							}
@@ -1302,38 +1326,23 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++ Search Button Component Events+++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void onClick$btnSearchCustIncomeType(Event event) {
+	
+	public void onFulfill$custIncomeType(Event event) {
 		logger.debug("Entering" + event.toString());
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerIncomeDialog, "IncomeType");
+		Object dataObject = custIncomeType.getObject();
 		if (dataObject instanceof String) {
 			this.custIncomeType.setValue(dataObject.toString());
-			this.lovDescCustIncomeTypeName.setValue("");
+			this.custIncomeType.setDescription("");
 		} else {
 			IncomeType details = (IncomeType) dataObject;
 			if (details != null) {
-				this.custIncomeType.setValue(details.getLovValue());
-				this.lovDescCustIncomeTypeName.setValue(details.getLovValue()
-						+ "-" + details.getIncomeTypeDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchCustIncomeCountry(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerIncomeDialog, "Country");
-		if (dataObject instanceof String) {
-			this.custIncomeCountry.setValue(dataObject.toString());
-			this.lovDescCustIncomeCountryName.setValue("");
-		} else {
-			Country details = (Country) dataObject;
-			if (details != null) {
-				this.custIncomeCountry.setValue(details.getLovValue());
-				this.lovDescCustIncomeCountryName.setValue(details
-						.getLovValue() + "-" + details.getCountryDesc());
+				this.custIncomeType.setValue(details.getIncomeTypeCode().trim());
+				this.custIncomeType.setDescription(details.getIncomeTypeDesc());
+				getCustomerIncome().setIncomeExpense(details.getIncomeExpense().trim());
+				getCustomerIncome().setLovDescCustIncomeTypeName(details.getIncomeTypeDesc());
+				getCustomerIncome().setCategory(details.getCategory().trim());
+				getCustomerIncome().setLovDescCategoryName(details.getLovDescCategoryName());
+				getCustomerIncome().setMargin(details.getMargin());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1478,7 +1487,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private String getReference(){
 		return getCustomerIncome().getCustID()
 		+ PennantConstants.KEY_SEPERATOR + getCustomerIncome().getCustIncomeType()
-		+ PennantConstants.KEY_SEPERATOR + getCustomerIncome().getCustIncomeCountry();
+		+ PennantConstants.KEY_SEPERATOR + getCustomerIncome().getCategory()
+		+ PennantConstants.KEY_SEPERATOR + getCustomerIncome().getIncomeExpense();
 	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

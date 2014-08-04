@@ -133,8 +133,8 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 	@Override
 	public RepayInstruction getRepayInstructionById(final String id, String type,boolean isWIF) {
 		logger.debug("Entering");
-		RepayInstruction repayInstruction = getRepayInstruction(isWIF);
 		
+		RepayInstruction repayInstruction = new RepayInstruction();
 		repayInstruction.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, RepayDate, RepayAmount, RepaySchdMethod");
@@ -201,7 +201,7 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void deleteByFinReference(String id,String type,boolean isWIF) {
+	public void deleteByFinReference(String id,String type,boolean isWIF, long logKey) {
 		logger.debug("Entering");
 		RepayInstruction repayInstruction = new RepayInstruction();
 		repayInstruction.setId(id);
@@ -214,6 +214,10 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 		}
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference");
+		if(logKey != 0){
+			deleteSql.append(" AND LogKey =:LogKey");
+		}
+		
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
@@ -325,10 +329,16 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 			insertSql.append(" FinRepayInstruction");	
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, RepayDate, RepayAmount, RepaySchdMethod");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference, :RepayDate, :RepayAmount, :RepaySchdMethod");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" (FinReference, RepayDate, RepayAmount, RepaySchdMethod, ");
+		if(type.contains("Log")){
+			insertSql.append(" LogKey , ");
+		}
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:FinReference, :RepayDate, :RepayAmount, :RepaySchdMethod, ");
+		if(type.contains("Log")){
+			insertSql.append(" :LogKey , ");
+		}
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
@@ -419,8 +429,8 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 	@Override
 	public List<RepayInstruction> getRepayInstructions(final String id, String type, boolean isWIF) {
 		logger.debug("Entering");
-		RepayInstruction repayInstruction = getRepayInstruction(isWIF);
 		
+		RepayInstruction repayInstruction = new RepayInstruction();
 		repayInstruction.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, RepayDate, RepayAmount, RepaySchdMethod");
@@ -433,6 +443,41 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
+		RowMapper<RepayInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RepayInstruction.class);
+		
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+	
+	/**
+	 * Fetch the Record  Repay Instruction Detail details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return RepayInstruction
+	 */
+	@Override
+	public List<RepayInstruction> getRepayInstructions(final String id, String type, boolean isWIF, long logKey) {
+		logger.debug("Entering");
+		
+		RepayInstruction repayInstruction = new RepayInstruction();
+		repayInstruction.setId(id);
+		repayInstruction.setLogKey(logKey);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, RepayDate, RepayAmount, RepaySchdMethod");
+		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		
+		if(isWIF){
+			selectSql.append(" From WIFFinRepayInstruction");	
+		}else{
+			selectSql.append(" From FinRepayInstruction");	
+		}
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference AND LogKey =:LogKey");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);

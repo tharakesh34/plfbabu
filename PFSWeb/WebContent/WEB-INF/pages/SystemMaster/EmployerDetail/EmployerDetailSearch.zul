@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_EmployerDetailSearch"
+		title="${c:l('window_EmployerDetailSearch.title')}" border="none"
+		apply="${employerDedatilSearchCtrl}" closable="true" width="600px"
+		height="400px" sizable="true">
+
+		<borderlayout>
+			<north />
+			<center flex="true">
+
+				<grid id="searchGrid" sclass="GridLayoutNoBorder"
+					fixedLayout="true"
+					style="border:0px; padding-left:5px; padding-right:5px;">
+					<columns>
+							<column width="130px" />
+							<column width="50px" />
+							<column width="100%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_EmployerDetailList_EmpIndustry"
+									value="${c:l('label_EmployerDetailList_EmpIndustry.value')}" />
+								<listbox id="sortOperator_EmpIndustry"
+									width="43px" mold="select" rows="1" />
+								<textbox id="empIndustry" width="72px"
+									maxlength="8" />
+							</row>
+							<row>
+								<label
+									id="label_EmployerDetailList_EmpName"
+									value="${c:l('label_EmployerDetailList_EmpName.value')}" />
+								<listbox id="sortOperator_EmpName"
+									width="43px" mold="select" rows="1" />
+								<textbox id="empName" width="200px"
+									maxlength="50" />
+							</row>
+							<row>
+								<label
+									id="label_EmployerDetailList_EmpFlatNbr"
+									value="${c:l('label_EmployerDetailList_EmpFlatNbr.value')}" />
+								<listbox id="sortOperator_EmpFlatNbr"
+									width="43px" mold="select" rows="1" />
+								<textbox id="empFlatNbr" width="180px"
+									maxlength="20" />
+							</row>
+							<row>
+								<label
+									id="label_EmployerDetailList_EmpPOBox"
+									value="${c:l('label_EmployerDetailList_EmpPOBox.value')}" />
+								<listbox id="sortOperator_EmpPOBox"
+									width="43px" mold="select" rows="1" />
+								<textbox id="empPOBox" width="72px"
+									maxlength="8" />
+							</row>
+							<row>
+								<label
+									id="label_EmployerDetailList_EmpCountry"
+									value="${c:l('label_EmployerDetailList_EmpCountry.value')}" />
+								<listbox id="sortOperator_EmpCountry"
+									width="43px" mold="select" rows="1" />
+								<textbox id="empCountry" width="18px"
+									maxlength="2" />
+							</row>
+							<row>
+								<label
+									id="label_EmployerDetailList_EmpProvince"
+									value="${c:l('label_EmployerDetailList_EmpProvince.value')}" />
+								<listbox id="sortOperator_EmpProvince"
+									width="43px" mold="select" rows="1" />
+								<textbox id="empProvince" width="72px"
+									maxlength="8" />
+							</row>
+							<row>
+								<label
+									id="label_EmployerDetailList_EmpCity"
+									value="${c:l('label_EmployerDetailList_EmpCity.value')}" />
+								<listbox id="sortOperator_EmpCity"
+									width="43px" mold="select" rows="1" />
+								<textbox id="empCity" width="72px"
+									maxlength="8" />
+							</row>
+							<row>
+								<label
+									id="label_EmployerDetailList_EmpAlocationType"
+									value="${c:l('label_EmployerDetailList_EmpAlocationType.value')}" />
+								<listbox
+									id="sortOperator_EmpAlocationType" width="43px" mold="select"
+									rows="1" />
+								<combobox id="empAlocationType"
+									width="100px" />
+							</row>
+
+							<row>
+								<label
+									id="label_EmployerDetailList_RecordStatus"
+									value="${c:l('label_EmployerDetailList_RecordStatus.value')}" />
+								<listbox id="sortOperator_RecordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="100px"
+									maxlength="50" />
+							</row>
+							<row>
+								<label
+									id="label_EmployerDetailList_RecordType"
+									value="${c:l('label_EmployerDetailList_RecordType.value')}" />
+								<listbox id="sortOperator_RecordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="100px"
+									mold="select" />
+							</row>
+						</rows>
+				</grid>
+
+
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouthEmployerDetails" align="left"
+					width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20"
+										label="${c:l('btnSearch.label')}"
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+									<button id="btnClose" height="20"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<label
+										id="label_EmployerDetailListSearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+
+		</borderlayout>
+	</window>
+</zk>

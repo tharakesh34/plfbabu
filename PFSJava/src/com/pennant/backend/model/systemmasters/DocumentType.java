@@ -60,6 +60,7 @@ public class DocumentType implements java.io.Serializable {
 	private String docTypeDesc;
 	private boolean docIsMandatory;
 	private boolean docTypeIsActive;
+	private boolean docIsCustDoc;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -127,6 +128,14 @@ public class DocumentType implements java.io.Serializable {
 	public void setDocTypeIsActive(boolean docTypeIsActive) {
 		this.docTypeIsActive = docTypeIsActive;
 	}
+
+	public boolean isDocIsCustDoc() {
+    	return docIsCustDoc;
+    }
+
+	public void setDocIsCustDoc(boolean docIsCustDoc) {
+    	this.docIsCustDoc = docIsCustDoc;
+    }
 
 	public int getVersion() {
 		return version;

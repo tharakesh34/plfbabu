@@ -118,7 +118,7 @@ public class MortgageLoanDetailDAOImpl extends BasisCodeDAO<MortgageLoanDetail> 
 	 */
 	public MortgageLoanDetail getMortgageLoanDetailById(final String id, String type) {
 		logger.debug("Entering");
-		MortgageLoanDetail mortgageLoanDetail = getMortgageLoanDetail();
+		MortgageLoanDetail mortgageLoanDetail = new MortgageLoanDetail();
 		mortgageLoanDetail.setId(id);
 
 		StringBuilder selectSql = new StringBuilder();
@@ -127,6 +127,7 @@ public class MortgageLoanDetailDAOImpl extends BasisCodeDAO<MortgageLoanDetail> 
 		selectSql.append(" MortgAddrFlatNbr, MortgAddrStreet, MortgAddrLane1, MortgAddrLane2," );
 		selectSql.append(" MortgAddrPOBox, MortgAddrCountry, MortgAddrProvince, MortgAddrCity," );
 		selectSql.append(" MortgAddrZIP, MortgAddrPhone,");
+		selectSql.append(" MortDeedNo,MortRegistrationNo,MortAreaSF,MortAreaSM,MortPricePF,MortAge,MortFinRatio,MortStatus,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescMortgPropertyName,lovDescMortgPropertyRelationName," );
 			selectSql.append(" lovDescMortgOwnershipName,lovDescMortgAddrCountryName," );
@@ -245,6 +246,7 @@ public class MortgageLoanDetailDAOImpl extends BasisCodeDAO<MortgageLoanDetail> 
 		insertSql.append(" MortgPropertyRelation, MortgOwnership, MortgAddrHNbr, MortgAddrFlatNbr," );
 		insertSql.append(" MortgAddrStreet, MortgAddrLane1, MortgAddrLane2, MortgAddrPOBox, MortgAddrCountry,");
 		insertSql.append(" MortgAddrProvince, MortgAddrCity, MortgAddrZIP, MortgAddrPhone,");
+		insertSql.append(" MortDeedNo,MortRegistrationNo,MortAreaSF,MortAreaSM,MortPricePF,MortAge,MortFinRatio,MortStatus,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:LoanRefNumber, :MortgProperty, :MortgCurrentValue," );
@@ -252,6 +254,7 @@ public class MortgageLoanDetailDAOImpl extends BasisCodeDAO<MortgageLoanDetail> 
 		insertSql.append(" :MortgAddrFlatNbr, :MortgAddrStreet, :MortgAddrLane1, :MortgAddrLane2," );
 		insertSql.append(" :MortgAddrPOBox, :MortgAddrCountry, :MortgAddrProvince, :MortgAddrCity," );
 		insertSql.append(" :MortgAddrZIP, :MortgAddrPhone,");
+		insertSql.append(" :MortDeedNo,:MortRegistrationNo,:MortAreaSF,:MortAreaSM,:MortPricePF,:MortAge,:MortFinRatio,:MortStatus,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -293,11 +296,13 @@ public class MortgageLoanDetailDAOImpl extends BasisCodeDAO<MortgageLoanDetail> 
 		updateSql.append(" MortgAddrCountry = :MortgAddrCountry, MortgAddrPhone = :MortgAddrPhone," );
 		updateSql.append(" MortgAddrProvince = :MortgAddrProvince, MortgAddrCity = :MortgAddrCity,");
 		updateSql.append(" MortgAddrZIP = :MortgAddrZIP," );
+		updateSql.append(" MortDeedNo=:MortDeedNo, MortRegistrationNo=:MortRegistrationNo, MortAreaSF=:MortAreaSF," );
+		updateSql.append(" MortAreaSM=:MortAreaSM, MortPricePF=:MortPricePF, MortAge=:MortAge, MortFinRatio=:MortFinRatio, MortStatus=:MortStatus," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
 		updateSql.append(" WorkflowId = :WorkflowId");
-		updateSql.append(" Where MortgLoanId =:MortgLoanId");
+		updateSql.append(" Where LoanRefNumber =:LoanRefNumber");
 
 		if (!type.endsWith("_TEMP")){
 			updateSql.append("  AND Version= :Version-1");

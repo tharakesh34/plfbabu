@@ -152,22 +152,22 @@ public class LovFieldDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_fieldCodeId.setModel(new ListModelList(
+		this.sortOperator_fieldCodeId.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_fieldCodeId.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fieldCodeValue.setModel(new ListModelList(
+		this.sortOperator_fieldCodeValue.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_fieldCodeValue.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_isActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_isActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_isActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	

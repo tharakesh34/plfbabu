@@ -54,8 +54,10 @@ import com.pennant.backend.util.WorkFlowUtil;
  *
  */
 public class MailTemplate implements java.io.Serializable, Entity {
-	private static final long serialVersionUID = 1L;
-	private long   templateId				= Long.MIN_VALUE;
+
+    private static final long serialVersionUID = -7999948592404630380L;
+    
+	private long   templateId = Long.MIN_VALUE;
 	private String templateFor;
 	private String module;
 	private String templateCode = null;
@@ -64,6 +66,8 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	private String smsContent;	
 	private boolean emailTemplate;
 	private byte[] emailContent;
+	private byte[] lovDescEmailAttachment;
+	private String lovDescAttachmentName;
 	private String emailFormat;
 	private String emailSendTo;
 	private String lovDescEmailSendTo;
@@ -105,12 +109,13 @@ public class MailTemplate implements java.io.Serializable, Entity {
 		this.setId(id);
 	}
 
-	//Getter and Setter methods
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
 	public long getId() {
 		return templateId;
 	}
-	
 	public void setId (long id) {
 		this.templateId = id;
 	}
@@ -118,7 +123,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public long getTemplateId() {
 		return templateId;
 	}
-
 	public void setTemplateId(long templateId) {
 		this.templateId = templateId;
 	}
@@ -126,7 +130,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getTemplateFor() {
 		return templateFor;
 	}
-
 	public void setTemplateFor(String templateFor) {
 		this.templateFor = templateFor;
 	}
@@ -134,7 +137,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getModule() {
 		return module;
 	}
-
 	public void setModule(String module) {
 		this.module = module;
 	}
@@ -149,7 +151,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getTemplateDesc() {
 		return templateDesc;
 	}
-
 	public void setTemplateDesc(String templateDesc) {
 		this.templateDesc = templateDesc;
 	}
@@ -157,7 +158,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public boolean isSmsTemplate() {
 		return smsTemplate;
 	}
-
 	public void setSmsTemplate(boolean smsTemplate) {
 		this.smsTemplate = smsTemplate;
 	}
@@ -165,7 +165,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getSmsContent() {
 		return smsContent;
 	}
-
 	public void setSmsContent(String smsContent) {
 		this.smsContent = smsContent;
 	}
@@ -173,7 +172,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public boolean isEmailTemplate() {
 		return emailTemplate;
 	}
-
 	public void setEmailTemplate(boolean emailTemplate) {
 		this.emailTemplate = emailTemplate;
 	}
@@ -181,7 +179,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public byte[] getEmailContent() {
 		return emailContent;
 	}
-
 	public void setEmailContent(byte[] emailContent) {
 		this.emailContent = emailContent;
 	}
@@ -196,7 +193,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getEmailSendTo() {
 		return emailSendTo;
 	}
-
 	public void setEmailSendTo(String emailSendTo) {
 		this.emailSendTo = emailSendTo;
 	}
@@ -204,7 +200,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getLovDescEmailSendTo() {
 		return lovDescEmailSendTo;
 	}
-
 	public void setLovDescEmailSendTo(String lovDescEmailSendTo) {
 		this.lovDescEmailSendTo = lovDescEmailSendTo;
 	}
@@ -212,12 +207,9 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getLovDescEmailFormatName() {
 		return this.lovDescEmailFormatName;
 	}
-
 	public void setLovDescEmailFormatName (String lovDescEmailFormatName) {
 		this.lovDescEmailFormatName = lovDescEmailFormatName;
 	}
-	
-		
 	
 	public String getEmailSubject() {
 		return emailSubject;
@@ -229,7 +221,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public int getTurnAroundTime() {
 		return turnAroundTime;
 	}
-
 	public void setTurnAroundTime(int turnAroundTime) {
 		this.turnAroundTime = turnAroundTime;
 	}
@@ -237,7 +228,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public boolean isRepeat() {
 		return repeat;
 	}
-
 	public void setRepeat(boolean repeat) {
 		this.repeat = repeat;
 	}
@@ -249,13 +239,9 @@ public class MailTemplate implements java.io.Serializable, Entity {
 		this.active = active;
 	}
 	
-	
-		
-	
 	public int getVersion() {
 		return version;
 	}
-	
 	public void setVersion(int version) {
 		this.version = version;
 	}
@@ -263,7 +249,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public long getLastMntBy() {
 		return lastMntBy;
 	}
-	
 	public void setLastMntBy(long lastMntBy) {
 		this.lastMntBy = lastMntBy;
 	}
@@ -271,7 +256,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public Timestamp getLastMntOn() {
 		return lastMntOn;
 	}
-
 	public void setLastMntOn(Timestamp lastMntON) {
 		this.lastMntOn = lastMntON;
 	}
@@ -279,7 +263,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
-
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -287,7 +270,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getLovValue() {
 		return lovValue;
 	}
-
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -295,7 +277,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public MailTemplate getBefImage(){
 		return this.befImage;
 	}
-	
 	public void setBefImage(MailTemplate beforeImage){
 		this.befImage=beforeImage;
 	}
@@ -303,7 +284,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public LoginUserDetails getUserDetails() {
 		return userDetails;
 	}
-
 	public void setUserDetails(LoginUserDetails userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -311,7 +291,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getRecordStatus() {
 		return recordStatus;
 	}
-	
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
 	}
@@ -319,7 +298,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getRoleCode() {
 		return roleCode;
 	}
-	
 	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
 	}
@@ -327,7 +305,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getNextRoleCode() {
 		return nextRoleCode;
 	}
-	
 	public void setNextRoleCode(String nextRoleCode) {
 		this.nextRoleCode = nextRoleCode;
 	}
@@ -335,7 +312,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getTaskId() {
 		return taskId;
 	}
-	
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
 	}
@@ -343,7 +319,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getNextTaskId() {
 		return nextTaskId;
 	}
-	
 	public void setNextTaskId(String nextTaskId) {
 		this.nextTaskId = nextTaskId;
 	}
@@ -351,7 +326,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getRecordType() {
 		return recordType;
 	}
-
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
 	}
@@ -359,7 +333,6 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public String getUserAction() {
 		return userAction;
 	}
-
 	public void setUserAction(String userAction) {
 		this.userAction = userAction;
 	}
@@ -374,12 +347,25 @@ public class MailTemplate implements java.io.Serializable, Entity {
 	public long getWorkflowId() {
 		return workflowId;
 	}
-
 	public void setWorkflowId(long workflowId) {
 		this.workflowId = workflowId;
 	}
+	
+	public String getLovDescFormattedContent() {
+		return lovDescFormattedContent;
+	}
+	public void setLovDescFormattedContent(String lovDescFormattedContent) {
+		this.lovDescFormattedContent = lovDescFormattedContent;
+	}
 
-	// Overidden Equals method to handle the comparision
+	public String[] getLovDescMailId() {
+		return lovDescMailId;
+	}
+	public void setLovDescMailId(String[] lovDescMailId) {
+		this.lovDescMailId = lovDescMailId;
+	}
+
+	// Overridden Equals method to handle the comparison
 	public boolean equals(MailTemplate mailTemplate) {
 		return getId() == mailTemplate.getId();
 	}
@@ -397,20 +383,20 @@ public class MailTemplate implements java.io.Serializable, Entity {
 		return false;
 	}
 
-	public String getLovDescFormattedContent() {
-		return lovDescFormattedContent;
-	}
+	public byte[] getLovDescEmailAttachment() {
+    	return lovDescEmailAttachment;
+    }
 
-	public void setLovDescFormattedContent(String lovDescFormattedContent) {
-		this.lovDescFormattedContent = lovDescFormattedContent;
-	}
+	public void setLovDescEmailAttachment(byte[] emailAttachment) {
+    	this.lovDescEmailAttachment = emailAttachment;
+    }
 
-	public String[] getLovDescMailId() {
-		return lovDescMailId;
-	}
+	public String getLovDescAttachmentName() {
+    	return lovDescAttachmentName;
+    }
 
-	public void setLovDescMailId(String[] lovDescMailId) {
-		this.lovDescMailId = lovDescMailId;
-	}
+	public void setLovDescAttachmentName(String attachmentName) {
+    	this.lovDescAttachmentName = attachmentName;
+    }
 	
 }

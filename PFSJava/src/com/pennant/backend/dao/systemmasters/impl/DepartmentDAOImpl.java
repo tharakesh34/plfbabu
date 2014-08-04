@@ -121,7 +121,7 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 	@Override
 	public Department getDepartmentById(final String id, String type) {
 		logger.debug("Entering");
-		Department department = getDepartment();
+		Department department = new Department();
 		department.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

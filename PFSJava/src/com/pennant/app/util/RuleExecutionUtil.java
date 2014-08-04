@@ -45,6 +45,7 @@ package com.pennant.app.util;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -65,8 +66,8 @@ import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
 import com.pennant.backend.model.rulefactory.AEAmountCodesRIAFB;
 import com.pennant.backend.model.rulefactory.AECommitment;
 import com.pennant.backend.model.rulefactory.DataSetFiller;
-import com.pennant.backend.model.rulefactory.Fees;
 import com.pennant.backend.model.rulefactory.SubHeadRule;
+import com.pennant.backend.util.PennantRuleConstants;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -74,8 +75,12 @@ import freemarker.template.Template;
 public class RuleExecutionUtil implements Serializable {
 	
     private static final long serialVersionUID = -7634160175219913960L;
-	private Logger logger = Logger.getLogger(RepaymentPostingsUtil.class);
+	private Logger logger = Logger.getLogger(RuleExecutionUtil.class);
 	
+	public RuleExecutionUtil() {
+	    super();
+    }
+
 	/**
 	 * Method for replacement of GlobalVariables in Rule Execution
 	 * @param templateStr
@@ -87,11 +92,15 @@ public class RuleExecutionUtil implements Serializable {
 		logger.debug("Entering");
 		
 		StringWriter result = new StringWriter();
+		Configuration cfg = null;
+		LinkedHashMap root = null;
+		Template t1 = null;
+		Template t = null;
 		try {
 
-			Configuration cfg = new Configuration();
+			cfg = new Configuration();
 			// Create a data-model
-			LinkedHashMap root = new LinkedHashMap();
+			root = new LinkedHashMap();
 			
 			for(int i=0; i<globalList.size();i++){
 				GlobalVariable globalVariable = globalList.get(i);
@@ -99,20 +108,25 @@ public class RuleExecutionUtil implements Serializable {
 				root.put(str, "("+globalVariable.getVarValue()+")");
 			}
 			// Prepare string template
-			Template t1 = new Template("RuleReplacement", new StringReader(templateStr), cfg);
+			t1 = new Template("RuleReplacement", new StringReader(templateStr), cfg);
 
 			// Process the output to StringWriter and convert that to String
 			t1.process(root, result);
 			
 			// Load Data
 			// Prepare string template
-			Template t = new Template("RuleReplacement", new StringReader(result.getBuffer().toString()), cfg);
+			t = new Template("RuleReplacement", new StringReader(result.getBuffer().toString()), cfg);
 			result = new StringWriter();
 			// Process the output to StringWriter and convert that to String
 			t.process(root, result);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
+		}finally{
+			root = null;
+			t1 = null;
+			t = null;
+			cfg = null;
 		}
 		logger.debug("Leaving");
 		return result.getBuffer().toString();
@@ -124,8 +138,14 @@ public class RuleExecutionUtil implements Serializable {
 	 * @param rule
 	 * @param object
 	 * @return Object
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws SecurityException 
+	 * @throws IllegalArgumentException 
 	 */
-	public Object executeRule(String rule, Object object,List<GlobalVariable> globalVariableList) {
+	@SuppressWarnings("unchecked")
+    public Object executeRule(String rule, Object object,List<GlobalVariable> globalVariableList, String finccy){
 		logger.debug("Entering");
 		
 		HashMap<String, Object> fieldsandvalues = new HashMap<String, Object>();
@@ -146,9 +166,6 @@ public class RuleExecutionUtil implements Serializable {
 		} else if (object instanceof DataSetFiller) {
 			DataSetFiller dataSetFiller = (DataSetFiller) object;
 			fieldsandvalues = dataSetFiller.getDeclaredFieldValues();
-		} else if (object instanceof Fees) {
-			Fees fee = (Fees) object;
-			fieldsandvalues = fee.getDeclaredFieldValues();
 		} else if (object instanceof AEAmountCodesRIA) {
 			AEAmountCodesRIA codesRIA = (AEAmountCodesRIA) object;
 			fieldsandvalues = codesRIA.getDeclaredFieldValues();
@@ -158,15 +175,38 @@ public class RuleExecutionUtil implements Serializable {
 		}else if (object instanceof AECommitment) {
 			 AECommitment codesRIAFB = (AECommitment) object;
 			fieldsandvalues = codesRIAFB.getDeclaredFieldValues();
+		}else{
+			try{
+				fieldsandvalues = (HashMap<String, Object>) object.getClass().getMethod("getDeclaredFieldValues").invoke(object);
+				returnType = "S";
+			}catch(Exception e){
+				logger.debug(e);
+			}
+
 		}
 		
 		ArrayList<String> keyset = new ArrayList<String>(fieldsandvalues.keySet());
 		for (int i = 0; i < keyset.size(); i++) {
+			
 			Object var=fieldsandvalues.get(keyset.get(i));
 			if (var instanceof String) {
 				var=var.toString().trim();
 			}
+			
 			engine.put(keyset.get(i),var );
+		}
+		
+		//Currency Conversions if Courrency Constants Exists in Rule 
+		String[] ccyConstantsList = rule.split("[^"+PennantRuleConstants.RULEFIELD_CCY+"0-9]+");
+		if(ccyConstantsList != null && ccyConstantsList.length > 0){
+			for (String ruleField : ccyConstantsList) {
+				if(ruleField.startsWith(PennantRuleConstants.RULEFIELD_CCY)){
+					BigDecimal ruleValue = new BigDecimal(Integer.parseInt(ruleField.replace(
+							PennantRuleConstants.RULEFIELD_CCY, ""))*PennantRuleConstants.RULEFIELD_CCY_AMT);
+					String convRuleValue = CalculationUtil.convertedUnFormatAmount(null, finccy, ruleValue);
+					rule = rule.replace(ruleField, convRuleValue);
+				}
+            }
 		}
 		
 		Object result = processEngineRule(rule, engine, globalVariableList, returnType);
@@ -190,7 +230,7 @@ public class RuleExecutionUtil implements Serializable {
 			sqlRule = getGlobalVariables(sqlRule,globalVariableList);
 		}
 		
-		BigDecimal tempResult=new BigDecimal("0");		
+		BigDecimal tempResult= BigDecimal.ZERO;		
 		String result =null;
 		
 		try {// pass script
@@ -233,6 +273,22 @@ public class RuleExecutionUtil implements Serializable {
 		
 		logger.debug("Leaving");
 		return result;
+	}
+	
+	/**
+	 * Execute Rule by using rule engine
+	 * @param rule
+	 * @param customerEligibilityCheck
+	 * @return
+	 */
+	public String executeRule(String rule, CustomerEligibilityCheck customerEligibilityCheck, String finccy){
+		Object ruleResult = null;
+		try {
+			ruleResult = executeRule(rule, customerEligibilityCheck, SystemParameterDetails.getGlobaVariableList(), finccy);
+		} catch (Exception e) {
+			ruleResult = "E";
+		}
+		return ruleResult == null ? "" : ruleResult.toString();
 	}
 
 	

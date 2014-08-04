@@ -51,6 +51,8 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.lmtmasters.FacilityReferenceDetailDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -71,6 +73,8 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceWorkFlowDAO financeWorkFlowDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private FacilityReferenceDetailDAO facilityReferenceDetailDAO;
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -89,7 +93,20 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
 		this.financeWorkFlowDAO = financeWorkFlowDAO;
 	}
+	
+	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
+	    return financeReferenceDetailDAO;
+    }
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+	    this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+    }
 
+	public FacilityReferenceDetailDAO getFacilityReferenceDetailDAO() {
+	    return facilityReferenceDetailDAO;
+    }
+	public void setFacilityReferenceDetailDAO(FacilityReferenceDetailDAO facilityReferenceDetailDAO) {
+	    this.facilityReferenceDetailDAO = facilityReferenceDetailDAO;
+    }
 	@Override
 	public FinanceWorkFlow getFinanceWorkFlow() {
 		return getFinanceWorkFlowDAO().getFinanceWorkFlow();
@@ -240,14 +257,26 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 			financeWorkFlow.setNextTaskId("");
 			financeWorkFlow.setWorkflowId(0);
 
-			if (financeWorkFlow.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) 
-			{	
+			if (financeWorkFlow.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){	
 				tranType=PennantConstants.TRAN_ADD;
 				financeWorkFlow.setRecordType("");
 				getFinanceWorkFlowDAO().save(financeWorkFlow,"");
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
 				financeWorkFlow.setRecordType("");
+				
+				//Remove Finance Process Editor Details If Workflow Modified from Previous Version
+				FinanceWorkFlow apprvFinWorkflow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeWorkFlow.getId(), "");
+				if(apprvFinWorkflow != null){
+					if(!apprvFinWorkflow.getWorkFlowType().equals(financeWorkFlow.getWorkFlowType())){
+						if(PennantConstants.WORFLOW_MODULE_FINANCE.equals(financeWorkFlow.getModuleName())){
+							getFinanceReferenceDetailDAO().deleteByFinType(financeWorkFlow.getFinType(), "");
+						}else if(PennantConstants.WORFLOW_MODULE_FACILITY.equals(financeWorkFlow.getModuleName())){
+							getFacilityReferenceDetailDAO().deleteByFinType(financeWorkFlow.getFinType(), "");
+						}
+					}
+				}
+				
 				getFinanceWorkFlowDAO().update(financeWorkFlow,"");
 			}
 		}

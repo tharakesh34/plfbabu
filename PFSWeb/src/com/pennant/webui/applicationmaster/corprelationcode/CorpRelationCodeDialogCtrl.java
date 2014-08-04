@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.CorpRelationCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -412,6 +413,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl implements Serializa
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -428,7 +430,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl implements Serializa
 		this.corpRelationIsActive.setChecked(aCorpRelationCode.isCorpRelationIsActive());
 		this.recordStatus.setValue(aCorpRelationCode.getRecordStatus());
 		
-		if(aCorpRelationCode.isNew() || aCorpRelationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aCorpRelationCode.isNew() || (aCorpRelationCode.getRecordType() != null ? aCorpRelationCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.corpRelationIsActive.setChecked(true);
 			this.corpRelationIsActive.setDisabled(true);
 		}
@@ -599,15 +601,12 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl implements Serializa
 		setValidationOn(true);
 
 		if (!this.corpRelationCode.isReadonly()){
-			this.corpRelationCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_CorpRelationCodeDialog_CorpRelationCode.value")})));
+			this.corpRelationCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CorpRelationCodeDialog_CorpRelationCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.corpRelationDesc.isReadonly()){
-			this.corpRelationDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_CorpRelationCodeDialog_CorpRelationDesc.value")})));
+			this.corpRelationDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CorpRelationCodeDialog_CorpRelationDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -746,7 +745,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl implements Serializa
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

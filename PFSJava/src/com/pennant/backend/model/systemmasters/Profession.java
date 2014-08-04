@@ -59,6 +59,7 @@ public class Profession implements java.io.Serializable {
 	private String professionCode = null;
 	private String professionDesc;
 	private boolean professionIsActive;
+	private boolean selfEmployee;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -210,6 +211,14 @@ public class Profession implements java.io.Serializable {
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
 	}
+
+	public boolean isSelfEmployee() {
+    	return selfEmployee;
+    }
+
+	public void setSelfEmployee(boolean selfEmployee) {
+    	this.selfEmployee = selfEmployee;
+    }
 
 	public String getUserAction() {
 		return userAction;

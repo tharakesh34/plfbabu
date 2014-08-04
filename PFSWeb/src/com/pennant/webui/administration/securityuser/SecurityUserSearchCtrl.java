@@ -189,67 +189,67 @@ public class SecurityUserSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_usrID.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrLogin.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrLogin.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrLogin.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrPwd.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrPwd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrPwd.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_userStaffID.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_userStaffID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_userStaffID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrFName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrFName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrFName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrMName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrMName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrMName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrLName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrLName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrLName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrMobile.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrMobile.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrMobile.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrEmail.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrEmail.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrEmail.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrEnabled.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_usrEnabled.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_usrEnabled.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrCanSignonFrom.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrCanSignonFrom.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrCanSignonFrom.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrCanSignonTo.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrCanSignonTo.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrCanSignonTo.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrCanOverrideLimits.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_usrCanOverrideLimits.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_usrCanOverrideLimits.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrAcExp.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_usrAcExp.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_usrAcExp.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrCredentialsExp.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_usrCredentialsExp.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_usrCredentialsExp.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrAcLocked.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_usrAcLocked.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_usrAcLocked.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrLanguage.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrLanguage.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrLanguage.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrBranchCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrBranchCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrBranchCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_usrDeptCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_usrDeptCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_usrDeptCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

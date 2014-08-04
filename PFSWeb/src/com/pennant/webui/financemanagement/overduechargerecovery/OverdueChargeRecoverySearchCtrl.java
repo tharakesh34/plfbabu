@@ -157,37 +157,37 @@ public class OverdueChargeRecoverySearchCtrl extends GFCBaseCtrl implements Seri
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_finReference.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finSchdDate.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finSchdDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finSchdDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finBrnm.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finBrnm.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finBrnm.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finODDate.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finODDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finODDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finODCCustCtg.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finODCCustCtg.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finODCCustCtg.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finODCWaived.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finODCWaived.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finODCWaived.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finODCLastPaidDate.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finODCLastPaidDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finODCLastPaidDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_finODCRecoverySts.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finODCRecoverySts.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finODCRecoverySts.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{
@@ -328,7 +328,6 @@ public class OverdueChargeRecoverySearchCtrl extends GFCBaseCtrl implements Seri
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */ 
-	@SuppressWarnings("unchecked")
 	public void doSearch() {
 		logger.debug("Entering");
 		final JdbcSearchObject<OverdueChargeRecovery> so = new JdbcSearchObject<OverdueChargeRecovery>(OverdueChargeRecovery.class);

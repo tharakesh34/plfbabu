@@ -52,7 +52,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.smtmasters.WeekendMaster;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 
 
 /**
@@ -75,7 +75,7 @@ public class WeekendMasterListModelItemRenderer implements ListitemRenderer<Week
 		StringTokenizer st = new StringTokenizer(weekendMaster.getWeekend(), ",");
 		String str ="";
 		while(st.hasMoreTokens()) {
-			str = str+PennantAppUtil.getWeekName().get(Integer.parseInt(st.nextToken())-1).getLabel()+",";
+			str = str+PennantStaticListUtil.getWeekName().get(Integer.parseInt(st.nextToken())-1).getLabel()+",";
 		}
 	  	lc = new Listcell(str.substring(0, str.length()-1));
 	  	lc.setParent(item);

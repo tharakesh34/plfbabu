@@ -125,7 +125,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	public ExtendedFieldDetail getExtendedFieldDetailById(final long id,String name,String type) {
 		logger.debug("Entering");
 
-		ExtendedFieldDetail extendedFieldDetail = getExtendedFieldDetail();
+		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 		extendedFieldDetail.setId(id);
 		extendedFieldDetail.setFieldName(name);
 
@@ -227,7 +227,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 */
 	public void deleteByExtendedFields(final long id,String type) {
 		logger.debug("Entering");
-		ExtendedFieldDetail extendedFieldDetail = getExtendedFieldDetail();
+		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 		extendedFieldDetail.setId(id);
 
 		StringBuilder deleteSql = new StringBuilder();
@@ -337,7 +337,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	@Override
 	public List<ExtendedFieldDetail> getExtendedFieldDetailById(long id, String type) {
 		logger.debug("Entering");
-		ExtendedFieldDetail extendedFieldDetail = getExtendedFieldDetail();
+		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 
 		extendedFieldDetail.setId(id);
 
@@ -371,7 +371,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	public List<ExtendedFieldDetail> getExtendedFieldDetailBySubModule(String subModule, String type) {
 		logger.debug("Entering");
 
-		ExtendedFieldDetail extendedFieldDetail = getExtendedFieldDetail();
+		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 		extendedFieldDetail.setLovDescSubModuleName(subModule);
 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );
@@ -398,7 +398,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	public List<ExtendedFieldDetail> getExtendedFieldNameById(long id, String type) {
 		logger.debug("Entering");
 
-		ExtendedFieldDetail extendedFieldDetail = getExtendedFieldDetail();
+		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
 		extendedFieldDetail.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, " );

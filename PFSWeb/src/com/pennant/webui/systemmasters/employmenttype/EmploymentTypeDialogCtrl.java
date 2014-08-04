@@ -63,7 +63,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -76,7 +75,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.EmploymentTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -106,7 +108,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl implements
 	 */
 	protected Window  		window_EmploymentTypeDialog;// auto wired
 
-	protected Textbox 		empType; 					// auto wired
+	protected Uppercasebox	empType; 					// auto wired
 	protected Textbox 		empTypeDesc; 				// auto wired
 
 	protected Label 	 	recordStatus; 				// auto wired
@@ -419,6 +421,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl implements
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -587,14 +590,12 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl implements
 
 		setValidationOn(true);
 		if (!this.empType.isReadonly()) {
-			this.empType.setConstraint(new SimpleConstraint(PennantConstants.ALPHA_CAPS_REGEX,
-					Labels.getLabel("FIELD_CHAR_CAPS",new String[] { Labels.getLabel(
-							"label_EmploymentTypeDialog_EmpType.value") })));
+			this.empType.setConstraint(new PTStringValidator(Labels.getLabel("label_EmploymentTypeDialog_EmpType.value"), 
+					PennantRegularExpressions.REGEX_ALPHA, true));
 		}
 		if (!this.empTypeDesc.isReadonly()) {
-			this.empTypeDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX,
-					Labels.getLabel("MAND_FIELD_DESC", new String[] { Labels.getLabel(
-							"label_EmploymentTypeDialog_EmpTypeDesc.value")})));
+			this.empTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EmploymentTypeDialog_EmpTypeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -757,7 +758,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl implements
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

@@ -9,7 +9,7 @@
 
 	<window id="window_CourseSearch"
 		title="${c:l('window_CourseSearch.title')}" border="none"
-		apply="${courseSearchCtrl}" closable="true" width="400px"
+		apply="${courseSearchCtrl}" closable="true" width="550px"
 		height="284px" sizable="true">
 
 		<borderlayout>
@@ -33,10 +33,10 @@
 								  
 										
 								</row>
-								<row>
+								<row visible = "false">
 									<label id="label_CourseSearch_CourseDesc" value="${c:l('label_CourseSearch_CourseDesc.value')}" />
 									<listbox id="sortOperator_courseDesc" width="43px" mold="select" rows="1" />
-									 <textbox id="courseDesc" width="450px" maxlength="50" />
+									 <textbox id="courseDesc" width="330px" maxlength="50" />
 								  
 										
 								</row>

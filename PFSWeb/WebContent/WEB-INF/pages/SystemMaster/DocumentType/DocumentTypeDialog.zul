@@ -102,6 +102,17 @@
 							</row>
 							<row>
 								<label
+									id="label_DocumentTypeDialog_DocIsCustDocument"
+									value="${c:l('label_DocumentTypeDialog_DocIsCustDocument.value')}" />
+
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="docIsCustDoc"
+										checked="false" />
+								</hbox>
+							</row>
+							<row>
+								<label
 									id="label_DocumentTypeDialog_DocTypeIsActive"
 									value="${c:l('label_DocumentTypeDialog_DocTypeIsActive.value')}" />
 								<hbox>

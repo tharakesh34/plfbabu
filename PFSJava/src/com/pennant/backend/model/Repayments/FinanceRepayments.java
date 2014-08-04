@@ -14,28 +14,28 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	private String finRpyFor;
 	private long finPaySeq = Long.MIN_VALUE;
 	private long linkedTranId;
-	private BigDecimal finRpyAmount = new BigDecimal(0);
+	private BigDecimal finRpyAmount = BigDecimal.ZERO;
 	private Date finSchdDate;
 	private Date finValueDate;
 	private String finBranch;
 	private String finType;
 	private long finCustID;
-	private BigDecimal finSchdPriPaid = new BigDecimal(0);
-	private BigDecimal finSchdPftPaid = new BigDecimal(0);
-	private BigDecimal finTotSchdPaid = new BigDecimal(0);
-	private BigDecimal finFee = new BigDecimal(0);
-	private BigDecimal finWaiver = new BigDecimal(0);
-	private BigDecimal finRefund = new BigDecimal(0);
+	private BigDecimal finSchdPriPaid = BigDecimal.ZERO;
+	private BigDecimal finSchdPftPaid = BigDecimal.ZERO;
+	private BigDecimal finTotSchdPaid = BigDecimal.ZERO;
+	private BigDecimal finFee = BigDecimal.ZERO;
+	private BigDecimal finWaiver = BigDecimal.ZERO;
+	private BigDecimal finRefund = BigDecimal.ZERO;
 	
 	// not in database
-	private BigDecimal lovDescSchdPriPaid = new BigDecimal(0);
-	private BigDecimal lovDescSchdPftPaid = new BigDecimal(0);
-	private BigDecimal RepayBal = new BigDecimal(0);
-	private BigDecimal Repaypri = new BigDecimal(0);
-	private BigDecimal RepayPft = new BigDecimal(0);
-	private BigDecimal RepayPenal = new BigDecimal(0);
-	private BigDecimal RepayWaiver = new BigDecimal(0);
-	private BigDecimal RepayRefund = new BigDecimal(0);
+	private BigDecimal lovDescSchdPriPaid = BigDecimal.ZERO;
+	private BigDecimal lovDescSchdPftPaid = BigDecimal.ZERO;
+	private BigDecimal RepayBal = BigDecimal.ZERO;
+	private BigDecimal Repaypri = BigDecimal.ZERO;
+	private BigDecimal RepayPft = BigDecimal.ZERO;
+	private BigDecimal RepayPenal = BigDecimal.ZERO;
+	private BigDecimal RepayWaiver = BigDecimal.ZERO;
+	private BigDecimal RepayRefund = BigDecimal.ZERO;
 
 	@Override
 	public boolean isNew() {

@@ -160,6 +160,10 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 		EventQueues.lookup("departmentCodeEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangedepartment", null, departmentCode));
 		EventQueues.lookup("appVersionEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeAppVersion", null, version));
 		EventQueues.lookup("tableSchemaEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeTableSchema", null, tableSchemaName));
+		
+		if("Y".equals(SystemParameterDetails.getSystemParameterValue("LAST_LOGIN_INFO"))) {
+			EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeLastLogin", null, ""));
+		}
 
 	}
 

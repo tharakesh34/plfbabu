@@ -125,7 +125,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 	@Override
 	public BaseRate getBaseRateById(final String bRType, Date bREffDate, String type) {
 		logger.debug("Entering");
-		BaseRate baseRate = getBaseRate();
+		BaseRate baseRate = new BaseRate();
 		baseRate.setBRType(bRType);
 		baseRate.setBREffDate(bREffDate);
 
@@ -317,7 +317,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 	 */
 	private List<BaseRate> getBaseRateListByType(String bRType, Date bREffDate, String type) {
 		logger.debug("Entering");
-		BaseRate baseRate = getBaseRate();
+		BaseRate baseRate = new BaseRate();
 		baseRate.setBRType(bRType);
 		baseRate.setBREffDate(bREffDate);
 
@@ -356,7 +356,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 	 */
 	public boolean getBaseRateListById(String bRType, Date bREffDate, String type) {
 		logger.debug("Entering");
-		BaseRate baseRate = getBaseRate();
+		BaseRate baseRate = new BaseRate();
 		baseRate.setBRType(bRType);
 		baseRate.setBREffDate(bREffDate);
 

@@ -77,7 +77,18 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="expenceTypeName"
-										maxlength="100" width="900px" />
+										maxlength="100" width="250px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_ExpenseTypeDialog_ExpenceFor"
+									value="${c:l('label_ExpenseTypeDialog_ExpenceFor.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="cb_expenceFor"
+										maxlength="100" width="250px" />
 								</hbox>
 							</row>
 						</rows>

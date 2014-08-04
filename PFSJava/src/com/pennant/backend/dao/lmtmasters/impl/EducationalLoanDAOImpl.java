@@ -117,7 +117,7 @@ public class EducationalLoanDAOImpl extends BasisCodeDAO<EducationalLoan> implem
 	@Override
 	public EducationalLoan getEducationalLoanByID(final String loanRef, String type) {
 		logger.debug("Entering");
-		EducationalLoan educationalLoan = getEducationalLoan();
+		EducationalLoan educationalLoan = new EducationalLoan();
 		educationalLoan.setLoanRefNumber(loanRef);
 		
 		StringBuilder selectSql = new StringBuilder();

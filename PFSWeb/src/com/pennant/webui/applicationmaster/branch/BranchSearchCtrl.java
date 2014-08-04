@@ -170,67 +170,67 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_branchCode.setModel(new ListModelList(
+		this.sortOperator_branchCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchDesc.setModel(new ListModelList(
+		this.sortOperator_branchDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchDesc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchCity.setModel(new ListModelList(
+		this.sortOperator_branchCity.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchCity.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchProvince.setModel(new ListModelList(
+		this.sortOperator_branchProvince.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchProvince.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchCountry.setModel(new ListModelList(
+		this.sortOperator_branchCountry.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchCountry.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchSwiftBankCde.setModel(new ListModelList(
+		this.sortOperator_branchSwiftBankCde.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchSwiftBankCde.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchSwiftCountry.setModel(new ListModelList(
+		this.sortOperator_branchSwiftCountry.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchSwiftCountry.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchSwiftLocCode.setModel(new ListModelList(
+		this.sortOperator_branchSwiftLocCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchSwiftLocCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchSwiftBrnCde.setModel(new ListModelList(
+		this.sortOperator_branchSwiftBrnCde.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchSwiftBrnCde.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchSortCode.setModel(new ListModelList(
+		this.sortOperator_branchSortCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_branchSortCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_branchIsActive.setModel(new ListModelList(
+		this.sortOperator_branchIsActive.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_branchIsActive.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

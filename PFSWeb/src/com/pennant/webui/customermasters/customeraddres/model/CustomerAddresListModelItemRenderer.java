@@ -59,24 +59,23 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CustomerAddresListModelItemRenderer implements ListitemRenderer, Serializable {
+public class CustomerAddresListModelItemRenderer implements ListitemRenderer<CustomerAddres>, Serializable {
 
 	private static final long serialVersionUID = 1411092588536155341L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, CustomerAddres customerAddres, int count) throws Exception {
 
 		if (item instanceof Listgroup) { 
-			Object groupData = (Object) data; 
-			final CustomerAddres customerAddres= (CustomerAddres)groupData;
 			item.appendChild(new Listcell(String.valueOf(customerAddres.getLovDescCustCIF()))); 
 		} else if (item instanceof Listgroupfoot) { 
 			Listcell cell = new Listcell("");
 			cell.setSpan(7);
 			item.appendChild(cell);
 		} else {
-			final CustomerAddres customerAddres = (CustomerAddres) data;
 			Listcell lc;
+			lc = new Listcell(customerAddres.getLovDescCustCIF());
+			lc.setParent(item);
 			lc = new Listcell(customerAddres.getCustAddrType()+"-"+customerAddres.getLovDescCustAddrTypeName());
 			lc.setParent(item);
 			lc = new Listcell(customerAddres.getCustAddrHNbr());
@@ -89,7 +88,7 @@ public class CustomerAddresListModelItemRenderer implements ListitemRenderer, Se
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(customerAddres.getRecordType()));
 			lc.setParent(item);
-			item.setAttribute("data", data);
+			item.setAttribute("data", customerAddres);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerAddresItemDoubleClicked");
 		}
 	}

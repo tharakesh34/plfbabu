@@ -42,6 +42,8 @@
 */
 
 package com.pennant.backend.dao.applicationmaster;
+import java.util.List;
+
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 
@@ -69,6 +71,12 @@ public interface CurrencyDAO {
 
 	public boolean getUniqueCurrencyByID(Currency currency, boolean ccyNum, boolean swiftCode);
 
-	public ValueLabel getCurrencyById(String id);
+	public String getCurrencyById(String id);
+
+	public List<ValueLabel> getCcyCodesByFinRef();
+
+	public Currency getCurrencyByCode(String id);
+
+	public List<Currency> getCurrencyList(List<String> asList);
 
 }

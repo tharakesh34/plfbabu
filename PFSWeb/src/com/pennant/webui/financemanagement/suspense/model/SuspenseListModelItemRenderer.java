@@ -52,8 +52,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
-
 
 /**
  * Item renderer for listitems in the listbox.
@@ -62,7 +62,7 @@ import com.pennant.util.PennantAppUtil;
 public class SuspenseListModelItemRenderer implements ListitemRenderer<FinanceSuspHead>, Serializable {
 
 	private static final long serialVersionUID = -4554647022945989420L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, FinanceSuspHead suspHead, int count) throws Exception {
 
@@ -85,8 +85,14 @@ public class SuspenseListModelItemRenderer implements ListitemRenderer<FinanceSu
 		lc.appendChild(manualSusp);
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.amountFormate(suspHead.getFinSuspAmt(), suspHead.getLovDescFinFormatter()));
+		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.amountFormate(suspHead.getFinCurSuspAmt(), suspHead.getLovDescFinFormatter()));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+		lc = new Listcell(suspHead.getRecordStatus());
+		lc.setParent(item);
+		lc = new Listcell(PennantJavaUtil.getLabel(suspHead.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("data", suspHead);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onSuspenseItemDoubleClicked");

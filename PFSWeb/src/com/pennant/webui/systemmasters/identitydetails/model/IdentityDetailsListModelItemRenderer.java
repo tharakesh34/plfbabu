@@ -60,11 +60,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class IdentityDetailsListModelItemRenderer implements ListitemRenderer<IdentityDetails>, Serializable {
 
 	private static final long serialVersionUID = -3653224021041165546L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, IdentityDetails identityDetails, int count) throws Exception {
 		
-		//final IdentityDetails identityDetails = (IdentityDetails) data;
 		Listcell lc;
 		lc=new Listcell(identityDetails.getIdentityType());
 		lc.setParent(item);

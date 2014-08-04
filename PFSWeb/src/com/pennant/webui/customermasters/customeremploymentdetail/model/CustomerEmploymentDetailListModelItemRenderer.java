@@ -68,13 +68,13 @@ public class CustomerEmploymentDetailListModelItemRenderer implements ListitemRe
 		Listcell lc;
 		lc = new Listcell(customerEmploymentDetail.getLovDescCustCIF());
 		lc.setParent(item);
-		lc = new Listcell(customerEmploymentDetail.getCustEmpName());
+		lc = new Listcell(customerEmploymentDetail.getLovDesccustEmpName());
 		lc.setParent(item);
-		lc = new Listcell(customerEmploymentDetail.getCustEmpDesg());
+		lc = new Listcell(customerEmploymentDetail.getLovDescCustEmpDesgName());
 		lc.setParent(item);
-		lc = new Listcell(customerEmploymentDetail.getCustEmpDept());
+		lc = new Listcell(customerEmploymentDetail.getLovDescCustEmpDeptName());
 		lc.setParent(item);
-		lc = new Listcell(customerEmploymentDetail.getCustEmpID());
+		lc = new Listcell(customerEmploymentDetail.getLovDescCustEmpTypeName());
 		lc.setParent(item);
 		lc = new Listcell(customerEmploymentDetail.getRecordStatus());
 		lc.setParent(item);

@@ -57,18 +57,35 @@ import com.pennant.backend.util.WorkFlowUtil;
  *
  */
 public class FinanceDisbursement implements java.io.Serializable {
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = -5230263039482884873L;
+    
 	private String finReference = null;
-	private Date disbDate;
+	private Date disbDate = null;
 	private int disbSeq;
+	private long logKey;
+	private String disbType;
 	private String disbDesc;
+	private long disbExpType;
+	private String lovDescDisbExpType;
+	private long disbBeneficiary = Long.MIN_VALUE;
+	private String lovdescDisbBenificiary;
+	private String lovDescDisbBenfShrtName;;
+	private BigDecimal disbRetPerc = BigDecimal.ZERO;
+	private BigDecimal disbRetAmount = BigDecimal.ZERO;
+	private BigDecimal disbRetPaid = BigDecimal.ZERO;
+	private Date retPaidDate = null;
+	private boolean autoDisb;
 	private String disbAccountId;
-	private BigDecimal disbAmount;
-	private Date disbReqDate;
+	private BigDecimal disbAmount= BigDecimal.ZERO;
+	private Date disbReqDate = null;
+	private BigDecimal disbClaim = BigDecimal.ZERO;
 	private boolean disbDisbursed;
-	private BigDecimal feeChargeAmt;
+	private BigDecimal feeChargeAmt= BigDecimal.ZERO;
 	private boolean disbIsActive;
 	private String disbRemarks;
+	private BigDecimal netAdvDue= BigDecimal.ZERO;
+	private BigDecimal netRetDue= BigDecimal.ZERO;
 	private long linkedTranId;
 	private int version;
 	private long lastMntBy;
@@ -99,7 +116,9 @@ public class FinanceDisbursement implements java.io.Serializable {
 		this.setId(id);
 	}
 
-	//Getter and Setter methods
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
 	public String getId() {
 		return finReference;
@@ -121,6 +140,91 @@ public class FinanceDisbursement implements java.io.Serializable {
 	public void setDisbDate(Date disbDate) {
 		this.disbDate = DateUtility.getDate(DateUtility.formatUtilDate(disbDate, PennantConstants.dateFormat));
 	}
+	
+	public String getDisbAccountId() {
+		return disbAccountId;
+	}
+
+	public void setDisbAccountId(String disbAccountId) {
+		this.disbAccountId = disbAccountId;
+	}
+	
+	public String getDisbType() {
+    	return disbType;
+    }
+	public void setDisbType(String disbType) {
+    	this.disbType = disbType;
+    }
+
+	public long getDisbExpType() {
+    	return disbExpType;
+    }
+	public void setDisbExpType(long disbExpType) {
+    	this.disbExpType = disbExpType;
+    }
+
+	public long getDisbBeneficiary() {
+    	return disbBeneficiary;
+    }
+	public void setDisbBeneficiary(long disbBeneficiary) {
+    	this.disbBeneficiary = disbBeneficiary;
+    }
+	
+	public String getLovDescDisbExpType() {
+    	return lovDescDisbExpType;
+    }
+	public void setLovDescDisbExpType(String lovDescDisbExpType) {
+    	this.lovDescDisbExpType = lovDescDisbExpType;
+    }
+
+	public void setLovdescDisbBenificiary(String lovdescDisbBenificiary) {
+	    this.lovdescDisbBenificiary = lovdescDisbBenificiary;
+    }
+	public String getLovdescDisbBenificiary() {
+	    return lovdescDisbBenificiary;
+    }
+
+	public void setLovDescDisbBenfShrtName(String lovDescDisbBenfShrtName) {
+	    this.lovDescDisbBenfShrtName = lovDescDisbBenfShrtName;
+    }
+	public String getLovDescDisbBenfShrtName() {
+	    return lovDescDisbBenfShrtName;
+    }
+
+	public BigDecimal getDisbRetPerc() {
+    	return disbRetPerc;
+    }
+	public void setDisbRetPerc(BigDecimal disbRetPerc) {
+    	this.disbRetPerc = disbRetPerc;
+    }
+
+	public BigDecimal getDisbRetAmount() {
+    	return disbRetAmount;
+    }
+	public void setDisbRetAmount(BigDecimal disbRetAmount) {
+    	this.disbRetAmount = disbRetAmount;
+    }
+	
+	public void setDisbRetPaid(BigDecimal disbRetPaid) {
+	    this.disbRetPaid = disbRetPaid;
+    }
+	public BigDecimal getDisbRetPaid() {
+	    return disbRetPaid;
+    }
+
+	public void setRetPaidDate(Date retPaidDate) {
+	    this.retPaidDate = retPaidDate;
+    }
+	public Date getRetPaidDate() {
+	    return retPaidDate;
+    }
+
+	public boolean isAutoDisb() {
+    	return autoDisb;
+    }
+	public void setAutoDisb(boolean autoDisb) {
+    	this.autoDisb = autoDisb;
+    }
 	
 	public int getDisbSeq() {
 		return disbSeq;
@@ -157,10 +261,16 @@ public class FinanceDisbursement implements java.io.Serializable {
 		this.disbDisbursed = disbDisbursed;
 	}
 	
+	public void setDisbClaim(BigDecimal disbClaim) {
+	    this.disbClaim = disbClaim;
+    }
+	public BigDecimal getDisbClaim() {
+	    return disbClaim;
+    }
+	
 	public void setFeeChargeAmt(BigDecimal feeChargeAmt) {
 	    this.feeChargeAmt = feeChargeAmt;
     }
-
 	public BigDecimal getFeeChargeAmt() {
 	    return feeChargeAmt;
     }
@@ -184,6 +294,20 @@ public class FinanceDisbursement implements java.io.Serializable {
     }
 	public void setLinkedTranId(long linkedTranId) {
     	this.linkedTranId = linkedTranId;
+    }
+	
+	public void setNetAdvDue(BigDecimal netAdvDue) {
+	    this.netAdvDue = netAdvDue;
+    }
+	public BigDecimal getNetAdvDue() {
+	    return netAdvDue;
+    }
+
+	public void setNetRetDue(BigDecimal netRetDue) {
+	    this.netRetDue = netRetDue;
+    }
+	public BigDecimal getNetRetDue() {
+	    return netRetDue;
     }
 
 	public int getVersion() {
@@ -294,19 +418,10 @@ public class FinanceDisbursement implements java.io.Serializable {
 	public long getWorkflowId() {
 		return workflowId;
 	}
-
 	public void setWorkflowId(long workflowId) {
 		this.workflowId = workflowId;
 	}
 	
-	public String getDisbAccountId() {
-		return disbAccountId;
-	}
-
-	public void setDisbAccountId(String disbAccountId) {
-		this.disbAccountId = disbAccountId;
-	}
-
 	// Overidden Equals method to handle the comparision
 	public boolean equals(FinanceDisbursement financeDisbursement) {
 		return getId() == financeDisbursement.getId();
@@ -324,4 +439,13 @@ public class FinanceDisbursement implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public void setLogKey(long logKey) {
+	    this.logKey = logKey;
+    }
+
+	public long getLogKey() {
+	    return logKey;
+    }
+
 }

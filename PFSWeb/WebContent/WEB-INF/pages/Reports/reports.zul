@@ -6,19 +6,39 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window id="window_Report" border="normal" title="Report Viewer"
-		apply="com.pennant.webui.reports.ReportsCtrl" width="100%"
-		height="100%">
-		<!-- CRUD BUTTONS -->
-		<toolbar align="end" style="float:right; border-style: none;"
-			width="100%">
-			<button id="btnHelp" height="24px"
-				label = "${c:l('label_Help')}"
-				tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-			<button id="btnClose" height="24px"
-				tooltiptext="${c:l('btnClose.tooltiptext')}"
-				image="/images/icons/btn_exitdoor2_16x16.gif" />
-		</toolbar>
-		<iframe id="report" width="100%" height="95%" />
+
+	<window>
+		<window id="window_Report" border="normal"
+			apply="com.pennant.webui.reports.ReportsCtrl" width="100%"
+			height="100%">
+
+			<div sclass="z-toolbar" style="padding:0">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="35%,30%,35%">
+
+					<!-- COMMON BUTTONS -->
+					<toolbar align="start" sclass="toolbar-start"/>
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<label value="Report Viewer"
+							sclass="label-heading" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btnHelp" height="24px"
+							label="${c:l('label_Help')}"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						<button id="btnClose" height="24px"
+							tooltiptext="${c:l('btnClose.tooltiptext')}"
+							label="${c:l('btnClose.label')}" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<iframe id="report" width="100%" height="95%" />
+
+		</window>
 	</window>
 </zk>

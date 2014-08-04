@@ -354,7 +354,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl implements Serializable  {
 	 * 2)According to satisfied conditions it assigns  pwdstatusCode and calls 
 	 * showPasswordStatusMeter() for view passwordStatusMeter.
 	 */
-	final class OnChanging implements EventListener{
+	final class OnChanging implements EventListener<Event>{
 		@Override
 		public void onEvent(Event event) throws Exception {
 			logger.debug("Entering ");

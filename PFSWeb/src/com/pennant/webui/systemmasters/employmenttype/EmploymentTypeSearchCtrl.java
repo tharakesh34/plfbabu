@@ -156,22 +156,22 @@ public class EmploymentTypeSearchCtrl extends GFCBaseCtrl implements
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_empType.setModel(new ListModelList(
+		this.sortOperator_empType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_empType.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_empTypeDesc.setModel(new ListModelList(
+		this.sortOperator_empTypeDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_empTypeDesc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

@@ -159,27 +159,27 @@ public class BaseRateSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_bRType.setModel(new ListModelList(
+		this.sortOperator_bRType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_bRType.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_bREffDate.setModel(new ListModelList(
+		this.sortOperator_bREffDate.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getNumericOperators()));
 		this.sortOperator_bREffDate.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_bRRate.setModel(new ListModelList(
+		this.sortOperator_bRRate.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getNumericOperators()));
 		this.sortOperator_bRRate.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

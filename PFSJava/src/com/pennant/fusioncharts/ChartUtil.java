@@ -317,7 +317,7 @@ public class ChartUtil {
 		String formID="'Form"+chartDetail.getChartId()+"'";
 		String iFrame="iframe"+chartDetail.getChartId()+"'";
 		StringBuffer htmlCode= new StringBuffer(""); 
-		htmlCode.append("<form id="+formID+" target="+iFrame+"  method='post' action='/PFSWeb/Charts/FusionChart.jsp'>" );
+		htmlCode.append("<form id="+formID+" target="+iFrame+"  method='post' action='../Charts/FusionChart.jsp'>" );
 
 		htmlCode.append("<input type='hidden' name='chartID' value='"+chartDetail.getChartId()+"'/>");
 		htmlCode.append("<input type='hidden' name='strlXml' value='"+strXML+"'/>");

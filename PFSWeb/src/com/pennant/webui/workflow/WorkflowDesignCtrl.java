@@ -84,6 +84,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Workflow;
+import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
@@ -114,6 +115,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl implements Serializable {
 	private transient WorkFlowListCtrl workFlowListCtrl; // overhanded per param
 
 	// Button controller for the CRUD buttons
+	private transient final String btnCtroller_ClassPrefix = "button_WorkFlowDialog_";
 	protected Button btnSave; // autowire
 	protected Button btnCancel; // autowire
 	protected Button btnUpload; // autowire
@@ -150,7 +152,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl implements Serializable {
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
-
+		
 		// get the params map that are overhanded by creation.
 		final Map<String, Object> args = getCreationArgsMap(event);
 
@@ -352,8 +354,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl implements Serializable {
 			// fill the components with the data
 			doWriteBeanToComponents(aWorkFlowDetails);
 			doStoreInitValues();
-			this.window_workflowDesign.doModal(); // open the dialog in modal
-			// mode
+			setDialog(this.window_workflowDesign); // open the dialog in modal
 		} catch (final Exception e) {
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
@@ -472,7 +473,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl implements Serializable {
 					getWorkFlowListCtrl().listBoxWorkFlow.getListModel();
 				}
 
-				this.window_workflowDesign.onClose();
+				closeDialog(this.window_workflowDesign, "WorkFlowDialog");
 			}
 
 		} catch (final DataAccessException e) {
@@ -553,7 +554,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl implements Serializable {
 			doClose();
 		} catch (final Exception e) {
 			// close anyway
-			this.window_workflowDesign.onClose();
+			closeDialog(this.window_workflowDesign, "WorkFlowDialog");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -579,7 +580,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl implements Serializable {
 			MultiLineMessageBox.doSetTemplate();
 			if (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
 					| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION,
-					true, new EventListener() {
+					true, new EventListener<Event>() {
 						@Override
 						public void onEvent(Event evt) {
 							switch (((Integer) evt.getData()).intValue()) {
@@ -601,7 +602,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		final UserWorkspace workspace = getUserWorkspace();
 		workspace.deAlocateAuthorities("WorkFlowDialog");
-		this.window_workflowDesign.onClose();
+		closeDialog(this.window_workflowDesign, "WorkFlowDialog");
 		logger.debug("Leaving ");
 	}
 

@@ -44,31 +44,48 @@
 package com.pennant.webui.finance.wiffinancemain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
-import org.zkoss.zul.FieldComparator;
-import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listheader;
-import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Paging;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Radiogroup;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.service.PagedListService;
-import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.model.smtmasters.PFSParameter;
+import com.pennant.backend.service.customermasters.CustomerIncomeService;
+import com.pennant.backend.service.finance.EligibilityDetailService;
+import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.ScoringDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
-import com.pennant.webui.finance.wiffinancemain.model.WIFinanceTypeSelectItemRenderer;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 
@@ -86,24 +103,29 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 	 */
 	protected Window window_FinanceTypeSelect; 				// autoWired
 	protected Borderlayout borderLayout_FinanceTypeList; 	// autoWired
-	protected Paging pagingFinanceTypeList; 				// autoWired
-	protected Listbox listBoxFinanceType; 					// autoWired
+	
+	protected ExtendedCombobox finType;
+	
+	protected Radiogroup custType;
+	protected Radio custType_New;
+	protected Radio custType_Exist;
+	protected Row wIfCustSelectionRow;
+	protected Row customerRow;
+	protected Longbox custID;
+	protected Textbox lovDescCustCIF;
+	protected Button btnSearchCustCIF;
+	protected Label custShrtName;
+	private String finBranch;
 
-	// List headers
-	protected Listheader listheader_FinType; 				// autoWired
-	protected Listheader listheader_FinTypeDesc; 			// autoWired
-	protected Listheader listheader_FinCcy; 				// autoWired
-	protected Listheader listheader_FinBasicType; 			// autoWired
-	protected Listheader listheader_FinAcType; 				// autoWired
-	protected Listheader listheader_RecordStatus; 			// autoWired
-	protected Listheader listheader_RecordType;				// autoWired
-
-	private transient FinanceTypeService financeTypeService;
-	private transient PagedListService pagedListService;
 	private transient WIFFinanceMainDialogCtrl wifFinanceMainDialogCtrl;
 	private transient WIFFinanceMainListCtrl wIFFinanceMainListCtrl;
 	private transient FinanceDetail financeDetail;
-	protected JdbcSearchObject<FinanceType> searchObj;
+	private transient FinanceDetailService financeDetailService;
+	private transient CustomerIncomeService customerIncomeService;
+	private transient EligibilityDetailService eligibilityDetailService;
+	private transient ScoringDetailService scoringDetailService;
+	private FinanceType financeType;
+	private WIFCustomer wifcustomer = new WIFCustomer();
 	private String loanType = "";
 	
 	/**
@@ -127,37 +149,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 	 */
 	public void onCreate$window_FinanceTypeSelect(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/**
-		 * Calculate how many rows have been place in the listBox. Get the
-		 * currentDesktopHeight from a hidden IntBox from the index.zul that are
-		 * filled by onClientInfo() in the indexCtroller
-		 */
-
-		// set the paging parameters
-		this.pagingFinanceTypeList.setPageSize(15);
-		this.pagingFinanceTypeList.setDetailed(true);
-
-		this.listheader_FinType.setSortAscending(new FieldComparator("finType",
-				true));
-		this.listheader_FinType.setSortDescending(new FieldComparator(
-				"finType", false));
-		this.listheader_FinTypeDesc.setSortAscending(new FieldComparator(
-				"finTypeDesc", true));
-		this.listheader_FinTypeDesc.setSortDescending(new FieldComparator(
-				"finTypeDesc", false));
-		this.listheader_FinCcy.setSortAscending(new FieldComparator("finCcy",
-				true));
-		this.listheader_FinCcy.setSortDescending(new FieldComparator("finCcy",
-				false));
-		this.listheader_FinBasicType.setSortAscending(new FieldComparator(
-				"finDaysCalType", true));
-		this.listheader_FinBasicType.setSortDescending(new FieldComparator(
-				"finDaysCalType", false));
-		this.listheader_FinAcType.setSortAscending(new FieldComparator(
-				"finAcType", true));
-		this.listheader_FinAcType.setSortDescending(new FieldComparator(
-				"finAcType", false));
-
+		
 		final Map<String, Object> args = getCreationArgsMap(event);
 
 		if (args.containsKey("WIFFinanceMainDialogCtrl")) {
@@ -166,55 +158,197 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 			this.wifFinanceMainDialogCtrl = null;
 		}
 		
-		if (args.containsKey("loanType")) {
-			this.loanType = (String) args.get("loanType");
-		}
-
 		if(args.containsKey("WIFFinanceMainListCtrl")) {
 			this.wIFFinanceMainListCtrl = (WIFFinanceMainListCtrl) args.get("WIFFinanceMainListCtrl");			
 		} else {
 			this.wIFFinanceMainListCtrl = null;
 		}
+		
 		if(args.containsKey("financeDetail")) {
 			this.financeDetail = (FinanceDetail) args.get("financeDetail");			
 		} else {
 			this.financeDetail = null;
 		}
-
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<FinanceType>(FinanceType.class,getListRows());
-		this.searchObj.addSort("FinType", false);
 		
-		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
-			this.searchObj.addFilter(new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL));
+		if(args.containsKey("loanType")) {
+			this.loanType = (String) args.get("loanType");			
 		}
-
-		this.searchObj.addTabelName("RMTFinanceTypes_AView");
-
-		// Set the ListModel for the articles.
-		getPagedListWrapper().init(this.searchObj, this.listBoxFinanceType,this.pagingFinanceTypeList);
 		
-		// set the itemRenderer
-		this.listBoxFinanceType.setItemRenderer(new WIFinanceTypeSelectItemRenderer());
+		if(loanType.equals(PennantConstants.FIN_DIVISION_RETAIL)){
+			this.custType.setSelectedIndex(0);
+		}else if(loanType.equals(PennantConstants.FIN_DIVISION_FACILITY)){
+			this.custType.setSelectedIndex(1);
+			this.wIfCustSelectionRow.setVisible(false);
+			this.customerRow.setVisible(true);
+		}else if(loanType.equals(PennantConstants.FIN_DIVISION_COMMERCIAL)){
+			this.custType.setSelectedIndex(0);
+			this.wIfCustSelectionRow.setVisible(false);
+			this.customerRow.setVisible(false);
+		}else{
+			this.custType.setSelectedIndex(0);
+			this.wIfCustSelectionRow.setVisible(false);
+			this.customerRow.setVisible(false);
+		}
+		 doSetFieldProperties();
 		this.window_FinanceTypeSelect.doModal();
 		logger.debug("Leaving" + event.toString());
 	}
-
+	
+	
 	/**
-	 * This method is forwarded from the ListBoxes item renderer. <br>
-	 * see: com.pennant.webui.rmtmasters.financetype.model.
-	 * FinanceTypeListModelItemRenderer.java <br>
-	 * 
-	 * @param event
-	 * @throws Exception
+	 * Set the properties of the fields, like maxLength.<br>
 	 */
-	public void onFinanceTypeItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
-		// get the selected FinanceType object
-		fillFinanceDetails();
-		logger.debug("Leaving" + event.toString());
+	private void doSetFieldProperties() {
+		logger.debug("Entering");
+		
+		// Empty sent any required attributes
+		this.finType.setMaxlength(8);
+		this.finType.setMandatoryStyle(true);
+		this.finType.setModuleName("FinanceType");
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setValidateColumns(new String[] { "FinType" });
+		Filter[] filters = new Filter[2] ;
+		if(loanType.equals(PennantConstants.FIN_DIVISION_RETAIL)){
+			filters[0]= new Filter("FinDivision",  PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL);
+			filters[1]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		}else if(loanType.equals(PennantConstants.FIN_DIVISION_FACILITY)){
+			List<String> divList = new ArrayList<String>(2);
+			divList.add(PennantConstants.FIN_DIVISION_COMMERCIAL);
+			divList.add(PennantConstants.FIN_DIVISION_CORPORATE);
+			filters[0]= Filter.in("FinDivision", divList);
+			filters[1]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		}else if(loanType.equals(PennantConstants.FIN_DIVISION_COMMERCIAL)){
+			filters[0]= new Filter("FinDivision",  PennantConstants.FIN_DIVISION_COMMERCIAL, Filter.OP_EQUAL);
+			filters[1]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		}else{
+			filters = null;
+		}
+		
+		this.finType.setFilters(filters);
+
+		logger.debug("Leaving");
 	}
 
+	
+	
+	/**
+	 * When user clicks on button "SearchFinType" button
+	 * @param event
+	 */
+	public void onFulfill$finType(Event event){
+		logger.debug("Entering " + event.toString());
+
+		Object dataObject = finType.getObject();
+		if (dataObject instanceof String){
+			//
+		}else{
+			FinanceType details= (FinanceType) dataObject;
+			if (details != null) {
+				financeType = details;
+			}
+		}
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	/**
+	 * When user clicks on button "customerId Search" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+		this.lovDescCustCIF.clearErrorMessage();
+		doSearchCustomerCIF();
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	/**
+	 * To load the customerSelect filter dialog
+	 * 
+	 * @throws SuspendNotAllowedException
+	 * @throws InterruptedException
+	 */
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", null);
+		
+		ArrayList<Filter> filterList = new ArrayList<Filter>();
+		if(loanType.equals(PennantConstants.FIN_DIVISION_RETAIL)){
+			//filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_INDIVIDUAL, Filter.OP_EQUAL));
+		}else if(loanType.equals(PennantConstants.FIN_DIVISION_FACILITY)){
+			filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_INDIVIDUAL, Filter.OP_NOT_EQUAL));
+		}else if(loanType.equals(PennantConstants.FIN_DIVISION_COMMERCIAL)){
+			filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_BANK, Filter.OP_EQUAL));
+		}
+		map.put("filtersList", filterList);
+		
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+
+		logger.debug("Leaving");
+	}
+	
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		Customer customer = (Customer) nCustomer;
+		if(customer != null){
+			this.custID.setValue(customer.getCustID());
+			this.lovDescCustCIF.setValue(customer.getCustCIF());
+			this.custShrtName.setValue(customer.getCustShrtName());
+			this.finBranch = customer.getCustDftBranch();
+			BeanUtils.copyProperties(customer, wifcustomer);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * To set the customer id from Customer filter
+	 * 
+	 * @param nCustomer
+	 * @throws InterruptedException
+	 */
+	public void onChange$lovDescCustCIF(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		
+		ArrayList<Filter> filterList = new ArrayList<Filter>();
+		if(loanType.equals(PennantConstants.FIN_DIVISION_RETAIL)){
+			//filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_INDIVIDUAL, Filter.OP_EQUAL));
+		}else if(loanType.equals(PennantConstants.FIN_DIVISION_FACILITY)){
+			filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_INDIVIDUAL, Filter.OP_NOT_EQUAL));
+		}else if(loanType.equals(PennantConstants.FIN_DIVISION_COMMERCIAL)){
+			filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_BANK, Filter.OP_EQUAL));
+		}
+
+		this.lovDescCustCIF.clearErrorMessage();
+		Customer customer = (Customer)PennantAppUtil.getCustomerObject(this.lovDescCustCIF.getValue(), filterList);
+
+		if (customer != null) {
+			this.custID.setValue(customer.getCustID());
+			this.lovDescCustCIF.setValue(String.valueOf(customer.getCustCIF()));
+			this.custShrtName.setValue(customer.getCustShrtName());
+			BeanUtils.copyProperties(customer, wifcustomer);
+		} else {
+			this.custID.setValue(Long.valueOf(0));
+			throw new WrongValueException(this.lovDescCustCIF, Labels.getLabel("FIELD_NO_INVALID", 
+					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_CustID.value") }));
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onCheck$custType(Event event){
+		this.customerRow.setVisible(false);
+		if(this.custType.getSelectedItem() != null){
+			if(this.custType.getSelectedIndex() == 1){
+				this.customerRow.setVisible(true);
+			}
+		}
+	}
+	
 	/**
 	 * when the "close" button is clicked. <br>
 	 * 
@@ -241,52 +375,11 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 	 * 
 	 * @param event
 	 */
-	public void onClick$btnSelect(Event event) throws InterruptedException {
+	public void onClick$btnProceed(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		fillFinanceDetails();
 		logger.debug("Leaving" + event.toString());
 	}    
-
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
-
-	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
-		this.financeTypeService = financeTypeService;
-	}
-
-	public FinanceTypeService getFinanceTypeService() {
-		return this.financeTypeService;
-	}
-
-	public JdbcSearchObject<FinanceType> getSearchObj() {
-		return this.searchObj;
-	}
-
-	public void setSearchObj(JdbcSearchObject<FinanceType> searchObj) {
-		this.searchObj = searchObj;
-	}
-	
-	/**
-	 * @return the financeDetail
-	 */
-	public FinanceDetail getFinanceDetail() {
-		return financeDetail;
-	}
-
-	/**
-	 * @param financeDetail the financeDetail to set
-	 */
-	public void setFinanceDetail(FinanceDetail financeDetail) {
-		this.financeDetail = financeDetail;
-	}
 
 	/**
 	 * Method to invoke filldata method in WIFFinanceMain dialog control.
@@ -294,20 +387,106 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 	 * **/
 	private void fillFinanceDetails() throws InterruptedException {
 		logger.debug("Entering");
-		final Listitem item = this.listBoxFinanceType.getSelectedItem();
-		if(item==null){
-			throw new WrongValueException(this.listBoxFinanceType,Labels.getLabel("STATIC_INVALID",new String[] {""}));	    
-		} else if(this.wifFinanceMainDialogCtrl!=null){
-			this.financeDetail = new FinanceDetail();
-			this.financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain(),(FinanceType)item.getAttribute("data"));
-			this.financeDetail.getFinScheduleData().setFinanceType((FinanceType)item.getAttribute("data"));
+		if(this.wifFinanceMainDialogCtrl!=null){
+			
+			if(StringUtils.trimToEmpty(this.finType.getValue()).equals("")){
+				throw new WrongValueException(this.finType,"Finance Type must be selected.");
+			}
+			if(this.custType.getSelectedIndex() == 1 && this.custID.longValue() == 0){
+				throw new WrongValueException(this.btnSearchCustCIF,"Customer must be select from Existing Customer");
+			}
+			
+			String repayFrq = financeType.getFinRpyFrq();
+			financeType.setFinGrcDftIntFrq(repayFrq);
+			financeType.setFinGrcCpzFrq(repayFrq);
+			financeType.setFinGrcRvwFrq(repayFrq);
+			financeType.setFinDftIntFrq(repayFrq);
+			financeType.setFinRvwFrq(repayFrq);
+			financeType.setFinCpzFrq(repayFrq);
+			financeType.setFinRepayPftOnFrq(false);
+			
+			FinanceMain financeMain = this.financeDetail.getFinScheduleData().getFinanceMain();
+			if(this.financeDetail == null){
+				this.financeDetail = new FinanceDetail();
+				financeMain = new FinanceMain();
+			}
+			this.financeDetail.getFinScheduleData().setFinanceMain(financeMain,financeType);
+			this.financeDetail.getFinScheduleData().setFinanceType(financeType);
 			this.financeDetail.setNewRecord(true);
+			this.financeDetail.getFinScheduleData().getFinanceMain().setAllowGrcPeriod(false);
+			
+			//Fetch Fee Charge Details List
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			this.financeDetail.setFeeCharges(getFinanceDetailService().getFeeRuleDetails(this.financeDetail.getFinScheduleData().getFinanceType(), 
+					curBussDate, true));	
+			
+			boolean newCust = false;
+			if(this.custType.getSelectedIndex() == 0){
+				newCust = true;
+				wifcustomer.setNewRecord(true);
+				PFSParameter parameter = SystemParameterDetails.getSystemParameterObject("APP_DFT_CURR");
+				wifcustomer.setCustBaseCcy(parameter.getSysParmValue().trim());
+				wifcustomer.setLovDescCustBaseCcyName(parameter.getSysParmDescription());
+				parameter = SystemParameterDetails.getSystemParameterObject("APP_DFT_NATION");
+				wifcustomer.setCustNationality(parameter.getSysParmValue().trim());
+				wifcustomer.setLovDescCustNationalityName(parameter.getSysParmDescription());
+				wifcustomer.setCustTypeCode("EA");
+				wifcustomer.setLovDescCustTypeCodeName("Individual");
+				wifcustomer.setCustCtgCode("INDV");
+				wifcustomer.setLovDescCustCtgCodeName("Individual");
+			}
+			
+			Map<String, BigDecimal> incomeDetailMap = null;
+			if(!newCust && loanType.equals(PennantConstants.FIN_DIVISION_RETAIL)){
+				incomeDetailMap = getCustomerIncomeService().getCustomerIncomeByCustomer(wifcustomer.getCustID(), false);
+				wifcustomer.setExistCustID(wifcustomer.getCustID());
+				wifcustomer.setCustID(0);
+				wifcustomer.setNewRecord(true);
+			}
+			
 			final HashMap<String, Object> map = new HashMap<String, Object>();
+			
+			if(loanType.equals(PennantConstants.FIN_DIVISION_RETAIL)){
+				wifcustomer.setCustomerIncomeList(getFinanceDetailService().prepareIncomeDetails());
+				this.financeDetail.setCustomer(wifcustomer);
+				
+				financeDetail.setElgRuleList(getEligibilityDetailService().setFinanceEligibilityDetails("", financeType.getFinCcy(),
+						BigDecimal.ZERO, true, financeType.getFinType(), null));
+				
+				getScoringDetailService().setFinanceScoringDetails(financeDetail, 
+						this.finType.getValue(), null, wifcustomer.getLovDescCustCtgType());
+				
+				map.put("incomeDetailMap",incomeDetailMap);
+			}else if(loanType.equals(PennantConstants.FIN_DIVISION_FACILITY)){
+				this.financeDetail.getFinScheduleData().getFinanceMain().setCustID(this.custID.longValue());
+				this.financeDetail.getFinScheduleData().getFinanceMain().setLovDescCustCIF(this.lovDescCustCIF.getValue());
+				this.financeDetail.getFinScheduleData().getFinanceMain().setLovDescCustShrtName(this.custShrtName.getValue());
+				this.financeDetail.getFinScheduleData().getFinanceMain().setFinBranch(finBranch);
+				
+				IndicativeTermDetail termDetail = new IndicativeTermDetail();
+				termDetail.setCustId(this.custID.longValue());
+				termDetail.setLovDescCustCIF(this.lovDescCustCIF.getValue());
+				termDetail.setLovDescCustShrtName(this.custShrtName.getValue());
+				termDetail.setNewRecord(true);
+				termDetail.setWorkflowId(0);
+				this.financeDetail.setIndicativeTermDetail(termDetail);
+			}
+			
 			map.put("wIFFinanceMainListCtrl", this.wIFFinanceMainListCtrl);
 			map.put("financeDetail",this.financeDetail);
+			map.put("loanType",this.loanType);
+			
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				Executions.createComponents("/WEB-INF/pages/Finance/WIFFinanceMain/WIFFinanceMainDialog.zul",null,map);
+				String productType = this.loanType;
+				if(!productType.equals("")){
+					if(!productType.equals(PennantConstants.FIN_DIVISION_RETAIL)){
+						productType = "";
+					}else{
+						productType = (productType.substring(0, 1)).toUpperCase()+(productType.substring(1)).toLowerCase();
+					}
+				}
+				Executions.createComponents("/WEB-INF/pages/Finance/WIFFinanceMain/"+productType+"WIFFinanceMainDialog.zul",null,map);
 			} catch (final Exception e) {
 				logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 				PTMessageUtils.showErrorMessage(e.toString());
@@ -316,4 +495,45 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 		doClose();	
 		logger.debug("Leaving");
 	}
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public CustomerIncomeService getCustomerIncomeService() {
+		return customerIncomeService;
+	}
+	public void setCustomerIncomeService(CustomerIncomeService customerIncomeService) {
+		this.customerIncomeService = customerIncomeService;
+	}
+
+	public EligibilityDetailService getEligibilityDetailService() {
+		return eligibilityDetailService;
+	}
+	public void setEligibilityDetailService(
+			EligibilityDetailService eligibilityDetailService) {
+		this.eligibilityDetailService = eligibilityDetailService;
+	}
+
+	public ScoringDetailService getScoringDetailService() {
+		return scoringDetailService;
+	}
+	public void setScoringDetailService(ScoringDetailService scoringDetailService) {
+		this.scoringDetailService = scoringDetailService;
+	}
+	
 }

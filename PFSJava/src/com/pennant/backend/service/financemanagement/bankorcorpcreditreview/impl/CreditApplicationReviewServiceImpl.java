@@ -1,7 +1,7 @@
 package com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,22 +10,29 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
+import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditReviewSummaryDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevType;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.customermasters.CustomerDocumentService;
+import com.pennant.backend.service.customermasters.FinCreditRevSubCategoryService;
+import com.pennant.backend.service.customermasters.validation.CustomerDocumentValidation;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -39,56 +46,16 @@ CreditApplicationReviewService {
 	private CreditApplicationReviewDAO creditApplicationReviewDAO;
 	private CreditReviewSummaryDAO creditReviewSummaryDAO;
 	private CurrencyDAO currencyDAO;
-
+	private FinCreditRevSubCategoryService finCreditRevSubCategoryService;
+	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
+	
+	private CustomerDocumentValidation customerDocumentValidation;
+	private CustomerDocumentService customerDocumentService;
+	private CustomerDocumentDAO customerDocumentDAO;
+	private NotesDAO notesDAO;
+	List<CustomerDocument> docsList;
 	private CreditReviewSummaryEntryValidation creditReviewSummaryEntryValidation;
-
-
-	public void setCreditApplicationReviewDAO(CreditApplicationReviewDAO creditApplicationReviewDAO) {
-		this.creditApplicationReviewDAO = creditApplicationReviewDAO;
-	}
-
-	public CreditApplicationReviewDAO getCreditApplicationReviewDAO() {
-		return creditApplicationReviewDAO;
-	}
-	public CreditReviewSummaryDAO getCreditReviewSummaryDAO() {
-		return creditReviewSummaryDAO;
-	}
-
-	public void setCreditReviewSummaryDAO(CreditReviewSummaryDAO creditReviewSummaryDAO) {
-		this.creditReviewSummaryDAO = creditReviewSummaryDAO;
-	}
-
-	@Override
-	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCode(String creditRevCode) {
-
-		return this.creditApplicationReviewDAO.getCreditRevCategoryByCreditRevCode(creditRevCode);
-	}
-
-	@Override
-	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId) {
-		return this.creditApplicationReviewDAO.getFinCreditRevSubCategoryByCategoryId(categoryId);
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-
-
-
-	@Override
-	public FinCreditReviewDetails getCreditReviewDetails() {
-		return getCreditApplicationReviewDAO().getCreditReviewDetails();
-	}
-
-	@Override
-	public FinCreditReviewDetails getNewCreditReviewDetails() {
-		return getCreditApplicationReviewDAO().getNewCreditReviewDetails();
-	}
-
+	private String excludeFields = "auditYear,remarks,creditRevCode, ";
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
 	 * validation by using businessValidation(auditHeader) method if there is
@@ -130,12 +97,27 @@ CreditApplicationReviewService {
 			getCreditApplicationReviewDAO().update(creditReviewDetails, tableType);
 		}
 
+		if (creditReviewDetails.getLovDescFinCreditRevSubCategory() != null && creditReviewDetails.getLovDescFinCreditRevSubCategory().size() > 0) {
+			List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("FinCreditReviewSubCategory");
+			details = processCreditReviewSubCategory(details, creditReviewDetails.getDetailId(), "");
+			if(auditDetails.addAll(details)){
+				finCreditRevSubCategoryDAO.updateSubCategories(creditReviewDetails.getLovDescFinCreditRevSubCategory());
+			}
+		}
 		if (creditReviewDetails.getCreditReviewSummaryEntries() != null && creditReviewDetails.getCreditReviewSummaryEntries().size() > 0) {
 			List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("FinCreditReviewSummary");
 			details = processCreditReviewSummary(details, creditReviewDetails.getDetailId(), tableType);
 			auditDetails.addAll(details);
 		}
-
+		
+		if (creditReviewDetails.getCustomerDocumentList() != null && creditReviewDetails.getCustomerDocumentList().size() > 0) {
+			List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("CustomerDocuments");
+			details = processCustomerDocuments(details, creditReviewDetails.getDetailId(), "");
+			auditDetails.addAll(details);
+		}
+		saveNotes(creditReviewDetails.getNotesList(), creditReviewDetails);
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, creditReviewDetails.getBefImage(), creditReviewDetails));
+		
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -144,6 +126,13 @@ CreditApplicationReviewService {
 
 	}
 
+	
+	public void saveNotes(List<Notes> notesList, FinCreditReviewDetails creditReviewDetails){
+		for(Notes notes : notesList){
+			notes.setReference(String.valueOf(creditReviewDetails.getDetailId()));
+			getNotesDAO().save(notes);
+		}
+	}
 	/**
 	 * delete method do the following steps. 1) Do the Business validation by
 	 * using businessValidation(auditHeader) method if there is any error or
@@ -168,8 +157,12 @@ CreditApplicationReviewService {
 
 		FinCreditReviewDetails creditReviewDetails = (FinCreditReviewDetails) auditHeader.getAuditDetail().getModelData();
 		getCreditApplicationReviewDAO().delete(creditReviewDetails, "");
-
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(creditReviewDetails, "", auditHeader.getAuditTranType())));
+		
+		for(Notes notes : creditReviewDetails.getNotesList()){
+			getNotesDAO().deleteAllNotes(notes);
+		}
+		
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(creditReviewDetails, "", auditHeader.getAuditTranType()))); 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -279,10 +272,25 @@ CreditApplicationReviewService {
 				creditReviewDetails.setRecordType("");
 				getCreditApplicationReviewDAO().update(creditReviewDetails, "");
 			}
+			
+			
+			
 
+			if (creditReviewDetails.getLovDescFinCreditRevSubCategory() != null && creditReviewDetails.getLovDescFinCreditRevSubCategory().size() > 0) {
+				List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("FinCreditReviewSubCategory");
+				details = processCreditReviewSubCategory(details, creditReviewDetails.getDetailId(), "");
+				auditDetails.addAll(details);
+			}
+			
 			if (creditReviewDetails.getCreditReviewSummaryEntries() != null && creditReviewDetails.getCreditReviewSummaryEntries().size() > 0) {
 				List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("FinCreditReviewSummary");
 				details = processCreditReviewSummary(details, creditReviewDetails.getDetailId(), "");
+				auditDetails.addAll(details);
+			}
+			
+			if (creditReviewDetails.getCustomerDocumentList() != null && creditReviewDetails.getCustomerDocumentList().size() > 0) {
+				List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("CustomerDocuments");
+				details = processCustomerDocuments(details, creditReviewDetails.getDetailId(), "");
 				auditDetails.addAll(details);
 			}
 		}
@@ -290,7 +298,7 @@ CreditApplicationReviewService {
 		getCreditApplicationReviewDAO().delete(creditReviewDetails, "_TEMP");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(creditReviewDetails, "_TEMP", auditHeader.getAuditTranType())));
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, creditReviewDetails.getBefImage(), creditReviewDetails));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(),1, creditReviewDetails.getBefImage(), creditReviewDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
@@ -330,7 +338,6 @@ CreditApplicationReviewService {
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getCreditApplicationReviewDAO().delete(creditReviewDetails, "_TEMP");
-
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, creditReviewDetails.getBefImage(), creditReviewDetails));
 		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(creditReviewDetails, "_TEMP", auditHeader.getAuditTranType())));
 
@@ -365,10 +372,22 @@ CreditApplicationReviewService {
 		FinCreditReviewDetails creditReviewDetails = (FinCreditReviewDetails) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = creditReviewDetails.getUserDetails().getUsrLanguage();
 
-		// FeeTier Validation
+		// FeeTier Validation        
+		if (creditReviewDetails.getLovDescFinCreditRevSubCategory() != null && creditReviewDetails.getLovDescFinCreditRevSubCategory().size() > 0) {
+			List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("FinCreditReviewSubCategory");
+			details = getFinCreditRevSubCategoryService().finCreditRevSubCategoryListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+		
 		if (creditReviewDetails.getCreditReviewSummaryEntries() != null && creditReviewDetails.getCreditReviewSummaryEntries().size() > 0) {
 			List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("FinCreditReviewSummary");
 			details = getCreditReviewSummaryEntryValidation().creditReviewSummaryListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+		
+		if (creditReviewDetails.getCustomerDocumentList() != null && creditReviewDetails.getCustomerDocumentList().size() > 0) {
+			List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("CustomerDocuments");
+			details = documentListValidation(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
 
@@ -381,6 +400,123 @@ CreditApplicationReviewService {
 		return auditHeader;
 	}
 
+	
+public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, String method,String  usrLanguage){
+		
+		if(auditDetails!=null && auditDetails.size()>0){
+			List<AuditDetail> details = new ArrayList<AuditDetail>();
+			for (int i = 0; i < auditDetails.size(); i++) {
+				AuditDetail auditDetail =   validateDocs(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail); 		
+			}
+			return details;
+		}
+		return new ArrayList<AuditDetail>();
+	}
+	
+	
+
+	private AuditDetail validateDocs(AuditDetail auditDetail, String method, String usrLanguage) {
+
+		CustomerDocument customerDocument = (CustomerDocument) auditDetail.getModelData();
+		CustomerDocument tempCustomerDocument = null;
+		if (customerDocument.isWorkflow()) {
+			tempCustomerDocument = getCustomerDocumentDAO().getCustomerDocumentById(
+			        customerDocument.getId(), customerDocument.getCustDocCategory(), "");
+		}
+
+		CustomerDocument befCustomerDocument = getCustomerDocumentDAO().getCustomerDocumentById(
+		        customerDocument.getId(), customerDocument.getCustDocCategory(), "");
+
+		CustomerDocument old_CustomerDocument = customerDocument.getBefImage();
+
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
+
+		valueParm[0] = String.valueOf(customerDocument.getCustID());
+		valueParm[1] = customerDocument.getCustDocCategory();
+
+		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustDocType") + ":" + valueParm[1];
+
+		if (customerDocument.isNew()) { // for New record or new record into
+			// work flow
+
+			if (!customerDocument.isWorkflow()) {// With out Work flow only new
+				// records
+				if (befCustomerDocument != null) { // Record Already Exists in
+					// the table then error
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					        "41001", errParm, null));
+				}
+			} else { // with work flow
+
+				if (customerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+					// is new
+					if (befCustomerDocument != null || tempCustomerDocument != null) {
+						//if records already exists in the main table
+						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						        "41001", errParm, null));
+					}
+				} else { // if records not exists in the Main flow table
+					if (befCustomerDocument == null || tempCustomerDocument != null) {
+						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						        "41005", errParm, null));
+					}
+				}
+			}
+		} else {
+			// for work flow process records or (Record to update or Delete with
+			// out work flow)
+			if (!customerDocument.isWorkflow()) { // With out Work flow for
+				// update and delete
+
+				if (befCustomerDocument == null) { // if records not exists in
+					// the main table
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					        "41002", errParm, null));
+				}
+
+				if (old_CustomerDocument != null
+				        && !old_CustomerDocument.getLastMntOn().equals(
+				                befCustomerDocument.getLastMntOn())) {
+					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
+					        PennantConstants.TRAN_DEL)) {
+						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						        "41003", errParm, null));
+					} else {
+						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						        "41004", errParm, null));
+					}
+				}
+			} else {
+
+				if (tempCustomerDocument == null) { // if records not exists in
+					// the Work flow table
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					        "41005", errParm, null));
+				}
+
+				if (tempCustomerDocument != null
+				        && old_CustomerDocument != null
+				        && !old_CustomerDocument.getLastMntOn().equals(
+				                tempCustomerDocument.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+					        "41005", errParm, null));
+				}
+			}
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(),
+		        usrLanguage));
+
+		if (StringUtils.trimToEmpty(method).equals("doApprove") || !customerDocument.isWorkflow()) {
+			customerDocument.setBefImage(befCustomerDocument);
+		}
+		return auditDetail;
+	}
+
+	
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
@@ -456,7 +592,6 @@ CreditApplicationReviewService {
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !creditReviewDetails.isWorkflow()) {
 			creditReviewDetails.setBefImage(befCreditReviewDetails);
 		}
-
 		return auditDetail;
 	}
 
@@ -484,10 +619,20 @@ CreditApplicationReviewService {
 		}
 
 		if (creditReviewDetails.getCreditReviewSummaryEntries() != null && creditReviewDetails.getCreditReviewSummaryEntries().size() > 0) {
+			auditDetailMap.put("FinCreditReviewSubCategory", setCreditReviewSubCategoryAuditData(creditReviewDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("FinCreditReviewSubCategory"));
+		}
+		
+		if (creditReviewDetails.getCreditReviewSummaryEntries() != null && creditReviewDetails.getCreditReviewSummaryEntries().size() > 0) {
 			auditDetailMap.put("FinCreditReviewSummary", setCreditReviewSummaryAuditData(creditReviewDetails, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinCreditReviewSummary"));
 		}
-
+		
+		if (creditReviewDetails.getCustomerDocumentList() != null && creditReviewDetails.getCustomerDocumentList().size() > 0) {
+			auditDetailMap.put("CustomerDocuments", setCustomerAuditData(creditReviewDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustomerDocuments"));
+		}
+		
 		creditReviewDetails.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(creditReviewDetails);
 		auditHeader.setAuditDetails(auditDetails);
@@ -508,12 +653,12 @@ CreditApplicationReviewService {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinCreditReviewSummary());
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinCreditReviewSummary(),excludeFields);
 
 		for (int i = 0; i < creditReviewDetails.getCreditReviewSummaryEntries().size(); i++) {
 
 			FinCreditReviewSummary creditReviewSummaryEntry = creditReviewDetails.getCreditReviewSummaryEntries().get(i);
-			creditReviewSummaryEntry.setWorkflowId(creditReviewDetails.getWorkflowId());
+			//creditReviewSummaryEntry.setWorkflowId(creditReviewDetails.getWorkflowId());
 			creditReviewSummaryEntry.setDetailId(creditReviewDetails.getDetailId());
 
 
@@ -527,7 +672,7 @@ CreditApplicationReviewService {
 					isRcdType = true;
 				} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					isRcdType = true;
+					//isRcdType = true;
 				}
 
 				if (method.equals("saveOrUpdate") && (isRcdType == true)) {
@@ -556,7 +701,221 @@ CreditApplicationReviewService {
 		logger.debug("Leaving");
 		return auditDetails;
 	}
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setCustomerAuditData(FinCreditReviewDetails creditReviewDetails, String auditTranType, String method) {
+		logger.debug("Entering");
+		
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String[] fields = PennantJavaUtil.getFieldDetails(new CustomerDocument(),excludeFields);
+		
+		for (int i = 0; i < creditReviewDetails.getCustomerDocumentList().size(); i++) {
+			
+			CustomerDocument customerDocument = creditReviewDetails.getCustomerDocumentList().get(i);
+			customerDocument.setWorkflowId(creditReviewDetails.getWorkflowId());
+			//finCreditRevSubCategory.setDetailId(creditReviewDetails.getDetailId());
+			
+			
+			boolean isRcdType = false;
+			if(customerDocument.getRecordType()!=null){
+				if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					isRcdType = true;
+				} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					isRcdType = true;
+				} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					//isRcdType = true;
+				}
+				
+				if (method.equals("saveOrUpdate") && (isRcdType == true)) {
+					customerDocument.setNewRecord(true);
+				}
+				
+				if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+					if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						auditTranType = PennantConstants.TRAN_ADD;
+					} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+							|| customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						auditTranType = PennantConstants.TRAN_DEL;
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+					}
+				}
+				customerDocument.setRecordStatus(creditReviewDetails.getRecordStatus());
+				customerDocument.setUserDetails(creditReviewDetails.getUserDetails());
+				customerDocument.setLastMntOn(creditReviewDetails.getLastMntOn());
+				
+				if (!StringUtils.trimToEmpty(customerDocument.getRecordType()).equals("")) {
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerDocument.getBefImage(), customerDocument));
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setCreditReviewSubCategoryAuditData(FinCreditReviewDetails creditReviewDetails, String auditTranType, String method) {
+		logger.debug("Entering");
+		
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinCreditRevSubCategory(),excludeFields);
 
+		for (int i = 0; i < creditReviewDetails.getLovDescFinCreditRevSubCategory().size(); i++) {
+			
+			FinCreditRevSubCategory finCreditRevSubCategory = creditReviewDetails.getLovDescFinCreditRevSubCategory().get(i);
+			finCreditRevSubCategory.setWorkflowId(creditReviewDetails.getWorkflowId());
+			//finCreditRevSubCategory.setDetailId(creditReviewDetails.getDetailId());
+			
+			
+			boolean isRcdType = false;
+			if(finCreditRevSubCategory.getRecordType()!=null){
+				if (finCreditRevSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					finCreditRevSubCategory.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					isRcdType = true;
+				} else if (finCreditRevSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					finCreditRevSubCategory.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					isRcdType = true;
+				} else if (finCreditRevSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					finCreditRevSubCategory.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					//isRcdType = true;
+				}
+				
+				if (method.equals("saveOrUpdate") && (isRcdType == true)) {
+					finCreditRevSubCategory.setNewRecord(true);
+				}
+				
+				if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+					if (finCreditRevSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						auditTranType = PennantConstants.TRAN_ADD;
+					} else if (finCreditRevSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+							|| finCreditRevSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						auditTranType = PennantConstants.TRAN_DEL;
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+					}
+				}
+				finCreditRevSubCategory.setRecordStatus(creditReviewDetails.getRecordStatus());
+				finCreditRevSubCategory.setUserDetails(creditReviewDetails.getUserDetails());
+				finCreditRevSubCategory.setLastMntOn(creditReviewDetails.getLastMntOn());
+				
+				if (!StringUtils.trimToEmpty(finCreditRevSubCategory.getRecordType()).equals("")) {
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finCreditRevSubCategory.getBefImage(), finCreditRevSubCategory));
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	/**
+	 * Method For Preparing List of AuditDetails for Customer Ratings
+	 * 
+	 * @param auditDetails
+	 * @param type
+	 * @param custId
+	 * @return
+	 */
+	private List<AuditDetail> processCreditReviewSubCategory(List<AuditDetail> auditDetails, long detailId, String type) {
+		logger.debug("Entering");
+		
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+		
+		for (int i = 0; i < auditDetails.size(); i++) {
+			
+			FinCreditRevSubCategory creditReviewSubCategory = (FinCreditRevSubCategory) auditDetails.get(i).getModelData();
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (type.equals("")) {
+				approveRec = true;
+				creditReviewSubCategory.setRoleCode("");
+				creditReviewSubCategory.setNextRoleCode("");
+				creditReviewSubCategory.setTaskId("");
+				creditReviewSubCategory.setNextTaskId("");
+			}
+						
+			if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (creditReviewSubCategory.isNewRecord()) {
+				saveRecord = true;
+				if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					creditReviewSubCategory.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					creditReviewSubCategory.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					creditReviewSubCategory.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+			} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (creditReviewSubCategory.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			creditReviewSubCategory.setWorkflowId(0);
+
+			
+			if (approveRec) {
+				rcdType = creditReviewSubCategory.getRecordType();
+				recordStatus = creditReviewSubCategory.getRecordStatus();
+				creditReviewSubCategory.setRecordType("");
+				creditReviewSubCategory.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			
+			if (saveRecord) {
+				finCreditRevSubCategoryDAO.save(creditReviewSubCategory, type);
+			}
+			
+			if (updateRecord) {
+				finCreditRevSubCategoryDAO.update(creditReviewSubCategory, type);
+			}
+			
+			if (deleteRecord) {
+				finCreditRevSubCategoryDAO.delete(creditReviewSubCategory, type);
+			}
+			
+			if (approveRec) {
+				creditReviewSubCategory.setRecordType(rcdType);
+				creditReviewSubCategory.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(creditReviewSubCategory);
+		}
+		
+		logger.debug("Leaving");
+		return auditDetails;
+		
+	}
 	/**
 	 * Method For Preparing List of AuditDetails for Customer Ratings
 	 * 
@@ -590,8 +949,6 @@ CreditApplicationReviewService {
 				creditReviewSummaryEntry.setTaskId("");
 				creditReviewSummaryEntry.setNextTaskId("");
 			}
-
-			creditReviewSummaryEntry.setWorkflowId(0);
 
 			if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
@@ -652,6 +1009,97 @@ CreditApplicationReviewService {
 		return auditDetails;
 
 	}
+	/**
+	 * Method For Preparing List of AuditDetails for Customer Ratings
+	 * 
+	 * @param auditDetails
+	 * @param type
+	 * @param custId
+	 * @return
+	 */
+	private List<AuditDetail> processCustomerDocuments(List<AuditDetail> auditDetails, long detailId, String type) {
+		logger.debug("Entering");
+		
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+		
+		for (int i = 0; i < auditDetails.size(); i++) {
+			
+			CustomerDocument customerDocument = (CustomerDocument) auditDetails.get(i).getModelData();
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (type.equals("")) {
+				approveRec = true;
+				customerDocument.setRoleCode("");
+				customerDocument.setNextRoleCode("");
+				customerDocument.setTaskId("");
+				customerDocument.setNextTaskId("");
+			}
+			if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (customerDocument.isNewRecord()) {
+				saveRecord = true;
+				if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+			} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (customerDocument.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			customerDocument.setWorkflowId(0);
+			if (approveRec) {
+				rcdType = customerDocument.getRecordType();
+				recordStatus = customerDocument.getRecordStatus();
+				customerDocument.setRecordType("");
+				customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			
+			if (saveRecord) {
+				customerDocumentDAO.save(customerDocument, type);
+			}
+			
+			if (updateRecord) {
+				customerDocumentDAO.update(customerDocument, type);
+			}
+			
+			if (deleteRecord) {
+				customerDocumentDAO.delete(customerDocument, type);
+			}
+			
+			if (approveRec) {
+				customerDocument.setRecordType(rcdType);
+				customerDocument.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(customerDocument);
+		}
+		
+		logger.debug("Leaving");
+		return auditDetails;
+		
+	}
 
 	/**
 	 * Method deletion of creditReviewSummary list with existing fee type
@@ -662,11 +1110,22 @@ CreditApplicationReviewService {
 	public List<AuditDetail> listDeletion(FinCreditReviewDetails creditReviewDetails, String tableType, String auditTranType) {
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+		if (creditReviewDetails.getLovDescFinCreditRevSubCategory() != null && creditReviewDetails.getLovDescFinCreditRevSubCategory().size() > 0) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinCreditReviewSummary());
+			for (int i = 0; i < creditReviewDetails.getLovDescFinCreditRevSubCategory().size(); i++) {
+				FinCreditRevSubCategory finCreditRevSubCategory = creditReviewDetails.getLovDescFinCreditRevSubCategory().get(i);
+				if (!StringUtils.trimToEmpty(finCreditRevSubCategory.getRecordType()).equals("") || tableType.equals("")) {
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finCreditRevSubCategory.getBefImage(), finCreditRevSubCategory));
+				}
+				getFinCreditRevSubCategoryDAO().delete(finCreditRevSubCategory, tableType);
+			}
+		}
+		
 		if (creditReviewDetails.getCreditReviewSummaryEntries() != null && creditReviewDetails.getCreditReviewSummaryEntries().size() > 0) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinCreditReviewSummary());
 			for (int i = 0; i < creditReviewDetails.getCreditReviewSummaryEntries().size(); i++) {
 				FinCreditReviewSummary creditReviewSummary = creditReviewDetails.getCreditReviewSummaryEntries().get(i);
-				if (!creditReviewSummary.getRecordType().equals("") || tableType.equals("")) {
+				if (!StringUtils.trimToEmpty(creditReviewSummary.getRecordType()).equals("") || tableType.equals("")) {
 					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], creditReviewSummary.getBefImage(), creditReviewSummary));
 				}
 			}
@@ -690,26 +1149,47 @@ CreditApplicationReviewService {
 
 		if (list != null & list.size() > 0) {
 
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinCreditReviewSummary(),excludeFields);
+			String[] fields1 = PennantJavaUtil.getFieldDetails(new FinCreditRevSubCategory(),excludeFields);
 			for (int i = 0; i < list.size(); i++) {
 
 				String transType = "";
 				String rcdType = "";
-				FinCreditReviewSummary creditReviewSummaryEntry = (FinCreditReviewSummary) ((AuditDetail) list.get(i)).getModelData();
+				
+				if(list.get(i).getModelData()instanceof FinCreditRevSubCategory) {
+					FinCreditRevSubCategory finCreditRevSubCategory = (FinCreditRevSubCategory) ((AuditDetail) list.get(i)).getModelData();
+					rcdType = finCreditRevSubCategory.getRecordType();
 
-				rcdType = creditReviewSummaryEntry.getRecordType();
+					if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						transType = PennantConstants.TRAN_ADD;
+					} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) || rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						transType = PennantConstants.TRAN_DEL;
+					} else {
+						transType = PennantConstants.TRAN_UPD;
+					}
+					
+					if (!(transType.equals(""))) {
+						// check and change below line for Complete code
+						auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),fields1[0],fields1[1], finCreditRevSubCategory.getBefImage(), finCreditRevSubCategory));
+					}
+					
+				}else if(list.get(i).getModelData()instanceof FinCreditReviewSummary) {
+					FinCreditReviewSummary creditReviewSummaryEntry = (FinCreditReviewSummary) ((AuditDetail) list.get(i)).getModelData();
+					rcdType = creditReviewSummaryEntry.getRecordType();
 
-				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					transType = PennantConstants.TRAN_ADD;
-				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) || rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					transType = PennantConstants.TRAN_DEL;
-				} else {
-					transType = PennantConstants.TRAN_UPD;
-				}
-
-				if (!(transType.equals(""))) {
-					// check and change below line for Complete code
-					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), creditReviewSummaryEntry.getBefImage(), creditReviewSummaryEntry));
-				}
+					if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+						transType = PennantConstants.TRAN_ADD;
+					} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) || rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						transType = PennantConstants.TRAN_DEL;
+					} else {
+						transType = PennantConstants.TRAN_UPD;
+					}
+					
+					if (!(transType.equals(""))) {
+						// check and change below line for Complete code
+						auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),fields[0],fields[1], creditReviewSummaryEntry.getBefImage(), creditReviewSummaryEntry));
+					}
+				} 
 			}
 		}
 		logger.debug("Leaving");
@@ -749,23 +1229,108 @@ CreditApplicationReviewService {
 
 	@Override
 	public Map<String, List<FinCreditReviewSummary>> getListCreditReviewSummaryByCustId(long id,
-			int noOfYears,int year) {
+			int noOfYears,int year, String type) {
 		logger.debug("Entering");
 		Map<String, List<FinCreditReviewSummary>> map = new LinkedHashMap<String, List<FinCreditReviewSummary>>();
-		//Calendar calender = Calendar.getInstance();
-		//int year =DateUtility.getYear(calender.getTime());
-		//int year =DateUtility.getYear(calender.getTime());
-		
 		for(int i=noOfYears;i>=1;i--){
-			map.put(String.valueOf(year-i), this.creditReviewSummaryDAO.getListCreditReviewSummaryByYearAndCustId(id, String.valueOf(year-i)));
+			map.put(String.valueOf(year-i+1), this.creditReviewSummaryDAO.getListCreditReviewSummaryByYearAndCustId(id, String.valueOf(year-i+1), type));
+		}
+		logger.debug("Leaving");
+		return map;
+	}
+	
+	@Override
+	public Map<String, FinCreditReviewDetails> getListCreditReviewDetailsByCustId(long id,
+			int noOfYears,int year) {
+		logger.debug("Entering");
+		Map<String, FinCreditReviewDetails> map = new LinkedHashMap<String, FinCreditReviewDetails>();
+		for(int i=noOfYears;i>=1;i--){
+			map.put(String.valueOf(year-i+1), this.creditReviewSummaryDAO.getCreditReviewDetailsByYearAndCustId(id, String.valueOf(year-i+1), "_View"));
 		}
 		logger.debug("Leaving");
 		return map;
 	}
 
+	
+	
 	@Override
-    public int isCreditSummaryExists(long custID, String auditYear) {
-	    return this.creditApplicationReviewDAO.isCreditSummaryExists(custID, auditYear);
+	public Map<String, List<FinCreditReviewSummary>> getListCreditReviewSummaryByCustId2(long id,
+			int noOfYears,int year, String category, String type) {
+		logger.debug("Entering");
+		Map<String, List<FinCreditReviewSummary>> map = new LinkedHashMap<String, List<FinCreditReviewSummary>>();
+		//Calendar calender = Calendar.getInstance();
+		//int year =DateUtility.getYear(calender.getTime());
+		//int year =DateUtility.getYear(calender.getTime());
+		List<FinCreditReviewSummary> finCreditReviewSummaries;
+		for(int i=0;i<=noOfYears;i++){
+			finCreditReviewSummaries = this.creditReviewSummaryDAO.getListCreditReviewSummaryByYearAndCustId2(id, String.valueOf(year-i),category, type);
+			if((finCreditReviewSummaries != null && finCreditReviewSummaries.size() > 0 )){
+				map.put(String.valueOf(year-i),finCreditReviewSummaries );
+			}
+			if(i == noOfYears+1){
+				break;
+			}
+		}
+		
+		/*for(int i=noOfYears;i>=1;i--){
+		}*/
+		logger.debug("Leaving");
+		return map;
+	}
+	
+	@Override
+	public Map<String, List<FinCreditReviewSummary>> getListCreditReviewSummaryByCustId2(long id,
+			int noOfYears,int year, String category, int auditPeriod, boolean isCurrentYear, String type) {
+		logger.debug("Entering");
+		Map<String, List<FinCreditReviewSummary>> map = new LinkedHashMap<String, List<FinCreditReviewSummary>>();
+		//Calendar calender = Calendar.getInstance();
+		//int year =DateUtility.getYear(calender.getTime());
+		//int year =DateUtility.getYear(calender.getTime());
+		List<FinCreditReviewSummary> finCreditReviewSummaries;
+		for(int i=0;i<=noOfYears;i++){
+			finCreditReviewSummaries = this.creditReviewSummaryDAO.getListCreditReviewSummaryByYearAndCustId2(id, String.valueOf(year-i),category, auditPeriod, isCurrentYear, type);
+			if((finCreditReviewSummaries != null && finCreditReviewSummaries.size() > 0 )){
+				map.put(String.valueOf(year-i),finCreditReviewSummaries );
+			}
+			if(i == noOfYears+1){
+				break;
+			}
+		}
+		
+		/*for(int i=noOfYears;i>=1;i--){
+		}*/
+		logger.debug("Leaving");
+		return map;
+	}
+	
+	@Override
+	public String getMaxAuditYearByCustomerId(long customerId, String type){
+		return getCreditApplicationReviewDAO().getMaxAuditYearByCustomerId(customerId, type);
+	}
+
+    public BigDecimal getCcySpotRate(String ccyCode){
+    	return this.creditReviewSummaryDAO.getCcySpotRate(ccyCode);
+    }
+
+	
+	public int getCreditReviewAuditPeriodByAuditYear(final long customerId, final String auditYear, int auditPeriod, boolean isEnquiry, String type) {
+		return getCreditApplicationReviewDAO().getCreditReviewAuditPeriodByAuditYear(customerId, auditYear, auditPeriod, isEnquiry, type);
+	}
+
+	
+	public List<CustomerDocument> getCustomerDocumentsById(long id, String type){
+		docsList = new ArrayList<CustomerDocument>();
+		docsList =customerDocumentDAO.getCustomerDocumentByCustomerId(id);
+		return docsList;
+	}
+	
+	@Override
+	public FinCreditReviewDetails getCreditReviewDetailsByCustIdAndYear(final long customerId, String auditYear, String type){
+		  return this.creditApplicationReviewDAO.getCreditReviewDetailsByCustIdAndYear(customerId, auditYear, type);
+	}
+	@Override
+    public int isCreditSummaryExists(long custID, String auditYear, int auditPeriod) {
+	    return this.creditApplicationReviewDAO.isCreditSummaryExists(custID, auditYear, auditPeriod);
     }
 	
 	@Override
@@ -773,5 +1338,115 @@ CreditApplicationReviewService {
 	    return this.creditApplicationReviewDAO.getFinCreditRevSubCategoryByCategoryIdAndCalcSeq(categoryId);
     }
 	
+	@Override
+     public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByMainCategory(String category){
+		return this.creditApplicationReviewDAO.getFinCreditRevSubCategoryByMainCategory(category);
+	}
 	
+	@Override
+	public List<FinCreditReviewSummary> getLatestCreditReviewSummaryByCustId(long id) {
+		logger.debug("Entering");
+		logger.debug("Leaving");
+		return this.creditReviewSummaryDAO.getLatestCreditReviewSummaryByYearAndCustId(id);
+	}
+
+	@Override
+	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId, String subCategoryItemType) {
+		return this.creditApplicationReviewDAO.getFinCreditRevSubCategoryByCategoryId(categoryId, subCategoryItemType);
+	}
+
+
+	public void setCreditApplicationReviewDAO(CreditApplicationReviewDAO creditApplicationReviewDAO) {
+		this.creditApplicationReviewDAO = creditApplicationReviewDAO;
+	}
+
+	public CreditApplicationReviewDAO getCreditApplicationReviewDAO() {
+		return creditApplicationReviewDAO;
+	}
+	public CreditReviewSummaryDAO getCreditReviewSummaryDAO() {
+		return creditReviewSummaryDAO;
+	}
+
+	public void setCreditReviewSummaryDAO(CreditReviewSummaryDAO creditReviewSummaryDAO) {
+		this.creditReviewSummaryDAO = creditReviewSummaryDAO;
+	}
+
+	@Override
+	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCode(String creditRevCode) {
+
+		return this.creditApplicationReviewDAO.getCreditRevCategoryByCreditRevCode(creditRevCode);
+	}
+
+	@Override
+	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId) {
+		return this.creditApplicationReviewDAO.getFinCreditRevSubCategoryByCategoryId(categoryId);
+	}
+
+	public AuditHeaderDAO getAuditHeaderDAO() {
+		return auditHeaderDAO;
+	}
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Override
+	public FinCreditReviewDetails getCreditReviewDetails() {
+		return getCreditApplicationReviewDAO().getCreditReviewDetails();
+	}
+
+	@Override
+	public FinCreditReviewDetails getNewCreditReviewDetails() {
+		return getCreditApplicationReviewDAO().getNewCreditReviewDetails();
+	}
+
+	public FinCreditRevSubCategoryService getFinCreditRevSubCategoryService() {
+    	return finCreditRevSubCategoryService;
+    }
+
+	public void setCustomerDocumentValidation(CustomerDocumentValidation customerDocumentValidation) {
+	    this.customerDocumentValidation = customerDocumentValidation;
+    }
+
+	public CustomerDocumentValidation getCustomerDocumentValidation() {
+	    return customerDocumentValidation;
+    }
+
+	public void setFinCreditRevSubCategoryService(
+            FinCreditRevSubCategoryService finCreditRevSubCategoryService) {
+    	this.finCreditRevSubCategoryService = finCreditRevSubCategoryService;
+    }
+
+	public FinCreditRevSubCategoryDAO getFinCreditRevSubCategoryDAO() {
+    	return finCreditRevSubCategoryDAO;
+    }
+
+	public void setFinCreditRevSubCategoryDAO(FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO) {
+    	this.finCreditRevSubCategoryDAO = finCreditRevSubCategoryDAO;
+    }
+
+	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
+	    this.customerDocumentDAO = customerDocumentDAO;
+    }
+
+	public CustomerDocumentDAO getCustomerDocumentDAO() {
+	    return customerDocumentDAO;
+    }
+
+	public NotesDAO getNotesDAO() {
+    	return notesDAO;
+    }
+
+	public void setNotesDAO(NotesDAO notesDAO) {
+    	this.notesDAO = notesDAO;
+    }
+
+	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
+	    this.customerDocumentService = customerDocumentService;
+    }
+
+	public CustomerDocumentService getCustomerDocumentService() {
+	    return customerDocumentService;
+    }
+
+ 
 }

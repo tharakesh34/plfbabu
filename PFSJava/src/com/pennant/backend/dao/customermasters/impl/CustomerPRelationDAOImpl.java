@@ -121,7 +121,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 	@Override
 	public CustomerPRelation getCustomerPRelationByID(final long pRCustID,int pRCustPRSNo, String type) {
 		logger.debug("Entering");
-		CustomerPRelation customerPRelation = getCustomerPRelation();
+		CustomerPRelation customerPRelation = new CustomerPRelation();
 		customerPRelation.setId(pRCustID);
 		customerPRelation.setPRCustPRSNo(pRCustPRSNo);
 
@@ -237,7 +237,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 	public void deleteByCustomer(final long id,String type) {
 		logger.debug("Entering delete Method");
 		int recordCount = 0;
-		CustomerPRelation customerPRelation = getCustomerPRelation();
+		CustomerPRelation customerPRelation = new CustomerPRelation();
 		customerPRelation.setId(id);
 
 		StringBuilder deleteSql = new StringBuilder();
@@ -400,7 +400,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 	public List<CustomerPRelation> getCustomerPRelationByCustomer(long id,String type) {
 		logger.debug("Entering");
 		
-		CustomerPRelation customerPRelation = getCustomerPRelation();
+		CustomerPRelation customerPRelation = new CustomerPRelation();
 		customerPRelation.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select PRCustID, PRCustPRSNo, PRRelationCode," );

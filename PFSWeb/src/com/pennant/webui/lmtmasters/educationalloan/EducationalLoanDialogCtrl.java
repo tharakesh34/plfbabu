@@ -62,6 +62,7 @@ import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -69,10 +70,10 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
@@ -80,18 +81,16 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.amtmasters.Course;
-import com.pennant.backend.model.amtmasters.CourseType;
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.EducationalExpense;
@@ -99,17 +98,18 @@ import com.pennant.backend.model.lmtmasters.EducationalLoan;
 import com.pennant.backend.service.lmtmasters.EducationalLoanService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.lmtmasters.educationalexpense.model.EducationalExpenseListModelItemRenderer;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.pagging.PagedListWrapper;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -132,16 +132,16 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	protected Window         window_EducationalLoanDialog;               // autoWired
 	protected Textbox        loanRefNumber;                              // autoWired
 	protected Checkbox       loanRefType;                                // autoWired
-	protected Textbox        eduCourse;                                  // autoWired
+	protected ExtendedCombobox   eduCourse;                                  // autoWired
 	protected Textbox        eduSpecialization;                          // autoWired
-	protected Textbox        eduCourseType;                              // autoWired
+	protected ExtendedCombobox   eduCourseType;                              // autoWired
 	protected Textbox        eduCourseFrom;                              // autoWired
 	protected Textbox        eduCourseFromBranch;                        // autoWired
 	protected Textbox        eduAffiliatedTo;                            // autoWired
 	protected Datebox        eduCommenceDate;                            // autoWired
 	protected Datebox        eduCompletionDate;                          // autoWired
-	protected Decimalbox     eduExpectedIncome;                          // autoWired
-	protected Textbox        eduLoanFromBranch;                          // autoWired
+	protected CurrencyBox     eduExpectedIncome;                          // autoWired
+	protected ExtendedCombobox   eduLoanFromBranch;                          // autoWired
 	protected Listbox        listbox_EduExpenseDetails;                  // autoWired
 	protected Paging         pagingEduExpenseDetailsList;                // autoWired
 	protected Caption		 caption_eduLoan;
@@ -164,14 +164,6 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	protected Button         btnNotes;                                   // autoWired
 	protected Button         btnNew_EducationalExpense;                  // autoWired
 	
-	//Search Button declarations
-	protected Button         btnSearchEduCourse;                         // autoWired
-	protected Textbox        lovDescEduCourseName;                       // autoWired
-	protected Button         btnSearchEduCourseType;                     // autoWired
-	
-	protected Textbox        lovDescEduCourseTypeName;                   // autoWired
-	protected Button         btnSearchEduLoanFromBranch;                 // autoWired
-	protected Textbox        lovDescEduLoanFromBranchName;               // autoWired
 
 	// not auto wired variables
 	private EducationalLoan                   educationalLoan;           // over handed per parameters
@@ -208,9 +200,11 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 
 	//For Dynamically calling of this Controller
 	private Div toolbar;
-	private FinanceMainDialogCtrl financeMainDialogCtrl;
+	private Object financeMainDialogCtrl;
 	private Tabpanel panel = null;
 	private Grid grid_eduLoanDetails;
+	private transient boolean recSave = false;
+	private boolean isEnquiry = false;
 	
 	/**
 	 * default constructor.<br>
@@ -234,9 +228,6 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void onCreate$window_EducationalLoanDialog(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
-		
 		if(event.getTarget().getParent() != null){
 			panel = (Tabpanel) event.getTarget().getParent();
 		}
@@ -263,7 +254,12 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 
 		if(args.containsKey("financeMainDialogCtrl")){
-			this.financeMainDialogCtrl = (FinanceMainDialogCtrl) args.get("financeMainDialogCtrl");
+			this.financeMainDialogCtrl = (Object) args.get("financeMainDialogCtrl");
+			try {
+				financeMainDialogCtrl.getClass().getMethod("setChildWindowDialogCtrl", Object.class).invoke(financeMainDialogCtrl, this);
+			} catch (Exception e) {
+				logger.error(e);
+			}
 			setNewFinance(true);
 			this.educationalLoan.setWorkflowId(0);
 			this.window_EducationalLoanDialog.setTitle("");
@@ -271,11 +267,16 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 		
 		if(args.containsKey("roleCode")){
-			getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "EducationalLoanDialog");
+			setRole((String) args.get("roleCode"));
+			getUserWorkspace().alocateRoleAuthorities(getRole(), "EducationalLoanDialog");
 		}
 		
 		if(args.containsKey("ccyFormatter")){
 			this.ccyFormatter = (Integer)args.get("ccyFormatter");
+		}
+		
+		if (args.containsKey("isEnquiry")) {
+			isEnquiry = (Boolean) args.get("isEnquiry");
 		}
 		
 		doLoadWorkFlow(this.educationalLoan.isWorkflow(),this.educationalLoan.getWorkflowId(),
@@ -286,6 +287,9 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 			getUserWorkspace().alocateRoleAuthorities(getRole(), "EducationalLoanDialog");
 		}
 
+		/* set components visible dependent of the users rights */
+		doCheckRights();
+		
 		// READ OVERHANDED params !
 		// we get the educationalLoanListWindow controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
@@ -295,6 +299,8 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		} else {
 			setEducationalLoanListCtrl(null);
 		}
+		
+		this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
 		
 		// set Field Properties
 		doSetFieldProperties();
@@ -308,17 +314,40 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	private void doSetFieldProperties() {
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
-		this.eduCourse.setMaxlength(50);
+		this.eduCourse.setMaxlength(10);
+        this.eduCourse.setMandatoryStyle(true);
+		this.eduCourse.setModuleName("Course");
+		this.eduCourse.setValueColumn("CourseName");
+		this.eduCourse.setDescColumn("CourseDesc");
+		this.eduCourse.setValidateColumns(new String[] { "CourseName" });
+		
+		this.eduCourseType.setMaxlength(20);
+        this.eduCourseType.setMandatoryStyle(true);
+		this.eduCourseType.setModuleName("CourseType");
+		this.eduCourseType.setValueColumn("CourseTypeCode");
+		this.eduCourseType.setDescColumn("CourseTypeDesc");
+		this.eduCourseType.setValidateColumns(new String[] { "CourseTypeCode" });
+		
+		this.eduLoanFromBranch.setMaxlength(8);
+        this.eduLoanFromBranch.setMandatoryStyle(false);
+		this.eduLoanFromBranch.setModuleName("Branch");
+		this.eduLoanFromBranch.setValueColumn("BranchCode");
+		this.eduLoanFromBranch.setDescColumn("BranchDesc");
+		this.eduLoanFromBranch.setValidateColumns(new String[] { "BranchCode" });
+		
+		
 		this.eduSpecialization.setMaxlength(50);
-		this.eduCourseType.setMaxlength(50);
 		this.eduCourseFrom.setMaxlength(100);
-		this.eduCourseFromBranch.setMaxlength(100);
 		this.eduAffiliatedTo.setMaxlength(100);
 		this.eduCommenceDate.setFormat(PennantConstants.dateFormat);
 		this.eduCompletionDate.setFormat(PennantConstants.dateFormat);
+				
+		this.eduExpectedIncome.setMandatory(true);
 		this.eduExpectedIncome.setMaxlength(18);
 		this.eduExpectedIncome.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
-		this.eduLoanFromBranch.setMaxlength(50);
+		
+		
+		this.eduCourseFromBranch.setMaxlength(50);
 
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
@@ -341,7 +370,7 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering") ;
-		getUserWorkspace().alocateAuthorities("EducationalLoanDialog");
+		getUserWorkspace().alocateAuthorities("EducationalLoanDialog", getRole());
 		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_EducationalLoanDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_EducationalLoanDialog_btnEdit"));
@@ -373,7 +402,10 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 		
 		doClearMessage();
-		if("Submit".equalsIgnoreCase(userAction)){
+		if(("Save".equalsIgnoreCase(userAction) || "Cancel".equalsIgnoreCase(userAction))
+				&& !map.containsKey("agreement")){
+			recSave = true;
+		}else{
 			doSetValidation();
 		}
 		doWriteComponentsToBean(getEducationalLoan());
@@ -382,7 +414,12 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 			getEducationalLoan().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			getEducationalLoan().setNewRecord(true);
 		}
-		this.financeMainDialogCtrl.getFinanceDetail().setEducationalLoan(getEducationalLoan());
+		//this.financeMainDialogCtrl.getFinanceDetail().setEducationalLoan(getEducationalLoan());
+		try {
+			financeMainDialogCtrl.getClass().getMethod("setEducationalLoanDetail", EducationalLoan.class).invoke(financeMainDialogCtrl, this.getEducationalLoan());
+		} catch (Exception e) {
+			logger.error(e);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -393,7 +430,16 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * */
 	public void onAssetClose(Event event){
 		logger.debug("Entering" + event.toString());
-		this.financeMainDialogCtrl.setAssetDataChanged(isDataChanged());
+		//this.financeMainDialogCtrl.setAssetDataChanged(isDataChanged());
+		
+		try {
+			financeMainDialogCtrl.getClass().getMethod("setAssetDataChanged", Boolean.class).invoke(financeMainDialogCtrl, this.isDataChanged());
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		
+		
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -507,10 +553,12 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Entering " + event.toString());
 		
 		EducationalExpense educationalExpense = new EducationalExpense();
+		EducationalLoan educationalLoan = new EducationalLoan();
+		doWriteComponentsToBean(educationalLoan);
 		educationalExpense.setNewRecord(true);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("educationalLoanDialogCtrl", this);
-		map.put("educationalLoan",getEducationalLoan());
+		map.put("educationalLoan",educationalLoan);
 		map.put("educationalExpense", educationalExpense);
 		map.put("roleCode", getRole());
 		map.put("ccyFormatter", this.ccyFormatter);
@@ -550,59 +598,6 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Leaving " + event.toString());	
 	}
 	
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++ Search Button Component Events+++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void onClick$btnSearchEduCourse(Event event){
-		logger.debug("Entering " + event.toString());
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_EducationalLoanDialog,"Course");
-		if (dataObject instanceof String){
-			this.eduCourse.setValue(dataObject.toString());
-			this.lovDescEduCourseName.setValue("");
-		}else{
-			Course details= (Course) dataObject;
-			if (details != null) {
-				this.eduCourse.setValue(details.getCourseName());
-				this.lovDescEduCourseName.setValue(details.getCourseName()+"-"+details.getCourseDesc());
-			}
-		}
-		logger.debug("Leaving " + event.toString());
-	}
-
-	public void onClick$btnSearchEduCourseType(Event event){
-		logger.debug("Entering " + event.toString());
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_EducationalLoanDialog,"CourseType");
-		if (dataObject instanceof String){
-			this.eduCourseType.setValue(dataObject.toString());
-			this.lovDescEduCourseTypeName.setValue("");
-		}else{
-			CourseType details= (CourseType) dataObject;
-			if (details != null) {
-				this.eduCourseType.setValue(details.getCourseTypeCode());
-				this.lovDescEduCourseTypeName.setValue(details.getCourseTypeCode()+"-"+details.getCourseTypeDesc());
-			}
-		}
-		logger.debug("Leaving " + event.toString());
-	}
-
-	public void onClick$btnSearchEduLoanFromBranch(Event event){
-		logger.debug("Entering " + event.toString());
-		Object dataObject = ExtendedSearchListBox.show(this.window_EducationalLoanDialog,"Branch");
-		if (dataObject instanceof String){
-			this.eduLoanFromBranch.setValue(dataObject.toString());
-			this.lovDescEduLoanFromBranchName.setValue("");
-		}else{
-			Branch details= (Branch) dataObject;
-			if (details != null) {
-				this.eduLoanFromBranch.setValue(details.getBranchCode());
-				this.lovDescEduLoanFromBranchName.setValue(details.getBranchCode()+"-"+details.getBranchDesc());
-			}
-		}
-		logger.debug("Leaving ");
-	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ GUI Process ++++++++++++++++ //
@@ -643,7 +638,7 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 
 		if(close){
-			closeDialog(this.window_EducationalLoanDialog, "EducationalLoan");	
+			closeDialog(this.window_EducationalLoanDialog, "EducationalLoanDialog");	
 		}
 
 		logger.debug("Leaving") ;
@@ -681,21 +676,17 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.eduAffiliatedTo.setValue(aEducationalLoan.getEduAffiliatedTo());
 		this.eduCommenceDate.setValue(aEducationalLoan.getEduCommenceDate());
 		this.eduCompletionDate.setValue(aEducationalLoan.getEduCompletionDate());
-		this.eduExpectedIncome.setValue(PennantAppUtil.formateAmount(
-				aEducationalLoan.getEduExpectedIncome(),this.ccyFormatter));
+		this.eduExpectedIncome.setValue(PennantAppUtil.formateAmount(aEducationalLoan.getEduExpectedIncome(),this.ccyFormatter));
 		this.eduLoanFromBranch.setValue(aEducationalLoan.getEduLoanFromBranch());
 
 		if (aEducationalLoan.isNewRecord()){
-			this.lovDescEduCourseName.setValue("");
-			this.lovDescEduCourseTypeName.setValue("");
-			this.lovDescEduLoanFromBranchName.setValue("");
+			this.eduCourse.setDescription("");
+			this.eduCourseType.setDescription("");
+			this.eduLoanFromBranch.setDescription("");
 		}else{
-			this.lovDescEduCourseName.setValue(aEducationalLoan.getEduCourse()+"-"+
-					aEducationalLoan.getLovDescEduCourseName());
-			this.lovDescEduCourseTypeName.setValue(aEducationalLoan.getEduCourseType()+"-"+
-					aEducationalLoan.getLovDescEduCourseTypeName());
-			this.lovDescEduLoanFromBranchName.setValue(aEducationalLoan.getEduLoanFromBranch()+"-"+
-					aEducationalLoan.getLovDescEduLoanFromBranchName());
+			this.eduCourse.setDescription(aEducationalLoan.getLovDescEduCourseName());
+			this.eduCourseType.setDescription(aEducationalLoan.getLovDescEduCourseTypeName());
+			this.eduLoanFromBranch.setDescription(aEducationalLoan.getLovDescEduLoanFromBranchName());
 		}
 		this.recordStatus.setValue(aEducationalLoan.getRecordStatus());
 		doFillExpenseDetailsList(getEducationalLoan().getEduExpenseList());
@@ -724,8 +715,8 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 			wve.add(we);
 		}
 		try {
-			aEducationalLoan.setLovDescEduCourseName(this.lovDescEduCourseName.getValue());
-			aEducationalLoan.setEduCourse(this.eduCourse.getValue());	
+			aEducationalLoan.setLovDescEduCourseName(this.eduCourse.getDescription());
+			aEducationalLoan.setEduCourse(this.eduCourse.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -735,8 +726,8 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 			wve.add(we);
 		}
 		try {
-			aEducationalLoan.setLovDescEduCourseTypeName(this.lovDescEduCourseTypeName.getValue());
-			aEducationalLoan.setEduCourseType(this.eduCourseType.getValue());	
+			aEducationalLoan.setLovDescEduCourseTypeName(this.eduCourseType.getDescription());
+			aEducationalLoan.setEduCourseType(this.eduCourseType.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -766,19 +757,19 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 			wve.add(we);
 		}
 		try {
-			if(this.eduExpectedIncome.getValue()!=null){
+			if(this.eduExpectedIncome.getValue() != null){
 				aEducationalLoan.setEduExpectedIncome(PennantAppUtil.unFormateAmount(this.eduExpectedIncome.getValue(), 
 						this.ccyFormatter));
 			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		try {
-			aEducationalLoan.setLovDescEduLoanFromBranchName(this.lovDescEduLoanFromBranchName.getValue());
+/*		try {
+			aEducationalLoan.setLovDescEduLoanFromBranchName(this.eduLoanFromBranch.getDescription());
 			aEducationalLoan.setEduLoanFromBranch(this.eduLoanFromBranch.getValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
-		}
+		}*/
 		try {
 			int i=DateUtility.compare(aEducationalLoan.getEduCompletionDate(),aEducationalLoan.getEduCommenceDate());
 			if(i==0 ){
@@ -801,15 +792,17 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+		if(!recSave){
+			if (wve.size()>0) {
+				WrongValueException [] wvea = new WrongValueException[wve.size()];
+				for (int i = 0; i < wve.size(); i++) {
+					wvea[i] = (WrongValueException) wve.get(i);
+				}
+				if(panel != null){
+					((Tab)panel.getParent().getParent().getFellowIfAny("loanAssetTab")).setSelected(true);
+				}
+				throw new WrongValuesException(wvea);
 			}
-			if(panel != null){
-				((Tab)panel.getParent().getParent().getFellowIfAny("loanAssetTab")).setSelected(true);
-			}
-			throw new WrongValuesException(wvea);
 		}
 
 		aEducationalLoan.setRecordStatus(this.recordStatus.getValue());
@@ -867,11 +860,13 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
+			doCheckEnquiry();
 			if(panel != null){
 				this.toolbar.setVisible(false);
 				this.groupboxWf.setVisible(false);
 				this.statusRow.setVisible(false);
-				this.window_EducationalLoanDialog.setHeight(grid_eduLoanDetails.getRows().getVisibleItemCount()*20+140+"px");
+				this.window_EducationalLoanDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+				listbox_EduExpenseDetails.setHeight((grid_eduLoanDetails.getRows().getVisibleItemCount()*20+72)+"px");
 				//panel.setHeight(grid_eduLoanDetails.getRows().getVisibleItemCount()*40+260+"px");
 				panel.appendChild(this.window_EducationalLoanDialog);
 			}else{
@@ -884,6 +879,13 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Leaving") ;
 	}
 
+	private void doCheckEnquiry() {
+		if(isEnquiry){
+			this.btnNew_EducationalExpense.setVisible(false);
+		}
+	}
+	
+	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -896,10 +898,10 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.oldVar_loanRefNumber = this.loanRefNumber.getValue();
 		this.oldVar_loanRefType = this.loanRefType.isChecked();
 		this.oldVar_eduCourse = this.eduCourse.getValue();
-		this.oldVar_lovDescEduCourseName = this.lovDescEduCourseName.getValue();
+		this.oldVar_lovDescEduCourseName = this.eduCourse.getDescription();
 		this.oldVar_eduSpecialization = this.eduSpecialization.getValue();
 		this.oldVar_eduCourseType = this.eduCourseType.getValue();
-		this.oldVar_lovDescEduCourseTypeName = this.lovDescEduCourseTypeName.getValue();
+		this.oldVar_lovDescEduCourseTypeName = this.eduCourseType.getDescription();
 		this.oldVar_eduCourseFrom = this.eduCourseFrom.getValue();
 		this.oldVar_eduCourseFromBranch = this.eduCourseFromBranch.getValue();
 		this.oldVar_eduAffiliatedTo = this.eduAffiliatedTo.getValue();
@@ -907,7 +909,7 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.oldVar_eduCompletionDate = this.eduCompletionDate.getValue();
 		this.oldVar_eduExpectedIncome = this.eduExpectedIncome.getValue();
 		this.oldVar_eduLoanFromBranch = this.eduLoanFromBranch.getValue();
-		this.oldVar_lovDescEduLoanFromBranchName = this.lovDescEduLoanFromBranchName.getValue();
+		this.oldVar_lovDescEduLoanFromBranchName = this.eduLoanFromBranch.getDescription();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving") ;
 	}
@@ -920,10 +922,10 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.loanRefNumber.setValue(this.oldVar_loanRefNumber);
 		this.loanRefType.setChecked(this.oldVar_loanRefType);
 		this.eduCourse.setValue(this.oldVar_eduCourse);
-		this.lovDescEduCourseName.setValue(this.oldVar_lovDescEduCourseName);
+		this.eduCourse.setDescription(this.oldVar_lovDescEduCourseName);
 		this.eduSpecialization.setValue(this.oldVar_eduSpecialization);
 		this.eduCourseType.setValue(this.oldVar_eduCourseType);
-		this.lovDescEduCourseTypeName.setValue(this.oldVar_lovDescEduCourseTypeName);
+		this.eduCourseType.setDescription(this.oldVar_lovDescEduCourseTypeName);
 		this.eduCourseFrom.setValue(this.oldVar_eduCourseFrom);
 		this.eduCourseFromBranch.setValue(this.oldVar_eduCourseFromBranch);
 		this.eduAffiliatedTo.setValue(this.oldVar_eduAffiliatedTo);
@@ -931,7 +933,7 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.eduCompletionDate.setValue(this.oldVar_eduCompletionDate);
 		this.eduExpectedIncome.setValue(this.oldVar_eduExpectedIncome);
 		this.eduLoanFromBranch.setValue(this.oldVar_eduLoanFromBranch);
-		this.lovDescEduLoanFromBranchName.setValue(this.oldVar_lovDescEduLoanFromBranchName);
+		this.eduLoanFromBranch.setDescription(this.oldVar_lovDescEduLoanFromBranchName);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
 		if(isWorkFlowEnabled()){
@@ -1019,37 +1021,32 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		setValidationOn(true);
 
 		if (!this.eduSpecialization.isReadonly()){
-			this.eduSpecialization.setConstraint(
-					new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel("MAND_FIELD_CHARACTER"
-							,new String[]{Labels.getLabel("label_EducationalLoanDialog_EduSpecialization.value")})));
+			this.eduSpecialization.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduSpecialization.value"),
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.eduCourseFrom.isReadonly()){
-			this.eduCourseFrom.setConstraint(
-					new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel("MAND_FIELD_CHARACTER"
-							,new String[]{Labels.getLabel("label_EducationalLoanDialog_EduCourseFrom.value")})));
+			this.eduCourseFrom.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduCourseFrom.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.eduCourseFromBranch.isReadonly()){
-			this.eduCourseFromBranch.setConstraint(
-					new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel("MAND_FIELD_CHARACTER"
-							,new String[]{Labels.getLabel("label_EducationalLoanDialog_EduCourseFromBranch.value")})));
+			this.eduCourseFromBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduCourseFromBranch.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.eduAffiliatedTo.isReadonly()){
-			this.eduAffiliatedTo.setConstraint(
-					new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel("MAND_FIELD_CHARACTER"
-							,new String[]{Labels.getLabel("label_EducationalLoanDialog_EduAffiliatedTo.value")})));
+			this.eduAffiliatedTo.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduAffiliatedTo.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.eduCommenceDate.isDisabled()){
-			this.eduCommenceDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_EducationalLoanDialog_EduCommenceDate.value")}));
+			this.eduCommenceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_EducationalLoanDialog_EduCommenceDate.value"), true));
 		}
 		if (!this.eduCompletionDate.isDisabled()){
-			this.eduCompletionDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_EducationalLoanDialog_EduCompletionDate.value")}));
+			this.eduCompletionDate.setConstraint(new PTDateValidator(Labels.getLabel("label_EducationalLoanDialog_EduCompletionDate.value"), true, new Date(), null, false));
 		}
 		if (!this.eduExpectedIncome.isReadonly()){
 			this.eduExpectedIncome.setConstraint(new AmountValidator(18,0,
 					Labels.getLabel("label_EducationalLoanDialog_EduExpectedIncome.value"),false));
 		}	
+		
 		logger.debug("Leaving");
 	}
 
@@ -1077,16 +1074,16 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Entering");
 		this.loanRefNumber.setReadonly(true);
 		this.loanRefType.setDisabled(true);
-		this.btnSearchEduCourse.setDisabled(true);
+		this.eduCourse.setReadonly(true);
 		this.eduSpecialization.setReadonly(true);
-		this.btnSearchEduCourseType.setDisabled(true);
+		this.eduCourseType.setReadonly(true);
 		this.eduCourseFrom.setReadonly(true);
 		this.eduCourseFromBranch.setReadonly(true);
 		this.eduAffiliatedTo.setReadonly(true);
 		this.eduCommenceDate.setDisabled(true);
 		this.eduCompletionDate.setDisabled(true);
 		this.eduExpectedIncome.setReadonly(true);
-		this.btnSearchEduLoanFromBranch.setDisabled(true);
+		this.eduLoanFromBranch.setReadonly(true);
 
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1110,10 +1107,10 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.loanRefNumber.setText("");
 		this.loanRefType.setChecked(false);
 		this.eduCourse.setValue("");
-		this.lovDescEduCourseName.setValue("");
+		this.eduCourse.setDescription("");
 		this.eduSpecialization.setValue("");
 		this.eduCourseType.setValue("");
-		this.lovDescEduCourseTypeName.setValue("");
+		this.eduCourseType.setDescription("");
 		this.eduCourseFrom.setValue("");
 		this.eduCourseFromBranch.setValue("");
 		this.eduAffiliatedTo.setValue("");
@@ -1121,7 +1118,7 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.eduCompletionDate.setText("");
 		this.eduExpectedIncome.setValue("");
 		this.eduLoanFromBranch.setValue("");
-		this.lovDescEduLoanFromBranchName.setValue("");
+		this.eduLoanFromBranch.setDescription("");
 		logger.debug("Leaving");
 	}
 	
@@ -1130,12 +1127,9 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering ");
-		this.lovDescEduCourseName.setConstraint("NO EMPTY:"+Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_EducationalLoanDialog_EduCourse.value")}));
-		this.lovDescEduCourseTypeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_EducationalLoanDialog_EduCourseType.value")}));
-		this.lovDescEduLoanFromBranchName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_EducationalLoanDialog_EduLoanFromBranch.value")}));
+		this.eduCourse.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduCourse.value"), null, true));
+		this.eduCourseType.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduCourseType.value"), null, true));
+	//	this.eduLoanFromBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduLoanFromBranch.value"), null, true));
 		logger.debug("Leaving ");
 	}
 	
@@ -1144,9 +1138,9 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering ");
-		this.lovDescEduCourseName.setConstraint("");
-		this.lovDescEduCourseTypeName.setConstraint("");
-		this.lovDescEduLoanFromBranchName.setConstraint("");
+		this.eduCourse.setConstraint("");
+		this.eduCourseType.setConstraint("");
+		this.eduLoanFromBranch.setConstraint("");
 		logger.debug("Leaving ");
 	}
 	
@@ -1156,16 +1150,16 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	private void doClearMessage() {
 		logger.debug("Entering");
 		this.loanRefNumber.setErrorMessage("");
-		this.lovDescEduCourseName.setErrorMessage("");
+		this.eduCourse.setErrorMessage("");
 		this.eduSpecialization.setErrorMessage("");
-		this.lovDescEduCourseTypeName.setErrorMessage("");
+		this.eduCourseType.setErrorMessage("");
 		this.eduCourseFrom.setErrorMessage("");
 		this.eduCourseFromBranch.setErrorMessage("");
 		this.eduAffiliatedTo.setErrorMessage("");
 		this.eduCommenceDate.setErrorMessage("");
 		this.eduCompletionDate.setErrorMessage("");
 		this.eduExpectedIncome.setErrorMessage("");
-		this.lovDescEduLoanFromBranchName.setErrorMessage("");
+		this.eduLoanFromBranch.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1244,7 +1238,7 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 			try {
 				if(doProcess(aEducationalLoan,tranType)){
 					refreshList();
-					closeDialog(this.window_EducationalLoanDialog, "EducationalLoan"); 
+					closeDialog(this.window_EducationalLoanDialog, "EducationalLoanDialog"); 
 				}
 			}catch (DataAccessException e){
 				logger.error("doDelete " + e);
@@ -1285,19 +1279,18 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		}else{
 			this.btnCancel.setVisible(true);
 		}
-
 		this.loanRefNumber.setReadonly(true);
 		this.loanRefType.setDisabled(isReadOnly("EducationalLoanDialog_loanRefType"));
-		this.btnSearchEduCourse.setDisabled(isReadOnly("EducationalLoanDialog_eduCourse"));
+		this.eduCourse.setReadonly(isReadOnly("EducationalLoanDialog_eduCourse"));
 		this.eduSpecialization.setReadonly(isReadOnly("EducationalLoanDialog_eduSpecialization"));
-		this.btnSearchEduCourseType.setDisabled(isReadOnly("EducationalLoanDialog_eduCourseType"));
+		this.eduCourseType.setReadonly(isReadOnly("EducationalLoanDialog_eduCourseType"));
 		this.eduCourseFrom.setReadonly(isReadOnly("EducationalLoanDialog_eduCourseFrom"));
 		this.eduCourseFromBranch.setReadonly(isReadOnly("EducationalLoanDialog_eduCourseFromBranch"));
 		this.eduAffiliatedTo.setReadonly(isReadOnly("EducationalLoanDialog_eduAffiliatedTo"));
 		this.eduCommenceDate.setDisabled(isReadOnly("EducationalLoanDialog_eduCommenceDate"));
 		this.eduCompletionDate.setDisabled(isReadOnly("EducationalLoanDialog_eduCompletionDate"));
 		this.eduExpectedIncome.setReadonly(isReadOnly("EducationalLoanDialog_eduExpectedIncome"));
-		this.btnSearchEduLoanFromBranch.setDisabled(isReadOnly("EducationalLoanDialog_eduLoanFromBranch"));
+		this.eduLoanFromBranch.setReadonly(isReadOnly("EducationalLoanDialog_eduLoanFromBranch"));
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1374,7 +1367,7 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			if(doProcess(aEducationalLoan,tranType)){
 				refreshList();
-				closeDialog(this.window_EducationalLoanDialog, "EducationalLoan");
+				closeDialog(this.window_EducationalLoanDialog, "EducationalLoanDialog");
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);

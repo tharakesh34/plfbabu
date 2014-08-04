@@ -61,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class GenderListModelItemRenderer implements ListitemRenderer<Gender>, Serializable {
 
 	private static final long serialVersionUID = 5688039398131772187L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, Gender gender, int count) throws Exception {
 		
-	//	final Gender gender = (Gender) data;
 		Listcell lc;
 	  	lc = new Listcell(gender.getGenderCode());
 		lc.setParent(item);

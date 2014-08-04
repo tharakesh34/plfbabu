@@ -45,21 +45,26 @@ package com.pennant.webui.customermasters.customeraddres;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
-import org.zkoss.zul.GroupsModelArray;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Panel;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -67,19 +72,19 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.CustomerAddres;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
-import com.pennant.webui.customermasters.customeraddres.model.CustomerAddresComparator;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customeraddres.model.CustomerAddresListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -88,8 +93,7 @@ import com.pennant.webui.util.PTReportUtils;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
-		implements Serializable {
+public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres> implements Serializable {
 
 	private static final long serialVersionUID = -3065680573751828336L;
 	private final static Logger logger = Logger.getLogger(CustomerAddresListCtrl.class);
@@ -97,33 +101,69 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * component with the same 'id' in the ZUL-file are getting autoWired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window 		window_CustomerAddresList; 				// autoWired
-	protected Panel 		panel_CustomerAddresList; 				// autoWired
-	protected Borderlayout 	borderLayout_CustomerAddresList; 		// autoWired
-	protected Paging 		pagingCustomerAddresList; 				// autoWired
-	protected Listbox 		listBoxCustomerAddres; 					// autoWired
-	
+	protected Window window_CustomerAddresList; // autoWired
+	protected Borderlayout borderLayout_CustomerAddresList; // autoWired
+	protected Paging pagingCustomerAddresList; // autoWired
+	protected Listbox listBoxCustomerAddres; // autoWired
+
+	// search controller
+	protected Textbox custCIF; // autoWired
+	protected Listbox sortOperator_custCIF; // autoWired
+	protected Textbox custAddrType; // autoWired
+	protected Listbox sortOperator_custAddrType; // autoWired
+	protected Textbox custAddrHNbr; // autoWired
+	protected Listbox sortOperator_custAddrHNbr; // autoWired
+	protected Textbox custFlatNbr; // autoWired
+	protected Listbox sortOperator_custFlatNbr; // autoWired
+	protected Textbox custAddrStreet; // autoWired
+	protected Listbox sortOperator_custAddrStreet; // autoWired
+	protected Textbox custPOBox; // autoWired
+	protected Listbox sortOperator_custPOBox; // autoWired
+	protected Textbox custAddrCountry; // autoWired
+	protected Listbox sortOperator_custAddrCountry; // autoWired
+	protected Textbox custAddrProvince; // autoWired
+	protected Listbox sortOperator_custAddrProvince; // autoWired
+	protected Textbox custAddrCity; // autoWired
+	protected Listbox sortOperator_custAddrCity; // autoWired
+	protected Textbox custAddrZIP; // autoWired
+	protected Listbox sortOperator_custAddrZIP; // autoWired
+	protected Textbox recordStatus; // autoWired
+	protected Listbox recordType; // autoWired
+	protected Listbox sortOperator_recordStatus; // autoWired
+	protected Listbox sortOperator_recordType; // autoWired
+	protected Grid searchGrid;
+
+	private transient boolean approvedList = false;
+	protected Textbox moduleType;
+	protected Radio fromApproved;
+	protected Radio fromWorkFlow;
+	protected Row workFlowFrom;
+
+	protected Label label_CustomerAddresSearch_RecordStatus; // autoWired
+	protected Label label_CustomerAddresSearch_RecordType; // autoWired
+	protected Label label_CustomerAddresSearchResult; // autoWired
+
 	// List headers
-	protected Listheader listheader_CustAddrType; 			// autoWired
-	protected Listheader listheader_CustAddrHNbr; 			// autoWired
-	protected Listheader listheader_CustFlatNbr; 			// autoWired
-	protected Listheader listheader_CustAddrStreet; 		// autoWired
-	protected Listheader listheader_RecordStatus; 			// autoWired
+	protected Listheader listheader_CustCIF; // autoWired
+	protected Listheader listheader_CustAddrType; // autoWired
+	protected Listheader listheader_CustAddrHNbr; // autoWired
+	protected Listheader listheader_CustFlatNbr; // autoWired
+	protected Listheader listheader_CustAddrStreet; // autoWired
+	protected Listheader listheader_RecordStatus; // autoWired
 	protected Listheader listheader_RecordType;
 
 	// checkRights
-	protected Button btnHelp; 												// autoWired
-	protected Button button_CustomerAddresList_NewCustomerAddres; 			// autoWired
-	protected Button button_CustomerAddresList_CustomerAddresSearchDialog; 	// autoWired
-	protected Button button_CustomerAddresList_PrintList; 					// autoWired
+	protected Button btnHelp; // autoWired
+	protected Button button_CustomerAddresList_NewCustomerAddres; // autoWired
+	protected Button button_CustomerAddresList_CustomerAddresSearchDialog; // autoWired
+	protected Button button_CustomerAddresList_PrintList; // autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<CustomerAddres> searchObj;
-	private transient PagedListService pagedListService;
 	private transient CustomerAddresService customerAddresService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -133,24 +173,23 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 	public CustomerAddresListCtrl() {
 		super();
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
 	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerAddres object in
-	 * a Map.
+	 * ZUL-file is called with a parameter for a selected CustomerAddres object
+	 * in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_CustomerAddresList(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 
-		ModuleMapping moduleMapping = PennantJavaUtil
-				.getModuleMap("CustomerAddres");
+		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("CustomerAddres");
 		boolean wfAvailable = true;
 
 		if (moduleMapping.getWorkflowType() != null) {
@@ -160,12 +199,41 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 				setWorkFlowEnabled(false);
 			} else {
 				setWorkFlowEnabled(true);
-				setFirstTask(getUserWorkspace().isRoleContains(
-						workFlowDetails.getFirstTaskOwner()));
+				setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 				setWorkFlowId(workFlowDetails.getId());
 			}
 		} else {
 			wfAvailable = false;
+		}
+
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custAddrType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custAddrType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custAddrHNbr.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custAddrHNbr.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custFlatNbr.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custFlatNbr.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custAddrStreet.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custAddrStreet.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = PennantAppUtil.setRecordType(this.recordType);
+		} else {
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CustomerAddresSearch_RecordStatus.setVisible(false);
+			this.label_CustomerAddresSearch_RecordType.setVisible(false);
 		}
 
 		/* set components visible dependent of the users rights */
@@ -173,15 +241,18 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 
 		/**
 		 * Calculate how many rows have been place in the list box. Get the
-		 * currentDesktopHeight from a hidden IntBox from the index.zul that
-		 * are filled by onClientInfo() in the indexCtroller
+		 * currentDesktopHeight from a hidden IntBox from the index.zul that are
+		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CustomerAddresList.setHeight(getBorderLayoutHeight());
+		this.listBoxCustomerAddres.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCustomerAddresList.setPageSize(getListRows());
 		this.pagingCustomerAddresList.setDetailed(true);
 
+		this.listheader_CustCIF.setSortAscending(new FieldComparator("custID",true));
+		this.listheader_CustCIF.setSortDescending(new FieldComparator("custID",false));
 		this.listheader_CustAddrType.setSortAscending(new FieldComparator("custAddrType", true));
 		this.listheader_CustAddrType.setSortDescending(new FieldComparator("custAddrType", false));
 		this.listheader_CustAddrHNbr.setSortAscending(new FieldComparator("custAddrHNbr", true));
@@ -201,47 +272,22 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 			this.listheader_RecordType.setVisible(false);
 		}
 
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<CustomerAddres>(CustomerAddres.class, getListRows());
-		this.searchObj.addSort("CustID", false);
-		this.searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
-		this.searchObj.addTabelName("CustomerAddresses_View");
+		// set the itemRenderer
+		this.listBoxCustomerAddres.setItemRenderer(new CustomerAddresListModelItemRenderer());
 
-		// WorkFlow
-		if (isWorkFlowEnabled()) {
-			if (isFirstTask()) {
-				button_CustomerAddresList_NewCustomerAddres.setVisible(true);
-			} else {
-				button_CustomerAddresList_NewCustomerAddres.setVisible(false);
-			}
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-		}
-
-		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_CustomerAddresList_NewCustomerAddres.setVisible(false);
 			this.button_CustomerAddresList_CustomerAddresSearchDialog.setVisible(false);
 			this.button_CustomerAddresList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			findSearchObject();
-			// set the itemRenderer
-			this.listBoxCustomerAddres.setItemRenderer(new CustomerAddresListModelItemRenderer());
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
-		logger.debug("Leaving" +event.toString());
-	}
-
-	/**
-	 * Internal Method for Grouping List items
-	 */
-	public void findSearchObject() {
-		logger.debug("Entering");
-		final SearchResult<CustomerAddres> searchResult = getPagedListService()
-				.getSRBySearchObject(this.searchObj);
-		listBoxCustomerAddres.setModel(new GroupsModelArray(
-				searchResult.getResult().toArray(),new CustomerAddresComparator()));
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -251,12 +297,12 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("CustomerAddresList");
 
-		this.button_CustomerAddresList_NewCustomerAddres.setVisible(getUserWorkspace().
-				isAllowed("button_CustomerAddresList_NewCustomerAddres"));
-		this.button_CustomerAddresList_CustomerAddresSearchDialog.setVisible(getUserWorkspace().
-				isAllowed("button_CustomerAddresList_CustomerAddresFindDialog"));
-		this.button_CustomerAddresList_PrintList.setVisible(getUserWorkspace().
-				isAllowed("button_CustomerAddresList_PrintList"));
+		this.button_CustomerAddresList_NewCustomerAddres.setVisible(getUserWorkspace()
+				.isAllowed("button_CustomerAddresList_NewCustomerAddres"));
+		this.button_CustomerAddresList_CustomerAddresSearchDialog.setVisible(getUserWorkspace()
+				.isAllowed("button_CustomerAddresList_CustomerAddresFindDialog"));
+		this.button_CustomerAddresList_PrintList.setVisible(getUserWorkspace()
+				.isAllowed("button_CustomerAddresList_PrintList"));
 		logger.debug("Leaving");
 	}
 
@@ -269,7 +315,7 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 	 * @throws Exception
 	 */
 	public void onCustomerAddresItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 
 		// get the selected CustomerAddres object
 		final Listitem item = this.listBoxCustomerAddres.getSelectedItem();
@@ -277,8 +323,7 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerAddres aCustomerAddres = (CustomerAddres) item.getAttribute("data");
-			final CustomerAddres customerAddres = getCustomerAddresService()
-					.getCustomerAddresById(aCustomerAddres.getId(),aCustomerAddres.getCustAddrType());
+			final CustomerAddres customerAddres = getCustomerAddresService().getCustomerAddresById(aCustomerAddres.getId(),aCustomerAddres.getCustAddrType());
 
 			if (customerAddres == null) {
 
@@ -288,46 +333,46 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 				valueParm[0] = String.valueOf(aCustomerAddres.getCustID());
 				valueParm[1] = aCustomerAddres.getCustAddrType();
 
-				errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
-				errParm[1] = PennantJavaUtil.getLabel("label_CustAddrType") + ":" + valueParm[1];
+				errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
+				errParm[1] = PennantJavaUtil.getLabel("label_CustAddrType")+ ":" + valueParm[1];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
 								errParm, valueParm), getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			} else {
-			String whereCond = " AND CustID='" + customerAddres.getCustID()
-					+ "'" + " AND CustAddrType ='  " + customerAddres.getCustAddrType() + 
-					"'" + " AND version=" + customerAddres.getVersion() + " ";
+				String whereCond = " AND CustID='" + customerAddres.getCustID()+ "'" + " AND CustAddrType ='  "
+						+ customerAddres.getCustAddrType() + "'"+ " AND version=" + customerAddres.getVersion() + " ";
 
-			if (isWorkFlowEnabled()) {
-				boolean userAcces = validateUserAccess(workFlowDetails.getId(),
-						getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "CustomerAddres", 
-						whereCond, customerAddres.getTaskId(), customerAddres.getNextTaskId());
-				if (userAcces) {
-					showDetailView(customerAddres);
+				if (isWorkFlowEnabled()) {
+					boolean userAcces = validateUserAccess(workFlowDetails.getId(), getUserWorkspace().getLoginUserDetails().getLoginUsrID(),
+							"CustomerAddres", whereCond,customerAddres.getTaskId(),customerAddres.getNextTaskId());
+					if (userAcces) {
+						showDetailView(customerAddres);
+					} else {
+						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
 				} else {
-					PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					showDetailView(customerAddres);
 				}
-			} else {
-				showDetailView(customerAddres);
 			}
-		  }
 		}
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Call the CustomerAddres dialog with a new empty entry. <br>
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$button_CustomerAddresList_NewCustomerAddres(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+	public void onClick$button_CustomerAddresList_NewCustomerAddres(Event event)
+			throws Exception {
+		logger.debug("Entering" + event.toString());
 		// create a new CustomerAddres object, We GET it from the BackEnd.
 		final CustomerAddres aCustomerAddres = getCustomerAddresService().getNewCustomerAddres();
 		showDetailView(aCustomerAddres);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -340,7 +385,7 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 	 */
 	private void showDetailView(CustomerAddres aCustomerAddres) throws Exception {
 		logger.debug("Entering");
-		
+
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
@@ -364,9 +409,9 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 		try {
 			Executions.createComponents(
 					"/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul",
-							null, map);
+					null, map);
 		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
 		logger.debug("Leaving");
@@ -379,7 +424,7 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_CustomerAddresList);
 		logger.debug("Leaving" + event.toString());
 	}
@@ -393,41 +438,41 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
-		this.pagingCustomerAddresList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_CustomerAddresList, event);
-		this.window_CustomerAddresList.invalidate();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Entering" + event.toString());
+
+		this.sortOperator_custCIF.setSelectedIndex(0);
+		this.custCIF.setValue("");
+		this.sortOperator_custAddrType.setSelectedIndex(0);
+		this.custAddrType.setValue("");
+		this.sortOperator_custAddrHNbr.setSelectedIndex(0);
+		this.custAddrHNbr.setValue("");
+		this.sortOperator_custFlatNbr.setSelectedIndex(0);
+		this.custFlatNbr.setValue("");
+		this.sortOperator_custAddrStreet.setSelectedIndex(0);
+		this.custAddrStreet.setValue("");
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		doSearch();
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * call the CustomerAddressSearch dialog
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$button_CustomerAddresList_CustomerAddresSearchDialog(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
-		
-		/*
-		 * we can call our CustomerAddresDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected CustomerAddres. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * CustomerAddres object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerAddresCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresSearchDialog.zul",
-							null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Entering" + event.toString());
+		doSearch();
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -436,16 +481,105 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_CustomerAddresList_PrintList(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
-		PTReportUtils.getReport("CustomerAddres", getSearchObj());
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Entering" + event.toString());
+		// PTReportUtils.getReport("CustomerAddres", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("CustomerAddres",
+				getSearchObj(), this.pagingCustomerAddresList.getTotalSize() + 1);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj = new JdbcSearchObject<CustomerAddres>(CustomerAddres.class, getListRows());
+		this.searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		this.searchObj.addSort("lovDescCustCIF", false);
+		this.searchObj.addTabelName("CustomerAddresses_View");
+
+		// Workflow
+		if (isWorkFlowEnabled()) {
+
+			if (isFirstTask() && this.moduleType == null) {
+				button_CustomerAddresList_NewCustomerAddres.setVisible(true);
+			} else {
+				button_CustomerAddresList_NewCustomerAddres.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("CustomerAddresses_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("CustomerAddresses_AView");
+		}
+
+		// Customer CIF
+		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custCIF.getSelectedItem(),this.custCIF.getValue(), "lovDescCustCIF");
+		}
+
+		// Customer Address Type
+		if (!StringUtils.trimToEmpty(this.custAddrType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custAddrType.getSelectedItem(),this.custAddrType.getValue(), "custAddrType");
+		}
+		// Customer House Number
+		if (!StringUtils.trimToEmpty(this.custAddrHNbr.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custAddrHNbr.getSelectedItem(),this.custAddrHNbr.getValue(), "custAddrHNbr");
+		}
+		// Customer Flat Number
+		if (!StringUtils.trimToEmpty(this.custFlatNbr.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custFlatNbr.getSelectedItem(),this.custFlatNbr.getValue(), "custFlatNbr");
+		}
+		// Customer Street
+		if (!StringUtils.trimToEmpty(this.custAddrStreet.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custAddrStreet.getSelectedItem(),this.custAddrStreet.getValue(), "custAddrStreet");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && 
+				!StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxCustomerAddres, this.pagingCustomerAddresList);
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	public void setCustomerAddresService(
 			CustomerAddresService customerAddresService) {
 		this.customerAddresService = customerAddresService;
@@ -461,10 +595,4 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres>
 		this.searchObj = searchObj;
 	}
 
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
 }

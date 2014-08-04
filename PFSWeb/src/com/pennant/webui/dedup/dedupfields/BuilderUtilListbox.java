@@ -51,10 +51,9 @@ import org.zkoss.zul.ListModel;
 import org.zkoss.zul.ListModelList;
 public class BuilderUtilListbox {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static ListModel operatorLabel() {
 
-		@SuppressWarnings("rawtypes")
 		List data = new ArrayList();
 		data.add("EQUALS"); 
 		data.add("LIKE"); 

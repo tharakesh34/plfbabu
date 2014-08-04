@@ -124,7 +124,7 @@ public class CollateralitemDAOImpl extends BasisCodeDAO<Collateralitem> implemen
 	@Override
 	public Collateralitem getCollateralitemById(final String id, String type) {
 		logger.debug("Entering");
-		Collateralitem collateralitem = getCollateralitem();
+		Collateralitem collateralitem = new Collateralitem();
 		
 		collateralitem.setId(id);
 		

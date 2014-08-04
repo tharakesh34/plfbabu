@@ -125,7 +125,7 @@ public class FinanceRepayPriorityDAOImpl extends BasisCodeDAO<FinanceRepayPriori
 	@Override
 	public FinanceRepayPriority getFinanceRepayPriorityById(final String id, String type) {
 		logger.debug("Entering");
-		FinanceRepayPriority financeRepayPriority = getFinanceRepayPriority();
+		FinanceRepayPriority financeRepayPriority = new FinanceRepayPriority();
 		
 		financeRepayPriority.setId(id);
 		
@@ -153,7 +153,7 @@ public class FinanceRepayPriorityDAOImpl extends BasisCodeDAO<FinanceRepayPriori
 	@Override
 	public List<FinanceRepayPriority> getFinanceRpyPriorByPriority(final int priority, String type) {
 		logger.debug("Entering");
-		FinanceRepayPriority financeRepayPriority = getFinanceRepayPriority();
+		FinanceRepayPriority financeRepayPriority = new FinanceRepayPriority();
 		
 		financeRepayPriority.setFinPriority(priority);
 		
@@ -312,12 +312,11 @@ public class FinanceRepayPriorityDAOImpl extends BasisCodeDAO<FinanceRepayPriori
 	}
 	
 	@Override
-	public List<ValueLabel> getFinanceRepayPriorities(String type) {
+	public List<ValueLabel> getFinanceRepayPriorities() {
 		logger.debug("Entering");
 		FinanceRepayPriority financeRepayPriority=new FinanceRepayPriority();
 		StringBuilder selectSql = new StringBuilder("Select FinType AS Label, FinPriority AS Value ");
 		selectSql.append(" From FinRpyPriority");
-		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" order by FinPriority asc");
 		
 		logger.debug("selectSql: " + selectSql.toString());

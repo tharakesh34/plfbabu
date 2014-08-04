@@ -134,22 +134,7 @@
 								<row id="row1">
 									<label id="label_TxnCCy"
 										value="${c:l('label_JVPostingEntryDialog_TxnCCy.value')}" />
-									<hlayout id="hlayout_TxnCCy"
-										spacing="2px">
-										<space id="space_TxnCCy"
-											spacing="2px" sclass="mandatory" />
-										<textbox id="txnCCy" width="0px"
-											visible="false" />
-										<hbox sclass="cssHbox"
-											spacing="0px">
-											<textbox id="txnCCyName"
-												width="150px" readonly="true"
-												style="border:0px;margin:0px;" />
-											<button id="btnSearchTxnCCy"
-												sclass="cssBtnSearch" height="20px" />
-
-										</hbox>
-									</hlayout>
+									<extendedcombobox id="txnCCy"/>
 									<label id="label_TxnCode"
 										value="${c:l('label_JVPostingEntryDialog_TxnCode.value')}" />
 									<hlayout id="hlayout_TxnCode">

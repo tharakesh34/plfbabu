@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listItems in the listBox.
  * 
@@ -61,13 +60,12 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CityListModelItemRenderer implements ListitemRenderer<City>, Serializable {
 
 	private static final long serialVersionUID = -5018118741984246012L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, City city, int count) throws Exception {
 
-		//final City city = (City) data;
 		Listcell lc;
-	  	lc = new Listcell(city.getPCCounty()+"-"+city.getLovDescPCCountyName());
+	  	lc = new Listcell(city.getPCCountry()+"-"+city.getLovDescPCCountryName());
 		lc.setParent(item);
 	  	lc = new Listcell(city.getPCProvince()+"-"+city.getLovDescPCProvinceName());
 		lc.setParent(item);

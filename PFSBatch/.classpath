@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-jdbc-3.0.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/sqljdbc4.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/cloning-1.7.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

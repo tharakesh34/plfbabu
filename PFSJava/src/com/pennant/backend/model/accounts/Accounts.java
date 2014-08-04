@@ -67,12 +67,12 @@ public class Accounts implements java.io.Serializable {
 	private String acPurpose;
 	private boolean internalAc;
 	private boolean custSysAc;
-	private BigDecimal acPrvDayBal= new BigDecimal(0);
-	private BigDecimal acTodayDr= new BigDecimal(0);
-	private BigDecimal acTodayCr= new BigDecimal(0);
-	private BigDecimal acTodayNet= new BigDecimal(0);
-	private BigDecimal acAccrualBal= new BigDecimal(0);
-	private BigDecimal acTodayBal= new BigDecimal(0);
+	private BigDecimal acPrvDayBal= BigDecimal.ZERO;
+	private BigDecimal acTodayDr= BigDecimal.ZERO;
+	private BigDecimal acTodayCr= BigDecimal.ZERO;
+	private BigDecimal acTodayNet= BigDecimal.ZERO;
+	private BigDecimal acAccrualBal= BigDecimal.ZERO;
+	private BigDecimal acTodayBal= BigDecimal.ZERO;
 	private Date acOpenDate;
 	private Date acCloseDate;
 	private Date acLastCustTrnDate;

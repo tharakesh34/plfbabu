@@ -67,7 +67,9 @@
 						sclass="GridLayoutNoBorder" fixedLayout="true"
 						style="border:0px">
 						<columns>
-							<column width="150px" />
+							<column width="200px" />
+							<column />
+							<column width="200px" />
 							<column />
 						</columns>
 						<rows>
@@ -75,27 +77,58 @@
 								<label
 									id="label_MortgageLoanDetailDialog_MortgProperty"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgProperty.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<longbox id="mortgProperty"
-										width="171px" visible="false" />
-									<textbox
-										id="lovDescMortgPropertyName" width="250px" readonly="true" />
-									<button
-										label="${c:l('btnSearch.label')}" id="btnSearchMortgProperty"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
-							</row>
-							<row visible="true">
+									<extendedcombobox id="mortgProperty"/>
 								<label
 									id="label_MortgageLoanDetailDialog_MortgCurrentValue"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgCurrentValue.value')}" />
+								<currencyBox id="mortgCurrentValue" />
+							</row>
+							<row visible="true">
+								<label value="${c:l('label_MortgageLoanDetailDialog_mortDeedNo.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<decimalbox id="mortgCurrentValue"
-										width="162px" maxlength="25" />
+									<space spacing="2px" sclass="mandatory" />
+									<textbox id="mortDeedNo" width="171px"  />
+								</hbox>
+								<label value="${c:l('label_MortgageLoanDetailDialog_mortRegistrationNo.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="" />
+									<textbox id="mortRegistrationNo" width="162px" maxlength="25" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label value="${c:l('label_MortgageLoanDetailDialog_mortAreaSF.value')}" />
+								<hbox>
+									<space spacing="2px"/>
+									<decimalbox id="mortAreaSF" width="171px"  />
+								</hbox>
+								<label value="${c:l('label_MortgageLoanDetailDialog_mortAreaSM.value')}" />
+								<hbox>
+									<space spacing="2px"/>
+									<decimalbox id="mortAreaSM" width="162px" maxlength="25" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label value="${c:l('label_MortgageLoanDetailDialog_mortPricePF.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<decimalbox id="mortPricePF" width="171px" />
+								</hbox>
+								<label value="${c:l('label_MortgageLoanDetailDialog_mortAge.value')}" />
+								<hbox>
+									<space spacing="2px"/>
+									<intbox id="mortAge" width="162px" maxlength="25" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label value="${c:l('label_MortgageLoanDetailDialog_mortFinRatio.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="" />
+									<decimalbox id="mortFinRatio" width="171px" />
+								</hbox>
+								<label value="${c:l('label_MortgageLoanDetailDialog_mortStatus.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="mortStatus" width="162px"  readonly="true"/>
 								</hbox>
 							</row>
 							<row visible="true">
@@ -106,50 +139,26 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="mortgPurposeOfLoan"
-										maxlength="100" width="500px" />
+										maxlength="100" width="300px" />
 								</hbox>
-							</row>
-							<row visible="true">
+						
 								<label
 									id="label_MortgageLoanDetailDialog_MortgPropertyRelation"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgPropertyRelation.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<longbox id="mortgPropertyRelation"
-										width="171px" visible="false" />
-									<uppercasebox
-										id="lovDescMortgPropertyRelationName" width="250px"
-										readonly="true" />
-									<button
-										label="${c:l('btnSearch.label')}"
-										id="btnSearchMortgPropertyRelation"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="mortgPropertyRelation"/>
 							</row>
 							<row visible="true">
 								<label
 									id="label_MortgageLoanDetailDialog_MortgOwnership"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgOwnership.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<longbox id="mortgOwnership"
-										width="171px" visible="false" />
-									<uppercasebox
-										id="lovDescMortgOwnershipName" width="250px" readonly="true" />
-									<button
-										label="${c:l('btnSearch.label')}" id="btnSearchMortgOwnership"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
-							</row>
-							<row visible="true">
+								<extendedcombobox id="mortgOwnership"/>
+						
 								<label
 									id="label_MortgageLoanDetailDialog_MortgAddrHNbr"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrHNbr.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory" />
+										sclass="" />
 									<uppercasebox id="mortgAddrHNbr"
 										maxlength="50" width="150px" />
 								</hbox>
@@ -160,18 +169,17 @@
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrFlatNbr.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory" />
+										sclass="" />
 									<uppercasebox id="mortgAddrFlatNbr"
 										maxlength="50" width="150px" />
 								</hbox>
-							</row>
-							<row visible="true">
+					
 								<label
 									id="label_MortgageLoanDetailDialog_MortgAddrStreet"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrStreet.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory" />
+										sclass="" />
 									<uppercasebox id="mortgAddrStreet"
 										maxlength="50" width="250px" />
 								</hbox>
@@ -185,8 +193,7 @@
 									<uppercasebox id="mortgAddrLane1"
 										maxlength="50" width="250px" />
 								</hbox>
-							</row>
-							<row visible="true">
+					
 								<label
 									id="label_MortgageLoanDetailDialog_MortgAddrLane2"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrLane2.value')}" />
@@ -202,83 +209,47 @@
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrPOBox.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory" />
+										sclass="" />
 									<uppercasebox id="mortgAddrPOBox"
 										maxlength="8" width="72px" />
 								</hbox>
-							</row>
-							<row visible="true">
+					
 								<label
 									id="label_MortgageLoanDetailDialog_MortgAddrCountry"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrCountry.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="mortgAddrCountry"
-										width="18px" visible="false" />
-									<uppercasebox
-										id="lovDescMortgAddrCountryName" width="250px"
-										readonly="true" />
-									<button
-										label="${c:l('btnSearch.label')}"
-										id="btnSearchMortgAddrCountry"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								
+								<extendedcombobox id="mortgAddrCountry"/>	
 							</row>
 							<row visible="true">
 								<label
 									id="label_MortgageLoanDetailDialog_MortgAddrProvince"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrProvince.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="mortgAddrProvince"
-										width="72px" visible="false" />
-									<uppercasebox
-										id="lovDescMortgAddrProvinceName" width="250px"
-										readonly="true" />
-									<button
-										label="${c:l('btnSearch.label')}"
-										id="btnSearchMortgAddrProvince"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
-							</row>
-							<row visible="true">
+								
+								<extendedcombobox id="mortgAddrProvince"/>
+						
 								<label
 									id="label_MortgageLoanDetailDialog_MortgAddrCity"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrCity.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="mortgAddrCity"
-										width="72px" visible="false" />
-									<uppercasebox
-										id="lovDescMortgAddrCityName" width="250px" readonly="true" />
-									<button
-										label="${c:l('btnSearch.label')}" id="btnSearchMortgAddrCity"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="mortgAddrCity"/>	
 							</row>
 							<row visible="true">
 								<label
 									id="label_MortgageLoanDetailDialog_MortgAddrZIP"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrZIP.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px"/>
 									<textbox id="mortgAddrZIP"
 										maxlength="10" width="90px" />
 								</hbox>
-							</row>
-							<row visible="true">
+						
 								<label
 									id="label_MortgageLoanDetailDialog_MortgAddrPhone"
 									value="${c:l('label_MortgageLoanDetailDialog_MortgAddrPhone.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory" />
+										sclass="" />
 									<textbox id="mortgAddrPhone"
-										maxlength="50" width="450px" />
+										maxlength="15" width="200px" />
 								</hbox>
 							</row>
 							<row id="statusRow">

@@ -121,7 +121,7 @@ public class PRelationCodeDAOImpl extends BasisCodeDAO<PRelationCode> implements
 	@Override
 	public PRelationCode getPRelationCodeById(final String id, String type) {
 		logger.debug("Entering");
-		PRelationCode pRelationCode = getPRelationCode();
+		PRelationCode pRelationCode = new PRelationCode();
 		pRelationCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

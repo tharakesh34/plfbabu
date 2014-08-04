@@ -119,7 +119,8 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseListCtrl<Provisio
 	protected Decimalbox 	nonFormulaProv; 		// autowired
 	protected Datebox 		dueFromDate; 			// autowired
 	protected Decimalbox 	provisionedAmt; 		// autowired
-	protected Datebox 		lastFullyPaidDate; 			// autowired
+	protected Datebox 		lastFullyPaidDate; 	    // autowired
+	protected Decimalbox 	calProvisionedAmt; 	    // autowired
 
 	// checkRights
 	protected Button btnHelp; 		// autowired
@@ -242,6 +243,7 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseListCtrl<Provisio
 				add(aProvision.getProfitDue()),aProvision.getLovDescFinFormatter()));
 		this.dueFromDate.setValue(aProvision.getDueFromDate());
 		this.lastFullyPaidDate.setValue(aProvision.getLastFullyPaidDate());
+		this.calProvisionedAmt.setValue(aProvision.getProvisionAmtCal());
 		
 		doFilllistbox(aProvision.getProvisionMovementList());
 

@@ -113,7 +113,7 @@ public class SearchOperators implements Serializable {
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
 
 		// list position 0
-		result.add(new SearchOperators(-1, "", "no operator"));
+		//result.add(new SearchOperators(-1, "", "no operator"));
 		// list position 1
 		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
 		// list position 2
@@ -137,7 +137,7 @@ public class SearchOperators implements Serializable {
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
 
 		// list position 0
-		result.add(new SearchOperators(-1, "", "no operator"));
+		//result.add(new SearchOperators(-1, "", "no operator"));
 		// list position 1
 		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
 		// list position 2
@@ -159,7 +159,7 @@ public class SearchOperators implements Serializable {
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
 
 		// list position 0
-		result.add(new SearchOperators(-1, "", "no operator"));
+		//result.add(new SearchOperators(-1, "", "no operator"));
 		// list position 1
 		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
 		// list position 2
@@ -169,13 +169,14 @@ public class SearchOperators implements Serializable {
 
 		return result;
 	}
+
 	
 	public List<SearchOperators> getMultiStringOperators() {
 
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
 
 		// list position 0
-		result.add(new SearchOperators(-1, "", "no operator"));
+		//result.add(new SearchOperators(-1, "", "no operator"));
 		// list position 1
 		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
 		// list position 2
@@ -195,7 +196,7 @@ public class SearchOperators implements Serializable {
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
 
 		// list position 0
-		result.add(new SearchOperators(-1, "", "no operator"));
+		//result.add(new SearchOperators(-1, "", "no operator"));
 		// list position 1
 		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
 		// list position 2
@@ -225,6 +226,18 @@ public class SearchOperators implements Serializable {
 		// list position 2
 		result.add(new SearchOperators(Filter.OP_NOT_EQUAL, "<>", "not equal"));
 
+		return result;
+	}
+	
+	public List<SearchOperators> getEqualOperators() {
+		
+		List<SearchOperators> result = new ArrayList<SearchOperators>();
+		
+		// list position 0
+		//result.add(new SearchOperators(-1, "", "no operator"));
+		// list position 1
+		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
+		
 		return result;
 	}
 	
@@ -291,22 +304,22 @@ public class SearchOperators implements Serializable {
 	 */
 	public static void restoreOperator(Listbox listbox, Filter filter) {
 		if (filter.getOperator() == Filter.OP_EQUAL) {
-			listbox.setSelectedIndex(1);
+			listbox.setSelectedIndex(0);
 		} else if (filter.getOperator() == Filter.OP_NOT_EQUAL) {
-			listbox.setSelectedIndex(2);
+			listbox.setSelectedIndex(1);
 		} else if (filter.getOperator() == Filter.OP_LESS_THAN) {
-			listbox.setSelectedIndex(3);
+			listbox.setSelectedIndex(2);
 		} else if (filter.getOperator() == Filter.OP_GREATER_THAN) {
-			listbox.setSelectedIndex(4);
+			listbox.setSelectedIndex(3);
 		} else if (filter.getOperator() == Filter.OP_LESS_OR_EQUAL) {
-			listbox.setSelectedIndex(5);
+			listbox.setSelectedIndex(4);
 		} else if (filter.getOperator() == Filter.OP_GREATER_OR_EQUAL) {
-			listbox.setSelectedIndex(6);
+			listbox.setSelectedIndex(5);
 		} else if (filter.getOperator() == Filter.OP_LIKE) {
 			// Delete used '%' signs if the operator is like or iLike
 			final String str = StringUtils.replaceChars(filter.getValue().toString(), "%", "");
 			filter.setValue(str);
-			listbox.setSelectedIndex(7);
+			listbox.setSelectedIndex(6);
 		}
 	}
 
@@ -321,14 +334,14 @@ public class SearchOperators implements Serializable {
 	 */
 	public static void restoreStringOperator(Listbox listbox, Filter filter) {
 		if (filter.getOperator() == Filter.OP_EQUAL) {
-			listbox.setSelectedIndex(1);
+			listbox.setSelectedIndex(0);
 		} else if (filter.getOperator() == Filter.OP_NOT_EQUAL) {
-			listbox.setSelectedIndex(2);
+			listbox.setSelectedIndex(1);
 		} else if (filter.getOperator() == Filter.OP_LIKE) {
 			// Delete used '%' signs if the operator is like or iLike
 			final String str = StringUtils.replaceChars(filter.getValue().toString(), "%", "");
 			filter.setValue(str);
-			listbox.setSelectedIndex(3);
+			listbox.setSelectedIndex(2);
 		}
 	}
 	
@@ -342,12 +355,12 @@ public class SearchOperators implements Serializable {
 	 */
 	public static void resetOperator(Listbox listbox, Filter filter) {
 		if (filter.getOperator() == Filter.OP_EQUAL) {
-			listbox.setSelectedIndex(1);
+			listbox.setSelectedIndex(0);
 		} else if (filter.getOperator() == Filter.OP_NOT_EQUAL) {
-			listbox.setSelectedIndex(2);
+			listbox.setSelectedIndex(1);
 		} else if (filter.getOperator() == Filter.OP_LIKE) {
 			// Delete used '%' signs if the operator is like or iLike
-			listbox.setSelectedIndex(3);
+			listbox.setSelectedIndex(2);
 		}
 	}
 
@@ -362,17 +375,17 @@ public class SearchOperators implements Serializable {
 	 */
 	public static void restoreNumericOperator(Listbox listbox, Filter filter) {
 		if (filter.getOperator() == Filter.OP_EQUAL) {
-			listbox.setSelectedIndex(1);
+			listbox.setSelectedIndex(0);
 		} else if (filter.getOperator() == Filter.OP_NOT_EQUAL) {
-			listbox.setSelectedIndex(2);
+			listbox.setSelectedIndex(1);
 		} else if (filter.getOperator() == Filter.OP_LESS_THAN) {
-			listbox.setSelectedIndex(3);
+			listbox.setSelectedIndex(2);
 		} else if (filter.getOperator() == Filter.OP_GREATER_THAN) {
-			listbox.setSelectedIndex(4);
+			listbox.setSelectedIndex(3);
 		} else if (filter.getOperator() == Filter.OP_LESS_OR_EQUAL) {
-			listbox.setSelectedIndex(5);
+			listbox.setSelectedIndex(4);
 		} else if (filter.getOperator() == Filter.OP_GREATER_OR_EQUAL) {
-			listbox.setSelectedIndex(6);
+			listbox.setSelectedIndex(5);
 		}
 	}
 	

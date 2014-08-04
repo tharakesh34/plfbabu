@@ -47,11 +47,28 @@ import com.pennant.backend.model.others.JVPosting;
 public interface JVPostingDAO {
 
 	public JVPosting getJVPosting();
+
 	public JVPosting getNewJVPosting();
-	public JVPosting getJVPostingById(String id,String type);
-	public void update(JVPosting jVPosting,String type);
-	public void delete(JVPosting jVPosting,String type);
-	public String save(JVPosting jVPosting,String type);
+
+	public JVPosting getJVPostingById(long id, String type);
+
+	public JVPosting getJVPostingByFileName(String fileName);
+
+	public void update(JVPosting jVPosting, String type);
+
+	public void updateHeaderDetails(JVPosting jVPosting, String type);
+
+	public void updateValidationStatus(JVPosting jVPosting, String type);
+
+	public void updateBatchPostingStatus(JVPosting jVPosting, String type);
+	
+	public void delete(JVPosting jVPosting, String type);
+
+	public long save(JVPosting jVPosting, String type);
+
 	public void initialize(JVPosting jVPosting);
+
 	public void refresh(JVPosting entity);
+
+	public long getMaxSeqNum(JVPosting jvPosting);
 }

@@ -70,7 +70,6 @@ import com.pennant.backend.util.WorkFlowUtil;
  * DAO methods implementation for the <b>CheckList model</b> class.<br>
  * 
  */
-
 public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements CheckListDAO {
 
 	private static Logger logger = Logger.getLogger(CheckListDAOImpl.class);
@@ -82,7 +81,6 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 	 * This method set the Work Flow id based on the module name and return the new CheckList 
 	 * @return CheckList
 	 */
-
 	@Override
 	public CheckList getCheckList() {
 		logger.debug("Entering");
@@ -95,13 +93,10 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 		return checkList;
 	}
 
-
 	/**
 	 * This method get the module from method getCheckList() and set the new record flag as true and return CheckList()   
 	 * @return CheckList
 	 */
-
-
 	@Override
 	public CheckList getNewCheckList() {
 		logger.debug("Entering");
@@ -122,12 +117,12 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 	@Override
 	public CheckList getCheckListById(final long id, String type) {
 		logger.debug("Entering");
-		CheckList checkList = getCheckList();
 		
+		CheckList checkList = new CheckList();
 		checkList.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder("Select CheckListId, CheckListDesc, CheckMinCount, CheckMaxCount, CheckRule, Active");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder selectSql = new StringBuilder("Select CheckListId, CheckListDesc, CheckMinCount, CheckMaxCount, CheckRule, Active,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(", LovDescCheckRuleName ");
@@ -158,6 +153,7 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 	public void initialize(CheckList checkList) {
 		super.initialize(checkList);
 	}
+	
 	/**
 	 * This method refresh the Record.
 	 * @param CheckList (checkList)
@@ -172,7 +168,6 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 	 * To Set  dataSource
 	 * @param dataSource
 	 */
-	
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
@@ -238,12 +233,12 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into BMTCheckList");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CheckListId, CheckListDesc, CheckMinCount, CheckMaxCount,CheckRule, Active");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CheckListId, :CheckListDesc, :CheckMinCount, :CheckMaxCount,:CheckRule, :Active");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode" );
-		insertSql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" (CheckListId, CheckListDesc, CheckMinCount, CheckMaxCount,CheckRule, Active, ");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:CheckListId, :CheckListDesc, :CheckMinCount, :CheckMaxCount,:CheckRule, :Active, ");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
+		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
@@ -273,11 +268,11 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update BMTCheckList");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CheckListId = :CheckListId, CheckListDesc = :CheckListDesc");
-		updateSql.append(", CheckMinCount = :CheckMinCount, CheckMaxCount = :CheckMaxCount,CheckRule=:CheckRule, Active = :Active");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		updateSql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode" );
-		updateSql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Set CheckListId = :CheckListId, CheckListDesc = :CheckListDesc,");
+		updateSql.append(" CheckMinCount = :CheckMinCount, CheckMaxCount = :CheckMaxCount,CheckRule=:CheckRule, Active = :Active, ");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CheckListId =:CheckListId");
 		
 		if (!type.endsWith("_TEMP")){

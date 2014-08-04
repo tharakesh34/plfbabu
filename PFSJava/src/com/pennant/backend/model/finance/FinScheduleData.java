@@ -44,6 +44,7 @@
 
 package com.pennant.backend.model.finance;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,8 +57,10 @@ import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 
 public class FinScheduleData {
@@ -76,7 +79,11 @@ public class FinScheduleData {
 	private FinanceSummary financeSummary;
 	private List<FeeRule> feeRules = new ArrayList<FeeRule>();	
 	private List<FinanceRepayments> repayDetails = new ArrayList<FinanceRepayments>();	
-
+	private List<OverdueChargeRecovery> penaltyDetails = new ArrayList<OverdueChargeRecovery>();	
+	private BigDecimal accrueValue;
+	private FinODPenaltyRate finODPenaltyRate;
+	private boolean finPftSuspended; 
+	private Date finSuspDate; 
 
 	public String getFinReference() {
 		return finReference;
@@ -192,19 +199,26 @@ public class FinScheduleData {
 		this.financeMain.setFinType(financeType.getFinType());
 		this.financeMain.setLovDescFinTypeName(financeType.getFinTypeDesc());
 		this.financeMain.setFinCcy(financeType.getFinCcy());
+		//this.financeMain.setDisbCcy(financeType.getFinCcy());
 		this.financeMain.setLovDescFinCcyName(financeType.getLovDescFinCcyName());
+		//this.financeMain.setLovDescDisbCcyName(financeType.getLovDescFinCcyName());
+		//this.financeMain.setCcyConversionRate(BigDecimal.ONE);
 		this.financeMain.setProfitDaysBasis(financeType.getFinDaysCalType());
 		this.financeMain.setLovDescProfitDaysBasisName(financeType.getLovDescFinDaysCalTypeName());
 		this.financeMain.setScheduleMethod(financeType.getFinSchdMthd());
 		this.financeMain.setLovDescScheduleMethodName(financeType.getLovDescFinSchdMthdName());
 		this.financeMain.setLovDescFinFormatter(financeType.getLovDescFinFormetter());
-		this.financeMain.setFinStartDate((Date)SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+		//this.financeMain.setLovDescDisbCcyFormatter(financeType.getLovDescFinFormetter());
+		this.financeMain.setFinStartDate((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		this.financeMain.setDepreciationFrq(financeType.getFinDepreciationFrq());
 
 		//Grace period details
 
 		if(financeType.isFInIsAlwGrace()){
-			this.financeMain.setAllowGrcPeriod(financeType.isFInIsAlwGrace());
+			
+			//Default Grace Period Group box UnVisible by setting Allow grace period to FALSE
+			this.financeMain.setAllowGrcPeriod(false);
+			
 			this.financeMain.setGraceBaseRate(financeType.getFinGrcBaseRate());
 			this.financeMain.setLovDescGraceBaseRateName(financeType.getLovDescFinGrcBaseRateName());
 			this.financeMain.setGraceSpecialRate(financeType.getFinGrcSplRate());
@@ -288,6 +302,21 @@ public class FinScheduleData {
 		this.financeMain.setIndBaseRate(financeType.getFinIndBaseRate());
 		this.financeMain.setLovDescIndBaseRateName(financeType.getLovDescFinIndBaseRateName());
 		this.financeMain.setFinRvwRateApplFor(financeType.getFinRvwRateApplFor());
+		this.financeMain.setFinRepayPftOnFrq(financeType.isFinRepayPftOnFrq());
+		this.financeMain.setFinRepayMethod(financeType.getFInRepayMethod());
+		
+		//overdue Penalty Details
+		if(this.finODPenaltyRate == null){
+			this.finODPenaltyRate = new FinODPenaltyRate();
+		}
+		this.finODPenaltyRate.setApplyODPenalty(financeType.isApplyODPenalty());
+		this.finODPenaltyRate.setODIncGrcDays(financeType.isODIncGrcDays());
+		this.finODPenaltyRate.setODChargeCalOn(financeType.getODChargeCalOn());
+		this.finODPenaltyRate.setODGraceDays(financeType.getODGraceDays());
+		this.finODPenaltyRate.setODChargeType(financeType.getODChargeType());
+		this.finODPenaltyRate.setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
+		this.finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
+		this.finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
 	}
 
 	public FinanceMain getFinanceMain() {
@@ -315,10 +344,19 @@ public class FinScheduleData {
     	this.financeSummary = financeSummary;
     }
 
-	public HashMap<Date, DefermentDetail> getDefermentMap() {
-		HashMap<Date, DefermentDetail> defMap=new HashMap<Date, DefermentDetail>();
+	public HashMap<Date, ArrayList<DefermentDetail>> getDefermentMap() {
+		HashMap<Date, ArrayList<DefermentDetail>> defMap=new HashMap<Date, ArrayList<DefermentDetail>>();
 		for (int i = 0; i < this.defermentDetails.size(); i++) {
-			defMap.put(this.defermentDetails.get(i).getDeferedRpyDate(), this.defermentDetails.get(i));			
+			
+			if(defMap.containsKey(this.defermentDetails.get(i).getDeferedRpyDate())){
+				ArrayList<DefermentDetail> penaltyDetailList = defMap.get(this.defermentDetails.get(i).getDeferedRpyDate());
+				penaltyDetailList.add(this.defermentDetails.get(i));
+				defMap.put(this.defermentDetails.get(i).getDeferedRpyDate(), penaltyDetailList);
+			}else{
+				ArrayList<DefermentDetail> penaltyDetailList = new ArrayList<DefermentDetail>();
+				penaltyDetailList.add(this.defermentDetails.get(i));
+				defMap.put(this.defermentDetails.get(i).getDeferedRpyDate(), penaltyDetailList);
+			}
 		}
 		return defMap;
 	}
@@ -343,6 +381,27 @@ public class FinScheduleData {
 	public void setRepayDetails(List<FinanceRepayments> repayDetails) {
     	this.repayDetails = repayDetails;
     }
+	
+	public void setPenaltyDetails(List<OverdueChargeRecovery> penaltyDetails) {
+	    this.penaltyDetails = penaltyDetails;
+    }
+	public List<OverdueChargeRecovery> getPenaltyDetails() {
+	    return penaltyDetails;
+    }
+
+	public void setAccrueValue(BigDecimal accrueValue) {
+	    this.accrueValue = accrueValue;
+    }
+	public BigDecimal getAccrueValue() {
+	    return accrueValue;
+    }
+
+	public FinODPenaltyRate getFinODPenaltyRate() {
+    	return finODPenaltyRate;
+    }
+	public void setFinODPenaltyRate(FinODPenaltyRate finODPenaltyRate) {
+    	this.finODPenaltyRate = finODPenaltyRate;
+    }
 
 	@Override
 	public boolean equals(Object obj) {
@@ -356,5 +415,23 @@ public class FinScheduleData {
 		}
 		return false;
 	}
+
+	public void setFinPftSuspended(boolean finPftSuspended) {
+	    this.finPftSuspended = finPftSuspended;
+    }
+
+	public boolean isFinPftSuspended() {
+	    return finPftSuspended;
+    }
+
+	public void setFinSuspDate(Date finSuspDate) {
+	    this.finSuspDate = finSuspDate;
+    }
+
+	public Date getFinSuspDate() {
+	    return finSuspDate;
+    }
+
+
 
 }

@@ -53,7 +53,8 @@ public interface NotesService {
 	Notes getNewNotes();
 
 	List<Notes> getNotesById(Notes notes);
-	List<Notes> getNotesList(Notes notes);
+	List<Notes> getNotesList(Notes notes, boolean isNotes);
+	List<Notes> getNotesListByRole(Notes notes, boolean isNotes,String[] roleCodes); 
 	
 	void setNotesDAO(NotesDAO notesDAO);
 	Notes refresh(Notes notes);

@@ -79,7 +79,7 @@ public class CustomerBalanceSheetListModelItemRenderer implements ListitemRender
 			final CustomerBalanceSheet customerBalanceSheet = (CustomerBalanceSheet) data;
 			Listcell lc;
 			lc = new Listcell(PennantAppUtil.getlabelDesc(customerBalanceSheet.getFinancialYear(),
-					PennantAppUtil.getFinancialYears()));
+					null));
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.amountFormate(customerBalanceSheet.getTotalAssets(),0));
 			lc.setParent(item);

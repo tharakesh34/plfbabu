@@ -58,14 +58,13 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Item renderer for list items in the list box.
  * 
  */
-public class CustomerNotesTypeListModelItemRenderer implements
-		ListitemRenderer<CustomerNotesType>, Serializable {
+public class CustomerNotesTypeListModelItemRenderer implements ListitemRenderer<CustomerNotesType>, Serializable {
 
 	private static final long serialVersionUID = -228283421898600121L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, CustomerNotesType customerNotesType, int count) throws Exception {
-		//final CustomerNotesType customerNotesType = (CustomerNotesType) data;
+
 		Listcell lc;
 		lc = new Listcell(customerNotesType.getCustNotesTypeCode());
 		lc.setParent(item);
@@ -74,19 +73,16 @@ public class CustomerNotesTypeListModelItemRenderer implements
 		lc = new Listcell();
 		final Checkbox cbCustNotesTypeIsPerminent = new Checkbox();
 		cbCustNotesTypeIsPerminent.setDisabled(true);
-		cbCustNotesTypeIsPerminent.setChecked(customerNotesType
-				.isCustNotesTypeIsPerminent());
+		cbCustNotesTypeIsPerminent.setChecked(customerNotesType.isCustNotesTypeIsPerminent());
 		lc.appendChild(cbCustNotesTypeIsPerminent);
 		lc.setParent(item);
 		lc = new Listcell(customerNotesType.getCustNotesTypeArchiveFrq());
 		lc.setParent(item);
 		lc = new Listcell(customerNotesType.getRecordStatus());
 		lc.setParent(item);
-		lc = new Listcell(PennantJavaUtil.getLabel(customerNotesType
-				.getRecordType()));
+		lc = new Listcell(PennantJavaUtil.getLabel(customerNotesType.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("data", customerNotesType);
-		ComponentsCtrl.applyForward(item,
-				"onDoubleClick=onCustomerNotesTypeItemDoubleClicked");
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerNotesTypeItemDoubleClicked");
 	}
 }

@@ -9,7 +9,7 @@
 
 	<window id="window_VehicleDealerSearch"
 		title="${c:l('window_VehicleDealerSearch.title')}" border="none"
-		apply="${vehicleDealerSearchCtrl}" closable="true" width="400px"
+		apply="${vehicleDealerSearchCtrl}" closable="true" width="550px"
 		height="284px" sizable="true">
 
 		<borderlayout>
@@ -27,28 +27,63 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_VehicleDealerSearch_DealerId" value="${c:l('label_VehicleDealerSearch_DealerId.value')}" />
-									<listbox id="sortOperator_dealerId" width="43px" mold="select" rows="1" />
-									 <textbox id="dealerId" width="171px" maxlength="19" />
-								  
-										
+									<label
+										id="label_VehicleDealerSearch_DealerType"
+										value="${c:l('label_VehicleDealerSearch_DealerType.value')}" />
+									<listbox
+										id="sortOperator_dealerType" width="43px" mold="select"
+										rows="1" />
+									<textbox id="dealerType"
+										width="171px" maxlength="19" />
+								</row>
+								<row visible="false">
+									<label
+										id="label_VehicleDealerSearch_DealerId"
+										value="${c:l('label_VehicleDealerSearch_DealerId.value')}" />
+									<listbox id="sortOperator_dealerId"
+										width="43px" mold="select" rows="1" />
+									<textbox id="dealerId" width="171px"
+										maxlength="19" />
 								</row>
 								<row>
-									<label id="label_VehicleDealerSearch_DealerName" value="${c:l('label_VehicleDealerSearch_DealerName.value')}" />
-									<listbox id="sortOperator_dealerName" width="43px" mold="select" rows="1" />
-									 <textbox id="dealerName" width="450px" maxlength="50" />
-								  
-										
+									<label
+										id="label_VehicleDealerSearch_DealerName"
+										value="${c:l('label_VehicleDealerSearch_DealerName.value')}" />
+									<listbox
+										id="sortOperator_dealerName" width="43px" mold="select"
+										rows="1" />
+									<textbox id="dealerName"
+										width="171px" maxlength="50" />
 								</row>
 								<row>
-									<label id="label_VehicleDealerSearch_RecordStatus" value="${c:l('label_VehicleDealerSearch_RecordStatus.value')}" />
-									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
-										<textbox id="recordStatus" width="100px" maxlength="50" />
+									<label
+										id="label_VehicleDealerSearch_DealerTelephone"
+										value="${c:l('label_VehicleDealerSearch_DealerTelephone.value')}" />
+									<listbox
+										id="sortOperator_dealerTelephone" width="43px" mold="select"
+										rows="1" />
+									<textbox id="dealerTelephone"
+										width="171px" maxlength="19" />
 								</row>
 								<row>
-									<label id="label_VehicleDealerSearch_RecordType" value="${c:l('label_VehicleDealerSearch_RecordType.value')}" />
-									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
-										<listbox id="recordType" width="100px" mold="select" />
+									<label
+										id="label_VehicleDealerSearch_RecordStatus"
+										value="${c:l('label_VehicleDealerSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_VehicleDealerSearch_RecordType"
+										value="${c:l('label_VehicleDealerSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>
@@ -57,7 +92,8 @@
 			</center>
 			<south border="none" margins="1,0,0,0" size="30px"
 				splittable="false">
-				<div id="divSouthVehicleDealer" align="left" width="100%">
+				<div id="divSouthVehicleDealer" align="left"
+					width="100%">
 					<grid>
 						<rows>
 							<row valign="middle">

@@ -485,7 +485,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 	private List<AuditDetail> setChkListDetailAuditData(CheckList checkList,String auditTranType,String method) {
 		logger.debug("Entering ");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new CheckListDetail());
+		String[] fields = PennantJavaUtil.getFieldDetails(new CheckListDetail(),new CheckListDetail().getExcludeFields());
 
 
 		for (int i = 0; i < checkList.getChkListList().size(); i++) {
@@ -501,10 +501,11 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 				isRcdType=true;
 			}else if (checkListDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 				checkListDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType=true;
+				if (checkList.isWorkflow()) {
+					isRcdType=true;
+                }
 			}else if (checkListDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				checkListDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType=true;
 			}
 
 			if(method.equals("saveOrUpdate") && (isRcdType==true)){

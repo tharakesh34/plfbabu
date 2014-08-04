@@ -11,11 +11,21 @@
 
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
+				
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start" sclass="toolbar-start"/>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center" sclass="toolbar-center">
+					<label value="${c:l('window_ImageViewDialog.title')}"
+						sclass="label-heading" />
+				</toolbar>
+
 				<toolbar align="end"
 					style="float:right; border-style: none;">
-					<button id="btnClose" height="24px"
-						image="/images/icons/btn_exitdoor2_16x16.gif">
+					<button id="btnClose" height="24px" label="close"
+						tooltiptext="${c:l('btnClose.tooltiptext')}">
 					</button>
 				</toolbar>
 			</hbox>

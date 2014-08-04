@@ -52,14 +52,20 @@
 
 					<listbox id="listBoxVehicleDealer"  vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
 						<listhead sizable="true">
+						    <listheader id="listheader_DealerType" label="${c:l('listheader_DealerType.label')}" sort="auto" 
+								width="25%" />
 							<listheader id="listheader_DealerName" label="${c:l('listheader_DealerName.label')}" sort="auto" 
-								width="80%" />
+								width="25%" />
+							<listheader id="listheader_DealerTelephone" label="${c:l('listheader_DealerTelephone.label')}" sort="auto" 
+								width="25%" />
+							<listheader id="listheader_DealerFax" label="${c:l('listheader_DealerFax.label')}" sort="auto" 
+								width="25%" />		
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								width="0%" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								width="0%" />
 						</listhead>		
 			
 					</listbox>

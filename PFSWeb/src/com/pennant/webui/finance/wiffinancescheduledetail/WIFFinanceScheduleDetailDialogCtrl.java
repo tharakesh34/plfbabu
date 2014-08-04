@@ -620,8 +620,8 @@ public class WIFFinanceScheduleDetailDialogCtrl extends GFCBaseCtrl implements S
 		   this.lovDescBaseRateName.setValue("");
 		   this.lovDescSplRateName.setValue("");
 	}else{
-		   this.lovDescBaseRateName.setValue(aWIFFinanceScheduleDetail.getBaseRate()+"-"+aWIFFinanceScheduleDetail.getLovDescBaseRateName());
-		   this.lovDescSplRateName.setValue(aWIFFinanceScheduleDetail.getSplRate()+"-"+aWIFFinanceScheduleDetail.getLovDescSplRateName());
+		   //this.lovDescBaseRateName.setValue(aWIFFinanceScheduleDetail.getBaseRate()+"-"+aWIFFinanceScheduleDetail.getLovDescBaseRateName());
+		   //this.lovDescSplRateName.setValue(aWIFFinanceScheduleDetail.getSplRate()+"-"+aWIFFinanceScheduleDetail.getLovDescSplRateName());
 	}
 		this.recordStatus.setValue(aWIFFinanceScheduleDetail.getRecordStatus());
 		logger.debug("Leaving");
@@ -691,13 +691,13 @@ public class WIFFinanceScheduleDetailDialogCtrl extends GFCBaseCtrl implements S
 			wve.add(we);
 		}
 		try {
-	 		aWIFFinanceScheduleDetail.setLovDescBaseRateName(this.lovDescBaseRateName.getValue());
+	 		//aWIFFinanceScheduleDetail.setLovDescBaseRateName(this.lovDescBaseRateName.getValue());
 	 		aWIFFinanceScheduleDetail.setBaseRate(this.baseRate.getValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-	 		aWIFFinanceScheduleDetail.setLovDescSplRateName(this.lovDescSplRateName.getValue());
+	 		//aWIFFinanceScheduleDetail.setLovDescSplRateName(this.lovDescSplRateName.getValue());
 	 		aWIFFinanceScheduleDetail.setSplRate(this.splRate.getValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);

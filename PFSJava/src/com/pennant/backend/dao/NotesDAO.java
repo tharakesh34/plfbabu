@@ -53,7 +53,10 @@ public interface NotesDAO {
 
 	public List<Notes> getNotesByID(Notes notes);
 
-	public List<Notes> getNotesList(Notes notes);
+	public List<Notes> getNotesList(Notes notes, boolean isNotes);
+	public List<Notes> getNotesListAsc(Notes notes, boolean isNotes);
+	public List<Notes> getNotesListAsc(Notes notes);
+	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes);
 
 	public void update(Notes notes);
 

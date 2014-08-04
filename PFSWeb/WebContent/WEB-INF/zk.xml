@@ -45,6 +45,10 @@
 		<listener-class>org.zkoss.zkplus.util.ThreadLocalListener
 		</listener-class>
 	</listener>
+ 	<listener>
+		<description>MyDesktopCleanup</description>
+		<listener-class>com.pennant.webui.util.UserDesktopCleanup</listener-class>
+	</listener>
 
 	<!-- ====================================================== -->
 	<!--         Besides that, you have to specify what         -->
@@ -138,6 +142,6 @@
          </script>
       ]]></embed>
    </device-config>
-   
+  
 </zk>
 

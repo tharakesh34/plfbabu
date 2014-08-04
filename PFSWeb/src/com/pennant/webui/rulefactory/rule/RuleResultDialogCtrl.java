@@ -76,7 +76,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
@@ -128,7 +128,7 @@ public class RuleResultDialogCtrl extends GFCBaseListCtrl<Rule> implements Seria
 	private List<String> amountCodes = new ArrayList<String>();
 	String returnValue = "";
 	
-	private List<ValueLabel> listRuleOperators = PennantAppUtil.getRuleOperator(); // autoWired
+	private List<ValueLabel> listRuleOperators = PennantStaticListUtil.getRuleOperator(); // autoWired
 	protected JdbcSearchObject<BMTRBFldDetails> searchObj;
 
 	/**

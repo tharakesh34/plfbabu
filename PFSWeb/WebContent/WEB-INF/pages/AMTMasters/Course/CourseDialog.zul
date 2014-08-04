@@ -39,10 +39,8 @@
 						</toolbar>
 						
 						<!-- SEARCH AREA -->
-						<toolbar align="center"
-							sclass="toolbar-center">
-							<label
-								value="${c:l('window_CourseDialog.title')}"
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_CourseDialog.title')}"
 								sclass="label-heading" />
 						</toolbar>
 

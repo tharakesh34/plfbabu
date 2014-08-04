@@ -59,30 +59,30 @@
 
 					<listbox id="listBoxCustomerNotesType" vflex="true"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
+						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 							<listheader
 								id="listheader_CustNotesTypeCode"
 								label="${c:l('listheader_CustNotesTypeCode.label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader
 								id="listheader_CustNotesTypeDesc"
 								label="${c:l('listheader_CustNotesTypeDesc.label')}" sort="auto"
-								width="40%" />
+								hflex="min" />
 							<listheader
 								id="listheader_CustNotesTypeIsPerminent"
 								label="${c:l('listheader_CustNotesTypeIsPerminent.label')}"
-								sort="auto" width="10%" />
+								sort="auto" hflex="min" />
 							<listheader
 								id="listheader_CustNotesTypeArchiveFrq"
 								label="${c:l('listheader_CustNotesTypeArchiveFrq.label')}"
-								sort="auto" width="15%" />
+								sort="auto" hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 						</listhead>
 					</listbox>
 

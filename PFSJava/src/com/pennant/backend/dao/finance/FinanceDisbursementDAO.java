@@ -52,12 +52,14 @@ public interface FinanceDisbursementDAO {
 	public FinanceDisbursement getNewFinanceDisbursement(boolean isWIF);
 	public FinanceDisbursement getFinanceDisbursementById(String id,String type,boolean isWIF);
 	public void update(FinanceDisbursement financeDisbursement,String type,boolean isWIF);
-	public void deleteByFinReference(String id,String type,boolean isWIF);
+	public void deleteByFinReference(String id,String type,boolean isWIF, long logKey);
 	public String save(FinanceDisbursement financeDisbursement,String type,boolean isWIF);
 	public void initialize(FinanceDisbursement financeDisbursement);
 	public void refresh(FinanceDisbursement entity);
 	public List<FinanceDisbursement> getFinanceDisbursementDetails(String id, String type,boolean isWIF);
+	public List<FinanceDisbursement> getFinanceDisbursementDetails(String id, String type,boolean isWIF, long logKey);
 	public void delete(FinanceDisbursement financeDisbursement,String type,boolean isWIF);
 	public void saveList(List<FinanceDisbursement> financeDisbursement, String type,boolean isWIF);
 	public void updateLinkedTranId(String finReference, long linkedTranId, String type);
+	public void updateBatchDisb(FinanceDisbursement disbursement, String type);
 }

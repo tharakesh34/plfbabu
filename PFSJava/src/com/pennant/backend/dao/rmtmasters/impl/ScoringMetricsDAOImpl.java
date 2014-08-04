@@ -125,7 +125,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 	@Override
 	public ScoringMetrics getScoringMetricsById(final String id, String type) {
 		logger.debug("Entering");
-		ScoringMetrics scoringMetrics = getScoringMetrics();
+		ScoringMetrics scoringMetrics = new ScoringMetrics();
 		scoringMetrics.setId(0);
 
 		StringBuilder selectSql = new StringBuilder("Select ScoreGroupId, ScoringId, CategoryType, ");
@@ -155,7 +155,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 	 */
 	public List<ScoringMetrics> getScoringMetricsByScoreGrpId(final long scoreGrpId,String categoryType, String type) {
 		logger.debug("Entering");
-		ScoringMetrics scoringMetrics = getScoringMetrics();
+		ScoringMetrics scoringMetrics = new ScoringMetrics();
 		scoringMetrics.setScoreGroupId(scoreGrpId);
 		scoringMetrics.setCategoryType(categoryType);
 
@@ -249,7 +249,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 	 */
 	public void delete(long  scoreGroupId,String type) {
 		logger.debug("Entering");
-		ScoringMetrics scoringMetrics=getScoringMetrics();
+		ScoringMetrics scoringMetrics=new ScoringMetrics();
 		scoringMetrics.setScoreGroupId(scoreGroupId);
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From RMTScoringMetrics");

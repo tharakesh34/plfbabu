@@ -121,7 +121,7 @@ public class RejectDetailDAOImpl extends BasisCodeDAO<RejectDetail> implements R
 	@Override
 	public RejectDetail getRejectDetailById(final String id, String type) {
 		logger.debug("Entering");
-		RejectDetail rejectDetail = getRejectDetail();
+		RejectDetail rejectDetail = new RejectDetail();
 		rejectDetail.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

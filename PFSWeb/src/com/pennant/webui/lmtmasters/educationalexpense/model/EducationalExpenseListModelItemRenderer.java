@@ -79,7 +79,7 @@ public class EducationalExpenseListModelItemRenderer implements ListitemRenderer
 	  	lc = new Listcell(PennantAppUtil.amountFormate(educationalExpense.getEduExpAmount(),0));
 	  	lc.setStyle("text-align:right");
 	  	lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.formateDate(educationalExpense.getEduExpDate(), PennantConstants.dateFormat));
+	  	lc = new Listcell(PennantAppUtil.formateDate(educationalExpense.getEduExpDate(), PennantConstants.dateFormate));
 	  	lc.setParent(item);
 	  	lc = new Listcell(educationalExpense.getRecordStatus());
 	  	lc.setParent(item);

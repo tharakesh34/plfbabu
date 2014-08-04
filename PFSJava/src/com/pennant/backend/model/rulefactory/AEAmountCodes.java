@@ -47,6 +47,7 @@ public class AEAmountCodes {
 	private BigDecimal rpPri = BigDecimal.ZERO;
 	private BigDecimal rpTot = BigDecimal.ZERO;
 	private BigDecimal refund = BigDecimal.ZERO;
+	private BigDecimal insRefund = BigDecimal.ZERO;
 	private BigDecimal cpzTot = BigDecimal.ZERO;
 	private BigDecimal cpzPrv = BigDecimal.ZERO;
 	private BigDecimal cpzCur = BigDecimal.ZERO;
@@ -54,15 +55,16 @@ public class AEAmountCodes {
 	private BigDecimal pftInAdv = BigDecimal.ZERO;
 	private BigDecimal provAmt = BigDecimal.ZERO;
 
-	private int elpDays;
-	private int elpMnts;
-	private int elpTerms;
-	private int ttlDays;
-	private int ttlMnts;
-	private int ttlTerms;
-	private int ODDays;
-	private int daysFromFullyPaid;
-	private int ODInst;
+	private int elpDays = 0;
+	private int elpMnts = 0;
+	private int elpTerms = 0;
+	private int ttlDays = 0;
+	private int ttlMnts = 0;
+	private int ttlTerms = 0;
+	private int ODDays = 0;
+	private int daysFromFullyPaid = 0;
+	private int ODInst = 0;
+	private int paidInst = 0;
 
 	private BigDecimal PROVDUE = BigDecimal.ZERO;
 	private BigDecimal SUSPNOW = BigDecimal.ZERO;
@@ -76,7 +78,41 @@ public class AEAmountCodes {
 	private BigDecimal DEFFEREDCOST = BigDecimal.ZERO;
 	private BigDecimal CURRETBILL = BigDecimal.ZERO;
 	private BigDecimal TTLRETBILL = BigDecimal.ZERO;
-
+	
+	//Summary Details
+	private Date fullyPaidDate;
+	private BigDecimal curReducingRate = BigDecimal.ZERO;
+	private BigDecimal curFlatRate = BigDecimal.ZERO;
+	private BigDecimal nextSchdPri = BigDecimal.ZERO;
+	private BigDecimal nextSchdPft = BigDecimal.ZERO;
+	private BigDecimal nextSchdPriBal = BigDecimal.ZERO;
+	private BigDecimal nextSchdPftBal = BigDecimal.ZERO;
+	private boolean isPftInSusp = false; 
+	private String finWorstSts;
+	private BigDecimal firstRepayAmt = BigDecimal.ZERO;
+	private Date firstRepayDate;
+	private BigDecimal lastRepayAmt = BigDecimal.ZERO;
+	private BigDecimal priOD = BigDecimal.ZERO;
+	private BigDecimal pftOD = BigDecimal.ZERO;
+	private BigDecimal penaltyPaid = BigDecimal.ZERO;
+	private BigDecimal penaltyDue = BigDecimal.ZERO;
+	private BigDecimal penaltyWaived = BigDecimal.ZERO;
+	private BigDecimal accrueTsfd = null;
+	private BigDecimal prvAccrueTsfd = BigDecimal.ZERO;
+	private Date firstODDate;
+	private Date lastODDate;
+	
+	private Date 	   lastRpySchDate;//Either Partially or Fully
+	private Date 	   nextRpySchDate;//Either partially or Fully
+	private BigDecimal lastRpySchPri =  BigDecimal.ZERO;// Last paid Schedule Principal
+	private BigDecimal lastRpySchPft =  BigDecimal.ZERO;// Last paid Schedule Profit
+	private Date       latestWriteOffDate; //latest WriteOff Schedule Date
+	private BigDecimal totalWriteoff = BigDecimal.ZERO; //Total WriteOff Amount (P+P)
+	
+	//Depreciation Principal Amount
+	private BigDecimal accumulatedDepPri = BigDecimal.ZERO;
+	private BigDecimal depreciatePri = BigDecimal.ZERO;
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -477,39 +513,39 @@ public class AEAmountCodes {
     	return PROVDUE;
     }
 	public void setPROVDUE(BigDecimal pROVDUE) {
-    	PROVDUE = pROVDUE;
+    	this.PROVDUE = pROVDUE;
     }
 
 	public BigDecimal getSUSPNOW() {
 		return SUSPNOW;
 	}
 	public void setSUSPNOW(BigDecimal sUSPNOW) {
-		SUSPNOW = sUSPNOW;
+		this.SUSPNOW = sUSPNOW;
 	}
 
 	public BigDecimal getSUSPRLS() {
 		return SUSPRLS;
 	}
 	public void setSUSPRLS(BigDecimal sUSPRLS) {
-		SUSPRLS = sUSPRLS;
+		this.SUSPRLS = sUSPRLS;
 	}
 
 	public BigDecimal getPENALTY() {
 		return PENALTY;
 	}
 	public void setPENALTY(BigDecimal pENALTY) {
-		PENALTY = pENALTY;
+		this.PENALTY = pENALTY;
 	}
 
 	public BigDecimal getWAIVER() {
 		return WAIVER;
 	}
 	public void setWAIVER(BigDecimal wAIVER) {
-		WAIVER = wAIVER;
+		this.WAIVER = wAIVER;
 	}
 
 	public void setODCPLShare(BigDecimal oDCPLShare) {
-		ODCPLShare = oDCPLShare;
+		this.ODCPLShare = oDCPLShare;
 	}
 	public BigDecimal getODCPLShare() {
 		return ODCPLShare;
@@ -519,28 +555,228 @@ public class AEAmountCodes {
     	return CLAIMAMT;
     }
 	public void setCLAIMAMT(BigDecimal cLAIMAMT) {
-    	CLAIMAMT = cLAIMAMT;
+		this.CLAIMAMT = cLAIMAMT;
     }
 	
 	public BigDecimal getDEFFEREDCOST() {
     	return DEFFEREDCOST;
     }
 	public void setDEFFEREDCOST(BigDecimal dEFFEREDCOST) {
-    	DEFFEREDCOST = dEFFEREDCOST;
+		this.DEFFEREDCOST = dEFFEREDCOST;
     }
 	
 	public BigDecimal getCURRETBILL() {
     	return CURRETBILL;
     }
 	public void setCURRETBILL(BigDecimal cURRETBILL) {
-    	CURRETBILL = cURRETBILL;
+		this.CURRETBILL = cURRETBILL;
     }
 	
 	public BigDecimal getTTLRETBILL() {
     	return TTLRETBILL;
     }
 	public void setTTLRETBILL(BigDecimal tTLRETBILL) {
-    	TTLRETBILL = tTLRETBILL;
+		this.TTLRETBILL = tTLRETBILL;
     }
-
+	public BigDecimal getdAccrue() {
+    	return dAccrue;
+    }
+	public void setdAccrue(BigDecimal dAccrue) {
+    	this.dAccrue = dAccrue;
+    }
+	public BigDecimal getnAccrue() {
+    	return nAccrue;
+    }
+	public void setnAccrue(BigDecimal nAccrue) {
+    	this.nAccrue = nAccrue;
+    }
+	public Date getFullyPaidDate() {
+    	return fullyPaidDate;
+    }
+	public void setFullyPaidDate(Date fullyPaidDate) {
+    	this.fullyPaidDate = fullyPaidDate;
+    }
+	public BigDecimal getCurReducingRate() {
+    	return curReducingRate;
+    }
+	public void setCurReducingRate(BigDecimal curReducingRate) {
+    	this.curReducingRate = curReducingRate;
+    }
+	public BigDecimal getCurFlatRate() {
+    	return curFlatRate;
+    }
+	public void setCurFlatRate(BigDecimal curFlatRate) {
+    	this.curFlatRate = curFlatRate;
+    }
+	public BigDecimal getNextSchdPri() {
+    	return nextSchdPri;
+    }
+	public void setNextSchdPri(BigDecimal nextSchdPri) {
+    	this.nextSchdPri = nextSchdPri;
+    }
+	public BigDecimal getNextSchdPft() {
+    	return nextSchdPft;
+    }
+	public void setNextSchdPft(BigDecimal nextSchdPft) {
+    	this.nextSchdPft = nextSchdPft;
+    }
+	public BigDecimal getNextSchdPriBal() {
+    	return nextSchdPriBal;
+    }
+	public void setNextSchdPriBal(BigDecimal nextSchdPriBal) {
+    	this.nextSchdPriBal = nextSchdPriBal;
+    }
+	public BigDecimal getNextSchdPftBal() {
+    	return nextSchdPftBal;
+    }
+	public void setNextSchdPftBal(BigDecimal nextSchdPftBal) {
+    	this.nextSchdPftBal = nextSchdPftBal;
+    }
+	public boolean isPftInSusp() {
+    	return isPftInSusp;
+    }
+	public void setPftInSusp(boolean isPftInSusp) {
+    	this.isPftInSusp = isPftInSusp;
+    }
+	public String getFinWorstSts() {
+    	return finWorstSts;
+    }
+	public void setFinWorstSts(String finWorstSts) {
+    	this.finWorstSts = finWorstSts;
+    }
+	public BigDecimal getFirstRepayAmt() {
+    	return firstRepayAmt;
+    }
+	public void setFirstRepayAmt(BigDecimal firstRepayAmt) {
+    	this.firstRepayAmt = firstRepayAmt;
+    }
+	public BigDecimal getLastRepayAmt() {
+    	return lastRepayAmt;
+    }
+	public void setLastRepayAmt(BigDecimal lastRepayAmt) {
+    	this.lastRepayAmt = lastRepayAmt;
+    }
+	public BigDecimal getPriOD() {
+    	return priOD;
+    }
+	public void setPriOD(BigDecimal priOD) {
+    	this.priOD = priOD;
+    }
+	public BigDecimal getPftOD() {
+    	return pftOD;
+    }
+	public void setPftOD(BigDecimal pftOD) {
+    	this.pftOD = pftOD;
+    }
+	public BigDecimal getPenaltyPaid() {
+    	return penaltyPaid;
+    }
+	public void setPenaltyPaid(BigDecimal penaltyPaid) {
+    	this.penaltyPaid = penaltyPaid;
+    }
+	public BigDecimal getPenaltyDue() {
+    	return penaltyDue;
+    }
+	public void setPenaltyDue(BigDecimal penaltyDue) {
+    	this.penaltyDue = penaltyDue;
+    }
+	public BigDecimal getPenaltyWaived() {
+    	return penaltyWaived;
+    }
+	public void setPenaltyWaived(BigDecimal penaltyWaived) {
+    	this.penaltyWaived = penaltyWaived;
+    }
+	public void setAccrueTsfd(BigDecimal accrueTsfd) {
+	    this.accrueTsfd = accrueTsfd;
+    }
+	public BigDecimal getAccrueTsfd() {
+	    return accrueTsfd;
+    }
+	
+	public Date getFirstODDate() {
+    	return firstODDate;
+    }
+	public void setFirstODDate(Date firstODDate) {
+    	this.firstODDate = firstODDate;
+    }
+	
+	public Date getLastODDate() {
+    	return lastODDate;
+    }
+	public void setLastODDate(Date lastODDate) {
+    	this.lastODDate = lastODDate;
+    }
+	public Date getFirstRepayDate() {
+	    return firstRepayDate;
+    }
+	public void setFirstRepayDate(Date firstRepayDate) {
+	    this.firstRepayDate = firstRepayDate;
+    }
+	public BigDecimal getInsRefund() {
+	    return insRefund;
+    }
+	public void setInsRefund(BigDecimal insRefund) {
+	    this.insRefund = insRefund;
+    }
+	public Date getLastRpySchDate() {
+    	return lastRpySchDate;
+    }
+	public void setLastRpySchDate(Date lastRpySchDate) {
+    	this.lastRpySchDate = lastRpySchDate;
+    }
+	public Date getNextRpySchDate() {
+    	return nextRpySchDate;
+    }
+	public void setNextRpySchDate(Date nextRpySchDate) {
+    	this.nextRpySchDate = nextRpySchDate;
+    }
+	public BigDecimal getLastRpySchPri() {
+    	return lastRpySchPri;
+    }
+	public void setLastRpySchPri(BigDecimal lastRpySchPri) {
+    	this.lastRpySchPri = lastRpySchPri;
+    }
+	public BigDecimal getLastRpySchPft() {
+    	return lastRpySchPft;
+    }
+	public void setLastRpySchPft(BigDecimal lastRpySchPft) {
+    	this.lastRpySchPft = lastRpySchPft;
+    }
+	public Date getLatestWriteOffDate() {
+    	return latestWriteOffDate;
+    }
+	public void setLatestWriteOffDate(Date latestWriteOffDate) {
+    	this.latestWriteOffDate = latestWriteOffDate;
+    }
+	public BigDecimal getTotalWriteoff() {
+    	return totalWriteoff;
+    }
+	public void setTotalWriteoff(BigDecimal totalWriteoff) {
+    	this.totalWriteoff = totalWriteoff;
+    }
+	public BigDecimal getPrvAccrueTsfd() {
+	    return prvAccrueTsfd;
+    }
+	public void setPrvAccrueTsfd(BigDecimal prvAccrueTsfd) {
+	    this.prvAccrueTsfd = prvAccrueTsfd;
+    }
+	public int getPaidInst() {
+	    return paidInst;
+    }
+	public void setPaidInst(int paidInst) {
+	    this.paidInst = paidInst;
+    }
+	public BigDecimal getAccumulatedDepPri() {
+    	return accumulatedDepPri;
+    }
+	public void setAccumulatedDepPri(BigDecimal accumulatedDepPri) {
+    	this.accumulatedDepPri = accumulatedDepPri;
+    }
+	public BigDecimal getDepreciatePri() {
+	    return depreciatePri;
+    }
+	public void setDepreciatePri(BigDecimal depreciatePri) {
+	    this.depreciatePri = depreciatePri;
+    }
+	
 }

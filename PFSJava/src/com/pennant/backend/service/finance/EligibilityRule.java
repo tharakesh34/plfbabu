@@ -10,6 +10,7 @@ public class EligibilityRule implements Serializable {
     private String ruleCode;
     private String ruleCodeDesc;
     private String finType;
+    private String finTypeDesc;
     private String ruleReturnType;
     private BigDecimal elgAmount;
     
@@ -50,6 +51,13 @@ public class EligibilityRule implements Serializable {
     }
 	public void setElgAmount(BigDecimal elgAmount) {
     	this.elgAmount = elgAmount;
+    }
+	
+	public void setFinTypeDesc(String finTypeDesc) {
+	    this.finTypeDesc = finTypeDesc;
+    }
+	public String getFinTypeDesc() {
+	    return finTypeDesc;
     }
 	
 }

@@ -69,7 +69,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -85,8 +84,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -116,6 +118,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	protected Textbox acType; // autoWired
 	protected Textbox acTypeDesc; // autoWired
+	protected Textbox acLmtCategory; // autoWired
 	protected Combobox acPurpose; // autoWired
 	protected Textbox acHeadCode; // autoWired
 	protected Checkbox internalAc; // autoWired
@@ -137,6 +140,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// on the values are edited since the last initialize.
 	private transient String oldVar_acType;
 	private transient String oldVar_acTypeDesc;
+	private transient String oldVar_acLmtCategory;
 	private transient String oldVar_acPurpose;
 	private transient String oldVar_acHeadCode;
 	private transient boolean oldVar_internalAc;
@@ -170,7 +174,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient AccountTypeService accountTypeService;
 	private transient PagedListService pagedListService;
 
-	private List<ValueLabel> listAcPurpose = PennantAppUtil.getAccountPurpose(); // autoWired
+	private List<ValueLabel> listAcPurpose = PennantStaticListUtil.getAccountPurpose(); // autoWired
 
 	String CBI_Available = (String) SystemParameterDetails
 			.getSystemParameterValue("CBI_AVAIL");
@@ -261,6 +265,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				.getSystemParameterValue("ACCOUNT_TYPE_LEN").toString());
 		this.acType.setMaxlength(acTypeLen);
 		this.acTypeDesc.setMaxlength(50);
+		this.acLmtCategory.setMaxlength(100);
 
 		this.acHeadCode.setMaxlength(4);
 
@@ -495,6 +500,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		this.acType.setValue(aAccountType.getAcType());
 		this.acTypeDesc.setValue(aAccountType.getAcTypeDesc());
+		this.acLmtCategory.setValue(aAccountType.getAcLmtCategory());
 		this.acPurpose.setValue(PennantAppUtil.getlabelDesc(
 				aAccountType.getAcPurpose(), listAcPurpose));
 		this.acHeadCode.setText(aAccountType.getAcHeadCode() == null ? ""
@@ -534,6 +540,11 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		try {
 			aAccountType.setAcTypeDesc(this.acTypeDesc.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aAccountType.setAcLmtCategory(this.acLmtCategory.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -720,6 +731,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		this.oldVar_acType = this.acType.getValue();
 		this.oldVar_acTypeDesc = this.acTypeDesc.getValue();
+		this.oldVar_acLmtCategory = this.acLmtCategory.getValue();
 		this.oldVar_acPurpose = this.acPurpose.getValue();
 		this.oldVar_acHeadCode = this.acHeadCode.getValue();
 		this.oldVar_internalAc = this.internalAc.isChecked();
@@ -736,6 +748,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		this.acType.setValue(this.oldVar_acType);
 		this.acTypeDesc.setValue(this.oldVar_acTypeDesc);
+		this.acLmtCategory.setValue(this.oldVar_acLmtCategory);
 		this.acPurpose.setValue(this.oldVar_acPurpose);
 		this.acHeadCode.setValue(this.oldVar_acHeadCode);
 		this.internalAc.setChecked(this.oldVar_internalAc);
@@ -765,6 +778,9 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.oldVar_acTypeDesc != this.acTypeDesc.getValue()) {
 			return true;
 		}
+		if (this.oldVar_acLmtCategory != this.acLmtCategory.getValue()) {
+			return true;
+		}
 		if (this.oldVar_acPurpose != this.acPurpose.getValue()) {
 			return true;
 		}
@@ -792,24 +808,19 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 		doClearMessage();
 		if (!this.acType.isReadonly()) {
-			this.acType.setConstraint(new SimpleConstraint(
-						PennantConstants.ALPHANUM_CAPS_REGEX,Labels.getLabel("FIELD_CHAR_CAPS",
-									new String[] { Labels.getLabel("label_AccountTypeDialog_AcType.value") })));
+			this.acType.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountTypeDialog_AcType.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.acTypeDesc.isReadonly()) {
-			this.acTypeDesc.setConstraint(new SimpleConstraint(
-							PennantConstants.DESC_REGEX,Labels.getLabel("MAND_FIELD_DESC",
-									new String[] { Labels.getLabel("label_AccountTypeDialog_AcTypeDesc.value") })));
+			this.acTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountTypeDialog_AcTypeDesc.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.acPurpose.isDisabled()) {
 			this.acPurpose.setConstraint(new StaticListValidator(listAcPurpose,
 							Labels.getLabel("label_AccountTypeDialog_AcPurpose.value")));
 		}
 		if (!this.acHeadCode.isReadonly() && CBI_Available.equals("Y") !=true) {
-			this.acHeadCode.setConstraint(new SimpleConstraint(
-							PennantConstants.NUM_REGEX,Labels.getLabel("MAND_FIELD_ALLOWED_CHARS",
-									new String[] {Labels.getLabel("label_AccountTypeDialog_AcHeadCode.value"),
-											"Numbers(0-9)", "'4'" })));
+			this.acHeadCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountTypeDialog_AcHeadCode.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, true,4,4));
 		}
 
 		logger.debug("Leaving");
@@ -823,6 +834,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(false);
 		this.acType.setConstraint("");
 		this.acTypeDesc.setConstraint("");
+		this.acLmtCategory.setConstraint("");
 		this.acPurpose.setConstraint("");
 		this.acHeadCode.setConstraint("");
 		logger.debug("Leaving");
@@ -847,6 +859,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Enterring");
 		this.acType.setErrorMessage("");
 		this.acTypeDesc.setErrorMessage("");
+		this.acLmtCategory.setErrorMessage("");
 		this.acPurpose.setErrorMessage("");
 		this.acHeadCode.setErrorMessage("");
 		logger.debug("Leaving");
@@ -962,6 +975,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		this.acTypeDesc.setReadonly(isReadOnly("AccountTypeDialog_acTypeDesc"));
+		this.acLmtCategory.setReadonly(isReadOnly("AccountTypeDialog_acTypeDesc"));//TODO Add Right
 		this.acPurpose.setDisabled(isReadOnly("AccountTypeDialog_acPurpose"));
 		this.acHeadCode.setReadonly(isReadOnly("AccountTypeDialog_acHeadCode"));
 		this.internalAc
@@ -995,6 +1009,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		this.acType.setReadonly(true);
 		this.acTypeDesc.setReadonly(true);
+		this.acLmtCategory.setReadonly(true);
 		this.acPurpose.setDisabled(true);
 		this.acHeadCode.setReadonly(true);
 		this.internalAc.setDisabled(true);
@@ -1022,6 +1037,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// remove validation, if there are a save before
 		this.acType.setValue("");
 		this.acTypeDesc.setValue("");
+		this.acLmtCategory.setValue("");
 		this.acPurpose.setValue("");
 		this.acHeadCode.setText("");
 		this.internalAc.setChecked(false);

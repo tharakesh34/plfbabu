@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for list items in the list box.
  * 
@@ -62,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerStatusCodeListModelItemRenderer implements ListitemRenderer<CustomerStatusCode>, Serializable {
 
 	private static final long serialVersionUID = -2369417870213221054L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, CustomerStatusCode customerStatusCode, int count) throws Exception {
 		
-		//final CustomerStatusCode customerStatusCode = (CustomerStatusCode) data;
 		Listcell lc;
 	  	lc = new Listcell(customerStatusCode.getCustStsCode());
 		lc.setParent(item);

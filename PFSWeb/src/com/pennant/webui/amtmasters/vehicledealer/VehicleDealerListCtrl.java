@@ -102,7 +102,10 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 	protected Listbox listBoxVehicleDealer; 				// autowired
 
 	// List headers
+	protected Listheader listheader_DealerType;
 	protected Listheader listheader_DealerName; 	// autowired
+	protected Listheader listheader_DealerTelephone;// autowired 
+	protected Listheader listheader_DealerFax;      // autowired
 	protected Listheader listheader_RecordStatus; 	// autowired
 	protected Listheader listheader_RecordType;
 
@@ -156,11 +159,22 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 		this.pagingVehicleDealerList.setPageSize(getListRows());
 		this.pagingVehicleDealerList.setDetailed(true);
 
+		this.listheader_DealerType.setSortAscending(new FieldComparator(
+				"dealerType", true));
+		this.listheader_DealerType.setSortDescending(new FieldComparator(
+				"dealerType", false));
 		this.listheader_DealerName.setSortAscending(new FieldComparator(
 				"dealerName", true));
 		this.listheader_DealerName.setSortDescending(new FieldComparator(
 				"dealerName", false));
-
+		this.listheader_DealerTelephone.setSortAscending(new FieldComparator(
+				"dealerTelephone", true));
+		this.listheader_DealerTelephone.setSortDescending(new FieldComparator(
+				"dealerTelephone", false));
+		this.listheader_DealerFax.setSortAscending(new FieldComparator(
+				"dealerFax", true));
+		this.listheader_DealerFax.setSortDescending(new FieldComparator(
+				"dealerFax", false));
 		if (isWorkFlowEnabled()) {
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator(
 					"recordStatus", true));
@@ -264,7 +278,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 						new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
 								errParm, valueParm), getUserWorkspace()
 								.getUserLanguage());
-				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
+				PTMessageUtils.showErrorMessage(errorDetails.getError());
 			} else {
 				if (isWorkFlowEnabled()) {
 					String whereCond = " AND DealerId="

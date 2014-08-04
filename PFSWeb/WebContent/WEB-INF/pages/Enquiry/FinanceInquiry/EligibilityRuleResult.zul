@@ -38,7 +38,7 @@
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 							<button id="btnClose" height="24px"
-								image="/images/icons/btn_exitdoor2_16x16.gif"
+								label="${c:l('label_Close')}"
 								tooltiptext="${c:l('btnClose.tooltiptext')}" />
 						</toolbar>
 					</hbox>

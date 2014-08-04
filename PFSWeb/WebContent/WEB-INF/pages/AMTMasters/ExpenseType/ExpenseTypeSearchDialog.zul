@@ -9,7 +9,7 @@
 
 	<window id="window_ExpenseTypeSearch"
 		title="${c:l('window_ExpenseTypeSearch.title')}" border="none"
-		apply="${expenseTypeSearchCtrl}" closable="true" width="400px"
+		apply="${expenseTypeSearchCtrl}" closable="true" width="550px"
 		height="284px" sizable="true">
 
 		<borderlayout>
@@ -26,7 +26,7 @@
 								<column width="100%" />
 							</columns>
 							<rows>
-								<row>
+								<row visible="false">
 									<label id="label_ExpenseTypeSearch_ExpenceTypeId" value="${c:l('label_ExpenseTypeSearch_ExpenceTypeId.value')}" />
 									<listbox id="sortOperator_expenceTypeId" width="43px" mold="select" rows="1" />
 									 <textbox id="expenceTypeId" width="171px" maxlength="19" />
@@ -36,7 +36,7 @@
 								<row>
 									<label id="label_ExpenseTypeSearch_ExpenceTypeName" value="${c:l('label_ExpenseTypeSearch_ExpenceTypeName.value')}" />
 									<listbox id="sortOperator_expenceTypeName" width="43px" mold="select" rows="1" />
-									 <textbox id="expenceTypeName" width="900px" maxlength="100" />
+									 <textbox id="expenceTypeName" width="330px" maxlength="100" />
 								  
 										
 								</row>

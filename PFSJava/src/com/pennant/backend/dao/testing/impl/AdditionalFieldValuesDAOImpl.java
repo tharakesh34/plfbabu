@@ -107,7 +107,8 @@ private static Logger logger = Logger.getLogger(AdditionalFieldValuesDAOImpl.cla
 		return additionalFieldValues;
     }
 
-	@Override
+	@SuppressWarnings("serial")
+    @Override
     public void update(AdditionalFieldValues additionalFieldValues, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
@@ -135,7 +136,8 @@ private static Logger logger = Logger.getLogger(AdditionalFieldValuesDAOImpl.cla
 	    
     }
 
-	@Override
+	@SuppressWarnings("serial")
+    @Override
     public void delete(AdditionalFieldValues additionalFieldValues, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;

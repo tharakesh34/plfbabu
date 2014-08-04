@@ -68,8 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerStatusCodeServiceImpl extends GenericService<CustomerStatusCode>
 		implements CustomerStatusCodeService {
 
-	private static Logger logger = Logger
-			.getLogger(CustomerStatusCodeServiceImpl.class);
+	private static Logger logger = Logger.getLogger(CustomerStatusCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerStatusCodeDAO customerStatusCodeDAO;
@@ -482,5 +481,6 @@ public class CustomerStatusCodeServiceImpl extends GenericService<CustomerStatus
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+
 
 }

@@ -118,10 +118,10 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 	@Override
 	public CheckListDetail getCheckListDetailById(final long id, String type) {
 		logger.debug("Entering");
-		CheckListDetail checkListDetail = getCheckListDetail();
+		CheckListDetail checkListDetail = new CheckListDetail();
 		checkListDetail.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow,RemarksMand");
+		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		selectSql.append(" RecordType, WorkflowId" );
 		
@@ -147,17 +147,17 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 	
 	public List<CheckListDetail> getCheckListDetailByChkList(final long checkListId, String type) {
 		logger.debug("Entering");
-		CheckListDetail checkListDetail = getCheckListDetail();
+		CheckListDetail checkListDetail = new CheckListDetail();
 		checkListDetail.setCheckListId(checkListId);
 		List<CheckListDetail>  chkListDetailList;
 
 		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc");
-		selectSql.append(", AnsCond,RemarksAllow,RemarksMand");
+		selectSql.append(", AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		selectSql.append(" RecordType, WorkflowId" );
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
-		selectSql.append("");
+		selectSql.append(", DocIsCustDOC");
 		}
 		selectSql.append(" From RMTCheckListDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -291,10 +291,10 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		}
 		StringBuilder insertSql =new StringBuilder("Insert Into RMTCheckListDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow, RemarksMand");
+		insertSql.append(" (CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow, DocRequired, DocType, RemarksMand");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		insertSql.append(", RecordType, WorkflowId)");
-		insertSql.append(" Values( :CheckListId, :AnsSeqNo, :AnsDesc, :AnsCond, :RemarksAllow, :RemarksMand");
+		insertSql.append(" Values( :CheckListId, :AnsSeqNo, :AnsDesc, :AnsCond, :RemarksAllow, :DocRequired,:DocType, :RemarksMand");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId ");
 		insertSql.append(", :RecordType, :WorkflowId)");
 		
@@ -326,7 +326,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		StringBuilder	updateSql =new StringBuilder("Update RMTCheckListDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set CheckListId = :CheckListId, AnsSeqNo = :AnsSeqNo, AnsDesc = :AnsDesc, AnsCond = :AnsCond");
-		updateSql.append(", RemarksAllow = :RemarksAllow, RemarksMand = :RemarksMand");
+		updateSql.append(", RemarksAllow = :RemarksAllow, DocRequired = :DocRequired,DocType=:DocType, RemarksMand = :RemarksMand");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
 		updateSql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		updateSql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");

@@ -100,7 +100,7 @@ public class OwnerShipType implements java.io.Serializable, Entity {
 		return ownerShipTypeId;
 	}
 	
-	public void setOwnerShipTypeId(int ownerShipTypeId) {
+	public void setOwnerShipTypeId(long ownerShipTypeId) {
 		this.ownerShipTypeId = ownerShipTypeId;
 	}
 	

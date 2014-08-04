@@ -116,7 +116,7 @@ public class SalesOfficerDAOImpl extends BasisCodeDAO<SalesOfficer> implements S
 	@Override
 	public SalesOfficer getSalesOfficerById(final String id, String type) {
 		logger.debug("Entering");
-		SalesOfficer salesOfficer = getSalesOfficer();
+		SalesOfficer salesOfficer = new SalesOfficer();
 		salesOfficer.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();

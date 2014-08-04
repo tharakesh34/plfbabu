@@ -66,11 +66,11 @@ public class CustomerRatingValidation {
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
-		valueParm[0] = String.valueOf(customerRating.getId());
+		valueParm[0] = StringUtils.trimToEmpty(customerRating.getLovDescCustCIF());
 		valueParm[1] = customerRating.getCustRatingType();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CustRatingType") + ":"+valueParm[1];
+        errParm[0] = PennantJavaUtil.getLabel("Rating") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
+		errParm[1] = PennantJavaUtil.getLabel("label_CustRatingType") + "-" + valueParm[1];
 		
 		if (customerRating.isNew()){ // for New record or new record into work flow
 

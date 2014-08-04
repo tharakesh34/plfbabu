@@ -61,7 +61,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class CommitmentListModelItemRenderer implements ListitemRenderer<Commitment>, Serializable {
 
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 5487388031427098891L;
 
 	@Override
 	public void render(Listitem item, Commitment commitment, int count) throws Exception {
@@ -74,9 +74,11 @@ public class CommitmentListModelItemRenderer implements ListitemRenderer<Commitm
 			lc.setParent(item);
 			lc = new Listcell(commitment.getCmtCcy());
 			lc.setParent(item);
-			lc = new Listcell(commitment.getCmtAccount());
+			lc = new Listcell(PennantApplicationUtil.formatAccountNumber(commitment.getCustShrtName()));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.formateDate(commitment.getCmtExpDate(), PennantConstants.dateFormat));
+/*			lc = new Listcell(PennantApplicationUtil.formatAccountNumber(commitment.getCmtAccount()));
+			lc.setParent(item);
+*/			lc = new Listcell(PennantApplicationUtil.formateDate(commitment.getCmtExpDate(), PennantConstants.dateFormate));
 			lc.setParent(item);
 			lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAmount(), commitment.getCcyEditField()));
 			lc.setParent(item);
@@ -84,7 +86,7 @@ public class CommitmentListModelItemRenderer implements ListitemRenderer<Commitm
 			lc.setParent(item);
 			lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAvailable(), commitment.getCcyEditField()));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.formateDate(commitment.getCmtStartDate(), PennantConstants.dateFormat));
+			lc = new Listcell(PennantApplicationUtil.formateDate(commitment.getCmtStartDate(), PennantConstants.dateFormate));
 			lc.setParent(item);
 			lc = new Listcell(commitment.getRecordStatus());
 			lc.setParent(item);

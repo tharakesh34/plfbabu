@@ -43,7 +43,11 @@
 
 package com.pennant.backend.service.administration;
 
+import java.util.List;
+
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SecurityUserService {
@@ -58,4 +62,10 @@ public interface SecurityUserService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	AuditHeader  changePassword(AuditHeader auditHeader);
+	public List<SecurityUserDivBranch> getSecUserDivBrList(long usrID,String type);
+	public List<AuditDetail> deleteDivBranchs(List<SecurityUserDivBranch> securityUserDivBranchList, String tableType, String auditTranType);
+	//Security Work flow changes
+	SecurityUser getSecurityUserRolesById(long id);
+	SecurityUser getApprovedSecurityUserRolesById(long id);
+	
 }

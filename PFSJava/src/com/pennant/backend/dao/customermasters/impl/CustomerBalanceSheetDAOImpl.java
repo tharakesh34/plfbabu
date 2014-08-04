@@ -126,7 +126,7 @@ public class CustomerBalanceSheetDAOImpl extends BasisCodeDAO<CustomerBalanceShe
 			long custId, String type) {
 		logger.debug("Entering");
 		
-		CustomerBalanceSheet customerBalanceSheet = getCustomerBalanceSheet();
+		CustomerBalanceSheet customerBalanceSheet = new CustomerBalanceSheet();
 		customerBalanceSheet.setId(financialYear);
 		customerBalanceSheet.setCustId(custId);
 		
@@ -168,7 +168,7 @@ public class CustomerBalanceSheetDAOImpl extends BasisCodeDAO<CustomerBalanceShe
 	@Override
 	public List<CustomerBalanceSheet> getBalanceSheetsByCustomer(final long id, String type) {
 		logger.debug("Entering");
-		CustomerBalanceSheet customerBalanceSheet = getCustomerBalanceSheet();
+		CustomerBalanceSheet customerBalanceSheet = new CustomerBalanceSheet();
 		customerBalanceSheet.setCustId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select CustId, FinancialYear, TotalAssets,");
@@ -272,7 +272,7 @@ public class CustomerBalanceSheetDAOImpl extends BasisCodeDAO<CustomerBalanceShe
 	 */
 	public void deleteByCustomer(final long id,String type) {
 		logger.debug("Entering");
-		CustomerBalanceSheet customerBalanceSheet = getCustomerBalanceSheet();
+		CustomerBalanceSheet customerBalanceSheet = new CustomerBalanceSheet();
 		customerBalanceSheet.setCustId(id);
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerBalanceSheet");

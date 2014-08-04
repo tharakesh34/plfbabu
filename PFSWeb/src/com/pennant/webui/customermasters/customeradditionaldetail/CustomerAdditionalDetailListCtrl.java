@@ -45,7 +45,9 @@ package com.pennant.webui.customermasters.customeradditionaldetail;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -54,11 +56,18 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -72,10 +81,13 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customeradditionaldetail.model.CustomerAdditionalDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -85,8 +97,7 @@ import com.pennant.webui.util.PTReportUtils;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class CustomerAdditionalDetailListCtrl extends 
-GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
+public class CustomerAdditionalDetailListCtrl extends GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 	
 	private static final long serialVersionUID = -4292260671471272242L;
 	private final static Logger logger = Logger.getLogger(CustomerAdditionalDetailListCtrl.class);
@@ -99,7 +110,6 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window 	   window_CustomerAdditionalDetailList; 		// autoWired
-	protected Panel 	   panel_CustomerAdditionalDetailList; 			// autoWired
 	protected Borderlayout borderLayout_CustomerAdditionalDetailList; 	// autoWired
 	protected Paging 	   pagingCustomerAdditionalDetailList; 			// autoWired
 	protected Listbox 	   listBoxCustomerAdditionalDetail; 			// autoWired
@@ -112,9 +122,36 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 	protected Listheader listheader_CustRefStaffID; 	// autoWired
 	protected Listheader listheader_RecordStatus; 		// autoWired
 	protected Listheader listheader_RecordType;			// autoWired
-
+	
 	protected Panel customerAdditionalDetailSeekPanel; // autoWired
 	protected Panel customerAdditionalDetailListPanel; // autoWired
+	
+	protected Grid	                       searchGrid;	                                                  // autowired
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+	private transient boolean			   approvedList=false;
+
+	//search
+	protected Textbox custCIF; 							// autoWired
+	protected Listbox sortOperator_custCIF; 				// autoWired
+	protected Textbox custAcademicLevel; 				// autoWired
+	protected Listbox sortOperator_custAcademicLevel; 	// autoWired
+	protected Textbox academicDecipline; 				// autoWired
+	protected Listbox sortOperator_academicDecipline; 	// autoWired
+	protected Longbox custRefCustID; 					// autoWired
+	protected Listbox sortOperator_custRefCustID; 		// autoWired
+	protected Textbox custRefStaffID; 					// autoWired
+	protected Listbox sortOperator_custRefStaffID; 		// autoWired
+	protected Textbox recordStatus; 					// autoWired
+	protected Listbox recordType;						// autoWired
+	protected Listbox sortOperator_recordStatus; 		// autoWired
+	protected Listbox sortOperator_recordType; 			// autoWired
+	
+	protected Label label_CustomerAdditionalDetailSearch_RecordStatus; 	// autoWired
+	protected Label label_CustomerAdditionalDetailSearch_RecordType; 	// autoWired
+	protected Label label_CustomerAdditionalDetailSearchResult; 		// autoWired
 
 	// checkRights
 	protected Button btnHelp; 																   // autoWired
@@ -124,7 +161,6 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<CustomerAdditionalDetail> searchObj;
-	
 	private transient CustomerAdditionalDetailService customerAdditionalDetailService;
 	private transient WorkFlowDetails workFlowDetails=null;
 	
@@ -167,6 +203,38 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 			wfAvailable=false;
 		}
 		
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_custAcademicLevel.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custAcademicLevel.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_academicDecipline.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_academicDecipline.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_custRefCustID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_custRefCustID.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_custRefStaffID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custRefStaffID.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+		}else{
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CustomerAdditionalDetailSearch_RecordStatus.setVisible(false);
+			this.label_CustomerAdditionalDetailSearch_RecordType.setVisible(false);
+		}
+		
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -176,11 +244,12 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CustomerAdditionalDetailList.setHeight(getBorderLayoutHeight());
+		this.listBoxCustomerAdditionalDetail.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCustomerAdditionalDetailList.setPageSize(getListRows());
 		this.pagingCustomerAdditionalDetailList.setDetailed(true);
-
+		
 		this.listheader_CustAdditionalCIF.setSortAscending(new FieldComparator("lovDescCustCIF", true));
 		this.listheader_CustAdditionalCIF.setSortDescending(new FieldComparator("lovDescCustCIF", false));
 		this.listheader_CustAcademicLevel.setSortAscending(new FieldComparator("custAcademicLevel", true));
@@ -202,36 +271,21 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 			this.listheader_RecordType.setVisible(false);
 		}
 		
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<CustomerAdditionalDetail>(CustomerAdditionalDetail.class, getListRows());
-		this.searchObj.addSort("CustID", false);
-		this.searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		// set the itemRenderer
+		this.listBoxCustomerAdditionalDetail.setItemRenderer(new CustomerAdditionalDetailListModelItemRenderer());
 		
 		// Work flow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("CustAdditionalDetails_View");
-			if (isFirstTask()) {
-				button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail.setVisible(true);
-			} else {
-				button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail.setVisible(false);
-			}
-
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}else {
-			this.searchObj.addTabelName("CustAdditionalDetails_AView");
-		}
-
-		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail.setVisible(false);
 			this.button_CustomerAdditionalDetailList_CustomerAdditionalDetailSearchDialog.setVisible(false);
 			this.button_CustomerAdditionalDetailList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxCustomerAdditionalDetail,	this.pagingCustomerAdditionalDetailList);
-			// set the itemRenderer
-			this.listBoxCustomerAdditionalDetail.setItemRenderer(new CustomerAdditionalDetailListModelItemRenderer());
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}	
 		logger.debug("Leaving" + event.toString());
 	}
@@ -270,8 +324,7 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerAdditionalDetail aCustomerAdditionalDetail = (CustomerAdditionalDetail) item.getAttribute("data");
-			final CustomerAdditionalDetail customerAdditionalDetail = getCustomerAdditionalDetailService()
-			.getCustomerAdditionalDetailById(aCustomerAdditionalDetail.getId());
+			final CustomerAdditionalDetail customerAdditionalDetail = getCustomerAdditionalDetailService().getCustomerAdditionalDetailById(aCustomerAdditionalDetail.getId());
 
 			if (customerAdditionalDetail == null) {
 
@@ -279,7 +332,6 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 				String[] errParm = new String[1];
 
 				valueParm[0] = String.valueOf(aCustomerAdditionalDetail.getId());
-
 				errParm[0] = PennantJavaUtil.getLabel("label_CustID")+ ":" + valueParm[0];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
@@ -380,6 +432,18 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
+		this.sortOperator_custCIF.setSelectedIndex(0);
+		this.custCIF.setValue("");
+		this.sortOperator_custAcademicLevel.setSelectedIndex(0);
+		this.custAcademicLevel.setValue("");
+		this.sortOperator_academicDecipline.setSelectedIndex(0);
+		this.academicDecipline.setValue("");
+		this.sortOperator_custRefCustID.setSelectedIndex(0);
+		this.custRefCustID.setText("");
+		this.sortOperator_custRefStaffID.setSelectedIndex(0);
+		this.custRefStaffID.setValue("");
+		this.sortOperator_recordStatus.setSelectedIndex(0);
+		this.recordStatus.setValue("");
 		this.pagingCustomerAdditionalDetailList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_CustomerAdditionalDetailList, event);
 		this.window_CustomerAdditionalDetailList.invalidate();
@@ -391,24 +455,7 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 	 */
 	public void onClick$button_CustomerAdditionalDetailList_CustomerAdditionalDetailSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our CustomerAdditionalDetailDialog zul-file with parameters. So we can
-		 * call them with a object of the selected CustomerAdditionalDetail. For handed over
-		 * these parameter only a Map is accepted. So we put the CustomerAdditionalDetail object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerAdditionalDetailCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-				"/WEB-INF/pages/CustomerMasters/CustomerAdditionalDetail/CustomerAdditionalDetailSearchDialog.zul",	null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -418,10 +465,107 @@ GFCBaseListCtrl<CustomerAdditionalDetail> implements Serializable {
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_CustomerAdditionalDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("CustomerAdditionalDetail", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("CustomerAdditionalDetail", getSearchObj(),this.pagingCustomerAdditionalDetailList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Search/filter data for the filled out fields<br>
+	 * <br>
+	 * 1. Checks for each textBox if there are a value. <br>
+	 * 2. Checks which operator is selected. <br>
+	 * 3. Store the filter and value in the searchObject. <br>
+	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
+	 */ 
+	
+	public void doSearch() {
+		logger.debug("Entering ");
+		
+		// ++ create the searchObject and initialize sorting ++//
+		this.searchObj = new JdbcSearchObject<CustomerAdditionalDetail>(CustomerAdditionalDetail.class, getListRows());
+		this.searchObj.addSort("lovDescCustCIF", false);
+		this.searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		this.searchObj.addTabelName("CustAdditionalDetails_View");
+		
+		// Work flow
+		if (isWorkFlowEnabled()) {
+
+			if (isFirstTask() && this.moduleType == null) {
+				button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail.setVisible(true);
+			} else {
+				button_CustomerAdditionalDetailList_NewCustomerAdditionalDetail.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("CustAdditionalDetails_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("CustAdditionalDetails_AView");
+		}
+		
+		// Customer CIF
+		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custCIF.getSelectedItem(), this.custCIF.getValue(), "lovDescCustCIF");
+		}
+		
+		// Customer AcademicLevel
+		if (!StringUtils.trimToEmpty(this.custAcademicLevel.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custAcademicLevel.getSelectedItem(), this.custAcademicLevel.getValue(), "custAcademicLevel");
+		}
+		
+		// Customer AcademicDecipline
+		if (!StringUtils.trimToEmpty(this.academicDecipline.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_academicDecipline.getSelectedItem(), this.academicDecipline.getValue(), "academicDecipline");
+		}
+		
+		// Customer RefCustID
+		if (null!=this.custRefCustID.getValue()) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custRefCustID.getSelectedItem(), this.custRefCustID.getValue(), "custRefCustID");
+		}
+		
+		// Customer RefStaffID
+		if (!StringUtils.trimToEmpty(this.custRefStaffID.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custRefStaffID.getSelectedItem(), this.custRefStaffID.getValue(), "custRefStaffID");
+		}
+		
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		
+		// set the model to the listBox with the initial resultSet get by the DAO method.
+		getPagedListWrapper().init(this.searchObj, this.listBoxCustomerAdditionalDetail, this.pagingCustomerAdditionalDetailList);
+		logger.debug("Leaving ");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

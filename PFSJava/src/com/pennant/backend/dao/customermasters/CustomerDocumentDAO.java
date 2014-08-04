@@ -45,6 +45,7 @@ package com.pennant.backend.dao.customermasters;
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 
 /**
  * DAO methods declaration for the <b>CustomerDocument model</b> class.<br>
@@ -62,4 +63,8 @@ public interface CustomerDocumentDAO {
 	public long save(CustomerDocument customerDocument,String type);
 	public void initialize(CustomerDocument customerDocument);
 	public void refresh(CustomerDocument entity);
+	public DocumentDetails getCustDocByCustAndDocType(final long custId, String docType,String view);
+	public List<DocumentDetails> getCustDocByCustId(long custId, String type);
+	public List<DocumentDetails> getCustDocListByDocTypes(long custId, List<String> docTypeList, String type);
+	public List<CustomerDocument> getCustomerDocumentByCustomerId(final long custId);
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.pennant.backend.model.ModuleListcode;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 
 public class PennantLOVListUtil {
 
@@ -12,8 +13,8 @@ public class PennantLOVListUtil {
 	private static Map<String, ModuleListcode> moduleMap = new HashMap<String, ModuleListcode>() {
 		private static final long serialVersionUID = -3549857310897774789L;
 	{
-			put("AccountPurpose",new ModuleListcode("AccountPurpose",getHeading("AccountPurpose"),PennantAppUtil.getAccountPurpose(), getHeadings(new String[]{"PurposeCode","PurposeDescription"})));
-			put("WeekName",new ModuleListcode("WeekName",getHeading("WeekName"),PennantAppUtil.getWeekName(), getHeadings(new String[]{"WeekCode","WeekName"})));
+			put("AccountPurpose",new ModuleListcode("AccountPurpose",getHeading("AccountPurpose"),PennantStaticListUtil.getAccountPurpose(), getHeadings(new String[]{"PurposeCode","PurposeDescription"})));
+			put("WeekName",new ModuleListcode("WeekName",getHeading("WeekName"),PennantStaticListUtil.getWeekName(), getHeadings(new String[]{"WeekCode","WeekName"})));
 		}
 	};
 	

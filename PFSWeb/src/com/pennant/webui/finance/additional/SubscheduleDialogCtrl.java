@@ -69,15 +69,14 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.IntValidator;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
-import com.pennant.webui.finance.wiffinancemain.WIFFinanceMainDialogCtrl;
+import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 
 public class SubscheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4863495235148249386L;
 	private final static Logger logger = Logger.getLogger(SubscheduleDialogCtrl.class);
 
 	/*
@@ -101,8 +100,7 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 				// overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; 	// overhanded per param
-	private transient WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl;
-	private transient FinanceMainDialogCtrl financeMainDialogCtrl;
+	private ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
 	
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
@@ -152,18 +150,10 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// we get the WIFFinanceMainDialogCtrl controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete WIFFinanceMain here.
-		if (args.containsKey("wIFFinanceMainDialogCtrl")) {
-			setwIFFinanceMainDialogCtrl((WIFFinanceMainDialogCtrl) args
-					.get("wIFFinanceMainDialogCtrl"));
-		} else {
-			setwIFFinanceMainDialogCtrl(null);
-		}
-		
 		if (args.containsKey("financeMainDialogCtrl")) {
-			setFinanceMainDialogCtrl((FinanceMainDialogCtrl) args
-					.get("financeMainDialogCtrl"));
+			setScheduleDetailDialogCtrl((ScheduleDetailDialogCtrl) args.get("financeMainDialogCtrl"));
 		} else {
-			setFinanceMainDialogCtrl(null);
+			setScheduleDetailDialogCtrl(null);
 		}
 
 		// set Field Properties
@@ -208,72 +198,6 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		logger.debug("Leaving");
 	}
-
-	public FinScheduleData getFinScheduleData() {
-		return finScheduleData;
-	}
-
-	public void setFinScheduleData(FinScheduleData finScheduleData) {
-		this.finScheduleData = finScheduleData;
-	}
-
-	/**
-	 * @return the financeScheduleDetail
-	 */
-	public FinanceScheduleDetail getFinanceScheduleDetail() {
-		return financeScheduleDetail;
-	}
-
-	/**
-	 * @param financeScheduleDetail the financeScheduleDetail to set
-	 */
-	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
-		this.financeScheduleDetail = financeScheduleDetail;
-	}
-
-	/**
-	 * @return the wIFFinanceMainDialogCtrl
-	 */
-	public WIFFinanceMainDialogCtrl getwIFFinanceMainDialogCtrl() {
-		return wIFFinanceMainDialogCtrl;
-	}
-
-	/**
-	 * @param wIFFinanceMainDialogCtrl the wIFFinanceMainDialogCtrl to set
-	 */
-	public void setwIFFinanceMainDialogCtrl(
-			WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl) {
-		this.wIFFinanceMainDialogCtrl = wIFFinanceMainDialogCtrl;
-	}
-	
-	/**
-	 * @return the financeMainDialogCtrl
-	 */
-	public FinanceMainDialogCtrl getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
-	}
-
-	/**
-	 * @param financeMainDialogCtrl the financeMainDialogCtrl to set
-	 */
-	public void setFinanceMainDialogCtrl(FinanceMainDialogCtrl financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
-	}
-
-	/**
-	 * @return the validationOn
-	 */
-	public boolean isValidationOn() {
-		return validationOn;
-	}
-
-	/**
-	 * @param validationOn the validationOn to set
-	 */
-	public void setValidationOn(boolean validationOn) {
-		this.validationOn = validationOn;
-	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -320,8 +244,9 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
+	 * @throws InterruptedException 
 	 */
-	public void doWriteComponentsToBean() {
+	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -365,11 +290,15 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		setFinScheduleData(ScheduleCalculator.addSubSchedule(getFinScheduleData(),this.numOfTerms.getValue(),
 				this.firstDate.getValue(), this.termFrq.getValue()));
-		getFinScheduleData().setSchduleGenerated(true);
-		if(getFinanceMainDialogCtrl()!=null){
-			this.financeMainDialogCtrl.doFillScheduleList(getFinScheduleData(), null);
-		}else {
-			this.wIFFinanceMainDialogCtrl.doFillScheduleList(getFinScheduleData());
+		
+		//Show Error Details in Schedule Maintainance
+		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+		}else{
+			getFinScheduleData().setSchduleGenerated(true);
+			if(getScheduleDetailDialogCtrl()!=null){
+				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -579,23 +508,40 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 	}
 	public void onSelect$cbTermFrqDay(Event event){
 		logger.debug("Entering"+event.toString());
-
-		String frqCode 		= 	getComboboxValue(this.cbTermFrqCode);
-		String frqMth		= 	getComboboxValue(this.cbTermFrqMth);
-		String frqDay	 	= 	getComboboxValue(this.cbTermFrqDay);
-
-		onSelectFrqDay(frqCode,frqMth,frqDay,this.termFrq);
+		onSelectFrqDay(cbTermFrqCode,cbTermFrqMth,cbTermFrqDay,this.termFrq);
 		logger.debug("Leaving"+event.toString());
 	}
 	
-	private String getComboboxValue(Combobox combobox){
-		String comboValue = "";
-		if (combobox.getSelectedItem() != null) {
-			comboValue = combobox.getSelectedItem().getValue().toString();
-		} else {
-			combobox.setSelectedIndex(0);
-		}
-		return comboValue;
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+	public FinScheduleData getFinScheduleData() {
+		return finScheduleData;
+	}
+	public void setFinScheduleData(FinScheduleData finScheduleData) {
+		this.finScheduleData = finScheduleData;
+	}
+
+	public FinanceScheduleDetail getFinanceScheduleDetail() {
+		return financeScheduleDetail;
+	}
+	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
+		this.financeScheduleDetail = financeScheduleDetail;
+	}
+
+	public ScheduleDetailDialogCtrl getScheduleDetailDialogCtrl() {
+		return scheduleDetailDialogCtrl;
+	}
+	public void setScheduleDetailDialogCtrl(ScheduleDetailDialogCtrl scheduleDetailDialogCtrl) {
+		this.scheduleDetailDialogCtrl = scheduleDetailDialogCtrl;
+	}
+
+	public boolean isValidationOn() {
+		return validationOn;
+	}
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
 	}
 	
 }

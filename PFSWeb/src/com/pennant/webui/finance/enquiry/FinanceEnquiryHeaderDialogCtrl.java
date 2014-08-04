@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  LoanEnquiryDialogCtrl.java                                              * 	  
+ * FileName    		:  LoanEnquiryDialogCtrl.java                                           * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -29,7 +29,7 @@
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- *  1-02-2011  s       Pennant	                 0.1                                            * 
+ *  1-02-2011  s       Pennant	                 0.1                                        * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -50,50 +50,65 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Menu;
+import org.zkoss.zul.Menubar;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ReportGenerationUtil;
+import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
+import com.pennant.backend.model.finance.FinMainReportData;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceGraphReportData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleReportData;
+import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.lmtmasters.CarLoanDetail;
+import com.pennant.backend.model.lmtmasters.EducationalLoan;
+import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
+import com.pennant.backend.model.lmtmasters.HomeLoanDetail;
+import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.service.finance.AgreementDetailService;
+import com.pennant.backend.service.finance.CheckListDetailService;
+import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceScheduleDetailService;
 import com.pennant.backend.service.finance.ManualPaymentService;
+import com.pennant.backend.service.finance.ScoringDetailService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MultiLineMessageBox;
-import com.pennant.webui.util.PTMessageUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -125,8 +140,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 	protected Textbox	                 profitDaysBasis_header;	                                                      // autoWired
 	protected Textbox	                 finBranch_header;	                                                              // autoWired
 	protected Textbox	                 custCIF_header;	                                                              // autoWired
-	protected Label 					 custShrtName; 						// autoWired
-
+	protected Label 					 custShrtName; 		                                                              // autoWired
+	protected Label                      label_window_FinEnqHeaderDialog;   											// autoWired
+	
 	protected Label	                     label_FinEnqHeader_Filter;	                                                  // autoWired
 	protected Space	                     space_menubar;	                                                              // autoWired
 	protected Menu	                     menu_filter;	                                                                  // autoWired
@@ -135,26 +151,31 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 	protected Button	                 btnDelete;	                                                                  // autoWired
 	protected Button	                 btnClose;	                                                                      // autoWired
 	protected Component	                 childWindow;
-
+    protected Menubar                    menubar;
+	
 	protected String	                 enquiryType	        = "";
 	protected String	                 finReference	        = "";
-	protected boolean	                 isCancelFinance	    = false;
 
 	// not auto wired variables
 	private FinanceDetailService	     financeDetailService;
+	private EligibilityDetailService 	 eligibilityDetailService;
+	private AgreementDetailService       agreementDetailService;
+	private ScoringDetailService	     scoringDetailService;
+	private CheckListDetailService	     checkListDetailService;
+	
 	private FinanceScheduleDetailService	financeScheduleDetailService;
 	private ManualPaymentService	     manualPaymentService;
 	private OverdueChargeRecoveryService	overdueChargeRecoveryService;
 	private SuspenseService	             suspenseService;
 
-
-	private List<ValueLabel>	         enquiryList	        = PennantAppUtil.getEnquiryTypes();
+	private List<ValueLabel>	         enquiryList	        = PennantStaticListUtil.getEnquiryTypes();
 	private FinanceEnquiryListCtrl	     financeEnquiryListCtrl	= null;
 	private FinScheduleData	             finScheduleData;
 	private FinanceEnquiry	             financeEnquiry;
+	private FinanceSummary 				 financeSummary;
 
 	int	                                 listRows;
-
+    private String assetCode = "";
 	/**
 	 * default constructor.<br>
 	 */
@@ -184,10 +205,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 			this.enquiryType = (String) args.get("enquiryType");
 		}
 
-		if (args.containsKey("isCancelFinance")) {
-			this.isCancelFinance = (Boolean) args.get("isCancelFinance");
-		}
-
 		if (args.containsKey("financeEnquiry")) {
 			this.setFinanceEnquiry((FinanceEnquiry) args.get("financeEnquiry"));
 			this.finReference = getFinanceEnquiry().getFinReference();
@@ -215,13 +232,17 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 
 		this.finReference_header.setValue(enquiry.getFinReference());
 		this.finStatus_header.setValue(enquiry.getFinStatus());
-
-		if (enquiry.isBlacklisted()) {
-			this.finStatus_header.setValue("Write-Off");
-		} else if (enquiry.isFinIsActive()) {
+		
+		if (enquiry.isFinIsActive()) {
 			this.finStatus_header.setValue("Active");
 		} else {
-			this.finStatus_header.setValue("In-Active");
+			if (StringUtils.trimToEmpty(enquiry.getClosingStatus()).equals("W")) {
+				this.finStatus_header.setValue("Written-Off");
+			} else if (StringUtils.trimToEmpty(enquiry.getClosingStatus()).equals("P")) {
+				this.finStatus_header.setValue("Pay-Off");
+			} else {
+				this.finStatus_header.setValue("In-Active");
+			}
 		}
 		this.custCIF_header.setValue(enquiry.getLovDescCustCIF());
 		this.custShrtName.setValue(enquiry.getLovDescCustShrtName());
@@ -230,37 +251,55 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 		this.scheduleMethod_header.setValue(enquiry.getScheduleMethod() + "-" + enquiry.getLovDescScheduleMethodName());
 		this.profitDaysBasis_header.setValue(enquiry.getProfitDaysBasis() + "-" + enquiry.getLovDescProfitDaysBasisName());
 		this.finBranch_header.setValue(enquiry.getFinBranch() == null ? "" : enquiry.getFinBranch() + "-" + enquiry.getLovDescFinBranchName());
-
+		
 		if (childWindow != null) {
 			tabPanel_dialogWindow.getChildren().clear();
 			tabPanel_dialogWindow.appendChild(this.grid_BasicDetails);
 		}
-
+		
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeEnquiryHeaderDialogCtrl", this);
 		String path = "";
 		this.grid_BasicDetails.setVisible(true);
-
+		this.btnPrint.setVisible(false);
+		
+		final FinanceDetail financeDetail = getFinanceDetailService().getFinAssetDetails(this.finReference,"_View");
+		assetCode = financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName();
+		
 		if ("FINENQ".equals(this.enquiryType)) {
 
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinanceEnquiry.value"));
 			this.grid_BasicDetails.setVisible(false);
-			finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_AView");
+			finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_AView",true);
 			FinContributorHeader contributorHeader = getFinanceDetailService().getFinContributorHeaderById(this.finReference);
+			financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finReference);
+			map.put("financeSummary", financeSummary);
 			
+			// finance Contract Asset Details
+			List<ContractorAssetDetail> assetDetails = null;
+			if(PennantConstants.FINANCE_PRODUCT_ISTISNA.equals(finScheduleData.getFinanceMain().getLovDescProductCodeName())){
+				assetDetails = getFinanceDetailService().getContractorAssetDetailList(finReference);
+			}
+			
+			map.put("assetDetailList", assetDetails);
 			map.put("finScheduleData", finScheduleData);
 			map.put("contributorHeader", contributorHeader);
+			map.put("assetCode", enquiry.getAssetCode());
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul";
+			this.btnPrint.setVisible(true);
 
 		} else if ("SCHENQ".equals(this.enquiryType)) {
 
-			finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_AView");
-
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ScheduleEnquiry.value"));
+			finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_AView",0);
 			map.put("finScheduleData", finScheduleData);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ScheduleDetailsEnquiryDialog.zul";
+			this.btnPrint.setVisible(true);
 
 		} else if ("DOCENQ".equals(this.enquiryType)) {
 
-			List<FinAgreementDetail> finAgreements = getFinanceDetailService().getFinAgrByFinRef(this.finReference, "_AView");
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DocumentEnquiry.value"));
+			List<FinAgreementDetail> finAgreements = getAgreementDetailService().getFinAgrByFinRef(this.finReference, "_AView");
 			List<DocumentDetails> finDocuments = getFinanceDetailService().getFinDocByFinRef(this.finReference, "");
 
 			map.put("finAgreements", finAgreements);
@@ -269,37 +308,188 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 
 		} else if ("PSTENQ".equals(this.enquiryType)) {
 
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_PostingsEnquiry.value"));
 			map.put("finReference", this.finReference);
+			map.put("enquiry", enquiry);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/PostingsEnquiryDialog.zul";
 
 		} else if ("RPYENQ".equals(this.enquiryType)) {
 
-			List<FinanceRepayments> financeRepayments = getManualPaymentService().getFinRepayListByFinRef(this.finReference, "");
-
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RepaymentEnuiry.value"));
+			List<FinanceRepayments> financeRepayments = getManualPaymentService().getFinRepayListByFinRef(this.finReference, false,"");
 			map.put("financeRepayments", financeRepayments);
+			map.put("finAmountformatter", enquiry.getLovDescFinFormatter());
 			path = "/WEB-INF/pages/Enquiry/RepayInquiry/RepayEnquiryDialog.zul";
 
 		} else if ("ODCENQ".equals(this.enquiryType)) {
 
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OverdueEnquiry.value"));
 			map.put("finReference", this.finReference);
+			map.put("ccyFormatter", this.financeEnquiry.getLovDescFinFormatter());
 			path = "/WEB-INF/pages/Enquiry/OverDueInquiry/OverdueDetailList.zul";
 
 		} else if ("SUSENQ".equals(this.enquiryType)) {
 
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_SuspenseEnquiry.value"));
 			FinanceSuspHead suspHead = getSuspenseService().getFinanceSuspHeadById(this.finReference, true);
-
 			map.put("suspHead", suspHead);
 			path = "/WEB-INF/pages/Enquiry/SuspInquiry/SuspDetailEnquiryDialog.zul";
+			
+		} else if ("CHKENQ".equals(this.enquiryType)) {
 
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_CheckListEnquiry.value"));
+			List<FinanceCheckListReference> financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finReference, "_AView");
+			map.put("FinanceCheckListReference", financeCheckListReference);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CheckListEnquiry.zul";
+
+		} else if ("ELGENQ".equals(this.enquiryType)) {
+			
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_EligibilityListEnquiry.value"));
+			List<FinanceEligibilityDetail> eligibilityDetails = getEligibilityDetailService().getFinElgDetailList(this.finReference);
+			map.put("eligibilityList", eligibilityDetails);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityEnquiryDialog.zul";
+
+		} else if ("SCRENQ".equals(this.enquiryType)) {
+			
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ScoringListEnquiry.value"));
+			List<Object> scoreDetails = getScoringDetailService().getFinScoreDetailList(this.finReference);
+			map.put("scoringList", scoreDetails);
+			map.put("custTypeCtg", enquiry.getCustTypeCtg());
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ScoringEnquiryDialog.zul";
+
+		} else if ("PFTENQ".equals(this.enquiryType)) {
+			
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ProfitListEnquiry.value"));
+			FinanceSummary financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finReference);
+			map.put("financeSummary", financeSummary);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceProfitEnquiryDialog.zul";
+
+		} else if ("CHQPRNT".equals(this.enquiryType)) {
+
+			//this.window_FinEnqHeaderDialog.setTitle(Labels.getLabel("label_ChequePrintingDialog_Title.value"));
+			this.btnPrint.setVisible(false);
+			this.menubar.setVisible(false);
+			this.space_menubar.setWidth("240px");
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ChequePrintingDialog.value"));
+			this.label_FinEnqHeader_Filter.setVisible(false);
+			
+			finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_AView", 0);
+			map.put("finScheduleData", finScheduleData);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ChequePrintingDialog.zul";
+
+		} else if ("RECENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RecommendationsEnquiry.value"));
+			map.put("notes", getNotes());
+			map.put("control", this);
+			map.put("enquiry", true);
+			map.put("isFinanceNotes", true);
+			path = "/WEB-INF/pages/notes/notes.zul";
+		}else if ("ASSENQ".equals(this.enquiryType)) {
+		
+			CarLoanDetail carLoanDetail = null;
+			EducationalLoan educationalLoan = null;
+			HomeLoanDetail homeLoanDetail = null;
+			MortgageLoanDetail mortgageLoanDetail = null;
+
+			
+			try {
+				map.put("roleCode", getRole());
+				map.put("financeMainDialogCtrl", this);
+				map.put("ccyFormatter", financeDetail.getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
+
+				String finReference = financeDetail.getFinScheduleData().getFinReference();
+				
+				String tabLabel = "";
+				
+				if (assetCode.equalsIgnoreCase(PennantConstants.CARLOAN)) {
+
+					tabLabel = Labels.getLabel("CarLoanDetail");
+					if (financeDetail.getCarLoanDetail() == null) {
+						carLoanDetail = new CarLoanDetail();
+						carLoanDetail.setNewRecord(true);
+						carLoanDetail.setLoanRefNumber(finReference);
+					} else {
+						carLoanDetail = financeDetail.getCarLoanDetail();
+					}
+					map.put("carLoanDetail", carLoanDetail);
+					path = "/WEB-INF/pages/LMTMasters/CarLoanDetail/CarLoanDetailDialog.zul";
+
+				} else if (assetCode.equalsIgnoreCase(PennantConstants.EDUCATON)) {
+
+					tabLabel = Labels.getLabel("EducationalLoan");
+					if (financeDetail.getEducationalLoan() == null) {
+						educationalLoan = new EducationalLoan();
+						educationalLoan.setNewRecord(true);
+						educationalLoan.setLoanRefNumber(finReference);
+					} else {
+						educationalLoan = financeDetail.getEducationalLoan();
+					}
+					map.put("educationalLoan", educationalLoan);
+					map.put("isEnquiry", true);
+					path = "/WEB-INF/pages/LMTMasters/EducationalLoan/EducationalLoanDialog.zul";
+
+				} else if (assetCode.equalsIgnoreCase(PennantConstants.HOMELOAN)) {
+
+					tabLabel = Labels.getLabel("HomeLoanDetail");
+					if (financeDetail.getHomeLoanDetail() == null) {
+						homeLoanDetail = new HomeLoanDetail();
+						homeLoanDetail.setNewRecord(true);
+						homeLoanDetail.setLoanRefNumber(finReference);
+					} else {
+						homeLoanDetail = financeDetail.getHomeLoanDetail();
+					}
+					map.put("homeLoanDetail", homeLoanDetail);
+					path = "/WEB-INF/pages/LMTMasters/HomeLoanDetail/HomeLoanDetailDialog.zul";
+
+				} else if (assetCode.equalsIgnoreCase(PennantConstants.MORTLOAN)) {
+
+					tabLabel = Labels.getLabel("MortgageLoanDetail");
+					if (financeDetail.getMortgageLoanDetail() == null) {
+						mortgageLoanDetail = new MortgageLoanDetail();
+						mortgageLoanDetail.setNewRecord(true);
+						mortgageLoanDetail.setLoanRefNumber(finReference);
+					} else {
+						mortgageLoanDetail = financeDetail.getMortgageLoanDetail();
+					}
+					map.put("mortgageLoanDetail", mortgageLoanDetail);
+					path = "/WEB-INF/pages/LMTMasters/MortgageLoanDetail/MortgageLoanDetailDialog.zul";
+
+				}else if (assetCode.equalsIgnoreCase(PennantConstants.GOODS)) {
+
+					tabLabel = Labels.getLabel("GoodsLoanDetail");
+					map.put("financedetail", financeDetail);
+					map.put("isEnquiry", true);
+					path = "/WEB-INF/pages/LMTMasters/GoodsLoanDetail/FinGoodsLoanDetailList.zul";
+
+				}else if (assetCode.equalsIgnoreCase(PennantConstants.GENGOODS)) {
+
+					tabLabel = Labels.getLabel("GenGoodsLoanDetail");
+					map.put("financedetail", financeDetail);
+					map.put("isEnquiry", true);
+					path = "/WEB-INF/pages/LMTMasters/GenGoodsLoanDetail/FinGenGoodsLoanDetailList.zul";
+
+				}else if (assetCode.equalsIgnoreCase(PennantConstants.COMMIDITY)) {
+
+						tabLabel = Labels.getLabel("CommidityLoanDetail");
+						map.put("financedetail", financeDetail);
+						map.put("isEnquiry", true);
+						path = "/WEB-INF/pages/LMTMasters/CommidityLoanDetail/FinCommidityLoanDetailList.zul";
+
+				} else if (assetCode.equalsIgnoreCase(PennantConstants.SHARES)) { 
+
+						tabLabel = Labels.getLabel("SharesDetail");
+						map.put("financedetail", financeDetail);
+						path = "/WEB-INF/pages/LMTMasters/SharesDetail/FinSharesDetailList.zul";
+
+				}
+				this.label_window_FinEnqHeaderDialog.setValue(tabLabel);
+				if (!path.equals("")) {
+				this.grid_BasicDetails.setVisible(false);
+				}
+		}catch (Exception e) {
+			logger.error(e);
 		}
-
-		if (isCancelFinance) {
-			//this.menu_filter.setVisible(false);
-			//this.label_FinEnqHeader_Filter.setVisible(false);
-			this.btnDelete.setVisible(true);
-			this.space_menubar.setWidth("200px");
-		}
-
+	}
 		if (!path.equals("")) {
 
 			//Child Window Calling
@@ -311,22 +501,31 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 		logger.debug("Leaving");
 	}
 
+	private Notes getNotes() {
+		Notes notes = new Notes();
+		notes.setModuleName(PennantConstants.NOTES_MODULE_FINANCEMAIN);
+		notes.setReference(this.finReference);
+		return notes;
+	}
+	
 	private void doFillFilterList() {
 		logger.debug("Entering");
 		this.menupopup_filter.getChildren().clear();
 		if (enquiryList != null && enquiryList.size() > 0) {
 			Menuitem menuitem = null;
 			for (ValueLabel enquiry : enquiryList) {
-				menuitem = new Menuitem();
-				menuitem.setImage("/images/icons/Old/arrow_blue_right_16x16.gif");
-				menuitem.setLabel(enquiry.getLabel());
-				menuitem.setValue(enquiry.getValue());
-				menuitem.setStyle("font-weight:bold;");
-				menuitem.addForward("onClick", this.window_FinEnqHeaderDialog, "onFilterMenuItem", enquiry);
-				if (this.enquiryType.equals(enquiry.getValue())) {
-					this.menu_filter.setLabel(enquiry.getLabel());
-				} else {
-					this.menupopup_filter.appendChild(menuitem);
+				if(!(enquiry.getValue().equalsIgnoreCase("ASSENQ") && StringUtils.trimToEmpty(assetCode).equalsIgnoreCase("NOTAPP"))){
+					menuitem = new Menuitem();
+					menuitem.setImage("/images/icons/Old/arrow_blue_right_16x16.gif");
+					menuitem.setLabel(enquiry.getLabel());
+					menuitem.setValue(enquiry.getValue());
+					menuitem.setStyle("font-weight:bold;");
+					menuitem.addForward("onClick", this.window_FinEnqHeaderDialog, "onFilterMenuItem", enquiry);
+					if (this.enquiryType.equals(enquiry.getValue())) {
+						this.menu_filter.setLabel(enquiry.getLabel());
+					} else {
+						this.menupopup_filter.appendChild(menuitem);
+					}
 				}
 			}
 		}
@@ -364,8 +563,15 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
-				ReportGenerationUtil.generateReport("FINENQ_FinanceBasicDetail", finScheduleData.getFinanceMain(), list, true, 1,
-				        getUserWorkspace().getUserDetails().getUsername(), window_FinEnqHeaderDialog);
+				
+				FinMainReportData reportData = new FinMainReportData();
+				reportData = reportData.getFinMainReportData(finScheduleData,financeSummary);
+				
+				SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
+				String usrName = (securityUser.getUsrFName().trim() +" "+securityUser.getUsrMName().trim()+" "+securityUser.getUsrLName()).trim();
+				
+				ReportGenerationUtil.generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
+						usrName, window_FinEnqHeaderDialog);
 			}
 
 		} else if ("SCHENQ".equals(this.enquiryType)) {
@@ -413,9 +619,13 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
-				List<FinanceScheduleReportData> subList = finRender.getScheduleData(finScheduleData,rpyDetailsMap, feeChargesMap);
+				List<FinanceScheduleReportData> subList = finRender.getScheduleData(finScheduleData,rpyDetailsMap, feeChargesMap,true);
 				list.add(subList);
-				ReportGenerationUtil.generateReport("FINENQ_ScheduleDetail", finScheduleData.getFinanceMain(), list, true, 1, getUserWorkspace().getUserDetails().getUsername(),
+				
+				SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
+				String usrName = securityUser.getUsrFName().trim() +" "+securityUser.getUsrMName().trim()+" "+securityUser.getUsrLName();
+				
+				ReportGenerationUtil.generateReport("FINENQ_ScheduleDetail", finScheduleData.getFinanceMain(), list, true, 1, usrName,
 				        window_FinEnqHeaderDialog);
 			}
 		}
@@ -425,50 +635,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 					getLoanEnquiry().getFinanceMainList(),true, 1, getUserWorkspace().getUserDetails().getUsername(),null);
 		}*/
 		logger.debug("Leaving " + event.toString());
-	}
-
-	/**
-	 * when the "delete" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		doDelete();
-		logger.debug("Leaving" + event.toString());
-	}
-
-	private void doDelete() throws InterruptedException {
-
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + this.finReference;
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true));
-
-		if (conf == MultiLineMessageBox.YES) {
-			List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
-			listFinanceRepayments = getFinanceDetailService().getFinanceRepaymentsByFinRef(this.finReference);
-			if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
-				PTMessageUtils.showErrorMessage("Cannot Delete this Finance");
-			} else {
-				try {
-					if (getFinanceDetailService().inActivateFinance(this.finReference,getUserWorkspace().getLoginUserDetails())) {
-						Events.postEvent("onClick$button_Search", financeEnquiryListCtrl.window_FinanceEnquiry, null);			
-						this.tabPanel_dialogWindow.getChildren().clear();
-						closeDialog(this.window_FinEnqHeaderDialog, "FinanceEnquiryHeaderDialog");
-					} else {
-						PTMessageUtils.showErrorMessage("Posting Process failed");
-					}
-				} catch (Exception e) {
-					logger.debug(e);
-				}
-
-			}
-		}
-
 	}
 
 	/**
@@ -495,7 +661,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 	public void setFinanceEnquiryListCtrl(FinanceEnquiryListCtrl financeEnquiryListCtrl) {
 		this.financeEnquiryListCtrl = financeEnquiryListCtrl;
 	}
-
 	public FinanceEnquiryListCtrl getFinanceEnquiryListCtrl() {
 		return financeEnquiryListCtrl;
 	}
@@ -503,7 +668,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 	public void setSuspenseService(SuspenseService suspenseService) {
 		this.suspenseService = suspenseService;
 	}
-
 	public SuspenseService getSuspenseService() {
 		return suspenseService;
 	}
@@ -511,7 +675,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 	public void setOverdueChargeRecoveryService(OverdueChargeRecoveryService overdueChargeRecoveryService) {
 		this.overdueChargeRecoveryService = overdueChargeRecoveryService;
 	}
-
 	public OverdueChargeRecoveryService getOverdueChargeRecoveryService() {
 		return overdueChargeRecoveryService;
 	}
@@ -519,7 +682,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 	public void setFinanceScheduleDetailService(FinanceScheduleDetailService financeScheduleDetailService) {
 		this.financeScheduleDetailService = financeScheduleDetailService;
 	}
-
 	public FinanceScheduleDetailService getFinanceScheduleDetailService() {
 		return financeScheduleDetailService;
 	}
@@ -527,15 +689,36 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
-
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
+	}
+	
+	public EligibilityDetailService getEligibilityDetailService() {
+		return eligibilityDetailService;
+	}
+	public void setEligibilityDetailService(
+			EligibilityDetailService eligibilityDetailService) {
+		this.eligibilityDetailService = eligibilityDetailService;
+	}
+	
+	public AgreementDetailService getAgreementDetailService() {
+		return agreementDetailService;
+	}
+	public void setAgreementDetailService(
+			AgreementDetailService agreementDetailService) {
+		this.agreementDetailService = agreementDetailService;
+	}
+
+	public ScoringDetailService getScoringDetailService() {
+		return scoringDetailService;
+	}
+	public void setScoringDetailService(ScoringDetailService scoringDetailService) {
+		this.scoringDetailService = scoringDetailService;
 	}
 
 	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
 		this.manualPaymentService = manualPaymentService;
 	}
-
 	public ManualPaymentService getManualPaymentService() {
 		return manualPaymentService;
 	}
@@ -543,9 +726,15 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 	public void setFinanceEnquiry(FinanceEnquiry financeEnquiry) {
 		this.financeEnquiry = financeEnquiry;
 	}
-
 	public FinanceEnquiry getFinanceEnquiry() {
 		return financeEnquiry;
+	}
+
+	public void setCheckListDetailService(CheckListDetailService checkListDetailService) {
+		this.checkListDetailService = checkListDetailService;
+	}
+	public CheckListDetailService getCheckListDetailService() {
+		return checkListDetailService;
 	}
 
 }

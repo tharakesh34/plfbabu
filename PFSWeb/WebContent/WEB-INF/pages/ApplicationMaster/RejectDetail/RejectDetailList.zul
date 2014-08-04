@@ -62,23 +62,23 @@
 				<center border="none">
 					<listbox id="listBoxRejectDetail" vflex="true"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
+						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_RejectCode"
 								label="${c:l('listheader_RejectCode.label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_RejectDesc"
 								label="${c:l('listheader_RejectDesc.label')}" sort="auto"
-								width="55%" />
+								hflex="min" />
 							<listheader id="listheader_RejectIsActive"
 								label="${c:l('listheader_RejectIsActive.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 						</listhead>
 					</listbox>
 

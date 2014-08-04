@@ -138,7 +138,7 @@ public class InputConfirmBox extends Window {
 		}//Upgraded to ZK-6.5.1.1 Remove interrupted exception
 	}
 
-	final class OnCloseListener implements EventListener {
+	final class OnCloseListener implements EventListener<Event> {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			onClose();

@@ -73,14 +73,12 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
-import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
@@ -109,9 +107,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PercentageValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -261,8 +261,6 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 	private List<GlobalVariable> globalVariableList = new ArrayList<GlobalVariable>();// retrieve values from table--GlobalVariable	
 	private List<RuleModule> ruleModuleList = new ArrayList<RuleModule>(); // retrieve ruleModuleList
 	private List<ValueLabel> moduleList=new ArrayList<ValueLabel>(); //retrieve moduleList
-	private List<ValueLabel> waiverDeciderList = PennantAppUtil.getWaiverDecider(); // retrieve Waiver Type
-	private List<ValueLabel> returnTypeList = PennantAppUtil.getRuleReturnType(); // retrieve Return Type
 
 	// ServiceDAOs / Domain Classes
 	private transient RuleService ruleService;
@@ -302,14 +300,6 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			ruleModuleID = (String) args.get("ruleModule");
 		}
 		
-		/* set components visible dependent of the users rights */
-		doCheckRights();
-
-		/* create the Button Controller. Disable not used buttons during working */
-		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, 
-				true, this.btnNew, this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel,
-				this.btnClose, this.btnNotes);
-
 		// READ OVERHANDED params !
 		if (args.containsKey("rule")) {
 			this.rule = (Rule) args.get("rule");
@@ -320,6 +310,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		} else {
 			setRule(null);
 		}
+		
 		//Getting List of modules
 		ruleModuleList = getRuleService().getRuleModules(getRule().getRuleModule());
 		setRuleModuleCombo();
@@ -330,8 +321,16 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
-			getUserWorkspace().alocateRoleAuthorities("RuleDialog");
+			getUserWorkspace().alocateRoleAuthorities(getRole(),"RuleDialog");
 		}
+
+		/* set components visible dependent of the users rights */
+		doCheckRights();
+		
+		/* create the Button Controller. Disable not used buttons during working */
+		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, 
+				true, this.btnNew, this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel,
+				this.btnClose, this.btnNotes);
 		
 		// READ OVERHANDED params !
 		// we get the ruleListWindow controller. So we have access
@@ -342,15 +341,16 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		} else {
 			setRuleListCtrl(null);
 		}
-
-		// set Field Properties
-		doSetFieldProperties();
-		doShowDialog(getRule());
 		
 		getBorderLayoutHeight();
 		int tabPanelboxHeight = borderLayoutHeight-(this.grid_basicDetail.getRows().getVisibleItemCount() * 20)-180;
 		this.tree.setHeight(tabPanelboxHeight+"px");
+		this.tree.setZclass("z-dottree");
 		this.sqlRule.setHeight(tabPanelboxHeight+"px");
+
+		// set Field Properties
+		doSetFieldProperties();
+		doShowDialog(getRule());
 		
 		logger.debug("Leaving" + event.toString());
 	}
@@ -385,7 +385,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("RuleDialog");
+		getUserWorkspace().alocateAuthorities("RuleDialog",getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_RuleDialog_btn"+this.ruleModuleName+"New"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_RuleDialog_btn"+this.ruleModuleName+"Edit"));
@@ -539,7 +539,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			logger.debug("Data Changed(): false");
 		}
 		if(close){
-			closeDialog(window_RuleDialog, "Rule");
+			closeDialog(window_RuleDialog, "RuleDialog");
 		}
 		logger.debug("Leaving");
 	}
@@ -581,6 +581,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		this.sqlRule.setValue(aRule.getSQLRule());
 		actualBlob = aRule.getActualBlock();
 		if(!StringUtils.trimToEmpty(aRule.getWaiverDecider()).equals("")){
+			List<ValueLabel> waiverDeciderList = PennantStaticListUtil.getWaiverDecider();
 			for (int i = 0; i < waiverDeciderList.size(); i++) {
 				if(waiverDeciderList.get(i).getValue().equals(aRule.getWaiverDecider())){
 					waiverDecider.setSelectedIndex(i+1);		
@@ -601,6 +602,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		onWaiverChecked();
 		
 		if(!StringUtils.trimToEmpty(aRule.getReturnType()).equals("")){
+			List<ValueLabel> returnTypeList = PennantStaticListUtil.getRuleReturnType();
 			for (int i = 0; i < returnTypeList.size(); i++) {
 				if(returnTypeList.get(i).getValue().equals(aRule.getReturnType())){
 					returnType.setSelectedIndex(i+1);		
@@ -636,7 +638,16 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			wve.add(we);
 		}
 		try {
+			if(!this.ruleCode.isReadonly()) {
+				JdbcSearchObject<BMTRBFldDetails> searchObj = new JdbcSearchObject<BMTRBFldDetails>(BMTRBFldDetails.class,getListRows());
+				searchObj.addTabelName("BMTRBFldDetails");
+				searchObj.addFilter(new Filter("RBFldName", this.ruleCode.getValue(), Filter.OP_EQUAL));
+				if(this.pagedListService.getSRBySearchObject(searchObj).getTotalCount() > 0){
+					throw new WrongValueException(this.ruleCode, Labels.getLabel("label_RuleCodeExcept"));
+				}
+			}
 			aRule.setRuleCode(this.ruleCode.getValue());
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -804,7 +815,15 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 						Events.sendEvent("onChange$ruleModule",this.window_RuleDialog, "");	
 						this.ruleModule.setDisabled(true);
 					}else{
-						this.ruleModule.setSelectedIndex(0);
+						//If case , Only For AIB Requirement
+						if(aRule.getRuleModule().equalsIgnoreCase("SCORES")){
+							this.ruleModule.setSelectedIndex(2);
+							Events.sendEvent("onChange$ruleModule",this.window_RuleDialog, "");	
+							readOnlyComponent(true, this.ruleModule);
+
+						}else{
+							this.ruleModule.setSelectedIndex(0);
+						}
 					}
 				}
 				this.row_waiver.setVisible(false);
@@ -812,6 +831,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			}else{
 				String module= this.ruleModule.getSelectedItem().getValue().toString();	
 				String event= this.ruleEvent.getValue().trim();
+				this.btnSimulation.setVisible(false);
 				
 				if(getUserWorkspace().isAllowed("button_RuleDialog_btn"+this.ruleModuleName+"Maintain") &&
 						getUserWorkspace().isAllowed("button_RuleDialog_btn"+this.ruleModuleName+"Save") 
@@ -819,6 +839,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 					
 					objectFieldList = getRuleService().getFieldList(module,event);
 					buildingTree(sqlRuleValueList,aRule);// designing tree structure	
+					this.btnSimulation.setVisible(true);
 				}
 				
 				if (!aRule.getRuleModule().equalsIgnoreCase("FEES")) {
@@ -971,12 +992,11 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.ruleCode.isReadonly()){
-			this.ruleCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX,Labels.getLabel(
-					"FIELD_ALNUM_CAPS",	new String[] { Labels.getLabel("label_RuleDialog_ruleCode.value") })));
+			this.ruleCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RuleDialog_ruleCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.ruleCodeDesc.isReadonly()){
-			this.ruleCodeDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX,Labels.getLabel(
-					"MAND_FIELD_DESC",	new String[] { Labels.getLabel("label_RuleDialog_ruleCodeDesc.value") })));
+			this.ruleCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_RuleDialog_ruleCodeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.waiverPercentage.isDisabled()){
 			if(this.waiver.isChecked()){
@@ -985,8 +1005,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			}
 		}
 		if (this.hbox_groupId.isVisible() && !this.groupId.isReadonly()){
-			this.lovDescGroupName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_RuleDialog_GroupId.value") }));
+			this.lovDescGroupName.setConstraint(new PTStringValidator(Labels.getLabel("label_RuleDialog_GroupId.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -998,6 +1017,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.ruleCode.setConstraint("");
+		this.ruleModule.setConstraint("");
 		this.ruleCodeDesc.setConstraint("");
 		this.waiverPercentage.setConstraint("");
 		this.returnType.setConstraint("");
@@ -1030,16 +1050,15 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		treeitem.appendChild(treerow);
 		
 		//logic for disable the Else button , because it enable only once
-		Hlayout hlayout = (Hlayout)((Treecell)treerow.getChildren().get(0)).getChildren().get(0);
-		Label label = (Label) hlayout.getFirstChild().getNextSibling().getNextSibling();
+		Treecell treecell = (Treecell)treerow.getChildren().get(0);
+		Label label = (Label) treecell.getFirstChild().getNextSibling().getNextSibling();
 		if(label.getValue().equals("else")){
-			Hlayout hlay = (Hlayout)((Treecell)((Treerow)((Treeitem)((Treechildren)cmp.getChildren().get(0)).getChildren().get(0)).getChildren().get(0))
-					.getChildren().get(0)).getChildren().get(0);
-			if(hlay.getLastChild() instanceof Space){
-				Button btn = (Button)hlay.getLastChild().getPreviousSibling();
+			Treecell trcell = (Treecell)((Treerow)((Treeitem)((Treechildren)cmp.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).getChildren().get(0);
+			if(trcell.getLastChild() instanceof Space){
+				Button btn = (Button)trcell.getLastChild().getPreviousSibling();
 				btn.setDisabled(true);
-			}else if(hlay.getLastChild() instanceof Textbox){
-				Button btn = (Button)hlay.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
+			}else if(trcell.getLastChild() instanceof Textbox){
+				Button btn = (Button)trcell.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
 				btn.setDisabled(true);
 			}
 		}
@@ -1131,14 +1150,13 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		
 		//Enable Else button after removing the Else Condition Item
 		if(elsCon){
-			Hlayout hlayout = (Hlayout)((Treecell)((Treerow)((Treeitem)childComp.getParent().
-					getFirstChild()).getChildren().get(0)).getChildren().get(0)).getChildren().get(0);
+			Treecell treecell = (Treecell)((Treerow)((Treeitem)childComp.getParent().getFirstChild()).getChildren().get(0)).getChildren().get(0);
 			Button elsButton = null;
-			if(hlayout.getLastChild() instanceof Textbox){
-				elsButton = (Button) hlayout.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
+			if(treecell.getLastChild() instanceof Textbox){
+				elsButton = (Button) treecell.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
 				elsButton.setDisabled(false);
-			}else if(hlayout.getLastChild() instanceof Space){
-				elsButton = (Button) hlayout.getLastChild().getPreviousSibling();
+			}else if(treecell.getLastChild() instanceof Space){
+				elsButton = (Button) treecell.getLastChild().getPreviousSibling();
 				elsButton.setDisabled(false);
 			}
 		}
@@ -1152,16 +1170,16 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 					Treerow row = (Treerow)((Treeitem)childComp.getNextSibling()).getChildren().get(0);
 					if(row.getChildren().size() != 0){
 
-						Hlayout hlayout = (Hlayout)((Treecell)row.getChildren().get(0)).getChildren().get(0);
-						if(hlayout.getFirstChild().getNextSibling().getNextSibling() instanceof Label){
-							Label label = (Label) hlayout.getFirstChild().getNextSibling().getNextSibling();
+						Treecell treecell = (Treecell)row.getChildren().get(0);
+						if(treecell.getFirstChild().getNextSibling().getNextSibling() instanceof Label){
+							Label label = (Label) treecell.getFirstChild().getNextSibling().getNextSibling();
 							if(label.getValue().equals("else")){
 								childComp.getNextSibling().detach();
 								addReturnCondition(childComp);
 							}else{
 								//Check for Else condition Exist or not
-								Hlayout hlo = (Hlayout)((Treecell)((Treerow)((Treeitem)childComp.getParent().getLastChild()).getChildren().get(0)).getChildren().get(0)).getChildren().get(0);
-								Label lbl = (Label) hlo.getFirstChild().getNextSibling().getNextSibling();
+								Treecell tc = (Treecell)((Treerow)((Treeitem)childComp.getParent().getLastChild()).getChildren().get(0)).getChildren().get(0);
+								Label lbl = (Label) tc.getFirstChild().getNextSibling().getNextSibling();
 								boolean elsCondition = false;
 								if(lbl.getValue().equals("else")){
 									elsCondition = true;
@@ -1170,11 +1188,11 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 								//Changing label and UnDisable the Else Button if Else condition not exist
 								if(label.getValue().equals("else if")){
 									if(!elsCondition){
-										if(hlayout.getLastChild() instanceof Space){
-											Button btn = (Button)hlayout.getLastChild().getPreviousSibling();
+										if(treecell.getLastChild() instanceof Space){
+											Button btn = (Button)treecell.getLastChild().getPreviousSibling();
 											btn.setDisabled(false);
-										}else if(hlayout.getLastChild() instanceof Textbox){
-											Button btn = (Button)hlayout.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
+										}else if(treecell.getLastChild() instanceof Textbox){
+											Button btn = (Button)treecell.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
 											btn.setDisabled(false);
 										}
 									}
@@ -1196,10 +1214,10 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 					Treerow treerow = (Treerow)((Treeitem)childComp.getParent().getLastChild()).getChildren().get(0);
 					if(treerow.getChildren().size() != 0){
 						//Check for Else condition Exist or not
-						Hlayout hlo = (Hlayout)((Treecell)(treerow).getChildren().get(0)).getChildren().get(0);
+						Treecell trcell = (Treecell)treerow.getChildren().get(0);
 						boolean elsCondition = false;
-						if(hlo.getFirstChild().getNextSibling().getNextSibling() instanceof Label){
-							Label lbl = (Label) hlo.getFirstChild().getNextSibling().getNextSibling();
+						if(trcell.getFirstChild().getNextSibling().getNextSibling() instanceof Label){
+							Label lbl = (Label) trcell.getFirstChild().getNextSibling().getNextSibling();
 							if(lbl.getValue().equals("else")){
 								elsCondition = true;
 							}
@@ -1207,15 +1225,15 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 							Treerow row = (Treerow)((Treeitem)childComp.getNextSibling()).getChildren().get(0);
 							if(row.getChildren().size() != 0){
 								//Changing label and UnDisable the Else Button if Else condition not exist
-								Hlayout hlayout = (Hlayout)((Treecell)row.getChildren().get(0)).getChildren().get(0);
-								Label label = (Label) hlayout.getFirstChild().getNextSibling().getNextSibling();
+								Treecell tc = (Treecell)row.getChildren().get(0);
+								Label label = (Label) tc.getFirstChild().getNextSibling().getNextSibling();
 								if(label.getValue().equals("else if")){
 									if(!elsCondition){
-										if(hlayout.getLastChild() instanceof Space){
-											Button btn = (Button)hlayout.getLastChild().getPreviousSibling();
+										if(tc.getLastChild() instanceof Space){
+											Button btn = (Button)tc.getLastChild().getPreviousSibling();
 											btn.setDisabled(false);
-										}else if(hlayout.getLastChild() instanceof Textbox){
-											Button btn = (Button)hlayout.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
+										}else if(tc.getLastChild() instanceof Textbox){
+											Button btn = (Button)tc.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
 											btn.setDisabled(false);
 										}
 									}
@@ -1252,9 +1270,9 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 	private void addReturnCondition(Component childComp){
 		
 		//Add return Condition
-		Hlayout hl = (Hlayout)((Treecell)((Treerow)(childComp.getParent().getParent().getParent().getParent()).getChildren().get(0)).getChildren().get(0)).getChildren().get(0);
+		Treecell tc = (Treecell)((Treerow)(childComp.getParent().getParent().getParent().getParent()).getChildren().get(0)).getChildren().get(0);
 		
-		Button btn  = (Button) hl.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
+		Button btn  = (Button) tc.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
 		btn.setDisabled(false);
 		returnButton = new Button();
 		returnButton.setLabel("R");
@@ -1262,8 +1280,8 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		returnButton.setTooltiptext("Click for Add Return Value");
 		returnButton.setImage("/images/icons/Right_Arrow.png");
 		Textbox textbox = getSelectText();
-		hl.appendChild(returnButton);
-		hl.appendChild(textbox);
+		tc.appendChild(returnButton);
+		tc.appendChild(textbox);
 		returnButton.addForward("onClick",window_RuleDialog,"onReturnButtonClicked",textbox);
 		
 		if(childComp.getParent().getParent().getParent().getChildren().size()>1){
@@ -1300,11 +1318,11 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		logger.debug("Entering");
 		
 		//Remove return Condition
-		Hlayout hl = (Hlayout)((Treecell)((Treerow)cmp.getChildren().get(0)).getChildren().get(0)).getChildren().get(0);
-		if(hl.getLastChild() instanceof Textbox){
-			hl.removeChild(hl.getLastChild());
-			hl.removeChild(hl.getLastChild());
-			((Button)hl.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling()).setDisabled(true);
+		Treecell treecell = (Treecell)((Treerow)cmp.getChildren().get(0)).getChildren().get(0);
+		if(treecell.getLastChild() instanceof Textbox){
+			treecell.removeChild(treecell.getLastChild());
+			treecell.removeChild(treecell.getLastChild());
+			((Button)treecell.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling()).setDisabled(true);
 		}
 
 		treeitem.appendChild(treerow);
@@ -1342,15 +1360,15 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			}
 			
 			//Check for Else condition Exist or not
-			Hlayout hlayout = (Hlayout)((Treecell)treerow.getChildren().get(0)).getChildren().get(0);
-			Label label = (Label) hlayout.getFirstChild().getNextSibling().getNextSibling();
+			Treecell tc = (Treecell)treerow.getChildren().get(0);
+			Label label = (Label) tc.getFirstChild().getNextSibling().getNextSibling();
 			if(label.getValue().equals("else")){
-				Hlayout hlay = (Hlayout)((Treecell)((Treerow)((Treeitem)treeitem.getParent().getFirstChild()).getChildren().get(0)).getChildren().get(0)).getChildren().get(0);
-				if(hlay.getLastChild() instanceof Space){
-					Button btn = (Button)hlay.getLastChild().getPreviousSibling();
+				Treecell tcell = (Treecell)((Treerow)((Treeitem)treeitem.getParent().getFirstChild()).getChildren().get(0)).getChildren().get(0);
+				if(tcell.getLastChild() instanceof Space){
+					Button btn = (Button)tcell.getLastChild().getPreviousSibling();
 					btn.setDisabled(true);
-				}else if(hlay.getLastChild() instanceof Textbox){
-					Button btn = (Button)hlay.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
+				}else if(tcell.getLastChild() instanceof Textbox){
+					Button btn = (Button)tcell.getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
 					btn.setDisabled(true);
 				}
 			}			
@@ -1477,7 +1495,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 				}else if (dataObject instanceof String) {
 					textbox.setValue("");
 				} else {
-					String textValue = dataObject.getClass().getMethod( "getLovValue", null).invoke( dataObject, null ).toString();
+					String textValue = dataObject.getClass().getMethod("getLovValue").invoke( dataObject).toString();
 					if (textValue != null) {
 						textbox.setValue(textValue);
 					}
@@ -1546,21 +1564,19 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		// create treeCell with in item of tree
 		treerow = new Treerow();
 		Treecell treecell = new Treecell();
-		Hlayout hbox = new Hlayout();
-		hbox.setHflex("max");
-		hbox.setVflex("min");
 		
 		// front space
 		space = new Space();
-		space.setSpacing("25px");
-		hbox.appendChild(space);
-		hbox.appendChild(removeButton);
+		space.setWidth("5px");
+		treecell.appendChild(space);
+		treecell.appendChild(removeButton);
 
 		// Condition for not generate Criteria comboBox at first time creation
 		// of treeItem
 		if (itemCount != 1 && !nestedIF) {
 			space = new Space();
-			hbox.appendChild(space);
+			space.setWidth("5px");
+			treecell.appendChild(space);
 			combo = getComboCondition();
 			combo.setReadonly(true);
 			if (ruleValues.size() > 0 && !aRule.isNew()) {
@@ -1577,7 +1593,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 					}
 				}
 			}
-			hbox.appendChild(combo);
+			treecell.appendChild(combo);
 		} else {
 			if(nestedIF){
 				Label label = null;
@@ -1591,19 +1607,21 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 					label = new Label("if");
 					label.setStyle("font-weight:bold;margin-right:30px;margin-left:20px;");
 				}
-				hbox.appendChild(label);
+				treecell.appendChild(label);
 			}else{
 				space = new Space();
-				hbox.appendChild(space);
+				space.setWidth("5px");
+				treecell.appendChild(space);
 				
 				space = new Space();
-				space.setSpacing("50px");
-				hbox.appendChild(space);
+				space.setWidth("5px");
+				treecell.appendChild(space);
 			}
 		}
 
 		space = new Space();
-		hbox.appendChild(space);
+		space.setWidth("5px");
+		treecell.appendChild(space);
 		combo = getFields();// first comboBox for Fields
 		combo.setReadonly(true);
 		combo.setTooltiptext(combo.getValue());
@@ -1638,10 +1656,11 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 				}
 			}
 		}
-		hbox.appendChild(combo);
+		treecell.appendChild(combo);
 
 		space = new Space();
-		hbox.appendChild(space);
+		space.setWidth("5px");
+		treecell.appendChild(space);
 		String selectType ="";
 		// Set fieldType to ComboBox depend on staticList of types and getting rule
 		Combobox comb = getSelectionTypeItem(field, new Combobox());// selection type comboBox
@@ -1662,10 +1681,12 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 				}
 			}
 		}
-		hbox.appendChild(comb);
+		treecell.appendChild(comb);
 		
 		space = new Space();
-		hbox.appendChild(space);
+		space.setWidth("5px");
+		treecell.appendChild(space);
+		
 		// Set Logical operators for rule
 		combo = getCriteria(getFieldType(),selectType,new Combobox());// condition comboBox
 		combo.setReadonly(true);
@@ -1684,10 +1705,11 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 				}
 			}
 		}
-		hbox.appendChild(combo);
+		treecell.appendChild(combo);
 
 		space = new Space();
-		hbox.appendChild(space);
+		space.setWidth("5px");
+		treecell.appendChild(space);
 		
 		calValueButton = new Button();
 		calValueButton.setImage("/images/icons/Right_Arrow.png");
@@ -1695,22 +1717,22 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		calValueButton.setTooltiptext("Click Button for Add Value");
 		calValueButton.setDisabled(true);
 		calValueButton.addForward("onClick",window_RuleDialog,"onValueButtonClicked",calValueButton);
-		hbox.appendChild(calValueButton);
+		treecell.appendChild(calValueButton);
 		
 		if(elseCond){
 			textbox = getSelectText();
 			textbox.setReadonly(true);
-			hbox.appendChild(textbox);
+			treecell.appendChild(textbox);
 		}
 		
 		// conditions for selecting comboBox depend on field selection type
 		if (ruleValues.size() > 0 && !aRule.isNew()) {
 			if(elseCond){
 				ruleValues.remove(0);	
-				if(!(hbox.getLastChild() instanceof Textbox)){
+				if(!(treecell.getLastChild() instanceof Textbox)){
 					textbox = getSelectText();
 					textbox.setReadonly(true);
-					hbox.appendChild(textbox);
+					treecell.appendChild(textbox);
 				}
 			}else{
 				String selectionType = (String) comb.getSelectedItem().getValue();
@@ -1719,7 +1741,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 						textbox = getSelectText();
 						textbox.setMaxlength(getFieldLength());
 						textbox.setValue(ruleValues.get(0).toString());
-						hbox.appendChild(textbox);
+						treecell.appendChild(textbox);
 					} else if (getFieldType().equalsIgnoreCase("nchar")) {
 						if(getFieldLength() == 1){
 							Combobox booleanCombo = getBooleanVariables();
@@ -1729,27 +1751,27 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 									break;
 								}
 							}
-							hbox.appendChild(booleanCombo);
+							treecell.appendChild(booleanCombo);
 						}else{
 							textbox = getSelectText();
 							textbox.setMaxlength(getFieldLength());
 							textbox.setValue(ruleValues.get(0).toString());
-							hbox.appendChild(textbox);
+							treecell.appendChild(textbox);
 						}
 					} else if (getFieldType().equalsIgnoreCase("bigint")) {
 						Intbox intbox = getIntBox();
 						intbox.setMaxlength(getFieldLength());
 						intbox.setValue(Integer.valueOf(ruleValues.get(0).toString()));
-						hbox.appendChild(intbox);
+						treecell.appendChild(intbox);
 					} else if (getFieldType().equalsIgnoreCase("decimal")) {
 						Decimalbox decimalbox = getDecimalbox();
 						decimalbox.setMaxlength(getFieldLength());
 						decimalbox.setValue(BigDecimal.valueOf(Double.valueOf(ruleValues.get(0).toString())));
-						hbox.appendChild(decimalbox);
+						treecell.appendChild(decimalbox);
 					} else if (getFieldType().equalsIgnoreCase("smalldatetime")) {
 						Datebox datebox = getDateBox();
 						datebox.setValue(DateUtility.getDBDate(ruleValues.get(0).toString()));
-						hbox.appendChild(datebox);
+						treecell.appendChild(datebox);
 					}
 					ruleValues.remove(0);
 					fldComboSelAtmpts++;
@@ -1757,7 +1779,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 
 					textbox = getSelectText();
 					textbox.setValue(ruleValues.get(0).toString());
-					hbox.appendChild(textbox);
+					treecell.appendChild(textbox);
 					calValueButton.setDisabled(false);
 					ruleValues.remove(0);
 					fldComboSelAtmpts++;
@@ -1765,7 +1787,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 
 					textbox = getSelectText();
 					textbox.setValue(ruleValues.get(0).toString());
-					hbox.appendChild(textbox);
+					treecell.appendChild(textbox);
 					calValueButton.setDisabled(false);
 					ruleValues.remove(0);
 					fldComboSelAtmpts++;
@@ -1779,28 +1801,31 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 							break;
 						}
 					}
-					hbox.appendChild(combo);
+					treecell.appendChild(combo);
 				}
 			}
 		}
 
-		hbox.appendChild(addElseIfButton);
+		treecell.appendChild(addElseIfButton);
 		space = new Space();
-		hbox.appendChild(space);
-		hbox.appendChild(addWithInIfButton);
+		space.setWidth("5px");
+		treecell.appendChild(space);
+		treecell.appendChild(addWithInIfButton);
 
 		space = new Space();
-		hbox.appendChild(space);
-		hbox.appendChild(addNestedIfButton);
+		space.setWidth("5px");
+		treecell.appendChild(space);
+		treecell.appendChild(addNestedIfButton);
 		
 		space = new Space();
-		hbox.appendChild(space);
-		hbox.appendChild(addElseButton);
+		space.setWidth("5px");
+		treecell.appendChild(space);
+		treecell.appendChild(addElseButton);
 
 		//return Condition
 		space = new Space();
-		space.setWidth("50px");
-		hbox.appendChild(space);
+		space.setWidth("5px");
+		treecell.appendChild(space);
 		if(withInIFCond){
 			addElseIfButton.setVisible(false);
 			addWithInIfButton.setVisible(false);
@@ -1821,7 +1846,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			returnButton.setStyle("font-weight:bold;dir:reverse;padding:0px;");
 			returnButton.setTooltiptext("Click for Add Return Value");
 			returnButton.setImage("/images/icons/Right_Arrow.png");
-			hbox.appendChild(returnButton);
+			treecell.appendChild(returnButton);
 			textbox = getSelectText();
 			if (ruleValues.size() > 0 && !aRule.isNew()) {
 				if(!(ruleValues.get(0).equals("AND") || ruleValues.get(0).equals("OR") || 
@@ -1832,13 +1857,10 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 				}
 			}
 			returnButton.addForward("onClick",window_RuleDialog,"onReturnButtonClicked",textbox);
-			hbox.appendChild(textbox);
+			treecell.appendChild(textbox);
 		}
-		hbox.setStyle("display: inline-block; _display: inline; padding:0px;");// Alignment
-		// for all child's with in treeCell
 
-		treecell.setHflex("100");
-		treecell.appendChild(hbox);
+		treecell.setStyle("display:inline-block;_display:inline;padding:0px;");// Alignment
 		treerow.appendChild(treecell);
 
 		// Add forward Events for creating new item(RuleCondition)
@@ -1856,6 +1878,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		// Setting for generating tree item for new rule when creating window
 		if (itemCount == 1) {
 			removeButton.setDisabled(true);
+			treeitem.setHeight("24px");
 			treeitem.appendChild(treerow);
 			treeitem.setStyle("padding:1px");
 			treechildren.appendChild(treeitem);
@@ -2311,6 +2334,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 	 */
 	public void onFieldComboSelected(Event event) {
 		logger.debug("Entering" +event.toString());
+		
 		Combobox component = (Combobox) event.getData();
 		Combobox selctcombo = (Combobox) component.getNextSibling().getNextSibling();
 		selctcombo.getItems().clear();
@@ -2471,17 +2495,20 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 	 */
 	private Decimalbox getDecimalbox() {
 		Decimalbox decimalbox = new Decimalbox();
+		decimalbox.setStyle("padding-left: 5px;padding-right: 5px;");
 		decimalbox.setWidth("100px");
 		return decimalbox;	
 	}
 	private Intbox getIntBox() {
 		Intbox intbox = new Intbox(0);
+		intbox.setStyle("padding-left: 5px;padding-right: 5px;");
 		intbox.setWidth("100px");
 		return intbox;	
 	}
 
 	private Datebox getDateBox() {
 		Datebox date = new Datebox();
+		date.setStyle("padding-left: 5px;padding-right: 5px;");
 		date.setWidth("100px");
 		date.setFormat(PennantConstants.DBDateTimeFormat);
 		return date;	
@@ -2520,6 +2547,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		item.setValue("");
 		this.waiverDecider.appendChild(item);
 		this.waiverDecider.setSelectedItem(item);
+		List<ValueLabel> waiverDeciderList = PennantStaticListUtil.getWaiverDecider();
 
 		for (int i = 0; i < waiverDeciderList.size(); i++) {			
 			item = new Comboitem();
@@ -2554,6 +2582,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		item.setValue(PennantConstants.List_Select);
 		this.returnType.appendChild(item);
 		this.returnType.setSelectedItem(item);
+		List<ValueLabel> returnTypeList = PennantStaticListUtil.getRuleReturnType();
 
 		for (int i = 0; i < returnTypeList.size(); i++) {			
 			item = new Comboitem();
@@ -2682,6 +2711,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 	private Textbox getSelectText() {
 		Textbox text = new Textbox();
 		text.setWidth("98px");
+		text.setStyle("padding-left: 5px;padding-right: 5px;");
 		return text;
 	}
 
@@ -2691,6 +2721,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 	private Combobox getGlobalVariables() {
 		logger.debug("Entering");
 		Combobox comboBox = new Combobox();
+		comboBox.setStyle("padding-left: 5px;padding-right: 5px;");
 		Comboitem item;
 
 		for (int i = 0; i < globalVariableList.size(); i++) {
@@ -2709,6 +2740,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 	private Combobox getBooleanVariables() {
 		logger.debug("Entering");
 		Combobox comboBox = new Combobox();
+		comboBox.setStyle("padding-left: 5px;padding-right: 5px;");
 		Comboitem item;
 
 		for (int i = 0; i < BuilderUtilListbox.getBooleanOperators().getSize(); i++) {
@@ -2764,7 +2796,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			try {
 				if (doProcess(aRule, tranType)) {
 					refreshList();
-					closeDialog(window_RuleDialog, "Quey");
+					closeDialog(window_RuleDialog, "RuleDialog");
 				}
 			} catch (DataAccessException e) {
 				logger.error(e);
@@ -2804,14 +2836,14 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		if (getRule().isNewRecord()) {
 			this.ruleCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
-			this.ruleModule.setDisabled(false);
+			readOnlyComponent(false, this.ruleModule);
 			this.tab_ruleDesign.setVisible(true);
 			this.btnReadValues.setVisible(true);
 			this.waiverDecider.setDisabled(isReadOnly("RuleDialog_waiverDecider"));
 		} else {
 			this.ruleCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
-			this.ruleModule.setDisabled(true);
+			readOnlyComponent(true, this.ruleModule);
 			
 			if(getUserWorkspace().isAllowed("button_RuleDialog_btn"+this.ruleModuleName+"Maintain") &&
 					getUserWorkspace().isAllowed("button_RuleDialog_btn"+this.ruleModuleName+"Save")){
@@ -2846,15 +2878,18 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			}
 		}
 		
-		this.ruleModule.setReadonly(true);
-		this.ruleCodeDesc.setReadonly(isReadOnly("RuleDialog_ruleCodeDesc"));
+		//readOnlyComponent(true, this.ruleModule);
+		//this.ruleModule.setReadonly(true);
+		//this.ruleCodeDesc.setReadonly(isReadOnly("RuleDialog_ruleCodeDesc"));
+		readOnlyComponent(isReadOnly("RuleDialog_ruleCodeDesc"),this.ruleCodeDesc);
 		this.sqlRule.setReadonly(true);
 		this.waiverDecider.setDisabled(true);
 		this.waiver.setDisabled(isReadOnly("RuleDialog_waiver"));
 		this.waiverPercentage.setDisabled(isReadOnly("RuleDialog_waiverPercentage"));
 		this.addFeeCharges.setDisabled(isReadOnly("RuleDialog_addFeeCharges"));
 		this.seqOrder.setReadonly(isReadOnly("RuleDialog_seqOrder"));
-		this.returnType.setDisabled(isReadOnly("RuleDialog_returnType"));
+		readOnlyComponent(isReadOnly("RuleDialog_returnType"), this.returnType);
+		//this.returnType.setDisabled(isReadOnly("RuleDialog_returnType"));
 		this.groupId.setReadonly(isReadOnly("RuleDialog_groupId"));
 		this.btnSearchGroupId.setDisabled(isReadOnly("RuleDialog_groupId"));
 		
@@ -2870,7 +2905,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			}
 		}
 		
-		if("SCORES".equals(this.ruleModuleID)){
+		if(!getRule().isNewRecord() && "SCORES".equals(this.ruleModuleID)){
 			this.returnType.setDisabled(true);
 		}
 		
@@ -2904,7 +2939,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		logger.debug("Entering");
 		this.ruleCode.setReadonly(true);
 		this.ruleCodeDesc.setReadonly(true);
-		this.ruleModule.setDisabled(true);
+		readOnlyComponent(true, this.ruleModule);
 		this.ruleEvent.setReadonly(true);
 		this.sqlRule.setReadonly(true);
 		this.tab_ruleDesign.setVisible(false);
@@ -2994,7 +3029,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			if (doProcess(aRule, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
-				closeDialog(this.window_RuleDialog, "Rule");
+				closeDialog(this.window_RuleDialog, "RuleDialog");
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);

@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.amtmasters.coursetype.model.CourseTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -373,7 +373,7 @@ public class CourseTypeListCtrl extends GFCBaseListCtrl<CourseType> implements S
 	public void onClick$button_CourseTypeList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("CourseType", getSearchObj());
+		new PTListReportUtils("CourseType", getSearchObj(),this.pagingCourseTypeList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

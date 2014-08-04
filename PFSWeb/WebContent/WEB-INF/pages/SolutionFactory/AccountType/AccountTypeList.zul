@@ -21,11 +21,11 @@
 				<toolbar align="center" style="border-style: none;">
 					<button
 						id="button_AccountTypeList_AccountTypeSearchDialog" height="24px"
-						label = "${c:l('label_Filter')}"
+						label="${c:l('label_Filter')}"
 						autodisable="button_AccountTypeList_AccountTypeSearchDialog,button_AccountTypeList_PrintList,button_AccountTypeList_NewAccountType,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_AccountTypeList_AccountTypeSearchDialog.tooltiptext')}" />
 					<button id="button_AccountTypeList_PrintList"
-						height="24px" label = "${c:l('label_Print')}"
+						height="24px" label="${c:l('label_Print')}"
 						autodisable="button_AccountTypeList_AccountTypeSearchDialog,button_AccountTypeList_PrintList,button_AccountTypeList_NewAccountType,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_AccountTypeList_PrintList.tooltiptext')}" />
 				</toolbar>
@@ -33,15 +33,15 @@
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" style="border-style: none;">
 					<button id="button_AccountTypeList_NewAccountType"
-						height="24px" label = "${c:l('label_New')}"
+						height="24px" label="${c:l('label_New')}"
 						autodisable="button_AccountTypeList_AccountTypeSearchDialog,button_AccountTypeList_PrintList,button_AccountTypeList_NewAccountType,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_AccountTypeList_NewAccountType.tooltiptext')}" />
 					<button id="btnRefresh" height="24px"
-						label = "${c:l('label_Refresh')}"
+						label="${c:l('label_Refresh')}"
 						autodisable="button_AccountTypeList_AccountTypeSearchDialog,button_AccountTypeList_PrintList,button_AccountTypeList_NewAccountType,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 					<button id="btnHelp" height="24px"
-						label = "${c:l('label_Help')}"
+						label="${c:l('label_Help')}"
 						autodisable="button_AccountTypeList_AccountTypeSearchDialog,button_AccountTypeList_PrintList,button_AccountTypeList_NewAccountType,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 				</toolbar>
@@ -51,41 +51,119 @@
 		<borderlayout id="borderLayout_AccountTypeList">
 			<north border="none" />
 			<center border="none">
-
-				<listbox id="listBoxAccountType" vflex="true"
-					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
-					<listhead sizable="true">
-						<listheader id="listheader_AcType"
-							label="${c:l('listheader_AcType.label')}" sort="auto"
-							width="12%" />
-						<listheader id="listheader_AcTypeDesc"
-							label="${c:l('listheader_AcTypeDesc.label')}" sort="auto"
-							width="30%" />
-						<listheader id="listheader_AcHead"
-							label="${c:l('listheader_AcHead.label')}" sort="auto"
-							width="8%" />
-						<listheader id="listheader_AcPurpose"
-							label="${c:l('listheader_AcPurpose.label')}" sort="auto"
-							width="8%" />
-						<listheader id="listheader_IsInternalAc"
-							label="${c:l('listheader_IsInternalAc.label')}" sort="auto"
-							width="10%" />
-						<listheader id="listheader_IsCustSysAccount"
-							label="${c:l('listheader_IsCustSysAccount.label')}" sort="auto"
-							width="10%" />
-						<listheader id="listheader_AcTypeIsActive"
-							label="${c:l('listheader_AcTypeIsActive.label')}" sort="auto"
-							width="6%" />
-						<listheader id="listheader_RecordStatus"
-							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="8%" />
-						<listheader id="listheader_RecordType"
-							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="8%" />
-					</listhead>
-				</listbox>
-
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true" style="border:0px">
+						<columns>
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_AccountTypeSearch_AcType"
+									value="${c:l('label_AccountTypeSearch_AcType.value')}" />
+								<listbox id="sortOperator_acType"
+									width="43px" mold="select" rows="1" />
+								<uppercasebox id="acType" width="120px"
+									maxlength="8" />
+								<label
+									id="label_AccountTypeSearch_AcTypeDesc"
+									value="${c:l('label_AccountTypeSearch_AcTypeDesc.value')}" />
+								<listbox id="sortOperator_acTypeDesc"
+									width="43px" mold="select" rows="1" />
+								<textbox id="acTypeDesc" width="200px"
+									maxlength="50" />
+							</row>
+							<row>
+								<label
+									id="label_AccountTypeSearch_AcPurpose"
+									value="${c:l('label_AccountTypeSearch_AcPurpose.value')}" />
+								<listbox id="sortOperator_acPurpose"
+									width="43px" mold="select" rows="1" />
+								<combobox id="acPurpose" width="100px"
+									readonly="true" />
+								<label
+									id="label_AccountTypeSearch_IsInternalAc"
+									value="${c:l('label_AccountTypeSearch_IsInternalAc.value')}" />
+								<listbox id="sortOperator_internalAc"
+									width="43px" mold="select" rows="1" />
+								<checkbox id="internalAc"
+									checked="false" />
+							</row>
+							<row>
+								<label
+									id="label_AccountTypeSearch_IsCustSysAccount"
+									value="${c:l('label_AccountTypeSearch_IsCustSysAccount.value')}" />
+								<listbox id="sortOperator_isCustSysAccount"
+									width="43px" mold="select" rows="1" />
+								<checkbox id="isCustSysAccount"
+									checked="false" />
+								<label
+									id="label_AccountTypeSearch_AcTypeIsActive"
+									value="${c:l('label_AccountTypeSearch_AcTypeIsActive.value')}" />
+								<listbox
+									id="sortOperator_acTypeIsActive" width="43px" mold="select"
+									rows="1" />
+								<checkbox id="acTypeIsActive"
+									checked="false" />
+							</row>
+							<row>
+							<label
+								id="label_AccountTypeSearch_RecordStatus"
+								value="${c:l('label_AccountTypeSearch_RecordStatus.value')}" />
+							<listbox id="sortOperator_recordStatus"
+								width="43px" mold="select" rows="1" />
+							<textbox id="recordStatus" width="120px"
+								maxlength="50" />
+								<label
+								id="label_AccountTypeSearch_RecordType"
+								value="${c:l('label_AccountTypeSearch_RecordType.value')}" />
+							<listbox id="sortOperator_recordType"
+								width="43px" mold="select" rows="1" />
+							<listbox id="recordType" width="120px"
+								mold="select" />
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxAccountType" fixedLayout="true" vflex="true" span="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
+						<listhead sizable="true">
+							<listheader id="listheader_AcType"
+								label="${c:l('listheader_AcType.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_AcTypeDesc"
+								label="${c:l('listheader_AcTypeDesc.label')}" sort="auto"
+								hflex="min"/>
+							<listheader id="listheader_AcHead"
+								label="${c:l('listheader_AcHead.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_AcPurpose"
+								label="${c:l('listheader_AcPurpose.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_IsInternalAc"
+								label="${c:l('listheader_IsInternalAc.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_IsCustSysAccount"
+								label="${c:l('listheader_IsCustSysAccount.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_AcTypeIsActive"
+								label="${c:l('listheader_AcTypeIsActive.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingAccountTypeList" />

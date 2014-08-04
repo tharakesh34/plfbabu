@@ -23,12 +23,12 @@
 						style="border-style: none;">
 						<button
 							id="button_DedupParmList_DedupParmSearchDialog" height="24px"
-							label = "${c:l('label_Filter')}"
+							label="${c:l('label_Filter')}"
 							autodisable="button_DedupParmList_DedupParmSearchDialog,button_DedupParmList_PrintList,
 								 button_DedupParmList_NewDedupParm, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_DedupParmList_DedupParmSearchDialog.tooltiptext')}" />
 						<button id="button_DedupParmList_PrintList"
-							height="24px" label = "${c:l('label_Print')}"
+							height="24px" label="${c:l('label_Print')}"
 							autodisable="button_DedupParmList_DedupParmSearchDialog,button_DedupParmList_PrintList,
 								 button_DedupParmList_NewDedupParm, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_DedupParmList_PrintList.tooltiptext')}" />
@@ -37,17 +37,17 @@
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
 						<button id="button_DedupParmList_NewDedupParm"
-							height="24px" label = "${c:l('label_New')}"
+							height="24px" label="${c:l('label_New')}"
 							autodisable="button_DedupParmList_DedupParmSearchDialog,button_DedupParmList_PrintList,
 								 button_DedupParmList_NewDedupParm, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_DedupParmList_NewDedupParm.tooltiptext')}" />
 						<button id="btnRefresh" height="24px"
-							label = "${c:l('label_Refresh')}"
+							label="${c:l('label_Refresh')}"
 							autodisable="button_DedupParmList_DedupParmSearchDialog,button_DedupParmList_PrintList,
 								 button_DedupParmList_NewDedupParm, btnRefresh, btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 						<button id="btnHelp" height="24px"
-							label = "${c:l('label_Help')}"
+							label="${c:l('label_Help')}"
 							autodisable="button_DedupParmList_DedupParmSearchDialog,button_DedupParmList_PrintList,
 								 button_DedupParmList_NewDedupParm, btnRefresh, btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
@@ -57,34 +57,105 @@
 
 			<borderlayout id="borderLayout_DedupParmList">
 				<north border="none">
-					<textbox id="queryModule" value="Loan"
+					<textbox id="queryModule" value="Finance"
 						visible="false" />
 				</north>
 
 				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px">
+							<columns>
+								<column width="17%" />
+								<column width="5%" />
+								<column width="28%" />
+								<column width="17%" />
+								<column width="5%" />
+								<column width="28%" />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_DedupParmSearch_QueryCode"
+										value="${c:l('label_DedupParmSearch_QueryCode.value')}" />
+									<listbox id="sortOperator_queryCode"
+										width="43px" mold="select" rows="1" />
+									<textbox id="queryCode"
+										width="250px" maxlength="50" />
+									<label
+										id="label_DedupParmSearch_QueryDesc"
+										value="${c:l('label_DedupParmSearch_QueryDesc.value')}" />
+									<listbox id="sortOperator_queryDesc"
+										width="43px" mold="select" rows="1" />
+									<textbox id="queryDesc"
+										width="250px" maxlength="50" />
 
-					<listbox id="listBoxDedupParm" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
-						<listhead sizable="true">
-							<listheader id="listheader_QueryCode"
-								label="${c:l('listheader_QueryCode.label')}" sort="auto"
-								width="20%" />
-							<listheader id="listheader_QueryDesc"
-								label="${c:l('listheader_QueryDesc.label')}" sort="auto"
-								width="60%" />
-							<listheader id="listheader_CustCtgCode"
-								label="${c:l('listheader_CustCtgCode.label')}" sort="auto"
-								visible="false" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
-						</listhead>
-					</listbox>
+								</row>
+								<row visible="false">
+									<label
+										id="label_DedupParmSearch_QueryModule"
+										value="${c:l('label_DedupParmSearch_QueryModule.value')}" />
+									<listbox
+										id="sortOperator_queryModule" width="43px" mold="select"
+										rows="1" />
+									<textbox id="queryModules"
+										width="250px" maxlength="50" />
+								</row>
+								<row visible="false">
+									<label
+										id="label_DedupParmSearch_CustCtgCode"
+										value="${c:l('label_DedupParmSearch_CustCtgCode.value')}" />
+									<listbox
+										id="sortOperator_querySubCode" width="43px" mold="select"
+										rows="1" />
+									<combobox id="querySubCode"
+										width="250px" maxlength="50" />
 
+								</row>
+								<row>
+									<label
+										id="label_DedupParmSearch_RecordStatus"
+										value="${c:l('label_DedupParmSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_DedupParmSearch_RecordType"
+										value="${c:l('label_DedupParmSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxDedupParm"
+							fixedLayout="true" vflex="true" span="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
+							<listhead sizable="true">
+								<listheader id="listheader_QueryCode"
+									label="${c:l('listheader_QueryCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_QueryDesc"
+									label="${c:l('listheader_QueryDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CustCtgCode"
+									label="${c:l('listheader_CustCtgCode.label')}" sort="auto"
+									visible="false" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingDedupParmList" />

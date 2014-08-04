@@ -28,6 +28,7 @@ package com.pennant.backend.model.others;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -46,16 +48,38 @@ import com.pennant.backend.util.WorkFlowUtil;
  * Model class for the <b>JVPosting table</b>.<br>
  * 
  */
-public class JVPosting implements java.io.Serializable {
+public class JVPosting implements java.io.Serializable, Entity {
 	private static final long serialVersionUID = 1L;
-	private String batchReference;
 	private String batch;
+	private String filename;
+	private long batchReference;
+	private String currency;
+	private int currencyEditField;
+	private String currencyDesc;
+	private String exchangeRateType;
+	private String RateTypeDescription;
+	private BigDecimal totDebitsByBatchCcy;
+	private int debitCCyEditField;
+	private BigDecimal totCreditsByBatchCcy;
+	private int creditCCyEditField;
 	private int debitCount;
 	private int creditsCount;
-	private BigDecimal totDebitsByBatchCcy;
-	private BigDecimal totCreditsByBatchCcy;
 	private String batchPurpose;
 	private int version;
+	private String validationStatus = "";
+	private String batchPostingStatus = "";
+	private String txnId  = "";
+	private Date postingDate;
+	private String finType  = "";
+	private String branch  = "";
+	private String branchDesc  = "";
+	private boolean rePostingModule = false;
+	private List<JVPostingEntry> JVPostingEntrysList = new ArrayList<JVPostingEntry>();
+	private List<JVPostingEntry> postingEntryList = new ArrayList<JVPostingEntry>();
+	private List<JVPostingEntry> deletedJVPostingEntryList = new ArrayList<JVPostingEntry>();
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private String ccyNumber;
+
 	@XmlTransient
 	private long lastMntBy;
 	private String lastMaintainedUser;
@@ -87,9 +111,8 @@ public class JVPosting implements java.io.Serializable {
 	private String userAction = "Save";
 	@XmlTransient
 	private long workflowId = 0;
-	private List<JVPostingEntry> JVPostingEntrysList = new ArrayList<JVPostingEntry>();
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-
+	
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -97,13 +120,24 @@ public class JVPosting implements java.io.Serializable {
 	public JVPosting() {
 		this.workflowId = WorkFlowUtil.getWorkFlowID("JVPosting");
 	}
-
+	
 	public JVPosting(String id) {
-		this.setId(id);
+		
 	}
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("debitCCyEditField");
+		excludeFields.add("creditCCyEditField");
+		excludeFields.add("currencyEditField");
+		excludeFields.add("currencyDesc");
+		excludeFields.add("branchDesc");
+		excludeFields.add("RateTypeDescription");
+		excludeFields.add("JVPostingEntrysList");
+		excludeFields.add("rePostingModule");	
+		excludeFields.add("txnId");
+		excludeFields.add("finType");
+		excludeFields.add("ccyNumber");
 		return excludeFields;
 	}
 
@@ -112,19 +146,20 @@ public class JVPosting implements java.io.Serializable {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 	@XmlTransient
-	public String getId() {
+	public long getId() {
 		return batchReference;
 	}
 
-	public void setId(String id) {
+	@Override
+	public void setId(long id) {
 		this.batchReference = id;
 	}
 
-	public String getBatchReference() {
+	public long getBatchReference() {
 		return batchReference;
 	}
 
-	public void setBatchReference(String batchReference) {
+	public void setBatchReference(long batchReference) {
 		this.batchReference = batchReference;
 	}
 
@@ -372,4 +407,156 @@ public class JVPosting implements java.io.Serializable {
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
+
+	public String getValidationStatus() {
+		return validationStatus;
+	}
+
+	public void setValidationStatus(String validationStatus) {
+		this.validationStatus = validationStatus;
+	}
+
+	public int getDebitCCyEditField() {
+		return debitCCyEditField;
+	}
+
+	public void setDebitCCyEditField(int debitCCyEditField) {
+		this.debitCCyEditField = debitCCyEditField;
+	}
+
+	public int getCreditCCyEditField() {
+		return creditCCyEditField;
+	}
+
+	public void setCreditCCyEditField(int creditCCyEditField) {
+		this.creditCCyEditField = creditCCyEditField;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public int getCurrencyEditField() {
+		return currencyEditField;
+	}
+
+	public void setCurrencyEditField(int currencyEditField) {
+		this.currencyEditField = currencyEditField;
+	}
+
+	public String getCurrencyDesc() {
+		return currencyDesc;
+	}
+
+	public void setCurrencyDesc(String currencyDesc) {
+		this.currencyDesc = currencyDesc;
+	}
+
+	public String getExchangeRateType() {
+		return exchangeRateType;
+	}
+
+	public void setExchangeRateType(String exchangeRateType) {
+		this.exchangeRateType = exchangeRateType;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public String getRateTypeDescription() {
+		return RateTypeDescription;
+	}
+
+	public void setRateTypeDescription(String rateTypeDescription) {
+		RateTypeDescription = rateTypeDescription;
+	}
+
+	public List<JVPostingEntry> getDeletedJVPostingEntryList() {
+		return deletedJVPostingEntryList;
+	}
+
+	public void setDeletedJVPostingEntryList(List<JVPostingEntry> deletedJVPostingEntryList) {
+		this.deletedJVPostingEntryList = deletedJVPostingEntryList;
+	}
+
+	public String getBatchPostingStatus() {
+		return batchPostingStatus;
+	}
+
+	public void setBatchPostingStatus(String batchPostingStatus) {
+		this.batchPostingStatus = batchPostingStatus;
+	}
+
+	public boolean isRePostingModule() {
+	    return rePostingModule;
+    }
+
+	public void setRePostingModule(boolean rePostingModule) {
+	    this.rePostingModule = rePostingModule;
+    }
+
+	public String getTxnId() {
+	    return txnId;
+    }
+
+	public void setTxnId(String txnId) {
+	    this.txnId = txnId;
+    }
+
+	public Date getPostingDate() {
+		return postingDate;
+	}
+
+	public void setPostingDate(Date postingDate) {
+		this.postingDate = postingDate;
+	}
+
+	public String getFinType() {
+	    return finType;
+    }
+
+	public void setFinType(String finType) {
+	    this.finType = finType;
+    }
+
+	public String getBranch() {
+	    return branch;
+    }
+
+	public void setBranch(String branch) {
+	    this.branch = branch;
+    }
+
+	public String getCcyNumber() {
+	    return ccyNumber;
+    }
+
+	public void setCcyNumber(String ccyNumber) {
+	    this.ccyNumber = ccyNumber;
+    }
+
+	public List<JVPostingEntry> getPostingEntryList() {
+	    return postingEntryList;
+    }
+
+	public void setPostingEntryList(List<JVPostingEntry> postingEntryList) {
+	    this.postingEntryList = postingEntryList;
+    }
+
+	public String getBranchDesc() {
+	    return branchDesc;
+    }
+
+	public void setBranchDesc(String branchDesc) {
+	    this.branchDesc = branchDesc;
+    }
 }

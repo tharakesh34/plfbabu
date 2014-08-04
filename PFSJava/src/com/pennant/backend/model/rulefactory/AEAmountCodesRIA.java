@@ -9,7 +9,7 @@ public class AEAmountCodesRIA {
 	private long contributorId;
 	private String custCIF;
 	private String accountId;
-	private BigDecimal investment = new BigDecimal(0);;
+	private BigDecimal investment = BigDecimal.ZERO;;
 	private BigDecimal mudaribPercent = BigDecimal.ZERO;
 	
 	private BigDecimal INVAMT = BigDecimal.ZERO;
@@ -44,15 +44,15 @@ public class AEAmountCodesRIA {
 	private BigDecimal IMUDFEE = BigDecimal.ZERO;
 	private BigDecimal IRPMF = BigDecimal.ZERO;
 	
-	private BigDecimal IMFACRS = new BigDecimal(0);
-	private BigDecimal IMFLACR = new BigDecimal(0);
+	private BigDecimal IMFACRS = BigDecimal.ZERO;
+	private BigDecimal IMFLACR = BigDecimal.ZERO;
 	
-	private BigDecimal ICPZCHG = new BigDecimal(0);
-	private BigDecimal ICPZTOT = new BigDecimal(0);
-	private BigDecimal ICPZPRV = new BigDecimal(0);
-	private BigDecimal ICPZCUR = new BigDecimal(0);
-	private BigDecimal ICPZNXT = new BigDecimal(0);
-	private BigDecimal IPFTINADV = new BigDecimal(0);
+	private BigDecimal ICPZCHG = BigDecimal.ZERO;
+	private BigDecimal ICPZTOT = BigDecimal.ZERO;
+	private BigDecimal ICPZPRV = BigDecimal.ZERO;
+	private BigDecimal ICPZCUR = BigDecimal.ZERO;
+	private BigDecimal ICPZNXT = BigDecimal.ZERO;
+	private BigDecimal IPFTINADV = BigDecimal.ZERO;
 	
 	private BigDecimal IPNLTY = BigDecimal.ZERO;
 	private BigDecimal IREFUND = BigDecimal.ZERO;

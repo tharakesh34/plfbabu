@@ -122,7 +122,7 @@ public class CustomerNotesTypeDAOImpl extends BasisCodeDAO<CustomerNotesType> im
 	public CustomerNotesType getCustomerNotesTypeById(final String id, String type) {
 		logger.debug("Entering");
 
-		CustomerNotesType customerNotesType = getCustomerNotesType();
+		CustomerNotesType customerNotesType = new CustomerNotesType();
 		customerNotesType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

@@ -72,39 +72,36 @@ import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.HomeLoanDetail;
-import com.pennant.backend.model.systemmasters.City;
-import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
-import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.lmtmasters.HomeLoanDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
+import com.pennant.util.Constraint.PTPhoneNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -127,7 +124,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Window 		window_HomeLoanDetailDialog;// autowired
 	protected Textbox 		loanRefNumber; 				// autowired
 	protected Checkbox 		loanRefType; 				// autowired
-	protected Longbox 		homeDetails; 				// autowired
+	protected ExtendedCombobox homeDetails; 				// autowired
 	protected Textbox 		homeBuilderName; 			// autowired
 	protected Decimalbox 	homeCostPerFlat; 			// autowired
 	protected Decimalbox 	homeCostOfLand; 			// autowired
@@ -136,18 +133,19 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Datebox 		homeDateOfPocession; 		// autowired
 	protected Decimalbox 	homeAreaOfLand; 			// autowired
 	protected Decimalbox 	homeAreaOfFlat; 			// autowired
-	protected Longbox 		homePropertyType; 			// autowired
-	protected Longbox 		homeOwnerShipType; 			// autowired
+	protected ExtendedCombobox 	homePropertyType; 			// autowired
+	protected ExtendedCombobox  homeOwnerShipType; 			// autowired
 	protected Textbox 		homeAddrFlatNbr; 			// autowired
 	protected Textbox 		homeAddrStreet; 			// autowired
 	protected Textbox 		homeAddrLane1; 				// autowired
 	protected Textbox 		homeAddrLane2; 				// autowired
 	protected Textbox 		homeAddrPOBox; 				// autowired
-	protected Textbox 		homeAddrCountry; 			// autowired
-	protected Textbox 		homeAddrProvince; 			// autowired
-	protected Textbox 		homeAddrCity; 				// autowired
+	protected ExtendedCombobox 		homeAddrCountry; 			// autowired
+	protected ExtendedCombobox 		homeAddrProvince; 			// autowired
+	protected ExtendedCombobox 		homeAddrCity; 				// autowired
 	protected Textbox 		homeAddrZIP; 				// autowired
 	protected Textbox 		homeAddrPhone; 				// autowired
+	protected Textbox       homeTitleDeedNo; 				// autowired
 	protected Caption		caption_homeLoan;
 
 	protected Label 		recordStatus; 				// autowired
@@ -184,6 +182,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private transient String  		oldVar_homeAddrCity;
 	private transient String  		oldVar_homeAddrZIP;
 	private transient String  		oldVar_homeAddrPhone;
+	private transient String  		oldVar_titleDeedNo;
 	private transient String 		oldVar_recordStatus;
 	private transient String 		oldVar_lovDescHomeDetailsName;
 	private transient String 		oldVar_lovDescHomePropertyTypeName;
@@ -207,19 +206,6 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Button btnHelp; 	// autowire
 	protected Button btnNotes; 	// autowire
 
-	protected Button btnSearchHomeDetails; 			 // autowire
-	protected Button btnSearchHomePropertyType; 	 // autowire
-	protected Button btnSearchHomeOwnerShipType; 	 // autowire
-	protected Button btnSearchHomeAddrCountry; 		 // autowire
-	protected Button btnSearchHomeAddrProvince; 	 // autowire
-	protected Button btnSearchHomeAddrCity; 		 // autowire
-
-	protected Textbox lovDescHomePropertyTypeName;
-	protected Textbox lovDescHomeDetailsName;
-	protected Textbox lovDescHomeOwnerShipTypeName;
-	protected Textbox lovDescHomeAddrCountryName;
-	protected Textbox lovDescHomeAddrProvinceName;
-	protected Textbox lovDescHomeAddrCityName;
 
 	// ServiceDAOs / Domain Classes
 	private transient HomeLoanDetailService homeLoanDetailService;
@@ -227,13 +213,15 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	//For Dynamically calling of this Controller
 	private Div toolbar;
-	private FinanceMainDialogCtrl financeMainDialogCtrl;
+	private Object financeMainDialogCtrl;
 	private Tabpanel panel = null;
 	private Grid grid_basicDetails;
 
-	private transient boolean recSave;
+	private transient boolean recSave = false;
 	private transient boolean   newFinance;
 	public transient int   ccyFormatter = 0;
+	private  String sHomeAddrCountry;
+	private  String sHomeAddrProvince;
 
 	/**
 	 * default constructor.<br>
@@ -256,9 +244,6 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	public void onCreate$window_HomeLoanDetailDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/* set components visible dependent of the users rights */
-		doCheckRights();
 
 		if(event.getTarget().getParent() != null){
 			panel = (Tabpanel) event.getTarget().getParent();
@@ -284,8 +269,12 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		if(args.containsKey("financeMainDialogCtrl")){
-			this.financeMainDialogCtrl = (FinanceMainDialogCtrl) args.get("financeMainDialogCtrl");
-			this.financeMainDialogCtrl.setChildWindowDialogCtrl(this);
+			this.financeMainDialogCtrl = (Object) args.get("financeMainDialogCtrl");
+			try {
+					financeMainDialogCtrl.getClass().getMethod("setChildWindowDialogCtrl", Object.class).invoke(financeMainDialogCtrl, this);
+			} catch (Exception e) {
+				logger.error(e);
+			}
 			setNewFinance(true);
 			this.homeLoanDetail.setWorkflowId(0);
 			this.window_HomeLoanDetailDialog.setTitle("");
@@ -293,7 +282,8 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		if(args.containsKey("roleCode")){
-			getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "HomeLoanDetailDialog");
+			setRole((String) args.get("roleCode"));
+			getUserWorkspace().alocateRoleAuthorities(getRole(), "HomeLoanDetailDialog");
 		}
 
 		if(args.containsKey("ccyFormatter")){
@@ -307,6 +297,9 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().alocateRoleAuthorities(getRole(), "HomeLoanDetailDialog");
 		}
+		
+		/* set components visible dependent of the users rights */
+		doCheckRights();
 
 		// READ OVERHANDED params !
 		// we get the homeLoanDetailListWindow controller. So we have access
@@ -330,7 +323,60 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.homeDetails.setMaxlength(19);
+		this.homeDetails.setInputAllowed(false);
+		this.homeDetails.setDisplayStyle(3);
+        this.homeDetails.setMandatoryStyle(true);
+		this.homeDetails.setModuleName("LovFieldDetail");
+		this.homeDetails.setValueColumn("FieldCode");
+		this.homeDetails.setDescColumn("FieldCodeValue");
+		this.homeDetails.setValidateColumns(new String[] { "FieldCode" });
+		Filter[] homeDetailsFilters = new Filter[1];
+		homeDetailsFilters[0] = new Filter("FieldCode", "PROPDETAIL", Filter.OP_EQUAL);
+		this.homeDetails.setFilters(homeDetailsFilters);
+		
+		this.homePropertyType.setInputAllowed(false);
+		this.homePropertyType.setDisplayStyle(3);
+        this.homePropertyType.setMandatoryStyle(true);
+		this.homePropertyType.setModuleName("LovFieldDetail");
+		this.homePropertyType.setValueColumn("FieldCode");
+		this.homePropertyType.setDescColumn("FieldCodeValue");
+		this.homePropertyType.setValidateColumns(new String[] { "FieldCode" });
+		Filter[] homePropTypeFilters = new Filter[1];
+		homePropTypeFilters[0] = new Filter("FieldCode", "PROPTYPE", Filter.OP_EQUAL);
+		this.homePropertyType.setFilters(homePropTypeFilters);
+		
+		this.homeOwnerShipType.setInputAllowed(false);
+		this.homeOwnerShipType.setDisplayStyle(3);
+        this.homeOwnerShipType.setMandatoryStyle(false);
+		this.homeOwnerShipType.setModuleName("LovFieldDetail");
+		this.homeOwnerShipType.setValueColumn("FieldCode");
+		this.homeOwnerShipType.setDescColumn("FieldCodeValue");
+		this.homeOwnerShipType.setValidateColumns(new String[] { "FieldCode" });
+		Filter[] homeOwnerShipTypeFilters = new Filter[1];
+		homeOwnerShipTypeFilters[0] = new Filter("FieldCode", "OWNERTYPE", Filter.OP_EQUAL);
+		this.homeOwnerShipType.setFilters(homeOwnerShipTypeFilters);
+		
+		this.homeAddrCountry.setMaxlength(2);
+        this.homeAddrCountry.setMandatoryStyle(false);
+		this.homeAddrCountry.setModuleName("Country");
+		this.homeAddrCountry.setValueColumn("CountryCode");
+		this.homeAddrCountry.setDescColumn("CountryDesc");
+		this.homeAddrCountry.setValidateColumns(new String[] { "CountryCode" });
+		
+		this.homeAddrProvince.setMaxlength(8);
+        this.homeAddrProvince.setMandatoryStyle(false);
+		this.homeAddrProvince.setModuleName("Province");
+		this.homeAddrProvince.setValueColumn("CPProvince");
+		this.homeAddrProvince.setDescColumn("CPProvinceName");
+		this.homeAddrProvince.setValidateColumns(new String[] { "CPProvince" });
+		
+		this.homeAddrCity.setMaxlength(8);
+        this.homeAddrCity.setMandatoryStyle(false);
+		this.homeAddrCity.setModuleName("City");
+		this.homeAddrCity.setValueColumn("PCCity");
+		this.homeAddrCity.setDescColumn("PCCityName");
+		this.homeAddrCity.setValidateColumns(new String[] { "PCCity" });
+		
 		this.homeBuilderName.setMaxlength(50);
 		this.homeCostPerFlat.setMaxlength(18);
 		this.homeCostPerFlat.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
@@ -345,18 +391,17 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.homeAreaOfFlat.setMaxlength(8);
 		this.homeAreaOfFlat.setFormat(PennantAppUtil.getAmountFormate(2));
 		this.homeAreaOfFlat.setScale(2);
-		this.homeOwnerShipType.setMaxlength(19);
 		this.homeAddrFlatNbr.setMaxlength(20);
 		this.homeAddrStreet.setMaxlength(50);
 		this.homeAddrLane1.setMaxlength(50);
 		this.homeAddrLane2.setMaxlength(50);
 		this.homeAddrPOBox.setMaxlength(8);
-		this.homeAddrCountry.setMaxlength(2);
-		this.homeAddrProvince.setMaxlength(8);
-		this.homeAddrCity.setMaxlength(8);
 		this.homeAddrZIP.setMaxlength(10);
 		this.homeAddrPhone.setMaxlength(20);
+		this.homeTitleDeedNo.setMaxlength(50);
 
+		this.homeAddrProvince.setReadonly(true);
+		this.homeAddrCity.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 			this.statusRow.setVisible(true);
@@ -378,7 +423,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().alocateAuthorities("HomeLoanDetailDialog");
+		getUserWorkspace().alocateAuthorities("HomeLoanDetailDialog", getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_HomeLoanDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_HomeLoanDetailDialog_btnEdit"));
@@ -407,11 +452,13 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			userAction = (String) map.get("userAction");
 		}
 		doClearMessage();
-		if("Submit".equalsIgnoreCase(userAction)){
-			//doSetValidation();	FIXME After Demo
-			//doSetLOVValidation();
-		}else{
+		recSave = false;
+		if(("Save".equalsIgnoreCase(userAction) || "Cancel".equalsIgnoreCase(userAction))
+				&& !map.containsKey("agreement")){
 			recSave = true;
+		}else{
+			doSetValidation();	
+			doSetLOVValidation();
 		}
 		doWriteComponentsToBean(getHomeLoanDetail());
 		if(StringUtils.trimToEmpty(getHomeLoanDetail().getRecordType()).equals("")){
@@ -419,7 +466,13 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			getHomeLoanDetail().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			getHomeLoanDetail().setNewRecord(true);
 		}
-		this.financeMainDialogCtrl.getFinanceDetail().setHomeLoanDetail(getHomeLoanDetail());
+		if (getFinanceMainDialogCtrl() != null) {
+			try {
+					financeMainDialogCtrl.getClass().getMethod("setHomeLoanDetail", HomeLoanDetail.class).invoke(financeMainDialogCtrl, getHomeLoanDetail());
+			} catch (Exception e) {
+				logger.error(e);
+			}
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -430,7 +483,13 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * */
 	public void onAssetClose(Event event){
 		logger.debug("Entering" + event.toString());
-		this.financeMainDialogCtrl.setAssetDataChanged(isDataChanged());
+		if (getFinanceMainDialogCtrl() != null) {
+			try {
+					financeMainDialogCtrl.getClass().getMethod("setAssetDataChanged", Boolean.class).invoke(financeMainDialogCtrl, isDataChanged());
+			} catch (Exception e) {
+				logger.error(e);
+			}
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -575,7 +634,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		if (close) {
-			closeDialog(this.window_HomeLoanDetailDialog, "HomeLoanDetail");
+			closeDialog(this.window_HomeLoanDetailDialog, "HomeLoanDetailDialog");
 		}
 
 		logger.debug("Leaving");
@@ -605,7 +664,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.loanRefNumber.setValue(aHomeLoanDetail.getLoanRefNumber());
 		this.loanRefType.setChecked(aHomeLoanDetail.isLoanRefType());
-		this.homeDetails.setValue(aHomeLoanDetail.getHomeDetails());
+		this.homeDetails.setValue(String.valueOf(aHomeLoanDetail.getHomeDetails()));
 		this.homeBuilderName.setValue(aHomeLoanDetail.getHomeBuilderName());
 		this.homeCostPerFlat.setValue(PennantAppUtil.formateAmount(
 				aHomeLoanDetail.getHomeCostPerFlat(), this.ccyFormatter));
@@ -624,8 +683,8 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 				aHomeLoanDetail.getHomeAreaOfLand(), 2));
 		this.homeAreaOfFlat.setValue(PennantAppUtil.formateAmount(
 				aHomeLoanDetail.getHomeAreaOfFlat(), 2));
-		this.homePropertyType.setValue(aHomeLoanDetail.getHomePropertyType());
-		this.homeOwnerShipType.setValue(aHomeLoanDetail.getHomeOwnerShipType());
+		this.homePropertyType.setValue(String.valueOf(aHomeLoanDetail.getHomePropertyType()));
+		this.homeOwnerShipType.setValue(String.valueOf(aHomeLoanDetail.getHomeOwnerShipType()));
 		this.homeAddrFlatNbr.setValue(aHomeLoanDetail.getHomeAddrFlatNbr());
 		this.homeAddrStreet.setValue(aHomeLoanDetail.getHomeAddrStreet());
 		this.homeAddrLane1.setValue(aHomeLoanDetail.getHomeAddrLane1());
@@ -636,25 +695,25 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.homeAddrCity.setValue(aHomeLoanDetail.getHomeAddrCity());
 		this.homeAddrZIP.setValue(StringUtils.trimToEmpty(aHomeLoanDetail.getHomeAddrZIP()));
 		this.homeAddrPhone.setValue(aHomeLoanDetail.getHomeAddrPhone());
+		this.homeTitleDeedNo.setValue(aHomeLoanDetail.getHomeTitleDeedNo());
 
 		if (aHomeLoanDetail.isNewRecord()) {
-			this.lovDescHomeDetailsName.setValue("");
-			this.lovDescHomePropertyTypeName.setValue("");
-			this.lovDescHomeOwnerShipTypeName.setValue("");
-			this.lovDescHomeAddrCountryName.setValue("");
-			this.lovDescHomeAddrProvinceName.setValue("");
-			this.lovDescHomeAddrCityName.setValue("");
+			this.homeDetails.setDescription("");
+			this.homePropertyType.setDescription("");
+			this.homeOwnerShipType.setDescription("");
+			this.homeAddrCountry.setDescription("");
+			this.homeAddrProvince.setDescription("");
+			this.homeAddrCity.setDescription("");
 		} else {
-			this.lovDescHomeDetailsName.setValue(aHomeLoanDetail.getLovDescHomeDetailsName());
-			this.lovDescHomePropertyTypeName.setValue(aHomeLoanDetail.getLovDescHomePropertyTypeName());
-			this.lovDescHomeOwnerShipTypeName.setValue(aHomeLoanDetail.getLovDescHomeOwnerShipTypeName());
-			this.lovDescHomeAddrCountryName.setValue(aHomeLoanDetail.getHomeAddrCountry().trim().equals("")?"":
-				aHomeLoanDetail.getHomeAddrCountry()+ "-"+ aHomeLoanDetail.getLovDescHomeAddrCountryName());
-			this.lovDescHomeAddrProvinceName.setValue(aHomeLoanDetail.getHomeAddrProvince().trim().equals("")?"":
-				aHomeLoanDetail.getHomeAddrProvince()+ "-"+ aHomeLoanDetail.getLovDescHomeAddrProvinceName());
-			this.lovDescHomeAddrCityName.setValue(aHomeLoanDetail.getHomeAddrCity().trim().equals("")?"":
-				aHomeLoanDetail.getHomeAddrCity()+ "-"+ aHomeLoanDetail.getLovDescHomeAddrCityName());
+			this.homeDetails.setDescription(aHomeLoanDetail.getLovDescHomeDetailsName());
+			this.homePropertyType.setDescription(aHomeLoanDetail.getLovDescHomePropertyTypeName());
+			this.homeOwnerShipType.setDescription(aHomeLoanDetail.getLovDescHomeOwnerShipTypeName());
+			this.homeAddrCountry.setDescription(aHomeLoanDetail.getLovDescHomeAddrCountryName());
+			this.homeAddrProvince.setDescription(aHomeLoanDetail.getLovDescHomeAddrProvinceName());
+			this.homeAddrCity.setDescription(aHomeLoanDetail.getLovDescHomeAddrCityName());
 		}
+		sHomeAddrCountry = this.homeAddrCountry.getValue();
+		sHomeAddrProvince = this.homeAddrProvince.getValue();
 		this.recordStatus.setValue(aHomeLoanDetail.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -680,9 +739,9 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			wve.add(we);
 		}
 		try {
-			aHomeLoanDetail.setLovDescHomeDetailsName(this.lovDescHomeDetailsName.getValue());
+			aHomeLoanDetail.setLovDescHomeDetailsName(this.homeDetails.getDescription());
 			if(this.homeDetails.getValue() != null) {
-				aHomeLoanDetail.setHomeDetails(this.homeDetails.getValue()); //FIXME After Demo
+				aHomeLoanDetail.setHomeDetails(Long.valueOf(this.homeDetails.getValue())); //FIXME After Demo
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -751,14 +810,14 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			wve.add(we);
 		}
 		try {
-			aHomeLoanDetail.setLovDescHomePropertyTypeName(this.lovDescHomePropertyTypeName.getValue());
-			aHomeLoanDetail.setHomePropertyType(this.homePropertyType.getValue());
+			aHomeLoanDetail.setLovDescHomePropertyTypeName(this.homePropertyType.getDescription());
+			aHomeLoanDetail.setHomePropertyType(Long.valueOf(this.homePropertyType.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aHomeLoanDetail.setLovDescHomeOwnerShipTypeName(this.lovDescHomeOwnerShipTypeName.getValue());
-			aHomeLoanDetail.setHomeOwnerShipType(this.homeOwnerShipType.getValue());
+			aHomeLoanDetail.setLovDescHomeOwnerShipTypeName(this.homeOwnerShipType.getDescription());
+			aHomeLoanDetail.setHomeOwnerShipType(Long.valueOf(this.homeOwnerShipType.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -788,19 +847,19 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			wve.add(we);
 		}
 		try {
-			aHomeLoanDetail.setLovDescHomeAddrCountryName(this.lovDescHomeAddrCountryName.getValue());
+			aHomeLoanDetail.setLovDescHomeAddrCountryName(this.homeAddrCountry.getDescription());
 			aHomeLoanDetail.setHomeAddrCountry(this.homeAddrCountry.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aHomeLoanDetail.setLovDescHomeAddrProvinceName(this.lovDescHomeAddrProvinceName.getValue());
+			aHomeLoanDetail.setLovDescHomeAddrProvinceName(this.homeAddrProvince.getDescription());
 			aHomeLoanDetail.setHomeAddrProvince(this.homeAddrProvince.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aHomeLoanDetail.setLovDescHomeAddrCityName(this.lovDescHomeAddrCityName.getValue());
+			aHomeLoanDetail.setLovDescHomeAddrCityName(this.homeAddrCity.getDescription());
 			aHomeLoanDetail.setHomeAddrCity(this.homeAddrCity.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -815,19 +874,26 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aHomeLoanDetail.setHomeTitleDeedNo(this.homeTitleDeedNo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size() > 0) {
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+		if(!recSave){
+			if (wve.size() > 0) {
+				WrongValueException[] wvea = new WrongValueException[wve.size()];
+				for (int i = 0; i < wve.size(); i++) {
+					wvea[i] = (WrongValueException) wve.get(i);
+				}
+				if(panel != null){
+					((Tab)panel.getParent().getParent().getFellowIfAny("loanAssetTab")).setSelected(true);
+				}
+				throw new WrongValuesException(wvea);
 			}
-			if(panel != null){
-				((Tab)panel.getParent().getParent().getFellowIfAny("loanAssetTab")).setSelected(true);
-			}
-			throw new WrongValuesException(wvea);
 		}
 
 		aHomeLoanDetail.setRecordStatus(this.recordStatus.getValue());
@@ -861,13 +927,13 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aHomeLoanDetail.isNew()) {
 			this.btnCtrl.setInitNew();
-			doEdit();
+			doEdit(); 
 			// setFocus
 			this.homeDetails.focus();
 		} else {
 			this.homeDetails.focus();
 			if(isNewFinance()){
-				doEdit();
+				doEdit(); 
 			}else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
@@ -913,8 +979,8 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.oldVar_loanRefNumber = this.loanRefNumber.getValue();
 		this.oldVar_loanRefType = this.loanRefType.isChecked();
-		this.oldVar_homeDetails = this.homeDetails.longValue();
-		this.oldVar_lovDescHomeDetailsName = this.lovDescHomeDetailsName.getValue();
+		this.oldVar_homeDetails = Long.valueOf(this.homeDetails.getValue());
+		this.oldVar_lovDescHomeDetailsName = this.homeDetails.getDescription();
 		this.oldVar_homeBuilderName = this.homeBuilderName.getValue();
 		this.oldVar_homeCostPerFlat = this.homeCostPerFlat.getValue();
 		this.oldVar_homeCostOfLand = this.homeCostOfLand.getValue();
@@ -923,23 +989,24 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.oldVar_homeDateOfPocession = this.homeDateOfPocession.getValue();
 		this.oldVar_homeAreaOfLand = this.homeAreaOfLand.getValue();
 		this.oldVar_homeAreaOfFlat = this.homeAreaOfFlat.getValue();
-		this.oldVar_homePropertyType = this.homePropertyType.longValue();
-		this.oldVar_lovDescHomePropertyTypeName = this.lovDescHomePropertyTypeName.getValue();
-		this.oldVar_homeOwnerShipType = this.homeOwnerShipType.longValue();
-		this.oldVar_lovDescHomeOwnerShipTypeName = this.lovDescHomeOwnerShipTypeName.getValue();
+		this.oldVar_homePropertyType = Long.valueOf(this.homePropertyType.getValue());
+		this.oldVar_lovDescHomePropertyTypeName = this.homePropertyType.getDescription();
+		this.oldVar_homeOwnerShipType = Long.valueOf(this.homeOwnerShipType.getValue());
+		this.oldVar_lovDescHomeOwnerShipTypeName = this.homeOwnerShipType.getDescription();
 		this.oldVar_homeAddrFlatNbr = this.homeAddrFlatNbr.getValue();
 		this.oldVar_homeAddrStreet = this.homeAddrStreet.getValue();
 		this.oldVar_homeAddrLane1 = this.homeAddrLane1.getValue();
 		this.oldVar_homeAddrLane2 = this.homeAddrLane2.getValue();
 		this.oldVar_homeAddrPOBox = this.homeAddrPOBox.getValue();
 		this.oldVar_homeAddrCountry = this.homeAddrCountry.getValue();
-		this.oldVar_lovDescHomeAddrCountryName = this.lovDescHomeAddrCountryName.getValue();
+		this.oldVar_lovDescHomeAddrCountryName = this.homeAddrCountry.getDescription();
 		this.oldVar_homeAddrProvince = this.homeAddrProvince.getValue();
-		this.oldVar_lovDescHomeAddrProvinceName = this.lovDescHomeAddrProvinceName.getValue();
+		this.oldVar_lovDescHomeAddrProvinceName = this.homeAddrProvince.getDescription();
 		this.oldVar_homeAddrCity = this.homeAddrCity.getValue();
-		this.oldVar_lovDescHomeAddrCityName = this.lovDescHomeAddrCityName.getValue();
+		this.oldVar_lovDescHomeAddrCityName = this.homeAddrCity.getDescription();
 		this.oldVar_homeAddrZIP = this.homeAddrZIP.getValue();
 		this.oldVar_homeAddrPhone = this.homeAddrPhone.getValue();
+		this.oldVar_titleDeedNo = this.homeTitleDeedNo.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
 	}
@@ -951,8 +1018,8 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.loanRefNumber.setValue(this.oldVar_loanRefNumber);
 		this.loanRefType.setChecked(this.oldVar_loanRefType);
-		this.homeDetails.setValue(this.oldVar_homeDetails);
-		this.lovDescHomeDetailsName.setValue(this.oldVar_lovDescHomeDetailsName);
+		this.homeDetails.setValue(String.valueOf(this.oldVar_homeDetails));
+		this.homeDetails.setDescription(this.oldVar_lovDescHomeDetailsName);
 		this.homeBuilderName.setValue(this.oldVar_homeBuilderName);
 		this.homeCostPerFlat.setValue(this.oldVar_homeCostPerFlat);
 		this.homeCostOfLand.setValue(this.oldVar_homeCostOfLand);
@@ -969,23 +1036,24 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.homeDateOfPocession.setValue(this.oldVar_homeDateOfPocession);
 		this.homeAreaOfLand.setValue(this.oldVar_homeAreaOfLand);
 		this.homeAreaOfFlat.setValue(this.oldVar_homeAreaOfFlat);
-		this.homePropertyType.setValue(this.oldVar_homePropertyType);
-		this.lovDescHomePropertyTypeName.setValue(this.oldVar_lovDescHomePropertyTypeName);
-		this.homeOwnerShipType.setValue(this.oldVar_homeOwnerShipType);
-		this.lovDescHomeOwnerShipTypeName.setValue(this.oldVar_lovDescHomeOwnerShipTypeName);
+		this.homePropertyType.setValue(String.valueOf(this.oldVar_homePropertyType));
+		this.homePropertyType.setDescription(this.oldVar_lovDescHomePropertyTypeName);
+		this.homeOwnerShipType.setValue(String.valueOf(this.oldVar_homeOwnerShipType));
+		this.homeOwnerShipType.setDescription(this.oldVar_lovDescHomeOwnerShipTypeName);
 		this.homeAddrFlatNbr.setValue(this.oldVar_homeAddrFlatNbr);
 		this.homeAddrStreet.setValue(this.oldVar_homeAddrStreet);
 		this.homeAddrLane1.setValue(this.oldVar_homeAddrLane1);
 		this.homeAddrLane2.setValue(this.oldVar_homeAddrLane2);
 		this.homeAddrPOBox.setValue(this.oldVar_homeAddrPOBox);
 		this.homeAddrCountry.setValue(this.oldVar_homeAddrCountry);
-		this.lovDescHomeAddrCountryName.setValue(this.oldVar_lovDescHomeAddrCountryName);
+		this.homeAddrCountry.setDescription(this.oldVar_lovDescHomeAddrCountryName);
 		this.homeAddrProvince.setValue(this.oldVar_homeAddrProvince);
-		this.lovDescHomeAddrProvinceName.setValue(this.oldVar_lovDescHomeAddrProvinceName);
+		this.homeAddrProvince.setDescription(this.oldVar_lovDescHomeAddrProvinceName);
 		this.homeAddrCity.setValue(this.oldVar_homeAddrCity);
-		this.lovDescHomeAddrCityName.setValue(this.oldVar_lovDescHomeAddrCityName);
+		this.homeAddrCity.setDescription(this.oldVar_lovDescHomeAddrCityName);
 		this.homeAddrZIP.setValue(this.oldVar_homeAddrZIP);
 		this.homeAddrPhone.setValue(this.oldVar_homeAddrPhone);
+		this.homeTitleDeedNo.setValue(this.oldVar_titleDeedNo);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
 		if (isWorkFlowEnabled()) {
@@ -1011,7 +1079,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.oldVar_loanRefType != this.loanRefType.isChecked()) {
 			return true;
 		}
-		if (this.oldVar_homeDetails != this.homeDetails.getValue()) {
+		if (this.oldVar_homeDetails != Long.valueOf(this.homeDetails.getValue())) {
 			return true;
 		}
 		if (this.oldVar_homeConstructionStage != this.homeConstructionStage.getSelectedIndex()) {
@@ -1049,10 +1117,10 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.oldVar_homeAreaOfFlat != this.homeAreaOfFlat.getValue()) {
 			return true;
 		}
-		if (this.oldVar_homePropertyType != this.homePropertyType.longValue()) {
+		if (this.oldVar_homePropertyType != Long.valueOf(this.homePropertyType.getValue())) {
 			return true;
 		}
-		if (this.oldVar_homeOwnerShipType != this.homeOwnerShipType.longValue()) {
+		if (this.oldVar_homeOwnerShipType != Long.valueOf(this.homeOwnerShipType.getValue())) {
 			return true;
 		}
 		if (this.oldVar_homeAddrFlatNbr != this.homeAddrFlatNbr.getValue()) {
@@ -1085,6 +1153,9 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.oldVar_homeAddrPhone != this.homeAddrPhone.getValue()) {
 			return true;
 		}
+		if (this.oldVar_titleDeedNo != this.homeTitleDeedNo.getValue()) {
+			return true;
+		}
 		return false;
 	}
 
@@ -1096,11 +1167,10 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(true);
 
 		if (!this.homeBuilderName.isReadonly()) {
-			this.homeBuilderName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER", new String[] { Labels.getLabel(
-					"label_HomeLoanDetailDialog_HomeBuilderName.value") })));
+			this.homeBuilderName.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeBuilderName.value"), 
+					PennantRegularExpressions.REGEX_NAME, false));
 		}
-		if (!this.homeCostPerFlat.isReadonly()) {
+		/*if (!this.homeCostPerFlat.isReadonly()) {
 			this.homeCostPerFlat.setConstraint(new AmountValidator(
 					18,0,Labels.getLabel("label_HomeLoanDetailDialog_HomeCostPerFlat.value"),false));
 		}
@@ -1119,45 +1189,35 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (!this.homeDateOfPocession.isDisabled()) {
 			this.homeDateOfPocession.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
 					new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeDateOfPocession.value") }));
-		}
+		}*/
 		if (!this.homeAreaOfLand.isReadonly()) {
 			this.homeAreaOfLand.setConstraint(new AmountValidator(
 					8,2,Labels.getLabel("label_HomeLoanDetailDialog_HomeAreaOfLand.value")));
 		}
-		if (!this.homeAreaOfFlat.isReadonly()) {
+		/*if (!this.homeAreaOfFlat.isReadonly()) {
 			this.homeAreaOfFlat.setConstraint(new AmountValidator(
 					8,2,Labels.getLabel("label_HomeLoanDetailDialog_HomeAreaOfFlat.value")));
-		}
+		}*/
 		if (!this.homeAddrFlatNbr.isReadonly()) {
-			
-			this.homeAddrFlatNbr.setConstraint(new SimpleConstraint(PennantConstants.HNO_FNO_REGEX, 
-					Labels.getLabel("MAND_FIELD_ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
-					"label_HomeLoanDetailDialog_HomeAddrFlatNbr.value")})));
-			
-		
+			this.homeAddrFlatNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrFlatNbr.value"),
+					PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.homeAddrStreet.isReadonly()) {
-			this.homeAddrStreet.setConstraint(new SimpleConstraint( PennantConstants.ADDRESS_LINE1_REGEX,
-					Labels.getLabel("MAND_FIELD_ALPHANUMERIC_SPECIALCHAR", new String[] { Labels.getLabel(
-					"label_HomeLoanDetailDialog_HomeAddrStreet.value") })));
+			this.homeAddrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrStreet.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
 			
 		}
 		if (!this.homeAddrPOBox.isReadonly()) {
-			this.homeAddrPOBox.setConstraint(new SimpleConstraint( PennantConstants.NUM_REGEX,
-					Labels.getLabel("MAND_NUMBER", new String[] { Labels.getLabel(
-					"label_HomeLoanDetailDialog_HomeAddrPOBox.value") })));
+			this.homeAddrPOBox.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrPOBox.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
 		if (!this.homeAddrZIP.isReadonly()) {
-
-			this.homeAddrZIP.setConstraint(new SimpleConstraint(PennantConstants.ZIP_REGEX,
-					Labels.getLabel("MAND_ZIP", new String[] { Labels.getLabel(
-					"label_HomeLoanDetailDialog_HomeAddrZIP.value") })));
-
+			this.homeAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, false));
 		}
 		if (!this.homeAddrPhone.isReadonly()) {
-			this.homeAddrPhone.setConstraint(new SimpleConstraint( PennantConstants.PH_REGEX,
-					Labels.getLabel("MAND_PHONE__INC_CTRY_CODE",new String[] { Labels.getLabel(
-					"label_HomeLoanDetailDialog_HomeAddrPhone.value") })));
+			this.homeAddrPhone.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrPhone.value"),false));
+		}
+		if (!this.homeTitleDeedNo.isReadonly()) {
+			this.homeTitleDeedNo.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeTitleDeedNo.value"), PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -1184,6 +1244,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.homeAddrPOBox.setConstraint("");
 		this.homeAddrZIP.setConstraint("");
 		this.homeAddrPhone.setConstraint("");
+		this.homeTitleDeedNo.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1193,23 +1254,23 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 
-		this.lovDescHomeDetailsName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
+		this.homeDetails.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
 				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeDetails.value") }));
 
-		this.lovDescHomePropertyTypeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
+		this.homePropertyType.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
 				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomePropertyType.value") }));
 
-		this.lovDescHomeOwnerShipTypeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeOwnerShipType.value") }));
+		/*this.homeOwnerShipType.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
+				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeOwnerShipType.value") }));*/
 
-		this.lovDescHomeAddrCountryName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
+		/*this.homeAddrCountry.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
 				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrCountry.value") }));
 
-		this.lovDescHomeAddrProvinceName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
+		this.homeAddrProvince.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
 				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrProvince.value") }));
 
-		this.lovDescHomeAddrCityName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrCity.value") }));
+		this.homeAddrCity.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
+				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrCity.value") }));*/
 
 		logger.debug("Leaving");
 	}
@@ -1219,12 +1280,12 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescHomeDetailsName.setConstraint("");
-		this.lovDescHomePropertyTypeName.setConstraint("");
-		this.lovDescHomeOwnerShipTypeName.setConstraint("");
-		this.lovDescHomeAddrCountryName.setConstraint("");
-		this.lovDescHomeAddrProvinceName.setConstraint("");
-		this.lovDescHomeAddrCityName.setConstraint("");
+		this.homeDetails.setConstraint("");
+		this.homePropertyType.setConstraint("");
+		this.homeOwnerShipType.setConstraint("");
+		this.homeAddrCountry.setConstraint("");
+		this.homeAddrProvince.setConstraint("");
+		this.homeAddrCity.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1234,7 +1295,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doClearMessage() {
 		logger.debug("Entering");
 		this.loanRefNumber.setErrorMessage("");
-		this.lovDescHomeDetailsName.setErrorMessage("");
+		this.homeDetails.setErrorMessage("");
 		this.homeBuilderName.setErrorMessage("");
 		this.homeCostPerFlat.setErrorMessage("");
 		this.homeCostOfLand.setErrorMessage("");
@@ -1243,18 +1304,19 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.homeDateOfPocession.setErrorMessage("");
 		this.homeAreaOfLand.setErrorMessage("");
 		this.homeAreaOfFlat.setErrorMessage("");
-		this.lovDescHomePropertyTypeName.setErrorMessage("");
-		this.lovDescHomeOwnerShipTypeName.setErrorMessage("");
+		this.homePropertyType.setErrorMessage("");
+		this.homeOwnerShipType.setErrorMessage("");
 		this.homeAddrFlatNbr.setErrorMessage("");
 		this.homeAddrStreet.setErrorMessage("");
 		this.homeAddrLane1.setErrorMessage("");
 		this.homeAddrLane2.setErrorMessage("");
 		this.homeAddrPOBox.setErrorMessage("");
-		this.lovDescHomeAddrCountryName.setErrorMessage("");
-		this.lovDescHomeAddrProvinceName.setErrorMessage("");
-		this.lovDescHomeAddrCityName.setErrorMessage("");
+		this.homeAddrCountry.setErrorMessage("");
+		this.homeAddrProvince.setErrorMessage("");
+		this.homeAddrCity.setErrorMessage("");
 		this.homeAddrZIP.setErrorMessage("");
 		this.homeAddrPhone.setErrorMessage("");
+		this.homeTitleDeedNo.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1312,7 +1374,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				if (doProcess(aHomeLoanDetail, tranType)) {
 					refreshList();
-					closeDialog(this.window_HomeLoanDetailDialog, "HomeLoanDetail");
+					closeDialog(this.window_HomeLoanDetailDialog, "HomeLoanDetailDialog");
 				}
 			} catch (DataAccessException e) {
 				logger.error("doDelete " + e);
@@ -1355,7 +1417,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		this.loanRefNumber.setReadonly(true);
 		this.loanRefType.setDisabled(isReadOnly("HomeLoanDetailDialog_loanRefType"));
-		this.btnSearchHomeDetails.setDisabled(isReadOnly("HomeLoanDetailDialog_homeDetails"));
+		this.homeDetails.setReadonly(isReadOnly("HomeLoanDetailDialog_homeDetails"));
 		this.homeBuilderName.setReadonly(isReadOnly("HomeLoanDetailDialog_homeBuilderName"));
 		this.homeCostPerFlat.setReadonly(isReadOnly("HomeLoanDetailDialog_homeCostPerFlat"));
 		this.homeCostOfLand.setReadonly(isReadOnly("HomeLoanDetailDialog_homeCostOfLand"));
@@ -1364,18 +1426,17 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.homeDateOfPocession.setDisabled(isReadOnly("HomeLoanDetailDialog_homeDateOfPocession"));
 		this.homeAreaOfLand.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAreaOfLand"));
 		this.homeAreaOfFlat.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAreaOfFlat"));
-		this.btnSearchHomePropertyType.setDisabled(isReadOnly("HomeLoanDetailDialog_homePropertyType"));
-		this.btnSearchHomeOwnerShipType.setDisabled(isReadOnly("HomeLoanDetailDialog_homeOwnerShipType"));
+		this.homePropertyType.setReadonly(isReadOnly("HomeLoanDetailDialog_homePropertyType"));
+		this.homeOwnerShipType.setReadonly(isReadOnly("HomeLoanDetailDialog_homeOwnerShipType"));
 		this.homeAddrFlatNbr.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAddrFlatNbr"));
 		this.homeAddrStreet.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAddrStreet"));
 		this.homeAddrLane1.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAddrLane1"));
 		this.homeAddrLane2.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAddrLane2"));
 		this.homeAddrPOBox.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAddrPOBox"));
-		this.btnSearchHomeAddrCountry.setDisabled(isReadOnly("HomeLoanDetailDialog_homeAddrCountry"));
-		this.btnSearchHomeAddrProvince.setDisabled(isReadOnly("HomeLoanDetailDialog_homeAddrProvince"));
-		this.btnSearchHomeAddrCity.setDisabled(isReadOnly("HomeLoanDetailDialog_homeAddrCity"));
+		this.homeAddrCountry.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAddrCountry"));
 		this.homeAddrZIP.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAddrZIP"));
 		this.homeAddrPhone.setReadonly(isReadOnly("HomeLoanDetailDialog_homeAddrPhone"));
+		this.homeTitleDeedNo.setReadonly(isReadOnly("HomeLoanDetailDialog_titleDeedNo"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1409,7 +1470,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.loanRefNumber.setReadonly(true);
 		this.loanRefType.setDisabled(true);
-		this.btnSearchHomeDetails.setDisabled(true);
+		this.homeDetails.setReadonly(true);
 		this.homeBuilderName.setReadonly(true);
 		this.homeCostPerFlat.setReadonly(true);
 		this.homeCostOfLand.setReadonly(true);
@@ -1418,18 +1479,19 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.homeDateOfPocession.setDisabled(true);
 		this.homeAreaOfLand.setReadonly(true);
 		this.homeAreaOfFlat.setReadonly(true);
-		this.btnSearchHomePropertyType.setDisabled(true);
-		this.btnSearchHomeOwnerShipType.setDisabled(true);
+		this.homePropertyType.setReadonly(true);
+		this.homeOwnerShipType.setReadonly(true);
 		this.homeAddrFlatNbr.setReadonly(true);
 		this.homeAddrStreet.setReadonly(true);
 		this.homeAddrLane1.setReadonly(true);
 		this.homeAddrLane2.setReadonly(true);
 		this.homeAddrPOBox.setReadonly(true);
-		this.btnSearchHomeAddrCountry.setDisabled(true);
-		this.btnSearchHomeAddrProvince.setDisabled(true);
-		this.btnSearchHomeAddrCity.setDisabled(true);
+		this.homeAddrCountry.setReadonly(true);
+		this.homeAddrProvince.setReadonly(true);
+		this.homeAddrCity.setReadonly(true);
 		this.homeAddrZIP.setReadonly(true);
 		this.homeAddrPhone.setReadonly(true);
+		this.homeTitleDeedNo.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1453,8 +1515,8 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		this.loanRefNumber.setText("");
 		this.loanRefType.setChecked(false);
-		this.homeDetails.setText("");
-		this.lovDescHomeDetailsName.setValue("");
+		this.homeDetails.setValue(String.valueOf(new Long(0)));
+		this.homeDetails.setDescription("");
 		this.homeBuilderName.setValue("");
 		this.homeCostPerFlat.setValue("");
 		this.homeCostOfLand.setValue("");
@@ -1464,23 +1526,24 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.homeDateOfPocession.setText("");
 		this.homeAreaOfLand.setValue("");
 		this.homeAreaOfFlat.setValue("");
-		this.homePropertyType.setText("");
-		this.lovDescHomePropertyTypeName.setValue("");
-		this.homeOwnerShipType.setText("");
-		this.lovDescHomeOwnerShipTypeName.setValue("");
+		this.homePropertyType.setValue(String.valueOf(new Long(0)));
+		this.homePropertyType.setDescription("");
+		this.homeOwnerShipType.setValue(String.valueOf(new Long(0)));
+		this.homeOwnerShipType.setDescription("");
 		this.homeAddrFlatNbr.setValue("");
 		this.homeAddrStreet.setValue("");
 		this.homeAddrLane1.setValue("");
 		this.homeAddrLane2.setValue("");
 		this.homeAddrPOBox.setValue("");
 		this.homeAddrCountry.setValue("");
-		this.lovDescHomeAddrCountryName.setValue("");
+		this.homeAddrCountry.setDescription("");
 		this.homeAddrProvince.setValue("");
-		this.lovDescHomeAddrProvinceName.setValue("");
+		this.homeAddrProvince.setDescription("");
 		this.homeAddrCity.setValue("");
-		this.lovDescHomeAddrCityName.setValue("");
+		this.homeAddrCity.setDescription("");
 		this.homeAddrZIP.setValue("");
 		this.homeAddrPhone.setValue("");
+		this.homeTitleDeedNo.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -1534,7 +1597,7 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			if (doProcess(aHomeLoanDetail, tranType)) {
 				refreshList();
-				closeDialog(this.window_HomeLoanDetailDialog, "HomeLoanDetail");
+				closeDialog(this.window_HomeLoanDetailDialog, "HomeLoanDetailDialog");
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);
@@ -1726,22 +1789,15 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// ++++++++++++ Search Button Component Events+++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchHomeDetails(Event event) {
+	public void onFulfill$homeDetails(Event event) {
 		logger.debug("Entering" + event.toString());
-
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("FieldCode", "PROPDETAIL", Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_HomeLoanDetailDialog, "LovFieldDetail", filters);
+		Object dataObject = this.homeDetails.getObject();
 		if (dataObject instanceof String) {
-			this.homeDetails.setText("");
-			this.lovDescHomeDetailsName.setValue("");
+			this.homeDetails.setValue(String.valueOf(new Long(0)));
 		} else {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
-				this.homeDetails.setValue(details.getFieldCodeId());
-				this.lovDescHomeDetailsName.setValue(details.getFieldCodeId()
-						+ "-" + details.getFieldCodeValue());
+				this.homeDetails.setValue(String.valueOf(details.getFieldCodeId()));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1769,130 +1825,87 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving" + event.toString());
 	}*/
 
-	public void onClick$btnSearchHomePropertyType(Event event) {
+	public void onFulfill$homePropertyType(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("FieldCode", "PROPTYPE", Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_HomeLoanDetailDialog, "LovFieldDetail", filters);
+		Object dataObject = this.homePropertyType.getObject();
 
 		if (dataObject instanceof String) {
-			this.homePropertyType.setText(dataObject.toString());
-			this.lovDescHomePropertyTypeName.setValue("");
+			this.homePropertyType.setValue(dataObject.toString());
 		} else {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
-				this.homePropertyType.setValue(details.getFieldCodeId());
-				this.lovDescHomePropertyTypeName.setValue(details
-						.getFieldCodeId() + "-" + details.getFieldCodeValue());
+				this.homePropertyType.setValue(String.valueOf(details.getFieldCodeId()));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchHomeOwnerShipType(Event event) {
+	public void onFulfill$homeOwnerShipType(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("FieldCode", "OWNERTYPE", Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_HomeLoanDetailDialog, "LovFieldDetail", filters);
+		Object dataObject = this.homeOwnerShipType.getObject();
 		if (dataObject instanceof String) {
-			this.homeOwnerShipType.setText("");
-			this.lovDescHomeOwnerShipTypeName.setValue("");
+			this.homeOwnerShipType.setValue(String.valueOf(new Long(0)));
 		} else {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
-				this.homeOwnerShipType.setValue(details.getFieldCodeId());
-				this.lovDescHomeOwnerShipTypeName.setValue(details
-						.getFieldCodeId() + "-" + details.getFieldCodeValue());
+				this.homeOwnerShipType.setValue(String.valueOf(details.getFieldCodeId()));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchHomeAddrCountry(Event event) {
+	public void onFulfill$homeAddrCountry(Event event) {
 		logger.debug("Entering" + event.toString());
-
-		String sHomeAddrCountry = this.homeAddrCountry.getValue();
-
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_HomeLoanDetailDialog, "Country");
-
-		if (dataObject instanceof String) {
-			this.homeAddrCountry.setValue(dataObject.toString());
-			this.lovDescHomeAddrCountryName.setValue("");
-		} else {
-			Country details = (Country) dataObject;
-			if (details != null) {
-				this.homeAddrCountry.setValue(details.getCountryCode());
-				this.lovDescHomeAddrCountryName.setValue(details
-						.getCountryCode() + "-" + details.getCountryDesc());
-			}
-		}
-
 		if (!StringUtils.trimToEmpty(sHomeAddrCountry).equals(
 				this.homeAddrCountry.getValue())) {
 			this.homeAddrProvince.setValue("");
-			this.lovDescHomeAddrProvinceName.setValue("");
+			this.homeAddrProvince.setDescription("");
 			this.homeAddrCity.setValue("");
-			this.lovDescHomeAddrCityName.setValue("");
+			this.homeAddrCity.setDescription("");
+			this.homeAddrCity.setReadonly(true);	
+			this.homeAddrCity.setMandatoryStyle(false);	
 		}
+		if(!StringUtils.trimToEmpty(this.homeAddrCountry.getValue()).equals("")){
+			this.homeAddrProvince.setReadonly(false);
+			this.homeAddrProvince.setMandatoryStyle(true);
+		}else{
+			this.homeAddrProvince.setReadonly(true);
+			this.homeAddrCity.setReadonly(true);
+			this.homeAddrProvince.setMandatoryStyle(false);
+			this.homeAddrCity.setMandatoryStyle(false);
+			
+		}
+		sHomeAddrCountry = this.homeAddrCountry.getValue();
+		Filter[] provinceFilters = new Filter[1];
+		provinceFilters[0] = new Filter("CPCountry", this.homeAddrCountry.getValue(), Filter.OP_EQUAL);
+		this.homeAddrProvince.setFilters(provinceFilters);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchHomeAddrProvince(Event event) {
+	public void onFulfill$homeAddrProvince(Event event) {
 		logger.debug("Entering" + event.toString());
-
-		String sHomeAddrProvince = this.homeAddrProvince.getValue();
-
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("CPCountry", this.homeAddrCountry.getValue(), Filter.OP_EQUAL);
-
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_HomeLoanDetailDialog, "Province",filters);
-		if (dataObject instanceof String) {
-			this.homeAddrProvince.setValue(dataObject.toString());
-			this.lovDescHomeAddrProvinceName.setValue("");
-		} else {
-			Province details = (Province) dataObject;
-			if (details != null) {
-				this.homeAddrProvince.setValue(details.getCPProvince());
-				this.lovDescHomeAddrProvinceName.setValue(details.getCPProvince() + 
-						"-" + details.getCPProvinceName());
-			}
-		}
-
 		if (!StringUtils.trimToEmpty(sHomeAddrProvince).equals(this.homeAddrProvince.getValue())) {
 			this.homeAddrCity.setValue("");
-			this.lovDescHomeAddrCityName.setValue("");
+			this.homeAddrCity.setDescription("");
 		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchHomeAddrCity(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("PCProvince", this.homeAddrProvince.getValue(),
+		if(!StringUtils.trimToEmpty(this.homeAddrProvince.getValue()).equals("")){
+			this.homeAddrCity.setReadonly(false);
+			this.homeAddrCity.setMandatoryStyle(true);
+		}else{
+			this.homeAddrCity.setReadonly(true);		   
+			this.homeAddrCity.setMandatoryStyle(false);		   
+		}
+		sHomeAddrProvince = this.homeAddrProvince.getValue();
+		Filter[] cityFilters = new Filter[1];
+		cityFilters[0] = new Filter("PCProvince", this.homeAddrProvince.getValue(),
 				Filter.OP_EQUAL);
+		this.homeAddrCity.setFilters(cityFilters);
 
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_HomeLoanDetailDialog, "City", filters);
-		if (dataObject instanceof String) {
-			this.homeAddrCity.setValue(dataObject.toString());
-			this.lovDescHomeAddrCityName.setValue("");
-		} else {
-			City details = (City) dataObject;
-			if (details != null) {
-				this.homeAddrCity.setValue(details.getPCCity());
-				this.lovDescHomeAddrCityName.setValue(details.getPCCity() + "-"
-						+ details.getPCCityName());
-			}
-		}
 		logger.debug("Leaving" + event.toString());
 	}
+
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//
@@ -2061,6 +2074,13 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	}
 	public void setNewFinance(boolean newFinance) {
 		this.newFinance = newFinance;
+	}
+	
+	public Object getFinanceMainDialogCtrl() {
+		return financeMainDialogCtrl;
+	}
+	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
+		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
 }

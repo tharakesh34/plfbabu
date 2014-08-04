@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,7 +77,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -443,6 +444,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving") ;
 	}
 
@@ -467,7 +469,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		this.recordStatus.setValue(aLovFieldDetail.getRecordStatus());
 		
-		if(aLovFieldDetail.isNew() || aLovFieldDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aLovFieldDetail.isNew() || (aLovFieldDetail.getRecordType() != null ? aLovFieldDetail.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.isActive.setChecked(true);
 			this.isActive.setDisabled(true);
 		}
@@ -650,12 +652,12 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(true);
 
 		if (!this.fieldCodeValue.isReadonly()) {
-			this.fieldCodeValue.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_SPACE_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[] { Labels.getLabel("label_LovFieldDetailDialog_FieldCodeValue.value") })));
+			this.fieldCodeValue.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_FieldCodeValue.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}
 		if (!this.valueDesc.isReadonly()) {
-			this.valueDesc.setConstraint(new SimpleConstraint(PennantConstants.NM_DESC_REGEX, Labels.getLabel(
-					"FIELD_DESC",new String[] { Labels.getLabel("label_LovFieldDetailDialog_ValueDesc.value") })));
+			this.valueDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_ValueDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		
 		logger.debug("Leaving");
@@ -668,6 +670,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.fieldCodeValue.setConstraint("");
+		this.valueDesc.setConstraint("");
 		logger.debug("Leaving");
 	}
 	/**
@@ -684,8 +687,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescFieldCodeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value")}));
+		this.lovDescFieldCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value"), null, true));
 		logger.debug("Leaving");
 	}
 	/**
@@ -813,7 +815,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -825,6 +827,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.btnSearchFieldCode.setDisabled(true);
 		this.fieldCodeValue.setReadonly(true);
+		this.valueDesc.setReadonly(true);
 		this.isActive.setDisabled(true);
 
 		if(isWorkFlowEnabled()){

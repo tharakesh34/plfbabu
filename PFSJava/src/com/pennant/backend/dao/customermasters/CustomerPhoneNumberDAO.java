@@ -62,4 +62,5 @@ public interface CustomerPhoneNumberDAO {
 	public void initialize(CustomerPhoneNumber customerPhoneNumber);
 	public void refresh(CustomerPhoneNumber entity);
 	public void deleteByCustomer(final long id,String type);
+	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id,String type, String phoneType);
 }

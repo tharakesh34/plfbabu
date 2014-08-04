@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  *********************************************************************************************
  *                                 FILE HEADER                                               *
  *********************************************************************************************
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+ *//*
 package com.pennant.webui.financemanagement.payments;
 
 import java.lang.reflect.InvocationTargetException;
@@ -98,25 +98,25 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
-/**
+*//**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the
  * WEB-INF/pages/FinanceManagement/SchdlRepayment/SchdlRepaymentDialog.zul <br/>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- */
+ *//*
 public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	private static final long serialVersionUID = 966281186831332116L;
 	private final static Logger logger = Logger
 			.getLogger(PaymentDialogCtrl.class);
 
-	/*
+	
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the ZUL-file are getting autowired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 */
+	 
 	protected Window window_PaymentDialog;
 
 	protected Tabbox tabbox;
@@ -207,9 +207,9 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	private HashMap<Date, ArrayList<PaymentFee>> mapPayFees = new HashMap<Date, ArrayList<PaymentFee>>();
 	private HashMap<Date, ArrayList<PaymentFee>> mapPayRefund = new HashMap<Date, ArrayList<PaymentFee>>();
 
-	/**
+	*//**
 	 * default constructor.<br>
-	 */
+	 *//*
 	public PaymentDialogCtrl() {
 		super();
 	}
@@ -218,13 +218,13 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	/**
+	*//**
 	 * Before binding the data and calling the dialog window we check, if the
 	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onCreate$window_PaymentDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent();
@@ -240,20 +240,20 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * Set the properties of the fields, like maxLength.<br>
-	 */
+	 *//*
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java void
-	 */
+	 *//*
 	public void doWriteComponentsToBean() {
 		FinanceRepayments finRepay = new FinanceRepayments();
 		finRepay.setFinReference(getFinanceMain().getFinReference());
@@ -268,7 +268,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		finRepay.setFinRefund(getUNFRAM(this.schdRefundPaid.getValue()));
 		// TODO start-- Check once commentted by Siva
 
-		/*
+		
 		 * //Total paid including current payment
 		 * finRepay.setFinSchdPriPaid(getUNFRAM
 		 * (getFRAM(getAmountCodeDetail().getTPPSchdPriPaid
@@ -286,7 +286,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		 * finRepay.setFinBPSchdPftBal
 		 * (getAmountCodeDetail().getTEProfitSchd().subtract
 		 * (getAmountCodeDetail().getTPPSchdPftPaid()));
-		 */
+		 
 
 		// Current schedule
 		finRepay.setLovDescSchdPriPaid(this.schdPriPaid.getValue());
@@ -334,11 +334,11 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 						this.schdDefPriPaid)));
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java void
-	 */
+	 *//*
 	private void doSaveProcess() {
 		// update finance schedule work table,
 		// save details to the repayments
@@ -370,19 +370,19 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	// +++++++++++++++++++++++ Components events +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_PaymentDialog);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * To set data to the fields when fin reference in search dialog is double
 	 * clicked <br>
 	 * IN PaymentDialogCtrl.java
@@ -390,7 +390,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	 * @param object
 	 * @param jdbcSearchObject
 	 *            void
-	 */
+	 *//*
 	public void doSetFinance(Object object,
 			JdbcSearchObject<FinanceMain> jdbcSearchObject) {
 		FinanceMain financeMain = (FinanceMain) object;
@@ -456,7 +456,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		}
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
@@ -464,7 +464,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	 * @param date
 	 * @param repayamount
 	 *            void
-	 */
+	 *//*
 	private void doDateChangeProcess(Date date, BigDecimal repayamount) {
 		this.payDate.setValue(date);
 		// Calculate current finance amount with app_date
@@ -484,7 +484,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		this.window_PaymentDialog.setVisible(true);
 	}
 
-	/**
+	*//**
 	 * To calculate the Re payment values of the single Schedule <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
@@ -493,7 +493,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	 * @param isWaiver
 	 * @param isFeeCalreq
 	 *            void
-	 */
+	 *//*
 	private void doProcess(FinanceScheduleDetail financeScheduleDetail,
 			BigDecimal repayAmount, boolean isWaiver, boolean isFeeCalreq) {
 
@@ -769,7 +769,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 		}
 
-		/*
+		
 		 * if (repayAmount.compareTo(zero) > 0 &&
 		 * getDCBValue(this.schdPftPaid).compareTo(zero) <= 0 &&
 		 * getDCBValue(this.schdPriPaid).compareTo(zero) <= 0) { //
@@ -777,18 +777,18 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		 * PTMessageUtils.showErrorMessage("insufficient Amount "); } catch
 		 * (InterruptedException e) { e.printStackTrace(); } //throw new
 		 * WrongValueException(this.rpyAmount,"insufficient Amount "); }
-		 */
+		 
 
 	}
 
-	/**
+	*//**
 	 * To calculate the Fee amount by schedule date either late payment or early
 	 * payment <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param financeScheduleDetail
 	 * @return BigDecimal
-	 */
+	 *//*
 	private BigDecimal getFeeValue(FinanceScheduleDetail financeScheduleDetail) {
 		BigDecimal FeeAmount = new BigDecimal(0);
 		if (isEarlypay || isLatePay) {
@@ -854,14 +854,14 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		return FeeAmount;
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param paymentFees
 	 * @return BigDecimal
-	 */
+	 *//*
 	private BigDecimal getPenaltyOrRefund(ArrayList<PaymentFee> paymentFees) {
 		BigDecimal totAmt = new BigDecimal(0);
 		if (paymentFees != null && paymentFees.size() > 0) {
@@ -873,14 +873,14 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		return totAmt;
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param paymentFees
 	 * @return BigDecimal
-	 */
+	 *//*
 	private BigDecimal getMaxPenaltyOrRefund(ArrayList<PaymentFee> paymentFees) {
 		BigDecimal totAmt = new BigDecimal(0);
 		if (paymentFees != null && paymentFees.size() > 0) {
@@ -892,7 +892,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		return totAmt;
 	}
 
-	/**
+	*//**
 	 * 
 	 * To Execute the Script Rule with Fees object data IN
 	 * PaymentDetailDialogCtrl.java
@@ -900,7 +900,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	 * @param rule
 	 * @param Fees
 	 * @return Double
-	 */
+	 *//*
 	@SuppressWarnings("unchecked")
 	private Double executeRule(String rule, Object object) {
 		HashMap<String, Object> fieldsandvalues = new HashMap<String, Object>();
@@ -939,14 +939,14 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	}
 
-	/**
+	*//**
 	 * To go back to previous schedule calculated amounts <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param financeScheduleDetail
 	 * @param repayAmount
 	 *            void
-	 */
+	 *//*
 	private void doPrevious(FinanceScheduleDetail financeScheduleDetail) {
 		// change date
 		this.rpyTodate.setValue(DateUtility.formatUtilDate(
@@ -975,14 +975,14 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	// ++++ Events +++++++//
 	// +++++++++++++++++++++++++//
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param event
 	 *            void
-	 */
+	 *//*
 	public void onChange$payDate(Event event) {
 		if (this.payDate.getValue() != null) {
 			BigDecimal amt = new BigDecimal(0);
@@ -996,26 +996,26 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	}
 
-	/**
+	*//**
 	 * To calculate repay values on repay amount change <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param event
 	 *            void
-	 */
+	 *//*
 	public void onChange$rpyAmount(Event event) {
 		doProcess(getCurFinanceScheduleDetail(), getDCBValue(this.rpyAmount),
 				false, false);
 
 	}
 
-	/**
+	*//**
 	 * To calculate repay values on Waiver amount paid <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param event
 	 *            void
-	 */
+	 *//*
 	public void onChange$schdWaiverPaid(Event event) {
 		BigDecimal maxVal = getFRAM(getMaxPenaltyOrRefund(mapPayFees
 				.get(getCurFinanceScheduleDetail().getSchDate())));
@@ -1047,13 +1047,13 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		}
 	}
 
-	/**
+	*//**
 	 * To calculate repay values on Waiver amount paid <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param event
 	 *            void
-	 */
+	 *//*
 	public void onChange$schdRefundPaid(Event event) {
 
 		BigDecimal maxVal = getFRAM(getPenaltyOrRefund(mapPayRefund
@@ -1085,13 +1085,13 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		}
 	}
 
-	/**
+	*//**
 	 * To calculate the Re payment values of the Next Schedule <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param event
 	 *            void
-	 */
+	 *//*
 	public void onClick$btnNext(Event event) {
 		// save to the repay work table and update the details in schedule work
 		// table
@@ -1107,13 +1107,13 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	}
 
-	/**
+	*//**
 	 * To calculate the Re payment values of the Previous Schedule <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param event
 	 *            void
-	 */
+	 *//*
 	public void onClick$btnPrevious(Event event) {
 		count = count - 1;
 		setCurFinanceScheduleDetail(listFinSchdDetails.get(count));
@@ -1145,14 +1145,14 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	// +++++++++######## New window for fee list ##############++++++++++++++//
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param event
 	 *            void
-	 */
+	 *//*
 	public void onClick$btnPenalty(Event event) {
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 		hashMap.put("payments",
@@ -1164,14 +1164,14 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param event
 	 *            void
-	 */
+	 *//*
 	public void onClick$btnRefund(Event event) {
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 		hashMap.put("payments",
@@ -1183,7 +1183,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
@@ -1191,7 +1191,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	 * @param event
 	 * @throws Exception
 	 *             void
-	 */
+	 *//*
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_RepayFees(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -1234,7 +1234,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
@@ -1242,21 +1242,21 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	 * @param bigDecimal
 	 * @param formatter
 	 * @return BigDecimal
-	 */
+	 *//*
 	private BigDecimal getFRAM(BigDecimal bigDecimal, int formatter) {
 		BigDecimal some = PennantAppUtil.formateAmount(bigDecimal, formatter);
 		some = some.setScale(formatter, RoundingMode.HALF_DOWN);
 		return some;
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param event
 	 *            void
-	 */
+	 *//*
 	public void onClick$btnCloseRepayfees(Event event) {
 		this.window_RepayFees.onClose();
 	}
@@ -1267,23 +1267,23 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	// ////===Utility Helpers===/////
 	// ////=========================/////
 
-	/**
+	*//**
 	 * To Close the tab when fin reference search dialog is closed <br>
 	 * IN PaymentDialogCtrl.java void
-	 */
+	 *//*
 	public void closeTab() {
 		this.window_PaymentDialog.onClose();
 		Tab tab = (Tab) tabbox.getFellowIfAny("tab_payment");
 		tab.close();
 	}
 
-	/**
+	*//**
 	 * To avoid null from getting the value of decimal box <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param decimalbox
 	 * @return BigDecimal
-	 */
+	 *//*
 	private BigDecimal getDCBValue(Decimalbox decimalbox) {
 		if (decimalbox.getValue() != null) {
 			return decimalbox.getValue();
@@ -1292,27 +1292,27 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param date
 	 * @return Date
-	 */
+	 *//*
 	private Date getDate(Datebox date) {
 		return DateUtility.getDBDate(DateUtility.formatUtilDate(
 				date.getValue(), PennantConstants.DBDateFormat));
 	}
 
-	/**
+	*//**
 	 * Subtracts the two decimal box values . Null safe <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param decimalbox1
 	 * @param decimalbox2
 	 * @return BigDecimal
-	 */
+	 *//*
 	private BigDecimal getSubtractedValue(Decimalbox decimalbox1,
 			Decimalbox decimalbox2) {
 		BigDecimal schd;
@@ -1332,14 +1332,14 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	}
 
-	/**
+	*//**
 	 * Add the two decimal box values . Null safe <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param decimalbox1
 	 * @param decimalbox2
 	 * @return BigDecimal
-	 */
+	 *//*
 	private BigDecimal getAddedValue(Decimalbox decimalbox1,
 			Decimalbox decimalbox2) {
 		BigDecimal schd;
@@ -1359,14 +1359,14 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param bigDecimal
 	 * @return BigDecimal
-	 */
+	 *//*
 	private BigDecimal getFRAM(BigDecimal bigDecimal) {
 		BigDecimal some = PennantAppUtil.formateAmount(bigDecimal,
 				financeMain.getLovDescFinFormatter());
@@ -1375,25 +1375,25 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		return some;
 	}
 
-	/**
+	*//**
 	 * 
 	 * <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @param bigDecimal
 	 * @return BigDecimal
-	 */
+	 *//*
 	private BigDecimal getUNFRAM(BigDecimal bigDecimal) {
 		return PennantAppUtil.unFormateAmount(bigDecimal,
 				financeMain.getLovDescFinFormatter());
 	}
 
-	/**
+	*//**
 	 * To set the Fees data for the Rule Execution <br>
 	 * IN PaymentDialogCtrl.java
 	 * 
 	 * @return Fees
-	 */
+	 *//*
 	private Fees getFeesData() {
 
 		String event = "";
@@ -1403,8 +1403,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 			event = "LATEPAY";
 		}
 		// Amount Codes preparation
-		AEAmounts aeAmounts = new AEAmounts();
-		DataSet dataSet = aeAmounts.createDataSet(financeMain, event,
+		DataSet dataSet = AEAmounts.createDataSet(financeMain, event,
 				getDate(this.payDate), getCurFinanceScheduleDetail()
 						.getSchDate());
 
@@ -1413,22 +1412,22 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		Date nextRepayDate = null;
 		if (count == 0) {
 			lastRepayDate = getFinanceMain().getLastRepayDate();
-			/*
+			
 			 * if (count==listFinSchdDetails.size()-1) { nextRepayDate
 			 * =lastRepayDate; }else{ nextRepayDate =
 			 * listFinSchdDetails.get(count + 1).getSchDate(); }
-			 */
+			 
 
 		} else if (count > 0) {
 			lastRepayDate = listFinSchdDetails.get(count - 1).getSchDate();
 
-			/*
+			
 			 * if
 			 * (getCurFinanceScheduleDetail().getSchDate().compareTo(getFinanceMain
 			 * ().getMaturityDate()) == 0) { nextRepayDate =
 			 * getFinanceMain().getMaturityDate(); }else{ nextRepayDate =
 			 * listFinSchdDetails.get(count + 1).getSchDate(); }
-			 */
+			 
 		}
 
 		// TODO need to get the Schedule data
@@ -1458,11 +1457,11 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	/**
+	*//**
 	 * when clicks on button "btnSearchRepayAcctId"
 	 * 
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnSearchRepayAcctId(Event event) {
 		logger.debug("Entering " + event.toString());
 		Filter[] filters;
@@ -1555,4 +1554,4 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		return engineExecution;
 	}
 
-}
+}*/

@@ -44,6 +44,7 @@
 package com.pennant.backend.service.rmtmasters;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 
 /**
@@ -77,5 +78,9 @@ public interface FinanceTypeService {
 	FinanceType getFinanceTypeByFinType(String finType);
 
 	boolean checkRIAFinance(String finType);
+	
+	public FinTypeAccount getFinTypeAccount();
+	
+	public FinTypeAccount getNewFinTypeAccount();
 
 }

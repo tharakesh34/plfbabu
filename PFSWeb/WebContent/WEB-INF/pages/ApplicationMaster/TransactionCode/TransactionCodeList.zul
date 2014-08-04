@@ -59,26 +59,26 @@
 
 					<listbox id="listBoxTransactionCode" vflex="true"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
+						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_TranCode"
 								label="${c:l('listheader_TranCode.label')}" sort="auto"
-								width="9%" />
+								hflex="min" />
 							<listheader id="listheader_TranDesc"
 								label="${c:l('listheader_TranDesc.label')}" sort="auto"
-								width="47%" />
+								hflex="min" />
 							<listheader id="listheader_TranType"
 								label="${c:l('listheader_TranType.label')}" sort="auto"
-								width="9%" />
+								hflex="min" />
 							<listheader id="listheader_TranIsActive"
 								label="${c:l('listheader_TranIsActive.label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 						</listhead>
 					</listbox>
 

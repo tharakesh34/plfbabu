@@ -39,25 +39,33 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.customermasters.customer;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,17 +78,21 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.model.CustomerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul
- * file.<br>
+ * This is the controller class for the
+ * /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -96,71 +108,138 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window 		window_CustomerList; 		// autowired
-	protected Borderlayout 	borderLayout_CustomerList; 	// autowired
-	protected Paging 		pagingCustomerList; 		// autowired
-	protected Listbox 		listBoxCustomer; 			// autowired
+	protected Window window_CustomerList; // autowired
+	protected Borderlayout borderLayout_CustomerList; // autowired
+	protected Paging pagingCustomerList; // autowired
+	protected Listbox listBoxCustomer; // autowired
 
 	// List headers
-	protected Listheader listheader_CustCIF; 		// autowired
-	protected Listheader listheader_CustCoreBank; 	// autowired
-	protected Listheader listheader_CustShrtName;	// autowired
-	protected Listheader listheader_CustDftBranch;	// autowired
-	protected Listheader listheader_CustCtgCode; 	// autowired
-	protected Listheader listheader_CustTypeCode;	// autowired
-	protected Listheader listheader_RecordStatus; 	// autowired
+	protected Listheader listheader_CustCIF; // autowired
+	protected Listheader listheader_CustCoreBank; // autowired
+	protected Listheader listheader_CustShrtName; // autowired
+	protected Listheader listheader_CustDftBranch; // autowired
+	protected Listheader listheader_CustCtgCode; // autowired
+	protected Listheader listheader_CustTypeCode; // autowired
+	protected Listheader listheader_RecordStatus; // autowired
 	protected Listheader listheader_RecordType;
 
 	// checkRights
-	protected Button btnHelp; 									// autowired
-	protected Button button_CustomerList_NewCustomer; 			// autowired
-	protected Button button_CustomerList_CustomerSearchDialog; 	// autowired
-	protected Button button_CustomerList_PrintList; 			// autowired
+	protected Button btnHelp; // autowired
+	protected Button button_CustomerList_NewCustomer; // autowired
+	protected Button button_CustomerList_CustomerSearchDialog; // autowired
+	protected Button button_CustomerList_PrintList; // autowired
+
+	// NEEDED for the ReUse in the SearchWindow
+
+	protected Textbox custCIF; // autowired
+	protected Listbox sortOperator_custCIF; // autowired
+	protected Textbox custCoreBank; // autowired
+	protected Listbox sortOperator_custCoreBank; // autowired
+	protected Combobox custCtgCode; // autowired
+	protected Listbox sortOperator_custCtgCode; // autowired
+	protected Textbox custTypeCode; // autowired
+	protected Listbox sortOperator_custTypeCode; // autowired
+	protected Textbox custShrtName; // autowired
+	protected Listbox sortOperator_custShrtName; // autowired
+	protected Textbox custDftBranch; // autowired
+	protected Listbox sortOperator_custDftBranch; // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType; // autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+
+	protected Label label_CustomerSearch_RecordStatus; // autowired
+	protected Label label_CustomerSearch_RecordType; // autowired
+	protected Label label_CustomerSearchResult; // autowired
+
+	protected Grid searchGrid; // autowired
+	protected Textbox moduleType; // autowired
+	protected Radio fromApproved;
+	protected Radio fromWorkFlow;
+	protected Row workFlowFrom;
+
+	private transient boolean approvedList = false;
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Customer> searchObj;
 	private transient CustomerDetailsService customerDetailsService;
-	private transient WorkFlowDetails workFlowDetails=null;
-	
+	private transient WorkFlowDetails workFlowDetails = null;
+
 	/**
 	 * default constructor.<br>
 	 */
 	public CustomerListCtrl() {
 		super();
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
 	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected Customer object in
-	 * a Map.
+	 * ZUL-file is called with a parameter for a selected Customer object in a
+	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_CustomerList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("Customer");
-		boolean wfAvailable=true;
-		
-		if (moduleMapping.getWorkflowType()!=null){
+		boolean wfAvailable = true;
+
+		if (moduleMapping.getWorkflowType() != null) {
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Customer");
-			
-			if (workFlowDetails==null){
+
+			if (workFlowDetails == null) {
 				setWorkFlowEnabled(false);
-			}else{
+			} else {
 				setWorkFlowEnabled(true);
-				setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
+				setFirstTask(getUserWorkspace().isRoleContains(
+						workFlowDetails.getFirstTaskOwner()));
 				setWorkFlowId(workFlowDetails.getId());
-			}	
-		}else{
-			wfAvailable=false;
+			}
+		} else {
+			wfAvailable = false;
 		}
-		
+
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custCoreBank.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCoreBank.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custCtgCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCtgCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custShrtName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custShrtName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custDftBranch.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custDftBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = PennantAppUtil.setRecordType(this.recordType);
+		} else {
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CustomerSearch_RecordStatus.setVisible(false);
+			this.label_CustomerSearch_RecordType.setVisible(false);
+		}
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -170,12 +249,13 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CustomerList.setHeight(getBorderLayoutHeight());
+		this.listBoxCustomer.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCustomerList.setPageSize(getListRows());
 		this.pagingCustomerList.setDetailed(true);
 
-		this.listheader_CustCIF.setSortAscending(new FieldComparator("custCIF", true));
+		this.listheader_CustCIF.setSortAscending(new FieldComparator("custCIF",	true));
 		this.listheader_CustCIF.setSortDescending(new FieldComparator("custCIF", false));
 		this.listheader_CustCoreBank.setSortAscending(new FieldComparator("custCoreBank", true));
 		this.listheader_CustCoreBank.setSortDescending(new FieldComparator("custCoreBank", false));
@@ -187,22 +267,21 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 		this.listheader_CustCtgCode.setSortDescending(new FieldComparator("custCtgCode", false));
 		this.listheader_CustTypeCode.setSortAscending(new FieldComparator("custTypeCode", true));
 		this.listheader_CustTypeCode.setSortDescending(new FieldComparator("custTypeCode", false));
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
 			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
 			this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
-		}else{
+		} else {
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<Customer>(Customer.class,getListRows());
-		this.searchObj.addSort("CustID", false);
-		this.searchObj.addTabelName("Customers_TView");
-		this.searchObj.addFilterOr(new Filter("(custIsClosed=0 AND recordStatus=\"Approved\") OR recordStatus", "Approved" , Filter.OP_NOT_EQUAL));
+      
+		fillComboBox(this.custCtgCode, "", PennantStaticListUtil.getCustCtgType(), "");
+
+		// set the itemRenderer
+		this.listBoxCustomer.setItemRenderer(new CustomerListModelItemRenderer());
 		
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -211,21 +290,20 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 			} else {
 				button_CustomerList_NewCustomer.setVisible(false);
 			}
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
 		}
 
-		setSearchObj(this.searchObj);
-		if (!isWorkFlowEnabled() && wfAvailable){
+		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_CustomerList_NewCustomer.setVisible(false);
 			this.button_CustomerList_CustomerSearchDialog.setVisible(false);
 			this.button_CustomerList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
-		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxCustomer,this.pagingCustomerList);
-			// set the itemRenderer
-			this.listBoxCustomer.setItemRenderer(new CustomerListModelItemRenderer());
-		}	
+		} else {
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -235,11 +313,9 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("CustomerList");
-		
 		this.button_CustomerList_NewCustomer.setVisible(getUserWorkspace()
 				.isAllowed("button_CustomerList_NewCustomer"));
-		this.button_CustomerList_CustomerSearchDialog.setVisible(getUserWorkspace()
-				.isAllowed("button_CustomerList_CustomerFindDialog"));
+		this.button_CustomerList_CustomerSearchDialog.setVisible(true);
 		this.button_CustomerList_PrintList.setVisible(getUserWorkspace()
 				.isAllowed("button_CustomerList_PrintList"));
 		logger.debug("Leaving");
@@ -247,7 +323,8 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 
 	/**
 	 * This method is forwarded from the listBoxes item renderer. <br>
-	 * see: com.pennant.webui.customermasters.customer.model.CustomerListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.customermasters.customer.model.
+	 * CustomerListModelItemRenderer.java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -261,71 +338,78 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			Customer aCustomer = (Customer) item.getAttribute("data");
-			final CustomerDetails customerDetails = getCustomerDetailsService().getCustomerById(
-					aCustomer.getId());
+			final CustomerDetails customerDetails = getCustomerDetailsService().getCustomerById(aCustomer.getId());
 
-			if(customerDetails == null){
+			if (customerDetails == null) {
 				String[] valueParm = new String[2];
-				String[] errParm= new String[2];
+				String[] errParm = new String[2];
 
 				valueParm[0] = aCustomer.getCustCIF();
 				valueParm[1] = aCustomer.getCustCtgCode();
 
 				errParm[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":"+ valueParm[0];
-				errParm[1] = PennantJavaUtil.getLabel("label_CustCtgCode") + ":"+valueParm[1];
+				errParm[1] = PennantJavaUtil.getLabel("label_CustCtgCode")+ ":" + valueParm[1];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD,"41005", 
-								errParm,valueParm), getUserWorkspace().getUserLanguage());
+						new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
+								errParm, valueParm), getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 
-			}else{
-				String whereCond =  " AND CustID='"+ aCustomer.getCustID()+"' AND version=" + 
-											aCustomer.getVersion()+" ";
+			} else {
+				String whereCond = " AND CustID='" + aCustomer.getCustID()
+						+ "' AND version=" + aCustomer.getVersion() + " ";
 
-				if(isWorkFlowEnabled()){
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),
-							getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "Customer", whereCond, aCustomer.getTaskId(), aCustomer.getNextTaskId());
-					if (userAcces){
+				if (isWorkFlowEnabled()) {
+					boolean userAcces = validateUserAccess(workFlowDetails.getId(), getUserWorkspace().getLoginUserDetails().getLoginUsrID(),
+							"Customer", whereCond, aCustomer.getTaskId(),aCustomer.getNextTaskId());
+					if (userAcces) {
 						showDetailView(customerDetails);
-					}else{
+					} else {
 						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
-				}else{
+				} else {
 					showDetailView(customerDetails);
 				}
 			}
-		}	
+		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Call the Customer dialog with a new empty entry. <br>
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$button_CustomerList_NewCustomer(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("customerListCtrl", this);
-		
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CoreCustomerSelect.zul",
-				null, map);
+
+		Executions.createComponents(
+						"/WEB-INF/pages/CustomerMasters/Customer/CoreCustomerSelect.zul",
+						null, map);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Build the Customer Dialog Window with Existing Core banking Data
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
-	public void buildDialogWindow(Customer customer) throws Exception{
+	public void buildDialogWindow(CustomerDetails customer,boolean newRecord) throws Exception{
 		logger.debug("Entering");
-		// create a new Customer object, We GET it from the backEnd.
-		CustomerDetails aCustomerDetails = getCustomerDetailsService().getNewCustomer(false);
-		customer = getCustomerDetailsService().fetchCustomerDetails(customer);
-		aCustomerDetails.setCustomer(customer);		
-		showDetailView(aCustomerDetails);
+		if (customer!=null) {
+			if (newRecord) {
+				// create a new Customer object, We GET it from the backEnd.
+				//CustomerDetails aCustomerDetails = getCustomerDetailsService().getNewCustomer(false);
+				Customer customerlov = getCustomerDetailsService().fetchCustomerDetails(customer.getCustomer());
+				customer.setCustomer(customerlov);
+				getCustomerDetailsService().setCustomerDetails(customer);
+			}
+			showDetailView(customer);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -333,7 +417,8 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 	 * Opens the detail view. <br>
 	 * OverHanded some params in a map if needed. <br>
 	 * 
-	 * @param CustomerDetails (aCustomerDetails)
+	 * @param CustomerDetails
+	 *            (aCustomerDetails)
 	 * @throws Exception
 	 */
 	private void showDetailView(CustomerDetails aCustomerDetails) throws Exception {
@@ -344,7 +429,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
 		Customer aCustomer = aCustomerDetails.getCustomer();
-		if(aCustomer.getWorkflowId()==0 && isWorkFlowEnabled()){
+		if (aCustomer.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aCustomer.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		aCustomerDetails.setCustomer(aCustomer);
@@ -363,7 +448,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 		try {
 			Executions.createComponents(
 					"/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
-					null,map);
+					null, map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -393,38 +478,40 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingCustomerList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_CustomerList, event);
-		this.window_CustomerList.invalidate();
+		this.sortOperator_custCIF.setSelectedIndex(0);
+		this.custCIF.setValue("");
+		this.sortOperator_custCoreBank.setSelectedIndex(0);
+		this.custCoreBank.setValue("");
+		this.sortOperator_custCtgCode.setSelectedIndex(0);
+		this.custCtgCode.setValue("");
+		this.sortOperator_custDftBranch.setSelectedIndex(0);
+		this.custDftBranch.setValue("");
+		this.sortOperator_custShrtName.setSelectedIndex(0);
+		this.custShrtName.setValue("");
+		this.sortOperator_custTypeCode.setSelectedIndex(0);
+		fillComboBox(this.custCtgCode, "", PennantStaticListUtil.getCustCtgType(), "");
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Method for call the Customer dialog
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$button_CustomerList_CustomerSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our CustomerDialog zul-file with parameters. So we can
-		 * call them with a object of the selected CustomerDetails. For handed over
-		 * these parameter only a Map is accepted. So we put the CustomerDetails object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/Customer/CustomerSearchDialog.zul",
-							null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -434,20 +521,132 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_CustomerList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("Customer", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("Customer",
+				getSearchObj(), this.pagingCustomerList.getTotalSize() + 1);
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doSearch() {
+		logger.debug("Entering"); 
+		
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<Customer>(Customer.class,	getListRows());
+		this.searchObj.addSort("CustID", false);
+		addFieldsToSearchObject();		
+		this.searchObj.addTabelName("Customers_View");
+		
+		// Workflow
+		if (isWorkFlowEnabled()) {
+
+			if (isFirstTask() && this.moduleType == null) {
+				button_CustomerList_NewCustomer.setVisible(true);
+			} else {
+				button_CustomerList_NewCustomer.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("Customers_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("Customers_AView");
+		}
+
+		// Customer CIF
+		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custCIF.getSelectedItem(),this.custCIF.getValue(), "custCIF");
+		}
+		// Customer Core Bank
+		if (!StringUtils.trimToEmpty(this.custCoreBank.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custCoreBank.getSelectedItem(),this.custCoreBank.getValue(), "custCoreBank");
+		}
+		// Customer Category Code
+		if (!this.custCtgCode.getSelectedItem().getValue().toString().equals("#")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custCtgCode.getSelectedItem(),this.custCtgCode.getSelectedItem().getValue().toString(), "custCtgCode");
+		}
+		// Customer Default Branch
+		if (!StringUtils.trimToEmpty(this.custDftBranch.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custDftBranch.getSelectedItem(),this.custDftBranch.getValue(), "custDftBranch");
+		}
+		// Customer Short Name
+		if (!StringUtils.trimToEmpty(this.custShrtName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custShrtName.getSelectedItem(),this.custShrtName.getValue(), "custShrtName");
+		}
+		// Customer Type Code
+		if (!StringUtils.trimToEmpty(this.custTypeCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custTypeCode.getSelectedItem(),this.custTypeCode.getValue(), "custTypeCode");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxCustomer,this.pagingCustomerList);
+
+		logger.debug("Leaving");
+
+	}
+	public void addFieldsToSearchObject(){
+		
+		this.searchObj.addField("CustID");
+	    this.searchObj.addField("CustCIF");
+		this.searchObj.addField("CustCoreBank");
+		this.searchObj.addField("CustShrtName");
+		this.searchObj.addField("CustCtgCode");
+		this.searchObj.addField("CustDftBranch");
+		this.searchObj.addField("CustTypeCode");
+		
+		// LOV values
+		this.searchObj.addField("LovDescCustCtgCodeName");
+		this.searchObj.addField("LovDescCustTypeCodeName");
+		
+		this.searchObj.addField("workflowId");
+		this.searchObj.addField("RecordStatus");
+		this.searchObj.addField("RecordType");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+	public void setCustomerDetailsService(
+			CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
 

@@ -70,6 +70,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.mortgageloandetail.model.MortgageLoanDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
@@ -168,8 +169,8 @@ public class MortgageLoanDetailListCtrl extends GFCBaseListCtrl<MortgageLoanDeta
 
 		this.listheader_LoanRefNumber.setSortAscending(new FieldComparator("loanRefNumber", true));
 		this.listheader_LoanRefNumber.setSortDescending(new FieldComparator("loanRefNumber", false));
-		this.listheader_LoanRefType.setSortAscending(new FieldComparator("loanRefType", true));
-		this.listheader_LoanRefType.setSortDescending(new FieldComparator("loanRefType", false));
+//		this.listheader_LoanRefType.setSortAscending(new FieldComparator("loanRefType", true));
+//		this.listheader_LoanRefType.setSortDescending(new FieldComparator("loanRefType", false));
 		this.listheader_MortgProperty.setSortAscending(new FieldComparator("mortgProperty", true));
 		this.listheader_MortgProperty.setSortDescending(new FieldComparator("mortgProperty", false));
 		this.listheader_MortgCurrentValue.setSortAscending(new FieldComparator("mortgCurrentValue", true));
@@ -189,13 +190,14 @@ public class MortgageLoanDetailListCtrl extends GFCBaseListCtrl<MortgageLoanDeta
 		
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<MortgageLoanDetail>(MortgageLoanDetail.class,getListRows());
+		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
 		this.searchObj.addSort("loanRefNumber", false);
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("LMTMortgageLoanDetail_View");
 			if (isFirstTask()) {
-				button_MortgageLoanDetailList_NewMortgageLoanDetail.setVisible(true);
+				button_MortgageLoanDetailList_NewMortgageLoanDetail.setVisible(false);
 			} else {
 				button_MortgageLoanDetailList_NewMortgageLoanDetail.setVisible(false);
 			}
@@ -227,8 +229,7 @@ public class MortgageLoanDetailListCtrl extends GFCBaseListCtrl<MortgageLoanDeta
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("MortgageLoanDetailList");
 		
-		this.button_MortgageLoanDetailList_NewMortgageLoanDetail.setVisible(getUserWorkspace().
-				isAllowed("button_MortgageLoanDetailList_NewMortgageLoanDetail"));
+		this.button_MortgageLoanDetailList_NewMortgageLoanDetail.setVisible(false);//getUserWorkspace().isAllowed("button_MortgageLoanDetailList_NewMortgageLoanDetail")
 		this.button_MortgageLoanDetailList_MortgageLoanDetailSearchDialog.setVisible(getUserWorkspace().
 				isAllowed("button_MortgageLoanDetailList_MortgageLoanDetailFindDialog"));
 		this.button_MortgageLoanDetailList_PrintList.setVisible(getUserWorkspace().
@@ -266,8 +267,8 @@ public class MortgageLoanDetailListCtrl extends GFCBaseListCtrl<MortgageLoanDeta
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			}else{
 				if(isWorkFlowEnabled()){
-					String whereCond =  " AND LoanRefNumber="+ mortgageLoanDetail.getId()+
-										" AND version=" + mortgageLoanDetail.getVersion()+" ";
+					String whereCond =  " AND LoanRefNumber='"+ mortgageLoanDetail.getId()+
+										"' AND version=" + mortgageLoanDetail.getVersion()+" ";
 
 					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),
 							getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "MortgageLoanDetail",

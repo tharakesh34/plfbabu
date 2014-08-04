@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.additional;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,16 +66,16 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
-import com.pennant.webui.finance.wiffinancemain.WIFFinanceMainDialogCtrl;
+import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 
 public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6125624350998749280L;
 	private final static Logger logger = Logger.getLogger(RecalculateDialogCtrl.class);
 
 	/*
@@ -92,8 +93,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 				// overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; 	// overhanded per param
-	private transient WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl;
-	private transient FinanceMainDialogCtrl financeMainDialogCtrl;
+	private ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
 
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
@@ -146,96 +146,14 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// we get the WIFFinanceMainDialogCtrl controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete WIFFinanceMain here.
-		if (args.containsKey("wIFFinanceMainDialogCtrl")) {
-			setWIFFinanceMainDialogCtrl((WIFFinanceMainDialogCtrl) args
-					.get("wIFFinanceMainDialogCtrl"));
-		} else {
-			setWIFFinanceMainDialogCtrl(null);
-		}
 		if (args.containsKey("financeMainDialogCtrl")) {
-			setFinanceMainDialogCtrl((FinanceMainDialogCtrl) args
-					.get("financeMainDialogCtrl"));
+			setScheduleDetailDialogCtrl((ScheduleDetailDialogCtrl) args.get("financeMainDialogCtrl"));
 		} else {
-			setFinanceMainDialogCtrl(null);
+			setScheduleDetailDialogCtrl(null);
 		}
 
-		// set Field Properties
-		doSetFieldProperties();
 		doShowDialog(getFinScheduleData());
 		this.window_RecalculateDialog.doModal();
-		logger.debug("Leaving");
-	}
-
-	public FinScheduleData getFinScheduleData() {
-		return finScheduleData;
-	}
-
-	public void setFinScheduleData(FinScheduleData finScheduleData) {
-		this.finScheduleData = finScheduleData;
-	}
-
-	/**
-	 * @return the financeScheduleDetail
-	 */
-	public FinanceScheduleDetail getFinanceScheduleDetail() {
-		return financeScheduleDetail;
-	}
-
-	/**
-	 * @param financeScheduleDetail the financeScheduleDetail to set
-	 */
-	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
-		this.financeScheduleDetail = financeScheduleDetail;
-	}
-
-	/**
-	 * @return the wIFFinanceMainDialogCtrl
-	 */
-	public WIFFinanceMainDialogCtrl getWIFFinanceMainDialogCtrl() {
-		return wIFFinanceMainDialogCtrl;
-	}
-
-	/**
-	 * @param wIFFinanceMainDialogCtrl the wIFFinanceMainDialogCtrl to set
-	 */
-	public void setWIFFinanceMainDialogCtrl(
-			WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl) {
-		this.wIFFinanceMainDialogCtrl = wIFFinanceMainDialogCtrl;
-	}
-
-	/**
-	 * @return the financeMainDialogCtrl
-	 */
-	public FinanceMainDialogCtrl getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
-	}
-
-	/**
-	 * @param financeMainDialogCtrl the financeMainDialogCtrl to set
-	 */
-	public void setFinanceMainDialogCtrl(FinanceMainDialogCtrl financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
-	}
-	
-	/**
-	 * @return the validationOn
-	 */
-	public boolean isValidationOn() {
-		return validationOn;
-	}
-
-	/**
-	 * @param validationOn the validationOn to set
-	 */
-	public void setValidationOn(boolean validationOn) {
-		this.validationOn = validationOn;
-	}
-
-	/**
-	 * Set the properties of the fields, like maxLength.<br>
-	 */
-	private void doSetFieldProperties() {
-		logger.debug("Entering");
 		logger.debug("Leaving");
 	}
 
@@ -283,7 +201,6 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
-			setDialog(this.window_RecalculateDialog);
 		} catch (final Exception e) {
 			logger.error(e);
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -303,34 +220,49 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if(aFinSchData.getFinanceMain() != null ){
 			fillSchReCalTypes(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType());
 			fillSchFromDates(this.cbFromDate, aFinSchData.getFinanceScheduleDetails());
-			fillSchDates(this.cbTillDate,aFinSchData);
+			fillSchDates(this.cbTillDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate());
 		}
 		logger.debug("Leaving");	
 	}
 
 	/** To fill schedule dates */
-	public void fillSchFromDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails) {
+	public void fillSchFromDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails) {
 		logger.debug("Entering");
+		
+		dateCombobox.getItems().clear();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				if (financeScheduleDetails.get(i).isRepayOnSchDate()) {
-					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate));
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
-					dateCombobox.appendChild(comboitem);
-					if (getFinanceScheduleDetail() != null
-							&& financeScheduleDetails.get(i).getSchDate()
-							.equals(getFinanceScheduleDetail().getSchDate())) {
-						dateCombobox.setSelectedItem(comboitem);
-					}
+
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+
+				//Not Allowed for Repayment
+				if (!curSchd.isRepayOnSchDate() ) {
+					continue;
+				}
+
+				//Profit Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				//Principal Paid (Partial/Full)
+				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+
+				comboitem = new Comboitem();
+				comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate));
+				comboitem.setValue(curSchd.getSchDate());
+				dateCombobox.appendChild(comboitem);
+				if (getFinanceScheduleDetail() != null && curSchd.getSchDate().equals(getFinanceScheduleDetail().getSchDate())) {
+					dateCombobox.setSelectedItem(comboitem);
 				}
 			}
 		}
@@ -341,17 +273,18 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	/** To fill schedule calculation types in combo */
 	public void fillSchReCalTypes(Combobox codeCombobox, String value){
 		logger.debug("Entering");
-		List<ValueLabel> recalTypes = PennantAppUtil.getSchCalCodes();
+		List<ValueLabel> recalTypes = PennantStaticListUtil.getSchCalCodes();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		codeCombobox.appendChild(comboitem);
 		codeCombobox.setSelectedItem(comboitem);
 		for (int i = 0; i < recalTypes.size(); i++) {
-			comboitem = new Comboitem();
-			comboitem.setValue(recalTypes.get(i).getValue());
-			comboitem.setLabel(recalTypes.get(i).getLabel());
-			if(!recalTypes.get(i).getValue().equals(CalculationConstants.RPYCHG_CURPRD)){
+			if(!recalTypes.get(i).getValue().equals(CalculationConstants.RPYCHG_CURPRD) && 
+					!recalTypes.get(i).getValue().equals(CalculationConstants.RPYCHG_ADDTERM)){
+				comboitem = new Comboitem();
+				comboitem.setValue(recalTypes.get(i).getValue());
+				comboitem.setLabel(recalTypes.get(i).getLabel());
 				codeCombobox.appendChild(comboitem);
 				if (StringUtils.trimToEmpty(value).equals(recalTypes.get(i).getValue())) {
 					codeCombobox.setSelectedItem(comboitem);
@@ -365,8 +298,9 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
+	 * @throws InterruptedException 
 	 */
-	public void doWriteComponentsToBean() {
+	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -425,15 +359,21 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if(this.tillDateRow.isVisible() && this.cbTillDate.getSelectedIndex() > 0){
 			getFinScheduleData().getFinanceMain().setRecalToDate((Date)this.cbTillDate.getSelectedItem().getValue());
+			getFinScheduleData().getFinanceMain().setEventToDate((Date)this.cbTillDate.getSelectedItem().getValue());
 			setFinScheduleData(ScheduleCalculator.reCalSchd(getFinScheduleData()));
 		}else {
+			getFinScheduleData().getFinanceMain().setEventToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
 			setFinScheduleData(ScheduleCalculator.reCalSchd(getFinScheduleData()));
 		}
-		getFinScheduleData().setSchduleGenerated(true);
-		if(getFinanceMainDialogCtrl()!=null){
-			this.financeMainDialogCtrl.doFillScheduleList(getFinScheduleData(), null);
-		}else {
-			this.wIFFinanceMainDialogCtrl.doFillScheduleList(getFinScheduleData());
+		
+		//Show Error Details in Schedule Maintenance
+		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+		}else{
+			getFinScheduleData().setSchduleGenerated(true);
+			if(getScheduleDetailDialogCtrl()!=null){
+				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
+			}
 		}
 		
 		this.window_RecalculateDialog.onClose();
@@ -598,10 +538,30 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving" + event.toString());
 	}
 	
+	public void onChange$cbFromDate(Event event) {
+		logger.debug("Entering" + event.toString());
+		this.cbTillDate.clearErrorMessage();
+		if(this.cbFromDate.getSelectedIndex() > 0) {
+			fillSchDates(cbTillDate, getFinScheduleData(), (Date)this.cbFromDate.getSelectedItem().getValue());
+			this.cbTillDate.setSelectedIndex(0);
+			if(this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLDATE)){
+				this.tillDateRow.setVisible(true);
+			}else {
+				this.tillDateRow.setVisible(false);
+			}
+		}else {
+			this.cbTillDate.setSelectedIndex(0);
+			this.tillDateRow.setVisible(false);
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
 	
 	/** To fill schedule dates */
-	public void fillSchDates(Combobox dateCombobox, FinScheduleData aFinSchData) {
+	public void fillSchDates(Combobox dateCombobox, FinScheduleData aFinSchData, Date fillAfter) {
 		logger.debug("Entering");
+		
+		dateCombobox.getItems().clear();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
@@ -610,15 +570,67 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (aFinSchData.getFinanceScheduleDetails() != null) {
 			List<FinanceScheduleDetail> financeScheduleDetails = aFinSchData.getFinanceScheduleDetails();
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				comboitem = new Comboitem();
-				comboitem.setLabel(PennantAppUtil.formateDate(
-						financeScheduleDetails.get(i).getSchDate(),
-						PennantConstants.dateFormate));
-				comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
-				dateCombobox.appendChild(comboitem);
+				
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				
+				//Not Allowed for Repayment
+				if (!curSchd.isRepayOnSchDate() ) {
+					continue;
+				}
+
+				//Profit Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				//Principal Paid (Partial/Full)
+				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+				
+				if(fillAfter.compareTo(curSchd.getSchDate()) < 0){
+
+					comboitem = new Comboitem();
+					comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate));
+					comboitem.setValue(curSchd.getSchDate());
+					dateCombobox.appendChild(comboitem);
+				}
 			}
 		}
 		logger.debug("Leaving");
 	}
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	public FinScheduleData getFinScheduleData() {
+		return finScheduleData;
+	}
+	public void setFinScheduleData(FinScheduleData finScheduleData) {
+		this.finScheduleData = finScheduleData;
+	}
+
+	public FinanceScheduleDetail getFinanceScheduleDetail() {
+		return financeScheduleDetail;
+	}
+	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
+		this.financeScheduleDetail = financeScheduleDetail;
+	}
+
+	public ScheduleDetailDialogCtrl getScheduleDetailDialogCtrl() {
+		return scheduleDetailDialogCtrl;
+	}
+	public void setScheduleDetailDialogCtrl(ScheduleDetailDialogCtrl scheduleDetailDialogCtrl) {
+		this.scheduleDetailDialogCtrl = scheduleDetailDialogCtrl;
+	}
+
+	public boolean isValidationOn() {
+		return validationOn;
+	}
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
+	}
+	
 }
 

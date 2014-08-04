@@ -48,6 +48,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,16 +62,19 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
+import org.zkoss.zul.South;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -78,23 +82,17 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
-import com.pennant.backend.model.systemmasters.City;
-import com.pennant.backend.model.systemmasters.Country;
-import com.pennant.backend.model.systemmasters.EmploymentType;
-import com.pennant.backend.model.systemmasters.GeneralDepartment;
-import com.pennant.backend.model.systemmasters.GeneralDesignation;
-import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.search.Filter;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -117,23 +115,14 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	protected Window  window_CustomerEmploymentDetailDialog; 	// autoWired
 
    	protected Longbox custID; 									// autoWired
-	protected Textbox custEmpName; 								// autoWired
+	protected ExtendedCombobox custEmpName; 								// autoWired
+	
   	protected Datebox custEmpFrom; 								// autoWired
-	protected Textbox custEmpDesg; 								// autoWired
-	protected Textbox custEmpDept; 								// autoWired
-	protected Textbox custEmpID; 								// autoWired
-	protected Textbox custEmpType; 								// autoWired
-	protected Textbox custEmpHNbr; 								// autoWired
-	protected Textbox custEMpFlatNbr; 							// autoWired
-	protected Textbox custEmpAddrStreet; 						// autoWired
-	protected Textbox custEMpAddrLine1; 						// autoWired
-	protected Textbox custEMpAddrLine2; 						// autoWired
-	protected Textbox custEmpPOBox; 							// autoWired
-	protected Textbox custEmpAddrCity; 							// autoWired
-	protected Textbox custEmpAddrProvince; 						// autoWired
-	protected Textbox custEmpAddrCountry; 						// autoWired
-	protected Textbox custEmpAddrZIP; 							// autoWired
-	protected Textbox custEmpAddrPhone; 						// autoWired
+  	protected Datebox custEmpTo; 								// autoWired
+  	protected Checkbox currentEmployer; 						// autoWired
+	protected ExtendedCombobox custEmpDesg; 								// autoWired
+	protected ExtendedCombobox custEmpDept; 								// autoWired
+	protected ExtendedCombobox custEmpType; 								// autoWired
 	
 	protected Textbox custCIF;									// autoWired
 	protected Label   custShrtName;								// autoWired
@@ -141,7 +130,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	protected Label 		recordStatus; 						// autoWired
 	protected Radiogroup 	userAction;
 	protected Groupbox 		groupboxWf;
-
+	protected South			south;
 
 	// not auto wired variables
 	private CustomerEmploymentDetail customerEmploymentDetail; // overHanded per parameter
@@ -150,23 +139,13 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
 	private transient long  		oldVar_custID;
-	private transient String  		oldVar_custEmpName;
+	private transient long  		oldVar_custEmpName;
 	private transient Date  		oldVar_custEmpFrom;
+	private transient Date  		oldVar_custEmpTo;
+	private transient boolean  		oldVar_currentEmployer;
 	private transient String  		oldVar_custEmpDesg;
 	private transient String  		oldVar_custEmpDept;
-	private transient String  		oldVar_custEmpID;
 	private transient String  		oldVar_custEmpType;
-	private transient String  		oldVar_custEmpHNbr;
-	private transient String  		oldVar_custEMpFlatNbr;
-	private transient String  		oldVar_custEmpAddrStreet;
-	private transient String  		oldVar_custEMpAddrLine1;
-	private transient String  		oldVar_custEMpAddrLine2;
-	private transient String  		oldVar_custEmpPOBox;
-	private transient String  		oldVar_custEmpAddrCity;
-	private transient String  		oldVar_custEmpAddrProvince;
-	private transient String  		oldVar_custEmpAddrCountry;
-	private transient String  		oldVar_custEmpAddrZIP;
-	private transient String  		oldVar_custEmpAddrPhone;
 	private transient String 		oldVar_recordStatus;
 
 	private transient boolean validationOn;
@@ -185,35 +164,26 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	protected Button btnNotes; 		// autoWire
 	protected Button btnSearchPRCustid; 
 	
-	protected Button btnSearchCustEmpDesg; 			// autoWire
-	protected Textbox lovDescCustEmpDesgName;
 	private transient String 		oldVar_lovDescCustEmpDesgName;
 	
-	protected Button btnSearchCustEmpDept; 			// autoWire
-	protected Textbox lovDescCustEmpDeptName;
 	private transient String 		oldVar_lovDescCustEmpDeptName;
 	
-	protected Button btnSearchCustEmpType; 			// autoWire
-	protected Textbox lovDescCustEmpTypeName;
 	private transient String 		oldVar_lovDescCustEmpTypeName;
 	
-	protected Button btnSearchCustEmpAddrCity; 		// autoWire
-	protected Textbox lovDescCustEmpAddrCityName;
-	private transient String 		oldVar_lovDescCustEmpAddrCityName;
-	
-	protected Button btnSearchCustEmpAddrProvince; 	// autoWire
-	protected Textbox lovDescCustEmpAddrProvinceName;
-	private transient String 		oldVar_lovDescCustEmpAddrProvinceName;
-	
-	protected Button btnSearchCustEmpAddrCountry; 	// autoWire
-	protected Textbox lovDescCustEmpAddrCountryName;
-	private transient String 		oldVar_lovDescCustEmpAddrCountryName;
 	
 	// ServiceDAOs / Domain Classes
 	private transient CustomerEmploymentDetailService customerEmploymentDetailService;
 	private transient CustomerSelectCtrl customerSelectCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	
+	
+	private boolean newRecord=false;
+	private boolean newCustomer=false;
+	private CustomerDialogCtrl customerDialogCtrl;
+	private List<CustomerEmploymentDetail> customerEmploymentDetails;
+	private String moduleType="";
+	private String userRole="";
+	private boolean isCurrentEmp = false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -236,8 +206,6 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	public void onCreate$window_CustomerEmploymentDetailDialog(Event event) throws Exception {
 		logger.debug("Entering" +event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
 		
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true,
@@ -258,9 +226,38 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 			setCustomerEmploymentDetail(null);
 		}
 	
+		if (args.containsKey("moduleType")) {
+			this.moduleType = (String) args.get("moduleType");
+		}
+		if (args.containsKey("currentEmployer")) {
+			this.isCurrentEmp = (Boolean) args.get("currentEmployer");
+		}
+		if(getCustomerEmploymentDetail().isNewRecord()){
+			setNewRecord(true);
+		}
+
+		if(args.containsKey("customerDialogCtrl")){
+
+			setCustomerDialogCtrl((CustomerDialogCtrl) args.get("customerDialogCtrl"));
+			setNewCustomer(true);
+
+			if(args.containsKey("newRecord")){
+				setNewRecord(true);
+			}else{
+				setNewRecord(false);
+			}
+			this.customerEmploymentDetail.setWorkflowId(0);
+			if(args.containsKey("roleCode")){
+				userRole = args.get("roleCode").toString();
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
+			}
+		}
+		
 		doLoadWorkFlow(this.customerEmploymentDetail.isWorkflow(),
 				this.customerEmploymentDetail.getWorkflowId(),this.customerEmploymentDetail.getNextTaskId());
-
+		/* set components visible dependent of the users rights */
+		doCheckRights();
+		
 		if (isWorkFlowEnabled()){
 			this.userAction	= setListRecordStatus(this.userAction);
 			getUserWorkspace().alocateRoleAuthorities(getRole(), "CustomerEmploymentDetailDialog");
@@ -282,7 +279,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		doShowDialog(getCustomerEmploymentDetail());
 		
 		//Calling SelectCtrl For proper selection of Customer
-		if(getCustomerEmploymentDetail().isNewRecord()){
+		if(isNewRecord() & !isNewCustomer()){
 			onload();
 		}
 		logger.debug("Leaving" +event.toString());
@@ -295,32 +292,45 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		logger.debug("Entering");
 		
 		//Empty sent any required attributes
-		this.custEmpName.setMaxlength(50);
+		this.custEmpName.setInputAllowed(false);
+		this.custEmpName.setDisplayStyle(3);
+        this.custEmpName.setMandatoryStyle(true);
+		this.custEmpName.setModuleName("EmployerDetail");
+		this.custEmpName.setValueColumn("EmployerId");
+		this.custEmpName.setDescColumn("EmpName");
+		this.custEmpName.setValidateColumns(new String[] { "EmployerId" });
+		
 	 	this.custEmpFrom.setFormat(PennantConstants.dateFormat);
+	 	this.custEmpTo.setFormat(PennantConstants.dateFormat);
 		this.custEmpDesg.setMaxlength(8);
+		this.custEmpDesg.setMandatoryStyle(true);
+		this.custEmpDesg.getTextbox().setWidth("110px");
+		this.custEmpDesg.setModuleName("GeneralDesignation");
+		this.custEmpDesg.setValueColumn("GenDesignation");
+		this.custEmpDesg.setDescColumn("GenDesgDesc");
+		this.custEmpDesg.setValidateColumns(new String[] { "GenDesignation" });
+		
 		this.custEmpDept.setMaxlength(8);
-		this.custEmpID.setMaxlength(50);
-		this.custEmpType.setMaxlength(8);
-		this.custEmpHNbr.setMaxlength(50);
-		this.custEMpFlatNbr.setMaxlength(50);
-		this.custEmpAddrStreet.setMaxlength(50);
-		this.custEMpAddrLine1.setMaxlength(50);
-		this.custEMpAddrLine2.setMaxlength(50);
-		this.custEmpPOBox.setMaxlength(8);
-		this.custEmpAddrCity.setMaxlength(8);
-		this.custEmpAddrProvince.setMaxlength(8);
-		this.custEmpAddrCountry.setMaxlength(2);
-		this.custEmpAddrZIP.setMaxlength(50);
-		this.custEmpAddrPhone.setMaxlength(50);
-		this.btnSearchCustEmpAddrProvince.setVisible(false);
-		this.btnSearchCustEmpAddrCity.setVisible(false);
+		this.custEmpDept.setMandatoryStyle(true);
+		this.custEmpDept.getTextbox().setWidth("110px");
+		this.custEmpDept.setModuleName("GeneralDepartment");
+		this.custEmpDept.setValueColumn("GenDepartment");
+		this.custEmpDept.setDescColumn("GenDeptDesc");
+		this.custEmpDept.setValidateColumns(new String[] { "GenDepartment" });	
+		
+		this.custEmpType.setInputAllowed(false);
+		this.custEmpType.setDisplayStyle(3);
+        this.custEmpType.setMandatoryStyle(true);
+		this.custEmpType.setModuleName("EmploymentType");
+		this.custEmpType.setValueColumn("EmpType");
+		this.custEmpType.setDescColumn("EmpTypeDesc");
+		this.custEmpType.setValidateColumns(new String[] { "EmpType" });
 		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
-			
 		}else{
 			this.groupboxWf.setVisible(false);
-			
+			this.south.setHeight("0px");
 		}
 		logger.debug("Leaving");
 	}
@@ -335,7 +345,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("CustomerEmploymentDetailDialog");
+		getUserWorkspace().alocateAuthorities("CustomerEmploymentDetailDialog",userRole);
 		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerEmploymentDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerEmploymentDetailDialog_btnEdit"));
@@ -487,10 +497,24 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 			logger.debug("Data Changed(): false");
 		}
 		if(close){
-			closeDialog(this.window_CustomerEmploymentDetailDialog, "CustomerEmploymentDetail");
+			closeWindow();
 		}
 		logger.debug("Leaving");
 	}
+	
+	public void closeWindow() throws InterruptedException{
+		logger.debug("Entering");
+
+		if(isNewCustomer()){
+			closePopUpWindow(this.window_CustomerEmploymentDetailDialog,"CustomerEmploymentDetailDialog");
+		}else{
+			closeDialog(this.window_CustomerEmploymentDetailDialog, "CustomerEmploymentDetailDialog");
+		}
+
+
+		logger.debug("Leaving");
+	}
+	
 
 	/**
 	 * Cancel the actual operation. <br>
@@ -519,40 +543,25 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 			this.custID.setValue(aCustomerEmploymentDetail.getCustID());	
 		}
 		
-		this.custEmpName.setValue(aCustomerEmploymentDetail.getCustEmpName());
+		this.custEmpName.setValue(String.valueOf(aCustomerEmploymentDetail.getCustEmpName()));
 		this.custEmpFrom.setValue(aCustomerEmploymentDetail.getCustEmpFrom());
+		this.custEmpTo.setValue(aCustomerEmploymentDetail.getCustEmpTo());
 		this.custEmpDesg.setValue(aCustomerEmploymentDetail.getCustEmpDesg());
 		this.custEmpDept.setValue(aCustomerEmploymentDetail.getCustEmpDept());
-		this.custEmpID.setValue(aCustomerEmploymentDetail.getCustEmpID());
 		this.custEmpType.setValue(aCustomerEmploymentDetail.getCustEmpType());
-		this.custEmpHNbr.setValue(aCustomerEmploymentDetail.getCustEmpHNbr());
-		this.custEMpFlatNbr.setValue(aCustomerEmploymentDetail.getCustEMpFlatNbr());
-		this.custEmpAddrStreet.setValue(aCustomerEmploymentDetail.getCustEmpAddrStreet());
-		this.custEMpAddrLine1.setValue(aCustomerEmploymentDetail.getCustEMpAddrLine1());
-		this.custEMpAddrLine2.setValue(aCustomerEmploymentDetail.getCustEMpAddrLine2());
-		this.custEmpPOBox.setValue(aCustomerEmploymentDetail.getCustEmpPOBox());
-		this.custEmpAddrCity.setValue(aCustomerEmploymentDetail.getCustEmpAddrCity());
-		this.custEmpAddrProvince.setValue(aCustomerEmploymentDetail.getCustEmpAddrProvince());
-		this.custEmpAddrCountry.setValue(aCustomerEmploymentDetail.getCustEmpAddrCountry());
-		this.custEmpAddrZIP.setValue(aCustomerEmploymentDetail.getCustEmpAddrZIP());
-		this.custEmpAddrPhone.setValue(aCustomerEmploymentDetail.getCustEmpAddrPhone());
 		this.custCIF.setValue(aCustomerEmploymentDetail.getLovDescCustCIF()==null?"":aCustomerEmploymentDetail.getLovDescCustCIF().trim());
 		this.custShrtName.setValue(aCustomerEmploymentDetail.getLovDescCustShrtName()==null?"":aCustomerEmploymentDetail.getLovDescCustShrtName().trim());
-
-		if (aCustomerEmploymentDetail.isNewRecord()){
-			this.lovDescCustEmpDesgName.setValue("");
-			this.lovDescCustEmpDeptName.setValue("");
-			this.lovDescCustEmpTypeName.setValue("");
-			this.lovDescCustEmpAddrCityName.setValue("");
-			this.lovDescCustEmpAddrProvinceName.setValue("");
-			this.lovDescCustEmpAddrCountryName.setValue("");
+		this.currentEmployer.setChecked(aCustomerEmploymentDetail.isCurrentEmployer());
+		if (aCustomerEmploymentDetail.getCustEmpName() == 0){
+			this.custEmpDesg.setDescription("");
+			this.custEmpDept.setDescription("");
+			this.custEmpType.setDescription("");
+			this.custEmpName.setDescription("");
 		}else{
-			this.lovDescCustEmpDesgName.setValue(aCustomerEmploymentDetail.getCustEmpDesg()+"-"+aCustomerEmploymentDetail.getLovDescCustEmpDesgName());
-			this.lovDescCustEmpDeptName.setValue(aCustomerEmploymentDetail.getCustEmpDept()+"-"+aCustomerEmploymentDetail.getLovDescCustEmpDeptName());
-			this.lovDescCustEmpTypeName.setValue(aCustomerEmploymentDetail.getCustEmpType()+"-"+aCustomerEmploymentDetail.getLovDescCustEmpTypeName());
-			this.lovDescCustEmpAddrCityName.setValue(aCustomerEmploymentDetail.getCustEmpAddrCity()+"-"+aCustomerEmploymentDetail.getLovDescCustEmpAddrCityName());
-			this.lovDescCustEmpAddrProvinceName.setValue(aCustomerEmploymentDetail.getCustEmpAddrProvince()+"-"+aCustomerEmploymentDetail.getLovDescCustEmpAddrProvinceName());
-			this.lovDescCustEmpAddrCountryName.setValue(aCustomerEmploymentDetail.getCustEmpAddrCountry()+"-"+aCustomerEmploymentDetail.getLovDescCustEmpAddrCountryName());
+			this.custEmpDesg.setDescription(aCustomerEmploymentDetail.getLovDescCustEmpDesgName());
+			this.custEmpDept.setDescription(aCustomerEmploymentDetail.getLovDescCustEmpDeptName());
+			this.custEmpType.setDescription(aCustomerEmploymentDetail.getLovDescCustEmpTypeName());
+			this.custEmpName.setDescription(aCustomerEmploymentDetail.getLovDesccustEmpName());
 		}
 		this.recordStatus.setValue(aCustomerEmploymentDetail.getRecordStatus());
 		logger.debug("Leaving");
@@ -575,106 +584,132 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 			wve.add(we);
 		}
 		try {
-		    aCustomerEmploymentDetail.setCustEmpName(this.custEmpName.getValue());
+			aCustomerEmploymentDetail.setLovDesccustEmpName(this.custEmpName.getDescription());
+		    aCustomerEmploymentDetail.setCustEmpName(Long.valueOf(this.custEmpName.getValue()));
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
+			if(this.custEmpFrom.getValue() != null){
 			if (!this.custEmpFrom.getValue().after(((Date) SystemParameterDetails
 							.getSystemParameterValue("APP_DFT_START_DATE")))) {
 				throw new WrongValueException(this.custEmpFrom,Labels.getLabel("DATE_ALLOWED_AFTER",
 						new String[] {Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpFrom.value"),
 							SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
 			}
+			if (this.custEmpFrom.getValue().compareTo(((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) != -1) {
+				throw new WrongValueException(this.custEmpFrom, Labels.getLabel("DATE_FUTURE_TODAY", new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpFrom.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
+			}
 			aCustomerEmploymentDetail.setCustEmpFrom(new Timestamp(this.custEmpFrom.getValue().getTime()));
+			}else{
+			aCustomerEmploymentDetail.setCustEmpFrom(null);
+			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-	 		aCustomerEmploymentDetail.setLovDescCustEmpDesgName(this.lovDescCustEmpDesgName.getValue());
-	 		aCustomerEmploymentDetail.setCustEmpDesg(this.custEmpDesg.getValue());	
+			if (this.custEmpTo.getValue()!=null) {
+				if (!this.custEmpTo.getValue().after(((Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE")))) {
+					throw new WrongValueException(this.custEmpTo, Labels.getLabel("DATE_ALLOWED_AFTER", new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpTo.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
+				}
+				if (this.custEmpTo.getValue().compareTo(((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) != -1) {
+					throw new WrongValueException(this.custEmpTo, Labels.getLabel("DATE_FUTURE_TODAY", new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpTo.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
+				}
+				aCustomerEmploymentDetail.setCustEmpTo(new Timestamp(this.custEmpTo.getValue().getTime()));
+			}else{
+				aCustomerEmploymentDetail.setCustEmpTo(null);
+			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-	 		aCustomerEmploymentDetail.setLovDescCustEmpDeptName(this.lovDescCustEmpDeptName.getValue());
-	 		aCustomerEmploymentDetail.setCustEmpDept(this.custEmpDept.getValue());	
+	 		aCustomerEmploymentDetail.setLovDescCustEmpDesgName(this.custEmpDesg.getDescription());
+	 		aCustomerEmploymentDetail.setCustEmpDesg(this.custEmpDesg.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-		    aCustomerEmploymentDetail.setCustEmpID(this.custEmpID.getValue());
+	 		aCustomerEmploymentDetail.setLovDescCustEmpDeptName(this.custEmpDept.getDescription());
+	 		aCustomerEmploymentDetail.setCustEmpDept(this.custEmpDept.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-	 		aCustomerEmploymentDetail.setLovDescCustEmpTypeName(this.lovDescCustEmpTypeName.getValue());
+	 		aCustomerEmploymentDetail.setLovDescCustEmpTypeName(this.custEmpType.getDescription());
 	 		aCustomerEmploymentDetail.setCustEmpType(this.custEmpType.getValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		try {
-		    aCustomerEmploymentDetail.setCustEmpHNbr(this.custEmpHNbr.getValue());
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-		    aCustomerEmploymentDetail.setCustEMpFlatNbr(this.custEMpFlatNbr.getValue());
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-		    aCustomerEmploymentDetail.setCustEmpAddrStreet(this.custEmpAddrStreet.getValue());
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-		    aCustomerEmploymentDetail.setCustEMpAddrLine1(this.custEMpAddrLine1.getValue());
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-		    aCustomerEmploymentDetail.setCustEMpAddrLine2(this.custEMpAddrLine2.getValue());
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-		    aCustomerEmploymentDetail.setCustEmpPOBox(this.custEmpPOBox.getValue());
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-	 		aCustomerEmploymentDetail.setLovDescCustEmpAddrCityName(this.lovDescCustEmpAddrCityName.getValue());
-	 		aCustomerEmploymentDetail.setCustEmpAddrCity(this.custEmpAddrCity.getValue());	
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-	 		aCustomerEmploymentDetail.setLovDescCustEmpAddrProvinceName(this.lovDescCustEmpAddrProvinceName.getValue());
-	 		aCustomerEmploymentDetail.setCustEmpAddrProvince(this.custEmpAddrProvince.getValue());	
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-	 		aCustomerEmploymentDetail.setLovDescCustEmpAddrCountryName(this.lovDescCustEmpAddrCountryName.getValue());
-	 		aCustomerEmploymentDetail.setCustEmpAddrCountry(this.custEmpAddrCountry.getValue());	
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-		    aCustomerEmploymentDetail.setCustEmpAddrZIP(this.custEmpAddrZIP.getValue());
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		try {
-		    aCustomerEmploymentDetail.setCustEmpAddrPhone(this.custEmpAddrPhone.getValue());
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
 		
+		try {
+			aCustomerEmploymentDetail.setCurrentEmployer(this.currentEmployer.isChecked());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+
+
+
+		//		try {
+		//		    aCustomerEmploymentDetail.setCustEmpHNbr(this.custEmpHNbr.getValue());
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//		    aCustomerEmploymentDetail.setCustEMpFlatNbr(this.custEMpFlatNbr.getValue());
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//		    aCustomerEmploymentDetail.setCustEmpAddrStreet(this.custEmpAddrStreet.getValue());
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//		    aCustomerEmploymentDetail.setCustEMpAddrLine1(this.custEMpAddrLine1.getValue());
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//		    aCustomerEmploymentDetail.setCustEMpAddrLine2(this.custEMpAddrLine2.getValue());
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//		    aCustomerEmploymentDetail.setCustEmpPOBox(this.custEmpPOBox.getValue());
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//	 		aCustomerEmploymentDetail.setLovDescCustEmpAddrCityName(this.lovDescCustEmpAddrCityName.getValue());
+		//	 		aCustomerEmploymentDetail.setCustEmpAddrCity(this.custEmpAddrCity.getValue());	
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//	 		aCustomerEmploymentDetail.setLovDescCustEmpAddrProvinceName(this.lovDescCustEmpAddrProvinceName.getValue());
+		//	 		aCustomerEmploymentDetail.setCustEmpAddrProvince(this.custEmpAddrProvince.getValue());	
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//	 		aCustomerEmploymentDetail.setLovDescCustEmpAddrCountryName(this.lovDescCustEmpAddrCountryName.getValue());
+		//	 		aCustomerEmploymentDetail.setCustEmpAddrCountry(this.custEmpAddrCountry.getValue());	
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//		    aCustomerEmploymentDetail.setCustEmpAddrZIP(this.custEmpAddrZIP.getValue());
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
+		//		try {
+		//		    aCustomerEmploymentDetail.setCustEmpAddrPhone(this.custEmpAddrPhone.getValue());
+		//		}catch (WrongValueException we ) {
+		//			wve.add(we);
+		//		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+        
 		if (wve.size()>0) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -682,7 +717,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		aCustomerEmploymentDetail.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
@@ -699,27 +734,17 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	public void doShowDialog(CustomerEmploymentDetail aCustomerEmploymentDetail) throws InterruptedException {
 		logger.debug("Entering");
 		
-		// if aCustomerEmploymentDetail == null then we opened the Dialog without
-		// arguments for a given entity, so we get a new Object().
-		if (aCustomerEmploymentDetail == null) {
-			/** !!! DO NOT BREAK THE TIERS !!! */
-			// We don't create a new DomainObject() in the frontEnd.
-			// We GET it from the backEnd.
-			aCustomerEmploymentDetail = getCustomerEmploymentDetailService().getNewCustomerEmploymentDetail();
-			setCustomerEmploymentDetail(aCustomerEmploymentDetail);
-		} else {
-			setCustomerEmploymentDetail(aCustomerEmploymentDetail);
-		}
-
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCustomerEmploymentDetail.isNew()) {
+		if (isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
-			this.custEmpName.focus();
+			this.custCIF.focus();
 		} else {
 			this.custEmpName.focus();
-			if (isWorkFlowEnabled()){
+			if (isNewCustomer()){
+				doEdit();
+			}else  if (isWorkFlowEnabled()){
 				this.btnNotes.setVisible(true);
 				doEdit();
 			}else{
@@ -728,17 +753,44 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 				btnCancel.setVisible(false);
 			}
 		}
-
+		if(this.isCurrentEmp){
+			this.currentEmployer.setDisabled(true);
+		}
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerEmploymentDetail);
 
 			// stores the initial data for comparing if they are changed
 			// during user action.
+			checkCurretEmployer();
 			doStoreInitValues();
-			setDialog(this.window_CustomerEmploymentDetailDialog);
+			doCheckEnquiry();
+			if(isNewCustomer()){
+				this.window_CustomerEmploymentDetailDialog.setHeight("35%");
+				this.window_CustomerEmploymentDetailDialog.setWidth("80%");
+				this.groupboxWf.setVisible(false);
+				this.window_CustomerEmploymentDetailDialog.doModal() ;
+			}else{
+				this.window_CustomerEmploymentDetailDialog.setWidth("100%");
+				this.window_CustomerEmploymentDetailDialog.setHeight("100%");
+				setDialog(this.window_CustomerEmploymentDetailDialog);
+			}
+			
 		} catch (final Exception e) {
 			PTMessageUtils.showErrorMessage(e.toString());
+			e.printStackTrace();
+		}
+	}
+
+	private void doCheckEnquiry() {
+		if("ENQ".equals(this.moduleType)){
+			this.custEmpFrom.setDisabled(true);
+			this.custEmpTo.setDisabled(true);
+			this.custEmpDesg.setReadonly(true);
+			this.custEmpDept.setReadonly(true);
+			this.custEmpType.setReadonly(true);
+			this.currentEmployer.setDisabled(true);
+			
 		}
 	}
 
@@ -753,30 +805,17 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		logger.debug("Entering");
 		
 	  	this.oldVar_custID = this.custID.longValue();
-		this.oldVar_custEmpName = this.custEmpName.getValue();
+		this.oldVar_custEmpName = Long.valueOf(this.custEmpName.getValue());
 		this.oldVar_custEmpFrom = this.custEmpFrom.getValue();	
+		this.oldVar_custEmpTo = this.custEmpTo.getValue();	
+		this.oldVar_currentEmployer = this.currentEmployer.isChecked();
  		this.oldVar_custEmpDesg = this.custEmpDesg.getValue();
- 		this.oldVar_lovDescCustEmpDesgName = this.lovDescCustEmpDesgName.getValue();
+ 		this.oldVar_lovDescCustEmpDesgName = this.custEmpDesg.getDescription();
  		this.oldVar_custEmpDept = this.custEmpDept.getValue();
- 		this.oldVar_lovDescCustEmpDeptName = this.lovDescCustEmpDeptName.getValue();
-		this.oldVar_custEmpID = this.custEmpID.getValue();
+ 		this.oldVar_lovDescCustEmpDeptName = this.custEmpDept.getDescription();
  		this.oldVar_custEmpType = this.custEmpType.getValue();
- 		this.oldVar_lovDescCustEmpTypeName = this.lovDescCustEmpTypeName.getValue();
-		this.oldVar_custEmpHNbr = this.custEmpHNbr.getValue();
-		this.oldVar_custEMpFlatNbr = this.custEMpFlatNbr.getValue();
-		this.oldVar_custEmpAddrStreet = this.custEmpAddrStreet.getValue();
-		this.oldVar_custEMpAddrLine1 = this.custEMpAddrLine1.getValue();
-		this.oldVar_custEMpAddrLine2 = this.custEMpAddrLine2.getValue();
-		this.oldVar_custEmpPOBox = this.custEmpPOBox.getValue();
- 		this.oldVar_custEmpAddrCity = this.custEmpAddrCity.getValue();
- 		this.oldVar_lovDescCustEmpAddrCityName = this.lovDescCustEmpAddrCityName.getValue();
- 		this.oldVar_custEmpAddrProvince = this.custEmpAddrProvince.getValue();
- 		this.oldVar_lovDescCustEmpAddrProvinceName = this.lovDescCustEmpAddrProvinceName.getValue();
- 		this.oldVar_custEmpAddrCountry = this.custEmpAddrCountry.getValue();
- 		this.oldVar_lovDescCustEmpAddrCountryName = this.lovDescCustEmpAddrCountryName.getValue();
-		this.oldVar_custEmpAddrZIP = this.custEmpAddrZIP.getValue();
-		this.oldVar_custEmpAddrPhone = this.custEmpAddrPhone.getValue();
-		this.oldVar_recordStatus = this.recordStatus.getValue();
+		this.oldVar_lovDescCustEmpTypeName = this.custEmpType.getDescription();
+ 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		
 		logger.debug("Leaving");
 	}
@@ -788,29 +827,16 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		logger.debug("Entering");
 		
 		this.custID.setValue(this.oldVar_custID);
-		this.custEmpName.setValue(this.oldVar_custEmpName);
+		this.custEmpName.setValue(String.valueOf(this.oldVar_custEmpName));
 		this.custEmpFrom.setValue(this.oldVar_custEmpFrom);
+		this.custEmpTo.setValue(this.oldVar_custEmpTo);
+		this.currentEmployer.setChecked(this.oldVar_currentEmployer);
  		this.custEmpDesg.setValue(this.oldVar_custEmpDesg);
- 		this.lovDescCustEmpDesgName.setValue(this.oldVar_lovDescCustEmpDesgName);
+ 		this.custEmpDesg.setDescription(this.oldVar_lovDescCustEmpDesgName);
  		this.custEmpDept.setValue(this.oldVar_custEmpDept);
- 		this.lovDescCustEmpDeptName.setValue(this.oldVar_lovDescCustEmpDeptName);
-		this.custEmpID.setValue(this.oldVar_custEmpID);
+ 		this.custEmpDept.setDescription(this.oldVar_lovDescCustEmpDeptName);
  		this.custEmpType.setValue(this.oldVar_custEmpType);
- 		this.lovDescCustEmpTypeName.setValue(this.oldVar_lovDescCustEmpTypeName);
-		this.custEmpHNbr.setValue(this.oldVar_custEmpHNbr);
-		this.custEMpFlatNbr.setValue(this.oldVar_custEMpFlatNbr);
-		this.custEmpAddrStreet.setValue(this.oldVar_custEmpAddrStreet);
-		this.custEMpAddrLine1.setValue(this.oldVar_custEMpAddrLine1);
-		this.custEMpAddrLine2.setValue(this.oldVar_custEMpAddrLine2);
-		this.custEmpPOBox.setValue(this.oldVar_custEmpPOBox);
- 		this.custEmpAddrCity.setValue(this.oldVar_custEmpAddrCity);
- 		this.lovDescCustEmpAddrCityName.setValue(this.oldVar_lovDescCustEmpAddrCityName);
- 		this.custEmpAddrProvince.setValue(this.oldVar_custEmpAddrProvince);
- 		this.lovDescCustEmpAddrProvinceName.setValue(this.oldVar_lovDescCustEmpAddrProvinceName);
- 		this.custEmpAddrCountry.setValue(this.oldVar_custEmpAddrCountry);
- 		this.lovDescCustEmpAddrCountryName.setValue(this.oldVar_lovDescCustEmpAddrCountryName);
-		this.custEmpAddrZIP.setValue(this.oldVar_custEmpAddrZIP);
-		this.custEmpAddrPhone.setValue(this.oldVar_custEmpAddrPhone);
+ 		this.custEmpType.setDescription(this.oldVar_lovDescCustEmpTypeName);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 		
 		if(isWorkFlowEnabled()){
@@ -834,10 +860,13 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		if (this.oldVar_custID != this.custID.longValue()) {
 			return true;
 		}
-		if (this.oldVar_custEmpName != this.custEmpName.getValue()) {
+		if (this.oldVar_custEmpFrom != this.custEmpFrom.getValue()) {
 			return true;
 		}
-		if (this.oldVar_custEmpFrom != this.custEmpFrom.getValue()) {
+		if (this.oldVar_custEmpTo != this.custEmpTo.getValue()) {
+			return true;
+		}
+		if (this.oldVar_currentEmployer!= this.currentEmployer.isChecked()) {
 			return true;
 		}
 		if (this.oldVar_custEmpDesg != this.custEmpDesg.getValue()) {
@@ -846,43 +875,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		if (this.oldVar_custEmpDept != this.custEmpDept.getValue()) {
 			return true;
 		}
-		if (this.oldVar_custEmpID != this.custEmpID.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEmpType != this.custEmpType.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEmpHNbr != this.custEmpHNbr.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEMpFlatNbr != this.custEMpFlatNbr.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEmpAddrStreet != this.custEmpAddrStreet.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEMpAddrLine1 != this.custEMpAddrLine1.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEMpAddrLine2 != this.custEMpAddrLine2.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEmpPOBox != this.custEmpPOBox.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEmpAddrCity != this.custEmpAddrCity.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEmpAddrProvince != this.custEmpAddrProvince.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEmpAddrCountry != this.custEmpAddrCountry.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEmpAddrZIP != this.custEmpAddrZIP.getValue()) {
-			return true;
-		}
-		if (this.oldVar_custEmpAddrPhone != this.custEmpAddrPhone.getValue()) {
+		if (!StringUtils.trimToEmpty(this.oldVar_custEmpType).equals(StringUtils.trimToEmpty(this.custEmpType.getValue()))) {
 			return true;
 		}
 		
@@ -901,56 +894,14 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustID.value")}));
 		}
-		if (!this.custEmpID.isReadonly()) {
-			this.custEmpID.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_REGEX,Labels.getLabel(
-				"MAND_FIELD_CHAR_NUMBER",new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpID.value") })));
+		if (this.custEmpName.isButtonVisible()) {
+			this.custEmpName.setConstraint(	"NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value")}));
 		}
-		if (!this.custEmpName.isReadonly()){
-			this.custEmpName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,Labels.getLabel(
-					"MAND_FIELD_CHARACTER",new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value") })));
-		}	
-		if (!this.custEmpFrom.isReadonly()) {
-			this.custEmpFrom.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:"+ Labels.getLabel("DATE_EMPTY_FUTURE_TODAY",
-				new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpFrom.value") }));
-		}
-		if (!this.custEmpPOBox.isReadonly()) {
-			this.custEmpPOBox.setConstraint(new SimpleConstraint(PennantConstants.NUM_REGEX,Labels.getLabel(
-				"MAND_NUMBER",new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpPOBox.value") })));
-		}
-		if (!this.custEmpAddrZIP.isReadonly()) {
-			if (!StringUtils.trimToEmpty(this.custEmpAddrZIP.getValue()).equals("")) {
-				this.custEmpAddrZIP.setConstraint(new SimpleConstraint(PennantConstants.ZIP_REGEX,Labels.getLabel(
-					"MAND_NUMBER",new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpAddrZIP.value") })));
-			}
-		}
-		if (!this.custEmpAddrPhone.isReadonly()) {
-			this.custEmpAddrPhone.setConstraint(new SimpleConstraint(PennantConstants.PH_REGEX,Labels.getLabel(
-				"MAND_NUMBER",new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpAddrPhone.value") })));
-		}
-		boolean addressConstraint = false;
-		if (StringUtils.trimToEmpty(this.custEmpHNbr.getValue()).equals("")
-				&& StringUtils.trimToEmpty(this.custEMpFlatNbr.getValue()).equals("")
-				&& StringUtils.trimToEmpty(this.custEmpAddrStreet.getValue()).equals("")
-				&& StringUtils.trimToEmpty(this.custEMpAddrLine1.getValue()).equals("")
-				&& StringUtils.trimToEmpty(this.custEMpAddrLine2.getValue()).equals("")) {
-			addressConstraint = true;
-		}
-		if (addressConstraint) {
-			this.custEmpHNbr.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_ADDRESS",
-				new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpHNbr.value") }));
-		}
-		if (addressConstraint) {
-			this.custEMpFlatNbr.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_ADDRESS",
-				new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEMpFlatNbr.value") }));
-		}
-		if (addressConstraint) {
-			this.custEmpAddrStreet.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_ADDRESS",
-				new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpAddrStreet.value") }));
-		}
-		if (addressConstraint) {
-			this.custEMpAddrLine1.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_ADDRESS",
-				new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEMpAddrLine1.value") }));
-		}
+		/*if (this.custEmpName.isButtonVisible()){
+			this.custEmpName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
+		}*/
 		logger.debug("Leaving");
 	}
 
@@ -964,15 +915,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		this.custCIF.setConstraint("");
 		this.custEmpName.setConstraint("");
 		this.custEmpFrom.setConstraint("");
-		this.custEmpID.setConstraint("");
-		this.custEmpHNbr.setConstraint("");
-		this.custEMpFlatNbr.setConstraint("");
-		this.custEmpAddrStreet.setConstraint("");
-		this.custEMpAddrLine1.setConstraint("");
-		this.custEMpAddrLine2.setConstraint("");
-		this.custEmpPOBox.setConstraint("");
-		this.custEmpAddrZIP.setConstraint("");
-		this.custEmpAddrPhone.setConstraint("");
+		this.custEmpTo.setConstraint("");
 		
 		logger.debug("Leaving");
 	}
@@ -983,23 +926,15 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		
-		this.lovDescCustEmpDesgName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+		this.custEmpDesg.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 				new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDesg.value")}));
 		
-		this.lovDescCustEmpDeptName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+		this.custEmpDept.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 				new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDept.value")}));
 		
-		this.lovDescCustEmpTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+		this.custEmpType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 				new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpType.value")}));
 		
-		this.lovDescCustEmpAddrCityName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpAddrCity.value")}));
-		
-		this.lovDescCustEmpAddrProvinceName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpAddrProvince.value")}));
-		
-		this.lovDescCustEmpAddrCountryName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpAddrCountry.value")}));
 		
 		logger.debug("Leaving");
 	}
@@ -1009,12 +944,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustEmpDesgName.setConstraint("");
-		this.lovDescCustEmpDeptName.setConstraint("");
-		this.lovDescCustEmpTypeName.setConstraint("");
-		this.lovDescCustEmpAddrCityName.setConstraint("");
-		this.lovDescCustEmpAddrProvinceName.setConstraint("");
-		this.lovDescCustEmpAddrCountryName.setConstraint("");
+		this.custEmpDesg.setConstraint("");
+		this.custEmpDept.setConstraint("");
+		this.custEmpType.setConstraint("");
 		logger.debug("Leaving");
 	}
 	
@@ -1026,21 +958,10 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		this.custCIF.setErrorMessage("");
 		this.custEmpName.setErrorMessage("");
 		this.custEmpFrom.setErrorMessage("");
-		this.custEmpID.setErrorMessage("");
-		this.custEmpHNbr.setErrorMessage("");
-		this.custEMpFlatNbr.setErrorMessage("");
-		this.custEmpAddrStreet.setErrorMessage("");
-		this.custEMpAddrLine1.setErrorMessage("");
-		this.custEMpAddrLine2.setErrorMessage("");
-		this.custEmpPOBox.setErrorMessage("");
-		this.custEmpAddrZIP.setErrorMessage("");
-		this.custEmpAddrPhone.setErrorMessage("");
-		this.lovDescCustEmpDesgName.setErrorMessage("");
-		this.lovDescCustEmpDeptName.setErrorMessage("");
-		this.lovDescCustEmpTypeName.setErrorMessage("");
-		this.lovDescCustEmpAddrCityName.setErrorMessage("");
-		this.lovDescCustEmpAddrProvinceName.setErrorMessage("");
-		this.lovDescCustEmpAddrCountryName.setErrorMessage("");
+		this.custEmpTo.setErrorMessage("");
+		this.custEmpDesg.setErrorMessage("");
+		this.custEmpDept.setErrorMessage("");
+		this.custEmpType.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
@@ -1074,7 +995,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + 
-									"\n\n --> " + aCustomerEmploymentDetail.getCustID();
+									"\n\n --> " + aCustomerEmploymentDetail.getCustID()+" with "+aCustomerEmploymentDetail.getLovDesccustEmpName();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 		
@@ -1087,7 +1008,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 			if (StringUtils.trimToEmpty(aCustomerEmploymentDetail.getRecordType()).equals("")){
 				aCustomerEmploymentDetail.setVersion(aCustomerEmploymentDetail.getVersion()+1);
 				aCustomerEmploymentDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
+				if(getCustomerDialogCtrl() != null &&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
+					aCustomerEmploymentDetail.setNewRecord(true);	
+				}
 				if (isWorkFlowEnabled()){
 					aCustomerEmploymentDetail.setNewRecord(true);
 					tranType=PennantConstants.TRAN_WF;
@@ -1097,7 +1020,18 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 			}
 
 			try {
-				if(doProcess(aCustomerEmploymentDetail,tranType)){
+				if(isNewCustomer()){
+					tranType=PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader =  newCusomerProcess(aCustomerEmploymentDetail,tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEmploymentDetailDialog, auditHeader);
+					int retValue = auditHeader.getProcessStatus();
+					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+						getCustomerDialogCtrl().doFillCustomerEmploymentDetail(this.customerEmploymentDetails);
+						// send the data back to customer
+						closeWindow();
+					}	
+
+				}else if(doProcess(aCustomerEmploymentDetail,tranType)){
 					refreshList();
 					closeDialog(this.window_CustomerEmploymentDetailDialog, "CustomerEmploymentDetail"); 
 				}
@@ -1127,7 +1061,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		doEdit(); // edit mode
 		this.btnCtrl.setBtnStatus_New();
 		// setFocus
-		this.btnSearchCustEmpDesg.focus();
+		this.custEmpDesg.getButton().focus();
 		logger.debug("Leaving");
 	}
 
@@ -1136,34 +1070,31 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
+		this.custID.setReadonly(true);
 		
-		if (getCustomerEmploymentDetail().isNewRecord()){
-		  	this.custID.setReadonly(false);
-			this.btnCancel.setVisible(false);
-			this.btnSearchPRCustid.setVisible(true);
+		if (isNewRecord()){
+			if(isNewCustomer()){
+				this.btnCancel.setVisible(false);	
+				this.btnSearchPRCustid.setVisible(false);
+			}else{
+				this.btnSearchPRCustid.setVisible(true);
+			}
+			this.btnDelete.setVisible(false);
+			this.custEmpName.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpName"));
 		}else{
-			this.custID.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
+			this.custEmpName.setReadonly(true);
 		}
 		this.custCIF.setReadonly(true);
-		this.custEmpName.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpName"));
 	 	this.custEmpFrom.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpFrom"));
-	  	this.btnSearchCustEmpDesg.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpDesg"));
-	  	this.btnSearchCustEmpDept.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpDept"));
-		this.custEmpID.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpID"));
-	  	this.btnSearchCustEmpType.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpType"));
-		this.custEmpHNbr.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpHNbr"));
-		this.custEMpFlatNbr.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEMpFlatNbr"));
-		this.custEmpAddrStreet.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpAddrStreet"));
-		this.custEMpAddrLine1.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEMpAddrLine1"));
-		this.custEMpAddrLine2.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEMpAddrLine2"));
-		this.custEmpPOBox.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpPOBox"));
-	  	this.btnSearchCustEmpAddrCity.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpAddrCity"));
-	  	this.btnSearchCustEmpAddrProvince.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpAddrProvince"));
-	  	this.btnSearchCustEmpAddrCountry.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpAddrCountry"));
-		this.custEmpAddrZIP.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpAddrZIP"));
-		this.custEmpAddrPhone.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpAddrPhone"));
+	 	this.custEmpTo.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpFrom"));
+	 	this.currentEmployer.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpFrom"));
+	  	this.custEmpDesg.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpDesg"));
+	  	this.custEmpDesg.setMandatoryStyle(!isReadOnly("CustomerEmploymentDetailDialog_custEmpDesg"));
+	  	this.custEmpDept.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpDept"));
+	  	this.custEmpDept.setMandatoryStyle(!isReadOnly("CustomerEmploymentDetailDialog_custEmpDept"));
+	  	this.custEmpType.setReadonly(isReadOnly("CustomerEmploymentDetailDialog_custEmpType"));
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1177,12 +1108,34 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		}else{
-			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			if(newCustomer){
+				if("ENQ".equals(this.moduleType)){
+					this.btnCtrl.setBtnStatus_New();
+					this.btnSave.setVisible(false);
+					btnCancel.setVisible(false);
+				}else if (isNewRecord()){
+					this.btnCtrl.setBtnStatus_Edit();
+					btnCancel.setVisible(false);
+				}else{
+					this.btnCtrl.setWFBtnStatus_Edit(newCustomer);
+				}
+			}else{
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(true);
+			}
 		}
 		logger.debug("Leaving");
 	}
-	
+	public boolean isReadOnly(String componentName){
+		boolean isCustomerWorkflow = false;
+		if(getCustomerDialogCtrl() != null){
+			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if (isWorkFlowEnabled() || isCustomerWorkflow){
+			return getUserWorkspace().isReadOnly(componentName);
+		}
+		return false;
+	}
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -1192,21 +1145,11 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		this.custID.setReadonly(true);
 		this.custEmpName.setReadonly(true);
 		this.custEmpFrom.setDisabled(true);
-		this.btnSearchCustEmpDesg.setDisabled(true);
-		this.btnSearchCustEmpDept.setDisabled(true);
-		this.custEmpID.setReadonly(true);
-		this.btnSearchCustEmpType.setDisabled(true);
-		this.custEmpHNbr.setReadonly(true);
-		this.custEMpFlatNbr.setReadonly(true);
-		this.custEmpAddrStreet.setReadonly(true);
-		this.custEMpAddrLine1.setReadonly(true);
-		this.custEMpAddrLine2.setReadonly(true);
-		this.custEmpPOBox.setReadonly(true);
-		this.btnSearchCustEmpAddrCity.setDisabled(true);
-		this.btnSearchCustEmpAddrProvince.setDisabled(true);
-		this.btnSearchCustEmpAddrCountry.setDisabled(true);
-		this.custEmpAddrZIP.setReadonly(true);
-		this.custEmpAddrPhone.setReadonly(true);
+		this.custEmpTo.setDisabled(true);
+		this.currentEmployer.setDisabled(true);
+		this.custEmpDesg.setReadonly(true);
+		this.custEmpDept.setReadonly(true);
+		this.custEmpType.setReadonly(true);
 		
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1229,29 +1172,14 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		
 		// remove validation, if there are a save before
 		this.custID.setText("");
-		this.custEmpName.setValue("");
 		this.custEmpFrom.setText("");
+		this.custEmpTo.setText("");
 	  	this.custEmpDesg.setValue("");
-		this.lovDescCustEmpDesgName.setValue("");
+		this.custEmpDesg.setDescColumn("");
 	  	this.custEmpDept.setValue("");
-		this.lovDescCustEmpDeptName.setValue("");
-		this.custEmpID.setValue("");
+		this.custEmpDept.setDescription("");
 	  	this.custEmpType.setValue("");
-		this.lovDescCustEmpTypeName.setValue("");
-		this.custEmpHNbr.setValue("");
-		this.custEMpFlatNbr.setValue("");
-		this.custEmpAddrStreet.setValue("");
-		this.custEMpAddrLine1.setValue("");
-		this.custEMpAddrLine2.setValue("");
-		this.custEmpPOBox.setValue("");
-	  	this.custEmpAddrCity.setValue("");
-		this.lovDescCustEmpAddrCityName.setValue("");
-	  	this.custEmpAddrProvince.setValue("");
-		this.lovDescCustEmpAddrProvinceName.setValue("");
-	  	this.custEmpAddrCountry.setValue("");
-		this.lovDescCustEmpAddrCountryName.setValue("");
-		this.custEmpAddrZIP.setValue("");
-		this.custEmpAddrPhone.setValue("");
+		this.custEmpType.setDescription("");
 		
 		logger.debug("Leaving");
 	}
@@ -1293,17 +1221,52 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 				}
 			}
 		}else{
-			aCustomerEmploymentDetail.setVersion(aCustomerEmploymentDetail.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
+
+
+			if(isNewCustomer()){
+				if(isNewRecord()){
+					aCustomerEmploymentDetail.setVersion(1);
+					aCustomerEmploymentDetail.setRecordType(PennantConstants.RCD_ADD);
+				}else{
+					tranType =PennantConstants.TRAN_UPD;
+				}
+
+				if(StringUtils.trimToEmpty(aCustomerEmploymentDetail.getRecordType()).equals("")){
+					aCustomerEmploymentDetail.setVersion(aCustomerEmploymentDetail.getVersion()+1);
+					aCustomerEmploymentDetail.setRecordType(PennantConstants.RCD_UPD);
+				}
+
+				if(aCustomerEmploymentDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
+					tranType =PennantConstants.TRAN_ADD;
+				} else if(aCustomerEmploymentDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+					tranType =PennantConstants.TRAN_UPD;
+				}
+
 			}else{
-				tranType =PennantConstants.TRAN_UPD;
+				aCustomerEmploymentDetail.setVersion(aCustomerEmploymentDetail.getVersion()+1);
+				if(isNew){
+					tranType =PennantConstants.TRAN_ADD;
+				}else{
+					tranType =PennantConstants.TRAN_UPD;
+				}
 			}
 		}
 		
 		// save it to database
 		try {
-			if(doProcess(aCustomerEmploymentDetail,tranType)){
+			if(isNewCustomer()){
+				AuditHeader auditHeader =  newCusomerProcess(aCustomerEmploymentDetail,tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEmploymentDetailDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+					getCustomerDialogCtrl().doFillCustomerEmploymentDetail(this.customerEmploymentDetails);
+					//true;
+					// send the data back to customer
+					closeWindow();
+
+				}
+
+			}else if(doProcess(aCustomerEmploymentDetail,tranType)){
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog(this.window_CustomerEmploymentDetailDialog, "CustomerEmploymentDetail");
@@ -1314,7 +1277,69 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		}
 		logger.debug("Leaving");
 	}
+	private AuditHeader newCusomerProcess(CustomerEmploymentDetail aCustomerRating,String tranType){
+		boolean recordAdded=false;
 
+		AuditHeader auditHeader= getAuditHeader(aCustomerRating, tranType);
+		customerEmploymentDetails = new ArrayList<CustomerEmploymentDetail>();
+
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
+
+		valueParm[0] = String.valueOf(aCustomerRating.getId());
+		valueParm[1] = String.valueOf(aCustomerRating.getLovDesccustEmpName());
+
+		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustEmpName") + ":"+valueParm[1];
+
+		if(getCustomerDialogCtrl().getCustomerEmploymentDetailList()!=null && getCustomerDialogCtrl().getCustomerEmploymentDetailList().size()>0){
+			for (int i = 0; i < getCustomerDialogCtrl().getCustomerEmploymentDetailList().size(); i++) {
+				CustomerEmploymentDetail customerRating = getCustomerDialogCtrl().getCustomerEmploymentDetailList().get(i);
+				if(customerRating.getCustEmpName() == aCustomerRating.getCustEmpName()){ // Both Current and Existing list rating same
+
+					if(isNewRecord()){
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
+								getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					}
+
+
+					if(tranType==PennantConstants.TRAN_DEL){
+						if(aCustomerRating.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+							aCustomerRating.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+							recordAdded=true;
+							customerEmploymentDetails.add(aCustomerRating);
+						}else if(aCustomerRating.getRecordType().equals(PennantConstants.RCD_ADD)){
+							recordAdded=true;
+						}else if(aCustomerRating.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+							aCustomerRating.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							recordAdded=true;
+							customerEmploymentDetails.add(aCustomerRating);
+						}else if(aCustomerRating.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
+							recordAdded=true;
+							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getRatingsList().size(); j++) {
+								CustomerEmploymentDetail rating =  getCustomerDialogCtrl().getCustomerDetails().getEmploymentDetailsList().get(j);
+								if(rating.getCustID() == aCustomerRating.getCustID() && rating.getCustEmpName()==aCustomerRating.getCustEmpName()){
+									customerEmploymentDetails.add(rating);
+								}
+							}
+						}
+					}else{
+						if(tranType!=PennantConstants.TRAN_UPD){
+							customerEmploymentDetails.add(customerRating);
+						}
+					}
+				}else{
+					customerEmploymentDetails.add(customerRating);
+				}
+			}
+		}
+		if(!recordAdded){
+			customerEmploymentDetails.add(aCustomerRating);
+		}
+		return auditHeader;
+	} 
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -1491,147 +1516,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++ Search Button Component Events+++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
-   public void onClick$btnSearchCustEmpDesg(Event event){
-	   logger.debug("Entering" + event.toString());
-	   
-	   Object dataObject = ExtendedSearchListBox.show(this.window_CustomerEmploymentDetailDialog,"GeneralDesignation");
-	   if (dataObject instanceof String){
-		   this.custEmpDesg.setValue(dataObject.toString());
-		   this.lovDescCustEmpDesgName.setValue("");
-	   }else{
-		   GeneralDesignation details= (GeneralDesignation) dataObject;
-			if (details != null) {
-				this.custEmpDesg.setValue(details.getLovValue());
-				this.lovDescCustEmpDesgName.setValue(details.getLovValue()+"-"+details.getGenDesgDesc());
-			}
-	   }
-	   logger.debug("Leaving" + event.toString());
-	}
-   
-   public void onClick$btnSearchCustEmpDept(Event event){
-	   logger.debug("Entering" + event.toString());
-	   
-	   Object dataObject = ExtendedSearchListBox.show(this.window_CustomerEmploymentDetailDialog,"GeneralDepartment");
-	   if (dataObject instanceof String){
-		   this.custEmpDept.setValue(dataObject.toString());
-		   this.lovDescCustEmpDeptName.setValue("");
-	   }else{
-		   GeneralDepartment details= (GeneralDepartment) dataObject;
-			if (details != null) {
-				this.custEmpDept.setValue(details.getLovValue());
-				this.lovDescCustEmpDeptName.setValue(details.getLovValue()+"-"+details.getGenDeptDesc());
-			}
-	   }
-	   logger.debug("Leaving" + event.toString());
-	}
-   
-   public void onClick$btnSearchCustEmpType(Event event){
-	   logger.debug("Entering" + event.toString());
-	   
-	   Object dataObject = ExtendedSearchListBox.show(this.window_CustomerEmploymentDetailDialog,"EmploymentType");
-	   if (dataObject instanceof String){
-		   this.custEmpType.setValue(dataObject.toString());
-		   this.lovDescCustEmpTypeName.setValue("");
-	   }else{
-		   EmploymentType details= (EmploymentType) dataObject;
-			if (details != null) {
-				this.custEmpType.setValue(details.getLovValue());
-				this.lovDescCustEmpTypeName.setValue(details.getLovValue()+"-"+details.getEmpTypeDesc());
-			}
-	   }
-	   logger.debug("Leaving" + event.toString());
-	}
-   
-   public void onClick$btnSearchCustEmpAddrCity(Event event){
-	   logger.debug("Entering" + event.toString());
-	   
-	   Filter[] filters = new Filter[1] ;
-	   filters[0]= new Filter("PCProvince", this.custEmpAddrProvince.getValue(), Filter.OP_EQUAL);  
-	   
-	   Object dataObject = ExtendedSearchListBox.show(this.window_CustomerEmploymentDetailDialog,"City",filters);
-	   if (dataObject instanceof String){
-		   this.custEmpAddrCity.setValue(dataObject.toString());
-		   this.lovDescCustEmpAddrCityName.setValue("");
-	   }else{
-		   City details= (City) dataObject;
-			if (details != null) {
-				this.custEmpAddrCity.setValue(details.getPCCity());
-				this.lovDescCustEmpAddrCityName.setValue(details.getLovValue()+"-"+details.getPCCityName());
-			}
-	   }
-	   logger.debug("Leaving" + event.toString());
-	}
-   
-   public void onClick$btnSearchCustEmpAddrProvince(Event event){
-	   logger.debug("Entering" + event.toString());
-	   
-	   String sCustEmpAddrProvince= this.custEmpAddrProvince.getValue();
-	   Filter[] filters = new Filter[1] ;
-	   filters[0]= new Filter("CPCountry", this.custEmpAddrCountry.getValue(), Filter.OP_EQUAL);  
-	   
-	   Object dataObject = ExtendedSearchListBox.show(this.window_CustomerEmploymentDetailDialog,"Province",filters);
-	   if (dataObject instanceof String){
-		   this.custEmpAddrProvince.setValue(dataObject.toString());
-		   this.lovDescCustEmpAddrProvinceName.setValue("");
-	   }else{
-		   Province details= (Province) dataObject;
-			if (details != null) {
-				this.custEmpAddrProvince.setValue(details.getCPProvince());
-				this.lovDescCustEmpAddrProvinceName.setValue(details.getLovValue()+"-"+details.getCPProvinceName());
-			}
-	   }
-	   if (!StringUtils.trimToEmpty(sCustEmpAddrProvince).equals(this.custEmpAddrProvince.getValue())){
-		   this.custEmpAddrCity.setValue("");
-		   this.lovDescCustEmpAddrCityName.setValue("");
-	   }
 
-	   if(!this.lovDescCustEmpAddrProvinceName.getValue().equals("")){
-		   this.btnSearchCustEmpAddrCity.setVisible(true);   
-	   }
-	   else{
-		   this.btnSearchCustEmpAddrCity.setVisible(false);
-		   this.lovDescCustEmpAddrCityName.setValue("");
-	   }
-	   logger.debug("Leaving" + event.toString());
-	}
    
-   public void onClick$btnSearchCustEmpAddrCountry(Event event){
-	   logger.debug("Entering" + event.toString());
-	   
-	   String sCustEmpAddrCountry= this.custEmpAddrCountry.getValue();
-	   
-	   Object dataObject = ExtendedSearchListBox.show(this.window_CustomerEmploymentDetailDialog,"Country");
-	   if (dataObject instanceof String){
-		   this.custEmpAddrCountry.setValue(dataObject.toString());
-		   this.lovDescCustEmpAddrCountryName.setValue("");
-	   }else{
-		   Country details= (Country) dataObject;
-			if (details != null) {
-				this.custEmpAddrCountry.setValue(details.getCountryCode());
-				this.lovDescCustEmpAddrCountryName.setValue(details.getLovValue()+"-"+details.getCountryDesc());
-			}
-	   }
-	   
-	   if (!StringUtils.trimToEmpty(sCustEmpAddrCountry).equals(this.custEmpAddrCountry.getValue())){
-		   this.custEmpAddrProvince.setValue("");
-		   this.lovDescCustEmpAddrProvinceName.setValue("");
-		   this.custEmpAddrCity.setValue("");
-		   this.lovDescCustEmpAddrCityName.setValue("");
-		   this.btnSearchCustEmpAddrCity.setVisible(false);
-	   }
-
-	   if(!this.lovDescCustEmpAddrCountryName.getValue().equals("")){
-		   this.btnSearchCustEmpAddrProvince.setVisible(true);
-	   }else{
-		   this.btnSearchCustEmpAddrProvince.setVisible(false);
-		   this.lovDescCustEmpAddrProvinceName.setValue("");
-		   this.btnSearchCustEmpAddrCity.setVisible(false);
-		   this.lovDescCustEmpAddrCityName.setValue("");
-	   }
-	   logger.debug("Leaving" + event.toString());
-	}
-
    /**
     * Method for Calling list Of existed Customers
     * @param event
@@ -1807,4 +1693,56 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		return customerSelectCtrl;
 	}
 
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
+		this.customerDialogCtrl = customerDialogCtrl;
+	}
+
+	public CustomerDialogCtrl getCustomerDialogCtrl() {
+		return customerDialogCtrl;
+	}
+
+	public void setNewCustomer(boolean newCustomer) {
+		this.newCustomer = newCustomer;
+	}
+
+	public boolean isNewCustomer() {
+		return newCustomer;
+	}
+	
+	public void onCheck$currentEmployer(Event event){
+		checkCurretEmployer();
+	}
+	
+	private void checkCurretEmployer(){
+		if (this.currentEmployer.isChecked()) {
+			this.custEmpTo.setReadonly(true);
+			this.custEmpTo.setDisabled(true);
+			this.custEmpTo.setValue(null);
+		}else{
+			this.custEmpTo.setReadonly(false);
+			this.custEmpTo.setDisabled(isReadOnly("CustomerEmploymentDetailDialog_custEmpFrom"));
+		}
+	}
+	
+	private String getLovDescription(String value) {
+		value = StringUtils.trimToEmpty(value);
+
+		try {
+			value = StringUtils.split(value, "-", 2)[1];
+		} catch (Exception e) {
+			//
+		}
+
+		return value;
+	}
+	
+	
 }

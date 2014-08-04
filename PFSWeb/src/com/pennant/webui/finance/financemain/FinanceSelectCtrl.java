@@ -45,6 +45,7 @@ package com.pennant.webui.finance.financemain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
@@ -70,18 +72,31 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceWriteoffHeader;
+import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
+import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.FinanceMaintenanceService;
+import com.pennant.backend.service.finance.FinanceWriteoffService;
+import com.pennant.backend.service.finance.ManualPaymentService;
+import com.pennant.backend.service.finance.RepaymentCancellationService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -122,8 +137,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	protected Textbox finBranch;						// autowired
 	protected Textbox scheduleMethod; 					// autowired
 	protected Textbox profitDaysBasis; 					// autowired
-	protected Paging  pagingFinanceList; 				// autowired
-	protected Listbox listBoxFinance; 					// autowired
+	private Paging  pagingFinanceList; 				// autowired
+	private Listbox listBoxFinance; 					// autowired
 	protected Button  btnClose; 						// autowired
 	protected Grid    grid_FinanceDetails;       		// autowired
 	protected Div 	  div_ToolBar;       				// autowired
@@ -145,25 +160,40 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	protected int   oldVar_sortOperator_profitDaysBasis;// autowired
 	
 	// List headers
-	protected Listheader listheader_FinReference; 		// autowired
-	protected Listheader listheader_FinType; 			// autowired
-	protected Listheader listheader_FinCcy; 			// autowired
-	protected Listheader listheader_ScheduleMethod; 	// autowired
-	protected Listheader listheader_ProfitDaysBasis; 	// autowired
+	protected Listheader listheader_FinType;		// autoWired
+	protected Listheader listheader_FinProduct;		// autoWired
+	protected Listheader listheader_CustCIF;		// autoWired
+	protected Listheader listheader_FinRef;			// autoWired
+	protected Listheader listheader_FinBranch;		// autoWired
+	protected Listheader listheader_FinStartDate;	// autoWired
+	protected Listheader listheader_NumberOfTerms;	// autoWired
+	protected Listheader listheader_MaturityDate;	// autoWired
+	protected Listheader listheader_FinCcy;			// autoWired
+	protected Listheader listheader_FinAmount;		// autoWired
+	protected Listheader listheader_CurFinAmount;	// autoWired
+	protected Listheader listheader_RecordStatus;	// autoWired
 
 	protected Label label_FinanceSelectResult; 			// autowired
 	private String moduleDefiner = "";
+	private String workflowCode = "";
 	private String eventCodeRef = "";
+	private String menuItemRightName = null;
 	private Tab tab;
 	private Tabbox	tabbox;
 
 	// not auto wired vars
 	private transient Object dialogCtrl   =   null;
-	private transient WorkFlowDetails workFlowDetails  =  WorkFlowUtil.getWorkFlowDetails("FinanceMain");
+	private transient WorkFlowDetails workFlowDetails  =  null;
 	protected JdbcSearchObject<FinanceMain> searchObject;
 	private List<Filter> filterList;
 	protected Button btnClear;
 	private transient FinanceDetailService financeDetailService;
+	private transient ManualPaymentService manualPaymentService;
+	private transient FinanceWriteoffService financeWriteoffService;
+	private transient FinanceCancellationService financeCancellationService;
+	private transient FinanceMaintenanceService financeMaintenanceService;
+	private transient RepaymentCancellationService repaymentCancellationService;
+	private FinanceMain financeMain;
 	private int listRows;
 	
 	/**
@@ -187,13 +217,30 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_FinanceSelect(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
+		
 		if (event.getTarget() != null && event.getTarget().getParent() != null
 				&& event.getTarget().getParent().getParent()!=null && 
 				event.getTarget().getParent().getParent().getParent() != null && 
 				event.getTarget().getParent().getParent().getParent().getParent() != null) {
 			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
+			
+			String menuItemName = tabbox.getSelectedTab().getId();
+			menuItemName = menuItemName.trim().replace("tab_", "menu_Item_");
+			
+			if (getUserWorkspace().getHasMenuRights().containsKey(menuItemName)) {
+				menuItemRightName = getUserWorkspace().getHasMenuRights().get(menuItemName);
+			}
+			
 			checkAndSetModDef(tabbox);
 	    }
+		
+		//Finance Maintenance Workflow Check & Assignment
+		if(!workflowCode.equals("")){
+			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(workflowCode);
+			if (moduleMapping.getWorkflowType() != null) {
+				workFlowDetails = WorkFlowUtil.getWorkFlowDetails(workflowCode);
+			} 
+		}
 		
 		if (workFlowDetails == null) {
 			setWorkFlowEnabled(false);
@@ -202,6 +249,44 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 			setWorkFlowId(workFlowDetails.getId());
 		}
+		
+		//Listbox Sorting
+		
+		this.listheader_FinType.setSortAscending(new FieldComparator("finType", true));
+		this.listheader_FinType.setSortDescending(new FieldComparator("finType", false));
+		
+		this.listheader_FinProduct.setSortAscending(new FieldComparator("lovDescProductCodeName", true));
+		this.listheader_FinProduct.setSortDescending(new FieldComparator("lovDescProductCodeName", false));
+		
+		this.listheader_CustCIF.setSortAscending(new FieldComparator("lovDescCustCIF", true));
+		this.listheader_CustCIF.setSortDescending(new FieldComparator("lovDescCustCIF", false));
+		
+		this.listheader_FinRef.setSortAscending(new FieldComparator("finReference", true));
+		this.listheader_FinRef.setSortDescending(new FieldComparator("finReference", false));
+		
+		this.listheader_FinBranch.setSortAscending(new FieldComparator("finBranch", true));
+		this.listheader_FinBranch.setSortDescending(new FieldComparator("finBranch", false));
+		
+		this.listheader_FinStartDate.setSortAscending(new FieldComparator("finStartDate", true));
+		this.listheader_FinStartDate.setSortDescending(new FieldComparator("finStartDate", false));
+		
+		this.listheader_NumberOfTerms.setSortAscending(new FieldComparator("numberOfTerms", true));
+		this.listheader_NumberOfTerms.setSortDescending(new FieldComparator("numberOfTerms", false));
+		
+		this.listheader_MaturityDate.setSortAscending(new FieldComparator("maturityDate", true));
+		this.listheader_MaturityDate.setSortDescending(new FieldComparator("maturityDate", false));
+		
+		this.listheader_FinCcy.setSortAscending(new FieldComparator("finCcy", true));
+		this.listheader_FinCcy.setSortDescending(new FieldComparator("finCcy", false));
+		
+		this.listheader_FinAmount.setSortAscending(new FieldComparator("finAmount", true));
+		this.listheader_FinAmount.setSortDescending(new FieldComparator("finAmount", false));
+		
+		this.listheader_CurFinAmount.setSortAscending(new FieldComparator("finRepaymentAmount", true));
+		this.listheader_CurFinAmount.setSortDescending(new FieldComparator("finRepaymentAmount", false));
+		
+		this.listheader_RecordStatus.setSortAscending(new FieldComparator("RecordStatus", true));
+		this.listheader_RecordStatus.setSortDescending(new FieldComparator("RecordStatus", false));
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
@@ -241,8 +326,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		if (args.containsKey("searchObject")) {
 			searchObject = (JdbcSearchObject<FinanceMain>) args.get("searchObject");
 		}
-		this.pagingFinanceList.setPageSize(20);
-		this.pagingFinanceList.setDetailed(true);
+		this.getPagingFinanceList().setPageSize(20);
+		this.getPagingFinanceList().setDetailed(true);
 		if (searchObject != null) {
 			// Render Search Object
 			paging(searchObject);
@@ -277,7 +362,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		}
 
 		showFinanceSeekDialog();
-
+        if(moduleDefiner.equals(PennantConstants.TAKAFULPREMIUMEXCLUDE)){
+        	this.listheader_RecordStatus.setVisible(false);
+        }
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -335,8 +422,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		}
 		try {
 			if(dialogCtrl != null){
-				if (dialogCtrl.getClass().getMethod("closeTab", null) != null) {
-					dialogCtrl.getClass().getMethod("closeTab", null).invoke(dialogCtrl, null);
+				if (dialogCtrl.getClass().getMethod("closeTab") != null) {
+					dialogCtrl.getClass().getMethod("closeTab").invoke(dialogCtrl);
 				}
 			}else{
 				this.window_FinanceSelect.onClose();
@@ -373,9 +460,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			this.borderlayout_FinanceSelect.setHeight(getBorderLayoutHeight());
 			int dialogHeight =  grid_FinanceDetails.getRows().getVisibleItemCount()* 20 + 120; 
 			int listboxHeight = borderLayoutHeight-dialogHeight;
-			listBoxFinance.setHeight(listboxHeight+"px");
+			getListBoxFinance().setHeight(listboxHeight+"px");
 			listRows = Math.round(listboxHeight/ 23);
-			this.pagingFinanceList.setPageSize(listRows);
+			this.getPagingFinanceList().setPageSize(listRows);
 		} catch (final Exception e) {
 			logger.error(e);
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -660,8 +747,16 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		logger.debug("Entering");
 
 		this.searchObject = new JdbcSearchObject<FinanceMain>(FinanceMain.class); 
-		this.searchObject.addTabelName("FinanceEnquiry_View");
-		this.searchObject.addFilterEqual("FinIsActive", "1");
+		this.searchObject.addTabelName("FinanceMaintenance_View");
+		if(!workflowCode.equals("")){
+			this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		}
+		this.searchObject.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		if(filterList != null && !filterList.isEmpty()){
+			for (Filter filter : filterList) {
+				this.searchObject.addFilter(filter);
+			}
+		}
 		
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
@@ -817,22 +912,71 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			}
 		}
 
-		searchObject.addFilter(new Filter("FinAmount - FinRepaymentAmount", 0, Filter.OP_NOT_EQUAL));
-		searchObject.addFilter(new Filter("Blacklisted", 0, Filter.OP_EQUAL));
+		// Default Sort on the table	
+		Date appDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		
-		// Default Sort on the table
 		searchObject.addSort("FinReference", false);
-
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = searchObject.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
+		StringBuilder whereClause = new StringBuilder( " FinIsActive = 1 " );
+		whereClause.append(" AND (RcdMaintainSts = '' OR RcdMaintainSts = '"+moduleDefiner+"' ) "); 
+		int backValueDays = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("MAINTAIN_RATECHG_BACK_DATE").toString());
+		Date backValueDate = DateUtility.addDays(appDate, backValueDays);
+		
+		if(moduleDefiner.equals(PennantConstants.ADD_RATE_CHG) ) {
+			whereClause.append(" AND ((AllowGrcPftRvw = 1 OR AllowRepayRvw = 1) OR "); 
+			whereClause.append("(FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND "); 
+			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "'))");  
+		}else if(moduleDefiner.equals(PennantConstants.CHG_REPAY)) {
+			
+		}else if(moduleDefiner.equals(PennantConstants.ADD_DISB)) {
+			whereClause.append(" AND lovDescFinIsAlwMD = '1'  AND MaturityDate > " + appDate);  
+		}else if(moduleDefiner.equals(PennantConstants.ADD_DEFF)) { 
+			whereClause.append(" AND (Defferments - AvailedDefRpyChange >= 0 ) "); 
+		}else if(moduleDefiner.equals(PennantConstants.RMV_DEFF)) { 
+			whereClause.append(" AND ( FinReference IN (select FinReference from FinanceMain where AvailedDefRpyChange > 0) ) "); 
+		}else if(moduleDefiner.equals(PennantConstants.ADD_TERMS)){
+			
+		}else if(moduleDefiner.equals(PennantConstants.RMV_TERMS)){
+			
+		}else if(moduleDefiner.equals(PennantConstants.RECALC)){
+			
+		}else if(moduleDefiner.equals(PennantConstants.SUBSCH)){
+			
+		}else if(moduleDefiner.equals(PennantConstants.CHGPFT)){
+			whereClause.append(" AND ((AllowGrcPftRvw = 1 OR AllowRepayRvw = 1) OR "); 
+			whereClause.append("(FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND "); 
+			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "'))");  
+		}else if(moduleDefiner.equals(PennantConstants.CHGFRQ)){
+			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D +"' " );
+		}else if(moduleDefiner.equals(PennantConstants.DATEDSCHD)){
+			whereClause.append(" AND MaturityDate > '" + DateUtility.addDays(appDate, 1)+"' " );
+		}else if(moduleDefiner.equals(PennantConstants.COMPOUND)){
+			whereClause.append(" AND (LovDescProductCodeName = '"+PennantConstants.FINANCE_PRODUCT_SUKUK +"')"); 
+		}else if(moduleDefiner.equals(PennantConstants.SCH_REPAY)){
+			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
+		}else if(moduleDefiner.equals(PennantConstants.SCH_EARLYPAY)){
+			whereClause.append(" AND FinStartDate < '" + appDate +"' " );
+		}else if(moduleDefiner.equals(PennantConstants.SCH_EARLYPAYENQ)){
+			whereClause.append(" AND FinStartDate < '" + appDate +"' " );
+		}else if(moduleDefiner.equals(PennantConstants.WRITEOFF)){
+			
+		}else if(moduleDefiner.equals(PennantConstants.CANCELREPAY)){
+			//whereClause.append(" OR (FinIsActive = '0' AND ClosingStatus = 'M') ");
+		}else if(moduleDefiner.equals(PennantConstants.CANCELFINANCE)){
+			
+			backValueDays = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("MAINTAIN_CANFIN_BACK_DATE").toString());
+			backValueDate = DateUtility.addDays(appDate, backValueDays);
+			
+			whereClause.append(" AND MigratedFinance = '0' ");
+			whereClause.append(" AND (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND "); 
+			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "')");  
+		} else if (moduleDefiner.equals(PennantConstants.TAKAFULPREMIUMEXCLUDE)) {
+			whereClause.append(" AND FinReference IN(SELECT FinReference FROM FinFeeCharges WHERE FeeCode= 'TAKAFUL')");
 		}
-
+		
+		// Filtering added based on user branch and division
+		whereClause.append(" ) AND ( " +getUsrFinAuthenticationQry(false));
+		
+		searchObject.addWhereClause(whereClause.toString());
 		setSearchObj(searchObject);
 		paging(searchObject);
 		logger.debug("Leaving");
@@ -845,9 +989,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	 */
 	private void paging(JdbcSearchObject<FinanceMain> searchObj) {
 		logger.debug("Entering");	
-		getPagedBindingListWrapper().init(searchObj, this.listBoxFinance, this.pagingFinanceList);
-		this.listBoxFinance.setItemRenderer(new FinanceMainSelectItemRenderer());
-		//this.label_FinanceSelectResult.setValue(Labels.getLabel("label_FinanceSelectResult") + " " + String.valueOf(pagingFinanceList.getTotalSize()));
+		getPagedListWrapper().init(searchObj, getListBoxFinance(), getPagingFinanceList());
+		this.getListBoxFinance().setItemRenderer(new FinanceMainSelectItemRenderer());
 		logger.debug("Leaving");
 	}
 
@@ -855,29 +998,47 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	@SuppressWarnings("rawtypes")
 	public void onFinanceItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		final Listitem item = this.listBoxFinance.getSelectedItem();
+		final Listitem item = this.getListBoxFinance().getSelectedItem();
 		if (!moduleDefiner.equals("") && !moduleDefiner.equals(PennantConstants.SCH_REPAY) && 
 				!moduleDefiner.equals(PennantConstants.SCH_EARLYPAY) && 
-				!moduleDefiner.equals(PennantConstants.WRITEOFF)) {
+				!moduleDefiner.equals(PennantConstants.SCH_EARLYPAYENQ) &&
+				!moduleDefiner.equals(PennantConstants.WRITEOFF) &&
+				!moduleDefiner.equals(PennantConstants.CANCELFINANCE) &&
+				!moduleDefiner.equals(PennantConstants.MNT_BASIC_DETAIL) &&
+				!moduleDefiner.equals(PennantConstants.CANCELREPAY) &&
+				!moduleDefiner.equals(PennantConstants.TAKAFULPREMIUMEXCLUDE)) {
+			
 			openFinanceMainDialog(item);
+			
 		}else if(moduleDefiner.equals(PennantConstants.SCH_REPAY) || 
 				moduleDefiner.equals(PennantConstants.SCH_EARLYPAY) || 
-				moduleDefiner.equals(PennantConstants.WRITEOFF)) {
+				moduleDefiner.equals(PennantConstants.SCH_EARLYPAYENQ)) {
 			
-			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("selectedItem", item.getAttribute("data"));
-			map.put("moduleDefiner", moduleDefiner);
-			// call the ZUL-file with the parameters packed in a map
-			try {
-				Executions.createComponents("/WEB-INF/pages/FinanceManagement/Payments/ManualPayment.zul",null,map);
-			} catch (final Exception e) {
-				logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-				PTMessageUtils.showErrorMessage(e.toString());
-			}
+			openFinanceRepaymentDialog(item);
 			
-		}else {
-			if (this.listBoxFinance.getSelectedItem() != null) {
-				final Listitem li = this.listBoxFinance.getSelectedItem();
+		}else if(moduleDefiner.equals(PennantConstants.WRITEOFF)) {
+			
+			openFinanceWriteoffDialog(item);
+			
+		}else if(moduleDefiner.equals(PennantConstants.CANCELFINANCE)) {
+			
+			openFinanceCancellationDialog(item);
+			
+		}else if(moduleDefiner.equals(PennantConstants.MNT_BASIC_DETAIL)) {
+			
+			openFinMaintenanceDialog(item);
+			
+		}else if(moduleDefiner.equals(PennantConstants.CANCELREPAY)) {
+			
+			openFinanceRepayCancelDialog(item);
+			
+		}else if(moduleDefiner.equals(PennantConstants.TAKAFULPREMIUMEXCLUDE)) {
+			
+			openTakafulPremiumExcludeDialog(item); 
+			
+		 } else {
+			if (this.getListBoxFinance().getSelectedItem() != null) {
+				final Listitem li = this.getListBoxFinance().getSelectedItem();
 				final Object object = li.getAttribute("data");
 
 				if (getDialogCtrl() != null) {
@@ -902,30 +1063,34 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	}
 	
 	
-	public void openFinanceMainDialog(Listitem item) throws Exception {
+	private void openFinanceMainDialog(Listitem item) throws Exception {
 		logger.debug("Entering ");
 		// get the selected FinanceMain object
 		
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
-			final FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailById(aFinanceMain.getId(),false,eventCodeRef);
+			final FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailById(aFinanceMain.getId(),false,eventCodeRef,false);
+			
+			String maintainSts = "";
+			if(financeDetail.getFinScheduleData().getFinanceMain() != null){
+				maintainSts = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+			}
 
-			if(financeDetail==null){
+			if(financeDetail==null || (!maintainSts.equals("") && !maintainSts.equals(moduleDefiner))){
 				String[] errParm= new String[1];
 				String[] valueParm= new String[1];
 				valueParm[0]=aFinanceMain.getId();
 				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm)
-				, getUserWorkspace().getUserLanguage());
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
 
 					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID()
-							, "FinanceMain", whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces){
 						showDetailView(financeDetail);
 					}else{
@@ -939,6 +1104,296 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		logger.debug("Leaving ");
 	}
 	
+	private void openFinMaintenanceDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+		
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+			final FinanceDetail financeDetail = getFinanceMaintenanceService().getFinanceDetailById(aFinanceMain.getId(),"_View");
+			
+			String maintainSts = "";
+			if(financeDetail.getFinScheduleData().getFinanceMain() != null){
+				maintainSts = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+			}
+
+			if(financeDetail==null || (!maintainSts.equals("") && !maintainSts.equals(moduleDefiner))){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				PTMessageUtils.showErrorMessage(errorDetails.getError());
+			}else{
+				if(isWorkFlowEnabled()){
+					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
+
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID()
+							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces){
+						showMaintainDetailView(financeDetail);
+					}else{
+						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				}else{
+					showMaintainDetailView(financeDetail);
+				}
+			}	
+		}
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * Method for Fetching Finance Repayment Details
+	 * @param item
+	 * @throws Exception
+	 */
+	private void openFinanceRepaymentDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+		
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+			final RepayData repayData = getManualPaymentService().getRepayDataById(aFinanceMain.getFinReference(), eventCodeRef);
+			
+			String maintainSts = "";
+			if(repayData.getFinanceMain() != null){
+				maintainSts = StringUtils.trimToEmpty(repayData.getFinanceMain().getRcdMaintainSts());
+			}
+
+			if(repayData == null || (!maintainSts.equals("") && !maintainSts.equals(moduleDefiner))){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm)
+				, getUserWorkspace().getUserLanguage());
+				PTMessageUtils.showErrorMessage(errorDetails.getError());
+			}else{
+				if(isWorkFlowEnabled()){
+					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
+
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID()
+							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces){
+						showRepayDetailView(repayData);
+					}else{
+						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				}else{
+					showRepayDetailView(repayData);
+				}
+			}	
+		}
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * Method for Fetching Finance Repayment Details
+	 * @param item
+	 * @throws Exception
+	 */
+	private void openFinanceWriteoffDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+		
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+			final FinanceWriteoffHeader writeoffHeader = getFinanceWriteoffService().getFinanceWriteoffDetailById(aFinanceMain.getFinReference(), "_View");
+			
+			String maintainSts = "";
+			if(writeoffHeader.getFinanceMain() != null){
+				maintainSts = StringUtils.trimToEmpty(writeoffHeader.getFinanceMain().getRcdMaintainSts());
+			}
+
+			if(writeoffHeader == null || (!maintainSts.equals("") && !maintainSts.equals(moduleDefiner))){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",
+						errParm,valueParm), getUserWorkspace().getUserLanguage());
+				PTMessageUtils.showErrorMessage(errorDetails.getError());
+			}else{
+				if(isWorkFlowEnabled()){
+					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
+
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID()
+							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces){
+						showWriteoffDetailView(writeoffHeader);
+					}else{
+						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				}else{
+					showWriteoffDetailView(writeoffHeader);
+				}
+			}	
+		}
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * Method for Fetching Finance Repayment Details
+	 * @param item
+	 * @throws Exception
+	 */
+	private void openTakafulPremiumExcludeDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+		
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+			FinanceDetail finDetail = getFinanceMaintenanceService().getFinanceDetailById(aFinanceMain.getFinReference(), "_View");
+			if(finDetail!=null){
+				aFinanceMain = finDetail.getFinScheduleData().getFinanceMain();
+			}
+			setFinanceMain(aFinanceMain);
+			
+			final FeeRule feeRule = getFinanceDetailService().getFeeChargesByFinRefAndFeeCode(aFinanceMain.getFinReference(), "TAKAFUL", "");
+			String maintainSts = "";
+			/*if(writeoffHeader.getFinanceMain() != null){
+				maintainSts = StringUtils.trimToEmpty(writeoffHeader.getFinanceMain().getRcdMaintainSts());
+			}*/
+			
+			if(feeRule == null || (!maintainSts.equals("") && !maintainSts.equals(moduleDefiner))){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+				
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",
+						errParm,valueParm), getUserWorkspace().getUserLanguage());
+				PTMessageUtils.showErrorMessage(errorDetails.getError());
+			}else{
+				if(isWorkFlowEnabled()){
+					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
+					
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID()
+							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces){
+						showTakafulPremiumExcludefDetailView(feeRule);
+					}else{
+						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				}else{
+					showTakafulPremiumExcludefDetailView(feeRule);
+				}
+			}	
+		}
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * Method for Fetching Finance Cancellation Details
+	 * @param item
+	 * @throws Exception
+	 */
+	private void openFinanceCancellationDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+		
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+			final FinanceDetail financeDetail = getFinanceCancellationService().getFinanceDetailById(aFinanceMain.getFinReference(), "_View");
+			String maintainSts = "";
+			if(financeDetail.getFinScheduleData().getFinanceMain() != null){
+				maintainSts = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+			}
+			
+			//Check Repayments on Finance when it is not in Maintenance
+			if(maintainSts.equals("")){
+				List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
+				listFinanceRepayments = getFinanceDetailService().getFinanceRepaymentsByFinRef(aFinanceMain.getFinReference(), false);
+				if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
+					PTMessageUtils.showErrorMessage("Repayments done on this Finance. Cannot Proceed Further");
+					return;
+				}
+			}
+			
+			if(financeDetail == null || (!maintainSts.equals("") && !maintainSts.equals(moduleDefiner))){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",
+						errParm,valueParm), getUserWorkspace().getUserLanguage());
+				PTMessageUtils.showErrorMessage(errorDetails.getError());
+			}else{
+				if(isWorkFlowEnabled()){
+					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
+
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID()
+							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces){
+						showCancellationDetailView(financeDetail);
+					}else{
+						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				}else{
+					showCancellationDetailView(financeDetail);
+				}
+			}	
+		}
+		logger.debug("Leaving ");
+	}
+
+	/**
+	 * Method for Fetching Finance Repayment Details
+	 * @param item
+	 * @throws Exception
+	 */
+	private void openFinanceRepayCancelDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+		
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+			final FinanceDetail financeDetail = getRepaymentCancellationService().getFinanceDetailById(aFinanceMain.getId(),"_View");
+			
+			String maintainSts = "";
+			if(financeDetail.getFinScheduleData().getFinanceMain() != null){
+				maintainSts = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+			}
+
+			if(financeDetail == null || (!maintainSts.equals("") && !maintainSts.equals(moduleDefiner))){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm)
+				, getUserWorkspace().getUserLanguage());
+				PTMessageUtils.showErrorMessage(errorDetails.getError());
+			}else{
+				if(isWorkFlowEnabled()){
+					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
+
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID()
+							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces){
+						showRepayCancelView(financeDetail);
+					}else{
+						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				}else{
+					showRepayCancelView(financeDetail);
+				}
+			}	
+		}
+		logger.debug("Leaving ");
+	}
+
 	/**
 	 * Opens the detail view. <br>
 	 * Over handed some parameters in a map if needed. <br>
@@ -946,8 +1401,80 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	 * @param FinanceMain (aFinanceMain)
 	 * @throws Exception
 	 */
-	protected void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
+	private void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
 		logger.debug("Entering");
+		/*
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
+		 */
+		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
+			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
+		final HashMap<String, Object> map = new HashMap<String, Object>(6);
+		map.put("financeDetail", aFinanceDetail);
+		/*
+		 * we can additionally handed over the listBox or the controller self,
+		 * so we have in the dialog access to the list box List model. This is
+		 * fine for synchronizing the data in the FinanceMainListbox from the
+		 * dialog when we do a delete, edit or insert a FinanceMain.
+		 */
+		map.put("financeSelectCtrl", this);
+		map.put("tabbox",tab);
+		map.put("moduleDefiner",moduleDefiner);
+		map.put("eventCode",eventCodeRef);
+		map.put("menuItemRightName",menuItemRightName);
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+
+			String productType = aFinanceMain.getLovDescProductCodeName();
+			productType = (productType.substring(0, 1)).toUpperCase()+(productType.substring(1)).toLowerCase();
+			
+			StringBuilder fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
+			if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_IJARAH)) {
+				fileLocaation.append("IjarahFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_ISTISNA)) {
+				fileLocaation.append("IstisnaFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_MUDARABA)) {
+				fileLocaation.append("MudarabaFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_MURABAHA)) {
+				fileLocaation.append("MurabahaFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_MUSHARAKA)) {
+				fileLocaation.append("MusharakFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_TAWARRUQ)) {
+				fileLocaation.append("TawarruqFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_SUKUK)) {
+				fileLocaation.append("SukukFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_SUKUKNRM)) {
+				fileLocaation.append("SukuknrmFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_ISTNORM)) {
+				fileLocaation.append("IstnormFinanceMainDialog.zul");
+			} else {
+				fileLocaation.append("FinanceMainDialog.zul");
+			}
+			
+			Executions.createComponents(fileLocaation.toString(), null,map);
+			
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Opens the detail view. <br>
+	 * Over handed some parameters in a map if needed. <br>
+	 * 
+	 * @param FinanceMain (aFinanceMain)
+	 * @throws Exception
+	 */
+	private void showMaintainDetailView(FinanceDetail aFinanceDetail) throws Exception {
+		logger.debug("Entering");
+		
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
@@ -967,13 +1494,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		 * dialog when we do a delete, edit or insert a FinanceMain.
 		 */
 		map.put("financeSelectCtrl", this);
-		map.put("tabbox",tab);
 		map.put("moduleDefiner",moduleDefiner);
-		map.put("eventCode",eventCodeRef);
+		map.put("menuItemRightName",menuItemRightName);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceMainDialog.zul",null,map);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceMaintenanceDialog.zul", null,map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -981,8 +1507,195 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Opens the detail view. <br>
+	 * Over handed some parameters in a map if needed. <br>
+	 * 
+	 * @param FinanceMain (aFinanceMain)
+	 * @throws Exception
+	 */
+	private void showRepayDetailView(RepayData repayData) throws Exception {
+		logger.debug("Entering");
+		
+		/*
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
+		 */
+		FinanceMain aFinanceMain = repayData.getFinanceMain();
+		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
+			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		repayData.setFinanceMain(aFinanceMain);
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("repayData", repayData);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("eventCode",eventCodeRef);
+		map.put("menuItemRightName",menuItemRightName);
+		map.put("financeSelectCtrl", this);
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Payments/ManualPayment.zul",null,map);
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Opens the detail view. <br>
+	 * Over handed some parameters in a map if needed. <br>
+	 * 
+	 * @param FinanceMain (aFinanceMain)
+	 * @throws Exception
+	 */
+	private void showWriteoffDetailView(FinanceWriteoffHeader writeoffHeader) throws Exception {
+		logger.debug("Entering");
+		
+		/*
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
+		 */
+		FinanceMain aFinanceMain = writeoffHeader.getFinanceMain();
+		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
+			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		writeoffHeader.setFinanceMain(aFinanceMain);
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("financeWriteoffHeader", writeoffHeader);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("menuItemRightName",menuItemRightName);
+		map.put("financeSelectCtrl", this);
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Payments/FinanceWriteoffDialog.zul",null,map);
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving");
+	}
 	
 	
+	/**
+	 * Opens the detail view. <br>
+	 * Over handed some parameters in a map if needed. <br>
+	 * 
+	 * @param FinanceMain (aFinanceMain)
+	 * @throws Exception
+	 */
+	private void showTakafulPremiumExcludefDetailView(FeeRule feeRule) throws Exception {
+		logger.debug("Entering");
+		
+		/*
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
+		 */
+	/*	FinanceMain aFinanceMain = feeRule.getFinanceMain();
+		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
+			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		feeRule.setFinanceMain(aFinanceMain);*/
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("feeRule", feeRule);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("menuItemRightName",menuItemRightName);
+		map.put("financeSelectCtrl", this);
+		map.put("financeMain", getFinanceMain());
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Payments/TakaFulPremiumExcludeDialog.zul",null,map);
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Opens the detail view. <br>
+	 * Over handed some parameters in a map if needed. <br>
+	 * 
+	 * @param FinanceMain (aFinanceMain)
+	 * @throws Exception
+	 */
+	private void showCancellationDetailView(FinanceDetail financeDetail) throws Exception {
+		logger.debug("Entering");
+		
+		/*
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
+		 */
+		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
+			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		financeDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("financeDetail", financeDetail);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("menuItemRightName",menuItemRightName);
+		map.put("financeSelectCtrl", this);
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceCancellationDialog.zul",null,map);
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Opens the detail view. <br>
+	 * Over handed some parameters in a map if needed. <br>
+	 * 
+	 * @param FinanceMain (aFinanceMain)
+	 * @throws Exception
+	 */
+	private void showRepayCancelView(FinanceDetail financeDetail) throws Exception {
+		logger.debug("Entering");
+		
+		/*
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
+		 */
+		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
+			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		financeDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("financeDetail", financeDetail);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("menuItemRightName",menuItemRightName);
+		map.put("financeSelectCtrl", this);
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Cancellation/RepayCancellationDialog.zul",null,map);
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		
+		logger.debug("Leaving");
+	}
+
 	public void onClick$btnClear(Event event){
 		logger.debug("Entering" + event.toString());
 		
@@ -1002,7 +1715,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			this.sortOperator_scheduleMethod.setSelectedIndex(0);
 			this.profitDaysBasis.setValue("");
 			this.sortOperator_profitDaysBasis.setSelectedIndex(0);
-			this.listBoxFinance.getItems().clear();
+			this.getListBoxFinance().getItems().clear();
 			this.searchObject.clearFilters();		
 			paging(getSearchObj());
 		}
@@ -1038,20 +1751,51 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		this.dialogCtrl = dialogCtrl;
 	}
 	
-	/**
-	 * @return the financeDetailService
-	 */
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
-
-	/**
-	 * @param financeDetailService the financeDetailService to set
-	 */
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
+	
+	public ManualPaymentService getManualPaymentService() {
+		return manualPaymentService;
+	}
+	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
+		this.manualPaymentService = manualPaymentService;
+	}
+	
+	public FinanceWriteoffService getFinanceWriteoffService() {
+		return financeWriteoffService;
+	}
+	public void setFinanceWriteoffService(
+			FinanceWriteoffService financeWriteoffService) {
+		this.financeWriteoffService = financeWriteoffService;
+	}
+	
+	public FinanceCancellationService getFinanceCancellationService() {
+		return financeCancellationService;
+	}
+	public void setFinanceCancellationService(
+			FinanceCancellationService financeCancellationService) {
+		this.financeCancellationService = financeCancellationService;
+	}
 
+	public FinanceMaintenanceService getFinanceMaintenanceService() {
+		return financeMaintenanceService;
+	}
+	public void setFinanceMaintenanceService(FinanceMaintenanceService financeMaintenanceService) {
+		this.financeMaintenanceService = financeMaintenanceService;
+	}
+	
+	public RepaymentCancellationService getRepaymentCancellationService() {
+		return repaymentCancellationService;
+	}
+	public void setRepaymentCancellationService(
+			RepaymentCancellationService repaymentCancellationService) {
+		this.repaymentCancellationService = repaymentCancellationService;
+	}
+	
 	/**
 	 * Method to check and set moduuledefiner value
 	 * 
@@ -1060,48 +1804,95 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	private void checkAndSetModDef(Tabbox tabbox) {
 		logger.debug("Entering");
 		filterList = new ArrayList<Filter>();
+		
 		if (tabbox != null) {			
 			tab = tabbox.getSelectedTab();
 			if( tab != null) {
-				if(tab.getId().equals("tab_AddRateChange")) {
+				if(tab.getId().equals("tab_BasicDetail")) {
+					moduleDefiner = PennantConstants.MNT_BASIC_DETAIL;
+					eventCodeRef  = "";
+					workflowCode =  PennantConstants.MNT_BASIC_DETAIL;
+				}else if(tab.getId().equals("tab_AddRateChange")) {
 					moduleDefiner = PennantConstants.ADD_RATE_CHG;
-					eventCodeRef  = "RATCHG";
+					eventCodeRef  = "SCDCHG";
+					workflowCode =  PennantConstants.ADD_RATE_CHG;
 				}else if(tab.getId().equals("tab_ChangeRepayment")) {
 					moduleDefiner = PennantConstants.CHG_REPAY;
-					eventCodeRef  = "REPAY";
+					eventCodeRef  = "SCDCHG";
+					workflowCode =  PennantConstants.CHG_REPAY;
 				}else if(tab.getId().equals("tab_AddDisbursment")) {
 					moduleDefiner = PennantConstants.ADD_DISB;
-					Filter filter = new Filter("lovDescFinIsAlwMD", 1, Filter.OP_EQUAL);
-					filterList.add(filter);
 					eventCodeRef  = "";
+					workflowCode =  PennantConstants.ADD_DISB;
 				}else if(tab.getId().equals("tab_AddDefferment")) {
 					moduleDefiner = PennantConstants.ADD_DEFF;
-					Filter filter = new Filter("lovDescFinAlwDeferment", 1, Filter.OP_EQUAL);
-					filterList.add(filter);
 					eventCodeRef  = "DEFRPY";
+					workflowCode =  PennantConstants.ADD_DEFF;
 				}else if(tab.getId().equals("tab_RmvDefferment")) {
 					moduleDefiner = PennantConstants.RMV_DEFF;
-					Filter filter = new Filter("lovDescFinAlwDeferment", 1, Filter.OP_EQUAL);
-					filterList.add(filter);
 					eventCodeRef  = "DEFRPY";
+					workflowCode =  PennantConstants.RMV_DEFF;
 				}else if(tab.getId().equals("tab_AddTerms")) {
 					moduleDefiner = PennantConstants.ADD_TERMS;
 					eventCodeRef  = "SCDCHG";
+					workflowCode =  PennantConstants.ADD_TERMS;
 				}else if(tab.getId().equals("tab_RmvTerms")) {
 					moduleDefiner = PennantConstants.RMV_TERMS;
 					eventCodeRef  = "SCDCHG";
+					workflowCode =  PennantConstants.RMV_TERMS;
 				}else if(tab.getId().equals("tab_Recalculate")) {
 					moduleDefiner = PennantConstants.RECALC;
 					eventCodeRef  = "SCDCHG";
+					workflowCode =  PennantConstants.RECALC;
+				}else if(tab.getId().equals("tab_SubSchedule")) {
+					moduleDefiner = PennantConstants.SUBSCH;
+					eventCodeRef  = "SCDCHG";
+					workflowCode =  PennantConstants.SUBSCH;
+				}else if(tab.getId().equals("tab_ChangeProfit")) {
+					moduleDefiner = PennantConstants.CHGPFT;
+					eventCodeRef  = "SCDCHG";
+					workflowCode =  PennantConstants.CHGPFT;
+				}else if(tab.getId().equals("tab_ChangeFrequency")) {
+					moduleDefiner = PennantConstants.CHGFRQ;
+					eventCodeRef  = "SCDCHG";//TODO
+					workflowCode =  PennantConstants.CHGFRQ;
+				}else if(tab.getId().equals("tab_DatedSchedule")) {
+					moduleDefiner = PennantConstants.DATEDSCHD;
+					eventCodeRef  = "SCDCHG";
+					workflowCode =  PennantConstants.DATEDSCHD;
+				}else if(tab.getId().equals("tab_FairValueRevaluation")) {
+					moduleDefiner = PennantConstants.COMPOUND;
+					eventCodeRef  = "COMPOUND";
+					workflowCode =  PennantConstants.COMPOUND;
 				}else if(tab.getId().equals("tab_SchdlRepayment")) {
 					moduleDefiner = PennantConstants.SCH_REPAY;
+					eventCodeRef  = "REPAY";
 					setDialogCtrl("ManualPaymentDialogCtrl");
+					workflowCode =  PennantConstants.SCH_REPAY;
 				}else if(tab.getId().equals("tab_EarlySettlement")) {
 					moduleDefiner = PennantConstants.SCH_EARLYPAY;
+					eventCodeRef  = "EARLYSTL";
+					setDialogCtrl("ManualPaymentDialogCtrl");
+					workflowCode =  PennantConstants.SCH_EARLYPAY;
+				}else if(tab.getId().equals("tab_EarlySettlementEnq")) {
+					moduleDefiner = PennantConstants.SCH_EARLYPAYENQ;
 					setDialogCtrl("ManualPaymentDialogCtrl");
 				}else if(tab.getId().equals("tab_WriteOff")) {
 					moduleDefiner = PennantConstants.WRITEOFF;
-					setDialogCtrl("ManualPaymentDialogCtrl");
+					setDialogCtrl("FinanceWriteoffDialogCtrl");
+					workflowCode =  PennantConstants.WRITEOFF;
+				}else if(tab.getId().equals("tab_CancelRepay")) {
+					moduleDefiner = PennantConstants.CANCELREPAY;
+					setDialogCtrl("CancelRepayDialogCtrl");
+					workflowCode =  PennantConstants.CANCELREPAY;
+				}else if(tab.getId().equals("tab_CancelFinance")) {
+					moduleDefiner = PennantConstants.CANCELFINANCE;
+					setDialogCtrl("CancelFinanceDialogCtrl");
+					workflowCode =  PennantConstants.CANCELFINANCE;
+				} else if(tab.getId().equals("tab_TakafulPremiumExclude")){
+					moduleDefiner = PennantConstants.TAKAFULPREMIUMEXCLUDE;
+					setDialogCtrl("TakafulPremiumExcludeDialogCtrl");
+					workflowCode="";
 				}
 				return;
 			}
@@ -1110,5 +1901,29 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			return;
 		}
 		logger.debug("Leaving");
+	}
+
+	public Paging getPagingFinanceList() {
+		return pagingFinanceList;
+	}
+
+	public void setPagingFinanceList(Paging pagingFinanceList) {
+		this.pagingFinanceList = pagingFinanceList;
+	}
+
+	public Listbox getListBoxFinance() {
+		return listBoxFinance;
+	}
+
+	public void setListBoxFinance(Listbox listBoxFinance) {
+		this.listBoxFinance = listBoxFinance;
+	}
+
+	public FinanceMain getFinanceMain() {
+		return financeMain;
+	}
+
+	public void setFinanceMain(FinanceMain financeMain) {
+		this.financeMain = financeMain;
 	}
 }

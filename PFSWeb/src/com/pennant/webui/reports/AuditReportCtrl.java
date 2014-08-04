@@ -26,6 +26,7 @@ import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 
@@ -46,6 +47,10 @@ public class AuditReportCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onCreate$window_AuditReport(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
+		
+		this.fromDate.setFormat(PennantConstants.dateFormat);
+		this.toDate.setFormat(PennantConstants.dateFormat);
+		
 		setModuleNamesList();
 		logger.debug("Leaving" + event.toString());
 
@@ -56,6 +61,9 @@ public class AuditReportCtrl extends GFCBaseCtrl implements Serializable {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		String reportName = "";
+		
+		this.fromDate.setConstraint(new PTDateValidator("From Date", true,null ,DateUtility.getSystemDate(),true));
+		this.toDate.setConstraint(new PTDateValidator("To Date", true,null ,DateUtility.getSystemDate(),true));
 
 		try {
 			if(!this.comboModuleList.isDisabled() && this.comboModuleList.getSelectedIndex()<0){
@@ -77,9 +85,6 @@ public class AuditReportCtrl extends GFCBaseCtrl implements Serializable {
 			if (fromDate.getValue().after(toDate.getValue())) {
 				throw new WrongValueException(fromDate, Labels.getLabel("label_AuditReport_FromDate.NotGreater"));
 			}
-			if (fromDate.getValue().compareTo(DateUtility.today())>=0){
-				throw new WrongValueException(fromDate, Labels.getLabel("label_AuditReport_FromDate.Lessthan"));
-			}
 			map.put("fromDate", DateUtility.getDate(DateUtility.formatUtilDate(fromDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -87,9 +92,6 @@ public class AuditReportCtrl extends GFCBaseCtrl implements Serializable {
 		try {
 			if (toDate.getValue() == null ) {
 				throw new WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.value"));
-			}
-			if (toDate.getValue().compareTo(DateUtility.today())>=0){
-				throw new WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.Lessthan"));
 			}
 			map.put("toDate", DateUtility.getDate(DateUtility.formatUtilDate(toDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
@@ -136,6 +138,8 @@ public class AuditReportCtrl extends GFCBaseCtrl implements Serializable {
 
 				//Setting to Default Values
 				this.comboModuleList.setValue("");
+				this.fromDate.setConstraint("");
+				this.toDate.setConstraint("");
 				this.fromDate.setText("");
 				this.toDate.setText("");
 			}else{

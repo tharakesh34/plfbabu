@@ -6,7 +6,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.ProgramCallDocument;
+import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.vo.FinanceCancellation;
 import com.pennant.equation.util.HostConnection;
 
@@ -25,7 +27,7 @@ public class FinanceCancellationProcess extends GenericProcess {
 	 * @return List<FinanceCancellation> 
 	 * @throws Exception  
 	 */
-	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference) throws Exception{
+	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, String linkedTranId) throws Exception{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -36,23 +38,20 @@ public class FinanceCancellationProcess extends GenericProcess {
 		int itemCount; // Number of records returned 
 		List<FinanceCancellation> list = new ArrayList<FinanceCancellation>();
 		FinanceCancellation item = null;
-		boolean newConnection = false;
-		String errorMessage = null;
 
 		try {
-			if (this.hostConnection == null) {
-				this.hostConnection = new HostConnection();
-				newConnection = true;
-			}
+			
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			pcmlDoc.setValue(pcml + ".@REQDTA.dsReqFinRef", finReference); // Finance reference
-			pcmlDoc.setValue(pcml + ".@REQDTA.dsReqLnkTID", ""); // Linked Trans Id
+			pcmlDoc.setValue(pcml + ".@REQDTA.dsReqLnkTID", linkedTranId); // Linked Trans Id
 			pcmlDoc.setValue(pcml + ".@ERCOD", "0000");
 			pcmlDoc.setValue(pcml + ".@ERPRM", "");
+			
 			logger.debug(" Before PCML Call");
 			getHostConnection().callAPI(pcmlDoc, pcml);
 			logger.debug(" After PCML Call");
+			
 			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
 				String dsRspCount=pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspCount").toString();
 				String dsRspFinRef=pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspFinRef", indices).toString();
@@ -77,18 +76,19 @@ public class FinanceCancellationProcess extends GenericProcess {
 					list.add(item);
 				}
 			} else {
-				errorMessage = pcmlDoc.getValue(pcml + ".@ERPRM").toString();
-				ArrayList<FinanceCancellation> arrayList=new ArrayList<FinanceCancellation>(1);
-				arrayList.add(new FinanceCancellation(errorMessage));
-				return arrayList;
+				throw new AccountNotFoundException(pcmlDoc.getValue(pcml + ".@ERCOD").toString() + " : "+pcmlDoc.getValue(pcml + ".@ERPRM").toString());
 			} 
-		} catch (Exception e) {
+		}catch (ConnectionPoolException e){
+			logger.error("Exception " + e);
+			throw new AccountNotFoundException("Host Connection Failed.. Please contact administrator ");
+		}  catch (AccountNotFoundException e) {
+			logger.error("Exception " + e);
+			throw e;
+		}catch (Exception e) {
 			logger.error("Exception " + e);
 			throw e;
 		} finally {
-			if (newConnection) {
-				this.hostConnection.disConnection();
-			}
+			this.hostConnection.closeConnection(as400);
 		}
 
 		logger.debug("Leaving");

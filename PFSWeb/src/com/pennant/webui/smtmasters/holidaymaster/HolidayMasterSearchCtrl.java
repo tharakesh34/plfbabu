@@ -148,18 +148,18 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_holidayCode.setModel(new ListModelList(
+		this.sortOperator_holidayCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_holidayCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
 		this.sortOperator_holidayYear.setModel(
-				new ListModelList(new SearchOperators().getStringOperators()));
+				new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_holidayYear.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
 		this.sortOperator_holidayType.setModel(
-				new ListModelList(new SearchOperators().getStringOperators()));
+				new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_holidayType.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	

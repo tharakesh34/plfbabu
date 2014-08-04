@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.amtmasters.expensetype.model.ExpenseTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -370,7 +370,7 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 	public void onClick$button_ExpenseTypeList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("ExpenseType", getSearchObj());
+		new PTListReportUtils("ExpenseType", getSearchObj(),this.pagingExpenseTypeList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

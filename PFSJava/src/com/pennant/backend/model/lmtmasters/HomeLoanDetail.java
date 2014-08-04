@@ -46,6 +46,8 @@ package com.pennant.backend.model.lmtmasters;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -87,6 +89,7 @@ public class HomeLoanDetail implements java.io.Serializable {
 	private String lovDescHomeAddrCityName;
 	private String homeAddrZIP;
 	private String homeAddrPhone;
+	private String homeTitleDeedNo;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -114,6 +117,12 @@ public class HomeLoanDetail implements java.io.Serializable {
 
 	public HomeLoanDetail(String id) {
 		this.setId(id);
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		
+		return excludeFields;
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -330,6 +339,14 @@ public class HomeLoanDetail implements java.io.Serializable {
 		this.homeAddrPhone = homeAddrPhone;
 	}
 	
+	public String getHomeTitleDeedNo() {
+    	return homeTitleDeedNo;
+    }
+
+	public void setHomeTitleDeedNo(String homeTitleDeedNo) {
+    	this.homeTitleDeedNo = homeTitleDeedNo;
+    }
+
 	public int getVersion() {
 		return version;
 	}

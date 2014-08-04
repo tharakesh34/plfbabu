@@ -139,6 +139,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseListCtrl<SecurityGroup>
 	protected Button        btnDelete;                        // autoWired
 	protected Button        btnCancel;                        // autoWired
 	protected Button        btnNotes;                         // autoWired
+	@SuppressWarnings("unused")
 	private transient ButtonStatusCtrl             btnCtrl;
 	private transient final String     btnCtroller_ClassPrefix = "button_SecRoleGroupsDialog_";
 	private   transient SecurityRoleGroupsService   securityRoleGroupsService;

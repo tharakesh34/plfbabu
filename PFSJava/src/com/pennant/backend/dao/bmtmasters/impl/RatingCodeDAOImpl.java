@@ -121,7 +121,7 @@ public class RatingCodeDAOImpl extends BasisCodeDAO<RatingCode> implements Ratin
 	@Override
 	public RatingCode getRatingCodeById(final String RatingType, String RatingCode, String type) {
 		logger.debug("Entering");
-		RatingCode ratingCode = getRatingCode();
+		RatingCode ratingCode = new RatingCode();
 		ratingCode.setRatingType(RatingType);
 		ratingCode.setRatingCode(RatingCode);
 		StringBuilder selectSql = new StringBuilder();
@@ -134,7 +134,7 @@ public class RatingCodeDAOImpl extends BasisCodeDAO<RatingCode> implements Ratin
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM BMTRatingCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where RatingCode =:ratingCode");
+		selectSql.append(" Where RatingType =:RatingType AND RatingCode=:RatingCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ratingCode);

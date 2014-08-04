@@ -122,7 +122,7 @@ public class FrequencyDAOImpl extends BasisCodeDAO<Frequency> implements Frequen
 	@Override
 	public Frequency getFrequencyById(final String id, String type) {
 		logger.debug("Entering");
-		Frequency frequency = getFrequency();
+		Frequency frequency = new Frequency();
 		frequency.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

@@ -356,7 +356,7 @@ public class VehicleModelListCtrl extends GFCBaseListCtrl<VehicleModel> implemen
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/AMTMaster/VehicleModel/VehicleModelSearchDialog.zul",null,map);
+			Executions.createComponents("/WEB-INF/pages/AMTMasters/VehicleModel/VehicleModelSearchDialog.zul",null,map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());

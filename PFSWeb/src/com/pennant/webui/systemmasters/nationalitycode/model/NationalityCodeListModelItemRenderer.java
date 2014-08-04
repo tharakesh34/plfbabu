@@ -63,11 +63,9 @@ public class NationalityCodeListModelItemRenderer implements ListitemRenderer<Na
 
 	private static final long serialVersionUID = -2115424367644659335L;
 
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
 	public void render(Listitem item, NationalityCode nationalityCode, int count) throws Exception {
 		
-		//final NationalityCode nationalityCode = (NationalityCode) data;
 		Listcell lc;
 		lc = new Listcell(nationalityCode.getNationalityCode());
 		lc.setParent(item);

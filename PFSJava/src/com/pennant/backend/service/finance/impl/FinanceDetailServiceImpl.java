@@ -1,655 +1,160 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
- ********************************************************************************************
- *                                 FILE HEADER                                              *
- ********************************************************************************************
- *																							*
- * FileName    		:  FinanceDetailServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  15-11-2011    														*
- *                                                                  						*
- * Modified Date    :  15-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
- ********************************************************************************************
- * Date             Author                   Version      Comments                          *
- ********************************************************************************************
- * 15-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- ********************************************************************************************
+ ******************************************************************************************** 
+ * FILE HEADER *
+ ******************************************************************************************** 
+ * * FileName : FinanceDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * *
+ * Modified Date : 15-11-2011 * * Description : * *
+ ******************************************************************************************** 
+ * Date Author Version Comments *
+ ******************************************************************************************** 
+ * 15-11-2011 Pennant 0.1 * * * * * * * * *
+ ******************************************************************************************** 
  */
 
 package com.pennant.backend.service.finance.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
-import com.pennant.Interface.service.PostingsInterfaceService;
-import com.pennant.app.model.CustomerCalData;
-import com.pennant.app.util.AEAmounts;
-import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.AccountEngineExecutionRIA;
-import com.pennant.app.util.AccountProcessUtil;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.FinanceProfitDetailFiller;
-import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
-import com.pennant.backend.dao.applicationmaster.CheckListDAO;
-import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
+import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.commitment.CommitmentDAO;
-import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
-import com.pennant.backend.dao.customermasters.CustomerDAO;
-import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.finance.DefermentDetailDAO;
-import com.pennant.backend.dao.finance.DefermentHeaderDAO;
-import com.pennant.backend.dao.finance.FinAgreementDetailDAO;
-import com.pennant.backend.dao.finance.FinBillingDetailDAO;
-import com.pennant.backend.dao.finance.FinBillingHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.finance.FinContributorHeaderDAO;
-import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.finance.FinanceScoreHeaderDAO;
-import com.pennant.backend.dao.finance.RepayInstructionDAO;
-import com.pennant.backend.dao.lmtmasters.CarLoanDetailDAO;
-import com.pennant.backend.dao.lmtmasters.EducationalExpenseDAO;
-import com.pennant.backend.dao.lmtmasters.EducationalLoanDAO;
-import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
+import com.pennant.backend.dao.finance.FinancePremiumDetailDAO;
+import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
+import com.pennant.backend.dao.finance.IndicativeTermDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.dao.lmtmasters.HomeLoanDetailDAO;
-import com.pennant.backend.dao.lmtmasters.MortgageLoanDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
-import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
-import com.pennant.backend.dao.rmtmasters.ScoringSlabDAO;
-import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
-import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
+import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.LoginUserDetails;
-import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.GlobalVariable;
+import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.commitment.Commitment;
-import com.pennant.backend.model.commitment.CommitmentMovement;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
+import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerScoringCheck;
+import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.finance.AgreementDetail;
-import com.pennant.backend.model.finance.FinAgreementDetail;
-import com.pennant.backend.model.finance.FinBillingDetail;
-import com.pennant.backend.model.finance.FinBillingHeader;
+import com.pennant.backend.model.finance.BulkDefermentChange;
+import com.pennant.backend.model.finance.BulkProcessDetails;
+import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
+import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.FinanceScoreDetail;
-import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.model.finance.GuarantorDetail;
+import com.pennant.backend.model.finance.IndicativeTermDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.ProspectCustomer;
+import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.lmtmasters.CarLoanDetail;
-import com.pennant.backend.model.lmtmasters.EducationalExpense;
-import com.pennant.backend.model.lmtmasters.EducationalLoan;
+import com.pennant.backend.model.lmtmasters.CommidityLoanDetail;
+import com.pennant.backend.model.lmtmasters.CommidityLoanHeader;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
-import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.lmtmasters.GenGoodsLoanDetail;
+import com.pennant.backend.model.lmtmasters.GoodsLoanDetail;
 import com.pennant.backend.model.lmtmasters.HomeLoanDetail;
 import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
+import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rmtmasters.ScoringMetrics;
-import com.pennant.backend.model.rmtmasters.ScoringSlab;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
-import com.pennant.backend.model.rulefactory.AECommitment;
-import com.pennant.backend.model.rulefactory.DataSet;
-import com.pennant.backend.model.rulefactory.NFScoreRuleDetail;
+import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.model.smtmasters.PFSParameter;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
-import com.pennant.backend.service.GenericService;
+import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.service.finance.validation.CarLoanDetailValidation;
-import com.pennant.backend.service.finance.validation.EduExpenseDetailValidation;
-import com.pennant.backend.service.finance.validation.EducationalLoanDetailValidation;
-import com.pennant.backend.service.finance.validation.FinAgreementDetailValidation;
-import com.pennant.backend.service.finance.validation.FinBillingDetailValidation;
+import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.validation.FinContributorDetailValidation;
-import com.pennant.backend.service.finance.validation.FinanceCheckListValidation;
-import com.pennant.backend.service.finance.validation.HomeLoanDetailValidation;
-import com.pennant.backend.service.finance.validation.MortgageLoanDetailValidation;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.vo.CustomerLimit;
-import com.pennant.document.generator.TemplateEngine;
+import com.rits.cloning.Cloner;
 
 /**
  * Service implementation for methods that depends on <b>FinanceMain</b>.<br>
  * 
  */
-public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> implements
-        FinanceDetailService {
-
+public class FinanceDetailServiceImpl extends GenericFinanceDetailService implements  FinanceDetailService {
 	private final static Logger logger = Logger.getLogger(FinanceDetailServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;
-	
-	private FinanceMainDAO financeMainDAO;
-	private FinanceTypeDAO financeTypeDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinanceDisbursementDAO financeDisbursementDAO;
-	private DefermentDetailDAO defermentDetailDAO;
-	private DefermentHeaderDAO defermentHeaderDAO;
-	private RepayInstructionDAO repayInstructionDAO;
-	
+	private CustomerIncomeDAO customerIncomeDAO;
+	private IncomeTypeDAO incomeTypeDAO;
 	private FinContributorHeaderDAO finContributorHeaderDAO;
 	private FinContributorDetailDAO finContributorDetailDAO;
-	
-	private FinBillingHeaderDAO finBillingHeaderDAO;
-	private FinBillingDetailDAO finBillingDetailDAO;
-	
-	private CarLoanDetailDAO carLoanDetailDAO;
-	private EducationalLoanDAO educationalLoanDAO;
-	private EducationalExpenseDAO educationalExpenseDAO;
-	private HomeLoanDetailDAO homeLoanDetailDAO;
-	private MortgageLoanDetailDAO mortgageLoanDetailDAO;
-	
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
-	private DocumentDetailsDAO documentDetailsDAO;
-	private FinanceScoreHeaderDAO financeScoreHeaderDAO; 
-	private ScoringMetricsDAO scoringMetricsDAO;
-	private ScoringSlabDAO scoringSlabDAO;
-	private FinAgreementDetailDAO finAgreementDetailDAO;
-	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
-	private CheckListDetailDAO checkListDetailDAO;
-	private CheckListDAO checkListDAO;
-	
 	private RuleDAO ruleDAO;
-	private PostingsDAO postingsDAO;
-	private FinanceProfitDetailDAO profitDetailsDAO;
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
-	
-	private CustomerDAO customerDAO;
 	private AccountingSetDAO accountingSetDAO;
-	private TransactionEntryDAO transactionEntryDAO;
-	private PostingsInterfaceService postingsInterfaceService;
-	private FinanceProfitDetailFiller financeProfitDetailFiller;
-	private AccountEngineExecution engineExecution;
-	private AccountEngineExecutionRIA engineExecutionRIA;
-	private AccountProcessUtil accountProcessUtil;
-	private PostingsPreparationUtil	postingsPreparationUtil;
-	private FinanceRepaymentsDAO financeRepaymentsDAO;
-	
+	private RuleExecutionUtil ruleExecutionUtil;
 	private AccountTypeDAO accountTypeDAO;
 	private CurrencyDAO currencyDAO;
 	private CustomerLimitIntefaceService custLimitIntefaceService;
-	private CommitmentDAO commitmentDAO;
-	private CommitmentMovementDAO commitmentMovementDAO;
-
-	// Declaring Classes For validation Assets.
-	private CarLoanDetailValidation carLoanDetailValidation;
-	private HomeLoanDetailValidation homeLoanDetailValidation;
-	private MortgageLoanDetailValidation mortgageLoanDetailValidation;
-	private EducationalLoanDetailValidation educationalLoanDetailValidation;
-	private EduExpenseDetailValidation eduExpenseDetailValidation;
-	
-	private FinanceCheckListValidation financeCheckListValidation;
+	private FinanceWriteoffDAO financeWriteoffDAO;
 	private FinContributorDetailValidation finContributorDetailValidation;
-	private FinBillingDetailValidation finBillingDetailValidation;
-	private FinAgreementDetailValidation finAgreementDetailValidation;
+	private IndicativeTermDetailDAO indicativeTermDetailDAO;
+	private FinancePremiumDetailDAO financePremiumDetailDAO;
 
-	private String excludeFields = "calculateRepay,equalRepay,eventFromDate,eventToDate,increaseTerms,"
-	        + "allowedDefRpyChange,availedDefRpyChange,allowedDefFrqChange,availedDefFrqChange,recalFromDate,recalToDate,excludeDeferedDates,"
-	        + "financeScheduleDetails,disbDate, disbursementDetails,repayInstructions, rateChanges, defermentHeaders,addTermAfter,"
-	        + "defermentDetails,scheduleMap,reqTerms,errorDetails,carLoanDetail,educationalLoan,homeLoanDetail,"
-	        + "mortgageLoanDetail,proceedDedup,actionSave, finRvwRateApplFor,finGrcRvwRateApplFor,curDisbursementAmt";
+	private NotesDAO notesDAO;
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
-	}
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
-	}
-	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
-		this.financeDisbursementDAO = financeDisbursementDAO;
-	}
-
-	public DefermentDetailDAO getDefermentDetailDAO() {
-		return defermentDetailDAO;
-	}
-	public void setDefermentDetailDAO(DefermentDetailDAO defermentDetailDAO) {
-		this.defermentDetailDAO = defermentDetailDAO;
-	}
-
-	public DefermentHeaderDAO getDefermentHeaderDAO() {
-		return defermentHeaderDAO;
-	}
-	public void setDefermentHeaderDAO(DefermentHeaderDAO defermentHeaderDAO) {
-		this.defermentHeaderDAO = defermentHeaderDAO;
-	}
-
-	public RepayInstructionDAO getRepayInstructionDAO() {
-		return repayInstructionDAO;
-	}
-	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
-		this.repayInstructionDAO = repayInstructionDAO;
-	}
-
-	public String getExcludeFields() {
-		return excludeFields;
-	}
-	public void setExcludeFields(String excludeFields) {
-		this.excludeFields = excludeFields;
-	}
-
-	public CarLoanDetailDAO getCarLoanDetailDAO() {
-		return carLoanDetailDAO;
-	}
-	public void setCarLoanDetailDAO(CarLoanDetailDAO carLoanDetailDAO) {
-		this.carLoanDetailDAO = carLoanDetailDAO;
-	}
-
-	public EducationalLoanDAO getEducationalLoanDAO() {
-		return educationalLoanDAO;
-	}
-	public void setEducationalLoanDAO(EducationalLoanDAO educationalLoanDAO) {
-		this.educationalLoanDAO = educationalLoanDAO;
-	}
-
-	public EducationalExpenseDAO getEducationalExpenseDAO() {
-		return educationalExpenseDAO;
-	}
-	public void setEducationalExpenseDAO(EducationalExpenseDAO educationalExpenseDAO) {
-		this.educationalExpenseDAO = educationalExpenseDAO;
-	}
-
-	public HomeLoanDetailDAO getHomeLoanDetailDAO() {
-		return homeLoanDetailDAO;
-	}
-	public void setHomeLoanDetailDAO(HomeLoanDetailDAO homeLoanDetailDAO) {
-		this.homeLoanDetailDAO = homeLoanDetailDAO;
-	}
-
-	public void setMortgageLoanDetailDAO(MortgageLoanDetailDAO mortgageLoanDetailDAO) {
-		this.mortgageLoanDetailDAO = mortgageLoanDetailDAO;
-	}
-	public MortgageLoanDetailDAO getMortgageLoanDetailDAO() {
-		return mortgageLoanDetailDAO;
-	}
-
-	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-		return financeReferenceDetailDAO;
-	}
-
-	public void setFinAgreementDetailDAO(FinAgreementDetailDAO finAgreementDetailDAO) {
-	    this.finAgreementDetailDAO = finAgreementDetailDAO;
-    }
-	public FinAgreementDetailDAO getFinAgreementDetailDAO() {
-	    return finAgreementDetailDAO;
-    }
-
-	public void setFinanceCheckListReferenceDAO(
-	        FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
-		this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
-	}
-	public FinanceCheckListReferenceDAO getFinanceCheckListReferenceDAO() {
-		return financeCheckListReferenceDAO;
-	}
-
-	public void setCheckListDetailDAO(CheckListDetailDAO checkListDetailDAO) {
-		this.checkListDetailDAO = checkListDetailDAO;
-	}
-	public CheckListDetailDAO getCheckListDetailDAO() {
-		return checkListDetailDAO;
-	}
-
-	public void setCheckListDAO(CheckListDAO checkListDAO) {
-		this.checkListDAO = checkListDAO;
-	}
-	public CheckListDAO getCheckListDAO() {
-		return checkListDAO;
-	}
-
-	public CustomerDAO getCustomerDAO() {
-		return customerDAO;
-	}
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
-	}
-	
-	public AccountingSetDAO getAccountingSetDAO() {
-    	return accountingSetDAO;
-    }
-	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
-    	this.accountingSetDAO = accountingSetDAO;
-    }
-	
-	public ExtendedFieldHeaderDAO getExtendedFieldHeaderDAO() {
-    	return extendedFieldHeaderDAO;
-    }
-	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
-    	this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
-    }
-
-	public ExtendedFieldDetailDAO getExtendedFieldDetailDAO() {
-		return extendedFieldDetailDAO;
-	}
-	public void setExtendedFieldDetailDAO(ExtendedFieldDetailDAO extendedFieldDetailDAO) {
-		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
-	}
-
-	public TransactionEntryDAO getTransactionEntryDAO() {
-		return transactionEntryDAO;
-	}
-	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
-		this.transactionEntryDAO = transactionEntryDAO;
-	}
-
-	public PostingsDAO getPostingsDAO() {
-		return postingsDAO;
-	}
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
-	}
-
-	public FinanceProfitDetailDAO getProfitDetailsDAO() {
-		return profitDetailsDAO;
-	}
-	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
-		this.profitDetailsDAO = profitDetailsDAO;
-	}
-
-	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
-		this.documentDetailsDAO = documentDetailsDAO;
-	}
-	public DocumentDetailsDAO getDocumentDetailsDAO() {
-		return documentDetailsDAO;
-	}
-	
-	public RuleDAO getRuleDAO() {
-    	return ruleDAO;
-    }
-	public void setRuleDAO(RuleDAO ruleDAO) {
-    	this.ruleDAO = ruleDAO;
-    }
-	
-	public FinanceScoreHeaderDAO getFinanceScoreHeaderDAO() {
-    	return financeScoreHeaderDAO;
-    }
-	public void setFinanceScoreHeaderDAO(FinanceScoreHeaderDAO financeScoreHeaderDAO) {
-    	this.financeScoreHeaderDAO = financeScoreHeaderDAO;
-    }
-
-	public void setPostingsInterfaceService(PostingsInterfaceService postingsInterfaceService) {
-		this.postingsInterfaceService = postingsInterfaceService;
-	}
-	public PostingsInterfaceService getPostingsInterfaceService() {
-		return postingsInterfaceService;
-	}
-	
-	public AccountEngineExecution getEngineExecution() {
-		return engineExecution;
-	}
-	public void setEngineExecution(AccountEngineExecution engineExecution) {
-		this.engineExecution = engineExecution;
-	}
-
-	public void setEngineExecutionRIA(AccountEngineExecutionRIA engineExecutionRIA) {
-	    this.engineExecutionRIA = engineExecutionRIA;
-    }
-	public AccountEngineExecutionRIA getEngineExecutionRIA() {
-	    return engineExecutionRIA;
-    }
-
-	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
-		this.accountProcessUtil = accountProcessUtil;
-	}
-	public AccountProcessUtil getAccountProcessUtil() {
-		return accountProcessUtil;
-	}
-	
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
-		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public FinanceProfitDetailFiller getFinanceProfitDetailFiller() {
-		return financeProfitDetailFiller;
-	}
-	public void setFinanceProfitDetailFiller(FinanceProfitDetailFiller financeProfitDetailFiller) {
-		this.financeProfitDetailFiller = financeProfitDetailFiller;
-	}
-	
-	public CustomerLimitIntefaceService getCustLimitIntefaceService() {
-    	return custLimitIntefaceService;
-    }
-	public void setCustLimitIntefaceService(CustomerLimitIntefaceService custLimitIntefaceService) {
-    	this.custLimitIntefaceService = custLimitIntefaceService;
-    }
-	
-	public CommitmentDAO getCommitmentDAO() {
-    	return commitmentDAO;
-    }
-	public void setCommitmentDAO(CommitmentDAO commitmentDAO) {
-    	this.commitmentDAO = commitmentDAO;
-    }
-	
-	public CommitmentMovementDAO getCommitmentMovementDAO() {
-    	return commitmentMovementDAO;
-    }
-	public void setCommitmentMovementDAO(CommitmentMovementDAO commitmentMovementDAO) {
-    	this.commitmentMovementDAO = commitmentMovementDAO;
-    }
-	
-	public AccountTypeDAO getAccountTypeDAO() {
-    	return accountTypeDAO;
-    }
-	public void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
-    	this.accountTypeDAO = accountTypeDAO;
-    }
-	
-	public CurrencyDAO getCurrencyDAO() {
-    	return currencyDAO;
-    }
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-    	this.currencyDAO = currencyDAO;
-    }
-	
-	public void setScoringMetricsDAO(ScoringMetricsDAO scoringMetricsDAO) {
-		this.scoringMetricsDAO = scoringMetricsDAO;
-	}
-	public ScoringMetricsDAO getScoringMetricsDAO() {
-		return scoringMetricsDAO;
-	}
-
-	public ScoringSlabDAO getScoringSlabDAO() {
-		return scoringSlabDAO;
-	}
-	public void setScoringSlabDAO(ScoringSlabDAO scoringSlabDAO) {
-		this.scoringSlabDAO = scoringSlabDAO;
-	}
-
-	public void setFinContributorHeaderDAO(FinContributorHeaderDAO finContributorHeaderDAO) {
-	    this.finContributorHeaderDAO = finContributorHeaderDAO;
-    }
-	public FinContributorHeaderDAO getFinContributorHeaderDAO() {
-	    return finContributorHeaderDAO;
-    }
-
-	public void setFinContributorDetailDAO(FinContributorDetailDAO finContributorDetailDAO) {
-	    this.finContributorDetailDAO = finContributorDetailDAO;
-    }
-	public FinContributorDetailDAO getFinContributorDetailDAO() {
-	    return finContributorDetailDAO;
-    }
-	
-	public void setFinBillingHeaderDAO(FinBillingHeaderDAO finBillingHeaderDAO) {
-		this.finBillingHeaderDAO = finBillingHeaderDAO;
-	}
-	public FinBillingHeaderDAO getFinBillingHeaderDAO() {
-		return finBillingHeaderDAO;
-	}
-	
-	public void setFinBillingDetailDAO(FinBillingDetailDAO finBillingDetailDAO) {
-		this.finBillingDetailDAO = finBillingDetailDAO;
-	}
-	public FinBillingDetailDAO getFinBillingDetailDAO() {
-		return finBillingDetailDAO;
-	}
-    
-    public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
-    	return financeRepaymentsDAO;
-    }
-	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
-    	this.financeRepaymentsDAO = financeRepaymentsDAO;
-    }
-	
-	public CarLoanDetailValidation getCarLoanDetailValidation() {
-		if (carLoanDetailValidation == null) {
-			this.carLoanDetailValidation = new CarLoanDetailValidation(carLoanDetailDAO);
-		}
-		return this.carLoanDetailValidation;
-	}
-
-	public HomeLoanDetailValidation getHomeLoanDetailValidation() {
-		if (homeLoanDetailValidation == null) {
-			this.homeLoanDetailValidation = new HomeLoanDetailValidation(homeLoanDetailDAO);
-		}
-		return this.homeLoanDetailValidation;
-	}
-
-	public MortgageLoanDetailValidation getMortgageLoanDetailValidation() {
-		if (mortgageLoanDetailValidation == null) {
-			this.mortgageLoanDetailValidation = new MortgageLoanDetailValidation(
-			        mortgageLoanDetailDAO);
-		}
-		return this.mortgageLoanDetailValidation;
-	}
-
-	public EducationalLoanDetailValidation getEducationalLoanDetailValidation() {
-		if (educationalLoanDetailValidation == null) {
-			this.educationalLoanDetailValidation = new EducationalLoanDetailValidation(
-			        educationalLoanDAO);
-		}
-		return this.educationalLoanDetailValidation;
-	}
-
-	public EduExpenseDetailValidation getEduExpenseDetailValidation() {
-		if (eduExpenseDetailValidation == null) {
-			this.eduExpenseDetailValidation = new EduExpenseDetailValidation(educationalExpenseDAO);
-		}
-		return this.eduExpenseDetailValidation;
-	}
-
-	public FinanceCheckListValidation getFinanceCheckListValidation() {
-		if (financeCheckListValidation == null) {
-			this.financeCheckListValidation = new FinanceCheckListValidation(
-			        financeCheckListReferenceDAO);
-		}
-		return this.financeCheckListValidation;
-	}
-
-	public FinContributorDetailValidation getContributorValidation(){
-		if(finContributorDetailValidation==null){
-			this.finContributorDetailValidation = new FinContributorDetailValidation(finContributorDetailDAO);
+	public FinContributorDetailValidation getContributorValidation() {
+		if (finContributorDetailValidation == null) {
+			this.finContributorDetailValidation = new FinContributorDetailValidation(
+					finContributorDetailDAO);
 		}
 		return this.finContributorDetailValidation;
-	}
-	
-	public FinBillingDetailValidation getBillingValidation(){
-		if(finBillingDetailValidation==null){
-			this.finBillingDetailValidation = new FinBillingDetailValidation(finBillingDetailDAO);
-		}
-		return this.finBillingDetailValidation;
-	}
-	
-	public FinAgreementDetailValidation getAgreementDetailValidation(){
-		if(finAgreementDetailValidation==null){
-			this.finAgreementDetailValidation = new FinAgreementDetailValidation(finAgreementDetailDAO);
-		}
-		return this.finAgreementDetailValidation;
 	}
 
 	@Override
@@ -671,136 +176,266 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	}
 
 	/**
+	 * Method for Check Have to Creating New Finance Accessibility for User or not
+	 */
+	@Override
+	public boolean checkFirstTaskOwnerAccess(String productCode, long usrLogin) {
+		return getFinanceMainDAO().checkFirstTaskOwnerAccess(productCode, usrLogin);
+	}
+
+	/**
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method.
 	 * 
 	 * @param finReference
 	 *            (String)
 	 * @return FinanceDetail
 	 */
-	public FinanceDetail getFinanceDetailById(String finReference, boolean isWIF,
-	        String eventCodeRef) {
+	public FinanceDetail getFinanceDetailById(String finReference, boolean isWIF, String eventCodeRef, boolean reqCustDetail) {
 		logger.debug("Entering");
-		
+
 		//Finance Details
-		FinanceDetail financeDetail = getFinanceDetailById(finReference, "_View", isWIF);
-		
-		if (!isWIF && financeDetail.getFinScheduleData().getFinanceMain() != null) {
-			//Finance Accounting Fee Charge Details
-			financeDetail.getFinScheduleData().setFeeRules(getPostingsDAO().getFeeChargesByFinRef(finReference, "_View"));
+		FinanceDetail financeDetail = getFinSchdDetailById(finReference, "_View", isWIF);
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = scheduleData.getFinanceMain();
+
+		//Finance Accounting Fee Charge Details
+		scheduleData.setFeeRules(getPostingsDAO().getFeeChargesByFinRef(finReference, isWIF, "_View"));
+
+		if(isWIF && reqCustDetail && scheduleData.getFinanceMain() != null){
+
+			if(PennantConstants.FIN_DIVISION_RETAIL.equals(scheduleData.getFinanceType().getFinDivision())){
+
+				long custId = scheduleData.getFinanceMain().getCustID();
+				if(custId != 0){
+					financeDetail.setCustomer(getCustomerDAO().getWIFCustomerByID(custId, null, "_AView"));
+					
+					if(financeDetail.getCustomer() == null){
+						Customer customer = getCustomerDAO().getCustomerByID(custId, "");
+						WIFCustomer wifcustomer = new WIFCustomer();
+						BeanUtils.copyProperties(customer, wifcustomer);
+						wifcustomer.setExistCustID(wifcustomer.getCustID());
+						wifcustomer.setCustID(0);
+						wifcustomer.setNewRecord(true);
+						financeDetail.setCustomer(wifcustomer);
+					}
+				}else{
+					WIFCustomer wifcustomer = new WIFCustomer();
+					wifcustomer.setNewRecord(true);
+					PFSParameter parameter = SystemParameterDetails.getSystemParameterObject("APP_DFT_CURR");
+					wifcustomer.setCustBaseCcy(parameter.getSysParmValue().trim());
+					wifcustomer.setLovDescCustBaseCcyName(parameter.getSysParmDescription());
+					parameter = SystemParameterDetails.getSystemParameterObject("APP_DFT_NATION");
+					wifcustomer.setCustNationality(parameter.getSysParmValue().trim());
+					wifcustomer.setLovDescCustNationalityName(parameter.getSysParmDescription());
+					wifcustomer.setCustTypeCode("EA");
+					wifcustomer.setLovDescCustTypeCodeName("Individual");
+					wifcustomer.setCustCtgCode("INDV");
+					wifcustomer.setLovDescCustCtgCodeName("Individual");
+					financeDetail.setCustomer(wifcustomer);
+				}
+
+				financeDetail.getCustomer().setCustomerIncomeList(prepareIncomeDetails());
+				String finType = scheduleData.getFinanceType().getFinType();
+
+				financeDetail.setElgRuleList(getEligibilityDetailService().setFinanceEligibilityDetails(finReference, financeMain.getFinCcy(),
+						financeMain.getFinAmount(), financeMain.isNewRecord(), finType, null));
+
+				financeDetail = getScoringDetailService().setFinanceScoringDetails(financeDetail, finType, null, 
+						PennantConstants.CUST_CAT_INDIVIDUAL);
+			}else{
+				IndicativeTermDetail termDetail = getIndicativeTermDetailDAO().getIndicateTermByRef(finReference, "_View", true);
+				if(termDetail == null){
+					termDetail = new IndicativeTermDetail();
+					termDetail.setCustId(financeMain.getCustID());
+					termDetail.setLovDescCustShrtName(financeMain.getLovDescCustShrtName());
+					termDetail.setNewRecord(true);
+					termDetail.setWorkflowId(0);
+				}
+				financeDetail.setIndicativeTermDetail(termDetail);
+			}
+
+		}else if(isWIF && PennantConstants.FIN_DIVISION_RETAIL.equals(scheduleData.getFinanceType().getFinDivision())){
+
+			ProspectCustomer propCustomer = getCustomerDAO().getProspectCustomer(finReference,"_View");
+			if(propCustomer != null){
+				financeMain.setCustID(propCustomer.getCustId());
+				financeMain.setLovDescCustCIF(propCustomer.getCustCIF());
+				financeMain.setLovDescCustShrtName(propCustomer.getCustShrtName());
+				financeMain.setLovDescCustCtgTypeName(propCustomer.getCustTypeCtg());
+				financeMain.setFinBranch(propCustomer.getCustDftBranch());
+			}else{
+				financeMain.setCustID(0);
+				financeMain.setLovDescCustCIF("");
+				financeMain.setLovDescCustShrtName("");
+				financeMain.setLovDescCustCtgTypeName("");
+				financeMain.setFinBranch("");
+			}
+		}
+
+		if (!isWIF && financeMain != null) {
+
+			//Finance Reference Details List
+			financeDetail = getFinanceReferenceDetails(financeDetail, financeMain.getNextRoleCode(), "DDE", eventCodeRef);
 
 			//Finance Contributor Details
-			if(financeDetail.getFinScheduleData().getFinanceType().isAllowRIAInvestment()){
+			if (scheduleData.getFinanceType().isAllowRIAInvestment()) {
 				financeDetail.setFinContributorHeader(getFinContributorHeaderDAO().getFinContributorHeaderById(finReference, "_View"));
-				if(financeDetail.getFinContributorHeader() != null){
+				if (financeDetail.getFinContributorHeader() != null) {
 					financeDetail.getFinContributorHeader().setContributorDetailList(
 							getFinContributorDetailDAO().getFinContributorDetailByFinRef(finReference, "_View"));
 				}
 			}
-			
-			if(financeDetail.getFinScheduleData().getFinanceType() != null &&
-					"ISTISNA".equals(financeDetail.getFinScheduleData().getFinanceType().getLovDescProductCodeName())){
-				
-				financeDetail.setFinBillingHeader(getFinBillingHeaderDAO().getFinBillingHeaderById(finReference, "_View"));
-				if(financeDetail.getFinBillingHeader() != null){
-					financeDetail.getFinBillingHeader().setBillingDetailList(
-							getFinBillingDetailDAO().getFinBillingDetailByFinRef(finReference, "_View"));
-				}
-			}
+
+			//Finance Overdue Penalty Rate Details
+			scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, "_View"));
 
 			//Finance Document Details
-			financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(finReference, "_View"));
+			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(finReference, "_View");
+			if(financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()){
+				financeDetail.getDocumentDetailsList().addAll(documentList);
+			}else{
+				financeDetail.setDocumentDetailsList(documentList);
+			}
 
-			//Finance Reference Details List
-			financeDetail = getFinanceReferenceDetails(financeDetail, financeDetail
-					.getFinScheduleData().getFinanceMain().getNextRoleCode(), "DDE", eventCodeRef);
+			//Finance Guarantor Details			
+			financeDetail.setGurantorsDetailList(getGuarantorDetailService().getGuarantorDetail(finReference, "_View"));
+
+			//Finance Joint Account Details
+			financeDetail.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
+
+			// finance Contract Asset Details
+			if(PennantConstants.FINANCE_PRODUCT_ISTISNA.equals(financeDetail.getFinScheduleData().getFinanceType().getLovDescProductCodeName())){
+				getContractorAssetDetailService().setContractorAssetDetails(financeDetail, "_View");
+			}else{
+				financeDetail.setContractorAssetDetails(null);
+			}
 		}
-		
+
 		logger.debug("Leaving");
 		return financeDetail;
 	}
 
 	/**
-	 * Method for get Finance Details 
+	 * Method for Fetching List of Fee Charge Details depends on Event Code
+	 * @param finType
+	 * @param startDate
+	 * @param isWIF
+	 * @return
+	 */
+	@Override
+	public List<Rule> getFeeRuleDetails(FinanceType finType, Date startDate, boolean isWIF){
+		logger.debug("Entering");
+
+		//Finance Accounting Fee Charge Details
+		String eventCode = "";
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		if (startDate.after(curBussDate)) {
+			eventCode = "ADDDBSF";
+		} else {
+			eventCode = "ADDDBSP";
+		}
+		String accSetId = returnAccountingSetid(eventCode, finType);
+
+		//Finance Fee Charge Details
+		List<Rule> feeChargeList = getTransactionEntryDAO().getListFeeChargeRules(Long.valueOf(accSetId), 
+				(eventCode.startsWith("ADDDBS") ? "ADDDBS" : eventCode),"_AView", 0);
+		logger.debug("Leaving");
+		return feeChargeList;
+	}
+	
+	/**
+	 * Method for Fetch takaful insurance Details Object for Early Settlement Refund
+	 * @param finReference
+	 * @return
+	 */
+	@Override
+	public FeeRule getTakafulFee(String finReference){
+		return getPostingsDAO().getTakafulFee(finReference,"");
+	}
+
+	/**
+	 * Method for Fetching List of Fee Rules From Approved Finance
+	 */
+	@Override
+	public List<FeeRule> getApprovedFeeRules(String finReference, boolean isWIF) {
+		logger.debug("Entering");
+		List<FeeRule> feeRuleList = getPostingsDAO().getFeeChargesByFinRef(finReference, isWIF, "");
+		logger.debug("Leaving");
+		return feeRuleList;
+	}
+
+	@Override
+	public List<ContractorAssetDetail> getContractorAssetDetailList(String finReference){
+		logger.debug("Entering");
+		List<ContractorAssetDetail> assetDetails;
+		assetDetails = getContractorAssetDetailService().getContractorAssetDetailList(finReference, "_AView");
+		logger.debug("Leaving");
+		return assetDetails;
+	}
+
+	/**
+	 * Method for get Finance Details
 	 */
 	@Override
 	public FinanceDetail getStaticFinanceDetailById(String finReference, String type) {
 		logger.debug("Entering");
 
 		//Finance Details
-		FinanceDetail financeDetail = getFinanceDetail(false);
-		financeDetail.getFinScheduleData().setFinReference(finReference);
-		financeDetail.getFinScheduleData().setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		scheduleData.setFinReference(finReference);
+		scheduleData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
 
-		if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
+		if (scheduleData.getFinanceMain() != null) {
 
 			//Finance Type Details
-			financeDetail.getFinScheduleData().setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(
-			        financeDetail.getFinScheduleData().getFinanceMain().getFinType(), type));
+			scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), type));
 
 			//Finance Schedule Details List
-			financeDetail.getFinScheduleData().setFinanceScheduleDetails(
-			        getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+			scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
 
 			//Finance Disbursement Details List
-			financeDetail.getFinScheduleData().setDisbursementDetails(
-			        getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
 
-			//Finance Differment Header Details List
-			financeDetail.getFinScheduleData().setDefermentHeaders(
-			        getDefermentHeaderDAO().getDefermentHeaders(finReference, type, false));
+			//Finance Defferment Header Details List
+			scheduleData.setDefermentHeaders(getDefermentHeaderDAO().getDefermentHeaders(finReference, type, false));
 
-			//Finance Differment Details List
-			financeDetail.getFinScheduleData().setDefermentDetails(
-			        getDefermentDetailDAO().getDefermentDetails(finReference, type, false));
+			//Finance Defferment Details List
+			scheduleData.setDefermentDetails(getDefermentDetailDAO().getDefermentDetails(finReference, type, false));
 
 			//Finance Repayment Instruction Details List
-			financeDetail.getFinScheduleData().setRepayInstructions(
-			        getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
+			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 
-			// Retrieving Fiannce Asset details based upon 'AssetCode'
-			if (financeDetail.getFinScheduleData().getFinanceType() != null) {
-				
-				String assetCode = financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName();
+			//Finance Overdue Penalty Rate Details
+			scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
-				if (assetCode.equalsIgnoreCase(PennantConstants.CARLOAN)) {
+			// Retrieving Finance Asset details based upon 'AssetCode'
+			FinanceType financeType = scheduleData.getFinanceType();
+			if (financeType != null) {
 
-					financeDetail.setCarLoanDetail(getCarLoanDetailDAO().getCarLoanDetailByID(finReference, type));
-
-				} else if (assetCode.equalsIgnoreCase(PennantConstants.EDULOAN)) {
-
-					financeDetail.setEducationalLoan(getEducationalLoanDAO().getEducationalLoanByID(finReference, type));
-					if (financeDetail.getEducationalLoan() != null) {
-						financeDetail.getEducationalLoan().setEduExpenseList(
-						        getEducationalExpenseDAO().getEducationalExpenseByEduLoanId(finReference, type));
-					}
-					
-				} else if (assetCode.equalsIgnoreCase(PennantConstants.HOMELOAN)) {
-
-					financeDetail.setHomeLoanDetail(getHomeLoanDetailDAO().getHomeLoanDetailByID(finReference, type));
-
-				} else if (assetCode.equalsIgnoreCase(PennantConstants.MORTLOAN)) {
-
-					financeDetail.setMortgageLoanDetail(getMortgageLoanDetailDAO().getMortgageLoanDetailById(finReference, type));
-				}
+				setAssetDetail(financeDetail, type);
 
 				// Fetching the Additional Field Details
-				ExtendedFieldHeader fieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName("FASSET", 
-						financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName(), "_AView");
-				if(fieldHeader != null){
+				ExtendedFieldHeader fieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
+						"FASSET", scheduleData.getFinanceType().getLovDescAssetCodeName(), "_AView");
+
+				if (fieldHeader != null) {
 					financeDetail.setExtendedFieldHeader(fieldHeader);
-					financeDetail.getExtendedFieldHeader().setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailBySubModule(
-							financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName(), "_AView"));
+					financeDetail.getExtendedFieldHeader().setExtendedFieldDetails(
+							getExtendedFieldDetailDAO().getExtendedFieldDetailBySubModule(
+									scheduleData.getFinanceType().getLovDescAssetCodeName(), "_AView"));
 
 					if (financeDetail.getExtendedFieldHeader().getExtendedFieldDetails().size() > 0) {
-						
+
 						String tableName = "";
-						if(PennantStaticListUtil.getModuleName().containsKey("FASSET")){
+						if (PennantStaticListUtil.getModuleName().containsKey("FASSET")) {
 							tableName = PennantStaticListUtil.getModuleName().get("FASSET").get(
-									financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName());
+									scheduleData.getFinanceType().getLovDescAssetCodeName());
 						}
-						
-						HashMap<String, Object> map = (HashMap<String, Object>) getExtendedFieldDetailDAO().retrive(
-								tableName,  financeDetail.getFinScheduleData().getFinReference(), "_Temp");
+
+						HashMap<String, Object> map = (HashMap<String, Object>) getExtendedFieldDetailDAO().retrive(tableName,
+								scheduleData.getFinReference(), "_Temp");
+
 						if (map != null) {
 							financeDetail.getLovDescExtendedFieldValues().putAll(map);
 						}
@@ -823,7 +458,7 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 */
 	@Override
 	public FinanceDetail getApprovedFinanceDetailById(String finReference, boolean isWIF) {
-		return getFinanceDetailById(finReference, "_AView", isWIF);
+		return getFinSchdDetailById(finReference, "_AView", isWIF);
 	}
 
 	/**
@@ -835,65 +470,55 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 *            (String)
 	 * @return FinanceDetail
 	 * */
-	private FinanceDetail getFinanceDetailById(String finReference, String type, boolean isWIF) {
+	private FinanceDetail getFinSchdDetailById(String finReference, String type, boolean isWIF) {
 		logger.debug("Entering");
 
 		//Finance Details
-		FinanceDetail financeDetail = getFinanceDetail(isWIF);
-		financeDetail.getFinScheduleData().setFinReference(finReference);
-		financeDetail.getFinScheduleData().setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, isWIF));
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		scheduleData.setFinReference(finReference);
+		scheduleData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, isWIF));
 
-		if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
+		if (scheduleData.getFinanceMain() != null) {
 
 			//Finance Type Details
-			financeDetail.getFinScheduleData().setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(
-			         financeDetail.getFinScheduleData().getFinanceMain().getFinType(), "_AView"));
+			scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
 
 			//Finance Schedule Details
-			financeDetail.getFinScheduleData().setFinanceScheduleDetails(
-			        getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, isWIF));
+			scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, isWIF));
 
 			//Finance Disbursement Details
-			financeDetail.getFinScheduleData().setDisbursementDetails(
-			        getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, isWIF));
+			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, isWIF));
+			
+			String tableType = "";
+			if(!StringUtils.trimToEmpty(scheduleData.getFinanceMain().getRecordType()).equals("")){
+				tableType = "_Temp";
+			}
 
 			//Finance Deferment Header Details
-			financeDetail.getFinScheduleData().setDefermentHeaders(
-			        getDefermentHeaderDAO().getDefermentHeaders(finReference, type, isWIF));
+			scheduleData.setDefermentHeaders(getDefermentHeaderDAO().getDefermentHeaders(finReference, tableType, isWIF));
 
 			//Finance Deferment Details
-			financeDetail.getFinScheduleData().setDefermentDetails(
-			        getDefermentDetailDAO().getDefermentDetails(finReference, type, isWIF));
+			scheduleData.setDefermentDetails(getDefermentDetailDAO().getDefermentDetails(finReference, tableType, isWIF));
 
 			//Finance Repayment Instruction Details
-			financeDetail.getFinScheduleData().setRepayInstructions(
-			        getRepayInstructionDAO().getRepayInstructions(finReference, type, isWIF));
+			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, isWIF));
 
-			// Retrieving asset details
-			if (!isWIF && financeDetail.getFinScheduleData().getFinanceType() != null) {
-				
-				String assetCode = financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName();
+			//Finance Overdue Penalty Rate Details
+			if (!isWIF) {
+				scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
-				if (assetCode.equalsIgnoreCase(PennantConstants.CARLOAN)) {
-
-					financeDetail.setCarLoanDetail(getCarLoanDetailDAO().getCarLoanDetailByID(finReference, type));
-
-				} else if (assetCode.equalsIgnoreCase(PennantConstants.EDULOAN)) {
-
-					financeDetail.setEducationalLoan(getEducationalLoanDAO().getEducationalLoanByID(finReference, type));
-					if (financeDetail.getEducationalLoan() != null) {
-						financeDetail.getEducationalLoan().setEduExpenseList(
-						        getEducationalExpenseDAO().getEducationalExpenseByEduLoanId(finReference, type));
-					}
-					
-				} else if (assetCode.equalsIgnoreCase(PennantConstants.HOMELOAN)) {
-
-					financeDetail.setHomeLoanDetail(getHomeLoanDetailDAO().getHomeLoanDetailByID(finReference, type));
-
-				} else if (assetCode.equalsIgnoreCase(PennantConstants.MORTLOAN)) {
-
-					financeDetail.setMortgageLoanDetail(getMortgageLoanDetailDAO().getMortgageLoanDetailById(finReference, type));
+				// Retrieving asset details
+				if (scheduleData.getFinanceType() != null && 
+						PennantConstants.RECORD_TYPE_NEW.equals(scheduleData.getFinanceMain().getRecordType())) {
+					setAssetDetail(financeDetail, type);
 				}
+			}
+			
+			//Fetch Finance Premium Details
+			String productCode = scheduleData.getFinanceType().getFinCategory();
+			if(productCode.equals(PennantConstants.FINANCE_PRODUCT_SUKUK)){
+				financeDetail.setPremiumDetail(getFinancePremiumDetailDAO().getFinPremiumDetailsById(finReference, type));
 			}
 		}
 
@@ -905,207 +530,150 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 * Method for Fetching Finance Reference Details List by using FinReference
 	 */
 	@Override
-	public FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String userRole,
-	        String screenCode, String eventCode) {
+	public FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String userRole,  String screenCode, String eventCode) {
 		logger.debug("Entering");
-		
+
 		//Finance Reference Details
 		String finType = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
-		
+		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+		FinanceMain financeMain =  financeDetail.getFinScheduleData().getFinanceMain();		
+		String finReference = financeDetail.getFinScheduleData().getFinReference();
+
 		String nextRoleCode = userRole;
-		if(!financeDetail.getFinScheduleData().getFinanceMain().isNewRecord()){
-			nextRoleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
+
+		if (financeMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
+
+			if (!financeMain.isNewRecord()) {
+				nextRoleCode = financeMain.getNextRoleCode();
+			}
+
+			//Finance Agreement Details	
+			//=======================================
+			financeDetail.setAggrementList(getAgreementDetailService().getAggrementDetailList(finType, nextRoleCode));
+
 		}
 
-		//Finance Agreement Details
-		financeDetail.setAggrementList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(
-				finType, nextRoleCode , "_AAView"));
-		
-		//Finance Agreement Details Fetching & Preparation
-		//=======================================
-		String agrIds = null;
-		if(financeDetail.getAggrementList() != null && financeDetail.getAggrementList().size() > 0){
-			
-			agrIds = "";
-			Map<Long, Boolean> keyExistencyCheckMap = new HashMap<Long, Boolean>();
-			
-			for (FinanceReferenceDetail finRefDetail : financeDetail.getAggrementList()) {
-				agrIds = agrIds + finRefDetail.getFinRefId() +",";
-				keyExistencyCheckMap.put(finRefDetail.getFinRefId(), false);
-            }
-			
-			if(agrIds.endsWith(",")){
-				agrIds = agrIds.substring(0, agrIds.length()-1);
-			}
-			
-			financeDetail.setFinAgrDetailList(getFinAgreementDetailDAO().getFinAgreementDetailList(
-					financeDetail.getFinScheduleData().getFinReference(), finType, true, agrIds, "_View"));
-			
-			Map<Long,FinAgreementDetail> existAgrDetailList = new HashMap<Long, FinAgreementDetail>();
-			for (FinAgreementDetail agrDetail : financeDetail.getFinAgrDetailList()) {
-				if(keyExistencyCheckMap.containsKey(agrDetail.getAgrId())){
-					keyExistencyCheckMap.put(agrDetail.getAgrId(), true);
-					existAgrDetailList.put(agrDetail.getAgrId(), agrDetail);
-				}
-            }
-			
-			List<FinAgreementDetail> mandInputAgrs = new ArrayList<FinAgreementDetail>();
-			for (FinanceReferenceDetail finRefDetail : financeDetail.getAggrementList()) {
-				if(!keyExistencyCheckMap.get(finRefDetail.getFinRefId())){
-					FinAgreementDetail detail = new FinAgreementDetail();
-					detail.setNewRecord(true);
-					detail.setAgrId(finRefDetail.getFinRefId());
-					detail.setFinType(finRefDetail.getFinType());
-					detail.setLovDescAgrName(finRefDetail.getLovDescNamelov());
-					detail.setLovDescMandInput(finRefDetail.getAllowInputInStage().contains(nextRoleCode));
-					mandInputAgrs.add(detail);
-				}else{
-					FinAgreementDetail agrDetail = existAgrDetailList.get(finRefDetail.getFinRefId());
-					agrDetail.setLovDescMandInput(finRefDetail.getAllowInputInStage().contains(nextRoleCode));
-					agrDetail.setLovDescAgrName(finRefDetail.getLovDescNamelov());
-					mandInputAgrs.add(agrDetail);
-				}
-            }
-			
-			//Finalize Agreement Details
-			//=======================================
-			financeDetail.setFinAgrDetailList(mandInputAgrs);		
-			
-		}
-		
 		// Accounting Set Details
 		//=======================================
-		
+
 		boolean isCustExist = true;
-		String ctgType = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCtgTypeName());
-		if("".equals(ctgType)){
+		String ctgType = StringUtils.trimToEmpty(financeMain.getLovDescCustCtgTypeName());
+
+		if ("".equals(ctgType)) {
 			isCustExist = false;
 		}
-		
+
 		if (StringUtils.trimToEmpty(eventCode).equals("")) {
-			if (financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate()
-			        .after(new Date())) {
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+
+			if (financeMain.getFinStartDate().after(curBussDate)) {
 				eventCode = "ADDDBSF";
 			} else {
 				eventCode = "ADDDBSP";
 			}
 		}
-		String accSetId = returnAccountingSetid(eventCode, financeDetail.getFinScheduleData().getFinanceType());
 
-		//Finance Accounting Posting Details
-		if(isCustExist){
-			financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(
-					Long.valueOf(accSetId), "_AEView", true));
-		}
+		String accSetId = returnAccountingSetid(eventCode, financeType);
 		
-		//Finance Commitment Accounting Posting Details
-		if(financeDetail.getFinScheduleData().getFinanceType().isFinCommitmentReq() &&
-				!StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef()).equals("")){
-			
-			long accountingSetId = getAccountingSetDAO().getAccountingSetId("CMTDISB", "CMTDISB");
-			if (accountingSetId != 0) {
-				financeDetail.setCmtFinanceEntries(getTransactionEntryDAO().getListTransactionEntryById(accountingSetId, "_AEView",true));
-			}
-		}
+		if(!accSetId.equals("")){
 
-		//Finance Fee Charge Details
-		financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules( Long.valueOf(accSetId),
-				(eventCode.startsWith("ADDDBS") ? "ADDDBS" : eventCode),  "_AView"));
+			//Finance Accounting Posting Details
+			//=======================================
+			if (isCustExist) {
 
-		//Finance Stage Accounting Posting Details
-		if(isCustExist){
-			financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(
-					finType, "5", nextRoleCode, "_AEView", true));
-		}
-		
-		//Finance Eligibility Rule Details List
-		//=======================================
-		if(isCustExist){
-			financeDetail.setEligibilityRuleList(getFinanceReferenceDetailDAO().getFinRefDetByRoleAndFinType(
-					finType, userRole, null, "_AEView"));
+				financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(Long.valueOf(accSetId), "_AEView", true));
 
-			if (financeDetail.getEligibilityRuleList().size() != 0
-					|| financeDetail.getScoringGroupList().size() != 0
-					&& financeDetail.getFinScheduleData().getFinanceMain().getCustID() != 0) {
-				doFillCustEligibilityData(financeDetail);
-			}
-		}
-		
-		//Finance Scoring Module Details List
-		//=======================================
-		List<String> groupIds = null;
-		if(isCustExist){
-			financeDetail.setFinScoreHeaderList(getFinanceScoreHeaderDAO().getFinScoreHeaderList(
-					financeDetail.getFinScheduleData().getFinReference(), "_View"));
-			if(financeDetail.getFinScoreHeaderList() != null && financeDetail.getFinScoreHeaderList().size() > 0){
-				List<Long> headerIds = new ArrayList<Long>();
-				 groupIds = new ArrayList<String>();
-				for (FinanceScoreHeader header : financeDetail.getFinScoreHeaderList()) {
-					headerIds.add(header.getHeaderId());
-					groupIds.add(String.valueOf(header.getGroupId()));
-				}
-				financeDetail.getScoreDetailListMap().clear();
-				for (FinanceScoreDetail scoreDetail : getFinanceScoreHeaderDAO().getFinScoreDetailList(headerIds, "_View")) {
-					List<FinanceScoreDetail> scoreDetailList = new ArrayList<FinanceScoreDetail>();
-					if(financeDetail.getScoreDetailListMap().containsKey(scoreDetail.getHeaderId())){
-						scoreDetailList = financeDetail.getScoreDetailListMap().get(scoreDetail.getHeaderId());
-						financeDetail.getScoreDetailListMap().remove(scoreDetail.getHeaderId());
+				//Finance Commitment Accounting Posting Details
+				//=======================================
+				if (PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
+					if (financeType.isFinCommitmentReq()
+							&& !StringUtils.trimToEmpty(financeMain.getFinCommitmentRef()).equals("")) {
+
+						long accountingSetId = getAccountingSetDAO().getAccountingSetId("CMTDISB","CMTDISB");
+
+						if (accountingSetId != 0) {
+							financeDetail.setCmtFinanceEntries(getTransactionEntryDAO().getListTransactionEntryById(
+									accountingSetId, "_AEView", true));
+						}
 					}
-					scoreDetailList.add(scoreDetail);
-					financeDetail.getScoreDetailListMap().put(scoreDetail.getHeaderId(), scoreDetailList);
 				}
 			}
-		}
-		
-		if(isCustExist && "C".equals(ctgType)
-				&& (financeDetail.getFinScoreHeaderList() != null && financeDetail.getFinScoreHeaderList().size() > 0)){
-			isCustExist = false;
-		}
-		
-		if(isCustExist){
-			fetchScoringDetails(financeDetail, ctgType, finType, userRole,groupIds);
+
+			//Finance Fee Charge Details
+			//=======================================
+			financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(
+					Long.valueOf(accSetId), (eventCode.startsWith("ADDDBS") ? "ADDDBS" : eventCode), "_AView",0));
 		}
 
-		//Check List Details
-		//=======================================
-		if (isCustExist && financeDetail.getFinScheduleData().getFinReference() != null) {
-			financeDetail.setCheckList(getCheckListByFinRef(finType));
-			financeDetail.setFinanceCheckList(getFinanceCheckListReferenceDAO()
-			        .getFinanceCheckListReferenceByFinRef(financeDetail.getFinScheduleData().getFinReference(), "_View"));
-		}
+		if (financeMain.isNewRecord()
+				|| PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) { 
 
-		// Fetching Finance Asset Additional Fields
-		//=======================================
-		if (!screenCode.equals("QDE")) {
-			
-			String assetCode = financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName();
-			
-			ExtendedFieldHeader fieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName("FASSET", assetCode, "_View");
-			if(fieldHeader != null){
-				financeDetail.setExtendedFieldHeader(fieldHeader);
-				financeDetail.getExtendedFieldHeader().setExtendedFieldDetails(
-						getExtendedFieldDetailDAO().getExtendedFieldDetailBySubModule(assetCode, "_View"));
+			//Finance Stage Accounting Posting Details
+			//=======================================
+			if (isCustExist) {
+				financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(
+						finType, PennantConstants.Accounting, nextRoleCode, "_AEView", true));
+			}
 
-				if (financeDetail.getExtendedFieldHeader().getExtendedFieldDetails().size() > 0 && 
-						!StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinReference()).equals("")) {
-					
-					String tableName = "";
-					if(PennantStaticListUtil.getModuleName().containsKey("FASSET")){
-						tableName = PennantStaticListUtil.getModuleName().get("FASSET").get(assetCode);
-					}
-					
-					HashMap<String, Object> map = (HashMap<String, Object>) getExtendedFieldDetailDAO().retrive(
-							tableName, financeDetail.getFinScheduleData().getFinReference(), "_Temp");
-					if (map != null) {
-						financeDetail.getLovDescExtendedFieldValues().putAll(map);
+			if (isCustExist) {
+
+				//Finance Eligibility Rule Details List
+				//=======================================
+				financeDetail.setElgRuleList(getEligibilityDetailService().setFinanceEligibilityDetails(finReference, financeMain.getFinCcy(),
+						financeMain.getFinAmount(), financeMain.isNewRecord(), finType, userRole));
+
+				//Finance Scoring Rule Details List
+				//=======================================
+				getScoringDetailService().setFinanceScoringDetails(financeDetail, finType, userRole, ctgType);
+
+				if ((financeDetail.getElgRuleList() != null && !financeDetail.getElgRuleList().isEmpty())
+						|| financeDetail.getScoringGroupList() != null && !financeDetail.getScoringGroupList().isEmpty()) {
+					doFillCustEligibilityData(financeDetail);
+				}
+
+				// set Check List Details
+				//=======================================
+				getCheckListDetailService().setFinanceCheckListDetails(financeDetail, finType, userRole);
+
+			}
+
+			// Fetching Finance Asset Additional Fields
+			//=======================================
+			if (!screenCode.equals("QDE")) {
+
+				ExtendedFieldHeader fieldHeader = null;
+				List<ExtendedFieldDetail> extendedFieldDetails = null;
+				String assetCode = financeType.getLovDescAssetCodeName();
+
+				fieldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName("FASSET", assetCode, "_View");
+
+				if (fieldHeader != null) {
+					extendedFieldDetails =  getExtendedFieldDetailDAO().getExtendedFieldDetailBySubModule(assetCode, "_View");
+					fieldHeader.setExtendedFieldDetails(extendedFieldDetails);
+					financeDetail.setExtendedFieldHeader(fieldHeader);
+
+					finReference = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinReference());
+
+					if (extendedFieldDetails != null && !extendedFieldDetails.isEmpty() && !finReference.equals("")) {
+
+						String tableName = "";
+						if (PennantStaticListUtil.getModuleName().containsKey("FASSET")) {
+							tableName = PennantStaticListUtil.getModuleName().get("FASSET").get(assetCode);
+						}
+
+						HashMap<String, Object> map = (HashMap<String, Object>) getExtendedFieldDetailDAO().retrive(tableName, finReference, "_Temp");
+						if (map != null) {
+							financeDetail.getLovDescExtendedFieldValues().putAll(map);
+						}
 					}
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 		return financeDetail;
 	}
+
 
 	/**
 	 * Method for testing Finance Reference is Already Exist or not
@@ -1131,92 +699,127 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws AccountNotFoundException 
+	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean isWIF) throws AccountNotFoundException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF)
+	throws AccountNotFoundException {
 		logger.debug("Entering");
-		
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate", isWIF);
+
+		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		if (!auditHeader.isNextProcess()) {
+		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
-			return auditHeader;
+			return aAuditHeader;
 		}
-		
+
+		Cloner cloner = new Cloner();
+		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+
 		String tableType = "";
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		final String rcdType = financeMain.getRecordType();
-		
+		String finReference = financeMain.getFinReference();
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+
 		if (financeMain.isWorkflow()) {
 			tableType = "_TEMP";
 		}
-		
-		if(financeDetail.getStageAccountingList()!= null && financeDetail.getStageAccountingList().size() > 0){
 
-			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-			long linkedTranId = Long.MIN_VALUE;
-			AEAmountCodes amountCodes = null;
-			AEAmounts aeAmounts = new AEAmounts();
-			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
-			financeMain.setRecordType(rcdType);
-			DataSet dataSet = aeAmounts.createDataSet(financeMain, "STAGE", 
-					financeMain.getFinStartDate(), financeMain.getFinStartDate());
+		//Accounting (Stage/Posting) Execution Process
+		//=======================================
+		if(!isWIF){
+			if(financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
 
-			amountCodes = aeAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData()
-					.getFinanceScheduleDetails(), new FinanceProfitDetail(), financeMain.getFinStartDate());
+				//Finance Stage Accounting Process
+				//=======================================
+				if (financeDetail.getStageAccountingList() != null && financeDetail.getStageAccountingList().size() > 0) {
 
-			try {
-				list.addAll(getEngineExecution().getStageExecResults(dataSet, amountCodes,
-						"Y", financeMain.getRoleCode(), null));
-			} catch (Exception e) {
-				logger.error(e);
-			}
+					List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
+					auditHeader = executeStageAccounting(auditHeader, list);
+					if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+						return auditHeader;
+					}
+					// save Postings
+					getPostingsDAO().saveBatch(list, "", false);
+				}
 
-			// Method for validating Postings with interface program and
-			// return results
-			if (list.get(0).getLinkedTranId() == Long.MIN_VALUE) {
-				linkedTranId = getPostingsDAO().getLinkedTransId(list.get(0));
-			} else {
-				linkedTranId = list.get(0).getLinkedTranId();
-			}
-			list = getPostingsInterfaceService().doFillPostingDetails(list,
-					financeMain.getFinBranch(), linkedTranId, "Y");			
-			if (list != null && list.size() > 0) {
-				ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-				for (int i = 0; i < list.size(); i++) {
-					ReturnDataSet set = list.get(i);
-					set.setLinkedTranId(linkedTranId);
-					set.setPostDate(curBDay);
-					if (!("0000".equals(set.getErrorId()) || "".equals(set.getErrorId()))) {
-						errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(),
-								"E", set.getErrorMsg(), new String[] {}, new String[] {}));
-					} else {
-						set.setPostStatus("S");
+			}else{
+
+				//Accounting Execution Process on Maintaiance
+				//=======================================
+				if(tableType.equals("") && financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+
+					auditHeader = executeAccountingProcess(auditHeader, curBDay);
+					if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+						return auditHeader;
 					}
 				}
-				auditHeader.setErrorList(errorDetails);
-				if (errorDetails.size() > 0 && auditHeader.getErrorMessage().size() > 0) {
-					return auditHeader;
-				}
-				
-				// save Postings
-				getPostingsDAO().saveBatch(list, "", false);
 			}
-			
 		}
 
-		// Extended Field Details Save And Update
+		if(isWIF){
+
+			//Customer Basic Details Maintenance
+			//=======================================
+			WIFCustomer customer = financeDetail.getCustomer();
+			if(customer != null){
+				long custId = customer.getCustID();
+				if (customer.isNewRecord()) {
+					custId = getCustomerDAO().saveWIFCustomer(customer);
+				}else{
+					getCustomerDAO().updateWIFCustomer(customer);
+					getCustomerIncomeDAO().deleteByCustomer(customer.getCustID(), "", true);
+				}
+
+				if(customer.getCustomerIncomeList() != null && !customer.getCustomerIncomeList().isEmpty()){
+					for (CustomerIncome income : customer.getCustomerIncomeList()) {
+						income.setCustID(custId);
+					}
+					getCustomerIncomeDAO().saveBatch(customer.getCustomerIncomeList(), "", true);
+				}
+				financeMain.setCustID(custId);
+			}
+
+			//Indicative Term Sheet Details Maintenance
+			//=======================================
+			IndicativeTermDetail termDetail = financeDetail.getIndicativeTermDetail();
+			if(termDetail != null){
+				termDetail.setFinReference(finReference);
+				if (termDetail.isNewRecord()) {
+					getIndicativeTermDetailDAO().save(termDetail, tableType, true);
+				}else{
+					getIndicativeTermDetailDAO().update(termDetail, tableType, true);
+				}
+			}
+		}
+
+		// Finance Main Details Save And Update
+		//=======================================
 		if (financeMain.isNew()) {
 			getFinanceMainDAO().save(financeMain, tableType, isWIF);
+			
+			//Save Finance Premium Details
+			String productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
+			if(productCode.equals(PennantConstants.FINANCE_PRODUCT_SUKUK)){
+				financeDetail.getPremiumDetail().setFinReference(finReference);
+				getFinancePremiumDetailDAO().save(financeDetail.getPremiumDetail(), tableType);
+			}
+			
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, isWIF);
-		}
-		
-		// Save Contributor Header Details
-		if (financeDetail.getFinContributorHeader() != null) {
 			
+			//Update Finance Premium Details
+			String productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
+			if(productCode.equals(PennantConstants.FINANCE_PRODUCT_SUKUK)){
+				getFinancePremiumDetailDAO().update(financeDetail.getPremiumDetail(), tableType);
+			}
+		}
+
+		// Save Contributor Header Details
+		//=======================================
+		if (financeDetail.getFinContributorHeader() != null) {
+
 			FinContributorHeader contributorHeader = financeDetail.getFinContributorHeader();
 			contributorHeader.setWorkflowId(0);
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinContributorHeader());
@@ -1225,162 +828,149 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 			} else {
 				getFinContributorHeaderDAO().update(contributorHeader, tableType);
 			}
+
 			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-			        fields[1], financeDetail.getFinContributorHeader().getBefImage(), financeDetail
-			                .getFinContributorHeader()));
-			
-			if(contributorHeader.getContributorDetailList() !=null && contributorHeader.getContributorDetailList().size()>0){
+					fields[1], financeDetail.getFinContributorHeader().getBefImage(), financeDetail.getFinContributorHeader()));
+
+			if (contributorHeader.getContributorDetailList() != null
+					&& contributorHeader.getContributorDetailList().size() > 0) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("Contributor");
-				details = processingContributorList(details,tableType,contributorHeader.getFinReference());
+				details = processingContributorList(details, tableType,
+						contributorHeader.getFinReference());
 				auditDetails.addAll(details);
 			}
 		}
-		
-		// Save Billing Header Details
-		if (financeDetail.getFinBillingHeader() != null) {
-			
-			FinBillingHeader billingHeader = financeDetail.getFinBillingHeader();
-			billingHeader.setWorkflowId(0);
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinBillingHeader());
-			if (billingHeader.isNewRecord()) {
-				getFinBillingHeaderDAO().save(billingHeader, tableType);
-			} else {
-				getFinBillingHeaderDAO().update(billingHeader, tableType);
-			}
-			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-			        fields[1], financeDetail.getFinBillingHeader().getBefImage(), financeDetail
-			                .getFinBillingHeader()));
-			
-			if(billingHeader.getBillingDetailList() !=null && billingHeader.getBillingDetailList().size()>0){
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("Billing");
-				details = processingBillingList(details,tableType,billingHeader.getFinReference());
-				auditDetails.addAll(details);
-			}
-		}
-		
+
 		// Save schedule details
+		//=======================================
 		if (!financeDetail.isNewRecord()) {
-			listDeletion(financeDetail.getFinScheduleData(), tableType, isWIF);
-			listSave(financeDetail.getFinScheduleData(), tableType, isWIF);
-			saveFeeChargeList(financeDetail.getFinScheduleData(),tableType);
-		} else {
-			listSave(financeDetail.getFinScheduleData(), tableType, isWIF);
-			saveFeeChargeList(financeDetail.getFinScheduleData(),tableType);
-		}
-		
-		//Finance Scoring Details
-		if(financeDetail.getFinScoreHeaderList() != null && 
-				financeDetail.getFinScoreHeaderList().size() > 0 ){
-			
-			for (FinanceScoreHeader header : financeDetail.getFinScoreHeaderList()) {
-				header.setFinReference(financeDetail.getFinScheduleData().getFinReference());
-				long headerId = getFinanceScoreHeaderDAO().saveHeader(header, "");
-				if(financeDetail.getScoreDetailListMap().containsKey(header.getGroupId())){
-					List<FinanceScoreDetail> ScoreDetailList = financeDetail.getScoreDetailListMap().get(header.getGroupId());
-					for (FinanceScoreDetail detail : ScoreDetailList) {
-						detail.setHeaderId(headerId);
-                    }
-					getFinanceScoreHeaderDAO().saveDetailList(ScoreDetailList, "");
+
+			if(!isWIF && tableType.equals("") && financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+				//Fetch Existing data before Modification
+				
+				FinScheduleData old_finSchdData = null;
+				if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
+					old_finSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);
+					old_finSchdData.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 				}
-            }
+
+				//Create log entry for Action for Schedule Modification
+				FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+				entryDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+				entryDetail.setEventAction(financeDetail.getAccountingEventCode());
+				entryDetail.setSchdlRecal(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated());
+				entryDetail.setPostDate(curBDay);
+				entryDetail.setReversalCompleted(false);
+				long logKey = getFinLogEntryDetailDAO().save(entryDetail);
+
+				//Save Schedule Details For Future Modifications
+				if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
+					listSave(old_finSchdData, "_Log", false, logKey);
+				}
+			}
+
+			listDeletion(financeDetail.getFinScheduleData(), tableType, isWIF);
+			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0);
+			saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
+		} else {
+			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0);
+			saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
 		}
-		
-		//Finance Agreement List Details
-		if(financeDetail.getFinAgrDetailList() !=null && financeDetail.getFinAgrDetailList().size()>0){
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("AgreementDetail");
-			details = processingAgrDetailList(details,tableType,financeMain.getFinReference());
-			auditDetails.addAll(details);
-		}
-		
-		// Save Document Details
-		if (financeDetail.getDocumentDetailsList() != null
-		        && financeDetail.getDocumentDetailsList().size() > 0) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType,
-			        financeMain.getFinReference());
-			auditDetails.addAll(details);
-		}
-		
-		//Finance Check List Details
-		if (financeDetail.getFinanceCheckList() != null
-		        && financeDetail.getFinanceCheckList().size() > 0) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("checkListDetails");
-			details = processCheckListDetails(details, tableType, financeMain.getFinReference());
-			auditDetails.addAll(details);
+
+		if(!isWIF){
+
+			//Finance Eligibility Rule Details
+			//=======================================
+			getEligibilityDetailService().saveOrUpdate(financeDetail);
+
+			// Finance Scoring Module Details List Saving 
+			//=======================================
+			getScoringDetailService().saveOrUpdate(financeDetail);
 		}
 
 		// Save asset details
-		if (financeDetail.getCarLoanDetail() != null) {
-			CarLoanDetail carLoanDetail = financeDetail.getCarLoanDetail();
-			carLoanDetail.setWorkflowId(0);
-			String[] fields = PennantJavaUtil.getFieldDetails(new CarLoanDetail());
-			if (carLoanDetail.isNewRecord()) {
-				getCarLoanDetailDAO().save(carLoanDetail, tableType);
-			} else {
-				getCarLoanDetailDAO().update(carLoanDetail, tableType);
+		//=======================================
+		if(!isWIF){
+			
+			String auditTranType = auditHeader.getAuditTranType();
+			if (financeDetail.getCarLoanDetail() != null) {
+				auditDetails.add(getCarLoanDetailService().saveOrUpdate(financeDetail.getCarLoanDetail(), tableType, auditTranType));
 			}
-			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-			        fields[1], financeDetail.getCarLoanDetail().getBefImage(), financeDetail.getCarLoanDetail()));
-		}
-		
-		if (financeDetail.getEducationalLoan() != null) {
-			EducationalLoan educationalLoan = financeDetail.getEducationalLoan();
-			educationalLoan.setWorkflowId(0);
-			String[] fields = PennantJavaUtil.getFieldDetails(new EducationalLoan());
-			if (educationalLoan.isNewRecord()) {
-				getEducationalLoanDAO().save(educationalLoan, tableType);
-			} else {
-				getEducationalLoanDAO().update(educationalLoan, tableType);
-			}
-			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-			        fields[1], financeDetail.getEducationalLoan().getBefImage(), financeDetail.getEducationalLoan()));
 
-			// Retrieving List of Audit Details For educational expenserelated
-			// modules
-			if (educationalLoan.getEduExpenseList() != null
-			        && educationalLoan.getEduExpenseList().size() > 0) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("EduExpense");
-				details = processingEduExpenseList(details, tableType, educationalLoan.getLoanRefNumber());
+			if(financeDetail.getEducationalLoan() != null) {
+				auditDetails.addAll(getEducationalLoanService().saveOrUpdate(financeDetail, tableType, auditTranType));
+			}
+
+			if (financeDetail.getHomeLoanDetail() != null) {
+				auditDetails.add(getHomeLoanDetailService().saveOrUpdate(financeDetail.getHomeLoanDetail(), tableType, auditTranType));
+			}
+
+			if (financeDetail.getMortgageLoanDetail() != null) {
+				auditDetails.add(getMortgageLoanDetailService().saveOrUpdate(financeDetail.getMortgageLoanDetail(), tableType, auditTranType));
+			}
+
+			// Save GOODS Details
+			if (financeDetail.getGoodsLoanDetails() != null && !financeDetail.getGoodsLoanDetails().isEmpty()) {
+				auditDetails.addAll(getGoodsLoanDetailService().saveOrUpdate(financeDetail.getGoodsLoanDetails(), tableType, auditTranType));
+			}
+			// Save General GOODS Details
+			if (financeDetail.getGenGoodsLoanDetails() != null && !financeDetail.getGenGoodsLoanDetails().isEmpty()) {
+				auditDetails.addAll(getGenGoodsLoanDetailService().saveOrUpdate(financeDetail.getGenGoodsLoanDetails(), tableType, auditTranType));
+			}
+
+			// Save Commidity Header & Details
+			CommidityLoanHeader commidityLoanHeader = financeDetail.getCommidityLoanHeader();
+			if (commidityLoanHeader != null) {
+				commidityLoanHeader.setCommidityLoanDetails(financeDetail.getCommidityLoanDetails());
+				auditDetails.addAll(getCommidityLoanDetailService().saveOrUpdate(commidityLoanHeader, tableType, auditTranType));
+			}
+
+			// set Sharing Details Audit
+			if (financeDetail.getSharesDetails() != null  && !financeDetail.getSharesDetails().isEmpty()) {
+				auditDetails.addAll(getSharesDetailService().saveOrUpdate(financeDetail, tableType));
+			}
+
+			// Save Document Details
+			if (financeDetail.getDocumentDetailsList() != null
+					&& financeDetail.getDocumentDetailsList().size() > 0) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
+				details = processingDocumentDetailsList(details, tableType,
+						financeMain.getFinReference(),financeDetail.getFinScheduleData().getFinanceMain());
 				auditDetails.addAll(details);
 			}
-		}
-		if (financeDetail.getHomeLoanDetail() != null) {
-			HomeLoanDetail homeLoanDetail = financeDetail.getHomeLoanDetail();
-			homeLoanDetail.setWorkflowId(0);
-			String[] fields = PennantJavaUtil.getFieldDetails(new HomeLoanDetail());
-			if (homeLoanDetail.isNewRecord()) {
-				getHomeLoanDetailDAO().save(homeLoanDetail, tableType);
-			} else {
-				getHomeLoanDetailDAO().update(homeLoanDetail, tableType);
+
+			// set Finance Check List audit details to auditDetails
+			if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
+				auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType));
 			}
-			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-			        fields[1], financeDetail.getHomeLoanDetail().getBefImage(), financeDetail.getHomeLoanDetail()));
-		}
-		if (financeDetail.getMortgageLoanDetail() != null) {
-			MortgageLoanDetail mortgageLoanDetail = financeDetail.getMortgageLoanDetail();
-			mortgageLoanDetail.setWorkflowId(0);
-			String[] fields = PennantJavaUtil.getFieldDetails(new MortgageLoanDetail());
-			if (mortgageLoanDetail.isNewRecord()) {
-				getMortgageLoanDetailDAO().save(mortgageLoanDetail, tableType);
-			} else {
-				getMortgageLoanDetailDAO().update(mortgageLoanDetail, tableType);
+
+			// set contract Details Audit
+			if (financeDetail.getContractorAssetDetails() != null  && !financeDetail.getContractorAssetDetails().isEmpty()) {
+				auditDetails.addAll(getContractorAssetDetailService().saveOrUpdate(finReference, financeDetail.getContractorAssetDetails(), tableType, auditTranType));
 			}
-			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-			        fields[1], financeDetail.getMortgageLoanDetail().getBefImage(), financeDetail.getMortgageLoanDetail()));
+
+			// set Guarantor Details Audit
+			if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()) {
+				auditDetails.addAll(getGuarantorDetailService().saveOrUpdate(financeDetail.getGurantorsDetailList(), tableType, auditTranType));
+			}
+
+			// set JountAccount Details Audit
+			if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
+				auditDetails.addAll(getJointAccountDetailService().saveOrUpdate(financeDetail.getJountAccountDetailList(), tableType, auditTranType));
+			}
+
+			//Additional Field Details Save / Update
+			doSaveAddlFieldDetails(financeDetail, tableType);
+
 		}
 
-		//Additional Field Details Save / Update
-		doSaveAddlFieldDetails(financeDetail, tableType);
+		if(!isWIF){
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), excludeFields);
+			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
+					fields[1], financeMain.getBefImage(), financeMain));
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), excludeFields);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-		        fields[1], financeMain.getBefImage(), financeMain));
-		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
-
-		// Generate agreements
-		if (!isWIF && !financeDetail.isActionSave()) {
-			generateAgreements(financeDetail, financeMain);
+			auditHeader.setAuditDetails(auditDetails);
+			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
 		logger.debug("Leaving");
@@ -1416,7 +1006,7 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader, boolean isWIF) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "delete", isWIF);
 		if (!auditHeader.isNextProcess()) {
@@ -1426,26 +1016,41 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String productCode = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceType().getFinCategory());
 
 		//Finance SubChild List And Reference Details List Deletion
 		listDeletion(financeDetail.getFinScheduleData(), "", isWIF);
+
+		if (!isWIF) {
+			//Additional Field Details Deletion
+			doDeleteAddlFieldDetails(financeDetail, "");
+		}
+
+		//Indicative Term Sheet Details deletion on WIF FinanceMain Deletion 
+		if(isWIF && financeDetail.getIndicativeTermDetail() != null){
+			getIndicativeTermDetailDAO().delete(financeDetail.getIndicativeTermDetail(), "", true);
+		}
+
+		if (!isWIF) {
+			auditDetails.addAll(assetDeletion(financeDetail, "", auditHeader.getAuditTranType()));	
+			auditDetails.addAll(jointGuarantorDeletion(financeDetail, "", auditHeader.getAuditTranType()));
+			auditDetails.addAll(getCheckListDetailService().delete(financeDetail, "", auditHeader.getAuditTranType()));
+		}
 		
-		//Additional Field Details Deletion
-		doDeleteAddlFieldDetails(financeDetail, "");
+		//Delete Finance Premium Details 
+		if(productCode.equals(PennantConstants.FINANCE_PRODUCT_SUKUK)){
+			getFinancePremiumDetailDAO().delete(financeDetail.getPremiumDetail(), "");
+		}
 		
 		//Finance Deletion
 		getFinanceMainDAO().delete(financeMain, "", isWIF);
-
-		if (!isWIF) {
-			auditDetails.addAll(getListAuditDetails(assetDeletion(financeDetail, "", auditHeader.getAuditTranType())));
-			auditDetails.addAll(getListAuditDetails(listDeletion_CheckList(financeDetail, "",auditHeader.getAuditTranType())));
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), excludeFields);
-			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
-			        fields[0], fields[1], financeMain.getBefImage(), financeMain));
-			auditHeader.setAuditDetails(auditDetails);
-			getAuditHeaderDAO().addAudit(auditHeader);
+		
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), excludeFields);
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
+		auditHeader.setAuditDetails(auditDetails);
+		if(!isWIF){
+		getAuditHeaderDAO().addAudit(auditHeader);
 		}
-
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -1467,8 +1072,7 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF)
-	        throws AccountNotFoundException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws AccountNotFoundException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -1478,407 +1082,357 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 			return aAuditHeader;
 		}
 
-		FinanceDetail financeDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
-		BeanUtils.copyProperties((FinanceDetail) aAuditHeader.getAuditDetail().getModelData(),
-		        financeDetail);
-
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Cloner cloner = new Cloner();
+		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
-		financeMain.setFinApprovedDate(curBDay);
-		final String rcdType = financeMain.getRecordType();
-		CarLoanDetail carLoanDetail = financeDetail.getCarLoanDetail();
-		EducationalLoan educationalLoan = financeDetail.getEducationalLoan();
-		HomeLoanDetail homeLoanDetail = financeDetail.getHomeLoanDetail();
-		MortgageLoanDetail mortgageLoanDetail = financeDetail.getMortgageLoanDetail();
 
-		AuditHeader auditHeader = new AuditHeader();
-		BeanUtils.copyProperties(aAuditHeader, auditHeader);
-		
-		// Finance Accounting Posting Details Process
-		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-		long linkedTranId = Long.MIN_VALUE;
-		AEAmountCodes amountCodes = null;
-		BigDecimal cmtPostAmt = BigDecimal.ZERO;
-		Commitment commitment = null;
-		AEAmounts aeAmounts = new AEAmounts();
-		financeMain.setRecordType(rcdType);
-		DataSet dataSet = aeAmounts.createDataSet(financeMain, financeDetail.getAccountingEventCode(), 
-				financeMain.getFinStartDate(), financeMain.getFinStartDate());
-
-		amountCodes = aeAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData()
-		        .getFinanceScheduleDetails(), new FinanceProfitDetail(), financeMain.getFinStartDate());
-		
-		if(financeDetail.getFinScheduleData().getFinanceType() != null &
-				"ISTISNA".equals(financeDetail.getFinScheduleData().getFinanceType().getLovDescProductCodeName())){
-				if(financeDetail.getFinBillingHeader() != null && 
-						financeDetail.getFinBillingHeader().getPreContrOrDeffCost().compareTo(BigDecimal.ZERO) > 0){
-					amountCodes.setDEFFEREDCOST(financeDetail.getFinBillingHeader().getPreContrOrDeffCost());
-				}
-		}
-		
-		try {
-			if(!financeDetail.getFinScheduleData().getFinanceType().isAllowRIAInvestment()){
-				list = getEngineExecution().getAccEngineExecResults(dataSet, amountCodes, "Y", null);//TODO
-				if(financeDetail.getStageAccountingList()!= null && financeDetail.getStageAccountingList().size() > 0){
-					
-					dataSet.setFinEvent("STAGE");
-					list.addAll(getEngineExecution().getStageExecResults(dataSet, amountCodes,
-							"Y", financeMain.getRoleCode(), null));
-				}
-			}else{
-				List<AEAmountCodesRIA> riaDetailList = new ArrayList<AEAmountCodesRIA>();
-				if(financeDetail.getFinContributorHeader() != null && 
-						financeDetail.getFinContributorHeader().getContributorDetailList() != null &&
-						financeDetail.getFinContributorHeader().getContributorDetailList().size() > 0){
-					riaDetailList = getEngineExecutionRIA().prepareRIADetails(
-							financeDetail.getFinContributorHeader().getContributorDetailList(), dataSet.getFinReference());
-				}
-				list = getEngineExecutionRIA().getAccEngineExecResults(dataSet, amountCodes, "Y", riaDetailList);
+		//Execute Accounting Details Process
+		//=======================================
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
+		if(financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+			financeMain.setFinApprovedDate(curBDay);
+			
+			if (financeMain.getFinContractDate() == null) {
+				financeMain.setFinContractDate(financeMain.getFinStartDate());
 			}
 			
-			// Finance Commitment Reference Posting Details
-			if(!StringUtils.trimToEmpty(financeMain.getFinCommitmentRef()).equals("")){
-				commitment = getCommitmentDAO().getCommitmentById(financeMain.getFinCommitmentRef(), "");
-				
-				AECommitment aeCommitment = new AECommitment();
-				aeCommitment.setCMTAMT(commitment.getCmtAmount());
-				aeCommitment.setCHGAMT(commitment.getCmtCharges());
-				aeCommitment.setDISBURSE(financeMain.getFinAmount());
-				aeCommitment.setRPPRI(BigDecimal.ZERO);
-				
-				list.addAll(getEngineExecution().getCommitmentExecResults(aeCommitment, commitment, "CMTDISB", "Y", null));
+			if (financeMain.getFeeChargeAmt() == null) {
+				financeMain.setFeeChargeAmt(BigDecimal.ZERO);
+			}
+		}	
+		if (!isWIF) {
+			auditHeader = executeAccountingProcess(auditHeader, curBDay);
+        }
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+			return auditHeader;
+		}
+		
+		//Re-Prepare of Finance Overdue Details with Existing Data
+		if(StringUtils.trimToEmpty(financeMain.getRcdMaintainSts()).equals(PennantConstants.CHGFRQ)){
+
+			List<FinanceScheduleDetail> schdList = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+			for (int i = 1; i < schdList.size(); i++) {
+
+				FinanceScheduleDetail curSchd = schdList.get(i);
+				if(!curSchd.isRepayOnSchDate()){
+					continue;
+				}
+
+				if(curSchd.isDeferedPay()){
+					continue;
+				}
+
+				if(curSchd.isSchPftPaid() || curSchd.isSchPriPaid()){
+					continue;
+				}
+
+				if(curSchd.getSchDate().compareTo(curBDay) > 0){
+					continue;
+				}
+
+				FinRepayQueue finRepayQueue = new FinRepayQueue();
+				finRepayQueue.setFinReference(financeMain.getFinReference());
+				finRepayQueue.setBranch(financeMain.getFinBranch());
+				finRepayQueue.setFinType(financeMain.getFinType());
+				finRepayQueue.setCustomerID(financeMain.getCustID());
+				finRepayQueue.setRpyDate(curSchd.getSchDate());
+				finRepayQueue.setFinPriority(9999);
+				finRepayQueue.setFinRpyFor("S");
+				finRepayQueue.setSchdPft(curSchd.getProfitSchd());
+				finRepayQueue.setSchdPri(curSchd.getPrincipalSchd());
+				finRepayQueue.setSchdPftPaid(curSchd.getSchdPftPaid());
+				finRepayQueue.setSchdPriPaid(curSchd.getSchdPriPaid());
+				finRepayQueue.setSchdPftBal(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+				finRepayQueue.setSchdPriBal(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+				finRepayQueue.setSchdIsPftPaid(false);
+				finRepayQueue.setSchdIsPriPaid(false);
+
+				try {
+					getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), curBDay, false);
+				} catch (IllegalAccessException e) {
+					logger.error(e.getMessage());
+				} catch (InvocationTargetException e) {
+					logger.error(e.getMessage());
+				}
 			}
 			
-		} catch (Exception e) {
-			logger.error(e);
+			//Recalculate Status of Finance using Overdue
+			String curFinStatus = getCustomerStatusCodeDAO().getFinanceStatus(financeMain.getFinReference(), true);
+			financeMain.setFinStatus(curFinStatus);
+
+			//Suspense Process Check after Overdue Details Recalculation
+			suspenseCheckProcess(financeMain, PennantConstants.CHGFRQ, curBDay, 
+					financeDetail.getFinScheduleData().getFinanceType().isAllowRIAInvestment(), financeMain.getFinStatus(), 0);
+			
 		}
 
-		// Method for validating Postings with interface program and
-		// return results
-		if (list.get(0).getLinkedTranId() == Long.MIN_VALUE) {
-			linkedTranId = getPostingsDAO().getLinkedTransId(list.get(0));
-		} else {
-			linkedTranId = list.get(0).getLinkedTranId();
-		}
-		
-		list = getPostingsInterfaceService().doFillPostingDetails(list, financeMain.getFinBranch(), linkedTranId, "Y");			
-		if (list != null && list.size() > 0) {
-			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-			boolean isFetchFinAc = false;
-			boolean isFetchCistIntAc = false;
-			for (int i = 0; i < list.size(); i++) {
-				ReturnDataSet set = list.get(i);
-				set.setLinkedTranId(linkedTranId);
-				set.setPostDate(curBDay);
-				if (!("0000".equals(set.getErrorId()) || "".equals(set.getErrorId()))) {
-					errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(),
-					        "E", set.getErrorMsg(), new String[] {}, new String[] {}));
-				} else {
-					set.setPostStatus("S");
-					if("CMTDISB".equals(set.getFinEvent())){
-						cmtPostAmt = set.getPostAmount();
-					}
-				}
-				if (!isFetchFinAc && set.getAccountType().equals(
-				         financeDetail.getFinScheduleData().getFinanceType().getFinAcType())) {
-					isFetchFinAc = true;
-					financeMain.setFinAccount(set.getAccount());
-				}
-				if (!isFetchCistIntAc && set.getAccountType().equals(
-				         financeDetail.getFinScheduleData().getFinanceType().getPftPayAcType())) {
-					isFetchCistIntAc = true;
-					financeMain.setFinCustPftAccount(set.getAccount());
-				}
-				
-			}
-			auditHeader.setErrorList(errorDetails);
-			if (errorDetails.size() > 0 && auditHeader.getErrorMessage().size() > 0) {
-				return auditHeader;
-			}
-		}
-		
-		if(commitment != null && cmtPostAmt.compareTo(BigDecimal.ZERO) > 0){
-			getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference(), cmtPostAmt);
-			CommitmentMovement movement = prepareCommitMovement(commitment, financeMain, cmtPostAmt, linkedTranId);
-			if(movement != null){
-				getCommitmentMovementDAO().save(movement, "");
-			}
-		}
-		
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getFinanceMainDAO().delete(financeMain, "", isWIF);
 			listDeletion(financeDetail.getFinScheduleData(), "", isWIF);
 			
-			//Additional Field Details Deletion
-			doDeleteAddlFieldDetails(financeDetail, "");
-			
-			auditDetails.addAll(getListAuditDetails(assetDeletion(financeDetail, "", tranType)));
-			auditDetails.addAll(getListAuditDetails(listDeletion_CheckList(financeDetail, "", auditHeader.getAuditTranType())));
-			auditDetails.addAll(getListAuditDetails(listDeletion_FinAgr(financeDetail, "", auditHeader.getAuditTranType())));
-			auditDetails.addAll(getListAuditDetails(listDeletion_FinContributor(financeDetail, "", auditHeader.getAuditTranType())));
-			auditDetails.addAll(getListAuditDetails(listDeletion_FinBilling(financeDetail, "", auditHeader.getAuditTranType())));
-			
+			//Delete Finance Premium Details 
+			if(productCode.equals(PennantConstants.FINANCE_PRODUCT_SUKUK)){
+				getFinancePremiumDetailDAO().delete(financeDetail.getPremiumDetail(), "");
+			}
+
+			if(!isWIF){
+				//Additional Field Details Deletion
+				//=======================================
+				doDeleteAddlFieldDetails(financeDetail, "");
+				auditDetails.addAll(assetDeletion(financeDetail, "", tranType));
+				auditDetails.addAll(jointGuarantorDeletion(financeDetail, "", tranType));
+				auditDetails.addAll(getCheckListDetailService().delete(financeDetail, "", auditHeader.getAuditTranType()));
+				auditDetails.addAll(getListAuditDetails(listDeletion_FinContributor(financeDetail, "", auditHeader.getAuditTranType())));
+			}
+
 		} else {
+
+			financeMain.setRcdMaintainSts("");
 			financeMain.setRoleCode("");
 			financeMain.setNextRoleCode("");
 			financeMain.setTaskId("");
 			financeMain.setNextTaskId("");
 			financeMain.setWorkflowId(0);
 
-			if (!financeDetail.isExtSource()) {
-				if (carLoanDetail != null) {
-					carLoanDetail.setRoleCode("");
-					carLoanDetail.setNextRoleCode("");
-					carLoanDetail.setTaskId("");
-					carLoanDetail.setNextTaskId("");
-					carLoanDetail.setWorkflowId(0);
-				}
-				if (educationalLoan != null) {
-					educationalLoan.setRoleCode("");
-					educationalLoan.setNextRoleCode("");
-					educationalLoan.setTaskId("");
-					educationalLoan.setNextTaskId("");
-					educationalLoan.setWorkflowId(0);
-				}
-				if (homeLoanDetail != null) {
-					homeLoanDetail.setRoleCode("");
-					homeLoanDetail.setNextRoleCode("");
-					homeLoanDetail.setTaskId("");
-					homeLoanDetail.setNextTaskId("");
-					homeLoanDetail.setWorkflowId(0);
-				}
-				if (mortgageLoanDetail != null) {
-					mortgageLoanDetail.setRoleCode("");
-					mortgageLoanDetail.setNextRoleCode("");
-					mortgageLoanDetail.setTaskId("");
-					mortgageLoanDetail.setNextTaskId("");
-					mortgageLoanDetail.setWorkflowId(0);
-				}
-			}
-
 			if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				
 				tranType = PennantConstants.TRAN_ADD;
 				financeMain.setRecordType("");
 				getFinanceMainDAO().save(financeMain, "", isWIF);
+
+				//Schedule Details
+				//=======================================
+				listSave(financeDetail.getFinScheduleData(), "", isWIF, 0);
+
+				//Fee Charge Details
+				//=======================================
+				saveFeeChargeList(financeDetail.getFinScheduleData(),isWIF, "");
+
+
+				//Indicative Term Sheet Details Maintenance
+				//=======================================
+				IndicativeTermDetail termDetail = financeDetail.getIndicativeTermDetail();
+				if(termDetail != null){
+					termDetail.setFinReference(financeMain.getFinReference());
+					getIndicativeTermDetailDAO().save(termDetail, "", true);
+					getIndicativeTermDetailDAO().delete(termDetail, "_Temp", true);
+				}
+				
+				//Save Finance Premium Details
+				//=======================================
+				if(productCode.equals(PennantConstants.FINANCE_PRODUCT_SUKUK)){
+					getFinancePremiumDetailDAO().save(financeDetail.getPremiumDetail(), "");
+				}
 				
 				// Save Contributor Header Details
+				//=======================================
 				if (financeDetail.getFinContributorHeader() != null) {
+
 					FinContributorHeader contributorHeader = financeDetail.getFinContributorHeader();
 					String[] fields = PennantJavaUtil.getFieldDetails(new FinContributorHeader());
 					getFinContributorHeaderDAO().save(contributorHeader, "");
 					auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-					        fields[1], financeDetail.getFinContributorHeader().getBefImage(), financeDetail.getFinContributorHeader()));
-				}
-				
-				// Save Billing Header Details
-				if (financeDetail.getFinBillingHeader() != null) {
-					FinBillingHeader billingHeader = financeDetail.getFinBillingHeader();
-					String[] fields = PennantJavaUtil.getFieldDetails(new FinBillingHeader());
-					getFinBillingHeaderDAO().save(billingHeader, "");
-					auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-					        fields[1], financeDetail.getFinBillingHeader().getBefImage(), financeDetail.getFinBillingHeader()));
-				}
-				
-				//Schedule Details
-				listSave(financeDetail.getFinScheduleData(), "", isWIF);
-				
-				//Fee Charge Details
-				saveFeeChargeList(financeDetail.getFinScheduleData(),"");
+							fields[1], financeDetail.getFinContributorHeader().getBefImage(),
+							financeDetail.getFinContributorHeader()));
 
-				if (!financeDetail.isExtSource()) {
-					if (carLoanDetail != null) {
-						carLoanDetail.setRecordType("");
-						getCarLoanDetailDAO().save(carLoanDetail, "");
-					}
-					if (educationalLoan != null) {
-						educationalLoan.setRecordType("");
-						getEducationalLoanDAO().save(educationalLoan, "");
-						if (educationalLoan.getEduExpenseList() != null && educationalLoan.getEduExpenseList().size() > 0) {
-							List<AuditDetail> details = financeDetail.getAuditDetailMap().get("EduExpense");
-							details = processingEduExpenseList(details, "", educationalLoan.getLoanRefNumber());
-							auditDetails.addAll(details);
-						}
-					}
-					if (homeLoanDetail != null) {
-						homeLoanDetail.setRecordType("");
-						getHomeLoanDetailDAO().save(homeLoanDetail, "");
-					}
-					if (mortgageLoanDetail != null) {
-						mortgageLoanDetail.setRecordType("");
-						getMortgageLoanDetailDAO().save(mortgageLoanDetail, "");
+					// Save Contributor Header Details
+					//=======================================
+					if (contributorHeader.getContributorDetailList() != null
+							&& contributorHeader.getContributorDetailList().size() > 0) {
+						List<AuditDetail> details = financeDetail.getAuditDetailMap().get("Contributor");
+						details = processingContributorList(details, "", contributorHeader.getFinReference());
+						auditDetails.addAll(details);
 					}
 				}
+
 			} else {
+
 				tranType = PennantConstants.TRAN_UPD;
 				financeMain.setRecordType("");
 				getFinanceMainDAO().update(financeMain, "", isWIF);
 
-				// ScheduleDetails delete and save
-				listDeletion(financeDetail.getFinScheduleData(), "", isWIF);
-				listSave(financeDetail.getFinScheduleData(), "", isWIF);
-				
-				//Fee Charge Details
-				saveFeeChargeList(financeDetail.getFinScheduleData(),"");
-				
-				// Save assets
-				if (carLoanDetail != null) {
-					carLoanDetail.setRecordType("");
-					getCarLoanDetailDAO().update(carLoanDetail, "");
-				}
-				if (educationalLoan != null) {
-					educationalLoan.setRecordType("");
-					getEducationalLoanDAO().update(educationalLoan, "");
-					if (educationalLoan.getEduExpenseList() != null && educationalLoan.getEduExpenseList().size() > 0) {
-						List<AuditDetail> details = financeDetail.getAuditDetailMap().get("EduExpense");
-						details = processingEduExpenseList(details, "", educationalLoan.getLoanRefNumber());
-						auditDetails.addAll(details);
+				if(!isWIF){
+					
+					//Fetch Existing data before Modification
+					FinScheduleData old_finSchdData = null;
+					if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
+						old_finSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);
+						old_finSchdData.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+					}
+
+					//Create log entry for Action for Schedule Modification
+					//=======================================
+					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+					entryDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+					entryDetail.setEventAction(financeDetail.getAccountingEventCode());
+					entryDetail.setSchdlRecal(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated());
+					entryDetail.setPostDate(curBDay);
+					entryDetail.setReversalCompleted(false);
+					long logKey = getFinLogEntryDetailDAO().save(entryDetail);
+
+					//Save Schedule Details For Future Modifications
+					if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
+						listSave(old_finSchdData, "_Log", isWIF, logKey);
 					}
 				}
-				if (homeLoanDetail != null) {
-					homeLoanDetail.setRecordType("");
-					getHomeLoanDetailDAO().update(homeLoanDetail, "");
+				
+				// ScheduleDetails delete and save
+				//=======================================
+				listDeletion(financeDetail.getFinScheduleData(), "", isWIF);
+				listSave(financeDetail.getFinScheduleData(), "", isWIF, 0);
+
+				//Fee Charge Details
+				//=======================================
+				saveFeeChargeList(financeDetail.getFinScheduleData(),isWIF, "");
+				
+				//Update Finance Premium Details
+				//=======================================
+				if(productCode.equals(PennantConstants.FINANCE_PRODUCT_SUKUK)){
+					getFinancePremiumDetailDAO().update(financeDetail.getPremiumDetail(), "");
 				}
-				if (mortgageLoanDetail != null) {
-					mortgageLoanDetail.setRecordType("");
-					getMortgageLoanDetailDAO().update(mortgageLoanDetail, "");
-				}
+				
 			}
 
-			if (!financeDetail.isExtSource()) {
-				
-				// Save Contributor Header Details
-				if (financeDetail.getFinContributorHeader() != null) {
-					FinContributorHeader contributorHeader = financeDetail.getFinContributorHeader();
-					if(contributorHeader.getContributorDetailList() !=null &&  contributorHeader.getContributorDetailList().size()>0){
-						List<AuditDetail> details = financeDetail.getAuditDetailMap().get("Contributor");
-						details = processingContributorList(details,"",contributorHeader.getFinReference());
-						auditDetails.addAll(details);
-					}
+			if (!financeDetail.isExtSource() && !isWIF) {
+
+				// Car Loan Detail
+				if (financeDetail.getCarLoanDetail() != null) {					
+					auditDetails.add(getCarLoanDetailService().doApprove(financeDetail.getCarLoanDetail(), "", tranType));
 				}
-				
-				// Save Billing Header Details
-				if (financeDetail.getFinBillingHeader() != null) {
-					FinBillingHeader billingHeader = financeDetail.getFinBillingHeader();
-					if(billingHeader.getBillingDetailList() !=null &&  billingHeader.getBillingDetailList().size()>0){
-						List<AuditDetail> details = financeDetail.getAuditDetailMap().get("Billing");
-						details = processingBillingList(details,"",billingHeader.getFinReference());
-						auditDetails.addAll(details);
-					}
+
+				// Education Loan Detail
+				if (financeDetail.getEducationalLoan() != null) {
+					auditDetails.addAll(getEducationalLoanService().doApprove(financeDetail, "", auditHeader.getAuditTranType()));
 				}
-				
+
+				//Home Loan Detail
+				if (financeDetail.getHomeLoanDetail() != null) {
+					auditDetails.add(getHomeLoanDetailService().doApprove(financeDetail.getHomeLoanDetail(), "", tranType));
+				}
+
+				//mortgage laon Detail
+				if (financeDetail.getMortgageLoanDetail() != null) {
+					auditDetails.add(getMortgageLoanDetailService().doApprove(financeDetail.getMortgageLoanDetail(), "", tranType));
+				}
+
+				// Goods Loan Details
+				if (financeDetail.getGoodsLoanDetails() != null && !financeDetail.getGoodsLoanDetails().isEmpty()) {
+					auditDetails.addAll(getGoodsLoanDetailService().doApprove(financeDetail.getGoodsLoanDetails() , "", tranType));
+				}
+
+				// General Goods loan Details
+				if (financeDetail.getGenGoodsLoanDetails() != null && !financeDetail.getGenGoodsLoanDetails().isEmpty()) {
+					auditDetails.addAll(getGenGoodsLoanDetailService().doApprove(financeDetail.getGenGoodsLoanDetails() , "", tranType));
+					}
+
+				// Commidity Header & Details
+				CommidityLoanHeader commidityLoanHeader = financeDetail.getCommidityLoanHeader();
+				if (commidityLoanHeader != null) {
+					commidityLoanHeader.setCommidityLoanDetails(financeDetail.getCommidityLoanDetails());
+					auditDetails.addAll(getCommidityLoanDetailService().doApprove(commidityLoanHeader, "", tranType));
+				}
+
+				// Share Details
+				if (financeDetail.getSharesDetails() != null  && financeDetail.getSharesDetails().size() > 0) {
+					auditDetails.addAll(getSharesDetailService().doApprove(financeDetail, ""));
+				}
+
+				// Svae Contractor Detaila
+				List<ContractorAssetDetail> contractorAssetDetails = financeDetail.getContractorAssetDetails();
+				if (contractorAssetDetails != null && !contractorAssetDetails.isEmpty()) {
+					auditDetails.addAll(getContractorAssetDetailService().doApprove(contractorAssetDetails, "", tranType));
+				}
+
 				// Save Document Details
 				if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-					details = processingDocumentDetailsList(details, "", financeMain.getFinReference());
+					details = processingDocumentDetailsList(details, "",
+							financeMain.getFinReference(),financeDetail.getFinScheduleData().getFinanceMain());
 					auditDetails.addAll(details);
 					listDocDeletion(financeDetail, "_Temp");
 				}
-				if (financeDetail.getFinanceCheckList() != null && financeDetail.getFinanceCheckList().size() > 0) {
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("checkListDetails");
-					details = processCheckListDetails(details, "", financeMain.getFinReference());
-					auditDetails.addAll(details);
+
+				// set Check list details Audit
+				if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {					
+					auditDetails.addAll(getCheckListDetailService().doApprove(financeDetail, ""));
 				}
-				
-				if(financeDetail.getFinAgrDetailList() !=null && financeDetail.getFinAgrDetailList().size()>0){
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("AgreementDetail");
-					details = processingAgrDetailList(details,"",financeMain.getFinReference());
-					auditDetails.addAll(details);
+
+				// set the Audit Details & Save / Update Guarantor Details
+				if (financeDetail.getGurantorsDetailList() != null  && !financeDetail.getGurantorsDetailList().isEmpty()) {
+					auditDetails.addAll(getGuarantorDetailService().doApprove(financeDetail.getGurantorsDetailList(), "", tranType));
 				}
-				
+
+				// set the Audit Details & Save / Update JountAccount Details 
+				if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
+					auditDetails.addAll(getJointAccountDetailService().doApprove(financeDetail.getJountAccountDetailList(), "", tranType));
+				}
+
 				//Additional Field Details Save / Update
 				doSaveAddlFieldDetails(financeDetail, "");
 			}
-			
-			// save Postings
-			if(list != null && list.size()>0){
-				getPostingsDAO().saveBatch(list, "", false);
-			}
-			
-			//Update disbursement details
-			getFinanceDisbursementDAO().updateLinkedTranId(financeMain.getFinReference(), linkedTranId, "");
 
-			// Save/Update Finance Profit Details
-			FinanceProfitDetail profitDetail = doSave_PftDetails(amountCodes, financeMain);
-
-			//Account Details Update
-			getAccountProcessUtil().procAccountUpdate(list , profitDetail.getTdPftAccrued(), financeMain.getCustID());
-
-			// Generate agreements
-			if (!financeDetail.isExtSource()) {
-				generateAgreements(financeDetail, financeMain);
-			}
 		}
-		
+
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), excludeFields);
 
 		if (!financeDetail.isExtSource()) {
-			getFinanceMainDAO().delete(financeMain, "_TEMP", isWIF);
 
 			// ScheduleDetails delete
-			listDeletion(financeDetail.getFinScheduleData(), "_TEMP", isWIF);
-			
-			//Additional Field Details Deletion in _Temp Table
-			doDeleteAddlFieldDetails(financeDetail, "_Temp");
-			
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			auditDetailList.addAll(getListAuditDetails(assetDeletion(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
-			auditDetailList.addAll(getListAuditDetails(listDeletion_CheckList(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
-			auditDetailList.addAll(getListAuditDetails(listDeletion_FinAgr(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
-			auditDetailList.addAll(getListAuditDetails(listDeletion_FinContributor(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
-			auditDetailList.addAll(getListAuditDetails(listDeletion_FinBilling(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
+			//=======================================
+			listDeletion(financeDetail.getFinScheduleData(), "_Temp", isWIF);
 
-			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1,
-			        fields[0], fields[1], financeMain.getBefImage(), financeMain));
+			if(!isWIF){
+				//Additional Field Details Deletion in _Temp Table
+				//=======================================
+				doDeleteAddlFieldDetails(financeDetail, "_Temp");
+
+				auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+				auditDetailList.addAll(assetDeletion(financeDetail, "_Temp", auditHeader.getAuditTranType()));
+				auditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", auditHeader.getAuditTranType()));
+				auditDetailList.addAll(getListAuditDetails(listDeletion_FinContributor(financeDetail, "_Temp", auditHeader.getAuditTranType())));
+				auditDetailList.addAll(getContractorAssetDetailService().delete(financeDetail.getContractorAssetDetails(), "_Temp", auditHeader.getAuditTranType()));
+			}
+			
+			//Delete Finance Premium Details
+			//=======================================
+			if(productCode.equals(PennantConstants.FINANCE_PRODUCT_SUKUK)){
+				getFinancePremiumDetailDAO().delete(financeDetail.getPremiumDetail(), "_Temp");
+			}
+			
+			getFinanceMainDAO().delete(financeMain, "_Temp", isWIF);
+			
+			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
+			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
+			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], tempfinanceMain.getBefImage(), tempfinanceMain));
 			auditHeader.setAuditDetails(auditDetailList);
+
 			// Adding audit as deleted from TEMP table
-			getAuditHeaderDAO().addAudit(auditHeader);
+			if(!isWIF){
+				getAuditHeaderDAO().addAudit(auditHeader);
+			}
 		}
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-		        fields[1], financeMain.getBefImage(), financeMain));
+				fields[1], financeMain.getBefImage(), financeMain));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
+
 		// Adding audit as Insert/Update/deleted into main table
-		getAuditHeaderDAO().addAudit(auditHeader);
+		if(!isWIF){
+			getAuditHeaderDAO().addAudit(auditHeader);
+		}
+
+		//Reset Finance Detail Object for Service Task Verifications
+		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug("Leaving");
 		return auditHeader;
 
-	}
-	
-	private CommitmentMovement prepareCommitMovement(Commitment commitment, FinanceMain financeMain, 
-			BigDecimal postAmount, long linkedtranId){
-		
-		CommitmentMovement movement = new CommitmentMovement();
-		
-		movement.setCmtReference(commitment.getCmtReference());
-		movement.setFinReference(financeMain.getFinReference());
-		movement.setFinBranch(financeMain.getFinBranch());
-		movement.setFinType(financeMain.getFinType());
-		movement.setMovementDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
-		movement.setMovementOrder(1);
-		movement.setMovementType("AD");
-		movement.setMovementAmount(postAmount);
-		movement.setCmtAmount(commitment.getCmtAmount());
-		movement.setCmtUtilizedAmount(commitment.getCmtUtilizedAmount().add(postAmount));
-		movement.setCmtAvailable(commitment.getCmtAvailable().subtract(postAmount));
-		movement.setCmtCharges(BigDecimal.ZERO);
-		movement.setLinkedTranId(linkedtranId);
-		movement.setVersion(0);
-		movement.setLastMntBy(financeMain.getLastMntBy());
-		movement.setLastMntOn(financeMain.getLastMntOn());
-		movement.setRecordStatus("Approved");
-		movement.setRoleCode("");
-		movement.setNextRoleCode("");
-		movement.setTaskId("");
-		movement.setNextTaskId("");
-		movement.setRecordType("");
-		movement.setWorkflowId(0);
-		
-		return movement;
-		
 	}
 
 	/**
@@ -1894,6 +1448,7 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader, boolean isWIF) {
 		logger.debug("Entering");
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "doReject", isWIF);
 		if (!auditHeader.isNextProcess()) {
@@ -1903,40 +1458,70 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String productCode = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceType().getFinCategory());
+
+		getFinanceMainDAO().saveRejectFinanceDetails(financeMain);
 
 		// ScheduleDetails deletion
 		listDeletion(financeDetail.getFinScheduleData(), "_TEMP", isWIF);
-
-		//Additional Field Details Deletion
-		doDeleteAddlFieldDetails(financeDetail, "_TEMP");
 		
+		//Document Details 
+		getDocumentDetailsDAO().deleteList(financeDetail.getDocumentDetailsList(), "_TEMP");
+
+		if(!isWIF){
+			//Additional Field Details Deletion
+			doDeleteAddlFieldDetails(financeDetail, "_TEMP");
+		}
+		
+		//Indicative Term Sheet Details Maintenance
+		//=======================================
+		IndicativeTermDetail termDetail = financeDetail.getIndicativeTermDetail();
+		if(termDetail != null){
+			termDetail.setFinReference(financeMain.getFinReference());
+			getIndicativeTermDetailDAO().delete(termDetail, "_TEMP", true);
+		}
+		
+		//Delete Finance Premium Details 
+		if(productCode.equals(PennantConstants.FINANCE_PRODUCT_SUKUK)){
+			getFinancePremiumDetailDAO().delete(financeDetail.getPremiumDetail(), "");
+		}
+
 		getFinanceMainDAO().delete(financeMain, "_TEMP", isWIF);
 		
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), excludeFields);
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
+
 		// Asset deletion
 		if (!isWIF) {
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), excludeFields);
-			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
-			auditDetails.addAll(getListAuditDetails(assetDeletion(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
-			auditDetails.addAll(getListAuditDetails(listDeletion_CheckList(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
-			auditDetails.addAll(getListAuditDetails(listDeletion_FinAgr(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
+			
+			auditDetails.addAll(assetDeletion(financeDetail, "_TEMP", auditHeader.getAuditTranType()));
+			auditDetails.addAll(jointGuarantorDeletion(financeDetail, "_TEMP", auditHeader.getAuditTranType()));
+			auditDetails.addAll(getCheckListDetailService().delete(financeDetail, "_TEMP", auditHeader.getAuditTranType()));
+			// auditDetails.addAll(getListAuditDetails(listDeletion_FinAgr(financeDetail, "_TEMP",  auditHeader.getAuditTranType())));
 			auditDetails.addAll(getListAuditDetails(listDeletion_FinContributor(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
-			auditDetails.addAll(getListAuditDetails(listDeletion_FinBilling(financeDetail, "_TEMP", auditHeader.getAuditTranType())));
 			auditHeader.setAuditDetails(auditDetails);
+			
+		}
+		
+		if(!isWIF){
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
+
+		//Reset Finance Detail Object for Service Task Verifications
+		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	/**
 	 * Method for Update Finance into BlackList Condition (WRITEOFF)
 	 */
 	@Override
-    public void updateFinBlackListStatus(String finReference) {
-	   getFinanceMainDAO().updateFinBlackListStatus(finReference);//FIXME === Add writeoff field rather than BlockList
-    }
+	public void updateFinBlackListStatus(String finReference) {
+		getFinanceMainDAO().updateFinBlackListStatus(finReference);//FIXME === Add writeoff field rather than BlockList
+	}
 
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
@@ -1950,59 +1535,90 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean isWIF) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method, isWIF);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
 		if (!isWIF) {
 			auditHeader = getAuditDetails(auditHeader, method);
 		}
+
+		String auditTranType = auditHeader.getAuditTranType();
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = financeDetail.getFinScheduleData().getFinanceMain().getUserDetails().getUsrLanguage();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String usrLanguage = financeMain.getUserDetails() .getUsrLanguage();
 
 		if (!financeDetail.isExtSource()) {
+			
+			String rcdType = financeMain.getRecordType();
+			if (!isWIF && !financeDetail.isLovDescIsQDE() && rcdType.equals(PennantConstants.RECORD_TYPE_NEW)) {
 
-			if (!isWIF && !financeDetail.isLovDescIsQDE()) {
-				
 				String assetCode = financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName();
+
 				if (assetCode.equalsIgnoreCase(PennantConstants.CARLOAN)) {
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CarLoanDetail");
-					details = getCarLoanDetailValidation().carLoanDetailListValidation(details, method, usrLanguage);
-					auditDetails.addAll(details);
+					financeDetail.getCarLoanDetail().setWorkflowId(financeMain.getWorkflowId());
+					auditDetails.add(getCarLoanDetailService().validate(financeDetail.getCarLoanDetail(), method, auditTranType, usrLanguage));
 				}
 
-				if (assetCode.equalsIgnoreCase(PennantConstants.EDULOAN)) {
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("EducationalLoan");
-					details = getEducationalLoanDetailValidation().eduLoanDetailListValidation(details, method, usrLanguage);
+				if (assetCode.equalsIgnoreCase(PennantConstants.EDUCATON)) {
+					List<AuditDetail> details;
+					details = getEducationalLoanService().validate(financeDetail, method, usrLanguage);
 					auditDetails.addAll(details);
-					if (financeDetail.getEducationalLoan().getEduExpenseList() != null
-					        && financeDetail.getEducationalLoan().getEduExpenseList().size() > 0) {
-						List<AuditDetail> expDetails = financeDetail.getAuditDetailMap().get("EduExpense");
-						details = getEduExpenseDetailValidation().eduExpenseDetailListValidation(expDetails, method, usrLanguage);
-						auditDetails.addAll(expDetails);
-					}
 				}
 
 				if (assetCode.equalsIgnoreCase(PennantConstants.HOMELOAN)) {
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("HomeLoanDetail");
-					details = getHomeLoanDetailValidation().homeLoanDetailListValidation(details, method, usrLanguage);
-					auditDetails.addAll(details);
+					financeDetail.getHomeLoanDetail().setWorkflowId(financeMain.getWorkflowId());
+					auditDetails.add(getHomeLoanDetailService().validate(financeDetail.getHomeLoanDetail(), method, auditTranType, usrLanguage));
 				}
 
 				if (assetCode.equalsIgnoreCase(PennantConstants.MORTLOAN)) {
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("MortgageLoanDetail");
-					details = getMortgageLoanDetailValidation().mortgageLoanDetailListValidation(details, method, usrLanguage);
-					auditDetails.addAll(details);
+					financeDetail.getMortgageLoanDetail().setWorkflowId(financeMain.getWorkflowId());
+					auditDetails.add(getMortgageLoanDetailService().validate(financeDetail.getMortgageLoanDetail(), method, auditTranType, usrLanguage));
+				}
+
+				List<GoodsLoanDetail>  goodLoanDetailList = financeDetail.getGoodsLoanDetails();
+				if (goodLoanDetailList != null && !goodLoanDetailList.isEmpty()) {
+					auditDetails.addAll(getGoodsLoanDetailService().validate(goodLoanDetailList, financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+				}
+
+				List<GenGoodsLoanDetail>  genGoodLoanDetailList = financeDetail.getGenGoodsLoanDetails();
+				if (genGoodLoanDetailList != null && !genGoodLoanDetailList.isEmpty()) {
+					auditDetails.addAll(getGenGoodsLoanDetailService().validate(genGoodLoanDetailList, financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+				}
+
+				List<CommidityLoanDetail>  commidityLoanDetails = financeDetail.getCommidityLoanDetails();
+				if (commidityLoanDetails != null && !commidityLoanDetails.isEmpty()) {
+					auditDetails.addAll(getCommidityLoanDetailService().validate(commidityLoanDetails, financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+				}
+
+				List<ContractorAssetDetail> contractorAssetDetails = financeDetail.getContractorAssetDetails();
+				if (contractorAssetDetails != null  && !contractorAssetDetails.isEmpty()) {
+					auditDetails.addAll(getContractorAssetDetailService().validate(financeDetail, method, usrLanguage));
 				}
 			}
 
 			//Finance Check List Details
-			if (financeDetail.getFinanceCheckList() != null && financeDetail.getFinanceCheckList().size() > 0) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("checkListDetails");
-				details = getFinanceCheckListValidation().finCheckListDetailListValidation(details, method, usrLanguage);
-				auditDetails.addAll(details);
+			List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
+			if (financeCheckList != null && !financeCheckList.isEmpty()) {
+				List<AuditDetail> auditDetailList;
+				auditDetailList = getCheckListDetailService().validate(financeDetail, method, usrLanguage);
+				auditDetails.addAll(auditDetailList);
 			}
+
+			//Guarantor Details Validation
+			List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
+			if (gurantorsDetailList != null  && !gurantorsDetailList.isEmpty()) {
+				auditDetails.addAll(getGuarantorDetailService().validate(gurantorsDetailList, financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+			}
+
+			//Joint Account Details Validation
+			List<JointAccountDetail> jountAccountDetailList  = financeDetail.getJountAccountDetailList();
+			if (jountAccountDetailList != null && !jountAccountDetailList.isEmpty()) {
+				auditDetails.addAll(getJointAccountDetailService().validate(jountAccountDetailList, financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+			}
+
 		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
@@ -2016,31 +1632,19 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 
 	/**
 	 * Method for Validate Finance Object
+	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @param isWIF
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method,
-	        boolean isWIF) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean isWIF) {
 		logger.debug("Entering");
-		
+
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		
-		if (!isWIF) {
-			if (!financeDetail.getUserAction().equalsIgnoreCase("Resubmit")) {
-				if ((StringUtils.equalsIgnoreCase(method, "saveOrUpdate") && !financeDetail.isActionSave()) || 
-						StringUtils.equalsIgnoreCase(method, "doApprove")) {
-					if (!(financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD) ||
-							financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))
-					        && financeDetail.getCheckList().size() > 0)
-						auditDetail = validation_CheckList(auditDetail, usrLanguage, method);
-				}
-			}
-		}
 
 		FinanceMain tempFinanceMain = null;
 		if (financeMain.isWorkflow()) {
@@ -2061,7 +1665,7 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 				if (befFinanceMain != null) { // Record Already Exists in the
 					// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+							PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
@@ -2069,12 +1673,12 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 					if (befFinanceMain != null || tempFinanceMain != null) { // if
 						// records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-						        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceMain == null || tempFinanceMain != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-						        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -2087,17 +1691,17 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 				if (befFinanceMain == null) { // if records not exists in the
 					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_FinanceMain != null
-					        && !old_FinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
+					if (old_FinanceMain != null && !old_FinanceMain.getLastMntOn()
+							.equals(befFinanceMain.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							        PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							        PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
 				}
@@ -2106,25 +1710,57 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 				if (tempFinanceMain == null) { // if records not exists in the
 					// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinanceMain != null && old_FinanceMain != null
-				        && !old_FinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
+						&& !old_FinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
+		if (StringUtils.trimToEmpty(financeMain.getRecordStatus()).startsWith("Submit")) {
+
+			// Eligibility
+			getEligibilityDetailService().validate(financeDetail.getElgRuleList(), auditDetail, errParm, valueParm, usrLanguage);
+
+			// Scoring 
+			getScoringDetailService().validate(financeDetail, auditDetail, errParm, valueParm, usrLanguage);
+
+		}
+
+		//Fee Details Waiver Validations
+		if(financeDetail.getFinScheduleData().getFeeRules() != null && 
+				!financeDetail.getFinScheduleData().getFeeRules().isEmpty()){
+			
+			List<FeeRule> feeRuleList = financeDetail.getFinScheduleData().getFeeRules();
+			for (FeeRule feeRule : feeRuleList) {
+				
+				String[] errParm1 = new String[1];
+				String[] valueParm1 = new String[1];
+				valueParm[0] = feeRule.getFeeCodeDesc();
+				errParm[0] = PennantJavaUtil.getLabel("label_FeeCode") + ":" + valueParm[0];
+				
+				BigDecimal maxWaiverAmt = feeRule.getFeeAmount().multiply(feeRule.getWaiverPerc()).divide(
+						new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+				if(feeRule.getWaiverAmount().compareTo(maxWaiverAmt) > 0){
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD, "E0040", errParm1, valueParm1), usrLanguage));
+				}
+            }
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !financeMain.isWorkflow()) {
-			auditDetail.setBefImage(befFinanceMain);
+			financeMain.setBefImage(befFinanceMain);
 		}
 
 		return auditDetail;
 	}
+
 
 	/**
 	 * Common Method for Retrieving AuditDetails List
@@ -2143,9 +1779,7 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		String auditTranType = "";
-
-		if (method.equals("saveOrUpdate") || method.equals("doApprove")
-		        || method.equals("doReject")) {
+		if (method.equals("saveOrUpdate") || method.equals("doApprove") || method.equals("doReject")) {
 			if (financeMain.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
@@ -2154,102 +1788,70 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 		if (!financeDetail.isExtSource()) {
 			
 			//Finance Contribution Details
-			if(financeDetail.getFinContributorHeader() != null && 
-					financeDetail.getFinContributorHeader().getContributorDetailList() !=null 
-					&& financeDetail.getFinContributorHeader().getContributorDetailList().size()>0){
-				auditDetailMap.put("Contributor", setContributorAuditData(financeDetail.getFinContributorHeader(),auditTranType,method));
+			if (financeDetail.getFinContributorHeader() != null
+					&& financeDetail.getFinContributorHeader().getContributorDetailList() != null
+					&& financeDetail.getFinContributorHeader().getContributorDetailList().size() > 0) {
+				auditDetailMap.put( "Contributor", setContributorAuditData(financeDetail.getFinContributorHeader(), auditTranType, method));
 				auditDetails.addAll(auditDetailMap.get("Contributor"));
 			}
-			
-			//Finance Billing Details
-			if(financeDetail.getFinBillingHeader() != null && 
-					financeDetail.getFinBillingHeader().getBillingDetailList() !=null 
-					&& financeDetail.getFinBillingHeader().getBillingDetailList().size()>0){
-				auditDetailMap.put("Billing", setBillingAuditData(financeDetail.getFinBillingHeader(),auditTranType,method));
-				auditDetails.addAll(auditDetailMap.get("Billing"));
-			}
-			
+
 			//Finance Document Details
-			if (financeDetail.getDocumentDetailsList() != null
-			        && financeDetail.getDocumentDetailsList() != null
-			        && financeDetail.getDocumentDetailsList().size() > 0) {
+			if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 				auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
 				auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 			}
-			
-			//Finance Agreement Details
-			if(financeDetail.getFinAgrDetailList() != null && 
-					financeDetail.getFinAgrDetailList().size()>0){
-				auditDetailMap.put("AgreementDetail", setAgreementDetailAuditData(financeDetail,auditTranType,method));
-				auditDetails.addAll(auditDetailMap.get("AgreementDetail"));
-			}
-			
-			//Finance Asset Details
-			if (financeDetail.getCarLoanDetail() != null) {
-				List<AuditDetail> details = new ArrayList<AuditDetail>();
-				CarLoanDetail carLoanDetail = financeDetail.getCarLoanDetail();
-				carLoanDetail.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
-				String[] fields = PennantJavaUtil.getFieldDetails(new CarLoanDetail());
-				details.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], carLoanDetail.getBefImage(), carLoanDetail));
-				auditDetailMap.put("CarLoanDetail", details);
-				auditDetails.addAll(auditDetailMap.get("CarLoanDetail"));
-			}
-			
-			if (financeDetail.getEducationalLoan() != null) {
-				List<AuditDetail> details = new ArrayList<AuditDetail>();
-				EducationalLoan educationalLoan = financeDetail.getEducationalLoan();
-				educationalLoan.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
-				String[] fields = PennantJavaUtil.getFieldDetails(new EducationalLoan());
-				details.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], educationalLoan.getBefImage(), educationalLoan));
-				auditDetailMap.put("EducationalLoan", details);
-				auditDetails.addAll(auditDetailMap.get("EducationalLoan"));
 
-				if (educationalLoan.getEduExpenseList() != null && educationalLoan.getEduExpenseList().size() > 0) {
-					auditDetailMap.put("EduExpense", setEduExpenseAuditData(educationalLoan, auditTranType, method));
-					auditDetails.addAll(auditDetailMap.get("EduExpense"));
-				}
+			//Finance Asset Details
+			if (financeDetail.getEducationalLoan() != null) {
+				List<AuditDetail> auditDetail;
+				auditDetail = getEducationalLoanService().getAuditDetail(auditDetailMap, financeDetail, auditTranType, method);
+				auditDetails.addAll(auditDetail);
 			}
-			
-			if (financeDetail.getHomeLoanDetail() != null) {
-				List<AuditDetail> details = new ArrayList<AuditDetail>();
-				HomeLoanDetail homeLoanDetail = financeDetail.getHomeLoanDetail();
-				homeLoanDetail.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
-				String[] fields = PennantJavaUtil.getFieldDetails(new HomeLoanDetail());
-				details.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], homeLoanDetail.getBefImage(), homeLoanDetail));
-				auditDetailMap.put("HomeLoanDetail", details);
-				auditDetails.addAll(auditDetailMap.get("HomeLoanDetail"));
+
+			//Shares
+			if (financeDetail.getSharesDetails() != null && !financeDetail.getSharesDetails().isEmpty()) {
+				List<AuditDetail> auditDetail;
+				auditDetail = getSharesDetailService().getAuditDetail(auditDetailMap, financeDetail, auditTranType, method);
+				auditDetails.addAll(auditDetail);
 			}
-			
-			if (financeDetail.getMortgageLoanDetail() != null) {
-				List<AuditDetail> details = new ArrayList<AuditDetail>();
-				MortgageLoanDetail mortgageLoanDetail = financeDetail.getMortgageLoanDetail();
-				mortgageLoanDetail.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
-				String[] fields = PennantJavaUtil.getFieldDetails(new MortgageLoanDetail());
-				details.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], mortgageLoanDetail.getBefImage(), mortgageLoanDetail));
-				auditDetailMap.put("MortgageLoanDetail", details);
-				auditDetails.addAll(auditDetailMap.get("MortgageLoanDetail"));
-			}
+
 
 			//Finance Check List Details
+			List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
+
 			if (StringUtils.equals(method, "saveOrUpdate")) {
-				if (financeDetail.getFinanceCheckList() != null && financeDetail.getFinanceCheckList().size() > 0) {
-					auditDetailMap.put("checkListDetails", setCheckListAuditData(financeDetail, auditTranType, method));
-					auditDetails.addAll(auditDetailMap.get("checkListDetails"));
+				if (financeCheckList != null && !financeCheckList.isEmpty()) {
+					List<AuditDetail> auditDetail;
+					auditDetail = getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail, auditTranType, method);
+					auditDetails.addAll(auditDetail);
 				}
 			} else {
 				String tableType = "_Temp";
 				if (financeDetail.getFinScheduleData().getFinanceMain().getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 					tableType = "";
 				}
-				financeDetail.setFinanceCheckList(getFinanceCheckListReferenceByFinRef(
-				        financeDetail.getFinScheduleData().getFinReference(), tableType));
-				if (financeDetail.getFinanceCheckList() != null && financeDetail.getFinanceCheckList().size() > 0) {
-					auditDetailMap.put("checkListDetails", setCheckListAuditData(financeDetail, auditTranType, method));
-					auditDetails.addAll(auditDetailMap.get("checkListDetails"));
+
+				String finReference = financeDetail.getFinScheduleData().getFinReference();
+				financeCheckList = getCheckListDetailService().getCheckListByFinRef(finReference, tableType);				
+				financeDetail.setFinanceCheckList(financeCheckList);
+
+				if (financeCheckList != null && !financeCheckList.isEmpty()) {
+					List<AuditDetail> auditDetail;
+					auditDetail = getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail, auditTranType, method);
+					auditDetails.addAll(auditDetail);
 				}
 			}
+
+			//Contract Details
+			List<ContractorAssetDetail> contractorAssetDetails = financeDetail.getContractorAssetDetails();
+			if (contractorAssetDetails != null && contractorAssetDetails.isEmpty()) {
+				List<AuditDetail> auditDetail;
+				auditDetail = getContractorAssetDetailService().getAuditDetail(contractorAssetDetails, financeMain, auditTranType, method);
+				auditDetailMap.put("ContractorAssetDetail", auditDetails);
+				auditDetails.addAll(auditDetail);
+			}
 		}
-		
+
 		financeDetail.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 		auditHeader.setAuditDetails(auditDetails);
@@ -2259,709 +1861,372 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	}
 
 	/**
-	 * Method to delete loan asset
+	 * Method for Rate changes for IJARAH Finances by Applying Actual rates
 	 * 
-	 * @param finDetail
-	 * @param tableType
-	 * @param isWIF
-	 * @return auditList
-	 * */
-	public List<AuditDetail> assetDeletion(FinanceDetail financeDetail, String tableType,
-	        String auditTranType) {
-		logger.debug("Entering ");
-		
-		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		CarLoanDetail carLoanDetail = financeDetail.getCarLoanDetail();
-		EducationalLoan educationalLoan = financeDetail.getEducationalLoan();
-		EducationalExpense eduExpense = null;
-		HomeLoanDetail homeLoanDetail = financeDetail.getHomeLoanDetail();
-		MortgageLoanDetail mortgageLoanDetail = financeDetail.getMortgageLoanDetail();
-
-		if (carLoanDetail != null) {
-			String[] carLoanFields = PennantJavaUtil.getFieldDetails(new CarLoanDetail());
-			getCarLoanDetailDAO().delete(carLoanDetail, tableType);
-			auditList.add(new AuditDetail(auditTranType, 1, carLoanFields[0], carLoanFields[1],
-			        financeDetail.getCarLoanDetail().getBefImage(), financeDetail.getCarLoanDetail()));
-		}
-		if (educationalLoan != null) {
-			String[] eduLoanFields = PennantJavaUtil.getFieldDetails(new EducationalLoan());
-			getEducationalLoanDAO().delete(educationalLoan, tableType);
-			auditList.add(new AuditDetail(auditTranType, 1, eduLoanFields[0], eduLoanFields[1],
-			        financeDetail.getEducationalLoan().getBefImage(), financeDetail.getEducationalLoan()));
-			if (educationalLoan.getEduExpenseList() != null
-			        && educationalLoan.getEduExpenseList().size() > 0) {
-				String[] fields = PennantJavaUtil.getFieldDetails(new EducationalExpense());
-				for (int i = 0; i < educationalLoan.getEduExpenseList().size(); i++) {
-					eduExpense = educationalLoan.getEduExpenseList().get(i);
-					if (!eduExpense.getRecordType().equals("")) {
-						auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-						        eduExpense.getBefImage(), eduExpense));
-					}
-				}
-				getEducationalExpenseDAO().delete(
-				        financeDetail.getFinScheduleData().getFinReference(), tableType);
-			}
-		}
-		if (homeLoanDetail != null) {
-			String[] homeLoanFields = PennantJavaUtil.getFieldDetails(new HomeLoanDetail());
-			getHomeLoanDetailDAO().delete(homeLoanDetail, tableType);
-			auditList.add(new AuditDetail(auditTranType, 1, homeLoanFields[0], homeLoanFields[1],
-			        financeDetail.getHomeLoanDetail().getBefImage(), financeDetail.getHomeLoanDetail()));
-		}
-		if (mortgageLoanDetail != null) {
-			String[] mortgageLoanFields = PennantJavaUtil.getFieldDetails(new MortgageLoanDetail());
-			getMortgageLoanDetailDAO().delete(mortgageLoanDetail, tableType);
-			auditList.add(new AuditDetail(auditTranType, 1, mortgageLoanFields[0], mortgageLoanFields[1],
-					financeDetail.getMortgageLoanDetail().getBefImage(),financeDetail.getMortgageLoanDetail()));
-		}
-		logger.debug("Leaving ");
-		return auditList;
-	}
-
-	/**
-	 * Method to delete schedule, disbursement, deferementheader, defermentdetail,repayinstruction, ratechanges lists.
-	 * 
-	 * @param finDetail
-	 * @param tableType
-	 * @param isWIF
-	 */
-	public void listDeletion(FinScheduleData finDetail, String tableType, boolean isWIF) {
-		logger.debug("Entering ");
-
-		getFinanceScheduleDetailDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF);
-		getFinanceDisbursementDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF);
-		getDefermentHeaderDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF);
-		getDefermentDetailDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF);
-		getRepayInstructionDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF);
-		
-		//Fee Charge Details
-		if(!isWIF){
-			getPostingsDAO().deleteChargesBatch(finDetail.getFinReference(), tableType);
-		}
-
-		logger.debug("Leaving ");
-	}
-
-	/**
-	 * Method to save what if inquiry lists
-	 */
-	public void listSave(FinScheduleData finDetail, String tableType, boolean isWIF) {
-		logger.debug("Entering ");
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
-
-		// Finance Schedule Details
-		for (int i = 0; i < finDetail.getFinanceScheduleDetails().size(); i++) {
-			finDetail.getFinanceScheduleDetails().get(i).setLastMntBy(finDetail.getFinanceMain().getLastMntBy());
-			finDetail.getFinanceScheduleDetails().get(i).setFinReference(finDetail.getFinReference());
-			int seqNo = 0;
-
-			if (mapDateSeq.containsKey(finDetail.getFinanceScheduleDetails().get(i).getSchDate())) {
-				seqNo = mapDateSeq.get(finDetail.getFinanceScheduleDetails().get(i).getSchDate());
-				mapDateSeq.remove(finDetail.getFinanceScheduleDetails().get(i).getSchDate());
-			}
-			seqNo = seqNo + 1;
-			mapDateSeq.put(finDetail.getFinanceScheduleDetails().get(i).getSchDate(), seqNo);
-			finDetail.getFinanceScheduleDetails().get(i).setSchSeq(seqNo);
-		}
-		getFinanceScheduleDetailDAO().saveList(finDetail.getFinanceScheduleDetails(), tableType, isWIF);
-
-		// Finance Disbursement Details
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
-		for (int i = 0; i < finDetail.getDisbursementDetails().size(); i++) {
-			finDetail.getDisbursementDetails().get(i).setFinReference(finDetail.getFinReference());
-			finDetail.getDisbursementDetails().get(i).setDisbReqDate(curBDay);
-			int seqNo = 0;
-
-			if (mapDateSeq.containsKey(finDetail.getDisbursementDetails().get(i).getDisbDate())) {
-				seqNo = mapDateSeq.get(finDetail.getDisbursementDetails().get(i).getDisbDate());
-				mapDateSeq.remove(finDetail.getDisbursementDetails().get(i).getDisbDate());
-			} else {
-				seqNo = seqNo + 1;
-			}
-
-			mapDateSeq.put(finDetail.getDisbursementDetails().get(i).getDisbDate(), seqNo);
-			finDetail.getDisbursementDetails().get(i).setDisbSeq(seqNo);
-			finDetail.getDisbursementDetails().get(i).setDisbAccountId(finDetail.getFinanceMain().getDisbAccountId());
-			finDetail.getDisbursementDetails().get(i).setDisbIsActive(true);
-			finDetail.getDisbursementDetails().get(i).setDisbDisbursed(true);
-		}
-		getFinanceDisbursementDAO().saveList(finDetail.getDisbursementDetails(), tableType, isWIF);
-
-		//Finance Defferment Header Details
-		for (int i = 0; i < finDetail.getDefermentHeaders().size(); i++) {
-			finDetail.getDefermentHeaders().get(i).setFinReference(finDetail.getFinReference());
-		}
-		getDefermentHeaderDAO().saveList(finDetail.getDefermentHeaders(), tableType, isWIF);
-
-		//Finance Defferment Details
-		for (int i = 0; i < finDetail.getDefermentDetails().size(); i++) {
-			finDetail.getDefermentDetails().get(i).setFinReference(finDetail.getFinReference());
-		}
-		getDefermentDetailDAO().saveList(finDetail.getDefermentDetails(), tableType, isWIF);
-
-		//Finance Repay Instruction Details
-		for (int i = 0; i < finDetail.getRepayInstructions().size(); i++) {
-			finDetail.getRepayInstructions().get(i).setFinReference(finDetail.getFinReference());
-		}
-		getRepayInstructionDAO().saveList(finDetail.getRepayInstructions(), tableType, isWIF);
-		
-		logger.debug("Leaving ");
-	}
-	
-	/**
-	 * Method for saving List of Fee Charge details
-	 * @param finDetail
-	 * @param tableType
-	 */
-	private void saveFeeChargeList(FinScheduleData finScheduleData, String tableType){
-		logger.debug("Entering");
-		
-		if(finScheduleData.getFeeRules() != null && finScheduleData.getFeeRules().size() > 0){
-			//Finance Fee Charge Details
-			for (int i = 0; i < finScheduleData.getFeeRules().size(); i++) {
-				finScheduleData.getFeeRules().get(i).setFinReference(finScheduleData.getFinReference());
-			}
-			getPostingsDAO().saveChargesBatch(finScheduleData.getFeeRules(), tableType);
-		}
-		
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Common Method for Finance schedule list validation
-	 * 
-	 * @param list
-	 * @param method
-	 * @param userDetails
-	 * @param lastMntON
-	 * @return
-	 * @throws InterruptedException
-	 */
-	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
-		logger.debug("Entering");
-		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
-
-		if (list != null && list.size() > 0) {
-
-			for (int i = 0; i < list.size(); i++) {
-
-				String transType = "";
-				String rcdType = "";
-				Object object = ((AuditDetail) list.get(i)).getModelData();
-				String[] fields = PennantJavaUtil.getFieldDetails(object, excludeFields);
-
-				try {
-
-					rcdType = object.getClass().getMethod("getRecordType", null).invoke(object, null).toString();
-
-					if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-						transType = PennantConstants.TRAN_ADD;
-					} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-					        || rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-						transType = PennantConstants.TRAN_DEL;
-					} else {
-						transType = PennantConstants.TRAN_UPD;
-					}
-
-					if (!(transType.equals(""))) {
-						// check and change below line for Complete code
-						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
-						        .invoke(object, object.getClass().getClasses());
-						auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i))
-						        .getAuditSeq(), fields[0], fields[1], befImg, object));
-					}
-				} catch (Exception e) {
-					logger.error(e);
-				}
-			}
-		}
-		logger.debug("Leaving");
-		return auditDetailsList;
-	}
-
-	/**
-	 * Method For Preparing List of AuditDetails for Educational expenses
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param eduCationLoanID
-	 * @return
-	 */
-	private List<AuditDetail> processingEduExpenseList(List<AuditDetail> auditDetails, String type,
-	        String eduCationLoanID) {
-		logger.debug("Entering ");
-		
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-
-			EducationalExpense educationalExpense = (EducationalExpense) auditDetails.get(i)
-			        .getModelData();
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			educationalExpense.setLoanRefNumber(eduCationLoanID);
-			if (type.equals("")) {
-				approveRec = true;
-				educationalExpense.setVersion(educationalExpense.getVersion() + 1);
-				educationalExpense.setRoleCode("");
-				educationalExpense.setNextRoleCode("");
-				educationalExpense.setTaskId("");
-				educationalExpense.setNextTaskId("");
-			}
-
-			educationalExpense.setWorkflowId(0);
-
-			if (educationalExpense.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (educationalExpense.isNewRecord()) {
-				saveRecord = true;
-				if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					educationalExpense.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (educationalExpense.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RCD_DEL)) {
-					educationalExpense.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					educationalExpense.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-
-			} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (educationalExpense.isNew()) {
-					saveRecord = true;
-				} else
-					updateRecord = true;
-			}
-
-			if (approveRec) {
-				rcdType = educationalExpense.getRecordType();
-				recordStatus = educationalExpense.getRecordStatus();
-				educationalExpense.setRecordType("");
-				educationalExpense.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-
-			}
-			if (saveRecord) {
-
-				educationalExpenseDAO.save(educationalExpense, type);
-			}
-
-			if (updateRecord) {
-				educationalExpenseDAO.update(educationalExpense, type);
-			}
-
-			if (deleteRecord) {
-				educationalExpenseDAO.delete(educationalExpense, type);
-			}
-
-			if (approveRec) {
-				educationalExpense.setRecordType(rcdType);
-				educationalExpense.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(educationalExpense);
-		}
-		logger.debug("Leaving ");
-		return auditDetails;
-	}
-
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * 
-	 * @param educationalLoan
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	private List<AuditDetail> setEduExpenseAuditData(EducationalLoan educationalLoan,
-	        String auditTranType, String method) {
-		logger.debug("Entering ");
-		
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new EducationalExpense());
-
-		for (int i = 0; i < educationalLoan.getEduExpenseList().size(); i++) {
-
-			EducationalExpense educationalExpense = educationalLoan.getEduExpenseList().get(i);
-			educationalExpense.setWorkflowId(educationalLoan.getWorkflowId());
-			educationalExpense.setLoanRefNumber((educationalLoan.getLoanRefNumber()));
-
-			boolean isRcdType = false;
-
-			if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				educationalExpense.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				educationalExpense.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				educationalExpense.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
-			}
-
-			if (method.equals("saveOrUpdate") && (isRcdType == true)) {
-				educationalExpense.setNewRecord(true);
-			}
-
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-				        || educationalExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-
-			educationalExpense.setRecordStatus(educationalLoan.getRecordStatus());
-			educationalExpense.setUserDetails(educationalLoan.getUserDetails());
-			educationalExpense.setLastMntOn(educationalLoan.getLastMntOn());
-			educationalExpense.setLastMntBy(educationalLoan.getLastMntBy());
-			if (!educationalExpense.getRecordType().equals("")) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-				        educationalExpense.getBefImage(), educationalExpense));
-			}
-
-		}
-		logger.debug("Leaving ");
-		return auditDetails;
-	}
-
-	/**
-	 * This method fetches list<FinanceReferenceDetail> and 
-	 * set the checkListDetails to each FinanceReferenceDetail
-	 * 
-	 * @param id
-	 * @param type
-	 * @return finRefDetailList
-	 */
-	public List<FinanceReferenceDetail> getCheckListByFinRef(final String finType) {
-		logger.debug("Entering ");
-		List<FinanceReferenceDetail> finRefDetailList = getFinanceReferenceDetailDAO()
-		        .getFinanceReferenceDetail(finType, "", "_AQView");
-		if (finRefDetailList != null) {
-			for (FinanceReferenceDetail finRefDetail : finRefDetailList) {
-				finRefDetail.setLovDesccheckListDetail(getCheckListDetailDAO()
-				        .getCheckListDetailByChkList(finRefDetail.getFinRefId(), "_AView"));
-			}
-		}
-		logger.debug("Leaving ");
-		return finRefDetailList;
-	}
-
-	/**
-	 * Setting checkList audit details
-	 * 
-	 * @param finMain
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	private List<AuditDetail> setCheckListAuditData(FinanceDetail financeDetail,
-	        String auditTranType, String method) {
-		logger.debug("Entering");
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		for (int i = 0; i < financeDetail.getFinanceCheckList().size(); i++) {
-			FinanceCheckListReference finChekListRef = financeDetail.getFinanceCheckList().get(i);
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (finChekListRef.getRecordType().equals(PennantConstants.RCD_ADD)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-					finChekListRef.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (finChekListRef.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_UPD;
-				} else {
-					auditTranType = PennantConstants.RCD_DEL;
-				}
-			}
-			if (StringUtils.trimToEmpty(method).equals("doApprove")) {
-				finChekListRef.setRecordType(PennantConstants.RCD_ADD);
-			}
-			finChekListRef.setRecordStatus("");
-			finChekListRef.setUserDetails(financeDetail.getFinScheduleData().getFinanceMain().getUserDetails());
-			finChekListRef.setLastMntOn(financeDetail.getFinScheduleData().getFinanceMain().getLastMntOn());
-			finChekListRef.setLastMntBy(financeDetail.getFinScheduleData().getFinanceMain().getLastMntBy());
-			finChekListRef.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceCheckListReference(),excludeFields);
-			if (!StringUtils.equals(finChekListRef.getRecordType().trim(), "")) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-				        finChekListRef.getBefImage(), finChekListRef));
-			}
-		}
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-
-	/**
-	 * processing CheckListDetails
-	 * 
-	 * @param checkList
-	 * @param type
-	 * @return
-	 */
-	private List<AuditDetail> processCheckListDetails(List<AuditDetail> auditDetails, String type,
-	        String finReference) {
-		logger.debug("Entering ");
-		
-		for (int i = 0; i < auditDetails.size(); i++) {
-			FinanceCheckListReference finChecklistRef = (FinanceCheckListReference) auditDetails.get(i).getModelData();
-			finChecklistRef.setWorkflowId(0);
-			if (type.equals("")) {
-				finChecklistRef.setVersion(finChecklistRef.getVersion() + 1);
-				finChecklistRef.setRoleCode("");
-				finChecklistRef.setNextRoleCode("");
-				finChecklistRef.setTaskId("");
-				finChecklistRef.setNextTaskId("");
-			}
-			if (finChecklistRef.getRecordType().equals(PennantConstants.RCD_ADD)) {
-				getFinanceCheckListReferenceDAO().save(finChecklistRef, type);
-			} else if (finChecklistRef.getRecordType().equals(PennantConstants.RCD_DEL)) {
-				getFinanceCheckListReferenceDAO().delete(finChecklistRef, type);
-			} else if (finChecklistRef.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				getFinanceCheckListReferenceDAO().update(finChecklistRef, type);
-			}
-
-			auditDetails.get(i).setModelData(finChecklistRef);
-
-		}
-		logger.debug("Leaving ");
-		return auditDetails;
-	}
-
-	/**
-	 * Method to validate checklist
-	 * 
-	 * @param auditDetail
-	 *            (AuditDetail)
-	 * @param usrLanguage
-	 *            (String)
-	 * @param method
-	 *            (String)
-	 * @return auditDetail
-	 */
-
-	private AuditDetail validation_CheckList(AuditDetail auditDetail, String usrLanguage,
-	        String method) {
-		logger.debug("Entering ");
-		
-		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
-		String[] errParm = new String[3];
-		String[] valueParm = new String[1];
-
-		if (financeDetail.getFinRefDetailsList() != null) {
-			for (FinanceReferenceDetail aFinRefDetail : financeDetail.getFinRefDetailsList()) {
-
-				if (financeDetail.getLovDescSelAnsCountMap().containsKey(Long.valueOf(aFinRefDetail.getFinRefId()))) {
-					if ((financeDetail.getLovDescSelAnsCountMap().get(Long.valueOf(
-							aFinRefDetail.getFinRefId()))) > (aFinRefDetail.getLovDescCheckMaxCount())
-					        || (financeDetail.getLovDescSelAnsCountMap().get(Long.valueOf(
-					        		aFinRefDetail.getFinRefId()))) < (aFinRefDetail.getLovDescCheckMinCount())) {
-						
-						errParm[0] = "" + aFinRefDetail.getLovDescCheckMinCount();
-						errParm[1] = "" + aFinRefDetail.getLovDescCheckMaxCount();
-						errParm[2] = aFinRefDetail.getLovDescRefDesc();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-						        PennantConstants.KEY_FIELD, "F0001", errParm, valueParm), usrLanguage));
-					}
-				} else {
-					errParm[0] = "" + aFinRefDetail.getLovDescCheckMinCount();
-					errParm[1] = "" + aFinRefDetail.getLovDescCheckMaxCount();
-					errParm[2] = aFinRefDetail.getLovDescRefDesc();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "F0001", errParm, valueParm), usrLanguage));
-				}
-			}
-		}
-		logger.debug("Leaving ");
-		return auditDetail;
-	}
-
-	/**
-	 * Method for Calculate Customer Live Data using Customer Details
-	 * 
-	 * @param CustomerCalData
-	 * @param type
-	 * @return FinanceMain
+	 * @param bulkRateChangeFinances
+	 * @param fromDate
+	 * @param toDate
+	 * @param recalType
+	 * @param rateChange
+	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public CustomerCalData getCalculatedData(CustomerCalData calData, String type) {
-		logger.debug("Entering ");
-		return getFinanceMainDAO().calculateData(calData, type);
+	public boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances,
+			String recalType, BigDecimal rateChange) throws AccountNotFoundException {
+		logger.debug("Entering");
+
+		//Bulk Rate Changes applied for fetched list
+		for (BulkProcessDetails rateChangeFinance : bulkRateChangeFinances) {
+
+			//Get Total Finance Details to particular Finance
+			FinanceDetail financeDetail = getFinSchdDetailById(rateChangeFinance.getFinReference(), "_AView", true);
+
+			//Reset Before Image for Auditing
+			FinanceDetail befImage = new FinanceDetail();
+			BeanUtils.copyProperties(financeDetail, befImage);
+			financeDetail.setBefImage(befImage);
+
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+			financeMain.setEventFromDate(rateChangeFinance.getLovDescEventFromDate());
+			financeMain.setEventToDate(rateChangeFinance.getLovDescEventToDate());
+			financeMain.setRecalType(recalType);
+
+			//Schedule Details Log Maintenance
+			final List<FinanceScheduleDetail> oldScheduleDetails = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+			getFinanceScheduleDetailDAO().saveList(oldScheduleDetails, "_Log", false);
+
+			//Schedule Re-calculation based on Applied parameters
+			financeDetail.setFinScheduleData(ScheduleCalculator.changeRate(financeDetail.getFinScheduleData(), "", "", BigDecimal.ZERO,
+					rateChange == null ? BigDecimal.ZERO : rateChange, true));
+
+			//Record proceed through WorkFlow defined Process
+			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, financeDetail.getBefImage(), financeDetail);
+			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
+					financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+
+			//Changed Finance Save in Database
+			saveOrUpdate(auditHeader, false);
+		}
+
+		logger.debug("Leaving");
+		return true;
 	}
 
 	/**
+	 * Method for Processing Bulk Finance for Deferment Process
 	 * 
-	 * <br>
-	 * IN FinanceDetailServiceImpl.java
-	 * 
+	 * @throws AccountNotFoundException
+	 */
+	@Override
+	public boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances,
+			String recalType, boolean excludeDeferment, String addTermAfter, Date calFromDate,
+			Date calToDate) throws AccountNotFoundException {
+		logger.debug("Entering");
+
+		//Bulk Deferment Changes applied for fetched list
+		for (BulkDefermentChange defermentFinance : defermentChangeFinances) {
+
+			//Get Total Finance Details to particular Finance
+			FinanceDetail financeDetail = getFinSchdDetailById(defermentFinance.getFinReference(), "_AView", true);
+
+			//Reset Before Image for Auditing
+			FinanceDetail befImage = new FinanceDetail();
+			BeanUtils.copyProperties(financeDetail, befImage);
+			financeDetail.setBefImage(befImage);
+
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+			financeMain.setEventFromDate(defermentFinance.getEventFromDate());
+			financeMain.setEventToDate(defermentFinance.getEventFromDate());
+			financeMain.setRecalType(recalType);
+			financeMain.setExcludeDeferedDates(excludeDeferment);
+			financeMain.setAddTermAfter(addTermAfter);
+			financeMain.setRecalFromDate(calFromDate);
+			financeMain.setRecalToDate(calToDate);
+
+			//Schedule Details Log Maintenance
+			final List<FinanceScheduleDetail> oldScheduleDetails = befImage.getFinScheduleData().getFinanceScheduleDetails();
+			getFinanceScheduleDetailDAO().saveList(oldScheduleDetails, "_Log", false);
+
+			//Schedule Re-calculation based on Applied parameters
+			financeDetail.setFinScheduleData(ScheduleCalculator.addDeferment(financeDetail.getFinScheduleData()));
+
+			//Record proceed through WorkFlow defined Process
+			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, financeDetail.getBefImage(), financeDetail);
+			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
+					financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+
+			//Changed Finance Save in Database
+			saveOrUpdate(auditHeader, false);
+		}
+		logger.debug("Leaving");
+		return false;
+	}
+
+	/**
+	 * Method for Preparing Customer Eligibility Execution Data
 	 * @param financeDetail
 	 */
 	private void doFillCustEligibilityData(FinanceDetail financeDetail) {
 		logger.debug("Entering ");
-		
-		Customer customer = getCustomerDAO().getCustomerByID(
-		        financeDetail.getFinScheduleData().getFinanceMain().getCustID(), "");
-		
-		if (customer != null) {
-			
-			// Eligibility object
-			financeDetail.setCustomerEligibilityCheck(new CustomerEligibilityCheck());
-			BeanUtils.copyProperties(customer, financeDetail.getCustomerEligibilityCheck());
-			financeDetail.getCustomerEligibilityCheck().setCustAge(
-			        DateUtility.getYearsBetween(customer.getCustDOB(), DateUtility.today()));
-			CustomerCalData calData = new CustomerCalData();
-			calData.setCustCIF(customer.getCustCIF());
-			calData.setCustID(customer.getCustID());
-			calData.setFinType(financeDetail.getFinScheduleData().getFinanceMain().getFinType());
-			// Set Calculated values for Eligibility
-			calData = getCalculatedData(calData, "");
-			BeanUtils.copyProperties(calData, financeDetail.getCustomerEligibilityCheck());
 
-			financeDetail.getCustomerEligibilityCheck().setReqFinType(
-			        financeDetail.getFinScheduleData().getFinanceMain().getFinType());
-			financeDetail.getCustomerEligibilityCheck().setReqFinStartDate(
-			        financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate());
-			financeDetail.getCustomerEligibilityCheck().setReqFinAmount(
-			        financeDetail.getFinScheduleData().getFinanceMain().getFinAmount());
-			financeDetail.getCustomerEligibilityCheck().setReqTerms(
-			        financeDetail.getFinScheduleData().getFinanceMain().getNumberOfTerms());
-			financeDetail.getCustomerEligibilityCheck().setReqFinccy(
-			        financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
-			financeDetail.getCustomerEligibilityCheck().setReqFinRepay(
-			        financeDetail.getFinScheduleData().getFinanceMain().getFinRepaymentAmount());
-			financeDetail.getCustomerEligibilityCheck().setReqMaturity(
-			        financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate());
-			financeDetail.getCustomerEligibilityCheck().setReqProduct(
-			        financeDetail.getFinScheduleData().getFinanceType().getLovDescProductCodeName());
-			financeDetail.getCustomerEligibilityCheck().setReqCampaign("");
-			financeDetail.getCustomerEligibilityCheck().setCustRepayTot(
-			        financeDetail.getCustomerEligibilityCheck().getCustRepayOther().add(financeDetail.getCustomerEligibilityCheck().getCustRepayBank()));
-			
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Customer customer = getCustomerDAO().getCustomerByID(financeMain.getCustID(), "_AView");
+
+		if (customer != null) {
+
+			String productCode = financeDetail.getFinScheduleData().getFinanceType().getLovDescProductCodeName();
+
+			//Current Finance Monthly Installment Calculation
+			BigDecimal totalRepayAmount = financeMain.getTotalRepayAmt();
+			int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate(), true);
+
+			BigDecimal curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
+			int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
+
+			//Customer Eligibility Amounts Calculation
+			financeDetail.setCustomerEligibilityCheck(getCustEligibilityDetail(customer, productCode,
+					financeMain.getFinCcy(), curFinRepayAmt, months, financeMain.getFinAmount(), financeMain.getCustDSR()));
+
+			//Reset Customer Debt Service Ratio
+			financeMain.setCustDSR(financeDetail.getCustomerEligibilityCheck().getDSCR());
+
 			// Scoring object
 			financeDetail.setCustomerScoringCheck(new CustomerScoringCheck());
 			BeanUtils.copyProperties(financeDetail.getCustomerEligibilityCheck(), financeDetail.getCustomerScoringCheck());
-			// Set Calculated values for Scoring
-			BeanUtils.copyProperties(calData, financeDetail.getCustomerScoringCheck());
-
 		}
 		logger.debug("Leaving ");
 	}
 
 	/**
-	 * Method to get FinanceCheckListReference By FinReference
-	 * 
-	 * @param id
-	 * @param type
-	 * @return
+	 * Method for Preparing Customer Eligibility Amount Details in Base(BHD) Currency
 	 */
-	public List<FinanceCheckListReference> getFinanceCheckListReferenceByFinRef(final String id,
-	        String type) {
-		return getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceByFinRef(id, type);
+	@Override
+	public CustomerEligibilityCheck getCustEligibilityDetail(Customer customer, String productCode,
+			String finCcy, BigDecimal curFinRpyAmount, int months, BigDecimal finAmount,
+			BigDecimal custDSR) {
+		logger.debug("Entering");
+
+		CustomerEligibilityCheck eligibilityCheck = new CustomerEligibilityCheck();
+		if (customer != null) {
+
+			// Eligibility object
+			BeanUtils.copyProperties(customer, eligibilityCheck);
+			int age = DateUtility.getYearsBetween(customer.getCustDOB(), DateUtility.today());
+			eligibilityCheck.setCustAge(age);
+
+			//Minor Age Calculation
+			int minorAge = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("MINOR_AGE").toString());
+			if (age < minorAge) {
+				eligibilityCheck.setCustIsMinor(true);
+			} else {
+				eligibilityCheck.setCustIsMinor(false);
+			}
+
+			Currency finCurrency = null;
+			//Customer Total Income & Expense Conversion
+			if (!StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").toString())
+					.equals(customer.getCustBaseCcy())) {
+				finCurrency = getCurrencyDAO().getCurrencyById(customer.getCustBaseCcy(), "");
+				eligibilityCheck.setCustTotalIncome(calculateExchangeRate(customer.getCustTotalIncome(), finCurrency));
+				eligibilityCheck.setCustTotalExpense(calculateExchangeRate(customer.getCustTotalExpense(), finCurrency));
+			}
+
+			if (months > 0) {
+				eligibilityCheck.setTenure(new BigDecimal((months / 12) + "." + (months % 12)));
+			}
+			eligibilityCheck.setReqFinAmount(finAmount);
+
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			eligibilityCheck.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate,
+					customer.getCustBlackListDate()));
+
+			eligibilityCheck.setCustCtgType(customer.getLovDescCustCtgType());
+			eligibilityCheck.setReqProduct(productCode);
+
+			//Currently
+			if (curFinRpyAmount != null && curFinRpyAmount.compareTo(BigDecimal.ZERO) > 0) {
+				if (!StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").toString())
+						.equals(finCcy)) {
+
+					if (finCurrency != null && finCurrency.getCcyCode().equals(finCcy)) {
+						eligibilityCheck.setCurFinRepayAmt(calculateExchangeRate(curFinRpyAmount, finCurrency));
+					} else {
+						finCurrency = getCurrencyDAO().getCurrencyById(finCcy, "");
+						eligibilityCheck.setCurFinRepayAmt(calculateExchangeRate(curFinRpyAmount, finCurrency));
+					}
+				} else {
+					eligibilityCheck.setCurFinRepayAmt(curFinRpyAmount);
+				}
+			}
+
+			//Finance Amount Calculations
+			List<FinanceProfitDetail> financeProfitDetailsList = 
+				getCustomerDAO().getCustFinAmtDetails(customer.getCustID(),eligibilityCheck);
+
+			BigDecimal custFinAmount = BigDecimal.ZERO;
+			BigDecimal custODAmount = BigDecimal.ZERO;
+
+			for (FinanceProfitDetail financeProfitDetail : financeProfitDetailsList) {
+				custFinAmount=custFinAmount.add(CalculationUtil.getConvertedAmount(financeProfitDetail.getFinCcy(), finCcy, 
+						financeProfitDetail.getTotalPriBal()));
+				custODAmount = custODAmount.add(CalculationUtil.getConvertedAmount(financeProfitDetail.getFinCcy(), finCcy, 
+						financeProfitDetail.getODPrincipal()));
+			}
+
+			eligibilityCheck.setCustLiveFinAmount(custFinAmount);
+			eligibilityCheck.setCustPastDueAmt(custODAmount);				
+
+			//get Customer Designation if customer status is Employed
+			eligibilityCheck.setCustEmpDesg(getCustomerDAO().getCustEmpDesg(customer.getCustID()));
+
+			//get Customer Employee Allocation Type if customer status is Employed
+			eligibilityCheck.setCustEmpAloc(getCustomerDAO().getCustCurEmpAlocType(customer.getCustID()));
+
+			//Get Customer Repay Totals On Bank
+			eligibilityCheck.setCustRepayBank(getCustomerDAO().getCustRepayBankTotal(customer.getCustID()));
+
+			//Get Customer Repay Totals by Other Commitments
+			eligibilityCheck.setCustRepayOther(getCustomerDAO().getCustRepayOtherTotal(customer.getCustID()));
+
+			//Get Customer Worst Status From Finances
+			eligibilityCheck.setCustWorstSts(getCustomerDAO().getCustWorstSts(customer.getCustID()));
+
+			//DSR Calculation
+			if (custDSR == null || custDSR.compareTo(BigDecimal.ZERO) == 0) {
+				Rule rule = getRuleDAO().getRuleByID("DSRCAL", "ELGRULE", "", "");
+				if (rule != null) {
+					List<GlobalVariable> globalVariableList = SystemParameterDetails.getGlobaVariableList();
+					Object dscr = getRuleExecutionUtil().executeRule(rule.getSQLRule(), eligibilityCheck, globalVariableList,finCcy);
+
+					if(dscr == null){
+						dscr = BigDecimal.ZERO;
+					}else if(new BigDecimal(dscr.toString()).intValue() > 9999){
+						dscr = 9999;
+					}
+
+					eligibilityCheck.setDSCR(new BigDecimal(dscr.toString()));
+				}
+			} else {
+				eligibilityCheck.setDSCR(custDSR);
+			}
+
+		}
+		logger.debug("Leaving");
+		return eligibilityCheck;
 	}
 
 	/**
-	 * This method prepare audit details for FinanceCheckListReference list and deletes the list
-	 * 
-	 * @param finDetail
-	 * @param tableType
-	 * @param auditTranType
-	 * @return
+	 * Method for Preparing Customer Eligibility Amount Details in Base(BHD) Currency
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private List<AuditDetail> listDeletion_CheckList(FinanceDetail finDetail, String tableType,
-	        String auditTranType) {
-		logger.debug("Entering ");
-		
-		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceCheckListReference(), excludeFields);
-		if (finDetail.getFinanceCheckList() != null && finDetail.getFinanceCheckList().size() > 0) {
+	@Override
+	public CustomerEligibilityCheck getWIFCustEligibilityDetail(WIFCustomer customer, String productCode,
+			String finCcy, BigDecimal curFinRpyAmount, int months, BigDecimal finAmount) throws IllegalAccessException, InvocationTargetException {
+		logger.debug("Entering");
 
-			for (int i = 0; i < finDetail.getFinanceCheckList().size(); i++) {
-				FinanceCheckListReference finCheckListRef = finDetail.getFinanceCheckList().get(i);
-				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finCheckListRef.getBefImage(), finCheckListRef));
+		CustomerEligibilityCheck eligibilityCheck = new CustomerEligibilityCheck();
+		if (customer != null) {
+
+			// Eligibility object
+			org.apache.commons.beanutils.BeanUtils.copyProperties(eligibilityCheck,customer);
+			int age = DateUtility.getYearsBetween(customer.getCustDOB(), DateUtility.today());
+			eligibilityCheck.setCustAge(age);
+
+			//Minor Age Calculation
+			int minorAge = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("MINOR_AGE").toString());
+			if (age < minorAge) {
+				eligibilityCheck.setCustIsMinor(true);
+			} else {
+				eligibilityCheck.setCustIsMinor(false);
 			}
-			getFinanceCheckListReferenceDAO().delete(finDetail.getFinanceCheckList().get(0).getFinReference(), tableType);
-		}
-		logger.debug("Leaving ");
-		return auditList;
-	}
-	
-	private List<AuditDetail> listDeletion_FinAgr(FinanceDetail finDetail, String tableType,
-			String auditTranType) {
-		logger.debug("Entering ");
-		
-		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinAgreementDetail(), "");
-		if (finDetail.getFinAgrDetailList() != null && finDetail.getFinAgrDetailList().size() > 0) {
-			
-			for (int i = 0; i < finDetail.getFinAgrDetailList().size(); i++) {
-				FinAgreementDetail finAgrDetail = finDetail.getFinAgrDetailList().get(i);
-				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finAgrDetail.getBefImage(), finAgrDetail));
+
+			if (months > 0) {
+				eligibilityCheck.setTenure(new BigDecimal((months / 12) + "." + (months % 12)));
 			}
-			getFinAgreementDetailDAO().deleteByFinRef(finDetail.getFinAgrDetailList().get(0).getFinReference(), tableType);
+			eligibilityCheck.setReqFinAmount(finAmount);
+
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			eligibilityCheck.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate,
+					customer.getCustBlackListDate()));
+
+			eligibilityCheck.setCustCtgType(customer.getLovDescCustCtgType());
+			eligibilityCheck.setReqProduct(productCode);
+			eligibilityCheck.setCurFinRepayAmt(curFinRpyAmount);
+
+			if(customer.getExistCustID() != 0){
+
+				//Finance Amount Calculations
+				List<FinanceProfitDetail> financeProfitDetailsList = 
+					getCustomerDAO().getCustFinAmtDetails(customer.getExistCustID(),eligibilityCheck);
+
+				BigDecimal custFinAmount = BigDecimal.ZERO;
+				BigDecimal custODAmount = BigDecimal.ZERO;
+
+				for (FinanceProfitDetail financeProfitDetail : financeProfitDetailsList) {
+					custFinAmount.add(CalculationUtil.getConvertedAmount(financeProfitDetail.getFinCcy(), finCcy, 
+							financeProfitDetail.getTotalPriBal().add(financeProfitDetail.getTotalPftBal())));
+					custODAmount.add(CalculationUtil.getConvertedAmount(financeProfitDetail.getFinCcy(), finCcy, 
+							financeProfitDetail.getODPrincipal().add(financeProfitDetail.getODProfit())));
+				}
+
+				eligibilityCheck.setCustLiveFinAmount(custFinAmount);
+				eligibilityCheck.setCustPastDueAmt(custODAmount);
+
+				//get Customer Designation if customer status is Employed
+				eligibilityCheck.setCustEmpDesg(getCustomerDAO().getCustEmpDesg(customer.getExistCustID()));
+
+				//get Customer Employee Allocation Type if customer status is Employed
+				eligibilityCheck.setCustEmpAloc(getCustomerDAO().getCustCurEmpAlocType(customer.getExistCustID()));
+
+				//Get Customer Worst Status From Finances
+				eligibilityCheck.setCustWorstSts(getCustomerDAO().getCustWorstSts(customer.getExistCustID()));
+			}else{
+
+				eligibilityCheck.setCustEmpAloc(customer.getLovDescCustEmpAlocName());
+				//Get Customer Worst Status From Finances
+				eligibilityCheck.setCustWorstSts(getCustStatusByMinDueDays());
+			}
+
+			//DSR Calculation
+			Rule rule = getRuleDAO().getRuleByID("DSRCAL", "ELGRULE", "", "");
+			if (rule != null) {
+				List<GlobalVariable> globalVariableList = SystemParameterDetails.getGlobaVariableList();
+				Object dscr = getRuleExecutionUtil().executeRule(rule.getSQLRule(),
+						eligibilityCheck, globalVariableList,finCcy);
+				eligibilityCheck.setDSCR(dscr == null ? BigDecimal.ZERO : new BigDecimal(dscr.toString()));
+			}
 		}
-		logger.debug("Leaving ");
-		return auditList;
+		logger.debug("Leaving");
+		return eligibilityCheck;
 	}
-	
-	private List<AuditDetail> listDeletion_FinContributor(FinanceDetail finDetail, String tableType,
-			String auditTranType) {
+
+	private List<AuditDetail> listDeletion_FinContributor(FinanceDetail finDetail,
+			String tableType, String auditTranType) {
 		logger.debug("Entering ");
-		
+
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		if(finDetail.getFinContributorHeader() != null){
+		if (finDetail.getFinContributorHeader() != null) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinContributorHeader(), "");
 			FinContributorHeader contributorHeader = finDetail.getFinContributorHeader();
-			auditList.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], contributorHeader.getBefImage(), contributorHeader));
-			
+			auditList.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], contributorHeader
+					.getBefImage(), contributorHeader));
+
 			getFinContributorHeaderDAO().delete(contributorHeader.getFinReference(), tableType);
 
 			String[] fields1 = PennantJavaUtil.getFieldDetails(new FinContributorDetail(), "");
-			if (contributorHeader.getContributorDetailList() != null && contributorHeader.getContributorDetailList().size() > 0) {
+			if (contributorHeader.getContributorDetailList() != null
+					&& contributorHeader.getContributorDetailList().size() > 0) {
 
 				for (int i = 0; i < contributorHeader.getContributorDetailList().size(); i++) {
 					FinContributorDetail contributorDetail = contributorHeader.getContributorDetailList().get(i);
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields1[0], fields1[1], contributorDetail.getBefImage(), contributorDetail));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields1[0], fields1[1],
+							contributorDetail.getBefImage(), contributorDetail));
 				}
-				getFinBillingDetailDAO().deleteByFinRef(contributorHeader.getContributorDetailList().get(0).getFinReference(), tableType);
-			}
-		}
-		logger.debug("Leaving ");
-		return auditList;
-	}
-	
-	private List<AuditDetail> listDeletion_FinBilling(FinanceDetail finDetail, String tableType,
-			String auditTranType) {
-		logger.debug("Entering ");
-		
-		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		if(finDetail.getFinBillingHeader() != null){
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinBillingHeader(), "");
-			FinBillingHeader billingHeader = finDetail.getFinBillingHeader();
-			auditList.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], billingHeader.getBefImage(), billingHeader));
-			getFinBillingHeaderDAO().delete(billingHeader.getFinReference(), tableType);
-			
-			String[] fields1 = PennantJavaUtil.getFieldDetails(new FinBillingDetail(), "");
-			if (billingHeader.getBillingDetailList() != null && billingHeader.getBillingDetailList().size() > 0) {
-
-				for (int i = 0; i < billingHeader.getBillingDetailList().size(); i++) {
-					FinBillingDetail billingDetail = billingHeader.getBillingDetailList().get(i);
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields1[0], fields1[1], billingDetail.getBefImage(), billingDetail));
-				}
-				getFinBillingDetailDAO().deleteByFinRef(billingHeader.getBillingDetailList().get(0).getFinReference(), tableType);
+				getFinContributorDetailDAO().deleteByFinRef(
+						contributorHeader.getContributorDetailList().get(0).getFinReference(),tableType);
 			}
 		}
 		logger.debug("Leaving ");
@@ -2975,7 +2240,7 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 * @param financeScheduleDetails
 	 */
 	public void maintainWorkSchedules(String finReference, long userId,
-	        List<FinanceScheduleDetail> financeScheduleDetails) {
+			List<FinanceScheduleDetail> financeScheduleDetails) {
 		logger.debug("Entering ");
 		getFinanceScheduleDetailDAO().deleteFromWork(finReference, userId);
 		for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -2996,7 +2261,7 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 */
 	private String returnAccountingSetid(String eventCode, FinanceType financeType) {
 		logger.debug("Entering ");
-		
+
 		// Execute entries depend on Finance Event
 		String accountingSetId = "";
 		if (eventCode.equals("ADDDBSF")) {
@@ -3031,8 +2296,10 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 			accountingSetId = financeType.getFinAEWriteOff();
 		} else if (eventCode.equals("SCDCHG")) {
 			accountingSetId = financeType.getFinSchdChange();
+		} else if (eventCode.equals("COMPOUND")) {
+			accountingSetId = financeType.getFinAECapitalize();
 		}
-		
+
 		logger.debug("Leaving");
 		return accountingSetId;
 	}
@@ -3045,226 +2312,189 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 * @param isWIF
 	 *            (boolean)
 	 * **/
-	public FinScheduleData getFinSchDataByFinRef(String finReference, String type) {
+	public FinScheduleData getFinSchDataByFinRef(String finReference, String type, long logKey) {
 		logger.debug("Entering");
-		
+
 		FinScheduleData finSchData = new FinScheduleData();
 		finSchData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
 		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+		if(logKey != 0){
+			finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails( finReference, type, false));
+		}
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 		finSchData.setDefermentHeaders(getDefermentHeaderDAO().getDefermentHeaders(finReference, type, false));
 		finSchData.setDefermentDetails(getDefermentDetailDAO().getDefermentDetails(finReference, type, false));
-		finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(finSchData.getFinanceMain().getFinType(), type));
-		finSchData.setFeeRules(getPostingsDAO().getFeeChargesByFinRef(finReference, ""));
-		finSchData.setRepayDetails(getFinanceRepaymentsByFinRef(finReference));
-		
+
+		if(logKey == 0){
+			finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(finSchData.getFinanceMain().getFinType(), type));
+			finSchData.setFeeRules(getPostingsDAO().getFeeChargesByFinRef(finReference,false, ""));
+			finSchData = getFinMaintainenceDetails(finSchData);
+			finSchData.setAccrueValue(getAccrueAmount(finReference));
+		}
+		logger.debug("Leaving");
+		return finSchData;
+	}
+	
+	@Override
+	public FinScheduleData getFinMaintainenceDetails(FinScheduleData finSchData){
+		logger.debug("Entering");
+		String finReference = finSchData.getFinanceMain().getFinReference();
+		finSchData.setRepayDetails(getFinanceRepaymentsByFinRef(finReference, false));
+		finSchData.setPenaltyDetails(getFinancePenaltysByFinRef(finReference));
+		logger.debug("Leaving");
+		return finSchData;
+	}
+	
+	
+	/**
+	 * Method to get Schedule related data.
+	 * 
+	 * @param finReference
+	 *            (String)
+	 * @param isWIF
+	 *            (boolean)
+	 * **/
+	public FinScheduleData getFinSchDataByFinRef(String finReference) {
+		logger.debug("Entering");
+
+		FinScheduleData finSchData = new FinScheduleData();
+
+		finSchData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, "", false));
+
+		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "", false));
+
+		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, "", false));
+		finSchData.setDefermentHeaders(getDefermentHeaderDAO().getDefermentHeaders(finReference, "", false));
+		finSchData.setDefermentDetails(getDefermentDetailDAO().getDefermentDetails(finReference, "", false));
+
+		finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(finSchData.getFinanceMain().getFinType(), ""));
+		finSchData.setFeeRules(getPostingsDAO().getFeeChargesByFinRef(finReference,false, ""));
+		finSchData.setRepayDetails(getFinanceRepaymentsByFinRef(finReference, false));
+		finSchData.setPenaltyDetails(getFinancePenaltysByFinRef(finReference));
+		finSchData.setAccrueValue(getAccrueAmount(finReference));
+
 		logger.debug("Leaving");
 		return finSchData;
 	}
 	
 	/**
+	 * Method for Get the Accrue Details
+	 * @param finReference
+	 * @return
+	 */
+	@Override
+	public BigDecimal getAccrueAmount(String finReference){
+		return getProfitDetailsDAO().getAccrueAmount(finReference);
+	}
+
+	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param financeReference
+	 * @param finReference
 	 *            (String)
 	 * @param isWIF
 	 *            (boolean)
 	 * **/
-	public FinScheduleData getFinSchDataById(String financeReference, String type) {
+	public FinScheduleData getFinSchDataById(String finReference, String type,
+			boolean summaryRequired) {
 		logger.debug("Entering");
-		
+
 		FinScheduleData finSchData = new FinScheduleData();
-		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(financeReference, type, false);
+		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, type, false);
+
 		finSchData.setFinanceMain(financeMain);
-		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(financeReference, type, false));
-		
-		//Finance Summary Details Preparation
-		final Date curBussDate =  (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
-		FinanceSummary summary = new FinanceSummary();
-		summary.setFinReference(financeMain.getFinReference());
-		summary.setSchDate(curBussDate);
-		
-		if(financeMain.isAllowGrcPeriod() && curBussDate.compareTo(financeMain.getNextGrcPftDate()) <= 0){
-			summary.setNextSchDate(financeMain.getNextGrcPftDate());
-		}else if(financeMain.getNextRepayDate().compareTo(financeMain.getNextRepayPftDate()) < 0) {
-			summary.setNextSchDate(financeMain.getNextRepayDate());
-		}else {
-			summary.setNextSchDate(financeMain.getNextRepayPftDate());
+		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+
+		if(PennantConstants.FINANCE_PRODUCT_ISTISNA.equals(financeMain.getLovDescProductCodeName())){
+			finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
 		}
-		
-		summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary);
-		summary = getPostingsDAO().getTotalFeeCharges(summary);
-		finSchData.setFinanceSummary(summary);
-		
+
+		finSchData.setFinPftSuspended(false);
+		FinanceSuspHead financeSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(finReference, "");
+		if (financeSuspHead != null && financeSuspHead.isFinIsInSusp()) {
+			finSchData.setFinPftSuspended(true);
+			finSchData.setFinSuspDate(financeSuspHead.getFinSuspDate());
+		}
+
+		if (summaryRequired) {
+
+			//Finance Summary Details Preparation
+			final Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			FinanceSummary summary = new FinanceSummary();
+			summary.setFinReference(financeMain.getFinReference());
+			summary.setSchDate(curBussDate);
+
+			if (financeMain.isAllowGrcPeriod() && curBussDate.compareTo(financeMain.getNextGrcPftDate()) <= 0) {
+				summary.setNextSchDate(financeMain.getNextGrcPftDate());
+			} else if (financeMain.getNextRepayDate().compareTo(financeMain.getNextRepayPftDate()) < 0) {
+				summary.setNextSchDate(financeMain.getNextRepayDate());
+			} else {
+				summary.setNextSchDate(financeMain.getNextRepayPftDate());
+			}
+
+			summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary);
+			summary = getPostingsDAO().getTotalFeeCharges(summary);
+			finSchData.setFinanceSummary(summary);
+			summary.setFinCurODDays(getFinODDetailsDAO().getFinODDays(finReference, ""));
+
+			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference, "");
+			if (finODDetails != null) {
+				summary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
+				summary.setFinODTotWaived(finODDetails.getTotWaived());
+				summary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
+				summary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
+			}
+		}
+
 		logger.debug("Leaving");
 		return finSchData;
 	}
-	
+
+	/**
+	 * Method for Fetching Profit Details for Particular Finance Reference
+	 * 
+	 * @param finReference
+	 * @return
+	 */
+	public FinanceProfitDetail getFinProfitDetailsById(String finReference) {
+		return getProfitDetailsDAO().getFinProfitDetailsById(finReference);
+	}
+
+	/**
+	 * Method for Fetching Profit Details 
+	 */
+	public FinanceSummary getFinanceProfitDetails(String finRef) {
+		return getFinanceMainDAO().getFinanceProfitDetails(finRef);
+	}
+
 	/**
 	 * Method for getting Fiannce Contributo Header Details
 	 */
 	public FinContributorHeader getFinContributorHeaderById(String finReference) {
 		logger.debug("Entering");
 		FinContributorHeader header = getFinContributorHeaderDAO().getFinContributorHeaderById(finReference, "_AView");
-		if(header != null){
+		if (header != null) {
 			header.setContributorDetailList(getFinContributorDetailDAO().getFinContributorDetailByFinRef(finReference, "_AView"));
 		}
 		logger.debug("Leaving");
 		return header;
 	}
-	/**
-	 * Method to save profit details
-	 * 
-	 * @param finScheduleData
-	 * */
-	private FinanceProfitDetail doSave_PftDetails(AEAmountCodes aeAmountCodes, FinanceMain financeMain) {
-		logger.debug("Entering");
-		// Save/Update Finance Profit Details
-		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
-
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
-
-		finProfitDetails.setFinReference(financeMain.getFinReference());
-		finProfitDetails.setCustId(financeMain.getCustID());
-		finProfitDetails.setFinBranch(financeMain.getFinBranch());
-		finProfitDetails.setFinType(financeMain.getFinType());
-
-		finProfitDetails = getFinanceProfitDetailFiller().prepareFinPftDetails(aeAmountCodes, finProfitDetails, curBDay);
-		if (getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference()) == null) {
-			getProfitDetailsDAO().save(finProfitDetails);
-		} else {
-			getProfitDetailsDAO().update(finProfitDetails);
-		}
-		logger.debug("Leaving");
-		return finProfitDetails;
-	}
-
-	/**
-	 * Method for fetching Agreement Details
-	 */
-	@Override
-	public AgreementDetail getAgreementDetail(FinanceMain main, HashMap<String, Object> extendedFields) {
-		logger.debug("Entering");
-		
-		AgreementDetail detail = new AgreementDetail();
-		detail.setFinanceStartDate(DateUtility.formatUtilDate(main.getFinStartDate(), PennantConstants.dateFormate));
-		detail.setDisbursementAmt(PennantApplicationUtil.amountFormate(main.getFinAmount(), main.getLovDescFinFormatter()));
-		detail.setDisbursementAccount(main.getDisbAccountId());
-		if (main.getFinContractDate() != null) {
-			detail.setDayOfContarctDate(Integer.toString(DateUtility.getDay(main.getFinContractDate())));
-			detail.setMonthOfContarctDate(new SimpleDateFormat("MMMM").format(main.getFinContractDate()));
-			detail.setYearOfContarctDate(Integer.toString(DateUtility.getYear(main.getFinContractDate())));
-		}
-		detail.setCustSalutation(StringUtils.trimToEmpty(main.getLovDescSalutationName()));
-		detail.setCustFullName(StringUtils.trimToEmpty(main.getLovDescCustFName()) + " "
-		        + StringUtils.trimToEmpty(main.getLovDescCustLName()));
-		detail.setCustCIF(main.getLovDescCustCIF());
-		if (SystemParameterDetails.getSystemParameterValue("BANK_NAME") != null) {
-			detail.setBankName(SystemParameterDetails.getSystemParameterValue("BANK_NAME").toString());
-		}
-		detail.setFinCcy(main.getFinCcy());
-		detail.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), main.getLovDescFinFormatter()));
-		if (main.getFinContractDate() != null) {
-			detail.setContractDate(new SimpleDateFormat(PennantConstants.dateFormat).format(main.getFinContractDate()));
-		}
-		if (extendedFields.containsKey("AgentName")) {
-			detail.setAgentName(extendedFields.get("AgentName").toString());
-			if (extendedFields.get("AgentLoc") != null) {
-				detail.setAgentAddr1(extendedFields.get("AgentLoc").toString());
-			}
-			if (extendedFields.get("AgentLoc2") != null) {
-				detail.setAgentAddr2(extendedFields.get("AgentLoc2").toString());
-			}
-			if (extendedFields.get("AgentCity") != null) {
-				detail.setAgentCity(extendedFields.get("AgentCity").toString());
-			}
-			if (extendedFields.get("AgentCountry") != null) {
-				detail.setAgentCountry(extendedFields.get("AgentCountry").toString());
-			}
-		} else {
-			detail.setAgentName(detail.getCustFullName() == null ? "" : detail.getCustFullName());
-			detail.setAgentAddr1(main.getLovDescCustAddrLine1() == null ? "" : main
-			        .getLovDescCustAddrLine1());
-			detail.setAgentAddr2(main.getLovDescCustAddrLine2() == null ? "" : main
-			        .getLovDescCustAddrLine2());
-			detail.setAgentCity(main.getLovDescCustAddrCity() == null ? "" : main
-			        .getLovDescCustAddrCity());
-			detail.setAgentCountry(main.getLovDescCustAddrCountry() == null ? "" : main
-			        .getLovDescCustAddrCountry());
-		}
-		logger.debug("Leaving");
-		return detail;
-	}
-
-	/**
-	 * Method for Generating Agreement Details List
-	 * @param detail
-	 * @param main
-	 * @return
-	 */
-	private boolean generateAgreements(FinanceDetail detail, FinanceMain main) {
-		logger.debug("Entering");
-
-		boolean result = false;
-		List<FinanceReferenceDetail> list = detail.getAggrementList();
-		FinanceReferenceDetail data = null;
-		TemplateEngine engine = null;
-		String name = "";
-
-		if (list != null && list.size() > 0) {
-			try {
-				AgreementDetail agreement = getAgreementDetail(main, detail.getLovDescExtendedFieldValues());
-				engine = new TemplateEngine();
-				engine.setDocumentSite(SystemParameterDetails.getSystemParameterValue("FINANCE_AGREEMENTS_PDF_PATH").toString());
-				
-				for (int i = 0; i < list.size(); i++) {
-					data = list.get(i);
-					name = main.getFinReference() + "_" + data.getLovDescCodelov() + ".pdf";
-					if (PennantConstants.server_OperatingSystem.equals("WINDOWS")) {
-						engine.setTemplateSite(data.getLovDescAggReportPath());
-					} else {
-						engine.setDocumentSite(SystemParameterDetails.getSystemParameterValue("LINUX_AGREEMENTS_PDF_PATH").toString());
-						engine.setTemplateSite(SystemParameterDetails.getSystemParameterValue("LINUX_AGGREMENTS_TEMPLATES_PATH").toString());
-					}
-					engine.setTemplate(data.getLovDescAggReportName());
-					engine.loadTemplate();
-					engine.mergeFields(agreement);
-					engine.saveDocument(name, data.isLovDescRegenerate());
-				}
-
-				result = true;
-			} catch (Exception exception) {
-				logger.error(exception);
-			} finally {
-				if (engine != null) {
-					engine.close();
-					engine = null;
-				}
-			}
-		}
-
-		logger.debug("Leaving");
-		return result;
-	}
 
 	@Override
-    public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent,
-            boolean showZeroBal) {
+	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent,
+			boolean showZeroBal) {
 		return getPostingsDAO().getPostingsByFinRefAndEvent(finReference, finEvent, showZeroBal);
-    }
-	
-	
+	}
+
 	/**
 	 * Method to CheckLimits
 	 * 
 	 * @param AuditHeader
 	 * 
-	 * 1. Check limit category exists or not for the account type, if not exists set limitValid = true other
-	 *            wise goto next step. 
-	 * 2. Fetch customer limits from core banking. 
-	 * 3. If the limits not available set the ErrMessage. 
-	 * 4. If available limit is less than finance amount, set warning message if the user
-	 *            have the permission 'override Limits' otherwise set Error message.
+	 *  1. Check limit category exists or not for the account type, if not exists set limitValid = true other wise goto next step. 
+	 *  2. Fetch customer limits from core banking. 
+	 *  3. If the limits not available set the ErrMessage. 
+	 *  4. If available limit is less than finance amount, set warning message if the user have the permission 'override Limits' otherwise set Error message.
 	 * 
 	 * */
 	public AuditHeader doCheckLimits(AuditHeader auditHeader) {
@@ -3273,372 +2503,389 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 		CustomerLimit custLimit = null;
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
-			
+
 		List<CustomerLimit> list = null;
-		
-		FinanceDetail finDetails =  (FinanceDetail)auditHeader.getAuditDetail().getModelData();				
-		AccountType accountType = getAccountTypeDAO().getAccountTypeById(finDetails.getFinScheduleData().getFinanceType().getFinAcType(), "");  
-		
-		if(!StringUtils.trimToEmpty(accountType.getAcLmtCategory()).equals("")) {
+
+		FinanceDetail finDetails = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceMain financeMain = finDetails.getFinScheduleData().getFinanceMain();
+		AccountType accountType = getAccountTypeDAO().getAccountTypeById(
+				finDetails.getFinScheduleData().getFinanceType().getFinAcType(), "");
+
+		if (!StringUtils.trimToEmpty(accountType.getAcLmtCategory()).equals("")) {
 			custLimit = new CustomerLimit();
-			custLimit.setCustMnemonic(finDetails.getFinScheduleData().getFinanceMain().getLovDescCustCIF());
+			custLimit.setCustMnemonic(financeMain.getLovDescCustCIF());
 			custLimit.setLimitCategory(accountType.getAcLmtCategory());
 			custLimit.setCustLocation(" ");
 		} else {
-			finDetails.getFinScheduleData().getFinanceMain().setLimitValid(true);
-        	auditHeader.getAuditDetail().setModelData(finDetails);
-        	logger.debug("Leaving");
-        	return auditHeader;
+			financeMain.setLimitValid(true);
+			auditHeader.getAuditDetail().setModelData(finDetails);
+			logger.debug("Leaving");
+			return auditHeader;
 		}
-		
-		try{
+
+		try {
 			list = getCustLimitIntefaceService().fetchLimitDetails(custLimit);
 		} catch (Exception e) {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, e.getMessage(), null));
-			logger.debug("Exception "+e.getMessage());
+			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, e.getMessage(),
+					null));
+			logger.debug("Exception " + e.getMessage());
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
-		if(list != null && list.size() == 0) {
-			valueParm[0] = accountType.getAcLmtCategory();
-			errParm[0] = PennantJavaUtil.getLabel("label_LimtCategorys")+ ":" +valueParm[0];
 
-			valueParm[1] = finDetails.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
-			errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID")+ ":" + valueParm[1];
-			
-			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit","41002", errParm,valueParm),
-					finDetails.getUserDetails().getUsrLanguage() ));
+		if (list != null && list.size() == 0) {
+
+			valueParm[0] = accountType.getAcLmtCategory();
+			errParm[0] = PennantJavaUtil.getLabel("label_LimtCategorys") + ":" + valueParm[0];
+
+			valueParm[1] = financeMain.getLovDescCustCIF();
+			errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID") + ":" + valueParm[1];
+
+			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit", "41002",
+					errParm, valueParm), finDetails.getUserDetails().getUsrLanguage()));
 			logger.debug("Leaving");
 			return auditHeader;
-		} else {	
-			for (CustomerLimit customerLimit:list) {								
-	            if(customerLimit.getLimitAmount() == null || customerLimit.getLimitAmount().equals(new BigDecimal(0))){
-	    			valueParm[0] = customerLimit.getLimitCategory();
-	    			errParm[0] = PennantJavaUtil.getLabel("label_LimtCategory")+ ":" +valueParm[0];
-	    			valueParm[1] = finDetails.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
-	    			errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID")+ ":" + valueParm[1];
-	    			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit","41002", errParm,valueParm),
-	    					finDetails.getUserDetails().getUsrLanguage() ));
-	            	return auditHeader;
-	            	
-	            }else {           	
-	            	
-	            	Currency fCurrency = getCurrencyDAO().getCurrencyById(finDetails.getFinScheduleData().getFinanceMain().getFinCcy(), "");
-	            	BigDecimal finAmount = calculateExchangeRate(finDetails.getFinScheduleData().getFinanceMain().getFinAmount(),fCurrency);
-	            	
-	            	Currency lCurrency = null;
-					if(!StringUtils.trimToEmpty(customerLimit.getLimitCurrency()).equals(fCurrency.getCcyCode())){
+
+		} else {
+
+			for (CustomerLimit customerLimit : list) {
+
+				if (customerLimit.getLimitAmount() == null || customerLimit.getLimitAmount().equals(BigDecimal.ZERO)) {
+
+					valueParm[0] = customerLimit.getLimitCategory();
+					errParm[0] = PennantJavaUtil.getLabel("label_LimtCategory") + ":" + valueParm[0];
+					valueParm[1] =financeMain.getLovDescCustCIF();
+					errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID") + ":" + valueParm[1];
+
+					auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit",
+							"41002", errParm, valueParm), finDetails.getUserDetails().getUsrLanguage()));
+
+					return auditHeader;
+
+				} else {
+
+					Currency fCurrency = getCurrencyDAO().getCurrencyById(financeMain.getFinCcy(), "");
+					BigDecimal finAmount = calculateExchangeRate(financeMain.getFinAmount(), fCurrency);
+
+					Currency lCurrency = null;
+					if (!StringUtils.trimToEmpty(customerLimit.getLimitCurrency()).equals(fCurrency.getCcyCode())) {
 						lCurrency = getCurrencyDAO().getCurrencyById(customerLimit.getLimitCurrency(), "");
-					}else{
+					} else {
 						lCurrency = fCurrency;
 					}
-	            	
-	            	BigDecimal availAmount =  calculateExchangeRate(customerLimit.getAvailAmount(),lCurrency);
-					
-	            	if(availAmount != null && availAmount.compareTo(finAmount)<0 ){
-	            		valueParm[0] = PennantApplicationUtil.amountFormate(finDetails.getFinScheduleData().getFinanceMain().getFinAmount(),
-	            				lCurrency.getCcyEditField() == 0 ? PennantConstants.defaultCCYDecPos : lCurrency.getCcyEditField());
-	            		errParm[0] = valueParm[0];
-	            		valueParm[1] = PennantApplicationUtil.amountFormate(customerLimit.getLimitAmount(), 
-	            				fCurrency.getCcyEditField() == 0 ? PennantConstants.defaultCCYDecPos : fCurrency.getCcyEditField());;
-	            		errParm[1] = valueParm[1];
-	            		String errorCode = "E0035";
-	            		if(finDetails.getFinScheduleData().getFinanceType().isOverrideLimit()){
-	            			errorCode = "W0035";
-	            		}
-	            		auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails("Limit",errorCode, errParm,valueParm),
-	            				finDetails.getUserDetails().getUsrLanguage() ));
-	            		logger.debug("Leaving");
-	            		return auditHeader;
-	            	}
-	            }
-            }	
-			finDetails.getFinScheduleData().getFinanceMain().setLimitValid(true);
-    		auditHeader.getAuditDetail().setModelData(finDetails);
+
+					BigDecimal availAmount = calculateExchangeRate(customerLimit.getAvailAmount(), lCurrency);
+
+					if (availAmount != null && availAmount.compareTo(finAmount) < 0) {
+
+						valueParm[0] = PennantApplicationUtil.amountFormate(financeMain.getFinAmount(), lCurrency
+								.getCcyEditField() == 0 ? PennantConstants.defaultCCYDecPos : lCurrency.getCcyEditField());
+						errParm[0] = valueParm[0];
+
+						valueParm[1] = PennantApplicationUtil.amountFormate(customerLimit.getLimitAmount(), fCurrency
+								.getCcyEditField() == 0 ? PennantConstants.defaultCCYDecPos : fCurrency.getCcyEditField());
+						errParm[1] = valueParm[1];
+
+						String errorCode = "E0035";
+						if (finDetails.getFinScheduleData().getFinanceType().isOverrideLimit()) {
+							errorCode = "W0035";
+						}
+
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+								"Limit", errorCode, errParm, valueParm), finDetails.getUserDetails().getUsrLanguage()));
+						logger.debug("Leaving");
+						return auditHeader;
+					}
+				}
+			}
+			financeMain.setLimitValid(true);
+			auditHeader.getAuditDetail().setModelData(finDetails);
 		}
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+
+	/**
+	 * Method for Checking Black List Abuser data Against Customer Included in Finance
+	 * @param financeDetail
+	 * @return
+	 */
+	@Override
+	public boolean doCheckBlackListedCustomer(AuditHeader auditHeader){
+		logger.debug("Entering");
+
+		FinanceDetail finDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		long custId = finDetail.getFinScheduleData().getFinanceMain().getCustID();
+
+		if(custId != Long.MIN_VALUE && custId != 0){
+			String custCRCPR = getCustomerDAO().getCustCRCPRById(custId,"");
+			if(!StringUtils.trimToEmpty(custCRCPR).equals("")){
+				Date blackListDate = getCustomerDAO().getCustBlackListedDate(custCRCPR, "");
+				if(blackListDate != null){
+					logger.debug("Leaving");
+					return true;
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return false;
+	}
+
+	/**
+	 * Method for Filling Amounts in USD & BHD Format to FinanceMain Object
+	 * 
+	 * @param financeMain
+	 * @return
+	 */
+	@Override
+	public FinanceMain fetchConvertedAmounts(FinanceMain financeMain, boolean calAllAmounts) {
+		logger.debug("Entering");
+		String dftCcy = SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").toString();
+
+		if(calAllAmounts){
+			if (dftCcy.equals(financeMain.getFinCcy())) {
+				financeMain.setAmountBD(PennantApplicationUtil.formateAmount(
+						financeMain.getFinAmount(), financeMain.getLovDescFinFormatter()));
+			} else {
+				Currency fCurrency = getCurrencyDAO().getCurrencyById(financeMain.getFinCcy(), "");
+				BigDecimal actualAmount = calculateExchangeRate(financeMain.getFinAmount(), fCurrency);
+				financeMain.setAmountBD(actualAmount);
+			}
+		}
+
+		if ("USD".equals(financeMain.getFinCcy())) {
+			financeMain.setAmountUSD(PennantApplicationUtil.formateAmount(
+					financeMain.getFinAmount(), financeMain.getLovDescFinFormatter()));
+		} else {
+			Currency fCurrency = getCurrencyDAO().getCurrencyById("USD", "");
+			BigDecimal actualAmount = calculateExchangeRate(financeMain.getFinAmount(), fCurrency);
+			financeMain.setAmountUSD(actualAmount);
+		}
+
+		logger.debug("Leaving");
+		return financeMain;
+	}
+	
+	
+	public FinanceDetail getDiscrepancies(FinanceDetail financeDetail){
+		logger.debug("Entering");
+
+		financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy("");
+		//Check Customer has Past Due or not and Stop Proceeding further if exist
+		long ODDays = getFinODDetailsDAO().checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
+		if(ODDays > 0){
+			financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(PennantConstants.WF_PAST_DUE);
+			logger.debug("Leaving");
+		}
+		getCustomerLimitStatus(financeDetail,true);
+		logger.debug("Leaving");
+		return financeDetail;
+	}
 	
 	/**
+	 * Method for Check Discrepancy in Workflow Level
+	 */
+	public FinanceDetail checkDiscrepancy(FinanceDetail financeDetail){
+		logger.debug("Entering");
+
+		financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy("");
+		//Check Customer has Past Due or not and Stop Proceeding further if exist
+		long ODDays = getFinODDetailsDAO().checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
+		int allowedDays = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("MAX_ALLOW_ODDAYS").toString());
+		if(ODDays >  0 ){
+			if(ODDays <= allowedDays){
+				financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(PennantConstants.WF_PAST_DUE_OVERRIDE);
+			}else{
+				financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(PennantConstants.WF_PAST_DUE);
+				return financeDetail;
+			}
+		}
+				 
+		getCustomerLimitStatus(financeDetail,false);
+		if(!financeDetail.getFinScheduleData().getFinanceMain().getLimitStatus().equals("")){
+			financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(
+				financeDetail.getFinScheduleData().getFinanceMain().getLimitStatus());
+		}
+
+		logger.debug("Leaving");
+		return financeDetail;
+	}
+	
+	/**
+	 * Get Customer Limits 
+	 * @param financeDetail
+	 * @param isDesc  send as false for the conditions used for workflow
+	 * @return
+	 */
+	private FinanceDetail getCustomerLimitStatus(FinanceDetail financeDetail, boolean isDesc){
+		logger.debug("Entering");
+
+		financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus("");
+		//Check Limit Status of Customer
+		CustomerLimit custLimit = null;
+		List<CustomerLimit> customerLimitList = null;
+		AccountType accountType = getAccountTypeDAO().getAccountTypeById(
+				financeDetail.getFinScheduleData().getFinanceType().getFinAcType(), "");
+		if (!StringUtils.trimToEmpty(accountType.getAcLmtCategory()).equals("")) {
+			custLimit = new CustomerLimit();
+			custLimit.setCustMnemonic(financeDetail.getFinScheduleData().getFinanceMain()
+					.getLovDescCustCIF());
+			custLimit.setLimitCategory(accountType.getAcLmtCategory());
+			custLimit.setCustLocation(" ");
+		} else {
+			logger.debug("Leaving");
+			return financeDetail;
+		}
+
+		try {
+			customerLimitList = getCustLimitIntefaceService().fetchLimitDetails(custLimit);
+		} catch (Exception e) {
+			logger.debug("Exception " + e.getMessage());
+			logger.debug("Leaving");
+			return financeDetail;
+		}
+
+		if (customerLimitList != null && customerLimitList.size() > 0) {
+
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			String limitType = "";
+			
+			for (CustomerLimit limit : customerLimitList) {
+				if(!limit.getCustCountry().equals("")){
+					limitType = "Country ( " + limit.getCustCountry() + " - " + limit.getCustCountryDesc() + " )";
+				}else if(!limit.getCustGrpCode().equals("")){
+					limitType = "Customer Group ( " + limit.getCustGrpCode() + " - " + limit.getCustGrpDesc() + " ) ";
+				}else {
+					limitType = "Customer";
+				}
+				if(limit.getLimitExpiry() != null && limit.getLimitExpiry().compareTo(curBussDate) < 0){
+					if(isDesc){
+						financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("LIMIT_EXPIRED", new String[]{limitType,limit.getLimitCategoryDesc()}));
+					}else{
+						financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_LIMIT_EXPIRED);
+					}
+					logger.debug("Leaving");
+					return financeDetail;
+				}
+
+				BigDecimal finAmount =  financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
+					
+				Currency lCurrency = null;
+				if (!StringUtils.trimToEmpty(limit.getLimitCurrency()).equals(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy())) {
+					lCurrency = getCurrencyDAO().getCurrencyById(limit.getLimitCurrency(), "");
+					Currency fCurrency = getCurrencyDAO().getCurrencyById(
+							financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), "");
+					finAmount = CalculationUtil.getConvertedAmount(fCurrency, lCurrency, finAmount);
+				}  
+				BigDecimal excessAmount = limit.getRiskAmount().add(finAmount).subtract(limit.getLimitAmount());
+				if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
+					if(limit.getLimitAmount().compareTo(BigDecimal.ZERO) == 0){
+						if(isDesc){
+							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_GREATER_THAN_20", new String[]{limitType,limit.getLimitCategoryDesc()}));
+						}else{
+							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_EXCESS_GREATER_THAN_20);
+						}
+					}else{
+						BigDecimal excessPerc = excessAmount.multiply(new BigDecimal(100)).divide(limit.getLimitAmount(), 0, RoundingMode.HALF_DOWN);
+						if(excessPerc.compareTo(new BigDecimal(10)) <= 0  ){
+							if(isDesc){
+								financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_LESS_THAN_10", new String[]{limitType,limit.getLimitCategoryDesc()}));
+							}else{
+								financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_EXCESS_LESS_THAN_10);
+							}
+						}else if(excessPerc.compareTo(new BigDecimal(10)) > 0 && excessPerc.compareTo(new BigDecimal(20)) <= 0){
+							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_BETWEEN_10_20", new String[]{limitType,limit.getLimitCategoryDesc()}));
+						}else{
+							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_GREATER_THAN_20", new String[]{limitType,limit.getLimitCategoryDesc()}));
+						}
+					}
+					logger.debug("Leaving");
+					if(!StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getLimitStatus()).equals("")){
+						return financeDetail;
+					}
+				}
+
+			}
+		}else{
+			financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_NO_LIMIT);
+		}
+		logger.debug("Entering");
+		return financeDetail;
+	}
+
+	/**
+	 * Method for Checking exception List based upon Requirements
+	 */
+	public AuditHeader doCheckExceptions(AuditHeader auditHeader) {
+		logger.debug("Entering");
+
+		FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+
+		//Check for Exception 
+		aFinanceMain.setException(false);
+
+		//*** Case 1 : Amount Case Check Exception for 100K BHD ***
+		String dftCcy = SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").toString();
+		final BigDecimal finAmount = PennantApplicationUtil.formateAmount(
+				aFinanceMain.getFinAmount(), aFinanceMain.getLovDescFinFormatter());
+		if (dftCcy.equals(aFinanceMain.getFinCcy())) {
+			aFinanceMain.setAmount(finAmount);
+		} else {
+			//Covert Amount into BHD Format 
+			Currency fCurrency = getCurrencyDAO().getCurrencyById(aFinanceMain.getFinCcy(), "");
+			aFinanceMain.setAmount(finAmount.multiply(fCurrency.getCcySpotRate()));
+		}
+
+		if (aFinanceMain.getAmount().compareTo(new BigDecimal(100000.000)) > 0) {
+			aFinanceMain.setException(true);
+		}
+		aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
+		auditHeader.getAuditDetail().setModelData(aFinanceDetail);
+
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	/**
 	 * Method for Calculating Exchange Rate for Fiannce Schedule Calculation
+	 * 
 	 * @param amount
 	 * @param aCurrency
 	 * @return
 	 */
 	private BigDecimal calculateExchangeRate(BigDecimal amount, Currency aCurrency) {
-		if(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").equals(aCurrency.getCcyCode())) {
+		if (SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").equals(
+				aCurrency.getCcyCode())) {
 			return amount;
 		} else {
 			if (amount == null) {
 				amount = new BigDecimal("0");
 			}
-			
+
 			if (aCurrency != null) {
 				amount = amount.multiply(aCurrency.getCcySpotRate());
 			}
 		}
 		return amount;
 	}
-	
-	// Finance Agreement Details List Maintainance
-
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * @param agreementDetail
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	private List<AuditDetail> setAgreementDetailAuditData(FinanceDetail detail,String auditTranType,String method) {
-		logger.debug("Leaving");
-		
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinAgreementDetail(""));
-		
-		List<FinAgreementDetail> oldAgrDetailList = null;
-		if(method.equals("doApprove")){
-			String agrIds = "";
-			for (FinAgreementDetail agrDetail : detail.getFinAgrDetailList()) {
-				agrIds = agrIds+agrDetail.getAgrId()+",";
-			}
-			
-			if(agrIds.endsWith(",")){
-				agrIds = agrIds.substring(0, agrIds.length()-1);
-			}
-
-			oldAgrDetailList = getFinAgreementDetailDAO().getFinAgreementDetailList(
-					detail.getFinScheduleData().getFinReference(),
-					detail.getFinScheduleData().getFinanceType().getFinType(),false,agrIds, "_Temp");
-
-			if(detail.getFinAgrDetailList() != null){
-				detail.getFinAgrDetailList().addAll(oldAgrDetailList);
-			}else{
-				detail.setFinAgrDetailList(oldAgrDetailList);
-			}
-		}
-
-		for (int i = 0; i < detail.getFinAgrDetailList().size(); i++) {
-
-			FinAgreementDetail agreementDetail = detail.getFinAgrDetailList().get(i);
-			agreementDetail.setWorkflowId(detail.getWorkflowId());
-			if (agreementDetail.getAgrId() <= 0) {
-				agreementDetail.setFinReference(agreementDetail.getFinReference());
-			}
-
-			boolean isRcdType= false;
-
-			if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				agreementDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType=true;
-			}else if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				agreementDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType=true;
-			}else if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				agreementDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType=true;
-			}
-
-			if(method.equals("saveOrUpdate") && (isRcdType==true)){
-				agreementDetail.setNewRecord(true);
-			}
-
-			if(!auditTranType.equals(PennantConstants.TRAN_WF)){
-				if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType= PennantConstants.TRAN_ADD;
-				} else if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType= PennantConstants.TRAN_DEL;
-				}else{
-					auditTranType= PennantConstants.TRAN_UPD;
-				}
-			}
-
-			agreementDetail.setRecordStatus(detail.getFinScheduleData().getFinanceMain().getRecordStatus());
-			agreementDetail.setUserDetails(detail.getFinScheduleData().getFinanceMain().getUserDetails());
-			agreementDetail.setLastMntOn(detail.getFinScheduleData().getFinanceMain().getLastMntOn());
-
-			if(!agreementDetail.getRecordType().equals("")){
-				auditDetails.add(new AuditDetail(auditTranType, i+1, fields[0], fields[1], agreementDetail.getBefImage(), agreementDetail));
-			}
-		}
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-
-	/**
-	 * Method For Preparing List of AuditDetails for Agreement Details
-	 * @param auditDetails
-	 * @param type
-	 * @param AgrId
-	 * @return
-	 */
-	private List<AuditDetail> processingAgrDetailList(List<AuditDetail> auditDetails, String type,String finReference) {
-		logger.debug("Entering");
-		
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec=false;
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-
-			FinAgreementDetail agreementDetail = (FinAgreementDetail) auditDetails.get(i).getModelData();
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec=false;
-			String rcdType ="";	
-			String recordStatus ="";
-			if (type.equals("")) {
-				approveRec=true;
-				agreementDetail.setRoleCode("");
-				agreementDetail.setNextRoleCode("");
-				agreementDetail.setTaskId("");
-				agreementDetail.setNextTaskId("");
-			}
-
-			agreementDetail.setWorkflowId(0);
-
-			if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord=true;
-			}else  if(agreementDetail.isNewRecord()){
-				saveRecord=true;
-				if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					agreementDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);	
-				} else if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					agreementDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					agreementDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-
-			}else if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if(approveRec){
-					saveRecord=true;
-				}else{
-					updateRecord=true;
-				}
-			}else if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord=true;
-			}else if (agreementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if(approveRec){
-					deleteRecord=true;
-				}else if(agreementDetail.isNew()){
-					saveRecord=true;
-				}else{
-					updateRecord=true;
-				}
-			}
-			if(approveRec){
-				rcdType= agreementDetail.getRecordType();
-				recordStatus = agreementDetail.getRecordStatus();
-				agreementDetail.setRecordType("");
-				agreementDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				if (StringUtils.trimToEmpty(agreementDetail.getFinReference()).equals("")) {
-					agreementDetail.setFinReference(finReference);
-				}
-				finAgreementDetailDAO.save(agreementDetail, type);
-			}
-
-			if (updateRecord) {
-				finAgreementDetailDAO.update(agreementDetail, type);
-			}
-
-			if (deleteRecord) {
-				finAgreementDetailDAO.delete(agreementDetail, type);
-			}
-
-			if(approveRec){
-				agreementDetail.setRecordType(rcdType);
-				agreementDetail.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(agreementDetail);
-		}
-		logger.debug("Leaving");
-		return auditDetails;
-
-	}
-
-	//Contributor Details List Maintainance
-	
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * @param contributorHeader
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	private List<AuditDetail> setContributorAuditData(FinContributorHeader contributorHeader,String auditTranType,String method) {
-		logger.debug("Entering");
-		
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinContributorDetail(""));
-
-		for (int i = 0; i < contributorHeader.getContributorDetailList().size(); i++) {
-
-			FinContributorDetail contributorDetail = contributorHeader.getContributorDetailList().get(i);
-			contributorDetail.setWorkflowId(contributorHeader.getWorkflowId());
-			if (contributorDetail.getCustID() <= 0) {
-				contributorDetail.setFinReference(contributorHeader.getFinReference());
-			}
-
-			boolean isRcdType= false;
-
-			if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType=true;
-			}else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType=true;
-			}else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType=true;
-			}
-
-			if(method.equals("saveOrUpdate") && (isRcdType==true)){
-				contributorDetail.setNewRecord(true);
-			}
-
-			if(!auditTranType.equals(PennantConstants.TRAN_WF)){
-				if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType= PennantConstants.TRAN_ADD;
-				} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType= PennantConstants.TRAN_DEL;
-				}else{
-					auditTranType= PennantConstants.TRAN_UPD;
-				}
-			}
-
-			contributorDetail.setRecordStatus(contributorHeader.getRecordStatus());
-			contributorDetail.setUserDetails(contributorHeader.getUserDetails());
-			contributorDetail.setLastMntOn(contributorHeader.getLastMntOn());
-
-			if(!contributorDetail.getRecordType().equals("")){
-				auditDetails.add(new AuditDetail(auditTranType, i+1, fields[0], fields[1], contributorDetail.getBefImage(), contributorDetail));
-			}
-		}
-		logger.debug("Leaving");
-		return auditDetails;
-	}
 
 	/**
 	 * Method For Preparing List of AuditDetails for Contributor Details
+	 * 
 	 * @param auditDetails
 	 * @param type
 	 * @param custId
 	 * @return
 	 */
-	private List<AuditDetail> processingContributorList(List<AuditDetail> auditDetails, String type,String finReference) {
+	private List<AuditDetail> processingContributorList(List<AuditDetail> auditDetails,
+			String type, String finReference) {
 		logger.debug("Entering");
-		
+
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
-		boolean approveRec=false;
+		boolean approveRec = false;
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 
@@ -3646,11 +2893,12 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
-			approveRec=false;
-			String rcdType ="";	
-			String recordStatus ="";
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+
 			if (type.equals("")) {
-				approveRec=true;
+				approveRec = true;
 				contributorDetail.setRoleCode("");
 				contributorDetail.setNextRoleCode("");
 				contributorDetail.setTaskId("");
@@ -3660,36 +2908,38 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 			contributorDetail.setWorkflowId(0);
 
 			if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord=true;
-			}else  if(contributorDetail.isNewRecord()){
-				saveRecord=true;
+				deleteRecord = true;
+			} else if (contributorDetail.isNewRecord()) {
+				saveRecord = true;
 				if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);	
-				} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (contributorDetail.getRecordType().equalsIgnoreCase(
+						PennantConstants.RCD_DEL)) {
 					contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				} else if (contributorDetail.getRecordType().equalsIgnoreCase(
+						PennantConstants.RCD_UPD)) {
 					contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			}else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if(approveRec){
-					saveRecord=true;
-				}else{
-					updateRecord=true;
+			} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
 				}
-			}else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord=true;
-			}else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if(approveRec){
-					deleteRecord=true;
-				}else if(contributorDetail.isNew()){
-					saveRecord=true;
-				}else{
-					updateRecord=true;
+			} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (contributorDetail.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
 				}
 			}
-			if(approveRec){
-				rcdType= contributorDetail.getRecordType();
+			if (approveRec) {
+				rcdType = contributorDetail.getRecordType();
 				recordStatus = contributorDetail.getRecordStatus();
 				contributorDetail.setRecordType("");
 				contributorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -3709,7 +2959,7 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 				finContributorDetailDAO.delete(contributorDetail, type);
 			}
 
-			if(approveRec){
+			if (approveRec) {
 				contributorDetail.setRecordType(rcdType);
 				contributorDetail.setRecordStatus(recordStatus);
 			}
@@ -3720,618 +2970,444 @@ public class FinanceDetailServiceImpl extends GenericService<FinanceDetail> impl
 		return auditDetails;
 
 	}
-	
-
-	//Billing Details List Maintainance
-	
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * @param billingHeader
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	private List<AuditDetail> setBillingAuditData(FinBillingHeader billingHeader,String auditTranType,String method) {
-		logger.debug("Entering");
-		
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinBillingDetail());
-
-		for (int i = 0; i < billingHeader.getBillingDetailList().size(); i++) {
-
-			FinBillingDetail billingDetail = billingHeader.getBillingDetailList().get(i);
-			billingDetail.setWorkflowId(billingHeader.getWorkflowId());
-			billingDetail.setFinReference(billingHeader.getFinReference());
-
-			boolean isRcdType= false;
-
-			if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				billingDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType=true;
-			}else if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				billingDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType=true;
-			}else if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				billingDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType=true;
-			}
-
-			if(method.equals("saveOrUpdate") && (isRcdType==true)){
-				billingDetail.setNewRecord(true);
-			}
-
-			if(!auditTranType.equals(PennantConstants.TRAN_WF)){
-				if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType= PennantConstants.TRAN_ADD;
-				} else if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType= PennantConstants.TRAN_DEL;
-				}else{
-					auditTranType= PennantConstants.TRAN_UPD;
-				}
-			}
-
-			billingDetail.setRecordStatus(billingHeader.getRecordStatus());
-			billingDetail.setUserDetails(billingHeader.getUserDetails());
-			billingDetail.setLastMntOn(billingHeader.getLastMntOn());
-
-			if(!billingDetail.getRecordType().equals("")){
-				auditDetails.add(new AuditDetail(auditTranType, i+1, fields[0], fields[1], billingDetail.getBefImage(), billingDetail));
-			}
-		}
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-
-	/**
-	 * Method For Preparing List of AuditDetails for Billing Details
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
-	private List<AuditDetail> processingBillingList(List<AuditDetail> auditDetails, String type,String finReference) {
-		logger.debug("Entering");
-		
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec=false;
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-
-			FinBillingDetail billingDetail = (FinBillingDetail) auditDetails.get(i).getModelData();
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec=false;
-			String rcdType ="";	
-			String recordStatus ="";
-			if (type.equals("")) {
-				approveRec=true;
-				billingDetail.setRoleCode("");
-				billingDetail.setNextRoleCode("");
-				billingDetail.setTaskId("");
-				billingDetail.setNextTaskId("");
-			}
-
-			billingDetail.setWorkflowId(0);
-
-			if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord=true;
-			}else  if(billingDetail.isNewRecord()){
-				saveRecord=true;
-				if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					billingDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);	
-				} else if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					billingDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					billingDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-
-			}else if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if(approveRec){
-					saveRecord=true;
-				}else{
-					updateRecord=true;
-				}
-			}else if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord=true;
-			}else if (billingDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if(approveRec){
-					deleteRecord=true;
-				}else if(billingDetail.isNew()){
-					saveRecord=true;
-				}else{
-					updateRecord=true;
-				}
-			}
-			if(approveRec){
-				rcdType= billingDetail.getRecordType();
-				recordStatus = billingDetail.getRecordStatus();
-				billingDetail.setRecordType("");
-				billingDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				if (StringUtils.trimToEmpty(billingDetail.getFinReference()).equals("")) {
-					billingDetail.setFinReference(finReference);
-				}
-				finBillingDetailDAO.save(billingDetail, type);
-			}
-
-			if (updateRecord) {
-				finBillingDetailDAO.update(billingDetail, type);
-			}
-
-			if (deleteRecord) {
-				finBillingDetailDAO.delete(billingDetail, type);
-			}
-
-			if(approveRec){
-				billingDetail.setRecordType(rcdType);
-				billingDetail.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(billingDetail);
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-
-	}
 
 	@Override
-    public void updateCustCIF(long custID, String finReference) {
-	   getFinanceMainDAO().updateCustCIF(custID, finReference);
-	    
-    }
-	
+	public void updateCustCIF(long custID, String finReference) {
+		getFinanceMainDAO().updateCustCIF(custID, finReference);
+
+	}
+
 	//Document Details List Maintainance
-
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * 
-	 * @param detail
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	private List<AuditDetail> setDocumentDetailsAuditData(FinanceDetail detail,
-	        String auditTranType, String method) {
-		logger.debug("Entering");
-		
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new DocumentDetails());
-
-		for (int i = 0; i < detail.getDocumentDetailsList().size(); i++) {
-
-			DocumentDetails documentDetails = detail.getDocumentDetailsList().get(i);
-			documentDetails.setWorkflowId(detail.getWorkflowId());
-			boolean isRcdType = false;
-
-			if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
-			}
-
-			if (method.equals("saveOrUpdate") && (isRcdType == true)) {
-				documentDetails.setNewRecord(true);
-			}
-
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-				        || documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-
-			documentDetails.setRecordStatus(detail.getFinScheduleData().getFinanceMain().getRecordStatus());
-			documentDetails.setUserDetails(detail.getFinScheduleData().getFinanceMain().getUserDetails());
-			documentDetails.setLastMntOn(detail.getFinScheduleData().getFinanceMain().getLastMntOn());
-
-			if (!documentDetails.getRecordType().equals("")) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-				        documentDetails.getBefImage(), documentDetails));
-			}
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-
-	/**
-	 * Method For Preparing List of AuditDetails for Contributor Details
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
-	private List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails,
-	        String type, String finReference) {
-		logger.debug("Entering");
-		
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-
-			DocumentDetails documentDetails = (DocumentDetails) auditDetails.get(i).getModelData();
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (type.equals("")) {
-				approveRec = true;
-				documentDetails.setRoleCode("");
-				documentDetails.setNextRoleCode("");
-				documentDetails.setTaskId("");
-				documentDetails.setNextTaskId("");
-			}
-
-			documentDetails.setWorkflowId(0);
-
-			if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (documentDetails.isNewRecord()) {
-				saveRecord = true;
-				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (documentDetails.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RCD_DEL)) {
-					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (documentDetails.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RCD_UPD)) {
-					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (documentDetails.isNew()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-			if (approveRec) {
-				rcdType = documentDetails.getRecordType();
-				recordStatus = documentDetails.getRecordStatus();
-				documentDetails.setRecordType("");
-				documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				if (StringUtils.trimToEmpty(documentDetails.getReferenceId()).equals("")) {
-					documentDetails.setReferenceId(finReference);
-				}
-				getDocumentDetailsDAO().save(documentDetails, type);
-			}
-
-			if (updateRecord) {
-				getDocumentDetailsDAO().update(documentDetails, type);
-			}
-
-			if (deleteRecord) {
-				getDocumentDetailsDAO().delete(documentDetails, type);
-			}
-
-			if (approveRec) {
-				documentDetails.setRecordType(rcdType);
-				documentDetails.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(documentDetails);
-		}
-		logger.debug("Leaving");
-		return auditDetails;
-
-	}
-
 	public void listDocDeletion(FinanceDetail custDetails, String tableType) {
-		getDocumentDetailsDAO().deleteList(new ArrayList<DocumentDetails>(custDetails.getDocumentDetailsList()), tableType);
+		getDocumentDetailsDAO().deleteList(
+				new ArrayList<DocumentDetails>(custDetails.getDocumentDetailsList()), tableType);
 	}
 
 	@Override
-    public List<FinAgreementDetail> getFinAgrByFinRef(String finReference, String type) {
-	    return getFinAgreementDetailDAO().getFinAgrByFinRef(finReference, type);
-    }
+	public List<DocumentDetails> getFinDocByFinRef(String finReference, String type) {
+		return getDocumentDetailsDAO().getDocumentDetailsByRef(finReference, type);
+	}
 
 	@Override
-    public List<DocumentDetails> getFinDocByFinRef(String finReference, String type) {
-	    return getDocumentDetailsDAO().getDocDetailsByFinRef(finReference, type);
-    }
+	public DocumentDetails getFinDocDetailByDocId(long docId) {
+		return getDocumentDetailsDAO().getDocumentDetailsById(docId, "");
+	}
 
-	@Override
-    public FinAgreementDetail getFinAgrDetailByAgrId(String finReference,long agrId) {
-	    return getFinAgreementDetailDAO().getFinAgreementDetailById(finReference, agrId, "_AView");
-    }
-
-	@Override
-    public DocumentDetails getFinDocDetailByDocId(long docId) {
-	    return getDocumentDetailsDAO().getDocumentDetailsById(docId, "");
-    }
-	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// +++++++++++++++++ Agreement Details ++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	/**
 	 * Method for Save/ Update Additional Field Details
 	 */
-	private void doSaveAddlFieldDetails(FinanceDetail financeDetail, String tableType){
+	private void doSaveAddlFieldDetails(FinanceDetail financeDetail, String tableType) {
 		logger.debug("Entering");
-		
-		if (financeDetail.getLovDescExtendedFieldValues() != null && financeDetail.getLovDescExtendedFieldValues().size() > 0) {
-			
+
+		if (financeDetail.getLovDescExtendedFieldValues() != null
+				&& financeDetail.getLovDescExtendedFieldValues().size() > 0) {
+
 			String tableName = "";
-			if(PennantStaticListUtil.getModuleName().containsKey("FASSET")){
+			if (PennantStaticListUtil.getModuleName().containsKey("FASSET")) {
 				tableName = PennantStaticListUtil.getModuleName().get("FASSET").get(
 						financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName());
 			}
 
-			if (!getExtendedFieldDetailDAO().isExist(tableName, 
+			if (!getExtendedFieldDetailDAO().isExist(tableName,
 					financeDetail.getFinScheduleData().getFinReference(), tableType)) {
 				getExtendedFieldDetailDAO().saveAdditional(financeDetail.getFinScheduleData().getFinReference(),
 						financeDetail.getLovDescExtendedFieldValues(), tableType, tableName);
 			} else {
 				getExtendedFieldDetailDAO().updateAdditional(financeDetail.getLovDescExtendedFieldValues(),
-						financeDetail.getFinScheduleData().getFinReference(), tableType,tableName);
+						financeDetail.getFinScheduleData().getFinReference(), tableType, tableName);
 			}
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Delete Additional Field Details
 	 */
-	private void doDeleteAddlFieldDetails(FinanceDetail financeDetail, String tableType){
+	private void doDeleteAddlFieldDetails(FinanceDetail financeDetail, String tableType) {
 		logger.debug("Entering");
-		
-		if (financeDetail.getLovDescExtendedFieldValues() != null && financeDetail.getLovDescExtendedFieldValues().size() > 0) {
-			
+
+		if (financeDetail.getLovDescExtendedFieldValues() != null
+				&& financeDetail.getLovDescExtendedFieldValues().size() > 0) {
+
 			String tableName = "";
-			if(PennantStaticListUtil.getModuleName().containsKey("FASSET")){
+			if (PennantStaticListUtil.getModuleName().containsKey("FASSET")) {
 				tableName = PennantStaticListUtil.getModuleName().get("FASSET").get(
 						financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName());
 			}
-			
-			getExtendedFieldDetailDAO().deleteAdditional(financeDetail.getFinScheduleData().getFinReference(),
-					tableName,tableType);
+
+			getExtendedFieldDetailDAO().deleteAdditional(
+					financeDetail.getFinScheduleData().getFinReference(), tableName, tableType);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++ Cust Related Finance Details ++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	public FinanceDetail fetchFinCustDetails(FinanceDetail financeDetail, String ctgType,
-			String finType,  String userRole, List<String> groupIds){
+			String finType, String userRole) {
 		logger.debug("Entering");
-		
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
 		String eventCode = "";
-		if (financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate().after(new Date())) {
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		if (financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate().after(curBussDate)) {
 			eventCode = "ADDDBSF";
 		} else {
 			eventCode = "ADDDBSP";
 		}
-		String accSetId = returnAccountingSetid(eventCode, financeDetail.getFinScheduleData().getFinanceType());
+		String accSetId = returnAccountingSetid(eventCode, financeDetail.getFinScheduleData()
+				.getFinanceType());
 
 		//Finance Accounting Posting Details
 		financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(
 				Long.valueOf(accSetId), "_AEView", true));
 
-		//Finance Stage Accounting Posting Details
-		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(
-				finType, "5", userRole, "_AEView", true));
-		
-		//Finance Eligibility Rule Details List
-		financeDetail.setEligibilityRuleList(getFinanceReferenceDetailDAO().getFinRefDetByRoleAndFinType(
-				finType, userRole, null, "_AEView"));
-		
-		//Finance Scoring Details
-		financeDetail = fetchScoringDetails(financeDetail, ctgType, finType, userRole,groupIds);
-		
-		//Check List Details
-		financeDetail.setCheckList(getCheckListByFinRef(finType));
-		financeDetail.setFinanceCheckList(getFinanceCheckListReferenceDAO()
-		        .getFinanceCheckListReferenceByFinRef(financeDetail.getFinScheduleData().getFinReference(), "_View"));
+		//Finance Commitment Accounting Posting Details
+		if (PennantConstants.RECORD_TYPE_NEW.equals(financeDetail.getFinScheduleData().getFinanceMain().getRecordType())) {
+			if (financeDetail.getFinScheduleData().getFinanceType().isFinCommitmentReq()
+					&& !StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef()).equals("")) {
 
-		logger.debug("Leaving");
-		return financeDetail;
-	}
-	
-	/**
-	 * Method for Fetching Scoring Module Details based Upon Customer Category type Code
-	 * @param financeDetail
-	 * @param finType
-	 * @param userRole
-	 * @return
-	 */
-	private FinanceDetail fetchScoringDetails(FinanceDetail financeDetail, String ctgType,
-			String finType,  String userRole, List<String> groupIds){
-		logger.debug("Entering");
-		
-		financeDetail.getScoringMetrics().clear();
-		financeDetail.getScoringSlabs().clear();
-		financeDetail.setScoringGroupList(null);
-		financeDetail.setFinScoringMetricList(null);
-		financeDetail.setNonFinScoringMetricList(null);
-		
-		//Finance Scoring Metric/Group Rule Details List
-		if("I".equals(ctgType)){
-			financeDetail.setScoringGroupList(getFinanceReferenceDetailDAO().getFinRefDetByRoleAndFinType(
-					finType, userRole,groupIds, "_ASGView"));
-
-			if (financeDetail.getScoringGroupList().size() != 0) {
-				for (int i = 0; i < financeDetail.getScoringGroupList().size(); i++) {
-					
-					//Scoring Slab Details List
-					List<ScoringSlab> scoringSlabsList = getScoringSlabDAO().getScoringSlabsByScoreGrpId(
-							financeDetail.getScoringGroupList().get(i).getFinRefId(), "_AView");
-					
-					financeDetail.setScoringSlabs(financeDetail.getScoringGroupList().get(i).getFinRefId(), 
-							scoringSlabsList);
-
-					//Scoring Metric Details For Retail Customers
-					List<ScoringMetrics> scoringMetricslist = getScoringMetricsDAO().getScoringMetricsByScoreGrpId(
-							financeDetail.getScoringGroupList().get(i).getFinRefId(), "R", "_AView");
-					
-					financeDetail.setScoringMetrics(financeDetail.getScoringGroupList().get(i).getFinRefId(),
-							scoringMetricslist);
-					
-				}
-			}
-			
-		}else if("C".equals(ctgType)){
-			
-			List<FinanceReferenceDetail> scoringGroupList = getFinanceReferenceDetailDAO().getFinRefDetByRoleAndFinType(
-					finType, userRole, groupIds, "_ACSGView");
-			
-			financeDetail.setScoringGroupList(scoringGroupList);
-
-			if (scoringGroupList.size() != 0) {
-				
-				for (int i = 0; i < scoringGroupList.size(); i++) {
-					
-					//Scoring Slab Details List
-					List<ScoringSlab> scoringSlabsList = getScoringSlabDAO().getScoringSlabsByScoreGrpId(
-							scoringGroupList.get(i).getFinRefId(), "_AView");
-					
-					financeDetail.setScoringSlabs(scoringGroupList.get(i).getFinRefId(), scoringSlabsList);
-
-					//Corporate Scoring Group for Financial Details
-					List<ScoringMetrics> finScoringMetricList = getScoringMetricsDAO().getScoringMetricsByScoreGrpId(
-							scoringGroupList.get(i).getFinRefId(), "F", "_AView");
-					
-					financeDetail.setFinScoringMetricList(finScoringMetricList);
-					if(finScoringMetricList != null && finScoringMetricList.size() > 0){
-
-						List<Long> metricIdList = new ArrayList<Long>();
-						for (ScoringMetrics metric : finScoringMetricList) {
-							metricIdList.add(metric.getScoringId());
-						}
-
-						List<Rule> ruleList = getRuleDAO().getRulesByFinScoreGroup(metricIdList, "F", "");
-						ScoringMetrics metric = null;
-						for (Rule rule : ruleList) {
-							metric = new ScoringMetrics();
-							metric.setScoringId(rule.getRuleId());
-							metric.setLovDescScoringCode(rule.getRuleCode());
-							metric.setLovDescScoringCodeDesc(rule.getRuleCodeDesc());
-							metric.setLovDescSQLRule(rule.getSQLRule());
-							List<ScoringMetrics> subMetricList = null;
-							if(financeDetail.getScoringMetrics().containsKey(rule.getGroupId())){
-								subMetricList = financeDetail.getScoringMetrics().get(rule.getGroupId());
-							}else{
-								subMetricList = new ArrayList<ScoringMetrics>();
-							}
-							subMetricList.add(metric);
-							financeDetail.setScoringMetrics(rule.getGroupId(),subMetricList);
-						}
-					}
-					
-					//Non - Financial Scoring Metric Details
-					List<ScoringMetrics> nonFinScoringMetricslist = getScoringMetricsDAO().getScoringMetricsByScoreGrpId(
-							scoringGroupList.get(i).getFinRefId(), "N" ,"_AView");
-					
-					financeDetail.setNonFinScoringMetricList(nonFinScoringMetricslist);
-					if(nonFinScoringMetricslist != null && nonFinScoringMetricslist.size() > 0){
-						
-						List<Long> metricIdList = new ArrayList<Long>();
-						for (ScoringMetrics metric : nonFinScoringMetricslist) {
-							metricIdList.add(metric.getScoringId());
-						}
-						
-						List<NFScoreRuleDetail> ruleList = getRuleDAO().getNFRulesByNFScoreGroup(metricIdList, "N", "");
-						ScoringMetrics metric = null;
-						for (NFScoreRuleDetail rule : ruleList) {
-							metric = new ScoringMetrics();
-							metric.setScoringId(rule.getNFRuleId());
-							metric.setLovDescScoringCode(String.valueOf(rule.getNFRuleId()));
-							metric.setLovDescScoringCodeDesc(rule.getNFRuleDesc());
-							metric.setLovDescMetricMaxPoints(rule.getMaxScore());
-							List<ScoringMetrics> subMetricList = null;
-							if(financeDetail.getScoringMetrics().containsKey(rule.getGroupId())){
-								subMetricList = financeDetail.getScoringMetrics().get(rule.getGroupId());
-							}else{
-								subMetricList = new ArrayList<ScoringMetrics>();
-							}
-							subMetricList.add(metric);
-							financeDetail.setScoringMetrics(rule.getGroupId(),subMetricList);
-						}
-					}
+				long accountingSetId = getAccountingSetDAO().getAccountingSetId("CMTDISB","CMTDISB");
+				if (accountingSetId != 0) {
+					financeDetail.setCmtFinanceEntries(getTransactionEntryDAO()
+							.getListTransactionEntryById(accountingSetId, "_AEView", true));
 				}
 			}
 		}
+
+		//Finance Stage Accounting Posting Details
+		financeDetail.setStageTransactionEntries(getTransactionEntryDAO()
+				.getListTransactionEntryByRefType(finType, PennantConstants.Accounting, userRole, "_AEView", true));
+
+		// Set Eligibility Details to finaceDetail
+		financeDetail.setElgRuleList(getEligibilityDetailService().setFinanceEligibilityDetails(financeMain.getFinReference(),
+				financeMain.getFinCcy(), financeMain.getFinAmount(), financeMain.isNewRecord(), finType, null));
+
+		// Set Scoring Details to finaceDetail
+		getScoringDetailService().setFinanceScoringDetails(financeDetail, finType, userRole, ctgType);
 		
+		//Reset Finance Document Details
+		financeDetail.setDocumentDetailsList(new ArrayList<DocumentDetails>(1));
+
+		//Set Check List Details to finaceDetail
+		getCheckListDetailService().setFinanceCheckListDetails(financeDetail, finType, userRole);
+
 		logger.debug("Leaving");
 		return financeDetail;
 	}
-	
+
 	/**
-	 * Method for Fetching Scoring Metric List
-	 */
-	@Override
-	public List<ScoringMetrics> getScoringMetricsList(long id, String type) {
-		return getScoringMetricsDAO().getScoringMetricsByScoreGrpId(id, "R", "_AView");
-	}
-	
-	/**
-	 * Method to get FinanceRepayments By FinReference
+	 * getAssetEnqDetailById fetch the details by using FinanceMainDAO's And getFinanceTypeDAO's .
 	 * 
-	 * @param id
-	 * @param type
-	 * @return
+	 * @param finReference
+	 *            (String)
+	 * @return FinanceDetail
 	 */
-	public List<FinanceRepayments> getFinanceRepaymentsByFinRef(final String id) {
-		logger.debug("Entering ");
-		return getFinanceRepaymentsDAO().getFinRepayListByFinRef(id, "");
+	public FinanceDetail getFinAssetDetails(String finReference, String type) {
+		logger.debug("Entering");
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		scheduleData.setFinReference(finReference);
+		scheduleData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
+		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
+
+		String assetCode = financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName();
+		Assets assest = Assets.valueOf(assetCode.toUpperCase());
+
+		switch(assest) {
+		case VEHICLE:
+			CarLoanDetail  carLoanDetail;
+			carLoanDetail = getCarLoanDetailService().getCarLoanDetailById(finReference);			
+			financeDetail.setCarLoanDetail(carLoanDetail);
+			break;
+		case EDUCATON:
+			getEducationalLoanService().setEducationalLoanDetails(financeDetail, type);
+			break;
+		case HOME:
+			HomeLoanDetail homeLoanDetail;
+			homeLoanDetail = getHomeLoanDetailService().getHomeLoanDetailById(finReference);
+			financeDetail.setHomeLoanDetail(homeLoanDetail);
+			break;
+		case EQPMENT:
+			MortgageLoanDetail mortgageLoanDetail;
+			mortgageLoanDetail =  getMortgageLoanDetailService().getMortgageLoanDetailById(finReference);
+			financeDetail.setMortgageLoanDetail(mortgageLoanDetail);
+			break;
+		case GOODS:
+			List<GoodsLoanDetail> goodsLoanDetails;
+			goodsLoanDetails =  getGoodsLoanDetailService().getGoodsLoanDetailById(finReference).getGoodsLoanDetailList();
+			financeDetail.setGoodsLoanDetails(goodsLoanDetails);
+			break;
+		case GENGOODS:
+			List<GenGoodsLoanDetail> genGoodsLoanDetails;
+			genGoodsLoanDetails = getGenGoodsLoanDetailService().getGenGoodsLoanDetailById(finReference).getGenGoodsLoanDetailList();
+			financeDetail.setGenGoodsLoanDetails(genGoodsLoanDetails);
+			break;
+		case COMIDITY:
+			CommidityLoanHeader commidityLoanHeader = null; 
+			commidityLoanHeader = getCommidityLoanDetailService().getCommidityLoanHeaderById(finReference);
+			if(commidityLoanHeader != null) {
+				financeDetail.setCommidityLoanHeader(commidityLoanHeader);
+				financeDetail.setCommidityLoanDetails(commidityLoanHeader.getCommidityLoanDetails());
+			}
+			break;
+		case SHARES:
+			getSharesDetailService().setSharesDetails(financeDetail, type);
+			break;
+		}
+		logger.debug("Leaving");
+		return financeDetail;
+
 	}
 	
 	@Override
-	public boolean inActivateFinance(String finReference,LoginUserDetails userDetails) {
-		try {
-			//FIXME
-			if (getPostingsPreparationUtil().processFinCanclPostings(finReference)) {
-				String tranType = PennantConstants.TRAN_WF;
-				FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, "",  false);
-				financeMain.setFinIsActive(false);
-				financeMain.setClosingStatus("C");
-				String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), excludeFields);
-				AuditDetail auditDetail =new AuditDetail(tranType, 1, fields[0],fields[1], financeMain.getBefImage(), financeMain);
-				AuditHeader auditHeader = new AuditHeader(finReference, null, null, null,auditDetail, userDetails, null);
-				getFinanceMainDAO().updateCancelStatus(financeMain, "");
-				getAuditHeaderDAO().addAudit(auditHeader);
-				return true;
-			}
-		} catch (Exception e) {
-			return false;
-		} 
-		return false;
+	public List<String> getFinanceReferenceList() {
+		return getFinanceMainDAO().getFinanceReferenceList();
 	}
+
+	@Override
+	public List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate) {
+		return getFinanceMainDAO().getIjaraBulkRateFinList(fromDate, toDate);
+	}
+
+	@Override
+	public List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate) {
+		return getFinanceMainDAO().getBulkDefermentFinList(fromDate, toDate);
+	}
+
+	@Override
+	public String getCustStatusByMinDueDays() {
+		CustomerStatusCode customerStatusCode = getCustomerStatusCodeDAO().getCustStatusByMinDueDays("");
+		if (customerStatusCode != null) {
+			return customerStatusCode.getCustStsCode();
+		}
+		return "";
+	}
+
+	/**
+	 * Get approved Customer Finance Details By ID 
+	 */
+	public CustomerFinanceDetail getApprovedCustomerFinanceById(String finReference){
+		CustomerFinanceDetail customerFinanceDetail = getFinanceMainDAO().getCustomerFinanceMainById(finReference, "_AView");
+		customerFinanceDetail.setAuditTransactionsList(getFinanceMainDAO().getFinTransactionsList(finReference, true));
+		return customerFinanceDetail;
+	}
+
+	/**
+	 * Get Customer Finance Details By ID 
+	 */
+	public CustomerFinanceDetail getCustomerFinanceById(String finReference) {
+		CustomerFinanceDetail customerFinanceDetail = getFinanceMainDAO().getCustomerFinanceMainById(finReference, "_View");
+		customerFinanceDetail.setAuditTransactionsList(getFinanceMainDAO().getFinTransactionsList(finReference, false));
+		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference), true));
+		return customerFinanceDetail;
+	}
+
+	/**
+	 * Method for retrieving Notes Details
+	 */
+	private Notes getNotes(String finReference) {
+		logger.debug("Entering ");
+		Notes notes = new Notes();
+		notes.setModuleName("financeMain");
+		notes.setReference(finReference);
+		notes.setVersion(0);
+		logger.debug("Leaving ");
+		return notes;
+	}
+
+	@Override
+	public List<CustomerIncome> prepareIncomeDetails() {
+
+		List<IncomeType> incomeTypeList = getIncomeTypeDAO().getIncomeTypeList();
+		List<CustomerIncome> customerIncomes = new ArrayList<CustomerIncome>();
+		for (IncomeType incomeType : incomeTypeList) {
+			CustomerIncome income = new CustomerIncome();
+			income.setIncomeExpense(incomeType.getIncomeExpense().trim());
+			income.setCustIncomeType(incomeType.getIncomeTypeCode().trim());
+			income.setJointCust(false);
+			income.setMargin(BigDecimal.ZERO);
+			income.setCategory(incomeType.getCategory().trim());
+			income.setCustIncome(BigDecimal.ZERO);
+			income.setVersion(1);
+			income.setRecordType(PennantConstants.RCD_ADD);
+			income.setWorkflowId(0);
+			income.setLovDescCategoryName(incomeType.getLovDescCategoryName().trim());
+			income.setLovDescCustIncomeTypeName(incomeType.getIncomeTypeDesc().trim());
+
+			customerIncomes.add(income);
+		}
+		return customerIncomes;
+	}
+
+	@Override
+	public List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId) {
+		return getFinanceMainDAO().getFinanceDetailByCmtRef(cmtRef, custId);
+	}	
+	
+	/**
+	 * Method for Fetching Template ID List using Finance Type & Role Code
+	 */
+	@Override
+	public List<Long> getMailTemplatesByFinType(String financeType, String roleCode){
+		return getFinanceReferenceDetailDAO().getMailTemplatesByFinType(financeType, roleCode);
+	}	
+	
+	@Override
+	public BigDecimal getCustRepayBankTotal(long custId) {
+		return getCustomerDAO().getCustRepayBankTotal(custId);
+	}	
+
+	@Override
+	public List<FeeRule> getFeeChargesByFeeCode(String feeCode, String tableType){
+		return getFinFeeChargesDAO().getFeeChargesByFeeCode(feeCode, tableType);
+	}
+	
+	@Override
+	public FeeRule getFeeChargesByFinRefAndFeeCode(String finReference, String feeCode, String tableType){
+		return getFinFeeChargesDAO().getFeeChargesByFinRefAndFee(finReference, feeCode, tableType);
+	}
+	
+	@Override
+	public boolean updateFeeChargesByFinRefAndFeeCode(FeeRule feeRule, String tableType){
+		return getFinFeeChargesDAO().updateFeeChargesByFinRefAndFee(feeRule, tableType);
+	}
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+	public CustomerIncomeDAO getCustomerIncomeDAO() {
+		return customerIncomeDAO;
+	}
+	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
+		this.customerIncomeDAO = customerIncomeDAO;
+	}
+
+	public String getExcludeFields() {
+		return excludeFields;
+	}
+	public void setExcludeFields(String excludeFields) {
+		this.excludeFields = excludeFields;
+	}
+
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
+		return financeReferenceDetailDAO;
+	}
+
+	public AccountingSetDAO getAccountingSetDAO() {
+		return accountingSetDAO;
+	}
+	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
+		this.accountingSetDAO = accountingSetDAO;
+	}
+
+	public ExtendedFieldHeaderDAO getExtendedFieldHeaderDAO() {
+		return extendedFieldHeaderDAO;
+	}
+	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
+		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+	}
+
+	public ExtendedFieldDetailDAO getExtendedFieldDetailDAO() {
+		return extendedFieldDetailDAO;
+	}
+	public void setExtendedFieldDetailDAO(ExtendedFieldDetailDAO extendedFieldDetailDAO) {
+		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
+	}
+
+	public RuleDAO getRuleDAO() {
+		return ruleDAO;
+	}
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public CustomerLimitIntefaceService getCustLimitIntefaceService() {
+		return custLimitIntefaceService;
+	}
+	public void setCustLimitIntefaceService(CustomerLimitIntefaceService custLimitIntefaceService) {
+		this.custLimitIntefaceService = custLimitIntefaceService;
+	}
+
+	public FinanceWriteoffDAO getFinanceWriteoffDAO() {
+		return financeWriteoffDAO;
+	}
+	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
+		this.financeWriteoffDAO = financeWriteoffDAO;
+	}
+
+	public AccountTypeDAO getAccountTypeDAO() {
+		return accountTypeDAO;
+	}
+	public void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
+		this.accountTypeDAO = accountTypeDAO;
+	}
+
+	public CurrencyDAO getCurrencyDAO() {
+		return currencyDAO;
+	}
+	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
+		this.currencyDAO = currencyDAO;
+	}
+
+	public void setFinContributorHeaderDAO(FinContributorHeaderDAO finContributorHeaderDAO) {
+		this.finContributorHeaderDAO = finContributorHeaderDAO;
+	}
+	public FinContributorHeaderDAO getFinContributorHeaderDAO() {
+		return finContributorHeaderDAO;
+	}
+
+	public void setFinContributorDetailDAO(FinContributorDetailDAO finContributorDetailDAO) {
+		this.finContributorDetailDAO = finContributorDetailDAO;
+	}
+	public FinContributorDetailDAO getFinContributorDetailDAO() {
+		return finContributorDetailDAO;
+	}
+
+	public void setIncomeTypeDAO(IncomeTypeDAO incomeTypeDAO) {
+		this.incomeTypeDAO = incomeTypeDAO;
+	}
+	public IncomeTypeDAO getIncomeTypeDAO() {
+		return incomeTypeDAO;
+	}
+
+	public NotesDAO getNotesDAO() {
+		return notesDAO;
+	}
+	public void setNotesDAO(NotesDAO notesDAO) {
+		this.notesDAO = notesDAO;
+	}
+
+	public IndicativeTermDetailDAO getIndicativeTermDetailDAO() {
+		return indicativeTermDetailDAO;
+	}
+	public void setIndicativeTermDetailDAO(IndicativeTermDetailDAO indicativeTermDetailDAO) {
+		this.indicativeTermDetailDAO = indicativeTermDetailDAO;
+	}
+
+	public FinancePremiumDetailDAO getFinancePremiumDetailDAO() {
+	    return financePremiumDetailDAO;
+    }
+	public void setFinancePremiumDetailDAO(FinancePremiumDetailDAO financePremiumDetailDAO) {
+	    this.financePremiumDetailDAO = financePremiumDetailDAO;
+    }
 
 }

@@ -9,7 +9,7 @@
 
 	<window id="window_VehicleManufacturerSearch"
 		title="${c:l('window_VehicleManufacturerSearch.title')}" border="none"
-		apply="${vehicleManufacturerSearchCtrl}" closable="true" width="400px"
+		apply="${vehicleManufacturerSearchCtrl}" closable="true" width="550px"
 		height="284px" sizable="true">
 
 		<borderlayout>
@@ -26,7 +26,7 @@
 								<column width="100%" />
 							</columns>
 							<rows>
-								<row>
+								<row visible= "false">
 									<label id="label_VehicleManufacturerSearch_ManufacturerId" value="${c:l('label_VehicleManufacturerSearch_ManufacturerId.value')}" />
 									<listbox id="sortOperator_manufacturerId" width="43px" mold="select" rows="1" />
 									  <uppercasebox  id="manufacturerId" width="171px" maxlength="19" />
@@ -36,7 +36,7 @@
 								<row>
 									<label id="label_VehicleManufacturerSearch_ManufacturerName" value="${c:l('label_VehicleManufacturerSearch_ManufacturerName.value')}" />
 									<listbox id="sortOperator_manufacturerName" width="43px" mold="select" rows="1" />
-									 <textbox id="manufacturerName" width="450px" maxlength="50" />
+									 <textbox id="manufacturerName" width="330px" maxlength="50" />
 								  
 										
 								</row>

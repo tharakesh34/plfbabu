@@ -1,7 +1,9 @@
 package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 
 public interface CreditReviewSummaryDAO {
@@ -15,5 +17,10 @@ public interface CreditReviewSummaryDAO {
 	public void initialize(FinCreditReviewSummary creditReviewSummary);
 	public void refresh(FinCreditReviewSummary entity);
 	public void deleteByDetailId(long detailId,String type);
-	public List<FinCreditReviewSummary> getListCreditReviewSummaryByYearAndCustId(final long id, String year);
+	public List<FinCreditReviewSummary> getListCreditReviewSummaryByYearAndCustId(final long id, String year, String type);
+	public List<FinCreditReviewSummary> getListCreditReviewSummaryByYearAndCustId2(long id, String year, String category, String type) ;
+	public List<FinCreditReviewSummary> getListCreditReviewSummaryByYearAndCustId2(long id, String year, String category, int auditPeriod, boolean isCurrentYear, String type) ;
+	public List<FinCreditReviewSummary> getLatestCreditReviewSummaryByYearAndCustId(long id);
+    public BigDecimal getCcySpotRate(String ccyCode);
+    public FinCreditReviewDetails getCreditReviewDetailsByYearAndCustId(long customerId, String year, String type);
 }

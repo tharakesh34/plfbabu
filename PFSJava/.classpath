@@ -14,12 +14,6 @@
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/org.springframework.web-3.0.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/org.springframework.web.servlet-3.0.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-jdbc-3.0.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-acl-3.0.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-config-3.0.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-core-3.0.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-openid-3.0.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-taglibs-3.0.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-web-3.0.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/zcommon.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/zcommons-el.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/zhtml.jar"/>
@@ -66,10 +60,19 @@
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/datecalc-jdk-1.2.0.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/freemarker.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/jasperreports-4.5.0.jar"/>
-	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/pas-dte-1.0.0.jar"/>
-	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/poi.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/pas-dte-1.0.2.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/sqlbuilder-2.0.6.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/commons-dbcp-1.2.2.jar"/>
 	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/objenesis-1.2.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/mail-1.4.4.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-acl-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-config-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-core-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-openid-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-taglibs-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-security-web-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-batch-core-2.1.8.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/spring-batch-infrastructure-2.1.8.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/PFSWeb/WebContent/WEB-INF/lib/poi-3.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

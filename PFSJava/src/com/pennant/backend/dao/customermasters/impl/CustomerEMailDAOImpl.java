@@ -120,7 +120,7 @@ public class CustomerEMailDAOImpl extends BasisCodeDAO<CustomerEMail> implements
 	@Override
 	public CustomerEMail getCustomerEMailById(final long id, String typeCode,String type) {
 		logger.debug("Entering");
-		CustomerEMail customerEMail = getCustomerEMail();
+		CustomerEMail customerEMail = new CustomerEMail();
 		customerEMail.setId(id);
 		customerEMail.setCustEMailTypeCode(typeCode);
 		StringBuilder selectSql = new StringBuilder();	
@@ -154,7 +154,7 @@ public class CustomerEMailDAOImpl extends BasisCodeDAO<CustomerEMail> implements
 	 * */
 	public List<CustomerEMail> getCustomerEmailByCustomer(final long id,String type) {
 		logger.debug("Entering");
-		CustomerEMail customerEMail = getCustomerEMail();
+		CustomerEMail customerEMail = new CustomerEMail();
 		customerEMail.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();	
@@ -172,6 +172,28 @@ public class CustomerEMailDAOImpl extends BasisCodeDAO<CustomerEMail> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
 		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerEMail.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+	}	
+	
+	/**
+	 * Method to return the customer email based on given customer id
+	 */
+	@Override
+	public List<String> getCustEmailsByCustId(final long custId) {
+		logger.debug("Entering");
+		
+		CustomerEMail customerEMail = new CustomerEMail();
+		customerEMail.setId(custId);
+		
+		StringBuilder selectSql = new StringBuilder();	
+		selectSql.append(" SELECT CustEMail FROM  CustomerEMails ");
+		selectSql.append(" Where CustID = :custID ORDER BY CustEMailPriority");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
+		RowMapper<String> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(String.class);
+		
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}	
@@ -328,7 +350,7 @@ public class CustomerEMailDAOImpl extends BasisCodeDAO<CustomerEMail> implements
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
-		updateSql.append(" Where CustID =:CustID AND CustEMailTypeCode =:custEMailTypeCode");
+		updateSql.append(" Where CustID =:CustID AND CustEMailTypeCode =:custEMailTypeCode ");
 		if (!type.endsWith("_TEMP")){
 			updateSql.append("AND Version= :Version-1");
 		}

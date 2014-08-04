@@ -70,7 +70,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -85,10 +84,12 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.PenaltyService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -839,9 +840,7 @@ public class PenaltyDialogCtrl extends GFCBaseCtrl implements Serializable {
 					"label_PenaltyDialog_ODueGraceDays.value")));
 		}	
 		if (!this.penaltyPriRateBasis.isReadonly()){
-			this.penaltyPriRateBasis.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX,
-					Labels.getLabel("FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-							"label_PenaltyDialog_PenaltyPriRateBasis.value")})));
+			this.penaltyPriRateBasis.setConstraint(new PTStringValidator(Labels.getLabel("label_PenaltyDialog_PenaltyPriRateBasis.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 		if (!this.penaltyPriBaseRate.isReadonly()){
 			this.penaltyPriBaseRate.setConstraint(new RateValidator(13,9,
@@ -857,9 +856,7 @@ public class PenaltyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}	
 		if (!this.penaltyIntRateBasis.isReadonly()){
 			if(this.penaltyIntRateBasis.getValue() != null && !this.penaltyIntRateBasis.getValue().equals("")){
-				this.penaltyIntRateBasis.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX,
-						Labels.getLabel("FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-								"label_PenaltyDialog_PenaltyIntRateBasis.value")})));
+				this.penaltyIntRateBasis.setConstraint(new PTStringValidator(Labels.getLabel("label_PenaltyDialog_PenaltyIntRateBasis.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 			}
 		}	
 		if (!this.penaltyIntBaseRate.isReadonly()){

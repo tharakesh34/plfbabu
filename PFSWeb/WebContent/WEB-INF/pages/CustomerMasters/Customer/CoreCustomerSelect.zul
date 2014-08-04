@@ -1,66 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-
 <zk xmlns="http://www.zkoss.org/2005/zul"
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-
+	
 	<window id="window_CoreCustomer" apply="${coreCustomerSelectCtrl}"
-		title="${c:l('Customer')}" border="normal" width="70%"
-		height="150px">
-
-		<div sclass="z-toolbar" style="padding:0" height="28px">
-			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
-
-				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					style="float:left; border-style: none;" width="150px">
-					<hbox align="center" style="padding: 2px" />
-				</toolbar>
-
-				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none;">
-				</toolbar>
-
-				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
-					<button id="btnClose" height="24px"
-						image="/images/icons/btn_exitdoor2_16x16.gif"
-						tooltiptext="${c:l('btnClose.tooltiptext')}" />
-				</toolbar>
-			</hbox>
-		</div>
-
+		width="50%" height="30%">
+		
 		<borderlayout id="borderLayout_CoreCustomer">
-			<north border="none" />
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<toolbar align="start" sclass="toolbar-start">
+							<label value="${c:l('Customer')}"
+								sclass="label-heading" />
+						</toolbar>
+						<toolbar align="center"
+							sclass="toolbar-center">
+						</toolbar>
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnClose" height="24px"
+								label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
 			<center border="none">
 				<groupbox>
-					<caption label="Core Banking Customer Details" />
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
 						style="border:0px; padding:0px;">
 						<columns>
-							<column width="200px" />
-							<column />
+							<column width="250px" />
 							<column />
 						</columns>
 						<rows>
 							<row>
+								<cell colspan="2">
+									<radiogroup>
+										<radio id="exsiting"
+											label="${c:l('label_CustomerDialog_Existing.value')}"
+											selected="true">
+										</radio>
+										<radio id="prospect"
+											label="${c:l('label_CustomerDialog_Prospect.value')}">
+										</radio>
+									</radiogroup>
+								</cell>
+							</row>
+							<row>
 								<label id="label_CustomerDialog_CustID"
-									value="${c:l('label_CustomerDialog_CoreCustID.value')}"/>
+									value="${c:l('label_CustomerDialog_CoreCustID.value')}"
+									style="padding-left:12px;" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="custCIF" width="108px"
 										maxlength="6" />
+									<button id="btnSearchCustFetch"
+										label="Proceed" style="font-weight:bold;"
+										image="/images/icons/LOVSearch.png" height="24px" />
 								</hbox>
-								<button id="btnSearchCustFetch"
-									label="Proceed" style="font-weight:bold;"
-									image="/images/icons/LOVSearch.png" height="24px" />
+							</row>
+							<row id="row_custCtgType" visible="false">
+								<label
+									id="label_CustomerDialog_CustType"
+									value="${c:l('label_CustomerDialog_CustType.value')}"
+									style="padding-left:12px;" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="custCtgType"
+										readonly="true" width="108px" />
+								</hbox>
+							</row>
+							<row id="row_custCountry" visible="false">
+								<label
+									id="label_CustomerDialog_CustCountry"
+									value="${c:l('label_CustomerDialog_CustCountry.value')}"
+									style="padding-left:12px;" />
+								<hbox>
+									<extendedcombobox id="custCountry"/>
+								</hbox>
+							</row>
+							<row id="row_custCRCPR" visible="false">
+								<label
+									id="label_CustomerDialog_CustCRCPR"
+									value="${c:l('label_CustomerDialog_CustCRCPR.value')}"
+									style="padding-left:12px;" />
+								<hbox>
+									<space spacing="2px" id="space_"
+										sclass="mandatory" />
+									<textbox id="custCPR"
+										readonly="false" width="130px" />	
+									<hbox id="hboxCustCR" visible="false">
+									<textbox id="custCR1"  width="78px"/>
+									<label value="-"/>
+									<textbox id="custCR2"  width="30px"/>
+									</hbox>
+								</hbox>
 							</row>
 						</rows>
 					</grid>

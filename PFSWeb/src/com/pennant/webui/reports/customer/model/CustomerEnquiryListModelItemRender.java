@@ -31,9 +31,11 @@ public class CustomerEnquiryListModelItemRender implements ListitemRenderer<Fina
 			cell.setSpan(3);
 			item.appendChild(cell);
 		} else if (item instanceof Listgroupfoot) {
-			Listcell cell = new Listcell("");
+			Listcell cell = new Listcell(PennantAppUtil.amountFormate(
+					aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt()).subtract(aFinanceEnq.getFinRepaymentAmount()),
+					aFinanceEnq.getLovDescFinFormatter()));
 			cell.setSpan(5);
-			cell.appendChild(cell);
+			item.appendChild(cell);
 		} else {
 			Listcell lc;
 			lc = new Listcell(aFinanceEnq.getFinReference());
@@ -60,7 +62,7 @@ public class CustomerEnquiryListModelItemRender implements ListitemRenderer<Fina
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.amountFormate(
-					aFinanceEnq.getCurrentFinAmount(),
+					aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt()).subtract(aFinanceEnq.getFinRepaymentAmount()),
 					aFinanceEnq.getLovDescFinFormatter()));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);

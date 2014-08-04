@@ -42,6 +42,8 @@
 */
 
 package com.pennant.backend.dao.mail;
+import java.util.List;
+
 import com.pennant.backend.model.mail.MailTemplate;
 
 public interface MailTemplateDAO {
@@ -54,4 +56,5 @@ public interface MailTemplateDAO {
 	public long save(MailTemplate mailTemplate,String type);
 	public void initialize(MailTemplate mailTemplate);
 	public void refresh(MailTemplate entity);
+	public List<MailTemplate> getMailTemplates();
 }

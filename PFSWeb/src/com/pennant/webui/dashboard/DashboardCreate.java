@@ -131,7 +131,7 @@ public class DashboardCreate extends  GFCBaseListCtrl<Object> implements Seriali
 	 * Event listener for panel maximize event
 	 *
 	 */
-	class onPanelMaximized implements EventListener{
+	class onPanelMaximized implements EventListener<Event>{
 
 		@Override
 		public void onEvent(Event event) throws Exception {
@@ -187,7 +187,7 @@ public class DashboardCreate extends  GFCBaseListCtrl<Object> implements Seriali
 	 * Event listener for panel maximize event
 	 *
 	 */
-	class onPanelClosed implements EventListener{
+	class onPanelClosed implements EventListener<Event>{
 
 		@Override
 		public void onEvent(Event event) throws Exception {

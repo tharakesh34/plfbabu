@@ -65,7 +65,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,7 +77,9 @@ import com.pennant.backend.model.rmtmasters.AccountEngineRule;
 import com.pennant.backend.service.rmtmasters.AccountEngineRuleService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -635,14 +636,11 @@ public class AccountEngineRuleDialogCtrl extends GFCBaseCtrl implements Serializ
 
 		setValidationOn(true);
 		if (!this.aERule.isReadonly()) {
-			this.aERule.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX,
-					Labels.getLabel("FIELD_ALNUM_CAPS",new String[] { Labels.getLabel(
-							"label_AccountEngineRuleDialog_AERule.value") })));
+			this.aERule.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountEngineRuleDialog_AERule.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.aERuleDesc.isReadonly()) {
-			this.aERuleDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX,
-					Labels.getLabel("MAND_FIELD_DESC",new String[] { Labels.getLabel(
-							"label_AccountEngineRuleDialog_AERuleDesc.value") })));
+			this.aERuleDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountEngineRuleDialog_AERuleDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}

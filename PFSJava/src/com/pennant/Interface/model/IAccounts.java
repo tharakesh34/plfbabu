@@ -23,6 +23,10 @@ public class IAccounts implements java.io.Serializable {
 	private String availBalSign;
 	private BigDecimal acAvailableBal;
 	private String lovValue;
+	private String division;
+	
+	//For Temporary Purpose in Core banking
+	private String tranAc;
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -169,6 +173,22 @@ public class IAccounts implements java.io.Serializable {
 
 	public String getLovValue() {
 	    return lovValue;
+    }
+
+	public String getDivision() {
+    	return division;
+    }
+
+	public void setDivision(String division) {
+    	this.division = division;
+    }
+
+	public String getTranAc() {
+    	return tranAc;
+    }
+
+	public void setTranAc(String tranAc) {
+    	this.tranAc = tranAc;
     }
 
 }

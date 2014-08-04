@@ -122,7 +122,7 @@ public class VehicleManufacturerDAOImpl extends
 	@Override
 	public VehicleManufacturer getVehicleManufacturerById(final long id, String type) {
 		logger.debug("Entering");
-		VehicleManufacturer vehicleManufacturer = getVehicleManufacturer();
+		VehicleManufacturer vehicleManufacturer = new VehicleManufacturer();
 		vehicleManufacturer.setId(id);
 		
 		StringBuilder   selectSql = new StringBuilder  ("SELECT ManufacturerId,  ManufacturerName, ");
@@ -286,7 +286,7 @@ public class VehicleManufacturerDAOImpl extends
 		logger.debug("updateSql: "+ updateSql.toString());
 
 		if (!type.endsWith("_TEMP")) {
-			updateSql.append("AND Version= :Version-1");
+			updateSql.append(" AND Version= :Version-1");
 		}
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleManufacturer);

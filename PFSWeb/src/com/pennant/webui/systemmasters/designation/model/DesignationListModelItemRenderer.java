@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for list items in the list box.
  * 
@@ -62,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class DesignationListModelItemRenderer implements ListitemRenderer<Designation>, Serializable {
 
 	private static final long serialVersionUID = -7810505551485114617L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, Designation designation, int count) throws Exception {
 		
-		//final Designation designation = (Designation) data;
 		Listcell lc;
 	  	lc = new Listcell(designation.getDesgCode());
 		lc.setParent(item);

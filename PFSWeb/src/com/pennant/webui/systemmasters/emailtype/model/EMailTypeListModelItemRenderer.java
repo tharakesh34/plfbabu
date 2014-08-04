@@ -55,7 +55,6 @@ import com.pennant.backend.model.systemmasters.EMailType;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for list items in the list box.
  * 
@@ -63,11 +62,10 @@ import com.pennant.util.PennantAppUtil;
 public class EMailTypeListModelItemRenderer implements ListitemRenderer<EMailType>, Serializable {
 	
 	private static final long serialVersionUID = 158114541693014078L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, EMailType eMailType, int count) throws Exception {
 		
-		//final EMailType eMailType = (EMailType) data;
 		Listcell lc;
 	  	lc = new Listcell(eMailType.getEmailTypeCode());
 		lc.setParent(item);

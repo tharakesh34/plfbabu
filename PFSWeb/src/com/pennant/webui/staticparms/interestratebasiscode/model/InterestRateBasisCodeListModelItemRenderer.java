@@ -62,11 +62,10 @@ public class InterestRateBasisCodeListModelItemRenderer implements
 		ListitemRenderer<InterestRateBasisCode>, Serializable {
 
 	private static final long serialVersionUID = 5364048272277594011L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+	
 	@Override
 	public void render(Listitem item, InterestRateBasisCode interestRateBasisCode, int count) throws Exception {
 		
-		//final InterestRateBasisCode interestRateBasisCode = (InterestRateBasisCode) data;
 		Listcell lc;
 		lc = new Listcell(interestRateBasisCode.getIntRateBasisCode());
 		lc.setParent(item);

@@ -43,21 +43,74 @@
 
 package com.pennant.backend.service.others;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
+import com.pennant.coreinterface.exception.AccountNotFoundException;
+import com.pennant.coreinterface.vo.CoreBankAccountDetail;
 
 public interface JVPostingService {
-	
+
 	JVPosting getJVPosting();
+
 	JVPosting getNewJVPosting();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	JVPosting getJVPostingById(String id);
-	JVPosting getApprovedJVPostingById(String id);
+
+	JVPosting getJVPostingById(long batchRef);
+
+	JVPosting getJVPostingByFileName(String fileName);
+
+	JVPosting getJVPostingBatchById(long batchRef);
+
+	JVPosting getApprovedJVPostingById(long batchRef);
+
 	JVPosting refresh(JVPosting jVPosting);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
+	CoreBankAccountDetail getAccountDetails(String accountNumber) throws AccountNotFoundException;	        
+
 	JVPostingEntry getNewJVPostingEntry();
+
+	List<JVPostingEntry> getJVPostingEntryListById(long batchRef);
+
+	List<JVPostingEntry> getFailureJVPostingEntryListById(long batchRef);
+
+	JVPostingEntry getJVPostingEntryById(long batchRef, long txnRef, long acRef);
+
+	JVPostingEntry getApprovedJVPostingEntryById(long batchRef, long txnRef, long acRef);
+
+	long save(JVPostingEntry externalAcEntry,String baseCcy, String baseCcyNumber, int baseCcyEditField, boolean addIAEntry);
+
+	void update(JVPostingEntry externalAcEntry,String baseCcy, String baseCcyNumber, int baseCcyEditField, boolean addIAEntry, String type);
+
+	void deleteByID(JVPostingEntry jVPostingEntry, String type);
+
+	JVPostingEntry getJVPostingEntryById(long batchRef, long txnReference,
+	        String account, String txnEntry, BigDecimal txnAmount);
+
+	List<JVPostingEntry> getDeletedJVPostingEntryListById(long batchRef);
+
+	// TODO
+	void updateDeleteFlag(JVPostingEntry jVPostingEntry);
+
+	void updateValidationStatus(JVPosting jVPosting);
+
+	void updateWorkFlowDetails(JVPostingEntry jVPostingEntry);
+
+	int getMaxSeqNumForCurrentDay(JVPostingEntry jVPostingEntry);
+
+	void upDateSeqNoForCurrentDayBatch(JVPostingEntry jVPostingEntry);
+
+	boolean doAccountValidation(JVPosting jVPosting, List<JVPostingEntry> distinctEntryList);
+
+	void deleteIAEntries(long batchReference);
 }

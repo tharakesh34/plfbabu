@@ -118,7 +118,7 @@ public class CourseTypeDAOImpl extends BasisCodeDAO<CourseType> implements Cours
 	@Override
 	public CourseType getCourseTypeById(final String id, String type) {
 		logger.debug("Entering");
-		CourseType courseType = getCourseType();
+		CourseType courseType = new CourseType();
 		courseType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

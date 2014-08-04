@@ -24,6 +24,7 @@
 .z-toolbar{
 	background:#EBEBEB;
 	padding:0px;
+	padding-top:2px;
 }
 .z-toolbar-list{
 	background:#EBEBEB;
@@ -324,6 +325,13 @@ span.z-tree-root-open {
 
 .z-treerow-ico-over span.z-tree-root-open {
     background-position: 0 0;
+}
+
+a.z-tree-ico, span.z-tree-line, span.checkmark-spacer {
+  display: inline-block;
+  height: 18px;
+  vertical-align: top;
+  width: 8px;
 }
 
 /** Change the styles for toolbar **/
@@ -1220,7 +1228,7 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 
 /**  Command button and Hover **/
 .z-button-os {
-	background-color:#84BE6A;
+	background-color:#00B050;
 	border-radius:2px;
 	border: 1px solid transparent;
 	display:inline-block;
@@ -1232,7 +1240,7 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 	text-decoration:none;
 	text-transform: uppercase;
 }.z-button-os:hover {
-	background-color:#86C67C;
+	background-color:#2AC771;
 	cursor: pointer;
 	color:#000000;	
 }.z-button-os:active {
@@ -1260,13 +1268,13 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 }
 
 .cssBtnSearch {
-	background: #84BE6A url(${c:encodeURL("/images/icons/search.png")}) no-repeat center center;
+	background: #00B050 url(${c:encodeURL("/images/icons/search.png")}) no-repeat center center;
 	width:25px;
 	border-radius:0px;
 	display:inline-block;
 	border: 1px solid transparent;
 }.cssBtnSearch:hover {
-	background: #86C67C url(${c:encodeURL("/images/icons/search.png")}) no-repeat center center;
+	background: #2AC771 url(${c:encodeURL("/images/icons/search.png")}) no-repeat center center;
 	cursor: pointer;
 }.cssBtnSearch:active {
 	position:relative;
@@ -1338,15 +1346,15 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 }
 
 .z-combobox-rounded-pp .z-comboitem-seld, .z-combobox-pp .z-comboitem-seld {
-    background: none repeat scroll 0 0 #84BE6A;
+    background: none repeat scroll 0 0 #2AC771;
     color: #FFFFFF;
     border: 1px solid #FFFFFF;
 }
 .z-combobox-rounded-pp .z-comboitem-over, .z-combobox-pp .z-comboitem-over {
-    background: none repeat scroll 0 0 #86C67C;
+    background: none repeat scroll 0 0 #2AC771;
 }
 .z-combobox-rounded-pp .z-comboitem-over-seld, .z-combobox-pp .z-comboitem-over-seld {
-    background: none repeat scroll 0 0 #86C67C;
+    background: none repeat scroll 0 0 #2AC771;
 }
 .z-comboitem .z-comboitem-text {
     font-size: 14px;
@@ -1354,7 +1362,7 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 
 /** Combobox button and Hover**/
 .z-combobox .z-combobox-btn{
-	background: #84BE6A url(${c:encodeURL("/images/icons/arrow-circle-down.png")}) no-repeat center center;
+	background: #00B050 url(${c:encodeURL("/images/icons/arrow-circle-down.png")}) no-repeat center center;
 	vertical-align: top;
 	width:20px;
 	height:21px;
@@ -1362,7 +1370,7 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 	overflow: hidden;
 	display: inline-block;
 }.z-combobox .z-combobox-btn:hover{
-	background: #86C67C url(${c:encodeURL("/images/icons/arrow-circle-down.png")}) no-repeat center center;
+	background: #2AC771 url(${c:encodeURL("/images/icons/arrow-circle-down.png")}) no-repeat center center;
 	border-image: none;
 	overflow: hidden;
 	display: inline-block;
@@ -1381,7 +1389,7 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 										/** ------------ Date Box Styles ------------------ **/		
 /** Datebox button and hover **/
 .z-datebox .z-datebox-btn {
-  	background: #84BE6A url(${c:encodeURL("/images/icons/calendar.png")}) no-repeat center center;
+  	background: #00B050 url(${c:encodeURL("/images/icons/calendar.png")}) no-repeat center center;
 	vertical-align: top;
 	width:20px;
 	height:20px;
@@ -1390,7 +1398,7 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 	display: inline-block;
 	border-radius: 0px 2px 2px 0px;
 }.z-datebox .z-datebox-btn:hover{
-  	background: #86C67C url(${c:encodeURL("/images/icons/calendar.png")}) no-repeat center center;
+  	background: #2AC771 url(${c:encodeURL("/images/icons/calendar.png")}) no-repeat center center;
 	vertical-align: top;
 	cursor: pointer;
 	border-image: none;
@@ -1448,5 +1456,125 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 	background-color:white;
 	font-weight:bold;
 }
+.listboxHeading{
+	font-Weight:bold;
+	color:#FF6600;
+	font-size:12px !important;
+	padding:2px 2px 2px 4px;
+}
+.listboxHeadingBlack{
+	font-Weight:bold;
+	color:#555;
+	font-size:12px !important;
+	padding:2px 2px 2px 4px;
+}
 
+.feeWaiver{
+	border:1px;
+	font-weight:bold;
+	color:green;
+	background-color:#FFDCDC;
+	float:left;
+}
+
+.amtDisplayFormat{
+	font-weight:bold;
+	text-align:right;
+}
+
+.inlineMargin{
+	margin-right:10px;
+}
+
+
+/** Change the styles for content in list cell **/
+.highlighted_List_Cell {
+ 	border-color: #E1E1E1 #E1E1E1 #E1E1E1 #E1E1E1 !important;
+ 	 border-width: 1px;
+     color: #3a5976;
+    font-family: 'PT Sans', Verdana,Tahoma,Arial,Helvetica,sans-serif;;
+    background-color:#B7DEE8;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    text-align:right;
+}
+
+/** Change the styles for content in list cell **/
+.highlighted_List_Cell_MainTotal {
+ 	border-color: #E1E1E1 #E1E1E1 #E1E1E1 #E1E1E1 !important;
+ 	 border-width: 1px;
+     color: #3a5976;
+    font-family: 'PT Sans', Verdana,Tahoma,Arial,Helvetica,sans-serif;;
+    background-color:#92D050;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    text-align:right;
+}
+/** Clients.showNotification **/
+.z-notification .z-notification-cl, 
+.z-notification	.z-notification-cnt { 
+	height: 60px; 
+	width: 300px; 	 		
+    font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    margin: 0 !important;
+}
+.z-notification-info .z-notification-cl {
+	background-color: #4F81BD;
+}
+.z-notification-info .z-notification-pointer-r {
+	border-left-color: #4F81BD;
+}
+.z-notification-info .z-notification-pointer-l {
+	border-right-color: #4F81BD;
+}
+.z-notification-info .z-notification-pointer-d {
+	border-upper-color: #4F81BD;
+}
+.z-notification-info .z-notification-pointer-u {
+	border-down-color: #4F81BD;
+}
+
+.ckeditorReadonly{
+	border:1px rgb(163, 163, 163) solid;
+}
+
+.button_Label {
+	font-size: 9px;
+	font-style: Verdana;
+	color: #FFFFFF;
+	font-weight:bold;
+	padding: 5px 3px;
+	border: 1px solid yellowgreen;
+	background-color: green;
+}
+.button_Label_Disable {
+	font-size: 9px;
+	font-style: Verdana;
+	color: #FFFFFF;
+	font-weight:bold;
+	padding: 5px 3px;
+	border: 1px solid yellowgreen;
+	background-color: grey;
+	
+}
+
+.queryBuilder_Label {
+	font-size: 12px;
+	font-style: calibri;
+	color: #000000;
+	font-weight:bold;
+	padding-left: 0px;
+}
+
+.javaScriptBuilderComboitemfont .z-combobox-rounded-inp,  .z-combobox-inp{
+font-size:11px;
+}
+
+.javaScriptBuilderfont{
+font-size:11px;
+}
 </style>

@@ -122,7 +122,7 @@ public class ScoringTypeDAOImpl extends BasisCodeDAO<ScoringType> implements Sco
 	@Override
 	public ScoringType getScoringTypeById(final String id, String type) {
 		logger.debug("Entering");
-		ScoringType scoringType = getScoringType();		
+		ScoringType scoringType = new ScoringType();		
 		scoringType.setId(id);		
 		StringBuilder selectSql = new StringBuilder("Select ScoType, ScoDesc");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");

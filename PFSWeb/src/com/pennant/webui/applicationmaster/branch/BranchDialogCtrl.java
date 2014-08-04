@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -80,8 +79,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTPhoneNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -465,6 +467,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -510,7 +513,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	}
 		this.recordStatus.setValue(aBranch.getRecordStatus());
 		
-		if(aBranch.isNew() || aBranch.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aBranch.isNew() || (aBranch.getRecordType() != null ? aBranch.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.branchIsActive.setChecked(true);
 			this.branchIsActive.setDisabled(true);
 		}
@@ -824,63 +827,40 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 		
 		if (!this.branchCode.isReadonly()){
-			this.branchCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX,
-					Labels.getLabel("FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-							"label_BranchDialog_BranchCode.value")})));
+			this.branchCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 		if (!this.branchDesc.isReadonly()){
-			this.branchDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX,
-					Labels.getLabel("MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_BranchDialog_BranchDesc.value")})));
+			this.branchDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}	
 		if (!this.branchAddrLine1.isReadonly()){
-			this.branchAddrLine1.setConstraint(new SimpleConstraint(PennantConstants.ADDRESS_LINE1_REGEX,
-					Labels.getLabel("MAND_FIELD_ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
-							"label_BranchDialog_BranchAddrLine1.value")})));
+			this.branchAddrLine1.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchAddrLine1.value"),
+					PennantRegularExpressions.REGEX_ADDRESS, true));
 		}	
 		if (!this.branchAddrLine2.isReadonly()){
-			if(!(this.branchAddrLine2.getValue() ==null || this.branchAddrLine2.getValue().equals(""))){
-				this.branchAddrLine1.setConstraint(new SimpleConstraint(PennantConstants.ADDRESS_LINE1_REGEX,
-						Labels.getLabel("MAND_FIELD_ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
-							"label_BranchDialog_BranchAddrLine1.value")})));
-			}
+			this.branchAddrLine2.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchAddrLine2.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
 		}	
 		if (!this.branchPOBox.isReadonly()) {
-			if(!(this.branchPOBox.getValue() ==null || this.branchPOBox.getValue().equals(""))){
-			this.branchPOBox.setConstraint(new SimpleConstraint(PennantConstants.NUM_REGEX,
-					Labels.getLabel("FIELD_NUMBER",new String[] { Labels.getLabel(
-							"label_BranchDialog_BranchPOBox.value") })));
-		    }
+			this.branchPOBox.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchPOBox.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
 		if (!this.branchFax.isReadonly()){
-			this.branchFax.setConstraint(new SimpleConstraint(PennantConstants.PH_REGEX, 
-					Labels.getLabel("MAND_FIELD_PHONENUM",new String[]{Labels.getLabel(
-					"label_BranchDialog_BranchFax.value")})));
+			this.branchFax.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_BranchFax.value"),true));
 		}	
 		if (!this.branchTel.isReadonly()){
-			this.branchTel.setConstraint(new SimpleConstraint(PennantConstants.PH_REGEX, 
-					Labels.getLabel("MAND_FIELD_PHONENUM",new String[]{Labels.getLabel(
-							"label_BranchDialog_BranchTel.value")})));
+			this.branchTel.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_BranchTel.value"),true));
 		}	
 		if (!this.branchSwiftBankCode.isReadonly()){
-			this.branchSwiftBankCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_FL4_REGEX,
-					Labels.getLabel("MAND_FIELD_ALLOWED_ALPHANUMERIC",new String[]{Labels.getLabel(
-							"label_BranchDialog_BranchSwiftBankCde.value"),"'4'"})));
+			this.branchSwiftBankCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftBankCde.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL4, true));
 		}	
 		if (!this.branchSwiftLocCode.isReadonly()){
-			this.branchSwiftLocCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_FL2_REGEX,
-					Labels.getLabel("MAND_FIELD_ALLOWED_ALPHANUMERIC",new String[]{Labels.getLabel(
-							"label_BranchDialog_BranchSwiftLocCode.value"),"'2'"})));
+			this.branchSwiftLocCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftLocCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL2, true));
 		}	
 		if (!this.branchSwiftBrnCde.isReadonly()){
-			this.branchSwiftBrnCde.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_FL3_REGEX,
-					Labels.getLabel("MAND_FIELD_ALLOWED_ALPHANUMERIC",new String[]{Labels.getLabel(
-							"label_BranchDialog_BranchSwiftBrnCde.value"),"'3'"})));
+			this.branchSwiftBrnCde.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftBrnCde.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL3, true));
 		}	
 		if (!this.branchSortCode.isReadonly()){
-			this.branchSortCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_FL4_REGEX,
-					Labels.getLabel("MAND_FIELD_ALLOWED_ALPHANUMERIC",new String[]{Labels.getLabel(
-							"label_BranchDialog_BranchSortCode.value"),"'4'"})));
+			this.branchSortCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSortCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL4, true));
 		}	
 		logger.debug("Leaving");
 	}
@@ -910,18 +890,14 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */	
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescBranchCityName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-						"label_BranchDialog_BranchCity.value")}));
-		this.lovDescBranchProvinceName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-						"label_BranchDialog_BranchProvince.value")}));
-		this.lovDescBranchCountryName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-						"label_BranchDialog_BranchCountry.value")}));
-		this.lovDescBranchSwiftCountryName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-						"label_BranchDialog_BranchSwiftCountry.value")}));
+		this.lovDescBranchCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchCity.value")
+				 , null, true));
+		this.lovDescBranchProvinceName.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchProvince.value"), 
+				null, true));
+		this.lovDescBranchCountryName.setConstraint(new PTStringValidator(Labels.getLabel(
+						"label_BranchDialog_BranchCountry.value"), null, true));
+		this.lovDescBranchSwiftCountryName.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftCountry.value"),
+				null, true));
 		logger.debug("Leaving");
 	}
 	
@@ -1093,7 +1069,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -1437,7 +1413,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		   Province details= (Province) dataObject;
 		   if (details != null) {
 			   this.branchProvince.setValue(details.getCPProvince());
-			   this.lovDescBranchProvinceName.setValue(details.getLovValue()+"-"+
+			   this.lovDescBranchProvinceName.setValue(details.getCPProvince()+"-"+
 					   details.getCPProvinceName());
 		   }
 	   }
@@ -1466,8 +1442,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	   }else{
 		   Country details= (Country) dataObject;
 		   if (details != null) {
-			   this.branchCountry.setValue(details.getLovValue());
-			   this.lovDescBranchCountryName.setValue(details.getLovValue()+"-"+
+			   this.branchCountry.setValue(details.getCountryCode());
+			   this.lovDescBranchCountryName.setValue(details.getCountryCode()+"-"+
 					   details.getCountryDesc());
 		   }
 	   }
@@ -1499,8 +1475,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	   }else{
 		   Country details= (Country) dataObject;
 		   if (details != null) {
-			   this.branchSwiftCountry.setValue(details.getLovValue());
-			   this.lovDescBranchSwiftCountryName.setValue(details.getLovValue()+"-"+
+			   this.branchSwiftCountry.setValue(details.getCountryCode());
+			   this.lovDescBranchSwiftCountryName.setValue(details.getCountryCode()+"-"+
 					   details.getCountryDesc());
 		   }
 	   }

@@ -62,26 +62,26 @@
 
 					<listbox id="listBoxSector" vflex="true"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
+						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_SectorCode"
 								label="${c:l('listheader_SectorCode_label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_SectorDesc"
 								label="${c:l('listheader_SectorDesc.label')}" sort="auto"
-								width="40%" />
+								hflex="min" />
 							<listheader id="listheader_SectorLimit"
 								label="${c:l('listheader_SectorLimit.label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_SectorIsActive"
 								label="${c:l('listheader_SectorIsActive.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 						</listhead>
 					</listbox>
 

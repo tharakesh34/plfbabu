@@ -56,6 +56,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
@@ -123,25 +124,21 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 *            (String) ""/_Temp/_View
 	 * @return CustomerIncome
 	 */
-	public CustomerIncome getCustomerIncomeById(final long id,String incomeType, String country, String type) {
+	public CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type) {
 		logger.debug("Entering");
-		CustomerIncome customerIncome = getCustomerIncome();
-		customerIncome.setId(id);
-		customerIncome.setCustIncomeType(incomeType);
-		customerIncome.setCustIncomeCountry(country);
-
+ 	 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID,  CustIncomeCountry, CustIncome, CustIncomeType,");
+		selectSql.append(" SELECT CustID,  CustIncome, CustIncomeType, IncomeExpense, Category, Margin, JointCust,");
 		if(type.contains("View")){
-			selectSql.append(" lovDescCustIncomeTypeName, lovDescCustIncomeCountryName," );
-			selectSql.append(" lovDescCustRecordType,lovDescCustCIF, lovDescCustShrtName,lovDescCcyEditField,");
+			selectSql.append(" lovDescCustIncomeTypeName, lovDescCategoryName, " );
+			selectSql.append(" lovDescCustRecordType, lovDescCustCIF, lovDescCustShrtName, lovDescCcyEditField,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerIncomes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :custID AND CustIncomeType = :custIncomeType ");
-		selectSql.append(" AND CustIncomeCountry = :custIncomeCountry ");
+		selectSql.append(" AND IncomeExpense = :IncomeExpense AND Category=:Category AND JointCust = :JointCust");
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
@@ -167,22 +164,30 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 *            (String) ""/_Temp/_View
 	 * @return CustomerIncome
 	 */
-	public List<CustomerIncome> getCustomerIncomeByCustomer(final long id,String type) {
+	@Override
+	public List<CustomerIncome> getCustomerIncomeByCustomer(final long id, boolean isWIF, String type) {
 		logger.debug("Entering");
-		CustomerIncome customerIncome = getCustomerIncome();
+		
+		CustomerIncome customerIncome = new CustomerIncome();
 		customerIncome.setId(id);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID, CustIncomeCountry, CustIncome, CustIncomeType,");
+		selectSql.append(" SELECT CustID,  CustIncome, CustIncomeType,IncomeExpense,Category,Margin, JointCust,");
 		if(type.contains("View")){
-			selectSql.append(" lovDescCustIncomeTypeName, lovDescCustIncomeCountryName," );
-			selectSql.append(" lovDescCustRecordType,lovDescCustCIF, lovDescCustShrtName,lovDescCcyEditField, ");
+			selectSql.append(" lovDescCustIncomeTypeName,lovDescCategoryName, " );
+			if(!isWIF){
+				selectSql.append(" lovDescCustRecordType,lovDescCustCIF, lovDescCustShrtName,lovDescCcyEditField, ");
+			}
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  CustomerIncomes");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		if(isWIF){
+			selectSql.append(" FROM  WIFCustomerIncomes");
+		}else{
+			selectSql.append(" FROM  CustomerIncomes");
+		}
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID ");
+		selectSql.append(" Where CustID =:CustID ");
 
 		logger.debug("selectSql: "+ selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
@@ -196,7 +201,7 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	public BigDecimal getTotalIncomeByCustomer(long custId) {
 		logger.debug("Entering");
 		
-		CustomerIncome customerIncome = getCustomerIncome();
+		CustomerIncome customerIncome = new CustomerIncome();
 		customerIncome.setCustID(custId);
 
 		StringBuilder selectSql = new StringBuilder();
@@ -205,11 +210,11 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 		logger.debug("selectSql: "+ selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
 		logger.debug("Leaving");
-		BigDecimal totalIncome = new BigDecimal(0);
+		BigDecimal totalIncome = BigDecimal.ZERO;
 		try {
 			totalIncome = new BigDecimal(this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),beanParameters, BigDecimal.class).toString());
 		} catch (Exception e) {
-			totalIncome = new BigDecimal(0);
+			totalIncome = BigDecimal.ZERO;
 		}
 		return totalIncome;
 	}
@@ -269,7 +274,7 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 		deleteSql.append(" Delete From CustomerIncomes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID AND CustIncomeType =:CustIncomeType " );
-		deleteSql.append(" AND CustIncomeCountry =:CustIncomeCountry ");
+		deleteSql.append(" AND IncomeExpense =:IncomeExpense  AND Category =:Category AND JointCust = :JointCust");
 		
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
@@ -279,14 +284,14 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 
 			if (recordCount <= 0) {
 				ErrorDetails errorDetails = getError("41004",customerIncome.getCustID(),
-						customerIncome.getCustIncomeType(),customerIncome.getCustIncomeCountry(), 
+						customerIncome.getCustIncomeType(),customerIncome.getCategory(), 
 						customerIncome.getUserDetails().getUsrLanguage());
 				throw new DataAccessException(errorDetails.getError()) {};
 			}
 		} catch (DataAccessException e) {
 			logger.error(e);
 			ErrorDetails errorDetails = getError("41006",customerIncome.getCustID(),
-					customerIncome.getCustIncomeType(),customerIncome.getCustIncomeCountry(),
+					customerIncome.getCustIncomeType(),customerIncome.getCategory(),
 					customerIncome.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {};
 		}
@@ -304,15 +309,19 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void deleteByCustomer(final long customerId, String type) {
+	public void deleteByCustomer(final long customerId, String type, boolean isWIF) {
 		logger.debug("Entering");
 		
-		CustomerIncome customerIncome = getCustomerIncome();
+		CustomerIncome customerIncome = new CustomerIncome();
 		customerIncome.setId(customerId);		
 		
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From CustomerIncomes");
-		deleteSql.append(StringUtils.trimToEmpty(type));
+		if(!isWIF){
+			deleteSql.append(" Delete From CustomerIncomes");
+			deleteSql.append(StringUtils.trimToEmpty(type));
+		}else{
+			deleteSql.append(" Delete From WIFCustomerIncomes");
+		}
 		deleteSql.append(" Where CustID =:CustID ");
 		
 		logger.debug("deleteSql: "+ deleteSql.toString());
@@ -344,10 +353,10 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into CustomerIncomes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustID, CustIncomeType, CustIncome, CustIncomeCountry," );
+		insertSql.append(" (CustID, CustIncomeType, CustIncome, IncomeExpense, Category,Margin, JointCust, " );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :CustIncomeType, :CustIncome, :CustIncomeCountry,");
+		insertSql.append(" Values(:CustID, :CustIncomeType, :CustIncome, :IncomeExpense,:Category,:Margin, :JointCust, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -357,6 +366,45 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 
 		logger.debug("Leaving");
 		return customerIncome.getId();
+	}
+	
+	/**
+	 * This method insert new Records into CustomerIncomes or
+	 * CustomerIncomes_Temp.
+	 * 
+	 * save Customer Incomes
+	 * 
+	 * @param Customer
+	 *            Incomes (customerIncome)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@Override
+	public void saveBatch(List<CustomerIncome> customerIncome, String type, boolean isWIF) {
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder();
+		if(!isWIF){
+			insertSql.append(" Insert Into CustomerIncomes");
+			insertSql.append(StringUtils.trimToEmpty(type));
+		}else{
+			insertSql.append(" Insert Into WIFCustomerIncomes");
+		}
+		
+		insertSql.append(" (CustID, CustIncomeType, CustIncome, IncomeExpense, Category,Margin, JointCust, " );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:CustID, :CustIncomeType, :CustIncome, :IncomeExpense,:Category,:Margin, :JointCust, ");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.debug("insertSql: "+ insertSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerIncome.toArray());
+		logger.debug("Leaving");
+		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 	}
 
 	/**
@@ -380,14 +428,13 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 
 		StringBuilder updateSql = new StringBuilder("Update CustomerIncomes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustID = :CustID, CustIncomeType = :CustIncomeType, CustIncome = :CustIncome,");
-		updateSql.append(" CustIncomeCountry = :CustIncomeCountry,");
+		updateSql.append(" Set CustID = :CustID, CustIncomeType = :CustIncomeType, CustIncome = :CustIncome, JointCust = :JointCust, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
 		updateSql.append(" WorkflowId = :WorkflowId ");
 		updateSql.append(" Where CustID =:CustID AND CustIncomeType =:CustIncomeType " );
-		updateSql.append(" AND CustIncomeCountry =:CustIncomeCountry");
+		updateSql.append(" AND IncomeExpense =:IncomeExpense AND Category =:Category AND JointCust = :JointCust");
 		if (!type.endsWith("_TEMP")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
@@ -399,7 +446,7 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :" + recordCount);
 			ErrorDetails errorDetails = getError("41003",customerIncome.getCustID(),
-					customerIncome.getCustIncomeType(),customerIncome.getCustIncomeCountry(),
+					customerIncome.getCustIncomeType(),customerIncome.getCategory(),
 					customerIncome.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {};
 		}
@@ -407,17 +454,17 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	}
 
 	private ErrorDetails  getError(String errorId, long customerID,
-			String incomeType,String incomeCountry, String userLanguage){
+			String incomeType,String incomeCategory, String userLanguage){
 		
 		String[][] parms= new String[2][3]; 
 
 		parms[1][0] = String.valueOf(customerID);
 		parms[1][1] = incomeType;
-		parms[1][2] = incomeCountry;
+		parms[1][2] = incomeCategory;
 
 		parms[0][0] = PennantJavaUtil.getLabel("label_CustID")+ ":" + parms[1][0] +
 						PennantJavaUtil.getLabel("label_CustIncomeType")+ ":" + parms[1][1];
-		parms[0][1]= PennantJavaUtil.getLabel("label_CustIncomeCountry")+ ":" + parms[1][2];
+		parms[0][1]= PennantJavaUtil.getLabel("label_CustIncomeCategory")+ ":" + parms[1][2];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 				errorId, parms[0],parms[1]), userLanguage);
 	}

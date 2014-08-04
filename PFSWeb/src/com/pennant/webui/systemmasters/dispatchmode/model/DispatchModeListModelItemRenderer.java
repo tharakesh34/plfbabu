@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.systemmasters.DispatchMode;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listItems in the listBox.
  * 
@@ -62,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class DispatchModeListModelItemRenderer implements ListitemRenderer<DispatchMode>, Serializable {
 
 	private static final long serialVersionUID = -3813890359709017692L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, DispatchMode dispatchMode, int count) throws Exception {
 
-		//final DispatchMode dispatchMode = (DispatchMode) data;
 		Listcell lc;
 		lc = new Listcell(dispatchMode.getDispatchModeCode());
 		lc.setParent(item);

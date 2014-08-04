@@ -121,7 +121,7 @@ public class CustomerAdditionalDetailDAOImpl extends
 	@Override
 	public CustomerAdditionalDetail getCustomerAdditionalDetailById(final long id, String type) {
 		logger.debug("Entering ");
-		CustomerAdditionalDetail customerAdditionalDetail = getCustomerAdditionalDetail();
+		CustomerAdditionalDetail customerAdditionalDetail = new CustomerAdditionalDetail();
 		customerAdditionalDetail.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

@@ -60,11 +60,12 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +78,12 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.IncomeTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -103,6 +109,10 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	protected Window 		window_IncomeTypeDialog;// autoWired
 
+	protected Combobox incomeExpense;
+	protected Combobox category;
+	protected Decimalbox margin;
+	
 	protected Textbox 		incomeTypeCode; 		// autoWired
 	protected Textbox 		incomeTypeDesc; 		// autoWired
 	protected Checkbox 		incomeTypeIsActive; 	// autoWired
@@ -218,7 +228,8 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// Empty sent any required attributes
 		this.incomeTypeCode.setMaxlength(8);
 		this.incomeTypeDesc.setMaxlength(50);
-
+		this.margin.setScale(2);
+		this.margin.setFormat(PennantConstants.amountFormate2);
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -408,6 +419,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -419,12 +431,15 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteBeanToComponents(IncomeType aIncomeType) {
 		logger.debug("Entering");
+		fillComboBox(incomeExpense, aIncomeType.getIncomeExpense(), PennantStaticListUtil.getIncomeExpense(), "");
+		fillComboBox(category, aIncomeType.getCategory(), PennantAppUtil.getIncomeExpenseCategory(), "");
 		this.incomeTypeCode.setValue(aIncomeType.getIncomeTypeCode());
 		this.incomeTypeDesc.setValue(aIncomeType.getIncomeTypeDesc());
+		this.margin.setValue(PennantAppUtil.formateAmount(aIncomeType.getMargin(), 2));
 		this.incomeTypeIsActive.setChecked(aIncomeType.isIncomeTypeIsActive());
 		this.recordStatus.setValue(aIncomeType.getRecordStatus());
 		
-		if(aIncomeType.isNew() || aIncomeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aIncomeType.isNew() || (aIncomeType.getRecordType() != null ? aIncomeType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.incomeTypeIsActive.setChecked(true);
 			this.incomeTypeIsActive.setDisabled(true);
 		}
@@ -443,12 +458,34 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
+			if (this.incomeExpense.getSelectedItem()==null || StringUtils.trimToEmpty(this.incomeExpense.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.incomeExpense,Labels.getLabel("STATIC_INVALID",new String[]{Labels.getLabel("label_IncomeTypeDialog_IncomeExpense.value")}));
+			}
+			
+			aIncomeType.setIncomeExpense(this.incomeExpense.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.category.getSelectedItem()==null || StringUtils.trimToEmpty(this.category.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.category,Labels.getLabel("STATIC_INVALID",new String[]{Labels.getLabel("label_IncomeTypeDialog_Category.value")}));
+			}
+			aIncomeType.setCategory(this.category.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
 			aIncomeType.setIncomeTypeCode(this.incomeTypeCode.getValue().toUpperCase());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aIncomeType.setIncomeTypeDesc(this.incomeTypeDesc.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aIncomeType.setMargin(PennantAppUtil.unFormateAmount(this.margin.getValue(), 2));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -594,18 +631,17 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.incomeTypeCode.isReadonly()){
-			this.incomeTypeCode.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-							"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-							"label_IncomeTypeDialog_IncomeTypeCode.value")})));
+			this.incomeTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_IncomeTypeDialog_IncomeTypeCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.incomeTypeDesc.isReadonly()){
-			this.incomeTypeDesc.setConstraint(new SimpleConstraint(
-					PennantConstants.DESC_REGEX, Labels.getLabel(
-							"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_IncomeTypeDialog_IncomeTypeDesc.value")})));
+			this.incomeTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_IncomeTypeDialog_IncomeTypeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
+		if (!this.margin.isReadonly()) {
+			this.margin.setConstraint(new 	PTDecimalValidator(Labels.getLabel("label_IncomeTypeDialog_Margin.value"), 2,false,false,100));
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -724,12 +760,17 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (getIncomeType().isNewRecord()) {
 			this.incomeTypeCode.setReadonly(false);
+			this.incomeExpense.setDisabled(false);
+			this.category.setDisabled(false);
 			this.btnCancel.setVisible(false);
 		} else {
 			this.incomeTypeCode.setReadonly(true);
+			this.incomeExpense.setDisabled(true);
+			this.category.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
 		this.incomeTypeDesc.setReadonly(isReadOnly("IncomeTypeDialog_incomeTypeDesc"));
+		this.margin.setReadonly(isReadOnly("IncomeTypeDialog_incomeTypeDesc"));
 		this.incomeTypeIsActive.setDisabled(isReadOnly("IncomeTypeDialog_incomeTypeIsActive"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -744,7 +785,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

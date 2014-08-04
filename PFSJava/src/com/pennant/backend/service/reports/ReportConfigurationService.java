@@ -45,6 +45,7 @@
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportSearchTemplate;
@@ -66,5 +67,9 @@ public interface ReportConfigurationService {
 	public Map<Object, List<ReportSearchTemplate>> getTemplatesByReportID(long reportId,long usrId);	
 	public int getRecordCountByTemplateName(long reportId,long usrId,String templateName);
 	public void deleteSearchTemplate(long reportId, long usrId, String templateName);
+	
+	//Month End Report Queries
+	public List<ValueLabel> getMonthEndReportGrpCodes();
+	public List<ValueLabel> getReportListByGrpCode(String grpCode);
 
 }

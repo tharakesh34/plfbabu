@@ -44,13 +44,17 @@
 package com.pennant.webui.finance.financemain.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -59,28 +63,50 @@ import com.pennant.backend.model.finance.FinanceMain;
 public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMain>, Serializable {
 
 	private static final long serialVersionUID = 1552059797117039294L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, FinanceMain financeMain, int count) throws Exception {
 
-		//final FinanceMain financeMain = (FinanceMain) data;
 		Listcell lc;
-		lc = new Listcell(financeMain.getFinReference());
+		lc = new Listcell(financeMain.getFinType());
 		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getFinType());
-		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getFinCcy());
-		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getScheduleMethod()==null?"":financeMain.getScheduleMethod() );
-		lc.setParent(item);
-		lc = new Listcell(financeMain.getProfitDaysBasis());
+		lc = new Listcell(financeMain.getLovDescProductCodeName());
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getLovDescCustCIF());
 		lc.setParent(item);
+		lc = new Listcell(financeMain.getFinReference());
+		lc.setParent(item);
 		lc = new Listcell(financeMain.getFinBranch());
 		lc.setParent(item);
+		lc = new Listcell(DateUtility.formatUtilDate(financeMain.getFinStartDate(),
+				PennantConstants.dateFormate));
+		lc.setParent(item);
+		lc = new Listcell(String.valueOf(financeMain.getGraceTerms()+financeMain.getNumberOfTerms()));
+		lc.setParent(item);
+		lc = new Listcell(DateUtility.formatUtilDate(financeMain.getMaturityDate(),
+				PennantConstants.dateFormate));
+		lc.setParent(item);
+		lc = new Listcell(financeMain.getFinCcy());
+		lc.setParent(item);
+		BigDecimal finAmount = financeMain.getFinAmount();
+		if(financeMain.getFeeChargeAmt() != null && financeMain.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0){
+			finAmount = finAmount.add(financeMain.getFeeChargeAmt());
+		}
+		lc = new Listcell(PennantAppUtil.amountFormate(finAmount,financeMain.getLovDescFinFormatter()));
+		lc.setStyle("text-align:right");
+		lc.setParent(item);
+		if(financeMain.getFinRepaymentAmount()!=null){
+			lc = new Listcell(PennantAppUtil.amountFormate(finAmount
+					.subtract(financeMain.getFinRepaymentAmount()),financeMain.getLovDescFinFormatter()));
+			lc.setStyle("text-align:right");
+		}else{
+			lc = new Listcell("");
+			
+		}
+		lc.setParent(item);
+		lc = new Listcell(financeMain.getRecordStatus());
+		lc.setParent(item);
 		item.setAttribute("data", financeMain);
-		ComponentsCtrl.applyForward(item,
-		"onDoubleClick=onFinanceItemDoubleClicked");
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onFinanceItemDoubleClicked");
 	}
 }

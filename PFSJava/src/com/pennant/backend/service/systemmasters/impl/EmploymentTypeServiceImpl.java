@@ -65,8 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> implements EmploymentTypeService {
 
-	private static Logger logger = Logger
-			.getLogger(EmploymentTypeServiceImpl.class);
+	private static Logger logger = Logger.getLogger(EmploymentTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private EmploymentTypeDAO employmentTypeDAO;

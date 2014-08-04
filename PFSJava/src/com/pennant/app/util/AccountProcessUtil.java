@@ -44,6 +44,7 @@ package com.pennant.app.util;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,12 @@ public class AccountProcessUtil implements Serializable {
 	private Accounts account;
 	private Map<String, SystemInternalAccountDefinition> intAcMap ;
 	private Map<String, AccountType> accountTypesMap ;
+	private Map<String, Accounts> saveAccMap ;
+	private Map<String, Accounts> updateAccMap ;
+	
+	public AccountProcessUtil() {
+	    super();
+    }
 
 	/**
 	 * Method for Account Details Updation after Postings
@@ -77,27 +84,54 @@ public class AccountProcessUtil implements Serializable {
 	 * @param accrualBal(Profit Details)
 	 * @param dataSets
 	 */
-	public void procAccountUpdate(List<ReturnDataSet> dataSets , BigDecimal accrualBal, long custId){
+	public void procAccountUpdate(List<ReturnDataSet> dataSets , BigDecimal accrualBal){
 		logger.debug("Entering");
 
-		intAcMap = new HashMap<String, SystemInternalAccountDefinition>(dataSets.size());
-		accountTypesMap = new HashMap<String, AccountType>(dataSets.size());
+		intAcMap = new HashMap<String, SystemInternalAccountDefinition>(1);
+		accountTypesMap = new HashMap<String, AccountType>(1);
+		saveAccMap = new HashMap<String, Accounts>(1);
+		updateAccMap = new HashMap<String, Accounts>(1);
 
 		for (int i = 0; i < dataSets.size(); i++) {
 
 			ReturnDataSet set = dataSets.get(i);
+			boolean isRcdSave = false;
 
 			if(!(set.getAccountType().equals("DISB") 
 					|| set.getAccountType().equals("REPAY")
-					|| set.getAccountType().equals("INVSTR"))){//TODO-- Check later
+					|| set.getAccountType().equals("INVSTR"))){
 
 				//Check Account Details Already exist or not
-				account = getAccountsDAO().getAccountsById(set.getAccount(), "");
-
+				if(saveAccMap.containsKey(set.getAccount())){
+					account = saveAccMap.get(set.getAccount());
+					isRcdSave = true;
+				}else if(updateAccMap.containsKey(set.getAccount())){
+					account = updateAccMap.get(set.getAccount());
+				}else{
+					account = getAccountsDAO().getAccountsById(set.getAccount(), "");
+					if(account == null){
+						isRcdSave = true;
+					}
+				}
+				
 				//if Non of the Account is found create new A/c else update
-				updateAccountDetails(account, set, accrualBal, custId);	
+				updateAccountDetails(account, set, accrualBal, isRcdSave);	
 			}
 		}
+		
+		//DB Insertion or updation of Account details
+		if(saveAccMap.size() > 0){
+			getAccountsDAO().saveList(new ArrayList<Accounts>(saveAccMap.values()),"");
+		}
+		if(updateAccMap.size() > 0){
+			getAccountsDAO().updateList(new ArrayList<Accounts>(updateAccMap.values()),"");
+		}
+		
+		intAcMap = null;
+		accountTypesMap = null;
+		saveAccMap = null;
+		updateAccMap = null;
+		
 		logger.debug("Leaving");
 	}
 
@@ -106,28 +140,55 @@ public class AccountProcessUtil implements Serializable {
 	 * @param list
 	 * @param isPostingsSucces
 	 */
-	public void updateAccountDetails(List<ReturnDataSet> list, long custId){
+	public void updateAccountInfo(List<ReturnDataSet> list){
 		logger.debug("Entering");
 		
-		intAcMap = new HashMap<String, SystemInternalAccountDefinition>(list.size());
-		accountTypesMap = new HashMap<String, AccountType>(list.size());
+		intAcMap = new HashMap<String, SystemInternalAccountDefinition>(1);
+		accountTypesMap = new HashMap<String, AccountType>(1);
+		saveAccMap = new HashMap<String, Accounts>(1);
+		updateAccMap = new HashMap<String, Accounts>(1);
 
 		//Prepare Accounts Accrual Balance if Shadow Postings
 		for (int i = 0; i < list.size(); i++) {
 			ReturnDataSet set = list.get(i);
+			boolean isRcdSave = false;
 			
 			if(!(set.getAccountType().equals("DISB") 
 					|| set.getAccountType().equals("REPAY")
-					|| set.getAccountType().equals("INVSTR"))){//TODO-- Check later
-			
-			//Check Account Details Already exist or not
-			account = getAccountsDAO().getAccountsById(set.getAccount(), "");
+					|| set.getAccountType().equals("INVSTR"))){
 
-			//if Non of the Account is found create new A/c else update
-			updateAccountDetails(account, set, set.getPostAmount(), custId);	
-			
+				//Check Account Details Already exist or not
+				if(saveAccMap.containsKey(set.getAccount())){
+					account = saveAccMap.get(set.getAccount());
+					isRcdSave = true;
+				}else if(updateAccMap.containsKey(set.getAccount())){
+					account = updateAccMap.get(set.getAccount());
+				}else{
+					account = getAccountsDAO().getAccountsById(set.getAccount(), "");
+					if(account == null){
+						isRcdSave = true;
+					}
+				}
+				
+				//if Non of the Account is found create new A/c else update
+				updateAccountDetails(account, set, set.getPostAmount(), isRcdSave);	
+
 			}
 		}
+		
+		//DB Insertion or updation of Account details
+		if(saveAccMap.size() > 0){
+			getAccountsDAO().saveList(new ArrayList<Accounts>(saveAccMap.values()),"");
+		}
+		if(updateAccMap.size() > 0){
+			getAccountsDAO().updateList(new ArrayList<Accounts>(updateAccMap.values()),"");
+		}
+		
+		intAcMap = null;
+		accountTypesMap = null;
+		saveAccMap = null;
+		updateAccMap = null;
+		
 		logger.debug("Leaving");
 	}
 	
@@ -135,16 +196,14 @@ public class AccountProcessUtil implements Serializable {
 	 * Method for Account Details updation
 	 * @param account
 	 */
-	private void updateAccountDetails(Accounts acc, ReturnDataSet set, BigDecimal accrualBal, long custId){
+	private void updateAccountDetails(Accounts acc, ReturnDataSet set, BigDecimal accrualBal, boolean isRcdSave){
 		logger.debug("Entering");
 		
-		boolean isAccExist = true;
 		if(acc == null){
-			isAccExist = false;
 			acc =  new Accounts();
 
 			acc.setAccountId(set.getAccount());
-			acc.setAcCcy(set.getFinCcy());
+			acc.setAcCcy(set.getAcCcy());
 			acc.setAcBranch(set.getFinBranch());
 
 			String accType = set.getAccountType();
@@ -161,7 +220,7 @@ public class AccountProcessUtil implements Serializable {
 				}
 				acc.setAcCustId(0);
 			}else{
-				acc.setAcCustId(custId);
+				acc.setAcCustId(set.getCustId());
 			}
 
 			acc.setAcType(accType);
@@ -215,7 +274,8 @@ public class AccountProcessUtil implements Serializable {
 			}
 			acc.setAcAccrualBal(acc.getAcAccrualBal().add(accrualBal));
 		}else {
-			// Debit/Credit Balances
+			
+			// Debit or Credit Balances
 			if(set.getDrOrCr().equals("C")){
 				acc.setAcTodayCr(acc.getAcTodayCr().add(set.getPostAmount()));
 				acc.setAcTodayBal(acc.getAcTodayBal().add(set.getPostAmount()));
@@ -228,11 +288,11 @@ public class AccountProcessUtil implements Serializable {
 			acc.setAcTodayNet(acc.getAcTodayCr().subtract(acc.getAcTodayDr()));
 		}
 
-		// Account Details Updation
-		if(isAccExist){
-			getAccountsDAO().update(acc, "");
+		// Account Details Updation/ Save
+		if(isRcdSave){
+			saveAccMap.put(set.getAccount(), acc);
 		}else{
-			getAccountsDAO().save(acc, "");
+			updateAccMap.put(set.getAccount(), acc);
 		}
 		logger.debug("Leaving");
 	}

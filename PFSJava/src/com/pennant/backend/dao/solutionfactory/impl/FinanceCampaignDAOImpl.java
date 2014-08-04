@@ -122,7 +122,7 @@ public class FinanceCampaignDAOImpl extends BasisCodeDAO<FinanceCampaign> implem
 	@Override
 	public FinanceCampaign getFinanceCampaignById(final String id, String type) {
 		logger.debug("Entering");
-		FinanceCampaign financeCampaign = getFinanceCampaign();
+		FinanceCampaign financeCampaign = new FinanceCampaign();
 		
 		financeCampaign.setId(id);
 		

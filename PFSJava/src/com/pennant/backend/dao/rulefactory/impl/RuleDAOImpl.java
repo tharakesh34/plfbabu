@@ -64,6 +64,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
@@ -131,7 +132,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 	public Rule getRuleByID(final String id,final String module,final String event, String type) {
 		logger.debug("Entering");
 		
-		Rule rule = getRule();
+		Rule rule = new Rule();
 		rule.setRuleCode(id);
 		rule.setRuleModule(module);
 		rule.setRuleEvent(event);
@@ -162,6 +163,64 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("Leaving");
 		return rule;
 	}
+	
+	/**
+	 * Get Rule by key field
+	 * 
+	 * @param id (String)
+	 * @param type (String) ""/_Temp/_View
+	 * @return Rule
+	 */
+	@Override
+	public String getAmountRule(final String id,final String module,final String event) {
+		logger.debug("Entering");
+		
+		String sqlRule = "";
+		Rule rule = new Rule();
+		rule.setRuleCode(id);
+		rule.setRuleModule(module);
+		rule.setRuleEvent(event);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT SQLRule From Rules ");
+		selectSql.append(" Where RuleCode =:RuleCode AND RuleModule =:RuleModule AND RuleEvent =:RuleEvent");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
+
+		try {
+			sqlRule = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(e);
+			sqlRule = "";
+		}finally{
+			rule = null;
+			beanParameters = null;
+		}
+		logger.debug("Leaving");
+		return sqlRule;
+	}
+	
+	/**
+	 * Method for Fetching SubHead Rule Queries
+	 */
+	@Override
+    public List<ValueLabel> getSubHeadAmountRule() {
+		logger.debug("Entering");
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT RuleCode AS Label, SQLRule AS Value From Rules ");
+		/*selectSql.append(" WHERE RuleCode IN(SELECT Distinct AccountSubHeadRule from RMTTransactionEntry where Account = '" );
+		selectSql.append(PennantConstants.GLNPL);
+		selectSql.append("')");*/
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
+		
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+    }
+	
 	/**
 	 * Get Rule by key field
 	 * 
@@ -173,7 +232,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 	public List<Rule> getRuleByModuleAndEvent(final String module,final String event, String type) {
 		logger.debug("Entering");
 		
-		Rule rule = getRule();
+		Rule rule = new Rule();
 		rule.setRuleModule(module);
 		rule.setRuleEvent(event);
 		
@@ -455,7 +514,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
     public List<Rule> getRulesByGroupId(long groupId, String ruleModule, String ruleEvent,String type) {
 		logger.debug("Entering");
 		
-		Rule rule = getRule();
+		Rule rule = new Rule();
 		rule.setGroupId(groupId);
 		rule.setRuleModule(ruleModule);
 		rule.setRuleEvent(ruleEvent);
@@ -526,7 +585,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 	 * Method for Retriving List Of Non-Financial Rule Details 
 	 */
 	@Override
-    public List<NFScoreRuleDetail> getNFRulesByNFScoreGroup(List<Long> groupIds, String categoryType, String type) {
+    public List<NFScoreRuleDetail> getNFRulesByNFScoreGroup(List<Long> groupIds, String type) {
 		logger.debug("Entering");
 		
 		StringBuilder selectSql = new StringBuilder();

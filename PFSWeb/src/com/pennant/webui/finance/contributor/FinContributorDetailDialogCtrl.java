@@ -75,7 +75,9 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.model.IAccounts;
+import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.accounts.Accounts;
@@ -83,7 +85,10 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinContributorDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
@@ -91,7 +96,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PercentageValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
+import com.pennant.webui.finance.financemain.ContributorDetailsDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -121,8 +126,9 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 
 	protected Longbox 		custID; 					// autowired
 	protected Textbox 		contributorCIF; 			// autowired
-	protected Textbox 		contributorName; 			// autowired
+	protected Label 		contributorName; 			// autowired
 	protected Decimalbox	contributorInvestment; 		// autowired
+	protected Label 		investmentAcctBal;
 	protected Textbox 		investmentAcc; 				// autowired
 	protected Datebox 		investmentDate; 			// autowired
 	protected Datebox 		recordDate; 				// autowired
@@ -133,6 +139,16 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 	protected Radiogroup 	userAction;
 	protected Groupbox 		groupboxWf;
 	protected Row 			statusRow;
+	protected Row 			row_mudaribPerc;
+	
+	
+	protected Label 		label_FinContributorDetailDialog_CustID;
+	protected Label 		label_FinContributorDetailDialog_ContributorInvestment;
+	protected Label 		label_FinContributorDetailDialog_InvestmentAcc;
+	protected Label 		label_FinContributorDetailDialog_InvestmentDate;
+	protected Label 		label_FinContributorDetailDialog_RecordDate;
+	protected Label 		label_FinContributorDetailDialog_MudaribPerc;
+	protected Label 		label_FinContributorDetailDialog_RecordStatus;
 
 	// not auto wired vars
 	private FinContributorDetail finContributorDetail; 	// overhanded per param
@@ -141,7 +157,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 	// on the values are edited since the last init.
 	private transient long   		oldVar_custID;
 	private transient String 		oldVar_contributorCIF;
-	private transient String 		oldVar_contributorName;
 	private transient BigDecimal 	oldVar_contributorInvestment;
 	private transient String 		oldVar_investmentAcc;
 	private transient Date 			oldVar_investmentDate;
@@ -173,13 +188,18 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 	private boolean newRecord=false;
 	private boolean newContributor=false;
 	private List<FinContributorDetail> contributorDetails;
-	private FinanceMainDialogCtrl  financeMainDialogCtrl;
+	private ContributorDetailsDialogCtrl  contributorDetailsDialogCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private String moduleType="";
 	private String finCcy="";
 	private BigDecimal balInvestAmount= BigDecimal.ZERO;
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private  int formatter = 0;
+	
+	private FinanceDetail financeDetail;
+	
+	private AccountInterfaceService accountInterfaceService;
+	private AccountsService accountsService;
 
 	/**
 	 * default constructor.<br>
@@ -244,14 +264,17 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 			this.formatter = (Integer) args.get("formatter");
 			newContributor=true;
 		}
+		if (args.containsKey("financeDetail")) {
+			this.financeDetail = (FinanceDetail) args.get("financeDetail");
+ 		}
 
 		if(getFinContributorDetail().isNewRecord()){
 			setNewRecord(true);
 		}
 
-		if(args.containsKey("financeMainDialogCtrl")){
+		if(args.containsKey("contributorDetailsDialogCtrl")){
 
-			setFinanceMainDialogCtrl((FinanceMainDialogCtrl) args.get("financeMainDialogCtrl"));
+			setContributorDetailsDialogCtrl((ContributorDetailsDialogCtrl) args.get("contributorDetailsDialogCtrl"));
 			setNewContributor(true);
 
 			if(args.containsKey("newRecord")){
@@ -263,8 +286,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 			if(args.containsKey("roleCode")){
 				getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "FinContributorDetailDialog");
 			}
-			formatter = this.financeMainDialogCtrl.getFinanceDetail().getFinScheduleData()
-			.getFinanceMain().getLovDescFinFormatter();
+			formatter = this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter();
 		}
 
 		doLoadWorkFlow(this.finContributorDetail.isWorkflow(),this.finContributorDetail.getWorkflowId(),
@@ -277,6 +299,9 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 
 		// set Field Properties
 		doSetFieldProperties();
+		if(this.contributorDetailsDialogCtrl!=null && this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName().equals(PennantConstants.FINANCE_PRODUCT_MUSHARAKA)){
+			dosetLabels();
+		}
 		doShowDialog(getFinContributorDetail());
 
 		//Calling SelectCtrl For proper selection of Customer
@@ -296,7 +321,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		//Empty sent any required attributes
 		
 		this.contributorCIF.setMaxlength(6);
-		this.contributorName.setMaxlength(50);
 		this.contributorInvestment.setMaxlength(18);
 		this.mudaribPerc.setScale(formatter);
 		this.contributorInvestment.setFormat(PennantAppUtil
@@ -309,6 +333,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		this.mudaribPerc.setFormat(PennantAppUtil.getAmountFormate(2));
 		this.investmentDate.setFormat(PennantConstants.dateFormat);
 		this.recordDate.setFormat(PennantConstants.dateFormat);
+		readOnlyComponent(true,this.recordDate);
 		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
@@ -317,6 +342,26 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 			this.groupboxWf.setVisible(false);
 			this.statusRow.setVisible(false);
 		}
+		
+		if(this.contributorDetailsDialogCtrl!=null && this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName().equals(PennantConstants.FINANCE_PRODUCT_MUSHARAKA)){
+			this.row_mudaribPerc.setVisible(false);
+		}
+		
+		logger.debug("Leaving");
+	}
+	
+	
+	public void dosetLabels(){
+		logger.debug("Entering");
+		label_FinContributorDetailDialog_CustID.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_CustID.value"));
+		label_FinContributorDetailDialog_ContributorInvestment.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_ContributorInvestment.value"));
+	    label_FinContributorDetailDialog_InvestmentAcc.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_InvestmentAcc.value"));
+		label_FinContributorDetailDialog_InvestmentDate.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_InvestmentDate.value"));
+		label_FinContributorDetailDialog_RecordDate.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_RecordDate.value"));
+		label_FinContributorDetailDialog_MudaribPerc.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_MudaribPerc.value"));
+		label_FinContributorDetailDialog_RecordStatus.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_CustID.value"));
+		
+		
 		logger.debug("Leaving");
 	}
 
@@ -337,6 +382,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinContributorDetailDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinContributorDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
+		
 		logger.debug("Leaving");
 	}
 
@@ -534,10 +580,16 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		this.contributorName.setValue(aFinContributorDetail.getContributorName());
 		this.contributorInvestment.setValue(PennantAppUtil.formateAmount(
 				aFinContributorDetail.getContributorInvest(),formatter));
-		this.investmentAcc.setValue(aFinContributorDetail.getInvestAccount());
+		
+		this.investmentAcc.setValue(PennantApplicationUtil.formatAccountNumber(aFinContributorDetail.getInvestAccount()));
+		this.investmentAcctBal.setValue(getAcBalance(aFinContributorDetail.getInvestAccount()));
 		this.investmentDate.setValue(aFinContributorDetail.getInvestDate());
+		if(isNewRecord()){
+			this.recordDate.setValue((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
+
+		}else{
 		this.recordDate.setValue(aFinContributorDetail.getRecordDate());
-		//this.totalInvestmentPerc.setValue(aFinContributorDetail.getTotalInvestPerc());
+		}//this.totalInvestmentPerc.setValue(aFinContributorDetail.getTotalInvestPerc());
 		this.mudaribPerc.setValue(aFinContributorDetail.getMudaribPerc());
 
 		this.recordStatus.setValue(aFinContributorDetail.getRecordStatus());
@@ -553,14 +605,14 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		logger.debug("Entering");
 		doSetLOVValidation();
 		
-		int formatter = this.financeMainDialogCtrl.getFinanceDetail().getFinScheduleData()
+		int formatter = this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData()
 								.getFinanceMain().getLovDescFinFormatter();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aFinContributorDetail.setCustID(this.custID.getValue());
 			aFinContributorDetail.setLovDescContributorCIF(this.contributorCIF.getValue());
+			aFinContributorDetail.setCustID(this.custID.getValue());
 			aFinContributorDetail.setLovDescFinFormatter(formatter);
 		}catch (WrongValueException we ) {
 			wve.add(we);
@@ -573,7 +625,11 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		try {
 			BigDecimal investAmt = PennantAppUtil.unFormateAmount(
 					this.contributorInvestment.getValue(), formatter);
-			if(investAmt.compareTo(balInvestAmount) > 0){
+			if(investAmt.compareTo(BigDecimal.ZERO) != 1){
+				throw new WrongValueException(this.contributorInvestment, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO",
+						new String[] { Labels.getLabel("label_FinContributorDetailDialog_ContributorInvestment.value")}));
+			}
+			else if(investAmt.compareTo(balInvestAmount) > 0){
 				throw new WrongValueException(this.contributorInvestment, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
 						new String[] { Labels.getLabel("label_FinContributorDetailDialog_ContributorInvestment.value"),
 						PennantAppUtil.amountFormate(balInvestAmount, formatter)}));
@@ -584,7 +640,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 			wve.add(we);
 		}
 		try {
-			aFinContributorDetail.setInvestAccount(this.investmentAcc.getValue());
+			aFinContributorDetail.setInvestAccount(PennantApplicationUtil.unFormatAccountNumber(this.investmentAcc.getValue()));
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -608,7 +664,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 			wve.add(we);
 		}
 		try {
-			aFinContributorDetail.setMudaribPerc(this.mudaribPerc.getValue());
+			aFinContributorDetail.setMudaribPerc(this.mudaribPerc.getValue() == null? BigDecimal.ZERO :this.mudaribPerc.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -699,7 +755,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		logger.debug("Entering");
 		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_contributorCIF = this.contributorCIF.getValue();
-		this.oldVar_contributorName = this.contributorName.getValue();
 		this.oldVar_contributorInvestment = this.contributorInvestment.getValue();
 		this.oldVar_investmentAcc = this.investmentAcc.getValue();
 		this.oldVar_investmentDate = this.investmentDate.getValue();
@@ -717,7 +772,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		logger.debug("Entering");
 		this.custID.setValue(this.oldVar_custID);
 		this.contributorCIF.setValue(this.oldVar_contributorCIF);
-		this.contributorName.setValue(this.oldVar_contributorName);
 		this.contributorInvestment.setValue(this.oldVar_contributorInvestment);
 		this.investmentAcc.setValue(this.oldVar_investmentAcc);
 		this.investmentDate.setValue(this.oldVar_investmentDate);
@@ -744,9 +798,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		doClearMessage();
 
 		if (this.oldVar_custID != this.custID.longValue()) {
-			return true;
-		}
-		if (this.oldVar_contributorName != this.contributorName.getValue()) {
 			return true;
 		}
 		if (this.oldVar_contributorInvestment != this.contributorInvestment.getValue()) {
@@ -783,12 +834,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 					new String[]{Labels.getLabel("label_FinContributorDetailDialog_CustID.value")}));
 		}
 		
-		if (!this.contributorName.isReadonly()){
-			this.contributorName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_FinContributorDetailDialog_ContributorName.value")}));
-		}
-		
-		if (!this.investmentAcc.isReadonly()){
+		if (!this.btnSearchInvestmentAcc.isDisabled()){
 			this.investmentAcc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[]{Labels.getLabel("label_FinContributorDetailDialog_InvestmentAcc.value")}));
 		}
@@ -798,12 +844,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 					"DATE_EMPTY_FUTURE_TODAY",new String[] { Labels.getLabel(
 							"label_FinContributorDetailDialog_InvestmentDate.value") }));
 		}
-		
-		/*if (!this.recordDate.isReadonly()){
-			this.recordDate.setConstraint("NO EMPTY,NO TODAY,NO PAST:"+ Labels.getLabel(
-					"DATE_EMPTY_PAST_TODAY",new String[] { Labels.getLabel(
-					"label_FinContributorDetailDialog_RecordDate.value") }));
-		}*/
 		
 		if (!this.mudaribPerc.isDisabled()){
 			this.mudaribPerc.setConstraint(new PercentageValidator(5,2,Labels
@@ -819,7 +859,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.contributorCIF.setConstraint("");
-		this.contributorName.setConstraint("");
+		this.contributorInvestment.setConstraint("");
 		this.investmentAcc.setConstraint("");
 		this.investmentDate.setConstraint("");
 		this.recordDate.setConstraint("");
@@ -845,7 +885,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 	private void doClearMessage() {
 		logger.debug("Entering");
 		this.contributorCIF.setErrorMessage("");
-		this.contributorName.setErrorMessage("");
 		this.investmentAcc.setErrorMessage("");
 		this.investmentDate.setErrorMessage("");
 		this.recordDate.setErrorMessage("");
@@ -869,8 +908,9 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		String tranType=PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") 
-		+ "\n\n --> " + aFinContributorDetail.getCustID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_value",
+				new String[] {Labels.getLabel("Contributor")})
+		+ "\n\n --> " + this.contributorCIF.getText();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 
@@ -899,7 +939,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 					auditHeader = ErrorControl.showErrorDetails(this.window_FinContributorDetailDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-						getFinanceMainDialogCtrl().doFillFinContributorDetails(this.contributorDetails,true);
+						getContributorDetailsDialogCtrl().doFillFinContributorDetails(this.contributorDetails,true);
 						// send the data back to customer
 						closeWindow();
 					}	
@@ -953,7 +993,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		
 		this.contributorCIF.setReadonly(true);
 		this.custID.setReadonly(isReadOnly("FinContributorDetailDialog_custID"));
-		this.contributorName.setReadonly(isReadOnly("FinContributorDetailDialog_contributorName"));
+		this.btnSearchCustId.setDisabled(isReadOnly("FinContributorDetailDialog_custID"));
 		this.contributorInvestment.setDisabled(isReadOnly("FinContributorDetailDialog_contributorInvestment"));
 		this.investmentAcc.setReadonly(true);
 		this.btnSearchInvestmentAcc.setDisabled(isReadOnly("FinContributorDetailDialog_investmentAcc"));
@@ -1008,7 +1048,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		logger.debug("Entering");
 		this.custID.setReadonly(true);
 		this.contributorCIF.setReadonly(true);
-		this.contributorName.setReadonly(true);
 		this.contributorInvestment.setDisabled(true);
 		this.investmentAcc.setReadonly(true);
 		this.investmentDate.setDisabled(true);
@@ -1122,7 +1161,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 				auditHeader = ErrorControl.showErrorDetails(this.window_FinContributorDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-					getFinanceMainDialogCtrl().doFillFinContributorDetails(this.contributorDetails,true);
+					getContributorDetailsDialogCtrl().doFillFinContributorDetails(this.contributorDetails,true);
 					//true;
 					// send the data back to customer
 					closeWindow();
@@ -1151,9 +1190,9 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		errParm[0] = PennantJavaUtil.getLabel("label_ContributorCIF") + ":"+ valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_ContributorName") + ":"+valueParm[1];
 
-		if(getFinanceMainDialogCtrl().getContributorsList()!=null && getFinanceMainDialogCtrl().getContributorsList().size()>0){
-			for (int i = 0; i < getFinanceMainDialogCtrl().getContributorsList().size(); i++) {
-				FinContributorDetail finContributorDetail = getFinanceMainDialogCtrl().getContributorsList().get(i);
+		if(getContributorDetailsDialogCtrl().getContributorsList()!=null && getContributorDetailsDialogCtrl().getContributorsList().size()>0){
+			for (int i = 0; i < getContributorDetailsDialogCtrl().getContributorsList().size(); i++) {
+				FinContributorDetail finContributorDetail = getContributorDetailsDialogCtrl().getContributorsList().get(i);
 
 				if(finContributorDetail.getCustID() == aFinContributorDetail.getCustID()){ // Both Current and Existing list rating same
 
@@ -1177,8 +1216,8 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 							contributorDetails.add(aFinContributorDetail);
 						}else if(aFinContributorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
 							recordAdded=true;
-							for (int j = 0; j < getFinanceMainDialogCtrl().getFinanceDetail().getFinContributorHeader().getContributorDetailList().size(); j++) {
-								FinContributorDetail detail =  getFinanceMainDialogCtrl().getFinanceDetail().getFinContributorHeader().getContributorDetailList().get(j);
+							for (int j = 0; j < getContributorDetailsDialogCtrl().getFinanceDetail().getFinContributorHeader().getContributorDetailList().size(); j++) {
+								FinContributorDetail detail =  getContributorDetailsDialogCtrl().getFinanceDetail().getFinContributorHeader().getContributorDetailList().get(j);
 								if(detail.getCustID() == aFinContributorDetail.getCustID()){
 									contributorDetails.add(detail);
 								}
@@ -1258,30 +1297,25 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		if(!StringUtils.trimToEmpty(this.contributorCIF.getValue()).equals("")) {
 			Object dataObject;
 
-			List<Accounts> accountList = new ArrayList<Accounts>();
-			accountList = this.financeMainDialogCtrl.getAccountsService().getAccountsByAcPurpose("M");
-			String acType = "";
-			for (int i = 0; i < accountList.size(); i++) {
-				acType = acType + accountList.get(i).getAcType();
-			}
-
 			List<IAccounts> iAccountList = new ArrayList<IAccounts>();
 			IAccounts iAccount = new IAccounts();
 			iAccount.setAcCcy(finCcy);
-			iAccount.setAcType(acType);
+			iAccount.setAcType("");
 			iAccount.setAcCustCIF(this.contributorCIF.getValue());
-
+			iAccount.setDivision(getFinanceDetail().getFinScheduleData().getFinanceType().getFinDivision());
+			
 			try {
-				iAccountList = this.financeMainDialogCtrl.getAccountInterfaceService().fetchExistAccountList(iAccount);
+				iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
 				dataObject = ExtendedSearchListBox.show(this.window_FinContributorDetailDialog,
 						"Accounts", iAccountList);
 				if (dataObject instanceof String) {
 					this.investmentAcc.setValue(dataObject.toString());
+					this.investmentAcctBal.setValue("");
 				} else {
 					IAccounts details = (IAccounts) dataObject;
 					if (details != null) {
-						
 						this.investmentAcc.setValue(details.getAccountId());
+						this.investmentAcctBal.setValue(getAcBalance(details.getAccountId()));
 					}
 				}
 			} catch (Exception e) {
@@ -1296,7 +1330,19 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 
 		logger.debug("Leaving " + event.toString());
 	}
-
+	
+	/**
+	 * Method for Fetching Account Balance
+	 * @param acId
+	 * @return
+	 */
+	private String getAcBalance(String acId){
+		if (!StringUtils.trimToEmpty(acId).equals("")) {
+			return PennantAppUtil.amountFormate(getAccountInterfaceService().getAccountAvailableBal(acId), formatter);
+		}else{
+			return "";
+		}
+	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//
@@ -1438,11 +1484,35 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		this.newContributor = newContributor;
 	}
 
-	public FinanceMainDialogCtrl getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
+	public ContributorDetailsDialogCtrl getContributorDetailsDialogCtrl() {
+		return contributorDetailsDialogCtrl;
 	}
-	public void setFinanceMainDialogCtrl(FinanceMainDialogCtrl financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
+	public void setContributorDetailsDialogCtrl(
+			ContributorDetailsDialogCtrl contributorDetailsDialogCtrl) {
+		this.contributorDetailsDialogCtrl = contributorDetailsDialogCtrl;
 	}
+
+	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
+		this.accountInterfaceService = accountInterfaceService;
+	}
+	public AccountInterfaceService getAccountInterfaceService() {
+		return accountInterfaceService;
+	}
+
+	public void setAccountsService(AccountsService accountsService) {
+		this.accountsService = accountsService;
+	}
+	public AccountsService getAccountsService() {
+		return accountsService;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+ 
 
 }

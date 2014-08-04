@@ -45,6 +45,7 @@ package com.pennant.backend.dao.rulefactory;
 
 import java.util.List;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.NFScoreRuleDetail;
@@ -75,8 +76,9 @@ public interface RuleDAO {
 	
 	public List<NFScoreRuleDetail> getNFRulesByGroupId(long id, String categoryType, String type);
 	public List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId, String type);
-	List<Rule> getRulesByFinScoreGroup(List<Long> groupIds, String categoryType, String type);
-	List<NFScoreRuleDetail> getNFRulesByNFScoreGroup(List<Long> groupIds, String categoryType,
-            String type);
+	public List<Rule> getRulesByFinScoreGroup(List<Long> groupIds, String categoryType, String type);
+	public List<NFScoreRuleDetail> getNFRulesByNFScoreGroup(List<Long> groupIds, String type);
+	public String getAmountRule(String id, String module, String event);
+	public List<ValueLabel> getSubHeadAmountRule();
 	
   }

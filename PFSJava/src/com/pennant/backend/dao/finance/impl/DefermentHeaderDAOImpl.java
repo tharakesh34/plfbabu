@@ -133,8 +133,8 @@ public class DefermentHeaderDAOImpl extends BasisCodeDAO<DefermentHeader> implem
 	@Override
 	public DefermentHeader getDefermentHeaderById(final String id, String type,boolean isWIF) {
 		logger.debug("Entering");
-		DefermentHeader defermentHeader = getDefermentHeader(isWIF);
 		
+		DefermentHeader defermentHeader = new DefermentHeader();
 		defermentHeader.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, DeferedSchdDate, DefSchdProfit, DefSchdPrincipal, DefRecalType, DefTillDate");
@@ -201,7 +201,7 @@ public class DefermentHeaderDAOImpl extends BasisCodeDAO<DefermentHeader> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void deleteByFinReference(String id,String type,boolean isWIF) {
+	public void deleteByFinReference(String id,String type,boolean isWIF, long logKey) {
 		logger.debug("Entering");
 		DefermentHeader defermentHeader = new DefermentHeader();
 		defermentHeader.setId(id);
@@ -214,6 +214,10 @@ public class DefermentHeaderDAOImpl extends BasisCodeDAO<DefermentHeader> implem
 		}
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference");
+		if(logKey != 0){
+			deleteSql.append(" AND LogKey =:LogKey");
+		}
+		
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentHeader);
@@ -324,10 +328,16 @@ public class DefermentHeaderDAOImpl extends BasisCodeDAO<DefermentHeader> implem
 			insertSql.append(" FinDefermentHeader");	
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, DeferedSchdDate, DefSchdProfit, DefSchdPrincipal, DefRecalType, DefTillDate");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference, :DeferedSchdDate, :DefSchdProfit, :DefSchdPrincipal, :DefRecalType, :DefTillDate");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" (FinReference, DeferedSchdDate, DefSchdProfit, DefSchdPrincipal, DefRecalType, DefTillDate, ");
+		if(type.contains("Log")){
+			insertSql.append(" LogKey , ");
+		}
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:FinReference, :DeferedSchdDate, :DefSchdProfit, :DefSchdPrincipal, :DefRecalType, :DefTillDate, ");
+		if(type.contains("Log")){
+			insertSql.append(" :LogKey , ");
+		}
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
@@ -423,8 +433,8 @@ public class DefermentHeaderDAOImpl extends BasisCodeDAO<DefermentHeader> implem
 	@Override
 	public List<DefermentHeader> getDefermentHeaders(final String id, String type,boolean isWIF) {
 		logger.debug("Entering");
-		DefermentHeader defermentHeader = getDefermentHeader(isWIF);
 		
+		DefermentHeader defermentHeader = new DefermentHeader();
 		defermentHeader.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, DeferedSchdDate, DefSchdProfit, DefSchdPrincipal, DefRecalType, DefTillDate");
@@ -443,6 +453,42 @@ public class DefermentHeaderDAOImpl extends BasisCodeDAO<DefermentHeader> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentHeader);
 		RowMapper<DefermentHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DefermentHeader.class);
 
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}	
+	
+	/**
+	 * Fetch the Record  Deferement Header details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return DeferementHeader
+	 */
+	@Override
+	public List<DefermentHeader> getDefermentHeaders(final String id, String type,boolean isWIF, long logKey) {
+		logger.debug("Entering");
+		
+		DefermentHeader defermentHeader = new DefermentHeader();
+		defermentHeader.setId(id);
+		defermentHeader.setLogKey(logKey);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, DeferedSchdDate, DefSchdProfit, DefSchdPrincipal, DefRecalType, DefTillDate");
+		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		
+		if(isWIF){
+			selectSql.append(" From WIFFinDefermentHeader");	
+		}else{
+			selectSql.append(" From FinDefermentHeader");	
+		}
+		
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference AND LogKey =:LogKey");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentHeader);
+		RowMapper<DefermentHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DefermentHeader.class);
+		
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}	

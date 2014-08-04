@@ -199,6 +199,12 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	@SuppressWarnings("unchecked")
 	private void setListeners(Listbox listBox) {
 
+		//Remove Listener Events If Already Exists
+		Iterable<EventListener<? extends Event>> iter = getPaging().getEventListeners("onPaging");
+		if(iter!=null && iter.iterator().hasNext()){
+			getPaging().removeEventListener("onPaging",iter.iterator().next() );	
+		} 
+
 		// Add 'onPaging' listener to the paging component
 		getPaging().addEventListener("onPaging", new OnPagingEventListener());
 
@@ -211,6 +217,14 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 				final Listheader lheader = (Listheader) object;
 
 				if (lheader.getSortAscending() != null || lheader.getSortDescending() != null) {
+					
+					//Remove Listener Events If Already Exists
+					Iterable<EventListener<? extends Event>> sort = lheader.getEventListeners("onSort");
+					if(sort!=null && sort.iterator().hasNext()){
+						lheader.removeEventListener("onSort",sort.iterator().next());	
+					} 
+					
+					// Add 'onSort' listener to the ListHeader component
 					lheader.addEventListener("onSort", onSortEventListener);
 				}
 			}

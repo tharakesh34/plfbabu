@@ -54,20 +54,17 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
  */
-public class MailTemplateListModelItemRenderer implements ListitemRenderer, Serializable {
+public class MailTemplateListModelItemRenderer implements ListitemRenderer<MailTemplate>, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+	private static final long serialVersionUID = -1086618969673027251L;
+
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, MailTemplate mailTemplate, int count) throws Exception {
 		
-		final MailTemplate mailTemplate = (MailTemplate)data;
-
 		Listcell lc;
 		Checkbox cb;
 	  	lc = new Listcell(mailTemplate.getTemplateCode());

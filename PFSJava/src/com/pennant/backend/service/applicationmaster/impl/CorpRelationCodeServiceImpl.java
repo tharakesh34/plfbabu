@@ -65,11 +65,9 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>CorpRelationCode</b>.<br>
  * 
  */
-public class CorpRelationCodeServiceImpl extends
-		GenericService<CorpRelationCode> implements CorpRelationCodeService {
+public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode> implements CorpRelationCodeService {
 
-	private static Logger logger = Logger
-			.getLogger(CorpRelationCodeServiceImpl.class);
+	private static Logger logger = Logger.getLogger(CorpRelationCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CorpRelationCodeDAO corpRelationCodeDAO;

@@ -224,142 +224,142 @@ public class FinanceCampaignSearchCtrl extends GFCBaseCtrl implements Serializab
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_fCCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCDesc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCFinType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCFinType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCFinType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsAlwMD.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsAlwMD.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsAlwMD.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsAlwGrace.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsAlwGrace.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsAlwGrace.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCOrgPrfUnchanged.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCOrgPrfUnchanged.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCOrgPrfUnchanged.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCRateType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCRateType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCRateType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCBaseRate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCBaseRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCBaseRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCSplRate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCSplRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCSplRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIntRate.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_fCIntRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_fCIntRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCDftIntFrq.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCDftIntFrq.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCDftIntFrq.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsIntCpz.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsIntCpz.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsIntCpz.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCCpzFrq.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCCpzFrq.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCCpzFrq.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsRvwAlw.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsRvwAlw.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsRvwAlw.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCRvwFrq.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCRvwFrq.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCRvwFrq.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcRateType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCGrcRateType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCGrcRateType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcBaseRate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCGrcBaseRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCGrcBaseRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcSplRate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCGrcSplRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCGrcSplRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcIntRate.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_fCGrcIntRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_fCGrcIntRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcDftIntFrq.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCGrcDftIntFrq.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCGrcDftIntFrq.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcIsIntCpz.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCGrcIsIntCpz.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCGrcIsIntCpz.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcCpzFrq.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCGrcCpzFrq.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCGrcCpzFrq.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcIsRvwAlw.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCGrcIsRvwAlw.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCGrcIsRvwAlw.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcRvwFrq.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCGrcRvwFrq.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCGrcRvwFrq.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCMinTerm.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_fCMinTerm.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_fCMinTerm.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCMaxTerm.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_fCMaxTerm.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_fCMaxTerm.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCDftTerms.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_fCDftTerms.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_fCDftTerms.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCRpyFrq.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCRpyFrq.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCRpyFrq.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCRepayMethod.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCRepayMethod.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCRepayMethod.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsAlwPartialRpy.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsAlwPartialRpy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsAlwPartialRpy.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsAlwDifferment.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsAlwDifferment.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsAlwDifferment.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCMaxDifferment.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_fCMaxDifferment.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_fCMaxDifferment.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsAlwFrqDifferment.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsAlwFrqDifferment.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsAlwFrqDifferment.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCMaxFrqDifferment.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_fCMaxFrqDifferment.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_fCMaxFrqDifferment.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsAlwEarlyRpy.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsAlwEarlyRpy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsAlwEarlyRpy.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsAlwEarlySettle.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsAlwEarlySettle.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsAlwEarlySettle.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsDwPayRequired.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsDwPayRequired.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsDwPayRequired.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCRvwRateApplFor.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCRvwRateApplFor.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCRvwRateApplFor.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCAlwRateChangeAnyDate.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCAlwRateChangeAnyDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCAlwRateChangeAnyDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcRvwRateApplFor.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCGrcRvwRateApplFor.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCGrcRvwRateApplFor.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCIsIntCpzAtGrcEnd.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCIsIntCpzAtGrcEnd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCIsIntCpzAtGrcEnd.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCGrcAlwRateChgAnyDate.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_fCGrcAlwRateChgAnyDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_fCGrcAlwRateChgAnyDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCMinDownPayAmount.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_fCMinDownPayAmount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_fCMinDownPayAmount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_fCSchCalCodeOnRvw.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_fCSchCalCodeOnRvw.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fCSchCalCodeOnRvw.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

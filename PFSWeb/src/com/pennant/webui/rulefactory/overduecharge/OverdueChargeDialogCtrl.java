@@ -94,6 +94,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rulefactory.OverdueChargeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1459,7 +1460,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 	 */
 	private Combobox fillComboboxByFlatorPrecentage(Combobox combobox, String value, boolean disabled) {
 		logger.debug("Entering ");
-		List<ValueLabel> odchargetypes = PennantAppUtil.getODCChargeType();
+		List<ValueLabel> odchargetypes = PennantStaticListUtil.getODCChargeType();
 		combobox.addForward("onChange", window_OverdueChargeDialog, "onFieldComboSelected", combobox);
 		logger.debug("Leaving ");
 		return fillCombobox(combobox, value, odchargetypes, disabled);
@@ -1476,7 +1477,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 	 */
 	private Combobox fillComboboxByCalculatedOn(Combobox combobox, String value, boolean disabled) {
 		logger.debug("Entering ");
-		List<ValueLabel> odcCalucatedOn = PennantAppUtil.getODCCalculatedOn();
+		List<ValueLabel> odcCalucatedOn = PennantStaticListUtil.getODCCalculatedOn();
 		fillCombobox(combobox, value, odcCalucatedOn, disabled);
 		logger.debug("Leaving ");
 		return combobox;

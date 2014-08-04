@@ -73,11 +73,11 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -149,7 +149,6 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 	protected Label recordStatus; // autowired
 	protected Radiogroup userAction;
 	protected Groupbox groupboxWf;
-	protected Row statusRow;
 	protected Row sysParmValueRow;
 
 	// not auto wired vars
@@ -281,10 +280,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			this.statusRow.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
-			this.statusRow.setVisible(false);
 		}
 		logger.debug("Leaving ");
 	}
@@ -806,9 +803,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 					Labels.getLabel("label_PFSParameterDialog_SysParmValue.value")));
 		}
 		if (!this.txtParmValue.isDisabled()) {
-			this.txtParmValue.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_REGEX,
-					Labels.getLabel("FIELD_CHAR_NUMBERS",new String[] { Labels.getLabel(
-							"label_PFSParameterDialog_SysParmValue.value") })));
+			this.txtParmValue.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmValue.value") }));
 		}
 		if (!this.doubleParamValue.isDisabled()) {
 			this.doubleParamValue.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
@@ -1024,6 +1020,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 		default:
 			
 			this.txtParmValue.setVisible(true);
+			this.txtParmValue.setMaxlength(this.sysParmLength);
 			this.txtParmValue.setValue(this.sysParmValue.getValue());
 			this.comboParmValue.setDisabled(true);
 			this.txtLanguageParmValue.setDisabled(true);
@@ -1145,6 +1142,10 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 		try {
 
 			if (doProcess(aPFSParameter, tranType)) {
+				
+				//Parameter Updation in Map Details
+				SystemParameterDetails.setParmDetails(aPFSParameter.getSysParmCode(), aPFSParameter.getSysParmValue());
+				
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog(this.window_PFSParameterDialog, "PFSParameter");

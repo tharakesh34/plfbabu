@@ -66,38 +66,41 @@ public class RepayMain implements java.io.Serializable {
 	private String lovDescCustShrtName;
 	private Date dateStart;
 	private Date dateMatuirty;
-	private BigDecimal finAmount = new BigDecimal(0);
-	private BigDecimal curFinAmount = new BigDecimal(0);
-	private BigDecimal profit = new BigDecimal(0);
-	private BigDecimal profitBalance = new BigDecimal(0);
-	private BigDecimal principal = new BigDecimal(0);
-	private BigDecimal principalBalance = new BigDecimal(0);
-	private BigDecimal totalCapitalize = new BigDecimal(0);
-	private BigDecimal capitalizeBalance = new BigDecimal(0);
-	private BigDecimal overduePrincipal = new BigDecimal(0);
-	private BigDecimal overdueProfit = new BigDecimal(0);
+	private BigDecimal finAmount = BigDecimal.ZERO;
+	private BigDecimal curFinAmount = BigDecimal.ZERO;
+	private BigDecimal profit = BigDecimal.ZERO;
+	private BigDecimal profitBalance = BigDecimal.ZERO;
+	private BigDecimal principal = BigDecimal.ZERO;
+	private BigDecimal principalBalance = BigDecimal.ZERO;
+	private BigDecimal totalCapitalize = BigDecimal.ZERO;
+	private BigDecimal capitalizeBalance = BigDecimal.ZERO;
+	private BigDecimal overduePrincipal = BigDecimal.ZERO;
+	private BigDecimal overdueProfit = BigDecimal.ZERO;
+	private BigDecimal totalFeeAmt = BigDecimal.ZERO;
 	private Date dateLastFullyPaid;
 	private Date dateNextPaymentDue;
-	private BigDecimal accrued = new BigDecimal(0);
-	private BigDecimal downpayment = new BigDecimal(0);
+	private BigDecimal accrued = BigDecimal.ZERO;
+	private BigDecimal downpayment = BigDecimal.ZERO;
 	private String repayAccountId;
 	private String finAccount;
 	private String finCustPftAccount;
-	private BigDecimal repayAmountNow = new BigDecimal(0);
-	private BigDecimal principalPayNow = new BigDecimal(0);
-	private BigDecimal profitPayNow = new BigDecimal(0);
-	private BigDecimal refundNow = new BigDecimal(0);
-	private BigDecimal pendindODCharges = new BigDecimal(0);
+	private BigDecimal repayAmountNow = BigDecimal.ZERO;
+	private BigDecimal principalPayNow = BigDecimal.ZERO;
+	private BigDecimal profitPayNow = BigDecimal.ZERO;
+	private BigDecimal refundNow = BigDecimal.ZERO;
+	private BigDecimal pendindODCharges = BigDecimal.ZERO;
 	private int lovDescFinFormatter;
-	private BigDecimal repayAmountExcess = new BigDecimal(0);
+	private BigDecimal repayAmountExcess = BigDecimal.ZERO;
 	
 	private String earlyPayEffectOn;
 	private boolean earlyPay;
-	private BigDecimal earlyPayAmount;
+	private BigDecimal earlyPayAmount = BigDecimal.ZERO;
+	private BigDecimal insRefund = BigDecimal.ZERO;
 	private FinanceScheduleDetail earlyRepayNewSchd;
 	private Date earlyPayOnSchDate;
 	private Date earlyPayNextSchDate;
-
+	private Date refundCalStartDate;
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -284,6 +287,13 @@ public class RepayMain implements java.io.Serializable {
 		this.overdueProfit = overdueProfit;
 	}
 
+	public BigDecimal getTotalFeeAmt() {
+    	return totalFeeAmt;
+    }
+	public void setTotalFeeAmt(BigDecimal totalFeeAmt) {
+    	this.totalFeeAmt = totalFeeAmt;
+    }
+	
 	public Date getDateLastFullyPaid() {
 		return dateLastFullyPaid;
 	}
@@ -421,6 +431,18 @@ public class RepayMain implements java.io.Serializable {
     }
 	public String getEarlyPayEffectOn() {
 	    return earlyPayEffectOn;
+    }
+	public void setInsRefund(BigDecimal insRefund) {
+	    this.insRefund = insRefund;
+    }
+	public BigDecimal getInsRefund() {
+	    return insRefund;
+    }
+	public void setRefundCalStartDate(Date refundCalStartDate) {
+	    this.refundCalStartDate = refundCalStartDate;
+    }
+	public Date getRefundCalStartDate() {
+	    return refundCalStartDate;
     }
 	
 }

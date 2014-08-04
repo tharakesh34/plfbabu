@@ -60,17 +60,18 @@ public class DefermentDetail implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private String finReference = null;
 	private Date deferedSchdDate;
-	private BigDecimal defSchdProfit = new BigDecimal(0);
-	private BigDecimal defSchdPrincipal = new BigDecimal(0);
+	private long logKey;
+	private BigDecimal defSchdProfit = BigDecimal.ZERO;
+	private BigDecimal defSchdPrincipal = BigDecimal.ZERO;
 	private Date deferedRpyDate;
-	private BigDecimal defRpySchdPft = new BigDecimal(0);
-	private BigDecimal defRpySchdPri = new BigDecimal(0);
-	private BigDecimal defRpySchdPftBal = new BigDecimal(0);
-	private BigDecimal defRpySchdPriBal = new BigDecimal(0);
-	private BigDecimal defPaidPftTillDate = new BigDecimal(0);
-	private BigDecimal defPaidPriTillDate = new BigDecimal(0);
-	private BigDecimal defPftBalance = new BigDecimal(0);
-	private BigDecimal defPriBalance = new BigDecimal(0);
+	private BigDecimal defRpySchdPft = BigDecimal.ZERO;
+	private BigDecimal defRpySchdPri = BigDecimal.ZERO;
+	private BigDecimal defRpySchdPftBal = BigDecimal.ZERO;
+	private BigDecimal defRpySchdPriBal = BigDecimal.ZERO;
+	private BigDecimal defPaidPftTillDate = BigDecimal.ZERO;
+	private BigDecimal defPaidPriTillDate = BigDecimal.ZERO;
+	private BigDecimal defPftBalance = BigDecimal.ZERO;
+	private BigDecimal defPriBalance = BigDecimal.ZERO;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -347,4 +348,12 @@ public class DefermentDetail implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public void setLogKey(long logKey) {
+	    this.logKey = logKey;
+    }
+
+	public long getLogKey() {
+	    return logKey;
+    }
 }

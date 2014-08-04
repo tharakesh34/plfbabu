@@ -118,13 +118,17 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 	@Override
 	public VehicleDealer getVehicleDealerById(final long id, String type) {
 		logger.debug("Entering");
-		VehicleDealer vehicleDealer = getVehicleDealer();
+		VehicleDealer vehicleDealer = new VehicleDealer();
 		vehicleDealer.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT DealerId, DealerName, ");
+		selectSql.append("SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
+		selectSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId");
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince");
+		}
 		selectSql.append(" FROM  AMTVehicleDealer");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DealerId =:DealerId ");
@@ -241,10 +245,12 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into AMTVehicleDealer");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append("(DealerId, DealerName, " );
+		insertSql.append("(DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, " );
+		insertSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:DealerId, :DealerName,");
+		insertSql.append(" Values(:DealerId,:DealerType, :DealerName,:DealerTelephone,:DealerFax,:DealerAddress1,");
+		insertSql.append(" :DealerAddress2,:DealerAddress3,:DealerAddress4,:DealerCountry,:DealerCity,:DealerProvince,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -276,7 +282,10 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update AMTVehicleDealer");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DealerId = :DealerId, DealerName = :DealerName,");
+		updateSql.append(" Set DealerId = :DealerId, DealerType = :DealerType, DealerName = :DealerName, ");
+		updateSql.append("DealerTelephone =:DealerTelephone,DealerFax = :DealerFax,DealerAddress1 = :DealerAddress1,");
+		updateSql.append("DealerAddress2 = :DealerAddress2,DealerAddress3 = :DealerAddress3,DealerAddress4 = :DealerAddress4,");
+		updateSql.append(" DealerCountry = :DealerCountry,DealerCity = :DealerCity,DealerProvince = :DealerProvince,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, " );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -284,7 +293,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		updateSql.append(" Where DealerId =:DealerId");
 
 		if (!type.endsWith("_TEMP")) {
-			updateSql.append("AND Version= :Version-1");
+			updateSql.append(" AND Version= :Version-1");
 		}
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);

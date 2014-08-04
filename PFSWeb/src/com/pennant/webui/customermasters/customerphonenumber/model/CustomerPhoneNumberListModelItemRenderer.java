@@ -59,15 +59,13 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CustomerPhoneNumberListModelItemRenderer implements ListitemRenderer, Serializable {
+public class CustomerPhoneNumberListModelItemRenderer implements ListitemRenderer<CustomerPhoneNumber>, Serializable {
 
 	private static final long serialVersionUID = 2940801004411140146L;
 
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, CustomerPhoneNumber customerPhoneNumber, int count) throws Exception {
 		if (item instanceof Listgroup) { 
-			Object groupData = (Object) data; 
-			final CustomerPhoneNumber customerPhoneNumber= (CustomerPhoneNumber)groupData;
 			item.appendChild(new Listcell(customerPhoneNumber.getLovDescCustCIF())); 
 		}
 		else if (item instanceof Listgroupfoot) { 
@@ -76,8 +74,9 @@ public class CustomerPhoneNumberListModelItemRenderer implements ListitemRendere
 			item.appendChild(cell); 
 		} else { 
 
-			final CustomerPhoneNumber customerPhoneNumber = (CustomerPhoneNumber) data;
 			Listcell lc;
+			lc = new Listcell(customerPhoneNumber.getLovDescCustCIF());
+			lc.setParent(item);
 			lc = new Listcell(customerPhoneNumber.getPhoneTypeCode()+"-"+customerPhoneNumber.getLovDescPhoneTypeCodeName());
 			lc.setParent(item);
 			lc = new Listcell(customerPhoneNumber.getPhoneCountryCode());
@@ -90,7 +89,7 @@ public class CustomerPhoneNumberListModelItemRenderer implements ListitemRendere
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(customerPhoneNumber.getRecordType()));
 			lc.setParent(item);
-			item.setAttribute("data", data);
+			item.setAttribute("data", customerPhoneNumber);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPhoneNumberItemDoubleClicked");
 		}
 	}

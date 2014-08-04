@@ -64,7 +64,7 @@ public class AgreementDefinition implements java.io.Serializable,Entity {
 	private String aggReportPath;
 	private boolean aggIsActive;
 	private String aggtype;
-	private byte[] aggImage;
+	private String aggImage;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -163,11 +163,11 @@ public class AgreementDefinition implements java.io.Serializable,Entity {
     	this.aggtype = aggtype;
     }
 
-	public byte[] getAggImage() {
+	public String getAggImage() {
     	return aggImage;
     }
 
-	public void setAggImage(byte[] aggImage) {
+	public void setAggImage(String aggImage) {
     	this.aggImage = aggImage;
     }
 

@@ -28,7 +28,7 @@
 
 	<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
 		<!-- <param name="File" value="./out.PFSLog.txt" /> -->
-		<param name="File" value="D:/logs/PFSLog.txt" />
+		<param name="File" value="C:/logs/PFSLog.log" />
 		<param name="MaxFileSize" value="5MB" />
 		<param name="MaxBackupIndex" value="2" />
 		<param name="Threshold" value="ALL" />

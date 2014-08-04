@@ -64,15 +64,21 @@ public class CalculationConstants {
 	public static final String PFT = "PFT";
 	public static final String NOPAY = "NO_PAY";
 
+	//Reducing, Flat, Convert FLat to Reducing, At Maturity
 	public static final String RATE_BASIS_R = "R";
 	public static final String RATE_BASIS_F = "F";
-	public static final String RATE_BASIS_FA = "FA";
+	public static final String RATE_BASIS_C = "C";
+	public static final String RATE_BASIS_M = "M";
+	public static final String RATE_BASIS_D = "D";
+	
 
+	
 	public static final String REPAY = "R";
 	public static final String GRACE = "G";
 	public static final String GRACE_END = "E";
 	public static final String MATURITY = "M";
 	public static final String TOTAL = "T";
+	public static final String SELECT = "S";
 
 	public static final int FRQ_YEARLY = 1;
 	public static final int FRQ_HALF_YEARLY = 2;

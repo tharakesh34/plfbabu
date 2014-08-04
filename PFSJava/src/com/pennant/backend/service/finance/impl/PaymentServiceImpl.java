@@ -1,4 +1,4 @@
-package com.pennant.backend.service.finance.impl;
+/*package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -99,16 +99,6 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
-	public void delete(FinanceRepayments financeRepayments, String type) {
-		getFinanceRepaymentsDAO().delete(financeRepayments, type);
-	}
-
-	@Override
-	public void deleteWorkByFinRef(String finref) {
-		getFinanceRepaymentsDAO().deleteByFinRef(finref, "_Work");
-	}
-
-	@Override
 	public void maintainWorkSchedules(String finReference, long userId, List<FinanceScheduleDetail> financeScheduleDetails) {
 		getFinanceScheduleDetailDAO().maintainWorkSchedules(finReference, userId, financeScheduleDetails);
 	}
@@ -148,3 +138,4 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 }
+*/

@@ -63,7 +63,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -105,7 +107,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	protected Window  window_ProvinceDialog;// autoWired
 	protected Textbox cPCountry; 			// autoWired
-	protected Textbox cPProvince; 			// autoWired
+	protected Uppercasebox cPProvince; 			// autoWired
 	protected Textbox cPProvinceName; 		// autoWired
 
 	protected Label 	 recordStatus; 		// autoWired
@@ -438,6 +440,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -633,14 +636,12 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.cPProvince.isReadonly()){
-			this.cPProvince.setConstraint(new SimpleConstraint(PennantConstants.ALPHA_CAPS_REGEX,
-					Labels.getLabel("FIELD_CHAR_CAPS",new String[]{Labels.getLabel(
-							"label_ProvinceDialog_CPProvince.value")})));
+			this.cPProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPProvince.value"), 
+					PennantRegularExpressions.REGEX_ALPHA, true));
 		}	
 		if (!this.cPProvinceName.isReadonly()){
-			this.cPProvinceName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER_SPACE",new String[]{Labels.getLabel(
-							"label_ProvinceDialog_CPProvinceName.value")})));
+			this.cPProvinceName.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPProvinceName.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
 		}	
 		logger.debug("Leaving");
 	}
@@ -661,9 +662,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCPCountryName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-						"label_ProvinceDialog_CPCountry.value")}));
+		this.lovDescCPCountryName.setConstraint(new PTStringValidator(Labels.getLabel(
+						"label_ProvinceDialog_CPCountry.value"), null, true));
 		logger.debug("Leaving");
 	}
 	/**
@@ -807,7 +807,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

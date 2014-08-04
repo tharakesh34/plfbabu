@@ -68,4 +68,8 @@ public interface AccountsDAO {
 
 	public void updateAccrualBalance();
 
+	void saveList(List<Accounts> accountList, String type);
+
+	void updateList(List<Accounts> accountList, String type);
+
 }

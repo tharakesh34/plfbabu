@@ -6,9 +6,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
+import com.pennant.coredb.process.CustomerLimitProcess;
 import com.pennant.coreinterface.exception.CustomerLimitProcessException;
 import com.pennant.coreinterface.vo.CustomerLimit;
-import com.pennant.coredb.process.CustomerLimitProcess;
 
 public class CustomerLimitIntefaceServiceCoreDBImpl implements CustomerLimitIntefaceService{
 	private static Logger logger = Logger.getLogger(CustomerLimitIntefaceServiceCoreDBImpl.class);
@@ -31,11 +31,14 @@ public class CustomerLimitIntefaceServiceCoreDBImpl implements CustomerLimitInte
     }
 
 	@Override
-    public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit) throws CustomerLimitProcessException {
+    public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit customerLimit)
+            throws CustomerLimitProcessException {
 		logger.debug("Entering");
 		List<CustomerLimit> customerLimits = null;
 		try{
-			customerLimits =  getCustLimitProcess().fetchGroupLimitDetails(custLimit);
+			
+			customerLimits =  getCustLimitProcess().fetchGroupLimitDetails(customerLimit);
+			
 		}catch (CustomerLimitProcessException e) {
 			throw e;
 		}

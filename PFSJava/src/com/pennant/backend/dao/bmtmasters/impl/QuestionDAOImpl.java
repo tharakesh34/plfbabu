@@ -122,7 +122,7 @@ public class QuestionDAOImpl extends BasisNextidDaoImpl<Question> implements Que
 	@Override
 	public Question getQuestionById(final long id, String type) {
 		logger.debug("Entering");
-		Question question = getQuestion();
+		Question question = new Question();
 		
 		question.setId(id);
 		

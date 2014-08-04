@@ -80,12 +80,9 @@ import com.pennant.webui.util.searching.SearchOperators;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-
-public class CustomerNotesTypeSearchCtrl extends GFCBaseCtrl implements
-Serializable {
+public class CustomerNotesTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 	private static final long serialVersionUID = 4580053594518153591L;
-
 	private final static Logger logger = Logger.getLogger(CustomerNotesTypeSearchCtrl.class);
 
 	/*
@@ -161,25 +158,25 @@ Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_custNotesTypeCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custNotesTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custNotesTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custNotesTypeDesc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custNotesTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custNotesTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custNotesTypeIsPerminent.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_custNotesTypeIsPerminent.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_custNotesTypeIsPerminent.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custNotesTypeIsActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_custNotesTypeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_custNotesTypeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custNotesTypeArchiveFrq.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custNotesTypeArchiveFrq.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custNotesTypeArchiveFrq.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {

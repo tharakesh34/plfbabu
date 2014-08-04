@@ -117,8 +117,12 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 		else{
 			object=null;
 		}
+		if (args.containsKey("SecurityUserRolesDialogCtrl")) {
+			object  =(Object)args.get("SecurityUserRolesDialogCtrl");
+		}
+		
 		doPrepareData();
-		this.sortOperator_Name.setModel(new ListModelList(
+		this.sortOperator_Name.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_Name.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
@@ -144,6 +148,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving " + event.toString());
 
 	}
+
 	/**
 	 * This method checks object's Class according to instance of class it fills data of dataMap into tempDataMap . 
 	 */
@@ -195,6 +200,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 		doClose() ;
 		logger.debug("Leaving " + event.toString());
 	}
+	
 	/**
 	 * This method do search operation
 	 * @throws Exception
@@ -213,7 +219,17 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if (item_Name != null ) {
 				final int searchOpId = ((SearchOperators) item_Name.getAttribute("data"))
 				.getSearchOperatorId();
+			
+				if(object instanceof SecurityUserRolesDailogCtrl){
+					searchResult[0] = searchOpId;
+					searchResult[1] = this.name.getValue();
+					int count = (Integer) object.getClass().getDeclaredMethod("doShowSearchResult"
+							, new Class[]{Object[].class}).invoke(object, new Object[]{searchResult});
+					this.label_SearchResult.setValue(Labels.getLabel(
+					"label_SecuritySearchResults.value") + " " +String.valueOf(count));
 
+					
+ 				}else{
 				if (searchOpId == Filter.OP_EQUAL) {
 					filters[0] =new Integer(item_Name.getIndex());
 					for (Object key : tempDataMap.keySet()) {
@@ -261,6 +277,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 					this.label_SearchResult.setValue(Labels.getLabel(
 					"label_SecuritySearchResults.value") + " " +String.valueOf(searchResultlist.size()));
 				}
+			}
 			}
 			else{
 				searchResult[0]=getAllResults(tempDataMap);

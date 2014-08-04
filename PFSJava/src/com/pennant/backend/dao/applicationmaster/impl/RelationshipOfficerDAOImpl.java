@@ -116,7 +116,7 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 	@Override
 	public RelationshipOfficer getRelationshipOfficerById(final String id, String type) {
 		logger.debug("Entering");
-		RelationshipOfficer relationshipOfficer = getRelationshipOfficer();
+		RelationshipOfficer relationshipOfficer = new RelationshipOfficer();
 		relationshipOfficer.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

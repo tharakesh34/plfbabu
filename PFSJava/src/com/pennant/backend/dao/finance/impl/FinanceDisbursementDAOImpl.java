@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -133,22 +132,25 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 	@Override
 	public FinanceDisbursement getFinanceDisbursementById(final String id, String type,boolean isWIF) {
 		logger.debug("Entering");
-		FinanceDisbursement financeDisbursement = getFinanceDisbursement(isWIF);
 		
+		FinanceDisbursement financeDisbursement = new FinanceDisbursement();
 		financeDisbursement.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, DisbDate, DisbSeq, DisbDesc,");
-		selectSql.append(" DisbAccountId, DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive,");
+		selectSql.append(" DisbAccountId, DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive , FeeChargeAmt,");
 		selectSql.append(" DisbRemarks, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append("");
+			if(!isWIF){
+				selectSql.append(" , lovDescDisbExpType, lovdescDisbBenificiary, lovDescDisbBenfShrtName ");
+			}
 		}
 		if(isWIF){
 			selectSql.append(" From WIFFinDisbursementDetails");	
 		}else{
-			selectSql.append(" , FeeChargeAmt ");	
+			selectSql.append(" , DisbType, DisbClaim, DisbExpType, DisbBeneficiary, DisbRetPerc, DisbRetAmount, " );
+			selectSql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate ");
 			selectSql.append(" From FinDisbursementDetails");	
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -209,7 +211,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void deleteByFinReference(String id,String type, boolean isWIF) {
+	public void deleteByFinReference(String id,String type, boolean isWIF, long logKey) {
 		logger.debug("Entering");
 		FinanceDisbursement financeDisbursement = new FinanceDisbursement();
 		financeDisbursement.setId(id);
@@ -224,6 +226,10 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference");
+		if(logKey != 0){
+			deleteSql.append(" AND LogKey =:LogKey");
+		}
+		
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDisbursement);
@@ -301,15 +307,17 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 			insertSql.append(" FinDisbursementDetails");	
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAccountId, DisbAmount, DisbReqDate,");
+		insertSql.append(" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAccountId, DisbAmount, DisbReqDate, FeeChargeAmt,");
 		if(!isWIF){
-			insertSql.append(" FeeChargeAmt, ");	
+			insertSql.append(" DisbType, DisbClaim, DisbExpType, DisbBeneficiary, DisbRetPerc, DisbRetAmount, " );
+			insertSql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");
 		}
 		insertSql.append(" DisbDisbursed, DisbIsActive, DisbRemarks, Version , LastMntBy, LastMntOn, RecordStatus,");
 		insertSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference, :DisbDate, :DisbSeq, :DisbDesc, :DisbAccountId, :DisbAmount,:DisbReqDate, ");
+		insertSql.append(" Values(:FinReference, :DisbDate, :DisbSeq, :DisbDesc, :DisbAccountId, :DisbAmount,:DisbReqDate, :FeeChargeAmt, ");
 		if(!isWIF){
-			insertSql.append(" :FeeChargeAmt, ");	
+			insertSql.append(" :DisbType, :DisbClaim, :DisbExpType, :DisbBeneficiary, :DisbRetPerc, :DisbRetAmount, " );
+			insertSql.append(" :AutoDisb, :NetAdvDue, :NetRetDue, :DisbRetPaid, :RetPaidDate, ");
 		}
 		insertSql.append(" :DisbDisbursed, :DisbIsActive, :DisbRemarks, :Version , :LastMntBy, ");
 		insertSql.append(" :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
@@ -347,15 +355,23 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 			insertSql.append(" FinDisbursementDetails");	
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAccountId, DisbAmount, DisbReqDate,");
+		insertSql.append(" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAccountId, DisbAmount, DisbReqDate, FeeChargeAmt,");
 		if(!isWIF){
-			insertSql.append(" FeeChargeAmt, ");	
+			insertSql.append(" DisbType, DisbClaim, DisbExpType, DisbBeneficiary, DisbRetPerc, DisbRetAmount, " );
+			insertSql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");	
+			if(type.contains("Log")){
+				insertSql.append(" LogKey , ");
+			}
 		}
 		insertSql.append(" DisbDisbursed, DisbIsActive, DisbRemarks, Version , LastMntBy, LastMntOn, RecordStatus,");
 		insertSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference, :DisbDate, :DisbSeq, :DisbDesc, :DisbAccountId, :DisbAmount,:DisbReqDate, ");
+		insertSql.append(" Values(:FinReference, :DisbDate, :DisbSeq, :DisbDesc, :DisbAccountId, :DisbAmount,:DisbReqDate, :FeeChargeAmt, ");
 		if(!isWIF){
-			insertSql.append(" :FeeChargeAmt, ");	
+			insertSql.append(" :DisbType, :DisbClaim, :DisbExpType, :DisbBeneficiary, :DisbRetPerc, :DisbRetAmount, " );
+			insertSql.append(" :AutoDisb, :NetAdvDue, :NetRetDue, :DisbRetPaid, :RetPaidDate, ");
+			if(type.contains("Log")){
+				insertSql.append(" :LogKey , ");
+			}
 		}
 		insertSql.append("  :DisbDisbursed, :DisbIsActive, :DisbRemarks, :Version , :LastMntBy, ");
 		insertSql.append(" :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
@@ -394,14 +410,39 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		}
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set FinReference = :FinReference, DisbDate = :DisbDate, DisbSeq = :DisbSeq," );
-		updateSql.append(" DisbDesc = :DisbDesc,DisbAccountId = :DisbAccountId, DisbAmount = :DisbAmount, ");
+		updateSql.append(" DisbDesc = :DisbDesc,DisbAccountId = :DisbAccountId, DisbAmount = :DisbAmount, FeeChargeAmt=:FeeChargeAmt, ");
 		if(!isWIF){
-			updateSql.append(" FeeChargeAmt=:FeeChargeAmt, ");	
+			updateSql.append(" DisbType=:DisbType, DisbClaim=:DisbClaim, DisbExpType=:DisbExpType, " );
+			updateSql.append(" DisbBeneficiary=:DisbBeneficiary, DisbRetPerc=:DisbRetPerc, DisbRetAmount=:DisbRetAmount, " );
+			updateSql.append(" AutoDisb=:AutoDisb, NetAdvDue=:NetAdvDue, NetRetDue=:NetRetDue, DisbRetPaid=:DisbRetPaid, RetPaidDate=:RetPaidDate, ");	
 		}
 		updateSql.append(" DisbReqDate = :DisbReqDate, DisbDisbursed = :DisbDisbursed, DisbIsActive = :DisbIsActive,");
 		updateSql.append(" DisbRemarks = :DisbRemarks, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Where FinReference =:FinReference and DisbDate = :DisbDate AND DisbSeq = :DisbSeq");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDisbursement);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError("41004",financeDisbursement.getId() ,financeDisbursement.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");
+	}
+	
+	@SuppressWarnings("serial")
+	@Override
+	public void updateBatchDisb(FinanceDisbursement financeDisbursement,String type) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		StringBuilder	updateSql =new StringBuilder("Update FinDisbursementDetails");	
+		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(" Set DisbDisbursed = :DisbDisbursed " );
 		updateSql.append(" Where FinReference =:FinReference and DisbDate = :DisbDate AND DisbSeq = :DisbSeq");
 		
 		logger.debug("updateSql: " + updateSql.toString());
@@ -430,7 +471,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 	@Override
 	public void updateLinkedTranId(String finReference, long linkedTranId, String type) {
 		logger.debug("Entering");
-		FinanceDisbursement financeDisbursement = getFinanceDisbursement(false);
+		FinanceDisbursement financeDisbursement = new FinanceDisbursement();
 		financeDisbursement.setFinReference(finReference);
 		financeDisbursement.setLinkedTranId(linkedTranId);
 		
@@ -457,20 +498,23 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 	@Override
 	public List<FinanceDisbursement> getFinanceDisbursementDetails(final String id, String type, boolean isWIF) {
 		logger.debug("Entering");
-		FinanceDisbursement wIFFinanceDisbursement = getFinanceDisbursement(isWIF);
 		
+		FinanceDisbursement wIFFinanceDisbursement = new FinanceDisbursement();
 		wIFFinanceDisbursement.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder("Select FinReference, DisbDate, DisbSeq, DisbDesc,");
+		StringBuilder selectSql = new StringBuilder("Select FinReference, DisbDate, DisbSeq, DisbDesc,FeeChargeAmt, ");
 		selectSql.append(" DisbAccountId, DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive, DisbRemarks,");
 		if(!isWIF){
-			selectSql.append(" FeeChargeAmt, ");
+			selectSql.append(" DisbType, DisbClaim, DisbExpType, DisbBeneficiary, DisbRetPerc, DisbRetAmount, " );
+			selectSql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append("");
+			if(!isWIF){
+				selectSql.append(" , lovDescDisbExpType, lovdescDisbBenificiary, lovDescDisbBenfShrtName ");
+			}
 		}
 		
 		if(isWIF){
@@ -480,6 +524,52 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceDisbursement);
+		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDisbursement.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+	
+	/**
+	 * Fetch the List of Finance Disbursement Detail Records by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return WIFFinanceDisbursement
+	 */
+	@Override
+	public List<FinanceDisbursement> getFinanceDisbursementDetails(final String id, String type, boolean isWIF, long logKey) {
+		logger.debug("Entering");
+		
+		FinanceDisbursement wIFFinanceDisbursement = new FinanceDisbursement();
+		wIFFinanceDisbursement.setId(id);
+		wIFFinanceDisbursement.setLogKey(logKey);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, DisbDate, DisbSeq, DisbDesc,FeeChargeAmt, ");
+		selectSql.append(" DisbAccountId, DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive, DisbRemarks,");
+		if(!isWIF){
+			selectSql.append(" DisbType, DisbClaim, DisbExpType, DisbBeneficiary, DisbRetPerc, DisbRetAmount, " );
+			selectSql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");
+		}
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+		selectSql.append(" NextTaskId, RecordType, WorkflowId");
+		
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			if(!isWIF){
+				selectSql.append(" , lovDescDisbExpType, lovdescDisbBenificiary, lovDescDisbBenfShrtName ");
+			}
+		}
+		
+		if(isWIF){
+			selectSql.append(" From WIFFinDisbursementDetails");	
+		}else{
+			selectSql.append(" From FinDisbursementDetails");	
+		}
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference AND LogKey =:LogKey");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceDisbursement);

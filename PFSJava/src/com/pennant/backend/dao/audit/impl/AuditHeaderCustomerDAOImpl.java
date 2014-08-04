@@ -36,6 +36,7 @@ public class AuditHeaderCustomerDAOImpl extends BasisNextidDaoImpl<AuditHeader> 
 	public AuditHeader getNewAuditHeader() {
 		return new AuditHeader();
 	}
+	
 
 	@Override
 	public long addAudit(AuditHeader auditHeader) {
@@ -90,7 +91,6 @@ public class AuditHeaderCustomerDAOImpl extends BasisNextidDaoImpl<AuditHeader> 
 		CustomerDetails befCustomerDetails = customerDetails.getBefImage();
 		
 		addAuditDetail(customerDetails.getCustomer(), befCustomerDetails.getCustomer(), auditHeader.getAuditTranType(), auditHeader);
-		addAuditDetail(customerDetails.getCustomerEmploymentDetail(), befCustomerDetails.getCustomerEmploymentDetail(), auditHeader.getAuditTranType(), auditHeader);
 	}
 		
 		

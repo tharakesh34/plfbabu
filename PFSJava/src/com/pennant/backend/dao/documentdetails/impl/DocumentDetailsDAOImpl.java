@@ -170,7 +170,7 @@ public class DocumentDetailsDAOImpl extends BasisNextidDaoImpl<DocumentDetails> 
 	 * @param documentDetailList
 	 * @param type
 	 */
-	public void deleteList(ArrayList<DocumentDetails> documentDetailList, String type) {
+	public void deleteList(List<DocumentDetails> documentDetailList, String type) {
 		logger.debug("Entering");
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From DocumentDetails");
@@ -327,24 +327,7 @@ public class DocumentDetailsDAOImpl extends BasisNextidDaoImpl<DocumentDetails> 
 		logger.debug("Leaving");
 		return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
-	
-	@Override
-    public List<DocumentDetails> getDocDetailsByFinRef(String finReference, String type) {
-		logger.debug("Entering");
-		DocumentDetails documentDetails = new DocumentDetails();
-		documentDetails.setReferenceId(finReference);
-		
-		StringBuilder selectSql = new StringBuilder("Select DocId, DocCategory, DocType,DocName ");
-		selectSql.append(" From DocumentDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ReferenceId =:ReferenceId");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
-	
-		logger.debug("Leaving");
-		return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    }
+ 
 
 
 }

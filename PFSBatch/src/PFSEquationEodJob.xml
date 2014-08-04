@@ -30,12 +30,20 @@
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<!-- ====================================================== -->
+	<!-- Calculation Utility Configuration -->
+	<!-- ====================================================== -->
+	
+	<bean id="calculationUtil" class="com.pennant.app.util.CalculationUtil">
+		<property name="currencyDAO" ref="currencyDAO" />
+	</bean>
 
 	<!-- ====================================================== -->
 	<!-- Finance Related Generic DAOs -->
 	<!-- ====================================================== -->
 
-	<!-- Finace Type Details -->
+	<!-- Finance Type Details -->
 	<bean id="financeTypeDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.FinanceTypeDAOImpl"
 		parent="basisCodeDAO">
@@ -48,7 +56,7 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
-	<!-- Finace Schedule Details -->
+	<!-- Finance Schedule Details -->
 	<bean id="financeScheduleDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
 		parent="basisCodeDAO">
@@ -59,6 +67,12 @@
 	<bean id="profitDetailsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!--============ AEAmounts Util ============== -->
+
+	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
+		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
 	</bean>
 
 	<!-- Repay Instructions -->
@@ -83,31 +97,36 @@
 	</bean>
 
 	<!-- Finance Profit Detail Filler -->
-	<bean name="financeProfitDetailFiller" class="com.pennant.app.util.FinanceProfitDetailFiller">
-	</bean>
+	<bean name="financeProfitDetailFiller" class="com.pennant.app.util.FinanceProfitDetailFiller" />
 
-	<!-- Ovedue Details TBD -->
+	<!-- Overdue Details  -->
 	<bean id="finODDetailsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinODDetailsDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
-	<!-- Finance Suspense Head TBD -->
+	<!-- Finance Suspense Head  -->
 	<bean id="financeSuspHeadDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceSuspHeadDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
-	<!-- Finance Contributors Details -->
-	<bean id="finBillingDetailDAO"
-		class="com.pennant.backend.dao.finance.impl.FinBillingDetailDAOImpl"
-		parent="basisCodeDAO">
+	<!-- Finance Status Details -->
+	<bean id="finStatusDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.FinStatusDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<!-- Finance Log Entry Details -->
 
+	<bean id="finLogEntryDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.FinLogEntryDetailDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
 	<!-- ====================================================== -->
-	<!-- Potings Related Generic DAOs -->
+	<!-- Postings Related Generic DAOs -->
 	<!-- ====================================================== -->
 	<!-- Postings -->
 	<bean id="postingsDAO"
@@ -116,12 +135,22 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
-	<!-- Syatem Parameter Details -->
+	<!-- System Parameter Details -->
 	<bean id="SystemParameterDetails " class="com.pennant.app.util.SystemParameterDetails" init-method="Init">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
 	
-	<bean id="batchAdminDAO" class="com.pennant.backend.batch.admin.BatchAdminDAOImpl">
+	<!-- EOD Parameter Details -->
+	<bean id="eodProperties" class="com.pennant.eod.util.EODProperties">
+		<property name="financeTypeDAO" ref="financeTypeDAO" /> 
+		<property name="currencyDAO" ref="currencyDAO" />
+		<property name="definitionDAO" ref="systemInternalAccountDefinitionDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
+	</bean>
+	
+	<!-- Database backup on EOD -->
+	<bean id="backupDatabase" class="com.pennant.eod.util.BackupDatabase">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
@@ -137,24 +166,37 @@
 		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="defermentHeaderDAO" ref="defermentHeaderDAO" />
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
-		<property name="overdueChargeDAO" ref="overdueChargeDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="accountingSetDAO" ref="accountingSetDAO" />
+		<property name="financePremiumDetailDAO" ref="financePremiumDetailDAO" />
 	</bean>
 	
 	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil" />
+	
+	<bean id="accountingSetDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountingSetDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!-- Finance Premium Detail -->
+	<bean id="financePremiumDetailDAO" class="com.pennant.backend.dao.finance.impl.FinancePremiumDetailDAOImpl" >
+			<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 
 	<!-- Postings Preparation Util -->
 	<bean name="postingsPreparationUtil" class="com.pennant.app.util.PostingsPreparationUtil">
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
-		<property name="provisionMovementDAO" ref="provisionMovementDAO" />
-		<property name="provisionDAO" ref="provisionDAO" />
+		<property name="commitmentDAO" ref="commitmentDAO" />
+		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="financeCancellationProcess" ref="financeCancellationProcess" />
+		<property name="accrualPostingService" ref="accrualPostingService" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="premiumDetailDAO" ref="financePremiumDetailDAO" />
 	</bean>
 
 	<bean name="engineExecutionRIA" class="com.pennant.app.util.AccountEngineExecutionRIA">
@@ -174,9 +216,34 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
+	<bean id="commitmentDAO"
+		class="com.pennant.backend.dao.commitment.impl.CommitmentDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="commitmentMovementDAO"
+		class="com.pennant.backend.dao.commitment.impl.CommitmentMovementDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="accrualPostingService" class="com.pennant.Interface.service.impl.AccrualPostinServiceEquationImpl">
+		<property name="uploadAccrualDetailsProcess" ref="uploadAccrualDetailsProcess" />
+	</bean>
+	
 	<bean id="accountInterfaceService" class="com.pennant.Interface.service.impl.AccountInterfaceServiceEquationImpl" >
    		<property name="accountProcess" ref="accountProcess" />
    	</bean> 
+   	
+	<bean id="dailyDownloadInterfaceService" class="com.pennant.Interface.service.impl.DailyDownloadInterfaceServiceImpl" >
+   		<property name="coreInterfaceCall" ref="coreInterfaceCall" />
+   		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
+   	</bean> 
+   	
+   	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
    	
    	<bean id="postingsInterfaceService" class="com.pennant.Interface.service.impl.PostingsInterfaceServiceEquationImpl" >
    		<property name="accountPostingProcess" ref="accountPostingProcess" />
@@ -195,16 +262,30 @@
 	<bean id="accountPostingProcess" class="com.pennant.equation.process.AccountPostingProcess">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean> 
+	
 	<bean id="dateRollOverProcess" class="com.pennant.equation.process.DateRollOverProcess">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
-	<bean id="hostConnection" class="com.pennant.equation.util.HostConnection"
-		destroy-method="disConnection" />
-		
+	
+	<bean id="uploadAccrualDetailsProcess" class="com.pennant.equation.process.UploadAccrualDetailsProcess">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+	
 	<bean id="financeCancellationProcess" class="com.pennant.equation.process.FinanceCancellationProcess" >
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
-	 
+	
+	<bean id="coreInterfaceCall" class="com.pennant.equation.process.CoreInterfaceCallImpl">
+	    <property name="hostConnection" ref="hostConnection" />
+	</bean>
+	
+	<bean id="hostConnection" class="com.pennant.equation.util.HostConnection" >
+		<property name="serverName" value="${pffEquation.ServerName}"/>
+		<property name="unitName" value="${pffEquation.UnitName}"/>
+		<property name="userName" value="${pffEquation.username}"/>
+		<property name="password" value="${pffEquation.password}"/>
+	</bean>
+		
 	<!-- Account Details -->
 	<bean id="accountsDAO" class="com.pennant.backend.dao.accounts.impl.AccountsDAOImpl"
 		parent="basisCodeDAO">
@@ -227,12 +308,6 @@
 	<!-- Transaction Entry -->
 	<bean id="transactionEntryDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
-	<!-- Finance Account Number Execution TBD -->
-	<bean id="financeAccountNumberDAO"
-		class="com.pennant.backend.dao.util.impl.FinanceAccountNumberDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
@@ -330,16 +405,20 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
-	<!-- Repayment Posting util -->
+	<!-- Repayment Posting Util -->
 	<bean id="repayPostingUtil" class="com.pennant.app.util.RepaymentPostingsUtil">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="defermentDetailDAO" ref="defermentDetailDAO" />
+		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
+		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
+		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
 	</bean>
 
 	<!-- Suspense Posting util -->
@@ -347,16 +426,17 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
-
-	<!-- +++++++OVERDUE RECOVERY CALCULATIONS & POSTINGS ++++++++ -->
-	<!-- Overdue Charge Details -->
-	<bean id="overdueChargeDAO"
-		class="com.pennant.backend.dao.rulefactory.impl.OverdueChargeDAOImpl"
+	
+	<bean id="customerStatusCodeDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.CustomerStatusCodeDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+
+	<!-- +++++++OVERDUE RECOVERY CALCULATIONS & POSTINGS ++++++++ -->
 
 	<!-- Overdue Charge Recovery -->
 	<bean id="overdueChargeRecoveryDAO"
@@ -368,8 +448,19 @@
 	<!-- Overdue Charge Recovery Posting Util -->
 	<bean id="recoveryPostingsUtil" class="com.pennant.app.util.OverDueRecoveryPostingsUtil">
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
+		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+	</bean>
+	
+	<!-- Finance Overdue penalty Rate Details -->
+
+	<bean id="finODPenaltyRateDAO"
+		class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
 	<!-- +++++++PROVISION CALCULATIONS & POSTINGS ++++++++ -->
@@ -407,7 +498,50 @@
 	</bean>
 
 	<!-- _____________________________________________ TASKLET BEANS _________________________________________ -->
-
+	
+	<!-- Backup Data base Before Eod -->
+	<bean id="backupDatabaseBeforeEodTaskLet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="backupDatabaseTargetBeforeEod" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="backupDatabaseTargetBeforeEod" class="com.pennant.backend.endofday.dbbackup.BackupDatabaseTaskLet">
+		<property name="backupDatabase" ref="backupDatabase" />
+		<property name="beforeEod" value="true"/>
+	</bean>
+	
+	<!-- Backup Data base After Eod-->
+	<bean id="backupDatabaseAfterEodTaskLet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="backupDatabaseTargetAfterEod" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="backupDatabaseTargetAfterEod" class="com.pennant.backend.endofday.dbbackup.BackupDatabaseTaskLet">
+		<property name="backupDatabase" ref="backupDatabase" />
+		<property name="beforeEod" value="false"/>
+	</bean>
+	
+	
 	<!-- Calendar Updation -->
 	<bean id="calendarUpdationTaskLet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -432,66 +566,9 @@
 		<property name="calendarInterfaceService" ref="calendarInterfaceService" />
 		<property name="accountsDAO" ref="accountsDAO" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
-	<!-- Overdue Payments TBD -->
-	<bean id="overDueCalculationTaskLet"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="overDueCalculationTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean id="overDueCalculationTarget"
-		class="com.pennant.backend.endofday.overduepayments.OverDueRecoveryCalculation">
-		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
-		<property name="engineExecution" ref="engineExecution" />
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
-	</bean>
-
-	<!-- Overdue Charges TBD -->
-	<bean id="overDuePostingsTaskLet"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="overDuePostingsTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean id="overDuePostingsTarget"
-		class="com.pennant.backend.endofday.overduepayments.OverDueRecoveryPostings">
-		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
-		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
-	</bean>
-
-	<!-- Profit Rate Reviews TBD -->
+	<!-- Profit Rate Reviews  -->
 	<bean id="rateReviewCalculationTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -515,6 +592,8 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 		<property name="defermentDetailDAO" ref="defermentDetailDAO" />
 		<property name="defermentHeaderDAO" ref="defermentHeaderDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
@@ -522,10 +601,9 @@
 		<property name="financeProfitDetailFiller" ref="financeProfitDetailFiller" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
-	<!-- Profit Rate Change Postings TBD -->
+	<!-- Profit Rate Change Postings  -->
 	<bean id="refreshRateChangesTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -550,6 +628,8 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 		<property name="defermentDetailDAO" ref="defermentDetailDAO" />
 		<property name="defermentHeaderDAO" ref="defermentHeaderDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
@@ -557,10 +637,9 @@
 		<property name="financeProfitDetailFiller" ref="financeProfitDetailFiller" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
-	<!-- Capitalization Postings TBD -->
+	<!-- Capitalization Postings  -->
 	<bean id="capitalizationPostingsTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -586,7 +665,6 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
 	<!-- Repayments Queuing -->
@@ -614,7 +692,6 @@
 		<property name="financeRepayPriorityDAO" ref="financeRepayPriorityDAO" />
 		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
 	<!-- Repayment Postings -->
@@ -642,11 +719,17 @@
 		<property name="profitDetailDAO" ref="profitDetailsDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
+		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="postingsUtil" ref="repayPostingUtil" />
+		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
 	<!-- Amortization Calculation -->
@@ -664,6 +747,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="doAccrualCalculation*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -671,12 +755,7 @@
 
 	<bean id="amortizationTarget"
 		class="com.pennant.backend.endofday.amortization.AmortizationCalculation">
-		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-		<property name="finMainDAO" ref="financeMainDAO" />
-		<property name="finScheduleDAO" ref="financeScheduleDetailDAO" />
-		<property name="financeProfitDetailFiller" ref="financeProfitDetailFiller" />
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
+		<property name="amortizationService" ref="amortizationService" />
 	</bean>
 
 	<!-- Amortization Postings -->
@@ -694,18 +773,14 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="doAccrualPosting*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
 	</bean>
 
-	<bean id="amortizationPostingsTarget"
-		class="com.pennant.backend.endofday.amortization.AmortizationPostings">
-		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
+	<bean id="amortizationPostingsTarget" class="com.pennant.backend.endofday.amortization.AmortizationPostings">
+		<property name="amortizationService" ref="amortizationService" />
 	</bean>
 
 	<!-- Provision Calculations TBD -->
@@ -732,7 +807,6 @@
 		class="com.pennant.backend.endofday.provision.ProvisionCalculation">
 		<property name="provisionCalculationUtil" ref="provisionCalculationUtil" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
 	<!-- Provisions Postings TBD -->
@@ -761,11 +835,12 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="provisionDAO" ref="provisionDAO" />
+		<property name="provisionMovementDAO" ref="provisionMovementDAO" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
-	<!-- Deprecation Postings TBD -->
+	<!-- Deprecation Postings -->
 	<bean id="depreciationPostingsTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -789,40 +864,9 @@
 		class="com.pennant.backend.endofday.depreciation.DepreciationPostings">
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 	
-		<!-- Amortization Postings -->
-	<bean id="progressClaimPostingsTasklet"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="progressClaimPostingsTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean id="progressClaimPostingsTarget"
-		class="com.pennant.backend.endofday.progressclaim.ProgressClaimAmountPostings">
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="finBillingDetailDAO" ref="finBillingDetailDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
-	</bean>
-
-	<!-- Non-Revolving Limits Adjustments TBD -->
-
-	<!-- Date Rollovers for Finance TBD -->
+	<!-- Date Rollovers for Finance  -->
 	<bean id="dateRollOverTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -844,10 +888,9 @@
 
 	<bean id="dateRollOverTarget" class="com.pennant.backend.endofday.daterollover.DateRollOver">
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
-	<!-- Disbursement Postings TBD -->
+	<!-- Disbursement Postings  -->
 	<bean id="dibursementPostingsTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -875,7 +918,35 @@
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
+	</bean>
+	
+	<!-- Commencement Postings  -->
+	<bean id="commencementPostingsTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="commencementPostingsTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="commencementPostingsTarget"
+		class="com.pennant.backend.endofday.commencement.CommencementPostings">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
 	<!-- Value Date Updation -->
@@ -900,7 +971,6 @@
 
 	<bean id="valueDateUpdationTarget" class="com.pennant.backend.endofday.limitdecider.ValueDateUpdation">
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
 
 	<!-- Loop Limit Decider -->
@@ -926,35 +996,211 @@
 	<bean id="limitDeciderTarget" class="com.pennant.backend.endofday.limitdecider.LimitDecider">
 		<property name="hostConnection" ref="hostConnection" />
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="batchAdminDAO" ref="batchAdminDAO" />
 	</bean>
+	
+	<!-- Upload profit details  -->
+	<bean id="uploadPftDetailTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="uploadPftDetailTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="doUploadPftDetails*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="uploadPftDetailTarget" class="com.pennant.backend.endofday.uploadprofitdetails.UploadFinProfitDetails">
+		<property name="uploadFinPftDetailService" ref="uploadFinPftDetailService" />
+	</bean>
+	
+	<bean id="uploadFinPftDetailService" class="com.pennant.app.eod.service.impl.UploadFinPftDetailServiceImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="uploadFinProfitDetailsProcess" ref="uploadFinProfitDetailsProcess" />
+	</bean> 
+	
+	<bean id="uploadFinProfitDetailsProcess" class="com.pennant.equation.process.UploadFinProfitDetailsProcess">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+	
+	<bean id="amortizationService" class="com.pennant.app.eod.service.impl.AmortizationServiceImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeProfitDetailFiller" ref="financeProfitDetailFiller" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
+		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
+		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+	</bean>
+	
+	<!-- Overdue Details Daily Download  -->
+	<bean id="oDDetailDownloadTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="oDDetailTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="oDDetailTarget" class="com.pennant.backend.endofday.oddetail.ODDetailDownload">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!-- Commitment Expiry Details Updation  -->
+	<bean id="commitmentExpiryProcessTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="commitmentExpiryProcessTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="commitmentExpiryProcessTarget" class="com.pennant.backend.endofday.commitment.CommitmentExpiryProcess">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!-- Daily Download Details Updation  -->
+	<bean id="dailyDownloadProcessTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="dailyDownloadProcessTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="dailyDownloadProcessTarget" class="com.pennant.backend.endofday.dailydownload.DailyDownloadProcess">
+		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
+	</bean>
+	
+	<!-- Remove Finance Maintenance Details  -->
+	<bean id="removeMaintenanceProcessTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="removeMaintenanceProcessTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="removeMaintenanceProcessTarget" class="com.pennant.backend.endofday.maintenance.RemoveMaintenanceProcess">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener">
+		<property name="eodProperties" ref="eodProperties" />
+	</bean>
+
+ <!-- Audit Data Purging  -->
+	<bean id="auditDataPurgingTaskLet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="auditDataPurgingTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="auditDataPurgingTarget" class="com.pennant.backend.endofday.auditdatadeletion.AuditDataPurgingTaskLet">
+		<property name="dataPurgingProcess" ref="dataPurgingProcess" />
+	</bean>
+
+	<!--  End Of Month Decider -->
+	<bean id="eodBackupDecider" class="com.pennant.backend.endofday.limitdecider.EodBackupDecider"/>
+
+	<!--  End Of Month Decider -->
+	<bean id="endOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.EndOfMonthDecider"/>
+
+    <!-- Audit data Purging -->
+	<bean id="dataPurgingProcess" class="com.pennant.eod.util.DataPurgingProcess">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
 
 	<bean id="PFSJobParametersIncrementer" class="com.pennant.backend.endofday.jobparameter.PFSJobParametersIncrementer"/>
 	<!-- _____________________________________________ JOB FLOW DEFINITION _________________________________________ -->
 	<!-- The job definition for the PLF End of Day -->
 	<job id="equationEodJob" xmlns="http://www.springframework.org/schema/batch" incrementer="PFSJobParametersIncrementer">
+	
+		<listeners>
+			<listener ref="eodJobListener"/>
+		</listeners>
+		
+		<!-- Eod Database Backup Decision -->
+		<decision id="databaseBackupBeforeEodDecision" decider="eodBackupDecider">
+			<next on="UNKNOWN" to="databaseBackupBeforEod" />
+			<next on="*" to="calendarUpdation" />
+			<fail on="FAILED"/>
+		</decision>
+		
+		<!-- database backup Before EOD Process Start -->
+		<step id="databaseBackupBeforEod">
+			<tasklet ref="backupDatabaseBeforeEodTaskLet" />
+			<next on="*" to="calendarUpdation" />
+			<fail on="FAILED"/>
+		</step>
 
-		<!-- Overdue Payments -->
+		<!-- Calendar Updation From Equation Core System -->
 		<step id="calendarUpdation">
 			<tasklet ref="calendarUpdationTaskLet" />
-			<next on="*" to="overDueCalculation" />
+			<next on="*" to="removeMaintenance" />
 			<fail on="FAILED"/>
 		</step>
 
-		<!-- Overdue Payments -->
-		<step id="overDueCalculation">
-			<tasklet ref="overDueCalculationTaskLet" />
-			<next on="*" to="overDuePostings" />
+		<!-- Remove Maintenance Details -->
+		<step id="removeMaintenance">
+			<tasklet ref="removeMaintenanceProcessTasklet" />
+			<next on="*" to="dailyDownload" />
 			<fail on="FAILED"/>
 		</step>
-
-		<!-- Overdue Charges -->
-		<step id="overDuePostings">
-			<tasklet ref="overDuePostingsTaskLet" />
+		
+		<!-- Daily Download Details -->
+		<step id="dailyDownload">
+			<tasklet ref="dailyDownloadProcessTasklet" />
 			<next on="*" to="refreshRateChanges" />
 			<fail on="FAILED"/>
 		</step>
-
+		
 		<!-- Profit Rate Change Postings -->
 		<step id="refreshRateChanges">
 			<tasklet ref="refreshRateChangesTasklet" />
@@ -993,6 +1239,13 @@
 		<!-- Amortization Postings -->
 		<step id="amortizationPostings">
 			<tasklet ref="amortizationPostingsTasklet" />
+			<next on="*" to="uploadPftDetails" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- Upload Profit Details -->
+		<step id="uploadPftDetails">
+			<tasklet ref="uploadPftDetailTasklet" />
 			<next on="*" to="provisionCalculation" />
 			<fail on="FAILED"/>
 		</step>
@@ -1007,9 +1260,16 @@
 		<!-- Provisions Postings -->
 		<step id="provisionPostings">
 			<tasklet ref="provisionPostingsTasklet" />
-			<next on="*" to="depreciationPostings" />
+			<next on="*" to="depreciationPostingsDecision" />
 			<fail on="FAILED"/>
 		</step>
+
+		<!-- End Of Month Decision For Depreciation Postings -->
+		<decision id="depreciationPostingsDecision" decider="endOfMonthDecider">
+			<next on="EndOfMonth" to="depreciationPostings" />
+			<next on="NotEndOfMonth" to="dibursementPostings" />
+			<fail on="FAILED"/>
+		</decision>
 
 		<!-- Depreciation Calculation -->
 		<step id="depreciationPostings">
@@ -1018,25 +1278,38 @@
 			<fail on="FAILED"/>
 		</step>
 
-		<!-- Non-Revolving Limits Adjustments -->
-
 		<!-- Disbursement Postings -->
 		<step id="dibursementPostings">
 			<tasklet ref="dibursementPostingsTasklet" />
-			<next on="*" to="progressClaimPostings" />
+			<next on="*" to="auditPurgingDecision" />
 			<fail on="FAILED"/>
 		</step>
 		
-		<!-- Progress Claim Postings -->
-		<step id="progressClaimPostings">
-			<tasklet ref="progressClaimPostingsTasklet" />
+		<!-- End Of Month Decision For Audit Data Purging-->
+		<decision id="auditPurgingDecision" decider="endOfMonthDecider">
+			<next on="EndOfMonth" to="auditDataPurging" />
+			<next on="NotEndOfMonth" to="valueDateUpdation" />
+			<fail on="FAILED"/>
+		</decision>
+
+		<!-- Audit Data Purging -->
+		<step id="auditDataPurging">
+			<tasklet ref="auditDataPurgingTaskLet" />
 			<next on="*" to="valueDateUpdation" />
 			<fail on="FAILED"/>
 		</step>
 		
+		
 		<!-- Value Date Updation -->
 		<step id="valueDateUpdation">
 			<tasklet ref="valueDateUpdationTasklet" />
+			<next on="*" to="commencementPostings" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- Commencement Postings -->
+		<step id="commencementPostings">
+			<tasklet ref="commencementPostingsTasklet" />
 			<next on="*" to="rateReviewCalculation" />
 			<fail on="FAILED"/>
 		</step>
@@ -1051,16 +1324,45 @@
 		<!-- Date Rollovers for Finance -->
 		<step id="dateRollOver">
 			<tasklet ref="dateRollOverTasklet" />
-			<next on="*" to="limitDecision" />
+			<next on="*" to="oDDetailDownload" />
 			<fail on="FAILED"/>
 		</step>
 
+		<!-- ODDetails Daily Downlaod for Finance -->
+		<step id="oDDetailDownload">
+			<tasklet ref="oDDetailDownloadTasklet" />
+			<next on="*" to="commitmentExpiry" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- ODDetails Daily Downlaod for Finance -->
+		<step id="commitmentExpiry">
+			<tasklet ref="commitmentExpiryProcessTasklet" />
+			<next on="*" to="limitDecision" />
+			<fail on="FAILED"/>
+		</step>
+		
+		
 		<!-- Limit Decision For loop -->
 		<decision id="limitDecision" decider="limitDecider">
-			<next on="UNKNOWN" to="overDueCalculation" />
-			<end on="COMPLETED" exit-code="COMPLETED" />
+			<next on="UNKNOWN" to="refreshRateChanges" />
+			<next on="*" to="databaseBackupAfterEodDecision" />
 			<fail on="FAILED"/>
 		</decision>
+		
+		<!-- Eod Database Backup Decision -->
+		<decision id="databaseBackupAfterEodDecision" decider="eodBackupDecider">
+			<next on="UNKNOWN" to="databaseBackupAfterEod" />
+			<end on="COMPLETED" exit-code="COMPLETED"/>
+			<fail on="FAILED"/>
+		</decision>
+		
+		<!-- database backup After Batch Execution-->
+		<step id="databaseBackupAfterEod">
+			<tasklet ref="backupDatabaseAfterEodTaskLet" />
+			<end on="COMPLETED" exit-code="COMPLETED" />
+			<fail on="FAILED"/>
+		</step>
 
 	</job>
 

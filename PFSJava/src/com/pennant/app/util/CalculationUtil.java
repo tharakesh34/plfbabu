@@ -45,16 +45,26 @@ package com.pennant.app.util;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
+import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.lmtmasters.CommidityLoanDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 
 public class CalculationUtil implements Serializable {
 
     private static final long serialVersionUID = -7140560124513312794L;
+    
+    private static CurrencyDAO currencyDAO;
     
 	public static BigDecimal getInterestDays(Date startDate, Date endDate, String strDaysBasis) {
 
@@ -313,5 +323,292 @@ public class CalculationUtil implements Serializable {
 		}
 		
 	}
+	
+	public static BigDecimal getConvertedAmount(Currency fromCurrency, Currency toCurrency,
+	        BigDecimal actualAmount) {
 
+		BigDecimal buyRate = new BigDecimal(0);
+		BigDecimal sellRate = new BigDecimal(0);
+
+		if (fromCurrency.isCcyIsReceprocal()) {
+			buyRate = BigDecimal.ONE.divide(fromCurrency.getCcySpotRate(), 9,
+					RoundingMode.HALF_DOWN);
+		} else {
+			buyRate = fromCurrency.getCcySpotRate();
+		}
+
+		if (toCurrency.isCcyIsReceprocal()) {
+			sellRate = BigDecimal.ONE
+			.divide(toCurrency.getCcySpotRate(), 9, RoundingMode.HALF_DOWN);
+		} else {
+			sellRate = toCurrency.getCcySpotRate();
+		}
+
+		actualAmount = (actualAmount.multiply(sellRate)
+		        .multiply(toCurrency.getCcyMinorCcyUnits()))
+		        .divide(buyRate.multiply(fromCurrency.getCcyMinorCcyUnits()), 0, RoundingMode.HALF_DOWN);
+		actualAmount = actualAmount.setScale(0, BigDecimal.ROUND_HALF_DOWN);
+
+		return actualAmount;
+
+	}
+	
+	/**
+	 * Convert Amount based on the exchange rates
+	 * @param entityCode
+	 * @param fromCcy
+	 * @param toCcy
+	 * @param amount
+	 * @return
+	 */
+	public static BigDecimal getConvertedAmount(String fromCcy, String toCcy,
+	        BigDecimal actualAmount) {
+
+		if(actualAmount.compareTo(BigDecimal.ZERO) == 0){
+			return BigDecimal.ZERO;
+		}
+		
+ 		//Base Currency 
+ 		String localCcy = SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY).toString();
+ 		if(fromCcy == null ){
+ 			fromCcy = localCcy;
+ 		}
+ 		if(toCcy == null ){
+ 			toCcy = localCcy;
+ 		}
+		
+ 		if(fromCcy.equals(toCcy) ){
+			return actualAmount;
+		}
+
+		Currency fromCurrency = null;
+		Currency toCurrency = null;
+		List<Currency> currencyList =getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy,toCcy));
+		for (Currency currency : currencyList) {
+			if (currency.getCcyCode().equals(fromCcy)) {
+				fromCurrency = currency;
+			} else {
+				toCurrency = currency;
+			}
+		}
+
+		return getConvertedAmount(fromCurrency, toCurrency, actualAmount);
+
+	}
+	
+	public static String getConvertedAmountASString(String fromCcy, String toCcy, 
+			BigDecimal actualAmount) {
+			
+		if(actualAmount.compareTo(BigDecimal.ZERO) == 0){
+			return String.valueOf(BigDecimal.ZERO);
+		}
+		
+		//Base Currency 
+		String localCcy = SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY).toString();
+		int format = Integer.parseInt(SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY_FORMAT).toString());
+		if(fromCcy == null ){
+			fromCcy = localCcy;
+		}
+		if(toCcy == null ){
+			toCcy = localCcy;
+		}
+		
+/*		if(fromCcy.equals(toCcy)){
+			return PennantApplicationUtil.amountFormate(actualAmount, format);
+		} 
+		*/
+		Currency fromCurrency =  null;
+		Currency toCurrency =  null;
+		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy,toCcy));
+		for (Currency currency : currencyList) {
+			if(currency.getCcyCode().equals(fromCcy)){
+				fromCurrency = currency;
+			}else{
+				toCurrency = currency;
+			}
+		}
+		
+		if(fromCcy.equals(toCcy)){
+			return PennantApplicationUtil.amountFormate(actualAmount, fromCurrency.getCcyEditField());
+		} 	
+		
+		BigDecimal bigDecimal= getConvertedAmount(fromCurrency, toCurrency, actualAmount);
+		return PennantApplicationUtil.amountFormate(bigDecimal,toCurrency.getCcyEditField() );
+		
+	}
+	
+	public static String convertedUnFormatAmount(String fromCcy, String toCcy, 
+			BigDecimal actualAmount) {
+		
+		if(actualAmount.compareTo(BigDecimal.ZERO) == 0){
+			return String.valueOf(BigDecimal.ZERO);
+		}
+		
+		//Base Currency 
+		String localCcy = SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY).toString();
+		if(fromCcy == null ){
+			fromCcy = localCcy;
+		}
+		if(toCcy == null ){
+			toCcy = localCcy;
+		}
+		
+		if(fromCcy.equals(toCcy)){
+			return String.valueOf(actualAmount);
+		} 		
+		
+		Currency fromCurrency =  null;
+		Currency toCurrency =  null;
+		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy,toCcy));
+		for (Currency currency : currencyList) {
+			if(currency.getCcyCode().equals(fromCcy)){
+				fromCurrency = currency;
+			}else{
+				toCurrency = currency;
+			}
+		}
+		BigDecimal bigDecimal= getConvertedAmount(fromCurrency, toCurrency, actualAmount);
+		return String.valueOf(bigDecimal);
+		
+	}
+	
+	
+	/**
+	 * calculate average profit rate [avgProfitRate = (profitAmt * 100)/(Days Factor * principalAmt )]
+	 * 
+	 * @param (Date) startDate
+	 * @param (Date) maturityDate
+	 * @param (String) profitDaysBasis
+	 * @param (BigDecimal) principalAmt
+	 * @param (BigDecimal) maturityAmount
+	 * @return(BigDecimal) avgProfitRate
+	 */
+	public static BigDecimal calcAvgProfitRate(Date startDate, Date maturityDate,  String profitDaysBasis, BigDecimal principalAmt, BigDecimal maturityAmount) {
+		BigDecimal avgProfitRate = BigDecimal.ZERO;
+		BigDecimal profitAmt = BigDecimal.ZERO;
+		
+		/*
+		 * avgProfitRate = (profitAmt * 100)/(Days Factor * principalAmt)
+		 */
+
+		if (principalAmt.compareTo(BigDecimal.ZERO) == 0) {
+			return BigDecimal.ZERO;
+		}
+
+		BigDecimal dayFactor;
+		dayFactor = CalculationUtil.getInterestDays(startDate, maturityDate, profitDaysBasis);
+
+		profitAmt = maturityAmount.subtract(principalAmt);
+		profitAmt = profitAmt.multiply(new BigDecimal(100));
+		
+		principalAmt = principalAmt.multiply(dayFactor);
+
+		avgProfitRate = profitAmt.divide(principalAmt, 9, RoundingMode.HALF_UP);
+
+		return avgProfitRate;
+	}
+	
+	
+	/**
+	 * getCalculatedCommodity <br>
+	 * calculate Commodity(quantity, Unit Sell Price, Sell Amount) Based on
+	 * (Profit Amount, Finance Amount, Unit Buy Price, Buy Amount)
+	 * 
+	 * @param (CommidityLoanDetail) commidityLoanDetail
+	 * @return(CommidityLoanDetail) commidityLoanDetail
+	 */
+	public static CommidityLoanDetail getCalculatedCommodity(CommidityLoanDetail commidityLoanDetail) {
+		long quantity = 0;
+		BigDecimal buyPrice 		= BigDecimal.ZERO;
+		BigDecimal buyAmount 		= BigDecimal.ZERO;
+		BigDecimal sellAmount 		= BigDecimal.ZERO;
+		BigDecimal unitSellPrice 	= BigDecimal.ZERO;
+		BigDecimal profit		 	= BigDecimal.ZERO;
+
+		if(commidityLoanDetail.getUnitBuyPrice() != null) {
+			buyPrice = commidityLoanDetail.getUnitBuyPrice();
+		}
+
+		if(commidityLoanDetail.getBuyAmount() != null) {
+			buyAmount = commidityLoanDetail.getBuyAmount();
+		}
+
+
+		if (buyAmount.compareTo(BigDecimal.ZERO) > 0 && buyPrice.compareTo(BigDecimal.ZERO) > 0) {
+			quantity = buyAmount.divide(buyPrice, BigDecimal.ROUND_HALF_DOWN).longValue();
+
+			if(commidityLoanDetail.getBuyAmount() != null) {
+				profit = commidityLoanDetail.getLovDescFinProfitAmt();
+			}
+
+			BigDecimal finAmount = commidityLoanDetail.getLovDescFinAmount();
+
+			if (profit.compareTo(BigDecimal.ZERO) > 0) {
+				sellAmount = (buyAmount.multiply(profit)).divide(finAmount, RoundingMode.HALF_DOWN);
+				sellAmount = sellAmount.add(buyAmount);
+				unitSellPrice = unitSellPrice.add(sellAmount).divide(new BigDecimal(quantity), 9,  RoundingMode.HALF_UP);
+			}
+		}
+
+		commidityLoanDetail.setQuantity(quantity);
+		commidityLoanDetail.setSellAmount(sellAmount);
+		commidityLoanDetail.setUnitSellPrice(unitSellPrice);
+
+		return commidityLoanDetail;
+
+	}
+	
+	public static BigDecimal getExchangeRate(String fromCcy, String toCcy) {
+		BigDecimal buyRate = new BigDecimal(0);
+		BigDecimal sellRate = new BigDecimal(0);
+		//Base Currency 
+		String localCcy = SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY).toString();
+		if(fromCcy == null ){
+			fromCcy = localCcy;
+		}
+		if(toCcy == null ){
+			toCcy = localCcy;
+		}
+
+		if(fromCcy.equals(toCcy) ){
+			return BigDecimal.ONE;
+		}
+		
+		Currency toCurrency = null;
+		Currency fromCurrency = null;
+		List<Currency> currencyList =getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy,toCcy));
+		for (Currency currency : currencyList) {
+			if (currency.getCcyCode().equals(fromCcy)) {
+				fromCurrency = currency;
+			}else {
+				toCurrency = currency;
+			}
+		}
+
+		if (fromCurrency.isCcyIsReceprocal()) {
+			buyRate = BigDecimal.ONE.divide(fromCurrency.getCcySpotRate(), 9,
+					RoundingMode.HALF_DOWN);
+		} else {
+			buyRate = fromCurrency.getCcySpotRate();
+		}
+
+		if (toCurrency.isCcyIsReceprocal()) {
+			sellRate = BigDecimal.ONE
+			.divide(toCurrency.getCcySpotRate(), 9, RoundingMode.HALF_DOWN);
+		} else {
+			sellRate = toCurrency.getCcySpotRate();
+		}
+
+		return (sellRate)
+		        .divide(buyRate, 9, RoundingMode.HALF_DOWN);
+	}
+
+	public static CurrencyDAO getCurrencyDAO() {
+	    return currencyDAO;
+    }
+	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
+	    CalculationUtil.currencyDAO = currencyDAO;
+    }
+
+	
 }

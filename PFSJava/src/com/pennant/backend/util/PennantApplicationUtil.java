@@ -7,8 +7,19 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.zkoss.zkplus.spring.SpringUtil;
+
+import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.administration.SecurityRole;
+import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.service.PagedListService;
+import com.pennant.search.Field;
+import com.pennant.search.Filter;
+ 
 
 public class PennantApplicationUtil {
 
@@ -16,14 +27,14 @@ public class PennantApplicationUtil {
 	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
 
 		if (amount == null) {
-			return new BigDecimal(0);
+			return BigDecimal.ZERO;
 		}
 		BigInteger bigInteger = amount.multiply(new BigDecimal(Math.pow(10, dec))).toBigInteger();
 		return new BigDecimal(bigInteger);
 	}
 	
 	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
-		BigDecimal bigDecimal = new BigDecimal(0);
+		BigDecimal bigDecimal = BigDecimal.ZERO;
 
 		if (amount != null) {
 			bigDecimal = amount.divide(new BigDecimal(Math.pow(10, dec)));
@@ -32,7 +43,7 @@ public class PennantApplicationUtil {
 	}
 
 	public static String amountFormate(BigDecimal amount, int dec) {
-		BigDecimal bigDecimal = new BigDecimal(0);
+		BigDecimal bigDecimal = BigDecimal.ZERO;
 		if (amount != null) {
 			bigDecimal = amount.divide(new BigDecimal(Math.pow(10, dec)));
 		}
@@ -140,19 +151,46 @@ public class PennantApplicationUtil {
 	public static String formatRate(double value, int decPos) {
 		StringBuffer sb = new StringBuffer("###,###,###,###");
 
-		if (decPos > 0) {
-			sb.append('.');
-			for (int i = 0; i < decPos; i++) {
-				sb.append('0');
-			}
-		}
 		if (value != 0) {
-			java.text.DecimalFormat df = new java.text.DecimalFormat();
-			df.applyPattern(sb.toString());
-			return df.format(value).toString();
+			String subString = String.valueOf(value).substring(String.valueOf(value).indexOf('.'));
+			if (!subString.contains("E")) {
+				
+				if (decPos > 0) {
+					sb.append('.');
+					for (int i = 0; i < decPos; i++) {
+						sb.append('0');
+					}
+				}
+				
+				java.text.DecimalFormat df = new java.text.DecimalFormat();
+				df.applyPattern(sb.toString());
+				String returnResult = df.format(value).toString();
+				returnResult = returnResult.replaceAll("[0]*$", "");
+				if(returnResult.endsWith(".")){
+					returnResult = returnResult + "00";
+				}
+				return returnResult;
+			} else {
+				
+				String actValue = String.valueOf(value).substring(0,String.valueOf(value).indexOf('.'));
+				int powValue = Integer.parseInt(String.valueOf(value).substring(String.valueOf(value).indexOf('E')+1));
+				
+				String string = "0.";
+				if(powValue < 0){
+					powValue = 0-powValue;
+					if(powValue > 0){
+						for (int i = 0; i < powValue-1; i++) {
+							string += "0";
+						}
+					}
+				}
+				
+				string += actValue;
+				return string;
+			}
 		} else {
 			String string = "0.";
-			for (int i = 0; i < decPos; i++) {
+			for (int i = 0; i < 2; i++) {
 				string += "0";
 			}
 			return string;
@@ -253,4 +291,87 @@ public class PennantApplicationUtil {
 		}
 		return time;
 	}
-}
+
+	public static String formatAccountNumber(String accountNumber){
+		if (!StringUtils.trimToEmpty(accountNumber).equals("") && accountNumber.length() == 13) {
+			StringBuilder builder = new StringBuilder();
+			builder.append(accountNumber.substring(0, 4));
+			builder.append("-");
+			builder.append(accountNumber.substring(4, 10));
+			builder.append("-");
+			builder.append(accountNumber.substring(10, 13));
+			return builder.toString();
+		}
+		return accountNumber;
+	}
+	
+	public static String unFormatAccountNumber(String accountNumber){
+		if (!StringUtils.trimToEmpty(accountNumber).equals("")) {
+			return StringUtils.trim(accountNumber.replaceAll("-", ""));
+		}
+		return accountNumber;
+	}
+	
+	public static String getSavingStatus(String roleCode,String nextRoleCode, String reference, String moduleCode, String recordStatus){
+		String roleCodeDesc = "";
+		if(StringUtils.trimToEmpty(nextRoleCode).equals("") || roleCode.equals(nextRoleCode) || StringUtils.trimToEmpty(recordStatus).equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)){
+			return moduleCode + " with Reference: " + reference +" "+ recordStatus + " Successfully.";
+		}else{
+			JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
+			if (nextRoleCode.contains(",")) {
+	            String roleCodes[]=nextRoleCode.split(",");
+	        	searchObject.addFilterIn("RoleCd",roleCodes);
+            }else{
+            	searchObject.addFilterEqual("RoleCd", nextRoleCode);
+            }
+			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+			List<SecurityRole> rolesList = pagedListService.getBySearchObject(searchObject);
+			if (rolesList!=null && !rolesList.isEmpty()) {
+				for (SecurityRole securityRole : rolesList) {
+					if ("".equals(roleCodeDesc)) {
+						roleCodeDesc = securityRole.getRoleDesc();
+                    }else{
+                    	roleCodeDesc=roleCodeDesc+" And "+securityRole.getRoleDesc();
+                    }
+                }
+            }
+			return moduleCode + " with Reference: " + reference + " Moved to " +  (StringUtils.trimToEmpty(roleCodeDesc).equals("") ? "" : roleCodeDesc) + " Successfully.";
+		}
+ 	}
+	
+	public static List<SecurityRole> getRoleCodeDesc(String roleCode){
+			JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
+			if (roleCode.contains(",")) {
+	            String roleCodes[]=roleCode.split(",");
+	        	searchObject.addFilterIn("RoleCd",roleCodes);
+            }else{
+            	searchObject.addFilterEqual("RoleCd", roleCode);
+            }
+//			searchObject.addFilterEqual("RoleCd", roleCode);
+			
+			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+			List<SecurityRole> rolesList = pagedListService.getBySearchObject(searchObject);
+			return rolesList;
+ 	}
+
+	public static String getUserDesc(long userID){
+		JdbcSearchObject<SecurityUser> searchObject = new JdbcSearchObject<SecurityUser>(SecurityUser.class);
+		searchObject.addFilterEqual("UsrID", userID);
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		List<SecurityUser> usersList = pagedListService.getBySearchObject(searchObject);
+		SecurityUser securityUser = usersList.get(0); 
+		if(StringUtils.trimToEmpty(securityUser.getUsrMName()).equals("")){
+			return securityUser.getUsrFName() + " " + securityUser.getUsrLName();
+		}else{
+			return securityUser.getUsrFName()+ " " + securityUser.getUsrMName() + " " + securityUser.getUsrLName();
+		}
+	}
+	public static String getWorkFlowType(long workflowID){
+		JdbcSearchObject<WorkFlowDetails> searchObject = new JdbcSearchObject<WorkFlowDetails>(WorkFlowDetails.class);
+		searchObject.addFilterEqual("WorkFlowID", workflowID);
+		searchObject.addField("WorkFlowType");
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		List<WorkFlowDetails> usersList = pagedListService.getBySearchObject(searchObject);
+		return usersList.get(0).getWorkFlowType(); 
+ 	}
+ }

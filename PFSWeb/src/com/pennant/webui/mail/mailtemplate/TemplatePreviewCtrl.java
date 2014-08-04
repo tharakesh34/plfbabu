@@ -31,10 +31,8 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.model.DisbursementDetail;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.mail.MailTemplateData;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -211,17 +209,13 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl implements Serializable {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 			Method method = null;
-			Object data = null;
+			MailTemplateData data = new MailTemplateData();
 			
 			Map<String, Object> model = new HashMap<String, Object>();
 			if(module.equals("FIN")) {
-				model.put("vo", new FinanceMain());
-			}else if(module.equals("RPY")) {
-				model.put("vo", new FinanceRepayments());
-			}else if(module.equals("DIS")) {
-				model.put("vo", new DisbursementDetail());
+				model.put("vo", data);
 			}
-			data = model.get("vo");
+			
 			for(int i =0 ;i < this.rows_Fields.getChildren().size(); i++) {
 				Row row = (Row) this.rows_Fields.getChildren().get(i);
 				Label lbl = null;
@@ -242,12 +236,12 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl implements Serializable {
 									throw new WrongValueException(db, Labels.getLabel( "FIELD_NO_EMPTY",new String[] { lbl.getValue().replaceAll(":", "")}));
 								}
 								if(db.getFormat().equals(PennantConstants.dateTimeFormat)){
-									method = data.getClass().getDeclaredMethod("set" +db.getId(), Timestamp.class);
+									method = data.getClass().getDeclaredMethod("set" +getFieldValue(db.getId()), Timestamp.class);
 									ts =new Timestamp(DateUtility.getUtilDate((DateUtility.formatDate(db.getValue(), PennantConstants.DBDateTimeFormat)),
 											PennantConstants.DBDateTimeFormat).getTime());
 									method.invoke(data, ts);
 								}else{
-									method = data.getClass().getDeclaredMethod("set" +db.getId(), Date.class);
+									method = data.getClass().getDeclaredMethod("set" +getFieldValue(db.getId()), Date.class);
 									date = DateUtility.getDBDate(DateUtility.formatDate(db.getValue(), PennantConstants.DBDateFormat));
 									method.invoke(data, date);
 								}
@@ -262,7 +256,7 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl implements Serializable {
 								if(dcb.getValue() ==null) {
 									throw new WrongValueException(dcb, Labels.getLabel( "FIELD_NO_EMPTY",new String[] { lbl.getValue().replaceAll(":", "")}));
 								}
-								method = data.getClass().getDeclaredMethod("set" +dcb.getId(), BigDecimal.class);
+								method = data.getClass().getDeclaredMethod("set" +getFieldValue(dcb.getId()), BigDecimal.class);
 								method.invoke(data, PennantApplicationUtil.formateAmount(PennantApplicationUtil.unFormateAmount(dcb.getValue(), 2),2));
 							} catch (WrongValueException e) {
 								wve.add(e);
@@ -273,7 +267,7 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl implements Serializable {
 								if(intb.getValue() ==null) {
 									throw new WrongValueException(intb, Labels.getLabel( "FIELD_NO_EMPTY",new String[] { lbl.getValue().replaceAll(":", "")}));
 								}
-								method = data.getClass().getDeclaredMethod("set" +intb.getId(), Integer.TYPE);
+								method = data.getClass().getDeclaredMethod("set" + getFieldValue(intb.getId()), Integer.TYPE);
 								method.invoke(data, intb.getValue());
 							} catch (WrongValueException e) {
 								wve.add(e);
@@ -284,7 +278,7 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl implements Serializable {
 								if(StringUtils.trimToEmpty(tb.getValue()).equals("")) {
 									throw new WrongValueException(tb, Labels.getLabel( "FIELD_NO_EMPTY",new String[] { lbl.getValue().replaceAll(":", "")}));
 								}
-								method = data.getClass().getDeclaredMethod("set" +tb.getId(), String.class);
+								method = data.getClass().getDeclaredMethod("set" +getFieldValue(tb.getId()), String.class);
 								method.invoke(data, tb.getValue());
 							} catch (WrongValueException e) {
 								wve.add(e);
@@ -307,6 +301,12 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving" + event.toString());
 	}
 	
+	private String getFieldValue(String field){
+		String fieldValue = field.substring(0, 1).toString().toUpperCase();
+		fieldValue =fieldValue + field.substring(1);
+		return fieldValue;
+	}
+	
 	
 	private void setContent(Map<String, Object> model) throws InterruptedException {
 		logger.debug("Entering");
@@ -318,10 +318,10 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl implements Serializable {
 			Configuration configuration = new Configuration();
 			configuration.setTemplateLoader(loader);
 			Template template = configuration.getTemplate("Template");
-			this.previewTabDiv.appendChild(new Html(FreeMarkerTemplateUtils.processTemplateIntoString(template, model)));
-			
-//			this.templatePreview.setValue(FreeMarkerTemplateUtils.processTemplateIntoString(template, model));
+			this.previewTabDiv.appendChild(new Html(new String(FreeMarkerTemplateUtils.processTemplateIntoString(template, model).getBytes(PennantConstants.DEFAULT_CHARSET),
+					PennantConstants.DEFAULT_CHARSET)));
 			this.previewTab.setSelected(true);
+			
 		} catch (TemplateException e) {
 			Messagebox.show(e.getMessage(), "Template Preview Window", Messagebox.OK, Messagebox.ERROR);
 		} catch (IOException e) {

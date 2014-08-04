@@ -14,19 +14,18 @@ public class CustomerDedup {
 	private long custId =Long.MIN_VALUE;
 	private String custCIF ;
 	private String custCoreBank;
-	private String custSalutationCode;
-	private String custFName;
-	private String custMName;
-	private String custLName;
-	private String custMotherMaiden;
-	private String likeCustFName;
-	private String likeCustMName;
-	private String likeCustLName;
-	private String likecustMotherMaiden;
-	private String custNationality;
-	private Date   custPassportExpiry;
 	private String custShrtName;
 	private Date custDOB;
+	private String custCtgCode;
+	private String custDftBranch;
+	private String custSector;
+	private String custSubSector;
+	private String custNationality;
+	private String custDocType;
+	private String custDocTitle;
+	
+	private String custSalutationCode;
+	private Date   custPassportExpiry;
 	private String custCOB;
 	private String custPassportNo;
 	private String custTradeLicenceNum;
@@ -37,43 +36,11 @@ public class CustomerDedup {
 	private String custEMail;
 	private CustomerDedup befImage;
 	private List<CustomerDedup> dedupList;
-	private String dedupFields;
+
+
 	
 	public CustomerDedup(){
 		super();
-	}
-	
-	
-	public CustomerDedup(long custId, String custCIF, String custCoreBank,String custSalutationCode,
-			String custFName, String custMName, String custLName, String custMotherMaiden, String likecustFName,
-			String likecustMName, String likecustLName, String likecustMotherMaiden, String custNationality,
-			Date custPassportExpiry, String custShrtName, Date custDOB,String custCOB, String custPassportNo, String custTradeLicenceNum,
-			String custVisaNum, String phoneNumber, String custPOB, String custResdCountry, String custEMail) {
-		super();
-		this.custId = custId;
-		this.custCIF = custCIF;
-		this.custCoreBank = custCoreBank;
-		this.custSalutationCode = custSalutationCode;
-		this.custFName = custFName;
-		this.custMName = custMName;
-		this.custLName = custLName;
-		this.custMotherMaiden = custMotherMaiden;
-		this.likeCustFName = likecustFName;
-		this.likeCustMName = likecustMName;
-		this.likeCustLName = likecustLName;
-		this.likecustMotherMaiden = likecustMotherMaiden;
-		this.custNationality = custNationality;
-		this.custPassportExpiry = custPassportExpiry;
-		this.custShrtName = custShrtName;
-		this.custDOB = custDOB;
-		this.custCOB = custCOB;
-		this.custPassportNo = custPassportNo;
-		this.custTradeLicenceNum = custTradeLicenceNum;
-		this.custVisaNum = custVisaNum;
-		this.phoneNumber = phoneNumber;
-		this.custPOB = custPOB;
-		this.custResdCountry = custResdCountry;
-		this.custEMail = custEMail;
 	}
 	
 	//Getter and Setter methods
@@ -109,24 +76,7 @@ public class CustomerDedup {
 	public void setCustSalutationCode(String custSalutationCode) {
 		this.custSalutationCode = custSalutationCode;
 	}
-	public String getCustFName() {
-		return custFName;
-	}
-	public void setCustFName(String custFName) {
-		this.custFName = custFName;
-	}
-	public String getCustMName() {
-		return custMName;
-	}
-	public void setCustMName(String custMName) {
-		this.custMName = custMName;
-	}
-	public String getCustLName() {
-		return custLName;
-	}
-	public void setCustLName(String custLName) {
-		this.custLName = custLName;
-	}
+
 	public String getCustShrtName() {
 		return custShrtName;
 	}
@@ -186,13 +136,7 @@ public class CustomerDedup {
 				changed=true;
 			}else if(!StringUtils.trimToEmpty(befImage.getCustCoreBank()).equals(StringUtils.trim(getCustCoreBank()))){
 				changed=true;
-			}else if(!StringUtils.trimToEmpty(befImage.getCustFName()).equals(StringUtils.trim(getCustFName()))){
-				changed=true;
-			}else if(!StringUtils.trimToEmpty(befImage.getCustMName()).equals(StringUtils.trim(getCustMName()))){
-				changed=true;
-			}else if(!StringUtils.trimToEmpty(befImage.getCustLName()).equals(StringUtils.trim(getCustLName()))) {
-				changed=true;
-			}else if(!StringUtils.trimToEmpty(befImage.getCustShrtName()).equals(StringUtils.trim(getCustShrtName()))){
+			}else  if(!StringUtils.trimToEmpty(befImage.getCustShrtName()).equals(StringUtils.trim(getCustShrtName()))){
 				changed=true;
 			}else if(befImage.getCustDOB().equals(getCustDOB())){
 				changed=true;
@@ -207,36 +151,6 @@ public class CustomerDedup {
 		
 		
 		return changed;
-	}
-	public String getCustMotherMaiden() {
-		return custMotherMaiden;
-	}
-	public void setCustMotherMaiden(String custMotherMaiden) {
-		this.custMotherMaiden = custMotherMaiden;
-	}
-	public String getLikeCustFName() {
-		return likeCustFName;
-	}
-	public void setLikeCustFName(String likecustFName) {
-		this.likeCustFName = likecustFName;
-	}
-	public String getLikeCustMName() {
-		return likeCustMName;
-	}
-	public void setLikeCustMName(String likecustMName) {
-		this.likeCustMName = likecustMName;
-	}
-	public String getLikeCustLName() {
-		return likeCustLName;
-	}
-	public void setLikeCustLName(String likecustLName) {
-		this.likeCustLName = likecustLName;
-	}
-	public String getLikecustMotherMaiden() {
-		return likecustMotherMaiden;
-	}
-	public void setLikecustMotherMaiden(String likecustMotherMaiden) {
-		this.likecustMotherMaiden = likecustMotherMaiden;
 	}
 	public String getCustNationality() {
 		return custNationality;
@@ -274,11 +188,61 @@ public class CustomerDedup {
 	public void setCustEMail(String custEMail) {
 		this.custEMail = custEMail;
 	}
-	public String getDedupFields() {
-		return dedupFields;
-	}
-	public void setDedupFields(String dedupFields) {
-		this.dedupFields = dedupFields;
-	}
+
+
+	public void setCustCtgCode(String custCtgCode) {
+	    this.custCtgCode = custCtgCode;
+    }
+
+
+	public String getCustCtgCode() {
+	    return custCtgCode;
+    }
+
+
+	public void setCustDftBranch(String custDftBranch) {
+	    this.custDftBranch = custDftBranch;
+    }
+
+
+	public String getCustDftBranch() {
+	    return custDftBranch;
+    }
+
+
+	public void setCustSector(String custSector) {
+	    this.custSector = custSector;
+    }
+
+
+	public String getCustSector() {
+	    return custSector;
+    }
+
+
+	public void setCustSubSector(String custSubSector) {
+	    this.custSubSector = custSubSector;
+    }
+
+
+	public String getCustSubSector() {
+	    return custSubSector;
+    }
+
+	public void setCustDocTitle(String custDocTitle) {
+	    this.custDocTitle = custDocTitle;
+    }
+
+	public String getCustDocTitle() {
+	    return custDocTitle;
+    }
+
+	public void setCustDocType(String custDocType) {
+	    this.custDocType = custDocType;
+    }
+
+	public String getCustDocType() {
+	    return custDocType;
+    }
 	
 }

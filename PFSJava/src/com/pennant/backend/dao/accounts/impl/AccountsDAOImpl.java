@@ -56,6 +56,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
@@ -120,8 +121,8 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 	@Override
 	public Accounts getAccountsById(final String id, String type) {
 		logger.debug("Entering");
-		Accounts accounts = getAccounts();
 		
+		Accounts accounts = new Accounts();
 		accounts.setAccountId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, ");
@@ -161,8 +162,8 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 	@Override
 	public List<Accounts> getAccountsByAcPurpose(final String acPurpose, String type) {
 		logger.debug("Entering");
-		Accounts accounts = getAccounts();
 		
+		Accounts accounts = new Accounts();
 		accounts.setAcPurpose(acPurpose);
 		
 		StringBuilder selectSql = new StringBuilder("Select AcType ");
@@ -283,6 +284,46 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 	}
 	
 	/**
+	 * This method insert new Records into Accounts or Accounts_Temp.
+	 *
+	 * save Account Details 
+	 * 
+	 * @param Account Details (accounts)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	
+	@Override
+	public void saveList(List<Accounts> accountList,String type) {
+		logger.debug("Entering");
+		
+		StringBuilder insertSql =new StringBuilder("Insert Into Accounts");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, AcShortName");
+		insertSql.append(", AcPurpose, InternalAc, CustSysAc, AcPrvDayBal, AcTodayDr, AcTodayCr, AcTodayNet");
+		insertSql.append(", AcAccrualBal, AcTodayBal, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
+		insertSql.append(", AcBlocked, AcClosed, HostAcNumber");
+		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode" );
+		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName" );
+		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc, :AcPrvDayBal, :AcTodayDr, :AcTodayCr");
+		insertSql.append(", :AcTodayNet, :AcAccrualBal, :AcTodayBal, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
+		insertSql.append(", :AcActive, :AcBlocked, :AcClosed, :HostAcNumber");
+		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
+		insertSql.append(", :NextTaskId, :RecordType, :WorkflowId)");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(accountList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	
+	/**
 	 * This method updates the Record Accounts or Accounts_Temp.
 	 * if Record not updated then throws DataAccessException with  error  41004.
 	 * update Account Details by key AccointId and Version
@@ -331,12 +372,52 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		logger.debug("Leaving");
 	}
 	
+	/**
+	 * This method updates the Record Accounts or Accounts_Temp.
+	 * if Record not updated then throws DataAccessException with  error  41004.
+	 * update Account Details by key AccointId and Version
+	 * 
+	 * @param Account Details (accounts)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@Override
+	public void updateList(List<Accounts> accountList,String type) {
+		logger.debug("Entering");
+		
+		StringBuilder	updateSql =new StringBuilder("Update Accounts");
+		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(" Set AccountId = :AccountId, AcCcy = :AcCcy, AcType = :AcType" ); 
+		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName" ); 
+		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc" ); 
+		updateSql.append(", CustSysAc = :CustSysAc, AcPrvDayBal = :AcPrvDayBal, AcTodayDr = :AcTodayDr" ); 
+	    updateSql.append(", AcTodayCr = :AcTodayCr, AcTodayNet = :AcTodayNet, AcAccrualBal = :AcAccrualBal" ); 
+		updateSql.append(", AcTodayBal = :AcTodayBal, AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate" ); 
+		updateSql.append(", AcLastSysTrnDate = :AcLastSysTrnDate, AcActive = :AcActive, AcBlocked = :AcBlocked" ); 
+		updateSql.append(", AcClosed = :AcClosed, HostAcNumber = :HostAcNumber, Version = :Version , LastMntBy = :LastMntBy");
+		updateSql.append(", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode" ); 
+		updateSql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Where AccountId =:AccountId");
+		
+		if (!type.endsWith("_TEMP")){
+			updateSql.append("  AND Version= :Version-1");
+		}
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(accountList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
     @Override
     public void updateAccrualBalance() {
 		logger.debug("Entering");
 		
-		Accounts accounts = getAccounts();
-		accounts.setAcAccrualBal(new BigDecimal(0));
+		Accounts accounts = new Accounts();
+		accounts.setAcAccrualBal(BigDecimal.ZERO);
 		
 		StringBuilder	updateSql =new StringBuilder("Update Accounts");
 		updateSql.append(" Set AcAccrualBal = :AcAccrualBal ");

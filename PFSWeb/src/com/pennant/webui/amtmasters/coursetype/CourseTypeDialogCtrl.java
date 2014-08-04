@@ -75,7 +75,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.amtmasters.CourseTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -581,10 +583,10 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.courseTypeCode.isReadonly()){
-			this.courseTypeCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CourseTypeDialog_CourseTypeCode.value")}));
+			this.courseTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CourseTypeDialog_CourseTypeCode.value"), PennantRegularExpressions.REGEX_ALPHA_CODE, true));
 		}	
 		if (!this.courseTypeDesc.isReadonly()){
-			this.courseTypeDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CourseTypeDialog_CourseTypeDesc.value")}));
+			this.courseTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CourseTypeDialog_CourseTypeDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}	
 		logger.debug("Leaving");
 	}

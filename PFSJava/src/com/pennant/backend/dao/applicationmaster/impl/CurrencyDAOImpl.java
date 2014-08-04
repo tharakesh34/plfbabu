@@ -43,7 +43,9 @@
 
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -121,7 +123,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 	@Override
 	public Currency getCurrencyById(final String id, String type) {
 		logger.debug("Entering ");
-		Currency currency = getCurrency();
+		Currency currency = new Currency();
 		currency.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("SELECT CcyCode, CcyNumber, CcyDesc, CcySwiftCode," );
@@ -161,33 +163,63 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 	 * @param id (String)
 	 * @param  type (String)
 	 * 			""/_Temp/_View          
+	 * @return Currency
+	 */
+	@Override
+	public Currency getCurrencyByCode(final String id) {
+		logger.debug("Entering ");
+		Currency currency = new Currency();
+		currency.setId(id);
+
+		StringBuilder selectSql = new StringBuilder("SELECT CcyCode, CcyNumber, CcyEditField" );
+		selectSql.append(" FROM  RMTCurrencies");
+		selectSql.append("  Where CcyCode =:CcyCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
+		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+
+		try{
+			currency = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.error(e);
+			currency = null;
+		}
+		logger.debug("Leaving ");
+		return currency;
+	}
+	
+	
+	/**
+	 * Fetch the Record  Currency details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
 	 * @return ValueLabel
 	 */
 	@Override
-	public ValueLabel getCurrencyById(final String id) {
+	public String getCurrencyById(final String id) {
 		logger.debug("Entering ");
-		ValueLabel valueLabel = null;
-		Currency currency = getCurrency();
+		String ccyCode = null;
+		Currency currency = new Currency();
 		currency.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("SELECT CcyCode AS Label, CcyNumber AS Value " );
-		selectSql.append(" FROM  RMTCurrencies");
+		StringBuilder selectSql = new StringBuilder("SELECT CcyNumber FROM  RMTCurrencies");
 		selectSql.append(" Where CcyCode =:CcyCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ValueLabel.class);
 
 		try{
-			valueLabel = this.namedParameterJdbcTemplate.queryForObject(
-					 selectSql.toString(), beanParameters, typeRowMapper);	
+			ccyCode = this.namedParameterJdbcTemplate.queryForObject(
+					 selectSql.toString(), beanParameters, String.class);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.error(e);
-			valueLabel = null;
+			ccyCode = "";
 		}
 		logger.debug("Leaving ");
-		return valueLabel;
+		return ccyCode;
 	}
 
 	/**
@@ -387,6 +419,30 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		return false;
 	}
 	
+	/**
+	 * Fetch the Record  Currency details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return ValueLabel
+	 */
+	@Override
+	 public List<ValueLabel> getCcyCodesByFinRef() {
+		logger.debug("Entering ");
+
+		StringBuilder selectSql = new StringBuilder("SELECT CcyCode AS Label, CcyNumber AS Value FROM  RMTCurrencies");
+		//selectSql.append(" where CcyCode IN (select DISTINCT FinCcy from FinanceMain WHERE FinIsActive = 1) ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);	
+	}
+
+
+	
 	private ErrorDetails  getError(String errorId, String ccyCode,String ccyNumber,
 			String ccySwiftCode, String userLanguage){
 		String[][] parms= new String[2][3]; 
@@ -401,4 +457,24 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 				errorId, parms[0],parms[1]), userLanguage);
 	}
+
+	@Override
+    public List<Currency> getCurrencyList(List<String> asList) {
+		logger.debug("Entering ");
+		
+		Map<String, Object> namedParameters=new HashMap<String, Object>();
+		namedParameters.put("CCYList", asList);
+
+		StringBuilder selectSql = new StringBuilder("SELECT CcyCode, CcyNumber, " );
+		selectSql.append(" CcyEditField, CcyMinorCcyUnits, CcySpotRate, CcyIsReceprocal " );
+		selectSql.append(" FROM  RMTCurrencies");
+		selectSql.append("  Where CcyCode IN(:CCYList)");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+
+		logger.debug("Leaving ");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), namedParameters, typeRowMapper);	
+    }
+
 }

@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -62,7 +63,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.batch.admin.BatchAdminDAO;
 import com.pennant.backend.util.PennantConstants;
 
 public class DateRollOver implements Tasklet {
@@ -70,33 +70,35 @@ public class DateRollOver implements Tasklet {
 	private Logger logger = Logger.getLogger(DateRollOver.class);
 
 	private DataSource dataSource;
-	private BatchAdminDAO batchAdminDAO;
 	
-
 	// Date Fields used in update
 	private Date dateValueDate = null;
+	
+	private ExecutionContext jobExecutionContext;
+	private ExecutionContext stepExecutionContext;
 
 	@SuppressWarnings({ "serial" })
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception{
 
 		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
-
-		logger.debug("START: Date Rollover for Value Date: "+ DateUtility.addDays(dateValueDate,-1));
 		
-		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
+		logger.debug("START: Date Rollover for Value Date: "+ DateUtility.addDays(dateValueDate,-1));
 
+		jobExecutionContext = context.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
+		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();	
+
+		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
+		
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
-		StringBuffer selQuery = new StringBuffer();
-		selQuery = prepareSelectQuery(selQuery);
 
 		try {
 			
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(selQuery.toString());
+			sqlStatement = connection.prepareStatement(prepareSelectQuery());
 			resultSet = sqlStatement.executeQuery();
 
 			String finReference = null;
@@ -135,8 +137,7 @@ public class DateRollOver implements Tasklet {
 				StringBuilder updateSql = new StringBuilder( "UPDATE FinanceMain SET");
 				
 				// If grace is allowed
-				if (resultSet.getBoolean("AllowGrcPeriod") && 
-						DateUtility.compare(graceEndDate, dateValueDate) >0) {
+				if (resultSet.getBoolean("AllowGrcPeriod") &&  DateUtility.compare(graceEndDate, dateValueDate) >0) {
 					
 					if (resultSet.getString("NextGrcPftDate") != null && (DateUtility.compare(
 							DateUtility.getDBDate(resultSet.getString("NextGrcPftDate")),dateValueDate) == 0)) {
@@ -259,24 +260,18 @@ public class DateRollOver implements Tasklet {
 				//Update Next Dates
 				PreparedStatement statement = null;
 				
-				System.out.println(updateSql.toString());
-				
 				try {
 					
 					statement = connection.prepareStatement(updateSql.toString());
 					statement.executeUpdate();
 					
-					getBatchAdminDAO().saveStepDetails(finReference, "", context.getStepContext().getStepExecution().getId());
-					context.getStepContext().getStepExecution().getExecutionContext().putInt("FIELD_COUNT", resultSet.getRow());
+					jobExecutionContext.putInt(context.getStepContext().getStepExecution().getStepName()+ "_FIELD_COUNT", resultSet.getRow());
 
 				} catch (DataAccessException e) {
 					logger.error(e);
 				}finally {
 					statement.close();
 				}
-				
-				
-				
 			}
 
 		} catch (SQLException e) {
@@ -298,17 +293,16 @@ public class DateRollOver implements Tasklet {
 	 * @param selQuery
 	 * @return
 	 */
-	private StringBuffer prepareSelectQuery(StringBuffer selQuery) {
+	private String prepareSelectQuery() {
 		
-		selQuery.append(" SELECT FinReference, CustID, FinBranch, GrcPftFrq, NextGrcPftDate, AllowGrcPeriod, ");
+		StringBuilder selQuery = new StringBuilder(" SELECT FinReference, CustID, FinBranch, GrcPftFrq, NextGrcPftDate, AllowGrcPeriod, ");
 		selQuery.append(" DepreciationFrq, NextDepDate, AllowGrcPftRvw, GrcPftRvwFrq, NextGrcPftRvwDate, ");
 		selQuery.append(" AllowGrcCpz, GrcCpzFrq, AllowGrcRepay, NextGrcCpzDate, ");
 		selQuery.append(" RepayFrq, NextRepayDate, NextRepayDate, NextRepayPftDate, ");
 		selQuery.append(" AllowRepayRvw, RepayRvwFrq, NextRepayRvwDate, RepayCpzFrq, NextRepayCpzDate, ");
 		selQuery.append(" FinType, FinCcy, GrcPeriodEndDate, LastRepayDate," );
 		selQuery.append(" MaturityDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate ");
-		selQuery.append(" FROM FinanceMain WHERE FinIsActive = '1' ");
-		selQuery.append(" AND (NextGrcPftDate = '" + dateValueDate + "'");
+		selQuery.append(" FROM FinanceMain WHERE (NextGrcPftDate = '" + dateValueDate + "'");
 		selQuery.append(" OR NextGrcPftRvwDate = '" + dateValueDate + "'");
 		selQuery.append(" OR NextGrcCpzDate = '" + dateValueDate + "'");
 		selQuery.append(" OR NextRepayDate = '" + dateValueDate + "'");
@@ -316,8 +310,8 @@ public class DateRollOver implements Tasklet {
 		selQuery.append(" OR NextRepayRvwDate = '" + dateValueDate + "'");
 		selQuery.append(" OR NextDepDate = '" + dateValueDate + "'");
 		selQuery.append(" OR NextRepayCpzDate = '" + dateValueDate + "')");
-		selQuery.append(" AND MaturityDate <> '" + dateValueDate + "'");
-		return selQuery;
+		selQuery.append(" AND MaturityDate >= '" + dateValueDate + "'");
+		return selQuery.toString();
 		
 	}
 
@@ -333,8 +327,7 @@ public class DateRollOver implements Tasklet {
 			Date dateParam, String columnName) throws SQLException {
 		
 		Date nextDate = null;
-		StringBuffer selDateQuery = new StringBuffer();
-		selDateQuery.append(" SELECT SchDate FROM FinScheduleDetails");
+		StringBuilder selDateQuery = new StringBuilder(" SELECT TOP 1 SchDate FROM FinScheduleDetails");
 		selDateQuery.append(" WHERE FinReference = '" + finReference + "' ");
 		selDateQuery.append(" AND " + columnName.trim() + " = '1' ");
 		selDateQuery.append(" AND SchDate > '" + dateParam + "' ORDER BY SCHDATE ");
@@ -360,13 +353,5 @@ public class DateRollOver implements Tasklet {
 	}
 	public DataSource getDataSource() {
 		return dataSource;
-	}
-
-	public BatchAdminDAO getBatchAdminDAO() {
-		return batchAdminDAO;
-	}
-
-	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
-		this.batchAdminDAO = batchAdminDAO;
 	}
 }

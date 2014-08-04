@@ -2,14 +2,17 @@ package com.pennant.webui.customermasters.customer.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -23,23 +26,23 @@ public class CustomerDocumentsListModelItemRenderer implements ListitemRenderer<
 	public void render(Listitem item, CustomerDocument customerDocument, int count) throws Exception {
 
 		//final CustomerDocument customerDocument = (CustomerDocument) data;
-
 		Listcell lc;
-		if(customerDocument.getRecordType().equals(PennantConstants.RCD_ADD) 
-				|| customerDocument.getRecordType().equals(PennantConstants.RCD_UPD)){
-
-			lc = new Listcell(customerDocument.getLovDescCustDocType());
-			lc.setParent(item);
-			lc = new Listcell(customerDocument.getLovDescCustDocIssuedCountry());
-			lc.setParent(item);
-		}else {
-			lc = new Listcell(customerDocument.getCustDocType()+"-"+customerDocument.getLovDescCustDocType());
-			lc.setParent(item);
-			lc = new Listcell(customerDocument.getCustDocIssuedCountry()+"-"+customerDocument.getLovDescCustDocIssuedCountry());
-			lc.setParent(item); 
-		}
+		if (StringUtils.trimToEmpty(customerDocument.getCustDocCategory()).equals(StringUtils.trimToEmpty(customerDocument.getLovDescCustDocCategory()))) {
+			String desc = PennantAppUtil.getlabelDesc(customerDocument.getCustDocCategory(), PennantAppUtil.getCustomerDocumentTypesList());
+			customerDocument.setLovDescCustDocCategory(desc);
+		}	
+		lc = new Listcell(customerDocument.getCustDocCategory() + "-" + customerDocument.getLovDescCustDocCategory());
+		lc.setParent(item);
 		lc = new Listcell(customerDocument.getCustDocTitle());
 		lc.setParent(item);
+		lc = new Listcell(customerDocument.getLovDescCustDocIssuedCountry());
+		lc.setParent(item); 
+		lc = new Listcell(customerDocument.getLovDescCustDocVerifiedBy());
+		lc.setParent(item); 
+		lc = new Listcell(PennantApplicationUtil.formateDate(customerDocument.getCustDocIssuedOn(),PennantConstants.dateFormate));
+		lc.setParent(item); 
+		lc = new Listcell(PennantApplicationUtil.formateDate(customerDocument.getCustDocExpDate(),PennantConstants.dateFormate));
+		lc.setParent(item); 
 		lc = new Listcell(customerDocument.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(customerDocument.getRecordType()));

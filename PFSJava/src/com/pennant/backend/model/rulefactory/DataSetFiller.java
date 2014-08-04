@@ -1,23 +1,24 @@
 package com.pennant.backend.model.rulefactory;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-public class DataSetFiller {
+public class DataSetFiller implements Serializable { 
 
+    private static final long serialVersionUID = -1586459460155302565L;
+    
 	private String custCIF;
 	private String custCOB;
 	private String custCtgCode;
 	private String custIndustry;
-	private String custIsStaff;
+	private boolean custIsStaff;
 	private String custNationality;
 	private String custParentCountry;
 	private String custResdCountry;
 	private String custRiskCountry;
 	private String custSector;
-	private String custSegment;
 	private String custSubSector;
-	private String custSubSegment;
 	private String custTypeCode;
 	private String reqCampaign;
 	private String reqFinAcType;
@@ -26,74 +27,100 @@ public class DataSetFiller {
 	private String reqFinBranch;
 	private String reqGLHead;
 	private String reqProduct;
+	private String reqFinPurpose;
 	private String debitOrCredit;
-	private int terms;
+	private int terms = 0;
+	private int tenure = 0;
 	private boolean isNewLoan= true;
 	
-	private BigDecimal DISBURSE=new BigDecimal(0);
-	private BigDecimal PFT=new BigDecimal(0);
-	private BigDecimal PFTS=new BigDecimal(0);
-	private BigDecimal PFTSP=new BigDecimal(0);
-	private BigDecimal PFTSB=new BigDecimal(0);
-	private BigDecimal PFTAP=new BigDecimal(0);
-	private BigDecimal PFTAB=new BigDecimal(0);
-	private BigDecimal PRI=new BigDecimal(0);
-	private BigDecimal PRIS=new BigDecimal(0);
-	private BigDecimal PRISP=new BigDecimal(0);
-	private BigDecimal PRISB=new BigDecimal(0);
-	private BigDecimal PRIAP=new BigDecimal(0);
-	private BigDecimal PRIAB=new BigDecimal(0);
-	private BigDecimal DACCRUE =new BigDecimal(0);
-	private BigDecimal NACCRUE =new BigDecimal(0);
-	private BigDecimal PFTCHG=new BigDecimal(0);
-	private BigDecimal CPZCHG=new BigDecimal(0);
-	private BigDecimal RPPFT=new BigDecimal(0);
-	private BigDecimal RPPRI=new BigDecimal(0);
-	private BigDecimal RPTOT=new BigDecimal(0);
-	private BigDecimal ACCRUE=new BigDecimal(0);
-	private BigDecimal ACCRUE_S=new BigDecimal(0);
-	private BigDecimal DOWNPAY=new BigDecimal(0);
-	private BigDecimal REFUND =new BigDecimal(0);
-	private BigDecimal CPZTOT=new BigDecimal(0);
-	private BigDecimal CPZPRV=new BigDecimal(0);
-	private BigDecimal CPZCUR=new BigDecimal(0);
-	private BigDecimal CPZNXT=new BigDecimal(0);
-	private BigDecimal PROVAMT=new BigDecimal(0);
+	private BigDecimal DISBURSE=BigDecimal.ZERO;
+	private BigDecimal FEEAMOUNT=BigDecimal.ZERO;
+	private BigDecimal PFT=BigDecimal.ZERO;
+	private BigDecimal PFTS=BigDecimal.ZERO;
+	private BigDecimal PFTSP=BigDecimal.ZERO;
+	private BigDecimal PFTSB=BigDecimal.ZERO;
+	private BigDecimal PFTAP=BigDecimal.ZERO;
+	private BigDecimal PFTAB=BigDecimal.ZERO;
+	private BigDecimal PRI=BigDecimal.ZERO;
+	private BigDecimal PRIS=BigDecimal.ZERO;
+	private BigDecimal PRISP=BigDecimal.ZERO;
+	private BigDecimal PRISB=BigDecimal.ZERO;
+	private BigDecimal PRIAP=BigDecimal.ZERO;
+	private BigDecimal PRIAB=BigDecimal.ZERO;
+	private BigDecimal DACCRUE =BigDecimal.ZERO;
+	private BigDecimal NACCRUE =BigDecimal.ZERO;
+	private BigDecimal PFTCHG=BigDecimal.ZERO;
+	private BigDecimal CPZCHG=BigDecimal.ZERO;
+	private BigDecimal RPPFT=BigDecimal.ZERO;
+	private BigDecimal RPPRI=BigDecimal.ZERO;
+	private BigDecimal RPTOT=BigDecimal.ZERO;
+	private BigDecimal ACCRUE=BigDecimal.ZERO;
+	private BigDecimal ACCRUE_S=BigDecimal.ZERO;
+	private BigDecimal ACCRUETSFD=BigDecimal.ZERO;
+	private BigDecimal DOWNPAY=BigDecimal.ZERO;
+	private BigDecimal DOWNPAYB=BigDecimal.ZERO;
+	private BigDecimal DOWNPAYS=BigDecimal.ZERO;
+	private BigDecimal REFUND =BigDecimal.ZERO;
+	private BigDecimal INSREFUND =BigDecimal.ZERO;
+	private BigDecimal CPZTOT=BigDecimal.ZERO;
+	private BigDecimal CPZPRV=BigDecimal.ZERO;
+	private BigDecimal CPZCUR=BigDecimal.ZERO;
+	private BigDecimal CPZNXT=BigDecimal.ZERO;
+	private BigDecimal PROVAMT=BigDecimal.ZERO;
+	private BigDecimal SECDEPST =BigDecimal.ZERO;
+	private BigDecimal RETAMT =BigDecimal.ZERO;
+	private BigDecimal NETRET =BigDecimal.ZERO;
+	private BigDecimal GRCPFTCH =BigDecimal.ZERO;
+	private BigDecimal GRCPFTTB =BigDecimal.ZERO;
+	private BigDecimal ADVDUE =BigDecimal.ZERO;
 	
-	private int cPNoOfDays;
-	private int cpDaysTill;
-	private int tPPNoOfDays;
-	private int daysDiff;
+	private int cPNoOfDays = 0;
+	private int cpDaysTill = 0;
+	private int tPPNoOfDays = 0;
+	private int daysDiff = 0;
 	
-	private BigDecimal finAmount=new BigDecimal(0);
-	private int finOverDueCntInPast;
-	private boolean finOverDueInPast;
-	private int noOfInst;
-	private int frqDfrCount;
-	private int ODDays;
-	private int ODInst;
-	private int rpyDfrCount;
+	private BigDecimal finAmount = BigDecimal.ZERO;
+	private int finOverDueCntInPast = 0;
+	private boolean finOverDueInPast = false;
+	private int noOfInst = 0;
+	private int frqDfrCount = 0;
+	private int ODDays = 0;
+	private int ODInst = 0;
+	private int rpyDfrCount = 0;
+	private int finJointAcCount = 0;
 	
-	private int ELPDAYS;
-	private int ELPMNTS;
-	private int ELPTERMS;
-	private int TTLDAYS;
-	private int TTLMNTS;
-	private int TTLTERMS;
+	private int ELPDAYS = 0;
+	private int ELPMNTS = 0;
+	private int ELPTERMS = 0;
+	private int TTLDAYS = 0;
+	private int TTLMNTS = 0;
+	private int TTLTERMS = 0;
 	
 	private BigDecimal PROVDUE = BigDecimal.ZERO;
-	private BigDecimal SUSPNOW = new BigDecimal(0);
-	private BigDecimal SUSPRLS = new BigDecimal(0);
-	private BigDecimal PENALTY = new BigDecimal(0);
-	private BigDecimal WAIVER = new BigDecimal(0);
-	private BigDecimal ODCPLShare = new BigDecimal(0);
-	private BigDecimal AstValO = new BigDecimal(0);
+	private BigDecimal SUSPNOW = BigDecimal.ZERO;
+	private BigDecimal SUSPRLS = BigDecimal.ZERO;
+	private BigDecimal PENALTY = BigDecimal.ZERO;
+	private BigDecimal WAIVER = BigDecimal.ZERO;
+	private BigDecimal ODCPLShare = BigDecimal.ZERO;
+	private BigDecimal AstValO = BigDecimal.ZERO;
+	private BigDecimal FINAMT = BigDecimal.ZERO;
 	
 	//ISTISNA Details
 	private BigDecimal CLAIMAMT = BigDecimal.ZERO;
 	private BigDecimal DEFFEREDCOST = BigDecimal.ZERO;
 	private BigDecimal CURRETBILL = BigDecimal.ZERO;
 	private BigDecimal TTLRETBILL = BigDecimal.ZERO;
+	
+	//SUKUK Details
+	private BigDecimal FACEVAL = BigDecimal.ZERO;
+	private BigDecimal PRMVALUE = BigDecimal.ZERO;
+	private BigDecimal PRMAMZ = BigDecimal.ZERO;
+	private BigDecimal ACCRBAL = BigDecimal.ZERO;
+	private BigDecimal REVALAMT = BigDecimal.ZERO;
+	
+	//DEPRECIATION Details
+	private BigDecimal ACCDPRPRI = BigDecimal.ZERO;
+	private BigDecimal DPRPRI = BigDecimal.ZERO;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -127,12 +154,12 @@ public class DataSetFiller {
 		this.custIndustry = custIndustry;
 	}
 	
-	public String getCustIsStaff() {
-		return custIsStaff;
-	}
-	public void setCustIsStaff(String custIsStaff) {
-		this.custIsStaff = custIsStaff;
-	}
+	public boolean isCustIsStaff() {
+    	return custIsStaff;
+    }
+	public void setCustIsStaff(boolean custIsStaff) {
+    	this.custIsStaff = custIsStaff;
+    }
 	
 	public String getCustNationality() {
 		return custNationality;
@@ -169,25 +196,11 @@ public class DataSetFiller {
 		this.custSector = custSector;
 	}
 	
-	public String getCustSegment() {
-		return custSegment;
-	}
-	public void setCustSegment(String custSegment) {
-		this.custSegment = custSegment;
-	}
-	
 	public String getCustSubSector() {
 		return custSubSector;
 	}
 	public void setCustSubSector(String custSubSector) {
 		this.custSubSector = custSubSector;
-	}
-	
-	public String getCustSubSegment() {
-		return custSubSegment;
-	}
-	public void setCustSubSegment(String custSubSegment) {
-		this.custSubSegment = custSubSegment;
 	}
 	
 	public String getCustTypeCode() {
@@ -245,6 +258,13 @@ public class DataSetFiller {
 	public void setReqProduct(String reqProduct) {
 		this.reqProduct = reqProduct;
 	}
+	
+	public String getReqFinPurpose() {
+    	return reqFinPurpose;
+    }
+	public void setReqFinPurpose(String reqFinPurpose) {
+    	this.reqFinPurpose = reqFinPurpose;
+    }
 	
 	public String getDebitOrCredit() {
 		return debitOrCredit;
@@ -428,6 +448,20 @@ public class DataSetFiller {
 		this.DOWNPAY = dOWNPAY;
 	}
 	
+	public BigDecimal getDOWNPAYB() {
+    	return DOWNPAYB;
+    }
+	public void setDOWNPAYB(BigDecimal dOWNPAYB) {
+    	DOWNPAYB = dOWNPAYB;
+    }
+	
+	public BigDecimal getDOWNPAYS() {
+    	return DOWNPAYS;
+    }
+	public void setDOWNPAYS(BigDecimal dOWNPAYS) {
+    	DOWNPAYS = dOWNPAYS;
+    }
+	
 	public BigDecimal getFinAmount() {
 		return finAmount;
 	}
@@ -511,6 +545,13 @@ public class DataSetFiller {
 	public void setRpyDfrCount(int rpyDfrCount) {
 		this.rpyDfrCount = rpyDfrCount;
 	}
+	
+	public int getFinJointAcCount() {
+    	return finJointAcCount;
+    }
+	public void setFinJointAcCount(int finJointAcCount) {
+    	this.finJointAcCount = finJointAcCount;
+    }
 	
 	public BigDecimal getREFUND() {
     	return REFUND;
@@ -670,6 +711,115 @@ public class DataSetFiller {
     }
 	public void setTTLRETBILL(BigDecimal tTLRETBILL) {
     	TTLRETBILL = tTLRETBILL;
+    }
+	public void setSECDEPST(BigDecimal sECDEPST) {
+	    SECDEPST = sECDEPST;
+    }
+	public BigDecimal getSECDEPST() {
+	    return SECDEPST;
+    }
+	public void setRETAMT(BigDecimal rETAMT) {
+	    RETAMT = rETAMT;
+    }
+	public BigDecimal getRETAMT() {
+	    return RETAMT;
+    }
+	public void setNETRET(BigDecimal nETRET) {
+	    NETRET = nETRET;
+    }
+	public BigDecimal getNETRET() {
+	    return NETRET;
+    }
+	public void setGRCPFTCH(BigDecimal gRCPFTCH) {
+	    GRCPFTCH = gRCPFTCH;
+    }
+	public BigDecimal getGRCPFTCH() {
+	    return GRCPFTCH;
+    }
+	public void setFINAMT(BigDecimal fINAMT) {
+	    FINAMT = fINAMT;
+    }
+	public BigDecimal getFINAMT() {
+	    return FINAMT;
+    }
+	public void setGRCPFTTB(BigDecimal gRCPFTTB) {
+	    GRCPFTTB = gRCPFTTB;
+    }
+	public BigDecimal getGRCPFTTB() {
+	    return GRCPFTTB;
+    }
+	public void setADVDUE(BigDecimal aDVDUE) {
+	    ADVDUE = aDVDUE;
+    }
+	public BigDecimal getADVDUE() {
+	    return ADVDUE;
+    }
+	public void setACCRUETSFD(BigDecimal aCCRUETSFD) {
+	    ACCRUETSFD = aCCRUETSFD;
+    }
+	public BigDecimal getACCRUETSFD() {
+	    return ACCRUETSFD;
+    }
+	public void setTenure(int tenure) {
+	    this.tenure = tenure;
+    }
+	public int getTenure() {
+	    return tenure;
+    }
+	
+	public BigDecimal getFACEVAL() {
+    	return FACEVAL;
+    }
+	public void setFACEVAL(BigDecimal fACEVAL) {
+    	FACEVAL = fACEVAL;
+    }
+	public BigDecimal getPRMVALUE() {
+    	return PRMVALUE;
+    }
+	public void setPRMVALUE(BigDecimal pRMVALUE) {
+    	PRMVALUE = pRMVALUE;
+    }
+	public BigDecimal getPRMAMZ() {
+    	return PRMAMZ;
+    }
+	public void setPRMAMZ(BigDecimal pRMAMZ) {
+    	PRMAMZ = pRMAMZ;
+    }
+	public BigDecimal getACCRBAL() {
+	    return ACCRBAL;
+    }
+	public void setACCRBAL(BigDecimal aCCRBAL) {
+	    ACCRBAL = aCCRBAL;
+    }
+	public BigDecimal getREVALAMT() {
+	    return REVALAMT;
+    }
+	public void setREVALAMT(BigDecimal rEVALAMT) {
+	    REVALAMT = rEVALAMT;
+    }
+	public BigDecimal getINSREFUND() {
+	    return INSREFUND;
+    }
+	public void setINSREFUND(BigDecimal iNSREFUND) {
+	    INSREFUND = iNSREFUND;
+    }
+	public BigDecimal getFEEAMOUNT() {
+	    return FEEAMOUNT;
+    }
+	public void setFEEAMOUNT(BigDecimal fEEAMOUNT) {
+	    FEEAMOUNT = fEEAMOUNT;
+    }
+	public BigDecimal getACCDPRPRI() {
+	    return ACCDPRPRI;
+    }
+	public void setACCDPRPRI(BigDecimal aCCDPRPRI) {
+	    ACCDPRPRI = aCCDPRPRI;
+    }
+	public BigDecimal getDPRPRI() {
+	    return DPRPRI;
+    }
+	public void setDPRPRI(BigDecimal dPRPRI) {
+	    DPRPRI = dPRPRI;
     }
 	
 	//Set values into Map

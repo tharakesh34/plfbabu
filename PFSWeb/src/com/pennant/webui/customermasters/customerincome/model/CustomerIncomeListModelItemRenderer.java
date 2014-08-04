@@ -46,6 +46,7 @@ package com.pennant.webui.customermasters.customerincome.model;
 import java.io.Serializable;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
@@ -60,16 +61,14 @@ import com.pennant.util.PennantAppUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CustomerIncomeListModelItemRenderer implements ListitemRenderer,Serializable {
+public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<CustomerIncome>,Serializable {
 
 	private static final long serialVersionUID = 816239347392992946L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, CustomerIncome customerIncome, int count) throws Exception {
 
 		if (item instanceof Listgroup) {
-			Object groupData = (Object) data;
-			final CustomerIncome customerIncome = (CustomerIncome) groupData;
 			item.appendChild(new Listcell(String.valueOf(customerIncome.getLovDescCustCIF())));
 		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
@@ -77,19 +76,24 @@ public class CustomerIncomeListModelItemRenderer implements ListitemRenderer,Ser
 			item.appendChild(cell);
 		} else {
 
-			final CustomerIncome customerIncome = (CustomerIncome) data;
 			Listcell lc;
+			lc = new Listcell(customerIncome.getLovDescCustCIF() );
+			lc.setParent(item);
 			lc = new Listcell(customerIncome.getCustIncomeType() + "-"+ customerIncome.getLovDescCustIncomeTypeName());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(customerIncome.getCustIncome(), 0));
+			lc = new Listcell();
+			Checkbox cb = new Checkbox();
+			cb.setChecked(customerIncome.isJointCust());
+			cb.setParent(lc);
 			lc.setParent(item);
-			lc = new Listcell(customerIncome.getCustIncomeCountry() + "-"+ customerIncome.getLovDescCustIncomeCountryName());
+			lc = new Listcell(PennantAppUtil.amountFormate(customerIncome.getCustIncome(), customerIncome.getLovDescCcyEditField()));
+			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			lc = new Listcell(customerIncome.getRecordStatus());
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(customerIncome.getRecordType()));
 			lc.setParent(item);
-			item.setAttribute("data", data);
+			item.setAttribute("data", customerIncome);
 			ComponentsCtrl.applyForward(item,"onDoubleClick=onCustomerIncomeItemDoubleClicked");
 		}
 	}

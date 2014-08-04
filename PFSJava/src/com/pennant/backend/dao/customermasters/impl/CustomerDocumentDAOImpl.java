@@ -43,7 +43,10 @@
 
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -63,6 +66,7 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -121,25 +125,26 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 	 * @return CustomerDocument
 	 */
 	@Override
-	public CustomerDocument getCustomerDocumentById(final long id, String docType, String type) {
+	public CustomerDocument getCustomerDocumentById(final long id, String docCategory, String type) {
 		logger.debug("Entering");
-		CustomerDocument customerDocument = getCustomerDocument();
+		CustomerDocument customerDocument = new CustomerDocument();
 		customerDocument.setId(id);
-		customerDocument.setCustDocType(docType);
+		customerDocument.setCustDocCategory(docCategory);
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn," );
+		selectSql.append(" CustDocCategory, CustDocName, CustDocImage," );
 		selectSql.append(" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified," );
 		selectSql.append(" CustDocVerifiedBy, CustDocIsAcrive,");
 		if(type.contains("View")){
-			selectSql.append(" lovDescCustDocType, lovDescCustDocIssuedCountry, lovDescCustRecordType," );
-			selectSql.append(" lovDescCustCIF, lovDescCustShrtName,lovDescCustDocVerifiedBy,");
+			selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, lovDescCustRecordType," );
+			selectSql.append(" lovDescCustCIF, lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  CustomerDocuments");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID AND CustDocType = :CustDocType");
+		selectSql.append(" Where CustID = :custID AND CustDocCategory = :CustDocCategory");
 		
 		logger.debug("selectSql: " + selectSql.toString());		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
@@ -169,16 +174,17 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 	@Override
 	public List<CustomerDocument> getCustomerDocumentByCustomer(final long custId, String type) {
 		logger.debug("Entering");
-		CustomerDocument customerDocument = getCustomerDocument();
+		CustomerDocument customerDocument = new CustomerDocument();
 		customerDocument.setId(custId);
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn," );
 		selectSql.append(" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified," );
+		selectSql.append(" CustDocCategory, CustDocName, CustDocImage, " );
 		selectSql.append(" CustDocVerifiedBy, CustDocIsAcrive,");
 		if(type.contains("View")){
-			selectSql.append(" lovDescCustDocType, lovDescCustDocIssuedCountry, lovDescCustRecordType," );
-			selectSql.append(" lovDescCustCIF, lovDescCustShrtName,lovDescCustDocVerifiedBy,");
+			selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, lovDescCustRecordType," );
+			selectSql.append(" lovDescCustCIF, lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -193,6 +199,38 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
 	}
+	
+	
+	
+	
+	public List<CustomerDocument> getCustomerDocumentByCustomerId(final long custId) {
+		logger.debug("Entering");
+		CustomerDocument customerDocument = new CustomerDocument();
+		customerDocument.setId(custId);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn," );
+		selectSql.append(" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified," );
+		selectSql.append(" CustDocCategory, CustDocName, CustDocImage, " );
+		selectSql.append(" CustDocVerifiedBy, CustDocIsAcrive,");
+		selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, lovDescCustRecordType," );
+		selectSql.append(" lovDescCustCIF, lovDescCustShrtName,");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" FROM  CustomerDocuments_AView");
+		selectSql.append(" Where CustID = :custID ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(	customerDocument);
+		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				CustomerDocument.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+	}
+	
+	
+	
+	
 	
 	/**
 	 * This method initialize the Record.
@@ -248,7 +286,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append(" Delete From CustomerDocuments");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CustID =:CustID AND CustDocType=:CustDocType");
+		deleteSql.append(" Where CustID =:CustID AND CustDocCategory =:CustDocCategory");
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
 		
@@ -321,12 +359,12 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn," );
 		insertSql.append(" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified," );
-		insertSql.append(" CustDocVerifiedBy, CustDocIsAcrive,");
+		insertSql.append(" CustDocVerifiedBy, CustDocIsAcrive,CustDocCategory, CustDocName, CustDocImage,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustID, :CustDocType, :CustDocTitle, :CustDocSysName, :CustDocRcvdOn," );
 		insertSql.append(" :CustDocExpDate, :CustDocIssuedOn, :CustDocIssuedCountry, :CustDocIsVerified," );
-		insertSql.append(" :CustDocVerifiedBy, :CustDocIsAcrive,");
+		insertSql.append(" :CustDocVerifiedBy, :CustDocIsAcrive,:CustDocCategory, :CustDocName, :CustDocImage,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -364,15 +402,16 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		updateSql.append(" Set CustID = :CustID, CustDocType = :CustDocType, CustDocTitle = :CustDocTitle," );
 		updateSql.append(" CustDocSysName = :CustDocSysName, CustDocRcvdOn = :CustDocRcvdOn," );
 		updateSql.append(" CustDocExpDate = :CustDocExpDate, CustDocIssuedOn = :CustDocIssuedOn," );
+		updateSql.append(" CustDocCategory = :CustDocCategory, CustDocName=:CustDocName, CustDocImage=:CustDocImage," );
 		updateSql.append(" CustDocIssuedCountry = :CustDocIssuedCountry, CustDocIsVerified = :CustDocIsVerified," );
 		updateSql.append(" CustDocVerifiedBy = :CustDocVerifiedBy, CustDocIsAcrive = :CustDocIsAcrive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
 		updateSql.append(" WorkflowId = :WorkflowId ");
-		updateSql.append(" Where CustID =:CustID AND CustDocType=:CustDocType");
+		updateSql.append(" Where CustID =:CustID AND CustDocCategory =:CustDocCategory");
 		if (!type.endsWith("_TEMP")) {
-			updateSql.append(" AND Version= :Version-1");
+			//updateSql.append(" AND Version= :Version-1");
 		}
 		
 		logger.debug("updateSql: "+ updateSql.toString());
@@ -386,6 +425,100 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 			throw new DataAccessException(errorDetails.getError()) {};
 		}
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Get Customer document by customer and document type
+	 * @param CustID
+	 * @param DocType
+	 * @return DocumentDetails
+	 */
+	public DocumentDetails getCustDocByCustAndDocType(final long custId, String docType, String type) {
+		logger.debug("Entering");
+		CustomerDocument customerDocument = new CustomerDocument();
+		customerDocument.setCustID(custId);
+		customerDocument.setCustDocCategory(docType);
+		
+		StringBuilder selectSql = new StringBuilder("Select CustID, CustDocCategory as docCategory, '1' as docIsCustDoc, ");
+		selectSql.append(" CustDocType as DocType, CustDocName as DocName, RecordStatus,");
+		if(type.contains("View")){
+			selectSql.append(" lovDescCustDocCategory as lovDescDocCategoryName, CustDocImage as DocImage,  CustDocTitle, CustDocSysName,");
+			selectSql.append(" custDocRcvdOn, custDocExpDate, custDocIssuedOn, lovDescCustCIF, lovDescCustShrtName,");
+			selectSql.append(" custDocIssuedCountry, lovDescCustDocIssuedCountry, custDocIsVerified, custDocVerifiedBy, custDocIsAcrive, ");
+		}
+		selectSql.append(" RecordType, WorkflowId" );
+		selectSql.append(" From CustomerDocuments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID = :CustID AND CustDocCategory =:CustDocCategory ");
+		
+		DocumentDetails documentDetails =null;
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
+		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
+		
+		try{
+			documentDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			documentDetails = null;
+		}
+		logger.debug("Leaving");
+		return documentDetails;
+	}
+	
+	/**
+	 * Get Customer documents by customer and document type(s)
+	 * @param CustID
+	 * @param DocType
+	 * @return DocumentDetails
+	 */
+	@Override
+	public List<DocumentDetails> getCustDocListByDocTypes(final long custId, List<String> docTypeList, String type) {
+		logger.debug("Entering");
+		
+		StringBuilder selectSql = new StringBuilder("Select CustID, CustDocCategory as docCategory, '1' as docIsCustDoc, ");
+		selectSql.append(" CustDocType as DocType, CustDocName as DocName, RecordStatus,");
+		selectSql.append(" RecordType, WorkflowId" );
+		selectSql.append(" From CustomerDocuments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID =:CustID AND CustDocCategory IN(:DocTypeList) ");
+		
+		Map<String, List<String>> parameterMap=new HashMap<String,List<String>>();
+		List<String> ids = new ArrayList<String>();
+		ids.add(String.valueOf(custId));
+		parameterMap.put("CustID", ids);
+		parameterMap.put("DocTypeList", docTypeList);
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(),parameterMap, typeRowMapper);
+	}
+	
+	/**
+	 * Get Customer document List by customer 
+	 */
+	public List<DocumentDetails> getCustDocByCustId(final long custId, String type) {
+		logger.debug("Entering");
+		CustomerDocument customerDocument = new CustomerDocument();
+		customerDocument.setCustID(custId);
+		
+		StringBuilder selectSql = new StringBuilder("Select CustID, CustDocCategory as docCategory, '1' as docIsCustDoc, ");
+		selectSql.append(" CustDocType as DocType, CustDocName as DocName, RecordStatus,");
+		if(type.contains("View")){
+			selectSql.append(" lovDescCustDocCategory as lovDescDocCategoryName, CustDocImage as DocImage,  CustDocTitle, CustDocSysName,");
+			selectSql.append(" custDocRcvdOn, custDocExpDate, custDocIssuedOn, lovDescCustCIF, lovDescCustShrtName,");
+			selectSql.append(" custDocIssuedCountry, lovDescCustDocIssuedCountry, custDocIsVerified, custDocVerifiedBy, custDocIsAcrive, ");
+		}
+		selectSql.append(" RecordType, WorkflowId" );
+		selectSql.append(" From CustomerDocuments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID = :CustID ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
+		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	/**

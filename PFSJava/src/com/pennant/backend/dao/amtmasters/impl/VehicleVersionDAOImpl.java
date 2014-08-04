@@ -122,7 +122,7 @@ public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
 	@Override
 	public VehicleVersion getVehicleVersionById(final long id, String type) {
 		logger.debug("Entering");
-		VehicleVersion vehicleVersion = getVehicleVersion();
+		VehicleVersion vehicleVersion = new VehicleVersion();
 		vehicleVersion.setId(id);
 		
 		StringBuilder   selectSql = new StringBuilder  ("SELECT VehicleVersionId, VehicleModelId,");

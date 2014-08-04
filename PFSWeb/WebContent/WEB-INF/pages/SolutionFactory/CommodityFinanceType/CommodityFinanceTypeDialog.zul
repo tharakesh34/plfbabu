@@ -120,7 +120,7 @@
 													<textbox id="finCcy"
 														width="27px" visible="false" />
 													<textbox
-														id="lovDescFinCcyName" width="250px" readonly="true" />
+														id="lovDescFinCcyName" width="250px" readonly="false" />
 													<button
 														id="btnSearchFinCcy" image="/images/icons/LOVSearch.png"
 														height="24px" />

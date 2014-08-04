@@ -51,11 +51,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.GroupsModelArray;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -64,11 +64,10 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.customermasters.customerphonenumber.model.CustomerPhoneComparater;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -151,37 +150,37 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_phoneCustCIF.setModel(new ListModelList(
+		this.sortOperator_phoneCustCIF.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_phoneCustCIF.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_phoneTypeCode.setModel(new ListModelList(
+		this.sortOperator_phoneTypeCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_phoneTypeCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 		
-		this.sortOperator_phoneCountryCode.setModel(new ListModelList(
+		this.sortOperator_phoneCountryCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_phoneCountryCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 		
-		this.sortOperator_phoneAreaCode.setModel(new ListModelList(
+		this.sortOperator_phoneAreaCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_phoneAreaCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_phoneNumber.setModel(new ListModelList(
+		this.sortOperator_phoneNumber.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_phoneNumber.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
@@ -308,6 +307,7 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */ 
+	@SuppressWarnings("unchecked")
 	public void doSearch() {
 		logger.debug("Entering");
 		final JdbcSearchObject<CustomerPhoneNumber> so = new JdbcSearchObject<CustomerPhoneNumber>(
@@ -471,13 +471,13 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 		this.customerPhoneNumberCtrl.setSearchObj(so);
 
 		// set the model to the listBox with the initial resultSet get by the DAO method.
-		final SearchResult<CustomerPhoneNumber> searchResult =this.customerPhoneNumberCtrl.
-						getPagedListService().getSRBySearchObject(so);
-		this.customerPhoneNumberCtrl.listBoxCustomerPhoneNumber.setModel(new GroupsModelArray(
-				searchResult.getResult().toArray(),new CustomerPhoneComparater()));
-
+		 final Listbox listBox = this.customerPhoneNumberCtrl.listBoxCustomerPhoneNumber;
+			final Paging paging = this.customerPhoneNumberCtrl.pagingCustomerPhoneNumberList;
+			
+			((PagedListWrapper<CustomerPhoneNumber>) listBox.getModel()).init(so, listBox, paging);
+			
 		this.label_CustomerPhoneNumberSearchResult.setValue(Labels.getLabel("label_CustomerPhoneNumberSearchResult.value") + " "
-				+ String.valueOf(searchResult.getTotalCount()));
+				+ String.valueOf(paging.getTotalSize()));
 	}
 
 }

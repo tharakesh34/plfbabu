@@ -64,7 +64,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -105,6 +104,7 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 	protected Listbox sortOperator_finStartDate; // autowired
 	protected Textbox finAmount; // autowired
 	protected Listbox sortOperator_finAmount; // autowired
+	protected Label label_WIFFinanceMainSearch_CustID; // autowired
 	protected Textbox custID; // autowired
 	protected Listbox sortOperator_custID; // autowired
 	protected Checkbox finIsActive; // autowired
@@ -120,8 +120,9 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 	// not auto wired vars
 	private transient WIFFinanceMainListCtrl wIFFinanceMainCtrl; // overhanded per param
-	private transient FinanceMainService financeMainService;
-	private transient WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("WIFFinanceMain");
+	private transient WorkFlowDetails workFlowDetails= null;
+	private String loanType = "";
+	private boolean isFacilityWIF = false;
 
 	/**
 	 * constructor
@@ -136,6 +137,19 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_WIFFinanceMainSearch(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		
+		// get the params map that are overhanded by creation.
+		final Map<String, Object> args = getCreationArgsMap(event);
+
+		if (args.containsKey("loanType")) {
+			this.loanType = (String) args.get("loanType");
+		} 
+		isFacilityWIF = StringUtils.trimToEmpty(this.loanType).equals(PennantConstants.FIN_DIVISION_FACILITY);
+		
+		if(isFacilityWIF){
+			workFlowDetails=WorkFlowUtil.getWorkFlowDetails("WIFFinanceMain");
+		}
 
 		if (workFlowDetails==null){
 			setWorkFlowEnabled(false);
@@ -145,48 +159,50 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 			setWorkFlowId(workFlowDetails.getId());
 		}
 
-		// get the params map that are overhanded by creation.
-		final Map<String, Object> args = getCreationArgsMap(event);
-
 		if (args.containsKey("wIFFinanceMainCtrl")) {
 			this.wIFFinanceMainCtrl = (WIFFinanceMainListCtrl) args.get("wIFFinanceMainCtrl");
 		} else {
 			this.wIFFinanceMainCtrl = null;
 		}
-
+		
+		if(StringUtils.trimToEmpty(this.loanType).equals(PennantConstants.FIN_DIVISION_FACILITY)){
+			this.label_WIFFinanceMainSearch_CustID.setVisible(true);
+			this.custID.setVisible(true);
+			this.sortOperator_custID.setVisible(true);
+		}
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_finReference.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finCcy.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finCcy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_scheduleMethod.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_scheduleMethod.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_scheduleMethod.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_profitDaysBasis.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_profitDaysBasis.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_profitDaysBasis.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finStartDate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finStartDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finStartDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finAmount.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finAmount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finAmount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custID.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finIsActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_finIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_finIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{
@@ -201,8 +217,7 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 		// ++++ Restore the search mask input definition ++++ //
 		// if exists a searchObject than show formerly inputs of filter values
 		if (args.containsKey("searchObject")) {
-			final JdbcSearchObject<FinanceMain> searchObj = (JdbcSearchObject<FinanceMain>) args
-			.get("searchObject");
+			final JdbcSearchObject<FinanceMain> searchObj = (JdbcSearchObject<FinanceMain>) args.get("searchObject");
 
 			// get the filters from the searchObject
 			final List<Filter> ft = searchObj.getFilters();
@@ -253,6 +268,7 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 			}
 
 		}
+		
 		showWIFFinanceMainSeekDialog();
 	}
 
@@ -320,16 +336,29 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 	public void doSearch() {
 
 		final JdbcSearchObject<FinanceMain> so = new JdbcSearchObject<FinanceMain>(FinanceMain.class);
-
+		
+		if(StringUtils.trimToEmpty(this.loanType).equals(PennantConstants.FIN_DIVISION_RETAIL)){
+			so.addFilter(new Filter("LovDescFinDivisionName", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL));
+		}else if(StringUtils.trimToEmpty(this.loanType).equals(PennantConstants.FIN_DIVISION_FACILITY)){
+			so.addFilter(new Filter("LovDescFinDivisionName", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_NOT_EQUAL));
+		}else if(StringUtils.trimToEmpty(this.loanType).equals(PennantConstants.FIN_DIVISION_COMMERCIAL)){
+			so.addFilter(new Filter("LovDescFinDivisionName", PennantConstants.FIN_DIVISION_COMMERCIAL, Filter.OP_EQUAL));
+		}
+		if(isFacilityWIF){
+			so.addFilter(Filter.isNotNull("FacilityType"));
+		}else{
+			so.addFilter(Filter.isNull("FacilityType"));
+		}
+		
 		if (isWorkFlowEnabled()){
 			so.addTabelName("WIFFinanceMain_View");
 			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());	
 		}else{
-			so.addTabelName("WIFFinanceMain_AView");
+			so.addTabelName("WIFFinanceMain_View");
 		}
 
 
-		if (StringUtils.isNotEmpty(this.finReference.getValue())) {
+		if (!StringUtils.trimToEmpty(this.finReference.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem item_FinReference = this.sortOperator_finReference.getSelectedItem();
@@ -338,16 +367,16 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 				final int searchOpId = ((SearchOperators) item_FinReference.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("finReference", "%" + this.finReference.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("finReference", "%" + this.finReference.getValue().toUpperCase().trim() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("finReference", this.finReference.getValue(), searchOpId));
+					so.addFilter(new Filter("finReference", this.finReference.getValue().trim(), searchOpId));
 				}
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.finType.getValue())) {
+		if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem item_FinType = this.sortOperator_finType.getSelectedItem();
@@ -356,15 +385,15 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 				final int searchOpId = ((SearchOperators) item_FinType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("finType", "%" + this.finType.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("finType", "%" + this.finType.getValue().toUpperCase().trim() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("finType", this.finType.getValue(), searchOpId));
+					so.addFilter(new Filter("finType", this.finType.getValue().trim(), searchOpId));
 				}
 			}
 		}
-		if (StringUtils.isNotEmpty(this.finCcy.getValue())) {
+		if (!StringUtils.trimToEmpty(this.finCcy.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem item_FinCcy = this.sortOperator_finCcy.getSelectedItem();
@@ -373,15 +402,15 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 				final int searchOpId = ((SearchOperators) item_FinCcy.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("finCcy", "%" + this.finCcy.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("finCcy", "%" + this.finCcy.getValue().toUpperCase().trim() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("finCcy", this.finCcy.getValue(), searchOpId));
+					so.addFilter(new Filter("finCcy", this.finCcy.getValue().trim(), searchOpId));
 				}
 			}
 		}
-		if (StringUtils.isNotEmpty(this.scheduleMethod.getValue())) {
+		if (!StringUtils.trimToEmpty(this.scheduleMethod.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem item_ScheduleMethod = this.sortOperator_scheduleMethod.getSelectedItem();
@@ -390,15 +419,15 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 				final int searchOpId = ((SearchOperators) item_ScheduleMethod.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("scheduleMethod", "%" + this.scheduleMethod.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("scheduleMethod", "%" + this.scheduleMethod.getValue().toUpperCase().trim() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("scheduleMethod", this.scheduleMethod.getValue(), searchOpId));
+					so.addFilter(new Filter("scheduleMethod", this.scheduleMethod.getValue().trim(), searchOpId));
 				}
 			}
 		}
-		if (StringUtils.isNotEmpty(this.profitDaysBasis.getValue())) {
+		if (!StringUtils.trimToEmpty(this.profitDaysBasis.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem item_ProfitDaysBasis = this.sortOperator_profitDaysBasis.getSelectedItem();
@@ -407,11 +436,11 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 				final int searchOpId = ((SearchOperators) item_ProfitDaysBasis.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("profitDaysBasis", "%" + this.profitDaysBasis.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("profitDaysBasis", "%" + this.profitDaysBasis.getValue().toUpperCase().trim() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("profitDaysBasis", this.profitDaysBasis.getValue(), searchOpId));
+					so.addFilter(new Filter("profitDaysBasis", this.profitDaysBasis.getValue().trim(), searchOpId));
 				}
 			}
 		}
@@ -449,7 +478,7 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 				}
 			}
 		}
-		if (StringUtils.isNotEmpty(this.custID.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custID.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem item_CustID = this.sortOperator_custID.getSelectedItem();
@@ -458,11 +487,11 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("custID", "%" + this.custID.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("lovDescCustCIF", "%" + this.custID.getValue().toUpperCase().trim() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("custID", this.custID.getValue(), searchOpId));
+					so.addFilter(new Filter("lovDescCustCIF", this.custID.getValue().trim(), searchOpId));
 				}
 			}
 		}
@@ -483,18 +512,18 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 				}
 			}
 		}
-		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
+		if (!StringUtils.trimToEmpty(this.recordStatus.getValue()).equals("")) {
 			// get the search operator
 			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
 			if (item_RecordStatus != null) {
 				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase().trim() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("recordStatus", this.recordStatus.getValue(), searchOpId));
+					so.addFilter(new Filter("recordStatus", this.recordStatus.getValue().trim(), searchOpId));
 				}
 			}
 		}
@@ -504,18 +533,18 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 			selectedValue =this.recordType.getSelectedItem().getValue().toString();
 		}
 
-		if (StringUtils.isNotEmpty(selectedValue)) {
+		if (!StringUtils.trimToEmpty(selectedValue).equals("")) {
 			// get the search operator
 			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
 			if (item_RecordType!= null) {
 				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase().trim() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("recordType", selectedValue, searchOpId));
+					so.addFilter(new Filter("recordType", selectedValue.trim(), searchOpId));
 				}
 			}
 		}
@@ -548,15 +577,4 @@ public class WIFFinanceMainSearchCtrl extends GFCBaseCtrl implements Serializabl
 				+ String.valueOf(paging.getTotalSize()));
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void setFinanceMainService(FinanceMainService financeMainService) {
-		this.financeMainService = financeMainService;
-	}
-
-	public FinanceMainService getFinanceMainService() {
-		return this.financeMainService;
-	}
 }

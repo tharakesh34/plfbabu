@@ -53,12 +53,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SecurityUserRolesService {
 	
-
-	public AuditHeader               	save(AuditHeader auditHeader);
+	public SecurityUserRoles getSecurityUserRoles();
+	public SecurityUserRoles getNewSecurityUserRoles();
+	public AuditHeader               	saveOrUpdate(AuditHeader auditHeader);
 	public  List<SecurityRole>         getRolesByUserId(long userId,boolean isAssigned);
-	public List<SecurityRoleGroups> 	getRoleGroupsByRoleId(SecurityRole securityRole);
 	public List<SecurityGroupRights> 	getGroupRightsByGrpId(SecurityGroup securityGroup);
-	public SecurityUserRoles         	getSecurityUserRoles();
 	public  SecurityUserRoles        	getUserRolesByUsrAndRoleIds(long userId,long RoleId);
-	
+	public  List<SecurityRole> getApprovedRoles();
+	public AuditHeader doApprove(AuditHeader auditHeader);
+	public List<SecurityRoleGroups> getApprovedRoleGroupsByRoleId(long roleId);
+	AuditHeader doReject(AuditHeader auditHeader);
+	public List<String> getUsrMailsByRoleCd(String roleCode);
+	public List<String> getUsrMailsByRoleIds(String roleCode);
 }

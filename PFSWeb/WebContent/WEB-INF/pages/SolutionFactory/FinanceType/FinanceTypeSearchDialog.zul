@@ -96,6 +96,7 @@
 							<checkbox id="finIsOpenNewFinAc"
 								checked="false" />
 						</row>
+						
 
 						<!-- 		<row>
 							<label id="label_FinanceTypeSearch_FinMaxAmount" value="${c:l('label_FinanceTypeSearch_FinMaxAmount.value')}" />

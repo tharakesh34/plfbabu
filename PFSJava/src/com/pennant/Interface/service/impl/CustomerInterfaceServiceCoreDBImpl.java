@@ -1,9 +1,12 @@
 package com.pennant.Interface.service.impl;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.reports.AvailCustomerDetail;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.vo.CoreBankingCustomer;
 import com.pennant.coredb.process.CustomerProcess;
@@ -97,6 +100,13 @@ public class CustomerInterfaceServiceCoreDBImpl implements CustomerInterfaceServ
 		logger.debug("Leaving");
 		return custCIF;
 	}
+	
+	@Override
+    public AvailCustomerDetail fetchAvailCustDetails(AvailCustomerDetail detail, BigDecimal newExposure, String ccy)
+            throws CustomerNotFoundException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -108,4 +118,6 @@ public class CustomerInterfaceServiceCoreDBImpl implements CustomerInterfaceServ
 	public CustomerProcess getCustomerProcess() {
 	    return customerProcess;
     }
+
+
 }

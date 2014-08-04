@@ -10,7 +10,7 @@
 	<window id="window_WeekendMasterList"
 		apply="${weekendMasterListCtrl}" border="none" width="100%">
 
-		
+
 		<div sclass="z-toolbar" style="padding:0" height="28px">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 				width="100%" widths="30%,40%,30%">
@@ -19,32 +19,30 @@
 				<label value="" />
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="border-style: none;">
-					
-						<button
-							id="button_WeekendMasterList_WeekendMasterSearchDialog"
-							height="24px" label = "${c:l('label_Filter')}"
-							tooltiptext="${c:l('button_WeekendMasterList_WeekendMasterSearchDialog.tooltiptext')}" />
-						<button id="button_WeekendMasterList_PrintList"
-							height="24px" label = "${c:l('label_Print')}"
-							tooltiptext="${c:l('button_WeekendMasterList_PrintList.tooltiptext')}" />
-					
+				<toolbar align="center" style="border-style: none;">
+
+					<button
+						id="button_WeekendMasterList_WeekendMasterSearchDialog"
+						height="24px" label="${c:l('label_Filter')}"
+						tooltiptext="${c:l('button_WeekendMasterList_WeekendMasterSearchDialog.tooltiptext')}" />
+					<button id="button_WeekendMasterList_PrintList"
+						height="24px" label="${c:l('label_Print')}"
+						tooltiptext="${c:l('button_WeekendMasterList_PrintList.tooltiptext')}" />
+
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="border-style: none;">
+				<toolbar align="end" style="border-style: none;">
 					<button
 						id="button_WeekendMasterList_NewWeekendMaster" height="24px"
-						label = "${c:l('label_New')}"
+						label="${c:l('label_New')}"
 						tooltiptext="${c:l('button_WeekendMasterList_NewWeekendMaster.tooltiptext')}" />
 
 					<button id="btnRefresh" height="24px"
-						label = "${c:l('label_Refresh')}"
+						label="${c:l('label_Refresh')}"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 					<button id="btnHelp" height="24px"
-						label = "${c:l('label_Help')}"
+						label="${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 				</toolbar>
 			</hbox>
@@ -54,29 +52,72 @@
 			<north border="none" />
 
 			<center border="none">
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true"
+						style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="15%" />
+							<column width="5%" />
+							<column width="30%" />
+							<column width="15%" />
+							<column width="5%" />
+							<column width="30%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_WeekendMasterSearch_WeekendCode"
+									value="${c:l('label_WeekendMasterSearch_WeekendCode.value')}" />
+								<listbox id="sortOperator_weekendCode"
+									width="75" mold="select" rows="1" />
+								<uppercasebox id="weekendCode" width="27px"
+									maxlength="3" />
+								<label
+									id="label_WeekendMasterSearch_WeekendDesc"
+									value="${c:l('label_WeekendMasterSearch_WeekendDesc.value')}" />
+								<listbox id="sortOperator_weekendDesc"
+									width="43px" mold="select" rows="1" />
+								<textbox id="weekendDesc" width="250px"
+									maxlength="50" />
+							</row>
+							<row id="weekendRow">
+								<label
+									id="label_WeekendMasterSearch_Weekend"
+									value="${c:l('label_WeekendMasterSearch_Weekend.value')}" />
+								<listbox id="sortOperator_weekend"
+									width="43px" mold="select" rows="1" />
+								<combobox id="weekend" width="180px" />
+									
 
-				<listbox id="listBoxWeekendMaster" vflex="true"
-					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
-					<listhead sizable="true">
-						<listheader id="listheader_WeekendCode"
-							label="${c:l('listheader_WeekendCode.label')}" sort="auto"
-							width="23%" />
-						<listheader id="listheader_WeekendDesc"
-							label="${c:l('listheader_WeekendDesc.label')}" sort="auto"
-							width="48%" />
-						<listheader id="listheader_Weekend"
-							label="${c:l('listheader_Weekend.label')}" sort="auto"
-							width="29%" />
-						<!-- <listheader id="listheader_RecordStatus"
-							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
-							<listheader id="listheader_RecordType"
-							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" /> -->
-					</listhead>
-
-				</listbox>
+								<label value="" />
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxWeekendMaster"
+						emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+						vflex="true" span="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
+						<listhead sizable="true">
+							<listheader id="listheader_WeekendCode"
+								label="${c:l('listheader_WeekendCode.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_WeekendDesc"
+								label="${c:l('listheader_WeekendDesc.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Weekend"
+								label="${c:l('listheader_Weekend.label')}" sort="auto"
+								hflex="min" />
+							<!-- <listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+								<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" /> -->
+						</listhead>
+					</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingWeekendMasterList" />

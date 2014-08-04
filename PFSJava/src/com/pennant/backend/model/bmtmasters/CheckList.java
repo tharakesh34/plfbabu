@@ -309,4 +309,5 @@ public class CheckList implements java.io.Serializable, Entity {
 		}
 		return false;
 	}
+
 }

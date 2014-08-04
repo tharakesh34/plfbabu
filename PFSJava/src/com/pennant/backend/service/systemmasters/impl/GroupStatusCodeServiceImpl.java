@@ -68,8 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 		implements GroupStatusCodeService {
 
-	private static Logger logger = Logger
-			.getLogger(GroupStatusCodeServiceImpl.class);
+	private static Logger logger = Logger.getLogger(GroupStatusCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private GroupStatusCodeDAO groupStatusCodeDAO;

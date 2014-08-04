@@ -121,7 +121,7 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 	@Override
 	public Country getCountryById(final String id, String type) {
 		logger.debug("Entering");
-		Country country = getCountry();
+		Country country = new Country();
 		country.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

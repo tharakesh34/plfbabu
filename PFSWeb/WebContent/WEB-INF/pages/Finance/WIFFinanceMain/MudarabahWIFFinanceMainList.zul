@@ -52,7 +52,7 @@
 
 			<borderlayout id="borderLayout_WIFFinanceMainList">
 				<north border="none">
-					<textbox id="loanType" value="MUDARABAH"
+					<textbox id="loanType" value="MUDARABA"
 						visible="false" />
 				</north>
 

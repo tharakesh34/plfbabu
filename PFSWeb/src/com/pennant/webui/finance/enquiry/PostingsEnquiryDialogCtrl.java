@@ -44,6 +44,7 @@
 package com.pennant.webui.finance.enquiry;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -57,8 +58,13 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.ReportGenerationUtil;
+import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.rmtmasters.TransactionDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsComparator;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsListItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -94,6 +100,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> im
 	private List<ReturnDataSet> postingDetails;
 	private String finReference = "";
 	private FinanceDetailService financeDetailService;
+	private FinanceEnquiry enquiry;
 
 	/**
 	 * default constructor.<br>
@@ -126,6 +133,11 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> im
 		// READ OVERHANDED parameters !
 		if (args.containsKey("finReference")) {
 			this.finReference = (String) args.get("finReference");
+		} 
+		
+		// READ OVERHANDED parameters !
+		if (args.containsKey("enquiry")) {
+			this.enquiry = (FinanceEnquiry) args.get("enquiry");
 		} 
 		
 		if (args.containsKey("financeEnquiryHeaderDialogCtrl")) {
@@ -197,10 +209,10 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> im
 	private void doFillPostings() {
 		logger.debug("Entering");
 		
-		String events = "'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','M_AMZ','M_NONAMZ','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB'";
+		String events = "'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','M_AMZ','M_NONAMZ','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND'";
 		
 		if(this.showAccrual.isChecked()) {
-			events = "'ADDDBSF','ADDDBSN','ADDDBSP','AMZ','AMZSUSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','M_AMZ','M_NONAMZ','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB'";
+			events = "'ADDDBSF','ADDDBSN','ADDDBSP','AMZ','AMZSUSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','M_AMZ','M_NONAMZ','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE','ISTBILL', 'GRACEEND'";
 		}
 		
 		if(!events.equals("")) {
@@ -210,10 +222,47 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> im
 
 		this.listBoxFinPostings.setModel(new GroupsModelArray(
 				postingDetails.toArray(),new FinanceEnquiryPostingsComparator()));
-		this.listBoxFinPostings.setItemRenderer(new FinanceEnquiryPostingsListItemRenderer(3));//TODO
+		this.listBoxFinPostings.setItemRenderer(new FinanceEnquiryPostingsListItemRenderer());
 		
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * when the "btnPrintAccounting" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnPrintAccounting(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		String       usrName     = getUserWorkspace().getUserDetails().getUsername();
+		List<Object> list        = null;
+		
+		list = new ArrayList<Object>();
+		List<TransactionDetail> accountingDetails = new ArrayList<TransactionDetail>();
+		for (ReturnDataSet dataSet : postingDetails) {
+			TransactionDetail detail = new TransactionDetail();
+			detail.setEventCode(dataSet.getFinEvent());
+			detail.setEventDesc(dataSet.getLovDescEventCodeName());
+			detail.setTranType(dataSet.getDrOrCr().equals("C") ? "Credit" : "Debit");
+			detail.setTransactionCode(dataSet.getTranCode());
+			detail.setTransDesc(dataSet.getTranDesc());
+			detail.setCcy(dataSet.getAcCcy());
+			detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
+			detail.setPostAmount(PennantAppUtil.amountFormate(dataSet.getPostAmount(), dataSet.getFormatter()));
+			accountingDetails.add(detail);
+		}
+
+		Window window= (Window) this.window_PostingsEnquiryDialog.getParent().getParent().getParent().getParent().getParent().getParent();
+		if(!accountingDetails.isEmpty()){
+			list.add(accountingDetails);
+		}
+
+		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail",enquiry, 
+				list, true, 1, usrName,window);
+		logger.debug("Leaving" + event.toString());
+	}
+
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

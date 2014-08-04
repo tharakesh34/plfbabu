@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.dashboard.dashboardconfiguration.model.DashboardConfigurationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -403,7 +403,7 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 	public void onClick$button_DashboardConfigurationList_PrintList(Event event) 
 	throws InterruptedException {
 		logger.debug("Entering"+event.toString());
-		PTReportUtils.getReport("DashboardDetail", getSearchObj());
+		new PTListReportUtils("DashboardDetail", getSearchObj(),this.pagingDashboardConfigurationList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

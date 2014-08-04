@@ -1135,6 +1135,10 @@ tr.z-row-over>td.z-row-inner,tr.z-row-over>.z-cell {
 
 }
 
-
+.progress_Meter {
+	display:-moz-inline-box; 
+	display:inline-block;
+	background:#9CBFEE url(${c:encodeURL('~./zk/img/prgmeter.gif')}) repeat-x scroll left center; height: 17px; font-size:0;
+}
 
 </style>

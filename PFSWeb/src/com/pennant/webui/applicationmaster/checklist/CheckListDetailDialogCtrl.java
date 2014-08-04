@@ -60,6 +60,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
@@ -80,8 +81,12 @@ import com.pennant.backend.model.bmtmasters.CheckList;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.LongValidator;
+import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -110,8 +115,12 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	protected Textbox 	ansDesc; 						// autoWired
 	protected Textbox 	ansCond; 						// autoWired
 	protected Checkbox 	remarkAllow; 					// autoWired
+	protected Checkbox  docRequired;                    // autoWired
+	protected Combobox  docType;                    	// autoWired
+	protected Row		row_DocType;					// autoWired
 	protected Checkbox 	remarkMand; 					// autoWired
 	protected Label    recordStatus; 				    // autoWired
+	
 	protected Button   btnNew; 		                    // autoWired
 	protected Button   btnEdit; 		                // autoWired
 	protected Button   btnDelete; 	                    // autoWired
@@ -134,6 +143,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	private transient String  		oldVar_ansDesc;
 	private transient String  		oldVar_ansCond;
 	private transient boolean  		oldVar_remarkAllow;
+	private transient boolean  		oldVar_docRequired;
+	private transient String  		oldVar_docType;
 	private transient boolean  		oldVar_remarkMand;
 	private transient String 		oldVar_recordStatus;
 
@@ -303,6 +314,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void onClick$btnEdit(Event event) {
 		logger.debug("Entering" +event.toString());
 		doEdit();
+		// remember the old variables
+		doStoreInitValues();
 		logger.debug("Leaving" +event.toString());
 	}
 
@@ -385,6 +398,26 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		}	
 		logger.debug("Leaving " + event.toString());
 	}
+	/**
+	 * when the "checks" Doc Required checkBox. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onCheck$docRequired(Event event) throws InterruptedException {
+		logger.debug("Entering " + event.toString());
+		onCheckDocRequire();
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	private void onCheckDocRequire(){
+		if(this.docRequired.isChecked()){
+			this.row_DocType.setVisible(true);
+		}else{
+			this.row_DocType.setVisible(false);
+			this.docType.setSelectedIndex(0);
+		}	
+	}
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -456,6 +489,9 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.ansDesc.setValue(aCheckListDetail.getAnsDesc());
 		this.ansCond.setValue(aCheckListDetail.getAnsCond());
 		this.remarkAllow.setChecked(aCheckListDetail.isRemarksAllow());
+		this.docRequired.setChecked(aCheckListDetail.isDocRequired());
+		fillComboBox(this.docType, aCheckListDetail.getDocType(), PennantAppUtil.getDocumentTypes(), "");
+		onCheckDocRequire();
 		this.remarkMand.setChecked(aCheckListDetail.isRemarksMand());
 		this.recordStatus.setValue(aCheckListDetail.getRecordStatus());
 		logger.debug("Leaving");
@@ -491,6 +527,16 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 		try {
 			aCheckListDetail.setRemarksAllow(this.remarkAllow.isChecked());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aCheckListDetail.setDocRequired(this.docRequired.isChecked());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aCheckListDetail.setDocType(this.docType.getSelectedItem().getValue().toString());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -586,6 +632,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.oldVar_ansDesc = this.ansDesc.getValue();
 		this.oldVar_ansCond = this.ansCond.getValue();
 		this.oldVar_remarkAllow = this.remarkAllow.isChecked();
+		this.oldVar_docRequired = this.docRequired.isChecked();
+		this.oldVar_docType = this.docType.getSelectedItem().getValue().toString();
 		this.oldVar_remarkMand = this.remarkMand.isChecked();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving") ;
@@ -602,6 +650,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.remarkAllow.setChecked(this.oldVar_remarkAllow);
 		this.remarkMand.setChecked(this.oldVar_remarkMand);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
+		this.docRequired.setChecked(this.oldVar_docRequired);
+		fillComboBox(this.docType, this.oldVar_docType, PennantAppUtil.getDocumentTypes(), "");
 
 		if(isWorkFlowEnabled()){
 			this.userAction.setSelectedIndex(0);	
@@ -626,7 +676,16 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		if (this.oldVar_remarkAllow != this.remarkAllow.isChecked()) {
 			return true;
 		}
+		if (this.oldVar_docRequired != this.docRequired.isChecked()) {
+			return true;
+		}
 		if (this.oldVar_remarkMand != this.remarkMand.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_docRequired != this.docRequired.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_docType != this.docType.getSelectedItem().getValue().toString()) {
 			return true;
 		}
 		logger.debug("Leaving"); 
@@ -645,13 +704,19 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 
 		if (!this.ansDesc.isReadonly()){
-			this.ansDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_QUESTION_DESC",new String[]{Labels.getLabel("label_CheckListDetailDialog_AnsDesc.value")})));	
+			this.ansDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CheckListDetailDialog_AnsDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));	
 		}
 		if (!this.ansCond.isReadonly()){
 			this.ansCond.setConstraint(new SimpleConstraint(("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
 					,new String[] { Labels.getLabel("label_CheckListDetailDialog_AnsRemarks.value") }))));
-							
+		}
+		
+		if(!this.docType.isDisabled()){
+			if(this.docRequired.isChecked()){
+				this.docType.setConstraint(new StaticListValidator(PennantAppUtil.getDocumentTypes(), 
+						Labels.getLabel("label_CheckListDetailDialog_DocType.value")));
+			}
 		}
 
 		logger.debug("Leaving");
@@ -666,6 +731,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.ansSeqNo.setConstraint("");
 		this.ansDesc.setConstraint("");
 		this.ansCond.setConstraint("");
+		this.docType.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -689,6 +755,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.ansSeqNo.setErrorMessage("");
 		this.ansDesc.setErrorMessage("");
 		this.ansCond.setErrorMessage("");
+		this.docType.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -786,6 +853,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.ansSeqNo.setReadonly(isReadOnly("CheckListDetailDialog_ansSeqNo"));
 		this.ansCond.setReadonly(isReadOnly("CheckListDetailDialog_ansCond"));
 		this.remarkAllow.setDisabled(isReadOnly("CheckListDetailDialog_remarksAllow"));
+		this.docRequired.setDisabled(isReadOnly("CheckListDetailDialog_docRequired"));
+		this.docType.setDisabled(isReadOnly("CheckListDetailDialog_docType"));
 		this.ansDesc.setReadonly(isReadOnly("CheckListDetailDialog_ansDesc"));
 		if(	this.remarkAllow.isChecked() && !isReadOnly("CheckListDetailDialog_remarksMand")
 				&& 	!this.remarkAllow.isDisabled()){
@@ -813,8 +882,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 				this.btnCtrl.setBtnStatus_Edit();
 			}
 		}
-		// remember the old variables
-		doStoreInitValues();
+		
 		logger.debug("Leaving");
 	}
 
@@ -827,6 +895,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.ansDesc.setReadonly(true);
 		this.ansCond.setReadonly(true);
 		this.remarkAllow.setDisabled(true);
+		this.docRequired.setDisabled(true);
+		this.docType.setDisabled(true);
 		this.remarkMand.setDisabled(true);
 
 		if(isWorkFlowEnabled()){
@@ -853,6 +923,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.ansDesc.setValue("");
 		this.ansCond.setValue("");
 		this.remarkAllow.setChecked(false);
+		this.docRequired.setChecked(false);
 		this.remarkMand.setChecked(false);
 		logger.debug("Leaving");
 	}
@@ -990,7 +1061,9 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 								}
 							}
 						}else if(aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
+							if(this.checkList != null && this.checkList.isWorkflow()){
 							aCheckListDetail.setNewRecord(true);
+							}
 						}
 					}else{
 						if(tranType!=PennantConstants.TRAN_UPD ){

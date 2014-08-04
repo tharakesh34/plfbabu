@@ -63,7 +63,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -76,7 +75,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.staticparms.RepaymentMethodService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -573,16 +574,11 @@ public class RepaymentMethodDialogCtrl extends GFCBaseCtrl implements Serializab
 		setValidationOn(true);
 
 		if (!this.repayMethod.isReadonly()){
-			this.repayMethod.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-							"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-							"label_RepaymentMethodDialog_RepayMethod.value")})));
+			this.repayMethod.setConstraint(new PTStringValidator(Labels.getLabel("label_RepaymentMethodDialog_RepayMethod.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 		if (!this.repayMethodDesc.isReadonly()){
-			this.repayMethodDesc.setConstraint(new SimpleConstraint(
-					PennantConstants.DESC_REGEX, Labels.getLabel(
-							"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_RepaymentMethodDialog_RepayMethodDesc.value")})));
+			this.repayMethodDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_RepaymentMethodDialog_RepayMethodDesc.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");

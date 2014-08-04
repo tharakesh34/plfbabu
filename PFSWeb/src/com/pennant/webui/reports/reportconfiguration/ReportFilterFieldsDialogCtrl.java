@@ -275,7 +275,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl implements Seriali
 	//private transient ReportFilterFieldsService reportFilterFieldsService;
 	private transient PagedListService pagedListService;
 	private List<ValueLabel> fieldTypeList = PennantStaticListUtil.getReportFieldTypes();
-	private List<ValueLabel> modulesList = PennantStaticListUtil.getModuleNamesList();
+	private List<ValueLabel> modulesList = PennantAppUtil.getModuleNamesList();
 	private List<ValueLabel> defaultFilterList = PennantStaticListUtil.getDefaultFilters(); 
 	private List<ReportFilterFields> reportFilterFieldsList;
 	public final HashMap<String, Object> fieldTypes = new HashMap<String, Object>();

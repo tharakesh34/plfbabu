@@ -160,8 +160,8 @@ public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implemen
 	private void addAuditDetails(Object modelData,String insertString){
 		logger.debug("Entering");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(modelData);
-		this.namedParameterJdbcTemplate.update(insertString, beanParameters);
 		logger.debug("SQL Qry"+insertString);
+		this.namedParameterJdbcTemplate.update(insertString, beanParameters);
 		logger.debug("Leaving");
 	}
 	

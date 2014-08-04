@@ -46,6 +46,7 @@ import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.finance.FinanceDedup;
 
 /**
  * DAO methods declaration for the <b>DedupParm model</b> class.<br>
@@ -61,7 +62,9 @@ public interface DedupParmDAO {
 	public String save(DedupParm dedupParm,String type);
 	public void initialize(DedupParm dedupParm);
 	public void refresh(DedupParm entity);
-	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup,String sqlQuery);
 	@SuppressWarnings("rawtypes")
 	public List validate(String resultQuery,CustomerDedup customerDedup);
+	public FinanceDedup getFinDedupByCustId(long custID);
+	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup,String sqlQuery);
+	public List<FinanceDedup> fetchFinDedupDetails(FinanceDedup dedup, String sqlQuery);
 }

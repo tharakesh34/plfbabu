@@ -65,7 +65,6 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,8 +77,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.PhoneTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -411,6 +412,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -428,7 +430,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.phoneTypeIsActive.setChecked(aPhoneType.isPhoneTypeIsActive());
 		this.recordStatus.setValue(aPhoneType.getRecordStatus());
 		
-		if(aPhoneType.isNew() || aPhoneType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aPhoneType.isNew() || (aPhoneType.getRecordType() != null ? aPhoneType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.phoneTypeIsActive.setChecked(true);
 			this.phoneTypeIsActive.setDisabled(true);
 		}
@@ -610,16 +612,11 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.phoneTypeCode.isReadonly()){
-			this.phoneTypeCode.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-							"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-							"label_PhoneTypeDialog_PhoneTypeCode.value")})));
+			this.phoneTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_PhoneTypeDialog_PhoneTypeCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.phoneTypeDesc.isReadonly()){
-			this.phoneTypeDesc.setConstraint(new SimpleConstraint(
-					PennantConstants.DESC_REGEX, Labels.getLabel(
-							"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_PhoneTypeDialog_PhoneTypeDesc.value")})));
+			this.phoneTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_PhoneTypeDialog_PhoneTypeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.phoneTypePriority.isReadonly()) {
 			this.phoneTypePriority.setConstraint(new IntValidator(10,Labels.getLabel(
@@ -767,7 +764,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

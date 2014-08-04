@@ -43,7 +43,12 @@
 
 package com.pennant.backend.service.lmtmasters;
 
+import java.util.List;
+import java.util.Map;
+
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.EducationalLoan;
 
 /**
@@ -61,4 +66,13 @@ public interface EducationalLoanService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	
+	public EducationalLoan getEducationalLoanById(String finReference, String tableType);
+	public void setEducationalLoanDetails(FinanceDetail financeDetail, String tableType);
+	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType, String auditTranType);
+	public List<AuditDetail> doApprove(FinanceDetail financeDetail, String recordType, String auditTranType);
+	public List<AuditDetail> delete(FinanceDetail financeDetail, String tableType, String auditTranType);
+	public List<AuditDetail> getAuditDetail(Map<String, List<AuditDetail>> auditDetailMap, FinanceDetail financeDetail, String auditTranType, String method);	
+	public List<AuditDetail> validate(FinanceDetail financeDetail, String method,String  usrLanguage);
+	
 }

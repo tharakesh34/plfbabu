@@ -45,21 +45,27 @@ package com.pennant.webui.smtmasters.holidaymaster;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -72,10 +78,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.smtmasters.holidaymaster.model.HolidayMasterListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -114,6 +123,25 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 	protected Panel holidayMasterSeekPanel; // autowired
 	protected Panel holidayMasterListPanel; // autowired
 
+	// Filtering Fields
+	
+	protected Textbox holidayCode; 				  // autowired
+	protected Listbox sortOperator_holidayCode;   // autowired
+	protected Intbox holidayYear; 				  // autowired
+	protected Listbox sortOperator_holidayYear;   // autowired
+	protected Textbox holidayType; 				  // autowired
+	protected Listbox sortOperator_holidayType;   // autowired
+	
+	protected Label label_HolidayMasterSearchResult; 		    // autowired
+	
+	private Grid 			searchGrid;							// autowired
+	protected Textbox 		moduleType; 						// autowired
+	protected Radio			fromApproved;
+	protected Radio			fromWorkFlow;
+	protected Row			workFlowFrom;
+
+	private transient boolean  approvedList=false;
+	
 	// checkRights
 	protected Button btnHelp; // autowired
 	protected Button button_HolidayMasterList_NewHolidayMaster; 		 // autowired
@@ -165,6 +193,23 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 			wfAvailable = false;
 		}
 
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		
+		this.sortOperator_holidayCode.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getStringOperators()));
+		this.sortOperator_holidayCode.setItemRenderer(
+				new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_holidayYear.setModel(
+				new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_holidayYear.setItemRenderer(
+				new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_holidayType.setModel(
+				new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_holidayType.setItemRenderer(
+				new SearchOperatorListModelItemRenderer());
+		
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -173,22 +218,11 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 		 * currentDesktopHeight from a hidden Intbox from the index.zul that are
 		 * filled by onClientInfo() in the indexCtroller
 		 */
-
-		int panelHeight = 30;
-		// put the logic for working with panel in the ApplicationWorkspace
-
-	
-		int height = ((Intbox) Path
-				.getComponent("/outerIndexWindow/currentDesktopHeight"))
-				.getValue().intValue();
-		height = height + panelHeight;
-		final int maxListBoxHeight = height - 103;
-		setCountRows(Math.round(maxListBoxHeight / 24) - 1);
-		this.borderLayout_HolidayMasterList.setHeight(String
-				.valueOf(maxListBoxHeight) + "px");
+		this.borderLayout_HolidayMasterList.setHeight(getBorderLayoutHeight());
+		this.listBoxHolidayMaster.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
-		this.pagingHolidayMasterList.setPageSize(getCountRows());
+		this.pagingHolidayMasterList.setPageSize(getListRows());
 		this.pagingHolidayMasterList.setDetailed(true);
 
 		this.listheader_HolidayCode.setSortAscending(new FieldComparator(
@@ -203,28 +237,7 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 				"holidayType", true));
 		this.listheader_HolidayType.setSortDescending(new FieldComparator(
 				"holidayType", false));
-
-		/*
-		 * if (isWorkFlowEnabled()){
-		 * this.listheader_RecordStatus.setSortAscending(new
-		 * FieldComparator("recordStatus", true));
-		 * this.listheader_RecordStatus.setSortDescending(new
-		 * FieldComparator("recordStatus", false));
-		 * this.listheader_RecordType.setSortAscending(new
-		 * FieldComparator("recordType", true));
-		 * this.listheader_RecordType.setSortDescending(new
-		 * FieldComparator("recordType", false)); }else{
-		 * this.listheader_RecordStatus.setVisible(false);
-		 * this.listheader_RecordType.setVisible(false); }
-		 */
-
-		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<HolidayMaster>(
-				HolidayMaster.class, getCountRows());
-		this.searchObj.addSort("HolidayCode", false);
-
-		this.searchObj.addTabelName("SMTHolidayMaster_View");
-
+	
 		// Workflow
 		if (isWorkFlowEnabled()) {
 			if (isFirstTask()) {
@@ -234,12 +247,11 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 			} else {
 				button_HolidayMasterList_NewHolidayMaster.setVisible(false);
 			}
-
-			// this.searchObj.addFilterIn("nextRoleCode",
-			// getUserWorkspace().getUserRoles(),isFirstTask());
 		}
 
-		setSearchObj(this.searchObj);
+		// set the itemRenderer
+		this.listBoxHolidayMaster.setItemRenderer(new HolidayMasterListModelItemRenderer());
+		
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_HolidayMasterList_NewHolidayMaster.setVisible(false);
 			this.button_HolidayMasterList_HolidayMasterSearchDialog
@@ -247,13 +259,12 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 			this.button_HolidayMasterList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil
 					.getLabel("WORKFLOW CONFIG NOT FOUND"));
-		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,
-					this.listBoxHolidayMaster, this.pagingHolidayMasterList);
-			// set the itemRenderer
-			this.listBoxHolidayMaster
-					.setItemRenderer(new HolidayMasterListModelItemRenderer());
+		} else{
+			doSearch();
+			if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
 		logger.debug("Leaving " + event.toString());
 	}
@@ -327,11 +338,6 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 								.getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			} else {
-				// CAST AND STORE THE SELECTED OBJECT
-
-				// String whereCond = " AND HolidayCode='"+
-				// holidayMaster.getHolidayCode()+"' AND HolidayYear ='"+holidayMaster.getHolidayYear()+"' AND HolidayType ='"+holidayMaster.getHolidayType()+"' AND version="
-				// + holidayMaster.getVersion()+" ";
 				showDetailView(holidayMaster);
 			}
 		}
@@ -414,9 +420,13 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		this.pagingHolidayMasterList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_HolidayMasterList, event);
-		this.window_HolidayMasterList.invalidate();
+		   this.sortOperator_holidayCode.setSelectedIndex(0);
+		   this.holidayCode.setValue("");
+		   this.sortOperator_holidayYear.setSelectedIndex(0);
+		   this.holidayYear.setValue(null);
+		   this.sortOperator_holidayType.setSelectedIndex(0);
+		   this.holidayType.setValue("");
+		   doSearch();
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -427,27 +437,7 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 	public void onClick$button_HolidayMasterList_HolidayMasterSearchDialog(
 			Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
-		/*
-		 * we can call our HolidayMasterDialog zul-file with parameters. So we
-		 * can call them with a object of the selected HolidayMaster. For handed
-		 * over these parameter only a Map is accepted. So we put the
-		 * HolidayMaster object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("holidayMasterCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions
-					.createComponents(
-							"/WEB-INF/pages/SolutionFactory/HolidayMaster/HolidayMasterSearchDialog.zul",
-							null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "
-					+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		    doSearch();
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -457,11 +447,73 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_HolidayMasterList_PrintList(Event event)
 			throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		PTReportUtils.getReport("HolidayMaster", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("HolidayMaster", getSearchObj(),
+				this.pagingHolidayMasterList.getTotalSize() + 1);
 		logger.debug("Leaving " + event.toString());
+	}
+	
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<HolidayMaster>(HolidayMaster.class,getListRows());
+
+		// Defualt Sort on the table
+		this.searchObj.addSort("HolidayCode", false);
+		
+		// Workflow
+		if (isWorkFlowEnabled()) {
+			this.searchObj.addTabelName("SMTHolidayMaster_View");
+
+			if(this.moduleType==null){
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+				approvedList=false;
+				
+			}else{
+				if(this.fromApproved.isSelected()){
+					approvedList=true;
+				}else{
+					approvedList=false;
+				}
+			}
+		}else{
+			approvedList=true;
+		}
+		
+		if(approvedList){
+			this.searchObj.addTabelName("SMTHolidayMaster_AView");
+		}else{
+			this.searchObj.addTabelName("SMTHolidayMaster_View");
+		}
+		
+		//Holiday Code
+		if (!StringUtils.trimToEmpty(this.holidayCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_holidayCode.getSelectedItem(),this.holidayCode.getValue(), "holidayCode");
+		}
+		//Holiday Year
+		if (this.holidayYear.intValue()!=0) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_holidayYear.getSelectedItem(),this.holidayYear.getValue(), "holidayYear");
+		}
+		//Holiday Type
+		if (!StringUtils.trimToEmpty(this.holidayType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_holidayType.getSelectedItem(),this.holidayType.getValue(), "holidayType");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxHolidayMaster,this.pagingHolidayMasterList);
+		logger.debug("Leaving");
 	}
 
 	public void setHolidayMasterService(

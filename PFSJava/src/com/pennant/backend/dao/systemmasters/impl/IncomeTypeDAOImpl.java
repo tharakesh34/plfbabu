@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -90,7 +92,7 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		if (workFlowDetails != null) {
 			incomeType.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving  getIncomeType()");
+		logger.debug("Leaving");
 		return incomeType;
 	}
 
@@ -119,20 +121,22 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 	 * @return IncomeType
 	 */
 	@Override
-	public IncomeType getIncomeTypeById(final String id, String type) {
+	public IncomeType getIncomeTypeById(final String id,String incomeExpense,String category, String type) {
 		logger.debug("Entering");
-		IncomeType incomeType = getIncomeType();
+		IncomeType incomeType = new IncomeType();
 		incomeType.setId(id);
+		incomeType.setCategory(category);
+		incomeType.setIncomeExpense(incomeExpense);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT IncomeTypeCode, IncomeTypeDesc, IncomeTypeIsActive, " );
-		/*if(type.contains("View")){
-			selectSql.append("");
-		}*/
+		selectSql.append("SELECT IncomeExpense,Category,IncomeTypeCode, IncomeTypeDesc,Margin ,IncomeTypeIsActive, " );
+		if(type.contains("View")){
+			selectSql.append("lovDescCategoryName,");
+		}
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" FROM  BMTIncomeTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where IncomeTypeCode =:IncomeTypeCode") ;
+		selectSql.append(" Where IncomeTypeCode =:IncomeTypeCode and IncomeExpense=:IncomeExpense and Category=:Category") ;
 				
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(incomeType);
@@ -146,6 +150,30 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 		}
 		logger.debug("Leaving");
 		return incomeType;
+	}
+	
+	/**
+	 * Fetch the Record Income Types details 
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return IncomeType
+	 */
+	@Override
+	public List<IncomeType> getIncomeTypeList() {
+		logger.debug("Entering");
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT IncomeExpense,Category,IncomeTypeCode, IncomeTypeDesc,Margin ,IncomeTypeIsActive, lovDescCategoryName " );
+		selectSql.append(" FROM  BMTIncomeTypes_AView");
+				
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<IncomeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeType.class);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
 	}
 
 	/**
@@ -246,10 +274,10 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 
 		insertSql.append("Insert Into BMTIncomeTypes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (IncomeTypeCode, IncomeTypeDesc, IncomeTypeIsActive," );
+		insertSql.append(" ( IncomeExpense, Category,IncomeTypeCode, IncomeTypeDesc,Margin, IncomeTypeIsActive," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:IncomeTypeCode, :IncomeTypeDesc, :IncomeTypeIsActive, " );
+		insertSql.append(" Values(:IncomeExpense,:Category,:IncomeTypeCode, :IncomeTypeDesc,:Margin, :IncomeTypeIsActive, " );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 		
@@ -283,11 +311,11 @@ public class IncomeTypeDAOImpl extends BasisCodeDAO<IncomeType> implements Incom
 
 		updateSql.append("Update BMTIncomeTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set IncomeTypeCode = :IncomeTypeCode, IncomeTypeDesc = :IncomeTypeDesc, IncomeTypeIsActive = :IncomeTypeIsActive,");
+		updateSql.append(" Set  IncomeTypeDesc = :IncomeTypeDesc, IncomeTypeIsActive = :IncomeTypeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where IncomeTypeCode =:IncomeTypeCode ");
+		updateSql.append(" Where IncomeTypeCode =:IncomeTypeCode and IncomeExpense=:IncomeExpense and Category=:Category");
 		
 		if (!type.endsWith("_TEMP")){
 			updateSql.append(" AND Version= :Version-1");

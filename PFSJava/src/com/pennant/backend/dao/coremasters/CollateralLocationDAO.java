@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.coremasters;
 import com.pennant.backend.model.coremasters.CollateralLocation;
-import com.pennant.backend.model.ErrorDetails;
 
 public interface CollateralLocationDAO {
 

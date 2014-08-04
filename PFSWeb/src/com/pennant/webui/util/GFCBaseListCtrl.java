@@ -45,15 +45,14 @@ package com.pennant.webui.util;
 
 import java.util.List;
 
-import org.zkoss.zk.ui.Path;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listitem;
 
 import com.pennant.backend.model.AuditLogDetils;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.service.AuditLogService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.pagging.PagedBindingListWrapper;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
@@ -71,10 +70,6 @@ public class GFCBaseListCtrl<T> extends GFCBaseCtrl {
 	private PagedBindingListWrapper<T>	pagedBindingListWrapper;
 
 	private AuditLogService	           auditLogService;
-
-	private int	                       listRows	          = 0;
-	private int	                       gridRows	          = 0;
-	public int	                       borderLayoutHeight	= 0;
 
 	public PagedListWrapper<T> getPagedListWrapper() {
 		return pagedListWrapper;
@@ -107,36 +102,6 @@ public class GFCBaseListCtrl<T> extends GFCBaseCtrl {
 		return true;
 	}
 
-	public int getGridRows() {
-		return gridRows;
-	}
-
-	public int getListRows() {
-		return this.listRows;
-	}
-
-	public String getBorderLayoutHeight() {
-		return calculateBorderLayoutHeight()+ "px";
-	}
-	public int calculateBorderLayoutHeight() {
-		if (this.borderLayoutHeight == 0) {
-			this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
-			this.gridRows = Math.round(this.borderLayoutHeight / 31) - 1;
-			this.listRows = Math.round(this.borderLayoutHeight / 24) - 1;
-		}
-		return borderLayoutHeight;
-	}
-
-	public String getListBoxHeight(int gridRowCount) {
-		int rowheight = 31;
-		if (this.borderLayoutHeight == 0) {
-			getBorderLayoutHeight();
-		}
-		int listboxheight = this.borderLayoutHeight;
-		listboxheight = listboxheight - (gridRowCount * rowheight) - 35;
-		this.listRows = Math.round(listboxheight / 24) - 1;
-		return listboxheight + "px";
-	}
 
 	public boolean validateUserAccess(String moduleName, String[] keyFields, String recordRole, long currentUser, Object beanObject) {
 
@@ -169,4 +134,117 @@ public class GFCBaseListCtrl<T> extends GFCBaseCtrl {
 		
 		return searchObj;
 	}
+	
+	/*
+	 * Method For Getting UsrFinAuthentication By Branch and Division
+	 */
+	public String getUsrFinAuthenticationQry(boolean isForReports) {
+		StringBuilder wherQuery = new StringBuilder();
+		if (getUserWorkspace().getLoginUserDetails().getSecurityUserDivBranchList() == null) {
+			getUserWorkspace().getLoginUserDetails().setSecurityUserDivBranchList(PennantAppUtil.getSecurityUserDivBranchList(getUserWorkspace().getLoginUserDetails().getLoginUsrID())); // TODO
+		}
+
+		String divisionField = "";
+		String branchField = "";
+		if (isForReports) {
+			divisionField = "FinDivision";
+			branchField = "BranchCode";
+		} else {
+			divisionField = "lovDescFinDivision";
+			branchField = "FinBranch";
+		}
+
+		String divisionCode = "";
+		String branchCode = "";
+		if (getUserWorkspace().getLoginUserDetails().getSecurityUserDivBranchList().isEmpty()) {
+			return " ( " + divisionField + "= '' and (" + branchField + "= '' ))";
+		}
+		for (SecurityUserDivBranch securityUserDivBranch : getUserWorkspace().getLoginUserDetails().getSecurityUserDivBranchList()) {
+			if (!divisionCode.equals("") && !divisionCode.equals(securityUserDivBranch.getUserDivision())) {
+				divisionCode = securityUserDivBranch.getUserDivision();
+				wherQuery.append("  )) or (( " + divisionField + "= '");
+				wherQuery.append(divisionCode + "' ) And " + branchField + " In( ");
+				branchCode = "";
+			} else if (divisionCode.equals("")) {
+				divisionCode = securityUserDivBranch.getUserDivision();
+				wherQuery.append(" ((( " + divisionField + "= '" + divisionCode + "' ) And " + branchField + " In( ");
+			} else if (!branchCode.equals("")) {
+				wherQuery.append(", " + securityUserDivBranch.getUserBranch() + " ");
+			}
+			if (branchCode.equals("")) {
+				wherQuery.append(securityUserDivBranch.getUserBranch() + " ");
+			}
+			branchCode = securityUserDivBranch.getUserBranch();
+		}
+		wherQuery.append(" ))) ");
+		return wherQuery.toString();
+	}
+	
+	/*
+	 * Method For Getting UsrFinAuthentication By FinDivision
+	 */
+	public String getUsrFinDivisionAuthenticationQry(boolean isForReports) {
+		StringBuilder wherQuery = new StringBuilder();
+		if (getUserWorkspace().getLoginUserDetails().getSecurityUserDivBranchList() == null) {
+			getUserWorkspace().getLoginUserDetails().setSecurityUserDivBranchList(PennantAppUtil.getSecurityUserDivBranchList(getUserWorkspace().getLoginUserDetails().getLoginUsrID())); // TODO
+		}
+		
+		String divisionField = "";
+		if (isForReports) {
+			divisionField = "FinDivision";
+		} else {
+			divisionField = "lovDescFinDivision";
+		}
+		
+		String divisionCode = "";
+		if (getUserWorkspace().getLoginUserDetails().getSecurityUserDivBranchList().isEmpty()) {
+			return " ( " + divisionField + "= '' )";
+		}
+		for (SecurityUserDivBranch securityUserDivBranch : getUserWorkspace().getLoginUserDetails().getSecurityUserDivBranchList()) {
+			if (!divisionCode.equals("") && wherQuery.toString().contains(divisionField)) {
+				divisionCode = securityUserDivBranch.getUserDivision();
+				wherQuery.append( ",'"+divisionCode+"'");
+			} else if (divisionCode.equals("")) {
+				divisionCode = securityUserDivBranch.getUserDivision();
+				wherQuery.append(" ( " + divisionField + " IN ('" + divisionCode+"'");
+			} 
+		}
+		wherQuery.append(" )) ");
+		return wherQuery.toString();
+	}
+	
+	/*
+	 * Method For Getting UsrFinBranchAuthentication By Branch
+	 */
+	public String getUsrFinBranchAuthenticationQry(boolean isForReports) {
+		StringBuilder wherQuery = new StringBuilder();
+		if (getUserWorkspace().getLoginUserDetails().getSecurityUserDivBranchList() == null) {
+			getUserWorkspace().getLoginUserDetails().setSecurityUserDivBranchList(PennantAppUtil.getSecurityUserDivBranchList(getUserWorkspace().getLoginUserDetails().getLoginUsrID())); // TODO
+		}
+
+		String branchField = "";
+		if (isForReports) {
+			branchField = "BranchCode";
+		} else {
+			branchField = "FinBranch";
+		}
+
+		String branchCode = "";
+		if (getUserWorkspace().getLoginUserDetails().getSecurityUserDivBranchList().isEmpty()) {
+			return "(" + branchField + "= '' ))";
+		}
+		wherQuery.append(branchField+" IN (");
+		for (SecurityUserDivBranch securityUserDivBranch : getUserWorkspace().getLoginUserDetails().getSecurityUserDivBranchList()) {
+		 if (!branchCode.equals("") && !wherQuery.toString().contains(securityUserDivBranch.getUserBranch())) {
+				wherQuery.append(", " + securityUserDivBranch.getUserBranch() + " ");
+			}
+			if (branchCode.equals("")) {
+				wherQuery.append(securityUserDivBranch.getUserBranch() + " ");
+			}
+			branchCode = securityUserDivBranch.getUserBranch();
+		}
+		wherQuery.append(" )");
+		return wherQuery.toString();
+	}
+
 }

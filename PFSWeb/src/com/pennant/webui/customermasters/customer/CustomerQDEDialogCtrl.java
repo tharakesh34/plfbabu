@@ -87,8 +87,10 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -948,21 +950,15 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.custDOB.clearErrorMessage();
 		if(this.row_retailCustomerPPT.isVisible() && this.row_retailCustomerNames.isVisible()){
 			if (!this.custFName.isReadonly()) {
-				this.custFName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-						Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-						"label_CustomerDialog_CustFName.value") })));
+				this.custFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustFName.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custMName.isReadonly()) {
-				if(this.custMName.getValue() != null){
-					this.custMName.setConstraint(new SimpleConstraint(PennantConstants.NM_NAME_REGEX ,
-							Labels.getLabel("FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerDialog_CustMName.value") })));
-				}
+				this.custMName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMName.value"), PennantRegularExpressions.REGEX_NAME, false));
 			}
 			if (!this.custLName.isReadonly()) {
-				this.custLName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-						Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-						"label_CustomerDialog_CustLName.value") })));
+				this.custLName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLName.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custDOB.isReadonly() ) {
 				this.custDOB.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:"+ Labels.getLabel(
@@ -982,9 +978,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}else if(this.row_corpCustomerTL.isVisible()){
 
 			if (!this.custLName.isReadonly()) {
-				this.custLName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-						Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-						"label_CustomerDialog_CustOrgName.value") })));
+				this.custLName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustOrgName.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custTradeLicenceNum.isReadonly() && this.custTradeLicenceNum.isVisible()) {
 				this.custTradeLicenceNum.setConstraint(new SimpleConstraint(PennantConstants.TRADE_LICENSE_REGEX,
@@ -1214,7 +1209,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (dataObject instanceof String) {
 			this.custCtgCode.setValue(dataObject.toString());
 			this.lovDescCustCtgCodeName.setValue("");
-			setFieldValues(true);
+			setFieldValues(true);	
 		} else {
 			CustomerCategory details = (CustomerCategory) dataObject;
 			if (details != null) {

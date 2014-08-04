@@ -10,8 +10,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.exception.CustomerLimitProcessException;
+import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.vo.CustomerLimit;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.HostConnection;
@@ -41,15 +43,9 @@ public class CustomerLimitProcess extends GenericProcess{
 		Map<String, Object> custLimitMap = new HashMap<String, Object>();
 		List<CustomerLimit> list = new ArrayList<CustomerLimit>();
 		CustomerLimit item = null;
-		boolean newConnection = false;
 		String errorMessage = null;
 
 		try {
-
-			if(this.hostConnection==null){
-				this.hostConnection= new HostConnection();
-				newConnection = true;
-			}
 
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
@@ -84,7 +80,6 @@ public class CustomerLimitProcess extends GenericProcess{
 					if (!(strDate.equals("0") || strDate.equals(""))) {
 						item.setLimitExpiry(DateUtility.getUtilDate(strDate, "ddMMyyyy"));
 					}
-
 					item.setLimitBranch(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtBranch",indices).toString());
 					item.setRepeatThousands(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.RptThousands",indices).toString());
 					item.setCheckLimit(pcmlDoc.getValue(pcml +  ".@RSPDTA.DETDTA.CheckLimit",indices).toString());					
@@ -100,13 +95,14 @@ public class CustomerLimitProcess extends GenericProcess{
 				throw new CustomerLimitProcessException(errorMessage);
 			}
 
+		}catch (ConnectionPoolException e){
+			logger.error("Exception " + e);
+			throw new CustomerLimitProcessException("Host Connection Failed.. Please contact administrator ");
 		} catch (Exception e) {
 			logger.error("Exception " + e);
 			throw new CustomerLimitProcessException(e.getMessage());
 		} finally {	
-			if(newConnection){
-				this.hostConnection.disConnection();
-			}
+				this.hostConnection.closeConnection(as400);
 		}
 
 		logger.debug("Leaving");
@@ -124,21 +120,15 @@ public class CustomerLimitProcess extends GenericProcess{
 
 		AS400 as400 = null;
 		ProgramCallDocument pcmlDoc = null;
-		String pcml = "PFFLMT";			//get List of Customer Limits
+		String pcml = "PFFCUSTLMT";			//get List of Customer Limits
 
 		int[] indices = new int[1]; 	// Indices for access array value
 		int dsRspCount;              	// Number of records returned 
 		List<CustomerLimit> list = new ArrayList<CustomerLimit>();
 		CustomerLimit item = null;
-		boolean newConnection = false;
 		String errorMessage = null;
 
 		try {
-
-			if(this.hostConnection==null){
-				this.hostConnection= new HostConnection();
-				newConnection = true;
-			}
 
 			as400 = this.hostConnection.getConnection();
 
@@ -163,21 +153,23 @@ public class CustomerLimitProcess extends GenericProcess{
 					item = new CustomerLimit();
 
 					String strDate = null;
-
+					
+					item.setCustCountry(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtCountry",indices).toString());
+					item.setCustCountryDesc(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtCnaDesc",indices).toString());
+					item.setCustGrpCode(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtGrpCode",indices).toString());
+					item.setCustGrpDesc(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtGrpDesc",indices).toString());
 					item.setLimitCategory(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtCategory",indices).toString());
+					item.setLimitCategoryDesc(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtCtgDesc",indices).toString());
 					item.setLimitCurrency(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtCurrency",indices).toString());
 
 					strDate = StringUtils.trimToEmpty(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtExpiry", indices).toString());	
-
-					if (!(strDate.equals("0") || strDate.equals(""))) {
-						item.setLimitExpiry(DateUtility.getUtilDate(strDate, "ddMMyyyy"));
-					}
-
+					item.setLimitExpiry(DateUtility.convertDateFromAS400(new BigDecimal(strDate)));
+					
 					item.setLimitAmount(new BigDecimal(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtAmount",indices).toString()));
 					item.setAvailAmount(new BigDecimal(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.AvailAmount",indices).toString()));
 					item.setRiskAmount(new BigDecimal(pcmlDoc.getValue(pcml +  ".@RSPDTA.DETDTA.RiskAmount",indices).toString()));					
-					item.setErrorId(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.ErrorId",indices).toString());
-					item.setErrorMsg(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.ErrorMsg",indices).toString());
+			//		item.setErrorId(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.ErrorId",indices).toString());
+			//		item.setErrorMsg(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.ErrorMsg",indices).toString());
 
 					list.add(item);
 				}
@@ -187,13 +179,14 @@ public class CustomerLimitProcess extends GenericProcess{
 				throw new CustomerLimitProcessException(errorMessage);
 			}
 
-		} catch (Exception e) {
+		}catch (ConnectionPoolException e){
+			logger.error("Exception " + e);
+			throw new CustomerLimitProcessException("Host Connection Failed.. Please contact administrator ");
+		}catch (Exception e) {
 			logger.error("Exception " + e);
 			throw new CustomerLimitProcessException(e.getMessage());
 		} finally {	
-			if(newConnection){
-				this.hostConnection.disConnection();
-			}
+				this.hostConnection.closeConnection(as400);
 		}
 
 		logger.debug("Leaving");
@@ -217,15 +210,9 @@ public class CustomerLimitProcess extends GenericProcess{
 		int dsRspCount;              	// Number of records returned 
 		List<CustomerLimit> list = new ArrayList<CustomerLimit>();
 		CustomerLimit item = null;
-		boolean newConnection = false;
 		String errorMessage = null;
 
 		try {
-
-			if(this.hostConnection==null){
-				this.hostConnection= new HostConnection();
-				newConnection = true;
-			}
 
 			as400 = this.hostConnection.getConnection();
 
@@ -233,6 +220,11 @@ public class CustomerLimitProcess extends GenericProcess{
 
 			pcmlDoc.setValue(pcml + ".@REQDTA.CustMnemonic", custLimit.getCustMnemonic()); 	// Customer mnemonic
 			pcmlDoc.setValue(pcml + ".@REQDTA.CustLocation", custLimit.getCustLocation()); 	// Customer Location
+			if(!StringUtils.trimToEmpty(custLimit.getCustGrpCode()).equals("")){
+				pcmlDoc.setValue(pcml + ".@REQDTA.CustGroup", custLimit.getCustGrpCode().substring(2)); 	// Customer Group
+			}else{
+				pcmlDoc.setValue(pcml + ".@REQDTA.CustGroup", ""); 	// Customer Group
+			}
 
 			pcmlDoc.setValue(pcml + ".@RSPDTA.@NOREQ", 0); 
 			pcmlDoc.setValue(pcml + ".@ERCOD", "0000"); 	
@@ -259,6 +251,7 @@ public class CustomerLimitProcess extends GenericProcess{
 					item.setLimitCategory(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtCategory",indices).toString());
 					item.setLimitCategoryDesc(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtCategoryDesc",indices).toString());
 					item.setLimitCurrency(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtCcy",indices).toString());
+					item.setLimitCcyEdit(Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtCed",indices).toString()));
 
 					strDate = StringUtils.trimToEmpty(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtExpiry", indices).toString());	
 					if (!(strDate.equals("0") || strDate.equals(""))) {
@@ -281,9 +274,7 @@ public class CustomerLimitProcess extends GenericProcess{
 			logger.error("Exception " + e);
 			throw new CustomerLimitProcessException(e.getMessage());
 		} finally {	
-			if(newConnection){
-				this.hostConnection.disConnection();
-			}
+				this.hostConnection.closeConnection(as400);
 		}
 
 		logger.debug("Leaving");
@@ -307,15 +298,10 @@ public class CustomerLimitProcess extends GenericProcess{
 		int dsRspCount;              	// Number of records returned 
 		List<CustomerLimit> list = new ArrayList<CustomerLimit>();
 		CustomerLimit item = null;
-		boolean newConnection = false;
 		String errorMessage = null;
 
 		try {
 
-			if(this.hostConnection==null){
-				this.hostConnection= new HostConnection();
-				newConnection = true;
-			}
 
 			as400 = this.hostConnection.getConnection();
 
@@ -369,9 +355,7 @@ public class CustomerLimitProcess extends GenericProcess{
 			logger.error("Exception " + e);
 			throw new CustomerLimitProcessException(e.getMessage());
 		} finally {	
-			if(newConnection){
-				this.hostConnection.disConnection();
-			}
+				this.hostConnection.closeConnection(as400);
 		}
 
 		logger.debug("Leaving");

@@ -78,9 +78,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.solutionfactory.FinanceCampaignService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -1063,55 +1065,55 @@ public class FinanceCampaignDialogCtrl extends GFCBaseCtrl implements Serializab
 		setValidationOn(true);
 		
 		if (!this.fCCode.isReadonly()){
-			this.fCCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCCode.value")}));
+			this.fCCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCCode.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}	
 		if (!this.fCDesc.isReadonly()){
-			this.fCDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCDesc.value")}));
+			this.fCDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}	
 		if (!this.fCFinType.isReadonly()){
-			this.fCFinType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCFinType.value")}));
+			this.fCFinType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCFinType.value"), PennantRegularExpressions.REGEX_ALPHA, true));
 		}	
 		if (!this.fCRateType.isReadonly()){
-			this.fCRateType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCRateType.value")}));
+			this.fCRateType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCRateType.value"), null, true));
 		}	
 		if (!this.fCBaseRate.isReadonly()){
-			this.fCBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCBaseRate.value")}));
+			this.fCBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCBaseRate.value"), null, true));
 		}	
 		if (!this.fCSplRate.isReadonly()){
-			this.fCSplRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCSplRate.value")}));
+			this.fCSplRate.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCSplRate.value"), null, true));
 		}	
 		if (!this.fCIntRate.isReadonly()){
 			this.fCIntRate.setConstraint(new AmountValidator(13,9,Labels.getLabel("label_FinanceCampaignDialog_FCIntRate.value")));
 		}	
 		if (!this.fCDftIntFrq.isReadonly()){
-			this.fCDftIntFrq.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCDftIntFrq.value")}));
+			this.fCDftIntFrq.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCDftIntFrq.value"), null, true));
 		}	
 		if (!this.fCCpzFrq.isReadonly()){
-			this.fCCpzFrq.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCCpzFrq.value")}));
+			this.fCCpzFrq.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCCpzFrq.value"), null, true));
 		}	
 		if (!this.fCRvwFrq.isReadonly()){
-			this.fCRvwFrq.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCRvwFrq.value")}));
+			this.fCRvwFrq.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCRvwFrq.value"), null, true));
 		}	
 		if (!this.fCGrcRateType.isReadonly()){
-			this.fCGrcRateType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCGrcRateType.value")}));
+			this.fCGrcRateType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCGrcRateType.value"), null, true));
 		}	
 		if (!this.fCGrcBaseRate.isReadonly()){
-			this.fCGrcBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCGrcBaseRate.value")}));
+			this.fCGrcBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCGrcBaseRate.value"), null, true));
 		}	
 		if (!this.fCGrcSplRate.isReadonly()){
-			this.fCGrcSplRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCGrcSplRate.value")}));
+			this.fCGrcSplRate.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCGrcSplRate.value"), null, true));
 		}	
 		if (!this.fCGrcIntRate.isReadonly()){
 			this.fCGrcIntRate.setConstraint(new AmountValidator(13,9,Labels.getLabel("label_FinanceCampaignDialog_FCGrcIntRate.value")));
 		}	
 		if (!this.fCGrcDftIntFrq.isReadonly()){
-			this.fCGrcDftIntFrq.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCGrcDftIntFrq.value")}));
+			this.fCGrcDftIntFrq.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCGrcDftIntFrq.value"), null, true));
 		}	
 		if (!this.fCGrcCpzFrq.isReadonly()){
-			this.fCGrcCpzFrq.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCGrcCpzFrq.value")}));
+			this.fCGrcCpzFrq.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCGrcCpzFrq.value"), null, true));
 		}	
 		if (!this.fCGrcRvwFrq.isReadonly()){
-			this.fCGrcRvwFrq.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCGrcRvwFrq.value")}));
+			this.fCGrcRvwFrq.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCGrcRvwFrq.value"), null, true));
 		}	
 		if (!this.fCMinTerm.isReadonly()){
 			this.fCMinTerm.setConstraint(new AmountValidator(3,0,Labels.getLabel("label_FinanceCampaignDialog_FCMinTerm.value")));
@@ -1123,10 +1125,10 @@ public class FinanceCampaignDialogCtrl extends GFCBaseCtrl implements Serializab
 			this.fCDftTerms.setConstraint(new AmountValidator(3,0,Labels.getLabel("label_FinanceCampaignDialog_FCDftTerms.value")));
 		}	
 		if (!this.fCRpyFrq.isReadonly()){
-			this.fCRpyFrq.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCRpyFrq.value")}));
+			this.fCRpyFrq.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCRpyFrq.value"), null, true));
 		}	
 		if (!this.fCRepayMethod.isReadonly()){
-			this.fCRepayMethod.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCRepayMethod.value")}));
+			this.fCRepayMethod.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCRepayMethod.value"), null, true));
 		}	
 		if (!this.fCMaxDifferment.isReadonly()){
 			this.fCMaxDifferment.setConstraint(new AmountValidator(3,0,Labels.getLabel("label_FinanceCampaignDialog_FCMaxDifferment.value")));
@@ -1135,16 +1137,16 @@ public class FinanceCampaignDialogCtrl extends GFCBaseCtrl implements Serializab
 			this.fCMaxFrqDifferment.setConstraint(new AmountValidator(3,0,Labels.getLabel("label_FinanceCampaignDialog_FCMaxFrqDifferment.value")));
 		}	
 		if (!this.fCRvwRateApplFor.isReadonly()){
-			this.fCRvwRateApplFor.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCRvwRateApplFor.value")}));
+			this.fCRvwRateApplFor.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCRvwRateApplFor.value"), null, true));
 		}	
 		if (!this.fCGrcRvwRateApplFor.isReadonly()){
-			this.fCGrcRvwRateApplFor.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCGrcRvwRateApplFor.value")}));
+			this.fCGrcRvwRateApplFor.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCGrcRvwRateApplFor.value"), null, true));
 		}	
 		if (!this.fCMinDownPayAmount.isReadonly()){
 			this.fCMinDownPayAmount.setConstraint(new AmountValidator(4,2,Labels.getLabel("label_FinanceCampaignDialog_FCMinDownPayAmount.value")));
 		}	
 		if (!this.fCSchCalCodeOnRvw.isReadonly()){
-			this.fCSchCalCodeOnRvw.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceCampaignDialog_FCSchCalCodeOnRvw.value")}));
+			this.fCSchCalCodeOnRvw.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCampaignDialog_FCSchCalCodeOnRvw.value"), null, true));
 		}	
 	logger.debug("Leaving");
 	}

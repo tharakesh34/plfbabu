@@ -151,19 +151,19 @@ public class AcademicSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_academicLevel.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_academicLevel.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_academicLevel.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_academicDecipline.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_academicDecipline.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_academicDecipline.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_academicDesc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_academicDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_academicDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {

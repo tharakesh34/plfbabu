@@ -57,6 +57,6 @@ public interface FinanceRepayPriorityDAO {
 	public String save(FinanceRepayPriority financeRepayPriority,String type);
 	public void initialize(FinanceRepayPriority financeRepayPriority);
 	public void refresh(FinanceRepayPriority entity);
-	public List<ValueLabel> getFinanceRepayPriorities(String type);
+	public List<ValueLabel> getFinanceRepayPriorities();
 	public List<FinanceRepayPriority> getFinanceRpyPriorByPriority(int priority, String type);
 }

@@ -101,7 +101,8 @@
 									id="label_LovFieldDetailDialog_ValueDesc"
 									value="${c:l('label_LovFieldDetailDialog_ValueDesc.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space spacing="2px" 
+									 sclass="mandatory" />
 									<textbox id="valueDesc"
 										maxlength="50" width="450px" />
 								</hbox>

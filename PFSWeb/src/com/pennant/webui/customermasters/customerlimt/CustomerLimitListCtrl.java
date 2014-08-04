@@ -176,9 +176,12 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> implem
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("CustomerList");
 		
-		this.button_CustomerLimitList_NewCustomerLimit.setVisible(false);
-		this.button_CustomerLimitList_CustomerLimitSearchDialog.setVisible(false);
-		this.button_CustomerLimitList_PrintList.setVisible(false);
+		this.button_CustomerLimitList_NewCustomerLimit.setVisible(getUserWorkspace()
+				.isAllowed("button_CustomerLimitList_NewCustomerLimit"));
+		this.button_CustomerLimitList_CustomerLimitSearchDialog.setVisible(getUserWorkspace()
+				.isAllowed("button_CustomerLimitList_CustomerLimitSearchDialog"));
+		this.button_CustomerLimitList_PrintList.setVisible(getUserWorkspace()
+				.isAllowed("button_CustomerLimitList_PrintList"));
 		logger.debug("Leaving");
 	}
 

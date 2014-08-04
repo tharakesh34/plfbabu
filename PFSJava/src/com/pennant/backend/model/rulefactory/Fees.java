@@ -1,4 +1,4 @@
-package com.pennant.backend.model.rulefactory;
+/*package com.pennant.backend.model.rulefactory;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -15,9 +15,7 @@ public class Fees {
 	private String custResdCountry;
 	private String custRiskCountry;
 	private String custSector;
-	private String custSegment;
 	private String custSubSector;
-	private String custSubSegment;
 	private String custTypeCode;
 	private String reqCampaign;
 	private String reqFinAcType;
@@ -167,25 +165,11 @@ public class Fees {
 		this.custSector = custSector;
 	}
 	
-	public String getCustSegment() {
-		return custSegment;
-	}
-	public void setCustSegment(String custSegment) {
-		this.custSegment = custSegment;
-	}
-	
 	public String getCustSubSector() {
 		return custSubSector;
 	}
 	public void setCustSubSector(String custSubSector) {
 		this.custSubSector = custSubSector;
-	}
-	
-	public String getCustSubSegment() {
-		return custSubSegment;
-	}
-	public void setCustSubSegment(String custSubSegment) {
-		this.custSubSegment = custSubSegment;
 	}
 	
 	public String getCustTypeCode() {
@@ -671,3 +655,4 @@ public class Fees {
 	}
 		
 }
+*/

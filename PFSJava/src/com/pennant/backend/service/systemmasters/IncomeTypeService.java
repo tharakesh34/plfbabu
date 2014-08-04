@@ -55,8 +55,8 @@ public interface IncomeTypeService {
 	IncomeType getIncomeType();
 	IncomeType getNewIncomeType();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	IncomeType getIncomeTypeById(String id);
-	IncomeType getApprovedIncomeTypeById(String id);
+	IncomeType getIncomeTypeById(String id, String incomeExpense, String category);
+	IncomeType getApprovedIncomeTypeById(String id, String incomeExpense, String category);
 	IncomeType refresh(IncomeType incomeType);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);

@@ -66,7 +66,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -79,9 +78,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.SectorService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -412,6 +413,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -430,7 +432,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.sectorIsActive.setChecked(aSector.isSectorIsActive());
 		this.recordStatus.setValue(aSector.getRecordStatus());
 		
-		if(aSector.isNew() || aSector.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aSector.isNew() || (aSector.getRecordType() != null ? aSector.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.sectorIsActive.setChecked(true);
 			this.sectorIsActive.setDisabled(true);
 		}
@@ -613,15 +615,12 @@ public class SectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.sectorCode.isReadonly()){
-			this.sectorCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_SectorDialog_SectorCode.value")})));
+			this.sectorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SectorDialog_SectorCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 
 		if (!this.sectorDesc.isReadonly()){
-			this.sectorDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_SectorDialog_SectorDesc.value")})));
+			this.sectorDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SectorDialog_SectorDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.sectorLimit.isReadonly()) {
@@ -769,7 +768,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

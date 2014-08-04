@@ -122,7 +122,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 	@Override
 	public FinanceMain getWIFFinanceMainById(final String id, String type) {
 		logger.debug("Entering");
-		FinanceMain wIFFinanceMain = getWIFFinanceMain();
+		FinanceMain wIFFinanceMain = new FinanceMain();
 		
 		wIFFinanceMain.setId(id);
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod,");

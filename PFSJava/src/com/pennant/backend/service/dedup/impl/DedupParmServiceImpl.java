@@ -58,7 +58,9 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.PennantConstants;
@@ -203,19 +205,74 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return DedupParm
 	 */
 	@Override
-	public DedupParm getApprovedDedupParmById(String id,String QueryModule,String QuerySubCode) {
-		return getDedupParmDAO().getDedupParmByID(id,QueryModule,QuerySubCode,"");
+	public DedupParm getApprovedDedupParmById(String id,String queryModule,String querySubCode) {
+		return getDedupParmDAO().getDedupParmByID(id,queryModule,querySubCode,"");
 	}
 
 	@Override	
 	public List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDetails aCustomerDetails){
 		DedupParm dedupParm = getApprovedDedupParmById(userRole, "Customer", aCustomerDetails.getCustomer().getLovDescCustCtgType());
+		if (dedupParm!=null ) {
+			String replaceString="";
+			if (StringUtils.trimToEmpty(dedupParm.getSQLQuery()).contains(PennantConstants.CUST_DEDUP_LIST_BUILD_EQUAL)) {
+				replaceString=PennantConstants.CUST_DEDUP_LIST_BUILD_EQUAL;
+			}else if ( StringUtils.trimToEmpty(dedupParm.getSQLQuery()).contains(PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE)) {
+				replaceString=PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE;
+			}
+				if (!"".equals(replaceString)) {
+	                StringBuilder rule = new StringBuilder("");
+	                //CustDocType = :CustDocType AND CustDocTitle = :CustDocTitle
+	                if (aCustomerDetails.getCustomerDocumentsList() != null
+	                        && aCustomerDetails.getCustomerDocumentsList().size() > 0) {
+		                for (CustomerDocument customerDocument : aCustomerDetails
+		                        .getCustomerDocumentsList()) {
+			                if (!rule.toString().equals("")) {
+				                rule.append("or");
+			                }
+			                rule.append("(" + PennantConstants.CUST_DEDUP_LISTFILED2 + " = '");
+			                rule.append(customerDocument.getCustDocType());
+			                rule.append("' AND " + PennantConstants.CUST_DEDUP_LISTFILED3 + " = '");
+			                rule.append(customerDocument.getCustDocTitle());
+			                rule.append("')");
+		                }
+	                }else{
+	                	 rule.append(PennantConstants.CUST_DEDUP_LISTFILED2 + " IN (");
+	                }
+	                dedupParm.setSQLQuery(dedupParm.getSQLQuery().replace(replaceString,rule.toString()));
+                }
+				logger.debug(dedupParm.getSQLQuery());
+            
+        }
 		
+		
+	
 		if(dedupParm!=null){
 			return getDedupParmDAO().fetchCustomerDedupDetails(aCustomerDetails.getCustDedup() ,dedupParm.getSQLQuery());	
 		}
 		return new ArrayList<CustomerDedup>();
 	}	
+	
+	/**
+	 * Prepare Finance Dedup object using Customer ID
+	 */
+	@Override
+    public FinanceDedup getCustomerById(long custID) {
+	    return getDedupParmDAO().getFinDedupByCustId(custID);
+    }
+
+	/**
+	 * Method for Fetching Dedup Finance List using Customer Dedup Details
+	 */
+	@Override	
+	public List<FinanceDedup> fetchFinDedupDetails(String userRole, FinanceDedup aFinanceDedup){
+		DedupParm dedupParm = getApprovedDedupParmById(userRole, "Finance", "L");
+		
+		if(dedupParm!=null){
+			return getDedupParmDAO().fetchFinDedupDetails(aFinanceDedup ,dedupParm.getSQLQuery());	
+		}
+		return new ArrayList<FinanceDedup>();
+	}	
+	
 	
 	/**
 	 * This method refresh the Record.
@@ -447,5 +504,5 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 		return auditDetail;
 	}
-
+	
 }

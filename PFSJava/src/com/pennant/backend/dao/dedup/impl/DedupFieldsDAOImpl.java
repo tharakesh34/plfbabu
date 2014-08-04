@@ -125,7 +125,7 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 	@Override
 	public DedupFields getDedupFieldsByID(final String id, String type) {
 		logger.debug("Entering");
-		DedupFields dedupFields = getDedupFields();
+		DedupFields dedupFields = new DedupFields();
 		dedupFields.setId(id);
 		
 		StringBuilder selectListSql = new StringBuilder("Select FieldName, FieldControl,RefType , ");

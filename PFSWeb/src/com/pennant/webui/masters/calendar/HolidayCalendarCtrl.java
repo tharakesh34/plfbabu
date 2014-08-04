@@ -39,6 +39,7 @@ import com.pennant.webui.masters.calendar.model.HolidayCalendarModelRenderer;
  * /WEB-INF/pages/Masters/Calendar/HolidayCalendar.zul. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
+@SuppressWarnings("rawtypes")
 public class HolidayCalendarCtrl extends GenericForwardComposer {
 	
 	private static final long serialVersionUID = -3455808868502431564L;

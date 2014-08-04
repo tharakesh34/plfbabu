@@ -45,6 +45,7 @@ package com.pennant.backend.service.lmtmasters;
 
 import java.util.List;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.HomeLoanDetail;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
@@ -65,4 +66,11 @@ public interface HomeLoanDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<LovFieldDetail> getHomeConstructionStage();
+	
+	public AuditDetail saveOrUpdate(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType);
+	public AuditDetail doApprove(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType);
+	public AuditDetail validate(HomeLoanDetail homeLoanDetail, String method, String auditTranType, String  usrLanguage);
+	public AuditDetail delete(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType);
+	
+	
 }

@@ -54,13 +54,13 @@
 						<listhead sizable="true">
 							<listheader id="listheader_CourseName"
 								label="${c:l('listheader_CourseName.label')}" sort="auto"
-								width="80%" />
+								width="100%" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								width="0%" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								width="0%" />
 						</listhead>		
 			
 					</listbox>

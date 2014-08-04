@@ -176,7 +176,7 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl implements Seria
 		MultiLineMessageBox.doSetTemplate();
 		if (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
 				| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true,
-				new EventListener() {
+				new EventListener<Event>() {
 					@Override
 					public void onEvent(Event evt) {
 						switch (((Integer) evt.getData()).intValue()) {

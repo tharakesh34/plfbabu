@@ -46,8 +46,7 @@
 								sclass="toolbar-center">
 								<label
 									value="${c:l('window_ProvisionDialog.title')}"
-									sclass="label-heading">
-								</label>
+									sclass="label-heading" />
 							</toolbar>
 
 							<!-- CRUD BUTTONS -->
@@ -79,15 +78,7 @@
 									<label
 										id="label_ProvisionDialog_FinReference"
 										value="${c:l('label_ProvisionDialog_FinReference.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<textbox id="finReference"
-											width="180px" readonly="true" />
-										<button label=""
-											id="btnSearchFinReference"
-											image="/images/icons/LOVSearch.png" height="24px" />
-									</hbox>
+									<extendedcombobox id="finReference"/>
 									<label
 										id="label_ProvisionDialog_FinBranch"
 										value="${c:l('label_ProvisionDialog_FinBranch.value')}" />
@@ -158,6 +149,24 @@
 								</row>
 								<row visible="true">
 									<label
+										id="label_ProvisionDialog_CalProvisionedAmt"
+										value="${c:l('label_ProvisionDialog_CalProvisionedAmt.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="calProvisionedAmt"
+											width="162px" readonly="true" maxlength="18" />
+									</hbox>
+									<label
+										id="label_ProvisionDialog_ProvisionedAmt"
+										value="${c:l('label_ProvisionDialog_ProvisionedAmt.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="provisionedAmt"
+											width="162px" readonly="true" maxlength="18" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
 										id="label_ProvisionDialog_UseNFProv"
 										value="${c:l('label_ProvisionDialog_UseNFProv.value')}" />
 									<hbox>
@@ -173,7 +182,7 @@
 									<hbox>
 										<space spacing="2px" />
 										<decimalbox id="nonFormulaProv"
-											width="162px" maxlength="18" readonly="true" />
+											width="162px" maxlength="18" />
 									</hbox>
 								</row>
 								<row visible="true">
@@ -184,6 +193,15 @@
 										<space spacing="2px" />
 										<checkbox id="autoReleaseNFP"
 											checked="false" />
+									</hbox>
+									<label
+										id="label_ProvisionDialog_lastFullyPaidDate"
+										value="${c:l('label_ProvisionDialog_lastFullyPaidDate.value')}" visible="false"/>
+									<hbox visible="false">
+										<space spacing="2px" />
+										<datebox id="lastFullyPaidDate"
+											readonly="true" width="144px" disabled="true"
+											buttonVisible="false" />
 									</hbox>
 								</row>
 							</rows>

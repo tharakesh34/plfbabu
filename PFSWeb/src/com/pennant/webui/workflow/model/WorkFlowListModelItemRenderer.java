@@ -45,14 +45,12 @@ package com.pennant.webui.workflow.model;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.WorkFlowDetails;
-
 
 /**
  * Item renderer for listitems in the listbox.
@@ -61,10 +59,10 @@ import com.pennant.backend.model.WorkFlowDetails;
 public class WorkFlowListModelItemRenderer implements ListitemRenderer<WorkFlowDetails>, Serializable {
 
 	private static final long serialVersionUID = 2925499383404057064L;
-	private final static Logger logger = Logger.getLogger(WorkFlowListModelItemRenderer.class);
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, WorkFlowDetails data, int count) throws Exception {
+		
 		String status = null;
 		final WorkFlowDetails workFlowDetails= (WorkFlowDetails) data;
 
@@ -85,7 +83,6 @@ public class WorkFlowListModelItemRenderer implements ListitemRenderer<WorkFlowD
 		}
 		lc = new Listcell(status);
 		lc.setParent(item);
-
 
 		item.setAttribute("data", data);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onWorkFlowItemDoubleClicked");

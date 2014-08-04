@@ -119,7 +119,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 	@Override
 	public LovFieldDetail getLovFieldDetailById(final long id, String type) {
 		logger.debug("Entering");
-		LovFieldDetail lovFieldDetail = getLovFieldDetail();
+		LovFieldDetail lovFieldDetail = new LovFieldDetail();
 		lovFieldDetail.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select FieldCodeId, FieldCode," );

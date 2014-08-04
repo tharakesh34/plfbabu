@@ -63,7 +63,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,7 +77,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.masters.SystemInternalAccountDefinitionService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -633,6 +634,21 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 		logger.debug("Entering");
 		// To clear the Error Messages
 		doClearMessage();
+		if (this.oldVar_sIAAcType != this.sIAAcType.getValue()) {
+			return true;
+		}
+		if (this.oldVar_sIACode != this.sIACode.getValue()) {
+			return true;
+		}
+		if (this.oldVar_sIAName != this.sIAName.getValue()) {
+			return true;
+		}
+		if (this.oldVar_sIANumber != this.sIANumber.getValue()) {
+			return true;
+		}
+		if (this.oldVar_sIAShortName != this.sIAShortName.getValue()) {
+			return true;
+		}
 		logger.debug("Leaving");
 		return false;
 	}
@@ -645,19 +661,14 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 		setValidationOn(true);
 
 		if (!this.sIACode.isReadonly()) {
-			this.sIACode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel("FIELD_ALNUM_CAPS",
-			        new String[] { Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIACode.value") })));
-
+			this.sIACode.setConstraint(new PTStringValidator(Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIACode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.sIAName.isReadonly()) {
-			this.sIAName.setConstraint(new SimpleConstraint(PennantConstants.AC_NAME_REGEX, Labels.getLabel("FIELD_AC_CHAR_CAPS",
-			        new String[] { Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAName.value") })));
+			this.sIAName.setConstraint(new PTStringValidator(Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAName.value"), PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL, true));
 
 		}
 		if (!this.sIAShortName.isReadonly()) {
-			this.sIAShortName.setConstraint(new SimpleConstraint(PennantConstants.AC_NAME_REGEX, Labels.getLabel("FIELD_AC_CHAR_CAPS",
-			        new String[] { Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAShortName.value") })));
-
+			this.sIAShortName.setConstraint(new PTStringValidator(Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAShortName.value"), PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL, true));
 		}
 
 		logger.debug("Leaving");
@@ -1058,7 +1069,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 			if (details != null) {
 				this.sIAAcType.setValue(details.getAcType());
 				this.lovDescSIAAcTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
-				this.sIAheadCode.setValue(details.getAcHeadCode().substring(0,2));
+				//this.sIAheadCode.setValue(details.getAcHeadCode().substring(0,2));
 			}
 		}
 	}
@@ -1159,8 +1170,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 	}
 
 	private void doSetLOVValidation() {
-		this.lovDescSIAAcTypeName.setConstraint("NO EMPTY:"
-		        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAAcType.value") }));
+		this.lovDescSIAAcTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAAcType.value"), null, true));
 	}
 
 	private void doRemoveLOVValidation() {

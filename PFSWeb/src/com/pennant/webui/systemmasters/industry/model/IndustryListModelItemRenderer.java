@@ -63,11 +63,10 @@ import com.pennant.util.PennantAppUtil;
 public class IndustryListModelItemRenderer implements ListitemRenderer<Industry>, Serializable {
 
 	private static final long serialVersionUID = -6686096785663103610L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, Industry industry, int count) throws Exception {
 		
-	//	final Industry industry = (Industry) data;
 		Listcell lc;
 	  	lc = new Listcell(industry.getIndustryCode());
 		lc.setParent(item);

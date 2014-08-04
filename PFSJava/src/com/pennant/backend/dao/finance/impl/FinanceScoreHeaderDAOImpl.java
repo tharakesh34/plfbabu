@@ -22,7 +22,7 @@ import com.pennant.backend.model.finance.FinanceScoreHeader;
 
 public class FinanceScoreHeaderDAOImpl extends BasisNextidDaoImpl<FinanceScoreHeader> implements FinanceScoreHeaderDAO {
 	
-	private static Logger logger = Logger.getLogger(FinanceProfitDetailDAOImpl.class);
+	private static Logger logger = Logger.getLogger(FinanceScoreHeaderDAOImpl.class);
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -132,6 +132,36 @@ public class FinanceScoreHeaderDAOImpl extends BasisNextidDaoImpl<FinanceScoreHe
     public void deleteDetailList(String finReferecne, String type) {
 	    // TODO Auto-generated method stub
 	    
+    }
+	
+	@Override
+    public void deleteHeader(FinanceScoreHeader scoreHeader, String type) {
+		logger.debug("Entering");
+		
+		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinanceScoreHeader");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" WHERE HeaderId=:HeaderId AND FinReference=:FinReference" );
+		
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoreHeader);
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+    }
+	
+	@Override
+    public void deleteDetailList(List<FinanceScoreDetail> scoreDetails, String type) {
+		logger.debug("Entering");
+		
+		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinanceScoreDetail");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" WHERE HeaderId=:HeaderId");
+		
+		logger.debug("deleteSql: " + deleteSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(scoreDetails.toArray());
+		
+		logger.debug("Leaving");
+		this.namedParameterJdbcTemplate.batchUpdate(deleteSql.toString(), beanParameters);
     }
 
 }

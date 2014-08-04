@@ -602,7 +602,7 @@ var JSLINT = (function () {
             weird_condition: "Weird condition.",
             weird_new: "Weird construction. Delete 'new'.",
             weird_program: "Weird program.",
-            weird_relation: "Weird relation.",
+            //weird_relation: "Weird relation.",
             weird_ternary: "Weird ternary.",
             wrap_immediate: "Wrap an immediate function invocation in parentheses " +
                 "to assist the reader in understanding that the expression " +
@@ -2982,7 +2982,7 @@ loop:   for (;;) {
             if (are_similar(left, right) ||
                     ((left.arity === 'string' || left.arity === 'number') &&
                     (right.arity === 'string' || right.arity === 'number'))) {
-                warn(bundle.weird_relation, that);
+               // warn(bundle.weird_relation, that);
             }
             that.first = left;
             that.second = check_relation(right);
@@ -5903,7 +5903,7 @@ loop:   for (;;) {
             case 'text':
             case 'file':
             case 'password':
-            case 'file':
+            //case 'file':
             case 'hidden':
             case 'image':
                 if (option.adsafe && a.autocomplete !== 'off') {

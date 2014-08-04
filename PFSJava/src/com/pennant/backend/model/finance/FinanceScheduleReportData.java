@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 public class FinanceScheduleReportData {
 
 	private String label;
+	private String schdSeqNo;
 	private String schDate;
 	private String pftAmount;
 	private String schdPft;
@@ -65,6 +66,14 @@ public class FinanceScheduleReportData {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
+	public String getSchdSeqNo() {
+    	return schdSeqNo;
+    }
+
+	public void setSchdSeqNo(String schdSeqNo) {
+    	this.schdSeqNo = schdSeqNo;
+    }
 
 	public String getSchDate() {
 		return schDate;

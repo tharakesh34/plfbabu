@@ -22,12 +22,12 @@ public class EligibilityCheckListItemRenderer implements ListitemRenderer<Eligib
 		super();
 		this.formatter = formatter;
 	}
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, EligibilityRule elgRule, int count) throws Exception {
 
 		if (item instanceof Listgroup) { 
-			item.appendChild(new Listcell(elgRule.getFinType()));
+			item.appendChild(new Listcell(elgRule.getFinType() +" - "+elgRule.getFinTypeDesc()));
 		} else if (item instanceof Listgroupfoot) { 
 			Listcell cell = new Listcell("");
 			cell.setSpan(3);
@@ -46,14 +46,28 @@ public class EligibilityCheckListItemRenderer implements ListitemRenderer<Eligib
 				if(elgRule.getElgAmount().compareTo(new BigDecimal(-1)) == 0){
 					lc = new Listcell("Not Eligible");
 					lc.setStyle("font-weight:bold;color:red;");
-				}else if(elgRule.getElgAmount().compareTo(BigDecimal.ZERO) == 0){
+				}else {
+					lc = new Listcell("Eligible");
+					lc.setStyle("font-weight:bold;color:green;");
+				}
+			}else if("B".equals(elgRule.getRuleReturnType())){
+				
+				if(elgRule.getElgAmount().compareTo(BigDecimal.ZERO) == 0){
+					lc = new Listcell("Not Eligible");
+					lc.setStyle("font-weight:bold;color:red;");
+				}else {
 					lc = new Listcell("Eligible");
 					lc.setStyle("font-weight:bold;color:green;");
 				}
 			}else if("D".equals(elgRule.getRuleReturnType())){
 
-				lc = new Listcell(PennantAppUtil.amountFormate(elgRule.getElgAmount(), formatter));
-				lc.setStyle("font-weight:bold;text-align:right;");
+				//IF Error in Executing the Rule
+				if("DSRCAL".equals(elgRule.getRuleCode())){
+					lc = new Listcell(elgRule.getElgAmount()+"%");
+				}else{
+					lc = new Listcell(PennantAppUtil.amountFormate(elgRule.getElgAmount(),formatter));
+					lc.setStyle("font-weight:bold;text-align:right;");
+				}
 				
 			}else if("I".equals(elgRule.getRuleReturnType())){
 

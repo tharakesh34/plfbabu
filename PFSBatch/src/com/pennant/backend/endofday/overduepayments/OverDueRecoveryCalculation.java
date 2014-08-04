@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,19 +39,15 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+ *//*
 package com.pennant.backend.endofday.overduepayments;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -60,19 +56,14 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.AccountEngineExecution;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.batch.admin.BatchAdminDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
-import com.pennant.backend.endofday.model.ODCConfig;
-import com.pennant.backend.endofday.model.WorkFields;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
-import com.pennant.backend.model.rulefactory.DataSet;
-import com.pennant.backend.util.PennantConstants;
 
 public class OverDueRecoveryCalculation implements Tasklet {
 
@@ -82,18 +73,11 @@ public class OverDueRecoveryCalculation implements Tasklet {
 	private OverdueChargeRecoveryDAO recoveryDAO;
 	private DataSource dataSource;
 	private BatchAdminDAO batchAdminDAO;
-
-	private Map<String,ODCConfig > chargeDetailsMap = null;
-	private ODCConfig config = null;
-	private Date dateValueDate = null;
-	private BigDecimal zeroValue = BigDecimal.ZERO;
 	
+	private Date dateValueDate = null;
 
-	@SuppressWarnings("serial")
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		
-		chargeDetailsMap = new HashMap<String, ODCConfig>();
 		
 		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
 		
@@ -101,90 +85,50 @@ public class OverDueRecoveryCalculation implements Tasklet {
 		
 		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
-		boolean isConfigFound = false;
-
-		//Fetch OD charges for all finance types by customer category
-
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
 		StringBuffer selQuery = new StringBuffer();
-		selQuery = prepareODCConfigQuery(selQuery);
 		
 		try {
 			
-			//Fetch ODCConfig records data 
+			// Fetch OverDue Details Data
+			selQuery = prepareODDetailsQuery(selQuery);
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(selQuery.toString());
 			resultSet = sqlStatement.executeQuery();
-			while (resultSet.next()) {
-				doPrepareODChargeDetails(resultSet);
-			}
-			
-			// Fetch OverDue Details Data
-			selQuery = prepareODDetailsQuery(new StringBuffer());
-			sqlStatement = connection.prepareStatement(selQuery.toString());
-			resultSet = sqlStatement.executeQuery();
-			WorkFields workFields = null;
 			
 			while (resultSet.next()) {
-				
-				//Fetch Customer Category using Finreference from ODDetails
-				String custCtgCode = resultSet.getString("CustCtgCode").trim();
-				String finType = resultSet.getString("FinType").trim();
-				
-				 
-				//Find Finance Type & Customer Category part of chargeDetailsMap
-				if(chargeDetailsMap.containsKey(finType+custCtgCode)){
-					isConfigFound = true;
-					//Set ODCCOnfig detals into WorkFields object
-					config = chargeDetailsMap.get(finType+custCtgCode);
-					workFields = prepareWorkFieldsFromConfig(config);
-				}else{
-					isConfigFound = false;
-					//Set SMTparameters details to WorkFields object	
-					workFields = prepareWorkFieldsFromSMT();
-				}
 				
 				//Date Check for OverDue Recovery
-				Date dateCheck = DateUtility.addDays(resultSet.getDate("FinODSchdDate"), workFields.getWorkGraceDays());
+				Date dateCheck = DateUtility.addDays(resultSet.getDate("FinODSchdDate"), resultSet.getInt("ODGraceDays"));
 				if(dateCheck.compareTo(dateValueDate) <= 0){
 
-					//Fetch Customer Category using Finreference from ODDetails
+					//Fetch Customer Category using FinReference from ODDetails
 					selQuery = prepareScheduleQuery(new StringBuffer(),resultSet.getString("FinReference"),
 							resultSet.getDate("FinODSchdDate"));
 					sqlStatement = connection.prepareStatement(selQuery.toString());
 					ResultSet rs = sqlStatement.executeQuery();
 					
-					OverdueChargeRecovery chargeRecovery = null;
 					//Prepare Finance OverDue Recovery Details Object Data
-					String overDueRuleCode = "";
-					if(isConfigFound){
-						overDueRuleCode = config.getAccountSetCode();
-					}
+					OverdueChargeRecovery chargeRecovery = null;
 					
 					//Insert OverDue Recovery(s) into Recoveries table
 					while (rs.next()) {
-						chargeRecovery = prepareODRData(resultSet,rs,custCtgCode, overDueRuleCode, workFields);
-						getRecoveryDAO().save(chargeRecovery, "");
+						chargeRecovery = saveOrUpdateODRData(resultSet,rs);
 						context.getStepContext().getStepExecution().getExecutionContext().putInt("FIELD_COUNT", resultSet.getRow());
 						getBatchAdminDAO().saveStepDetails(resultSet.getString("FinReference"), getODChargeRecory(chargeRecovery), context.getStepContext().getStepExecution().getId());
 					}
 					
 					rs.close();
 				}
-				
-				
-				
 			}
 
 		}catch (SQLException e) {
 			logger.error(e);
 			throw new SQLException(e.getMessage()) {};
 		}finally{
-			chargeDetailsMap =null;
-			config = null;
 			resultSet.close();
 			sqlStatement.close();
 		}
@@ -193,7 +137,7 @@ public class OverDueRecoveryCalculation implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	/**
+	*//**
 	 * Method for Preparing OverDue Recovery Object data
 	 * @param oDDRS
 	 * @param schdlRS
@@ -201,22 +145,81 @@ public class OverDueRecoveryCalculation implements Tasklet {
 	 * @param overDueRuleCode
 	 * @param work
 	 * @return
-	 */
+	 * @throws SQLException 
+	 *//*
 	@SuppressWarnings("serial")
-	private OverdueChargeRecovery prepareODRData(ResultSet oDDRS, ResultSet schdlRS , String custCtgCode, 
-			String overDueRuleCode, WorkFields work) {
+	private OverdueChargeRecovery saveOrUpdateODRData(ResultSet oDDRS, ResultSet schdlRS) throws SQLException {
 		logger.debug("Entering");
+
+		// If only when Finance Charge type is based upon Penalty Due days
+		OverdueChargeRecovery  recovery = null;
+		boolean isRcdNotFound = true;
+		BigDecimal prvPenaltyBal = BigDecimal.ZERO;
+		if(PennantConstants.PERCONDUEDAYS.equals(oDDRS.getString("ODChargeType"))){
+			recovery = getRecoveryDAO().getMaxOverdueChargeRecoveryById(oDDRS.getString("FinReference"), oDDRS.getDate("FinODSchdDate"),
+					oDDRS.getString("FinODFor"), "");
+			
+			//Set Data For creation of new object or for Updation
+			if(recovery == null){
+				recovery = new OverdueChargeRecovery();
+				recovery.setSeqOrder(1);
+			}else{
+				
+				//Check for Condition whether new record must add or not 
+				if(recovery.getFinODCPenaltyPaid().compareTo(BigDecimal.ZERO) > 0){
+					isRcdNotFound = true;
+				}else if(PennantConstants.SPFT.equals(oDDRS.getString("ODChargeCalOn"))){
+					
+					if((schdlRS.getBigDecimal("ProfitSchd").subtract(schdlRS.getBigDecimal("SchdPftPaid"))).compareTo(
+							recovery.getFinODPft()) < 0){
+						isRcdNotFound = true;
+					}
+				}else if(PennantConstants.SPRI.equals(oDDRS.getString("ODChargeCalOn"))){
+					
+					if((schdlRS.getBigDecimal("PrincipalSchd").subtract(schdlRS.getBigDecimal("SchdPriPaid"))).compareTo(
+							recovery.getFinODPri()) < 0){
+						isRcdNotFound = true;
+					}
+				}else if(PennantConstants.STOT.equals(oDDRS.getString("ODChargeCalOn"))){
+
+					if((schdlRS.getBigDecimal("PrincipalSchd").subtract(schdlRS.getBigDecimal("SchdPriPaid")).add(
+							schdlRS.getBigDecimal("ProfitSchd").subtract(schdlRS.getBigDecimal("SchdPftPaid")))).compareTo(
+							recovery.getFinODTot()) < 0){
+						isRcdNotFound = true;
+					}
+				}else{
+					isRcdNotFound = false;
+				}
+				
+				//Reset Data For new Overdue RecoveryRecord
+				if(isRcdNotFound){
+					recovery.setSeqOrder(recovery.getSeqOrder()+1);
+					recovery.setoDDays(0);
+					prvPenaltyBal = recovery.getFinODCPenaltyBal(); 
+				}
+			}
+			
+		} else{
+			recovery = new OverdueChargeRecovery();
+			recovery.setSeqOrder(1);
+		}
 		
-		OverdueChargeRecovery  recovery = new OverdueChargeRecovery();
 		try {
-			recovery.setFinReference(oDDRS.getString("FinReference"));
-			recovery.setFinSchdDate(oDDRS.getDate("FinODSchdDate"));
-			recovery.setFinODFor(oDDRS.getString("FinODFor"));
-			recovery.setFinBranch(oDDRS.getString("FinBranch"));
-			recovery.setFinType(oDDRS.getString("FinType"));
-			recovery.setFinCustId(oDDRS.getLong("FinCustID"));
-			recovery.setFinCcy(schdlRS.getString("FinCcy"));
-			recovery.setFinODDate(dateValueDate);
+
+			if(isRcdNotFound){
+				recovery.setFinReference(oDDRS.getString("FinReference"));
+				recovery.setFinSchdDate(oDDRS.getDate("FinODSchdDate"));
+				recovery.setFinODFor(oDDRS.getString("FinODFor"));
+				recovery.setFinBranch(oDDRS.getString("FinBranch"));
+				recovery.setFinType(oDDRS.getString("FinType"));
+				recovery.setFinCustId(oDDRS.getLong("CustID"));
+				recovery.setFinCcy(schdlRS.getString("FinCcy"));
+				recovery.setFinODDate(dateValueDate);
+			}
+			
+			//For Updation
+			recovery.setFinODCalDate(dateValueDate);
+			recovery.setoDDays(recovery.getoDDays()+1);
 
 			if(recovery.getFinODFor().equals(PennantConstants.SCHEDULE)){
 				recovery.setFinODPri(schdlRS.getBigDecimal("PrincipalSchd").subtract(schdlRS.getBigDecimal("SchdPriPaid")));
@@ -225,35 +228,23 @@ public class OverDueRecoveryCalculation implements Tasklet {
 				recovery.setFinODPri(schdlRS.getBigDecimal("DefPrincipal").subtract(schdlRS.getBigDecimal("DefSchdPriPaid")));
 				recovery.setFinODPft(schdlRS.getBigDecimal("DefProfit").subtract(schdlRS.getBigDecimal("DefSchdPftPaid")));
 			}
-			
+
 			recovery.setFinODTot(recovery.getFinODPri().add(recovery.getFinODPft()));
-			recovery.setFinODCRuleCode(overDueRuleCode);
 			
-			//Prepare Dataset For Account Number Generation
-			DataSet dataSet = doPrepareDataSet(oDDRS, recovery);
+			if(isRcdNotFound){
+				recovery.setFinODCRuleCode(oDDRS.getString("AccountSetCode"));
+				recovery.setFinODCType(oDDRS.getString("ODChargeType"));
+				recovery.setFinODCOn(oDDRS.getString("ODChargeCalOn"));
+				recovery.setFinODC(oDDRS.getBigDecimal("ODChargeAmtOrPerc"));
+				recovery.setFinODCGraceDays(oDDRS.getInt("ODGraceDays"));
+				recovery.setFinODCAlwWaiver(oDDRS.getBoolean("ODAllowWaiver"));
+				recovery.setFinODCMaxWaiver(oDDRS.getBigDecimal("ODMaxWaiverPerc"));
+			}
 
-			String oDCPlAccount = getEngineExecution().generateAccount(dataSet,work.getWorkPLAC(), 
-					work.getWorkPLACSH(), recovery.getFinODFor(),false);
-			recovery.setFinODCPLAc(oDCPlAccount);
+			if(recovery.getFinODCType().equals(PennantConstants.FLAT)){
+				recovery.setFinODCPenalty(recovery.getFinODC().multiply(schdlRS.getBigDecimal("NumberOfTerms")));
+			}else if(recovery.getFinODCType().equals(PennantConstants.PERCONETIME)){
 
-			String oDCCharityAccount = getEngineExecution().generateAccount(dataSet, work.getWorkCAC(),
-					work.getWorkCACSH(), recovery.getFinODFor(),false);
-			recovery.setFinODCCAc(oDCCharityAccount);
-
-			recovery.setFinODCPLShare(work.getWorkPLShare());
-			recovery.setFinODCSweep(work.isWorkSweep());
-			recovery.setFinODCCustCtg(custCtgCode);
-			recovery.setFinODCType(work.getWorkType());
-			recovery.setFinODCOn(work.getWorkCalOn());
-			recovery.setFinODC(work.getWorkChargeAmount());
-			recovery.setFinODCGraceDays(work.getWorkGraceDays());
-			recovery.setFinODCAlwWaiver(work.isWorkWaiver());
-			recovery.setFinODCMaxWaiver(work.getWorkMaxWaiver());
-			
-			if(recovery.getFinODCType().equals("F")){
-				recovery.setFinODCPenalty(recovery.getFinODC().multiply(schdlRS.getBigDecimal("NoOfDecimals")));
-			}else{
-				
 				if(recovery.getFinODCOn().equals(PennantConstants.SPFT)){
 					recovery.setFinODCPenalty(getPercentageValue(recovery.getFinODPft(),recovery.getFinODC()));
 				}else if(recovery.getFinODCOn().equals(PennantConstants.SPFT)){
@@ -261,14 +252,37 @@ public class OverDueRecoveryCalculation implements Tasklet {
 				}else{
 					recovery.setFinODCPenalty(getPercentageValue(recovery.getFinODTot(),recovery.getFinODC()));
 				}
-				
+			}else if(recovery.getFinODCType().equals(PennantConstants.PERCONDUEDAYS)){
+
+				if(recovery.getFinODCOn().equals(PennantConstants.SPFT)){
+					recovery.setFinODCPenalty(getDayPercValue(recovery.getFinODPft(),recovery.getFinODC(),
+							recovery.getFinODDate(),dateValueDate,oDDRS.getString("ProfitDaysBasis")));
+				}else if(recovery.getFinODCOn().equals(PennantConstants.SPFT)){
+					recovery.setFinODCPenalty(getDayPercValue(recovery.getFinODPri(),recovery.getFinODC(),
+							recovery.getFinODDate(),dateValueDate,oDDRS.getString("ProfitDaysBasis")));
+				}else{
+					recovery.setFinODCPenalty(getDayPercValue(recovery.getFinODTot(),recovery.getFinODC(),
+							recovery.getFinODDate(),dateValueDate,oDDRS.getString("ProfitDaysBasis")));
+				}
+				recovery.setFinODCPenalty(recovery.getFinODCPenalty().add(prvPenaltyBal));
 			}
-			recovery.setFinODCWaived(zeroValue);
-			recovery.setFinODCPLPenalty(getPercentageValue(recovery.getFinODCPenalty(),recovery.getFinODCPLShare()));
-			recovery.setFinODCCPenalty(recovery.getFinODCPenalty().subtract(recovery.getFinODCPLPenalty()));
-			recovery.setFinODCPaid(zeroValue);
+
+			if(isRcdNotFound){
+				recovery.setFinODCPenaltyBal(recovery.getFinODCPenalty());
+				recovery.setFinODCWaived(BigDecimal.ZERO);
+				recovery.setFinODCPenaltyPaid(BigDecimal.ZERO);
+			}else{
+				recovery.setFinODCPenaltyBal(recovery.getFinODCPenalty().subtract(recovery.getFinODCPenaltyPaid()));
+			}
 			recovery.setFinODCLastPaidDate(dateValueDate);
 			recovery.setFinODCRecoverySts("R");
+			
+			//Updation for Overdue Recovery Data
+			if(isRcdNotFound){
+				getRecoveryDAO().save(recovery, "");
+			}else{
+				getRecoveryDAO().update(recovery,false, "");
+			}
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -278,200 +292,88 @@ public class OverDueRecoveryCalculation implements Tasklet {
 		return recovery;
 	}
 	
-	/**
+	*//**
 	 * Method for get the Percentage of given value 
 	 * @param dividend
 	 * @param divider
 	 * @return
-	 */
+	 *//*
+	private BigDecimal getDayPercValue(BigDecimal dividend, BigDecimal divider, Date odDate, Date dateValueDate, String profitDayBasis){
+		BigDecimal value = ((dividend.multiply(unFormateAmount(divider,2).divide(new BigDecimal(100)))).multiply(
+				CalculationUtil.getInterestDays(odDate, dateValueDate, profitDayBasis))).divide(new BigDecimal(100),RoundingMode.HALF_DOWN);
+		
+		return value.setScale(0, RoundingMode.HALF_DOWN);
+	}
+	
+	*//**
+	 * Method for get the Percentage of given value 
+	 * @param dividend
+	 * @param divider
+	 * @return
+	 *//*
 	private BigDecimal getPercentageValue(BigDecimal dividend, BigDecimal divider){
 		return (dividend.multiply(unFormateAmount(divider,2).divide(
 				new BigDecimal(100)))).divide(new BigDecimal(100),RoundingMode.HALF_DOWN);
 	}
 	
-	/**
+	*//**
 	 * Method for UnFormat the passing Amount Value
 	 * @param amount
 	 * @param dec
 	 * @return
-	 */
+	 *//*
 	public BigDecimal unFormateAmount(BigDecimal amount, int dec) {
 		if (amount == null) {
-			return new BigDecimal(0);
+			return BigDecimal.ZERO;
 		}
 		BigInteger bigInteger = amount.multiply(new BigDecimal(Math.pow(10, dec))).toBigInteger();
 		return new BigDecimal(bigInteger);
 	}
 	
-	/**
-	 * Method for Preparation of Dataset 
-	 * @param oDDRS
-	 * @param recovery
-	 * @return
-	 * @throws SQLException
-	 */
-	private DataSet doPrepareDataSet(ResultSet oDDRS, OverdueChargeRecovery  recovery) throws SQLException{
-		
-		DataSet dataSet = new DataSet();
-		
-		try {
-			
-			dataSet.setFinReference(recovery.getFinReference());
-			dataSet.setFinBranch(recovery.getFinBranch());
-			dataSet.setFinCcy(recovery.getFinCcy());
-			dataSet.setSchdDate(recovery.getFinSchdDate());
-			dataSet.setFinType(recovery.getFinType());
-			dataSet.setCustId(recovery.getFinCustId());
-			dataSet.setFinAmount(oDDRS.getBigDecimal("FinAmount"));
-			dataSet.setNewRecord(false);
-			dataSet.setDownPayment(oDDRS.getBigDecimal("DownPayment"));
-			dataSet.setNoOfTerms(oDDRS.getInt("NoOfTerms"));
-
-		} catch (SQLException e) {
-			logger.error(e);
-			throw new SQLException(e.getMessage());
-		}
-
-		return dataSet;
-
-	}
-	/**
-	 * Method for preparation of Select Query To get ConfigDetails data
-	 * 
-	 * @param selQuery
-	 * @return
-	 */
-	private StringBuffer prepareODCConfigQuery(StringBuffer selQuery) {
-
-		selQuery.append(" SELECT RMTFinanceTypes.FinType, RMTFinanceTypes.FinLatePayRule As AccountSetID,");
-		selQuery.append(" RMTAccountingSet.AccountSetCode, ODCH.ODCPLAccount, ODCH.ODCPLSubHead," );
-		selQuery.append(" ODCH.ODCCharityAccount, ODCH.ODCCharitySubHead, ODCH.ODCPLShare, ODCH.ODCSweepCharges ," );
-		selQuery.append(" ODCD.ODCCustCtg, ODCD.ODCType, ODCD.ODCOn, ODCD.ODCAmount, ODCD.ODCGraceDays,");
-		selQuery.append(" ODCD.ODCAllowWaiver, ODCD.ODCMaxWaiver FROM RMTFinanceTypes " );
-		selQuery.append(" INNER JOIN RMTAccountingSet ON RMTFinanceTypes.FinLatePayRule = RMTAccountingSet.AccountSetid" );
-		selQuery.append(" INNER JOIN FinODCHeader AS ODCH " );
-		selQuery.append(" INNER JOIN FinODCDetails AS ODCD ON ODCH.ODCRuleCode = ODCD.ODCRuleCode " );
-		selQuery.append(" ON RMTAccountingSet.AccountSetCode = ODCH.ODCRuleCode");
-		return selQuery;
-		
-	}
-	
-	/**
-	 * Method for Prepare 
-	 * @param set
-	 */
-	@SuppressWarnings("serial")
-	private void doPrepareODChargeDetails(ResultSet set) {
-		logger.debug("Entering");
-		
-		config = new ODCConfig();
-		try {
-			config.setFinType(set.getString("FinType"));
-			config.setAccountSetID(set.getLong("AccountSetID"));
-			config.setAccountSetCode(set.getString("AccountSetCode"));
-			config.setODCPLAccount(set.getString("ODCPLAccount"));
-			config.setODCPLSubHead(set.getString("ODCPLSubHead"));
-			config.setODCCharityAccount(set.getString("ODCCharityAccount"));
-			config.setODCCharitySubHead(set.getString("ODCCharitySubHead"));
-			config.setODCPLShare(set.getBigDecimal("ODCPLShare"));
-			config.setODCCustCtg(set.getString("ODCCustCtg"));
-			config.setODCType(set.getString("ODCType"));
-			config.setODCOn(set.getString("ODCOn"));
-			config.setODCAmount(set.getBigDecimal("ODCAmount"));
-			config.setODCGraceDays(set.getInt("ODCGraceDays"));
-			config.setODCAllowWaiver(set.getBoolean("ODCAllowWaiver"));
-			config.setODCMaxWaiver(set.getBigDecimal("ODCMaxWaiver"));
-			config.setODCSweepCharges(set.getBoolean("ODCSweepCharges"));
-			
-			chargeDetailsMap.put(config.getFinType().trim().concat(config.getODCCustCtg().trim()), config);
-			
-		} catch (SQLException e) {
-			logger.error(e);
-			throw new DataAccessException(e.getMessage()) {};
-		}
-		logger.debug("Leaving");
-	}
-	
-	/**
+	*//**
 	 * Method for preparation of Select Query To get OverDueDetails data
 	 * 
 	 * @param selQuery
 	 * @return
-	 */
+	 *//*
 	private StringBuffer prepareODDetailsQuery(StringBuffer selQuery) {
 		
-		selQuery.append(" SELECT ODD.FinReference As FinReference ,ODD.FinODSchdDate As FinODSchdDate ," );
-		selQuery.append(" ODD.FinODFor As FinODFor ,ODD.FinBranch As FinBranch ,ODD.FinType As FinType ," );
-		selQuery.append(" ODD.CustID As FinCustID ,ODD.FinODTillDate As FInODTillDate ,ODD.FinCurODAmt As FInCurODAmt ," );
-		selQuery.append(" ODD.FinMaxODAmt As FinMaxODAmt ,ODD.FinCurODDays As FinCurODDays, CUST.CustctgCode,  " );
-		selQuery.append(" (FinMain.FinAmount - FinMain.FinRepaymentAmount) As FinAmount, " );
-		selQuery.append(" FinMain.DownPayment As DownPayment, FinMain.NumberOfTerms as NoOfTerms " );
-		selQuery.append(" FROM FinODDetails AS ODD INNER JOIN FinanceMain AS Finmain ON ODD.FinReference= Finmain.FinReference " );
-		selQuery.append(" INNER JOIN Customers As CUST ON ODD.CustID = CUST.CUSTID " );
-		selQuery.append(" WHERE NOT EXISTS (SELECT FinReference FROM FINODCRecovery AS ODR " );
+		selQuery.append(" SELECT ODD.FinReference ,ODD.FinODSchdDate , ODD.FinODFor ,ODD.FinBranch ,ODD.FinType , " );
+		selQuery.append(" ODD.CustID ,ODD.FinODTillDate ,ODD.FinCurODAmt , ODD.FinMaxODAmt ,ODD.FinCurODDays ,FM.ProfitDaysBasis, " );
+		selQuery.append(" (FM.FinAmount + FM.FeeChargeAmt  - FM.FinRepaymentAmount) As FinAmount,  FM.DownPayment , FM.NumberOfTerms , " );
+		selQuery.append(" ACS.AccountSetCode , FM.ODChargeType, FM.ODChargeCalOn, FM.ODChargeAmtOrPerc, " );
+		selQuery.append(" FM.ODGraceDays, FM.ODAllowWaiver, FM.ODMaxWaiverPerc " );
+		selQuery.append(" FROM FinODDetails AS ODD INNER JOIN FinanceMain AS FM  ON ODD.FinReference= FM.FinReference " );
+		selQuery.append(" INNER JOIN RMTFinanceTypes AS FT ON FM.FinType = FT.FinType " );
+		selQuery.append(" INNER JOIN RMTAccountingSet AS ACS ON FT.FinLatePayRule = ACS.AccountSetId " );
+		selQuery.append(" WHERE ODD.FinReference NOT IN (SELECT FinReference FROM FINODCRecovery AS ODR " );
 		selQuery.append(" WHERE ODR.FinReference = ODD.FinReference AND ODR.FinSchdDate = ODD.FinODSchdDate " );
-		selQuery.append(" AND ODR.FinODFor = ODD.FinODFor) ");
+		selQuery.append(" AND ODR.FinODFor = ODD.FinODFor AND FinODCRecoverySts='C' ) AND  FM.ODChargeType ='D' " );
+		selQuery.append(" UNION " );
+		selQuery.append(" SELECT ODD.FinReference ,ODD.FinODSchdDate , ODD.FinODFor ,ODD.FinBranch ,ODD.FinType , " );
+		selQuery.append(" ODD.CustID ,ODD.FinODTillDate ,ODD.FinCurODAmt , ODD.FinMaxODAmt ,ODD.FinCurODDays ,FM.ProfitDaysBasis, " );
+		selQuery.append(" (FM.FinAmount + FM.FeeChargeAmt - FM.FinRepaymentAmount) As FinAmount,  FM.DownPayment , FM.NumberOfTerms , " );
+		selQuery.append(" ACS.AccountSetCode , FM.ODChargeType, FM.ODChargeCalOn, FM.ODChargeAmtOrPerc, " );
+		selQuery.append(" FM.ODGraceDays, FM.ODAllowWaiver, FM.ODMaxWaiverPerc " );
+		selQuery.append(" FROM FinODDetails AS ODD INNER JOIN FinanceMain AS FM  ON ODD.FinReference= FM.FinReference " );
+		selQuery.append(" INNER JOIN RMTFinanceTypes AS FT ON FM.FinType = FT.FinType " );
+		selQuery.append(" INNER JOIN RMTAccountingSet AS ACS ON FT.FinLatePayRule = ACS.AccountSetId " );
+		selQuery.append(" WHERE ODD.FinReference NOT IN (SELECT FinReference FROM FINODCRecovery AS ODR " );
+		selQuery.append(" WHERE ODR.FinReference = ODD.FinReference AND ODR.FinSchdDate = ODD.FinODSchdDate " );
+		selQuery.append(" AND ODR.FinODFor = ODD.FinODFor) AND FM.ODChargeType IN ('F','P') " );
+
 		return selQuery;
 		
 	}
 	
-	/**
-	 * Method for Preparation of WorkFields Using OverDueCharges Config Data
-	 * @param config
-	 * @return
-	 */
-	private WorkFields prepareWorkFieldsFromConfig(ODCConfig config) {
-		
-		WorkFields workFields = new WorkFields();
-		workFields.setWorkChargeAmount(config.getODCAmount());
-		workFields.setWorkCalOn(config.getODCOn());
-		workFields.setWorkGraceDays(config.getODCGraceDays());
-		workFields.setWorkPLShare(config.getODCPLShare());
-		workFields.setWorkType(config.getODCType());
-		workFields.setWorkPLAC(config.getODCPLAccount());
-		workFields.setWorkPLACSH(config.getODCPLSubHead());
-		workFields.setWorkCAC(config.getODCCharityAccount());
-		workFields.setWorkCACSH(config.getODCCharitySubHead());
-		workFields.setWorkWaiver(config.isODCAllowWaiver());
-		workFields.setWorkMaxWaiver(config.getODCMaxWaiver());
-		workFields.setWorkSweep(config.isODCSweepCharges());
-		
-		return workFields;
-	}
-	
-	/**
-	 * Method for Preparation of WorkFields Using OverDueCharges Config Data
-	 * @param config
-	 * @return
-	 */
-	public WorkFields prepareWorkFieldsFromSMT() {
-		
-		WorkFields workFields = new WorkFields();
-		workFields.setWorkChargeAmount(new BigDecimal(SystemParameterDetails.getSystemParameterValue("ODC_AMT").toString()));
-		workFields.setWorkCalOn(SystemParameterDetails.getSystemParameterValue("ODC_CALON").toString());
-		workFields.setWorkGraceDays(Integer.parseInt(SystemParameterDetails.getSystemParameterValue("ODC_GRACE").toString()));
-		workFields.setWorkPLShare(new BigDecimal(SystemParameterDetails.getSystemParameterValue("ODC_PLSHARE").toString()));
-		workFields.setWorkType(SystemParameterDetails.getSystemParameterValue("ODC_TYPE").toString());
-		workFields.setWorkPLAC(SystemParameterDetails.getSystemParameterValue("ODC_PLAC").toString());
-		workFields.setWorkPLACSH(SystemParameterDetails.getSystemParameterValue("ODC_PLACSH").toString());
-		workFields.setWorkCAC(SystemParameterDetails.getSystemParameterValue("ODC_CAC").toString());
-		workFields.setWorkCACSH(SystemParameterDetails.getSystemParameterValue("ODC_CACSH").toString());
-		workFields.setWorkWaiver(SystemParameterDetails.getSystemParameterValue("ODC_WAIVER").toString().equals("Y")?true:false);
-		workFields.setWorkMaxWaiver(new BigDecimal(SystemParameterDetails.getSystemParameterValue("ODC_MAXWAIVER").toString()));
-		workFields.setWorkSweep(SystemParameterDetails.getSystemParameterValue("ODC_SWEEP").toString().equals("Y")?true:false);
-		
-		return workFields;
-	}
-	
-	/**
+	*//**
 	 * Method for get the Finance Schedule Object data on particular Schedule date & FinReference 
 	 * @param stringBuffer
 	 * @param string
 	 * @param date
 	 * @return
-	 */
-	private StringBuffer prepareScheduleQuery(StringBuffer selQuery, String finReference, 
-			java.sql.Date schdDate) {
+	 *//*
+	private StringBuffer prepareScheduleQuery(StringBuffer selQuery, String finReference,  java.sql.Date schdDate) {
 		
 		selQuery.append(" SELECT PrincipalSchd, SchdPriPaid , DefPrincipal, DefSchdPriPaid, ProfitSchd," );
 		selQuery.append(" SchdPftPaid, DefProfit, DefSchdPftPaid, FinanceMain.FinCcy AS FinCcy ," );
@@ -525,18 +427,7 @@ public class OverDueRecoveryCalculation implements Tasklet {
 			strodcr.append(odcr.getFinODCWaived());
 			strodcr.append(";");
 
-			strodcr.append("To P&L");
-			strodcr.append("-");
-			strodcr.append(odcr.getFinODCPLPenalty());
-			strodcr.append(";");
-
-			strodcr.append("To Charity");
-			strodcr.append("-");
-			strodcr.append(odcr.getFinODCCPenalty());
-			strodcr.append(";");
-
 		}
-		
 		
 		return strodcr.toString();
 
@@ -570,10 +461,9 @@ public class OverDueRecoveryCalculation implements Tasklet {
 	public BatchAdminDAO getBatchAdminDAO() {
 		return batchAdminDAO;
 	}
-
 	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
 		this.batchAdminDAO = batchAdminDAO;
 	}
 
-		
 }
+*/

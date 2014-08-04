@@ -2,6 +2,8 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -45,6 +47,11 @@ public class FinAgreementDetail implements Serializable {
 
 	public FinAgreementDetail(String id) {
 		this.setId(id);
+	}
+	
+	public Set<String> getExcludeFields(){
+		Set<String> excludeFields=new HashSet<String>();
+		return excludeFields;
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

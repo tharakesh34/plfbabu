@@ -65,15 +65,17 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
-import com.pennant.webui.finance.wiffinancemain.WIFFinanceMainDialogCtrl;
+import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
@@ -86,7 +88,7 @@ import com.pennant.webui.util.PTMessageUtils;
  */
 public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 454600127282110738L;
 	private final static Logger logger = Logger.getLogger(AddRepaymentDialogCtrl.class);
 
 	/*
@@ -108,8 +110,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 				// overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; 	// overhanded per param
-	private transient WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl;
-	private transient FinanceMainDialogCtrl financeMainDialogCtrl;
+	private ScheduleDetailDialogCtrl financeMainDialogCtrl;
 
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
@@ -125,10 +126,12 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	private transient PagedListService pagedListService;
 	Calendar calender = Calendar.getInstance();
 	static final List<ValueLabel>	      schMthds	              	  = PennantAppUtil.getScheduleMethod();
-	static final List<ValueLabel>	      recalTypes	              = PennantAppUtil.getSchCalCodes();
+	static final List<ValueLabel>	      recalTypes	              = PennantStaticListUtil.getSchCalCodes();
 	private transient String excludeFields = ",EQUAL,PRI_PFT,PRI,";
 	private transient String frSpecifier = "";
 	private transient String toSpecifier = "";
+	
+	private BigDecimal totalAlwRpyAmt = BigDecimal.ZERO;
 
 	/**
 	 * default constructor.<br>
@@ -165,8 +168,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		
 		if (args.containsKey("financeScheduleDetail")) {
-			this.setFinanceScheduleDetail((FinanceScheduleDetail) args.get("financeScheduleDetail"));
-			setFinanceScheduleDetail(this.financeScheduleDetail);
+			setFinanceScheduleDetail((FinanceScheduleDetail) args.get("financeScheduleDetail"));
 		} else {
 			setFinanceScheduleDetail(null);
 		}
@@ -175,16 +177,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		// we get the WIFFinanceMainDialogCtrl controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete WIFFinanceMain here.
-		if (args.containsKey("wIFFinanceMainDialogCtrl")) {
-			setWIFFinanceMainDialogCtrl((WIFFinanceMainDialogCtrl) args
-					.get("wIFFinanceMainDialogCtrl"));
-		} else {
-			setWIFFinanceMainDialogCtrl(null);
-		}
-		
 		if (args.containsKey("financeMainDialogCtrl")) {
-			setFinanceMainDialogCtrl((FinanceMainDialogCtrl) args
-					.get("financeMainDialogCtrl"));
+			setFinanceMainDialogCtrl((ScheduleDetailDialogCtrl) args.get("financeMainDialogCtrl"));
 		} else {
 			setFinanceMainDialogCtrl(null);
 		}
@@ -431,32 +425,26 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
-		fillSchFromDates(this.cbRepayFromDate,
-				aFinSchData.getFinanceScheduleDetails());
+		
+		fillSchFromDates(this.cbRepayFromDate, aFinSchData.getFinanceScheduleDetails());
 
 		if(getFinanceScheduleDetail() != null ) {
-			fillSchToDates(this.cbRepayToDate,
-					aFinSchData.getFinanceScheduleDetails(), getFinanceScheduleDetail().getSchDate());
+			fillSchToDates(this.cbRepayToDate, aFinSchData.getFinanceScheduleDetails(), getFinanceScheduleDetail().getSchDate(),true);
 		}else {
-			fillSchToDates(this.cbRepayToDate,
-					aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate());
+			fillSchToDates(this.cbRepayToDate, aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate(),true);
 		}
-		fillSchToDates(this.cbTillDate,
-				aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate());
+		fillSchToDates(this.cbTillDate, aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate(),false);
 	
 		
 		// check the values and set in respective fields.
 		// If schedule detail is not null i.e. existing one
 		if (getFinanceScheduleDetail() != null) {
 			if (getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.GRACE)) {
-				this.wIAmount.setValue(PennantAppUtil.formateAmount(
-						getFinanceScheduleDetail().getPrincipalSchd(),
+				this.wIAmount.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getPrincipalSchd(),
 						aFinSchData.getFinanceMain().getLovDescFinFormatter()));
 			} else {
-				this.wIAmount.setValue(PennantAppUtil.formateAmount(
-						getFinanceScheduleDetail().getRepayAmount(),
-						aFinSchData.getFinanceMain()
-						.getLovDescFinFormatter()));
+				this.wIAmount.setValue(PennantAppUtil.formateAmount( getFinanceScheduleDetail().getRepayAmount(),
+						aFinSchData.getFinanceMain().getLovDescFinFormatter()));
 			}
 		}
 
@@ -496,20 +484,53 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		
+		Date curBussDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		boolean curTermExcluded = false;
+		
+		totalAlwRpyAmt = BigDecimal.ZERO;
+		
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				if (financeScheduleDetails.get(i).isRepayOnSchDate()) {
+				
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				
+				//Not before Current Business date & not Current Schedule Term Date
+				if(curBussDate.compareTo(curSchd.getSchDate()) > 0){
+					continue;
+				} else if(curBussDate.compareTo(curSchd.getSchDate()) == 0){
+					curTermExcluded = true;
+				} else{
+					if(!curTermExcluded){
+						curTermExcluded = true;
+					}
+				}
+				
+				//Maximum Outstanding Repay amount Allowed to Change
+				if(!curTermExcluded){
+					totalAlwRpyAmt = totalAlwRpyAmt.add(curSchd.getPrincipalSchd()).add(curSchd.getProfitSchd()).
+							add(curSchd.getDefPrincipalSchd()).add(curSchd.getDefProfitSchd()).subtract(curSchd.getSchdPriPaid()).
+							subtract(curSchd.getSchdPftPaid()).subtract(curSchd.getDefSchdPriPaid()).subtract(curSchd.getDefSchdPftPaid());
+				}else{
+					totalAlwRpyAmt = totalAlwRpyAmt.add(curSchd.getPrincipalSchd()).add(curSchd.getDefPrincipalSchd()).
+							subtract(curSchd.getSchdPriPaid()).subtract(curSchd.getDefSchdPriPaid());
+				}
+				
+				if(i == financeScheduleDetails.size()-1){
+					continue;	
+				}
+				
+				if (curSchd.isRepayOnSchDate() && (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) > 0 ||
+						curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) > 0)) {
+
 					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate)+" "+financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setAttribute("fromSpecifier",financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
+					comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(),PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
+					comboitem.setAttribute("fromSpecifier",curSchd.getSpecifier());
+					comboitem.setValue(curSchd.getSchDate());
+
 					dateCombobox.appendChild(comboitem);
 					if (getFinanceScheduleDetail() != null) {
-						dateCombobox.appendChild(comboitem);
-						if(financeScheduleDetails.get(i).getSchDate()
-								.compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+						if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
 							dateCombobox.setSelectedItem(comboitem);
 						}
 					}
@@ -521,7 +542,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 
 	/** To fill schedule dates in todate combo */
 	public void fillSchToDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails, Date fillAfter) {
+			List<FinanceScheduleDetail> financeScheduleDetails, Date fillAfter, boolean includeFromDate) {
 		logger.debug("Entering");
 		if(dateCombobox.getId().equals("cbRepayToDate")) {
 			this.cbRepayToDate.getItems().clear();
@@ -535,20 +556,23 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		dateCombobox.setSelectedItem(comboitem);
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				if (financeScheduleDetails.get(i).isRepayOnSchDate()) {
+				
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				if (curSchd.isRepayOnSchDate()  && (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) > 0 ||
+						curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) > 0)) {
+					
 					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate)+" "+financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setAttribute("toSpecifier",financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
-					if (getFinanceScheduleDetail() != null) {
-						dateCombobox.appendChild(comboitem);
-						if(financeScheduleDetails.get(i).getSchDate()
-								.compareTo(getFinanceScheduleDetail().getSchDate())==0) {
-							dateCombobox.setSelectedItem(comboitem);
+					comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
+					comboitem.setAttribute("toSpecifier",curSchd.getSpecifier());
+					comboitem.setValue(curSchd.getSchDate());
+					if(includeFromDate && curSchd.getSchDate().compareTo(fillAfter) >= 0) {
+						if(i != financeScheduleDetails.size()-1){
+							dateCombobox.appendChild(comboitem);
+							if(getFinanceScheduleDetail() != null && curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+								dateCombobox.setSelectedItem(comboitem);
+							}
 						}
-					} else if(financeScheduleDetails.get(i).getSchDate().compareTo(fillAfter) >= 0) {
+					} else if(!includeFromDate && curSchd.getSchDate().compareTo(fillAfter) > 0) {
 						dateCombobox.appendChild(comboitem);
 					}
 				}
@@ -565,16 +589,19 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		String recalScheduleMethod = "";
 		try {
 			if(this.wIAmount.getValue()!=null) {
 				if(this.wIAmount.getValue().compareTo(BigDecimal.ZERO)==-1) {
-					throw new WrongValueException(
-							this.wIAmount,
-							Labels.getLabel(
-									"AMOUNT_NO_NUMBER",
-									new String[]{
-											Labels.getLabel("label_ChangeRepaymentDialog_RepayAmount.value")
-									}));
+					throw new WrongValueException(this.wIAmount,Labels.getLabel("AMOUNT_NO_NUMBER",
+									new String[]{Labels.getLabel("label_ChangeRepaymentDialog_RepayAmount.value")}));
+				}
+				
+				BigDecimal amount = PennantApplicationUtil.unFormateAmount(this.wIAmount.getValue(), getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
+				if(amount.compareTo(totalAlwRpyAmt) > 0){
+					throw new WrongValueException(this.wIAmount,Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+									new String[]{Labels.getLabel("label_ChangeRepaymentDialog_RepayAmount.value"),
+							PennantApplicationUtil.amountFormate(totalAlwRpyAmt, getFinScheduleData().getFinanceMain().getLovDescFinFormatter())}));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -630,7 +657,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 					this.cbSchdMthd,
 					Labels.getLabel("label_ChangeRepaymentDialog_RecalType.value"))
 					&& this.cbSchdMthd.getSelectedIndex() != 0) {
-				getFinScheduleData().getFinanceMain().setGrcSchdMthd(this.cbSchdMthd.getSelectedItem().getValue().toString());
+				recalScheduleMethod = this.cbSchdMthd.getSelectedItem().getValue().toString();
 			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
@@ -680,14 +707,14 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			throw new WrongValuesException(wvea);
 		}
 		
-		if(!getCbSlctVal(this.cbSchdMthd).equals("#") && 
-				!getCbSlctVal(this.cbSchdMthd).equals(getFinScheduleData().getFinanceType().getFinSchdMthd()) && 
+		if(!getComboboxValue(this.cbSchdMthd).equals("#") && 
+				!getComboboxValue(this.cbSchdMthd).equals(getFinScheduleData().getFinanceType().getFinSchdMthd()) && 
 				overrideCount == 0) {
 			doClearMessage();
 			if(this.cbRepayFromDate.getSelectedItem().getAttribute("fromSpecifier").equals("G")) {
 				if(!showMessage(ErrorUtil.getErrorDetail(new ErrorDetails("scheduleMethod", "W0002",
 						new String[]{},
-						new String[]{getFinScheduleData().getFinanceMain().getGrcSchdMthd()}),
+						new String[]{recalScheduleMethod}),
 						getUserWorkspace().getUserLanguage()).getError(),Labels.getLabel("message.Overide"))){
 					return;
 				}
@@ -697,22 +724,26 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			getFinScheduleData().getFinanceMain().setRecalToDate((Date)this.cbTillDate.getSelectedItem().getValue());
 			setFinScheduleData(ScheduleCalculator.changeRepay(
 					getFinScheduleData(), PennantAppUtil.unFormateAmount(
-							this.wIAmount.getValue(),
-							getFinScheduleData().getFinanceMain()
-							.getLovDescFinFormatter()),getFinScheduleData().getFinanceMain().getGrcSchdMthd()));
+							this.wIAmount.getValue(),getFinScheduleData().getFinanceMain().getLovDescFinFormatter()),recalScheduleMethod));
 		}else{
 			getFinScheduleData().getFinanceMain().setRecalToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
 			setFinScheduleData(ScheduleCalculator.changeRepay(
 					getFinScheduleData(), PennantAppUtil.unFormateAmount(
-							this.wIAmount.getValue(),
-							getFinScheduleData().getFinanceMain()
-							.getLovDescFinFormatter()),getFinScheduleData().getFinanceMain().getGrcSchdMthd()));
+							this.wIAmount.getValue(),getFinScheduleData().getFinanceMain().getLovDescFinFormatter()),recalScheduleMethod));
 		}
-		getFinScheduleData().setSchduleGenerated(true);
-		if(getFinanceMainDialogCtrl()!=null){
-			this.financeMainDialogCtrl.doFillScheduleList(getFinScheduleData(), null);
-		}else {
-			this.wIFFinanceMainDialogCtrl.doFillScheduleList(getFinScheduleData());
+		
+		//Show Error Details in Schedule Maintainance
+		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+		}else{
+			getFinScheduleData().setSchduleGenerated(true);
+			if(getFinanceMainDialogCtrl()!=null){
+				try {
+					getFinanceMainDialogCtrl().doFillScheduleList(getFinScheduleData());
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
 		}
 	
 		logger.debug("Leaving");
@@ -740,54 +771,6 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Leaving");
 	}
 
-	public void setWIFFinanceMainDialogCtrl(
-			WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl) {
-		this.wIFFinanceMainDialogCtrl = wIFFinanceMainDialogCtrl;
-	}
-
-	public WIFFinanceMainDialogCtrl getWIFFinanceMainDialogCtrl() {
-		return wIFFinanceMainDialogCtrl;
-	}
-
-	public FinanceScheduleDetail getFinanceScheduleDetail() {
-		return financeScheduleDetail;
-	}
-
-	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
-		this.financeScheduleDetail = financeScheduleDetail;
-	}
-
-
-	public void setValidationOn(boolean validationOn) {
-		this.validationOn = validationOn;
-	}
-
-	public boolean isValidationOn() {
-		return validationOn;
-	}
-
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
-
-	/**
-	 * @return the financeMainDialogCtrl
-	 */
-	public FinanceMainDialogCtrl getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
-	}
-
-	/**
-	 * @param financeMainDialogCtrl the financeMainDialogCtrl to set
-	 */
-	public void setFinanceMainDialogCtrl(FinanceMainDialogCtrl financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
-	}
-	
 	//Enable till date field if the selected recalculation type is TIIDATE
 	public void onChange$cbReCalType(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -796,7 +779,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			this.tillDateRow.setVisible(true);
 			if (isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))) {
 				fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
-						(Date) this.cbRepayToDate.getSelectedItem().getValue());
+						(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
 			}
 		}else {
 			this.cbTillDate.setSelectedIndex(0);
@@ -828,7 +811,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		fillSchdMethod();
 		if(this.cbRepayToDate.getSelectedIndex() > 0) {
 			fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
-					(Date) this.cbRepayToDate.getSelectedItem().getValue());
+					(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
 		}else {
 			this.cbTillDate.setSelectedIndex(0);
 		}
@@ -842,7 +825,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.cbRepayToDate.setDisabled(true);		
 		if (isValidComboValue(this.cbRepayFromDate,Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value"))) {
 			fillSchToDates(this.cbRepayToDate, getFinScheduleData().getFinanceScheduleDetails(),
-					(Date) this.cbRepayFromDate.getSelectedItem().getValue());
+					(Date) this.cbRepayFromDate.getSelectedItem().getValue(), true);
 			this.cbRepayToDate.setDisabled(false);
 		}
 		logger.debug("Leaving" + event.toString());
@@ -910,6 +893,38 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			this.cbSchdMthd.setSelectedIndex(0);
 		}
 		logger.debug("Leaving");
+	}
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	public ScheduleDetailDialogCtrl getFinanceMainDialogCtrl() {
+		return financeMainDialogCtrl;
+	}
+	public void setFinanceMainDialogCtrl(ScheduleDetailDialogCtrl financeMainDialogCtrl) {
+		this.financeMainDialogCtrl = financeMainDialogCtrl;
+	}
+
+	public FinanceScheduleDetail getFinanceScheduleDetail() {
+		return financeScheduleDetail;
+	}
+	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
+		this.financeScheduleDetail = financeScheduleDetail;
+	}
+
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
+	}
+	public boolean isValidationOn() {
+		return validationOn;
+	}
+
+	public PagedListService getPagedListService() {
+		return pagedListService;
+	}
+	public void setPagedListService(PagedListService pagedListService) {
+		this.pagedListService = pagedListService;
 	}
 	
 }

@@ -60,24 +60,24 @@
 				</div>
 			</north>
 
-			<center border="none" autoscroll="true">
-				<div>
+			<center border="none">
+				<div >
 					<grid sclass="GridLayoutNoBorder"
-						fixedLayout="true">
+						fixedLayout="true" style="padding-top:0px;">
 						<columns>
-							<column width="50%" />
-							<column style="border:0px;" />
+							<column/>
+							<!-- <column style="border:0px;" /> -->
 						</columns>
 						<rows>
 							<row>
-								<div id="orgDetailTabDiv"
-									style="overflow:auto">
+								<div id="orgDetailTabDiv">
 									<groupbox id="gb_basicDetails"
-										sclass="gb-dialog">
+										sclass="gb-dialog" closable="false">
+										<caption label="${c:l('AgreementDetails')}" />
 										<grid
 											sclass="GridLayoutNoBorder" fixedLayout="true">
 											<columns>
-												<column width="150px" />
+												<column width="250px" />
 											</columns>
 											<rows>
 												<row>
@@ -88,7 +88,7 @@
 														<space
 															spacing="2px" sclass="mandatory" />
 														<uppercasebox
-															id="aggCode" maxlength="50" width="100px" />
+															id="aggCode" maxlength="50" width="120px" />
 													</hbox>
 												</row>
 												<row>
@@ -124,7 +124,30 @@
 															id="aggReportName" maxlength="100" width="250px" />
 													</hbox>
 												</row>
+
 												<row>
+													<label
+														id="label_AgreementDefinitionDialog_AggReqDetails"
+														value="${c:l('label_AgreementDefinitionDialog_AggReqDetails.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<groupbox
+															mold="3d" contentStyle="border:5">
+															<vlayout
+																height="200px" width="300px" style="overflow:auto;">
+																<checkbox
+																	id="AggCheck_SelectAll" label="${c:l('label_AgreementDefinitionDialog_AggSelectAll.value')}" />
+																<vlayout
+																	id="AgreementDetails">
+																</vlayout>
+															</vlayout>
+														</groupbox>
+													</hbox>
+												</row>
+
+
+												<!-- 	<row>
 													<label
 														id="label_AgreementDefinitionDialog_AggReportPath"
 														value="${c:l('label_AgreementDefinitionDialog_AggReportPath.value')}" />
@@ -136,7 +159,7 @@
 														<button
 															upload="true" label="Browse" id="brwAgreementDoc" />
 													</hbox>
-												</row>
+												</row> -->
 												<row>
 													<label
 														id="label_AgreementDefinitionDialog_AggIsActive"
@@ -152,13 +175,13 @@
 										</grid>
 									</groupbox>
 								</div>
-								<vlayout>
+								<!-- <vlayout>
 									<div id="signCopyPdf">
 										<iframe id="agreementDocView"
 											width="100%" height="100%" style="border: 2px solid gray"
 											tooltiptext="Preview" />
 									</div>
-								</vlayout>
+								</vlayout> -->
 							</row>
 						</rows>
 					</grid>

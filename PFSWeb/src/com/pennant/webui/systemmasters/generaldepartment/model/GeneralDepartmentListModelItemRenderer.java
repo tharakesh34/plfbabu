@@ -61,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class GeneralDepartmentListModelItemRenderer implements ListitemRenderer<GeneralDepartment>, Serializable {
 
 	private static final long serialVersionUID = 3026042160754679960L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, GeneralDepartment generalDepartment, int count) throws Exception {
 
-		//final GeneralDepartment generalDepartment = (GeneralDepartment) data;
 		Listcell lc;
 	  	lc = new Listcell(generalDepartment.getGenDepartment());
 		lc.setParent(item);

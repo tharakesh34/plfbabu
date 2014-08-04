@@ -20,7 +20,12 @@ public interface CreditApplicationReviewDAO {
 	public void initialize(FinCreditReviewDetails creditReviewDetails);
 	public void refresh(FinCreditReviewDetails entity);
 	public FinCreditRevType getFinCreditRevByRevCode(String creditRevCode);
-	public int isCreditSummaryExists(long custID,String auditYear);
+	public int isCreditSummaryExists(long custID,String auditYear, int auditPeriod);
 	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryIdAndCalcSeq(long categoryId);
-	
+	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId, String subCategoryItemType);
+	public int getCreditReviewAuditPeriodByAuditYear(final long customerId, final String auditYear, int auditPeriod, 
+			boolean isEnquiry, String type);
+	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByMainCategory(String category);
+	public FinCreditReviewDetails getCreditReviewDetailsByCustIdAndYear(final long customerId, String auditYear, String type);
+	public String getMaxAuditYearByCustomerId(long customerId, String type);
 }

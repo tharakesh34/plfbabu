@@ -107,7 +107,6 @@ public class AuditDetail  implements java.io.Serializable,Entity {
 		this.auditSeq = auditSeq;
 		this.befImage=befImage;
 		this.modelData=modelData;
-		String excludeFields="";
 		String[] fields=null;
 
 		try {

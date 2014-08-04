@@ -48,7 +48,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -101,6 +103,12 @@ public class EducationalLoan implements java.io.Serializable {
 
 	public EducationalLoan() {
 		this.workflowId = WorkFlowUtil.getWorkFlowID("EducationalLoan");
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		
+		return excludeFields;
 	}
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

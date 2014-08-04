@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
@@ -67,11 +68,11 @@ public class CustomerEMailValidation {
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
-		valueParm[0] = String.valueOf(customerEMail.getId());
+		valueParm[0] = StringUtils.trimToEmpty(customerEMail.getLovDescCustCIF());
 		valueParm[1] = customerEMail.getCustEMailTypeCode();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CustEMailTypeCode") + ":"+valueParm[1];
+        errParm[0] = PennantJavaUtil.getLabel("EmailDetails") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
+        errParm[1] = PennantJavaUtil.getLabel("label_CustEMailTypeCode") + "-" + valueParm[1];
 
 		if (customerEMail.isNew()){ // for New record or new record into work flow
 
@@ -125,6 +126,8 @@ public class CustomerEMailValidation {
 			}
 		}
 
+		auditDetail.setErrorDetail(screenValidations(customerEMail));
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if(StringUtils.trimToEmpty(method).equals("doApprove") || !customerEMail.isWorkflow()){
@@ -134,5 +137,24 @@ public class CustomerEMailValidation {
 		return auditDetail;
 	}
 
+	/**
+	 * Method For Screen Level Validations
+	 * 
+	 * @param auditHeader
+	 * @param usrLanguage
+	 * @return
+	 */
+	public ErrorDetails  screenValidations(CustomerEMail customerEMail){
 
+		if(StringUtils.trimToEmpty(customerEMail.getCustEMail()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("EmailDetails"),
+					Labels.getLabel("label_CustomerEMailDialog_CustEMail.value"),
+					Labels.getLabel("listheader_CustEMailTypeCode.label"),
+					customerEMail.getCustEMailTypeCode()},
+					new String[] {});	
+		}
+
+		return null;
+	}	
 }

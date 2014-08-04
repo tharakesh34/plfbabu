@@ -47,10 +47,19 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.gui.service.GuiLoginLoggingPolicService;
+import com.pennant.policy.model.PolicyManager;
+import com.pennant.policy.model.UserImpl;
 
 /**
  * This class is called from spring aop as an aspect and is for logging <br>
@@ -63,7 +72,8 @@ public class LoginLoggingPolicyService implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(LoginLoggingPolicyService.class);
-
+	private PolicyManager policyManager;
+	private UserImpl userDetails;
 	private GuiLoginLoggingPolicService guiLoginLoggingPolicService;
 
 	public LoginLoggingPolicyService() {
@@ -93,25 +103,46 @@ public class LoginLoggingPolicyService implements Serializable {
 
 	public Authentication loginLogging(ProceedingJoinPoint call) throws Throwable {
 		logger.debug("Entering ");
-		final Authentication authentication = (Authentication) call.getArgs()[0];
-
-		@SuppressWarnings("unused")
-		Object userObject=  authentication.getPrincipal();
-
-		final Authentication result;
-		try {
+		WebAuthenticationDetails details = null;
+		Authentication authentication = (Authentication) call.getArgs()[0];
+		Authentication result;
+		try { // ###CR_10/07/12_47### Start
+			/*
+			 * Here we are checking for Authentication provider is LDAP's and is
+			 * LDAP authentication flag is false then we are not allowing LDAP
+			 * authentication .this check for when having Multiple
+			 * Authentication providers
+			 */
+			if (call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider && !PennantConstants.IS_LDAP_AUHRNTICATION) {
+				throw new UsernameNotFoundException("LDAP Authentication  not allowed");
+			}
+			if (!(call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider) && PennantConstants.IS_LDAP_AUHRNTICATION) {
+				throw new UsernameNotFoundException("DAO  Authentication  not allowed");
+			}
 			result = (Authentication) call.proceed();
+			if (PennantConstants.IS_LDAP_AUHRNTICATION) {
+				userDetails = (UserImpl) getPolicyManager().loadUserByUsername(result.getName());
+				details = (WebAuthenticationDetails) result.getDetails();
+				AbstractAuthenticationToken overRidedResult = new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
+				overRidedResult.setDetails(details);
+				result = overRidedResult;
+			}
 		} catch (Exception e) {
-			logAuthFail(authentication,e.getMessage());
+			if (call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider && PennantConstants.IS_LDAP_AUHRNTICATION) {
+				logAuthFail(authentication, e.getMessage());
+				logger.error("Login failed resason" + e.toString());
+			}
+			if (!(call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider) && !PennantConstants.IS_LDAP_AUHRNTICATION) {
+				logAuthFail(authentication, e.getMessage());
+				logger.error("Login failed resason" + e.toString());
+			}
 			throw e;
-		}
-
+		} // ###CR_10/07/12_47### End
 		if (result != null) {
 			logAuthPass(result);
 		}
 		logger.debug("Leaving ");
-		return result;
-	}
+		return result;}
 
 	public GuiLoginLoggingPolicService getGuiLoginLoggingPolicService() {
 		return guiLoginLoggingPolicService;
@@ -120,5 +151,19 @@ public class LoginLoggingPolicyService implements Serializable {
 	public void setGuiLoginLoggingPolicService(GuiLoginLoggingPolicService guiLoginLoggingPolicService) {
 		this.guiLoginLoggingPolicService = guiLoginLoggingPolicService;
 	}
+	public PolicyManager getPolicyManager() {
+		return policyManager;
+	}
 
+	public void setPolicyManager(PolicyManager policyManager) {
+		this.policyManager = policyManager;
+	}
+
+	public UserImpl getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(UserImpl userDetails) {
+		this.userDetails = userDetails;
+	}
 }

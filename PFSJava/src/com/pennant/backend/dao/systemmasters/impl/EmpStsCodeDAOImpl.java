@@ -121,7 +121,7 @@ public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpSt
 	@Override
 	public EmpStsCode getEmpStsCodeById(final String id, String type) {
 		logger.debug("Entering");
-		EmpStsCode empStsCode = getEmpStsCode();
+		EmpStsCode empStsCode = new EmpStsCode();
 		empStsCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

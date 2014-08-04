@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.EmpStsCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -409,6 +410,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -425,7 +427,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.empStsIsActive.setChecked(aEmpStsCode.isEmpStsIsActive());
 		this.recordStatus.setValue(aEmpStsCode.getRecordStatus());
 		
-		if(aEmpStsCode.isNew() || aEmpStsCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aEmpStsCode.isNew() || (aEmpStsCode.getRecordType() != null ? aEmpStsCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.empStsIsActive.setChecked(true);
 			this.empStsIsActive.setDisabled(true);
 		}
@@ -598,15 +600,12 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.empStsCode.isReadonly()){
-			this.empStsCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_EmpStsCodeDialog_EmpStsCode.value")})));
+			this.empStsCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EmpStsCodeDialog_EmpStsCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.empStsDesc.isReadonly()){
-			this.empStsDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_EmpStsCodeDialog_EmpStsDesc.value")})));
+			this.empStsDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EmpStsCodeDialog_EmpStsDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -745,7 +744,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

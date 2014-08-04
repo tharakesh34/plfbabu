@@ -60,14 +60,12 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class SegmentListModelItemRenderer implements ListitemRenderer<Segment>, Serializable {
-
 	
 	private static final long serialVersionUID = 5566099050192789157L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, Segment segment, int count) throws Exception {
 
-		//final Segment segment = (Segment) data;
 		Listcell lc;
 		lc = new Listcell(segment.getSegmentCode());
 		lc.setParent(item);

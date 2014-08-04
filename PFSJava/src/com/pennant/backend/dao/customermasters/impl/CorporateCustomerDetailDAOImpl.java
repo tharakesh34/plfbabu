@@ -104,7 +104,7 @@ public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<Corporate
 	@Override
 	public CorporateCustomerDetail getNewCorporateCustomerDetail() {
 		logger.debug("Entering");
-		CorporateCustomerDetail corporateCustomerDetail = getCorporateCustomerDetail();
+		CorporateCustomerDetail corporateCustomerDetail = new CorporateCustomerDetail();
 		corporateCustomerDetail.setNewRecord(true);
 		logger.debug("Leaving");
 		return corporateCustomerDetail;
@@ -122,7 +122,7 @@ public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<Corporate
 	public CorporateCustomerDetail getCorporateCustomerDetailById(final long id, String type) {
 		logger.debug("Entering");
 		
-		CorporateCustomerDetail corporateCustomerDetail = getCorporateCustomerDetail();
+		CorporateCustomerDetail corporateCustomerDetail = new CorporateCustomerDetail();
 		corporateCustomerDetail.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select CustId, Name, PhoneNumber, EmailId," );

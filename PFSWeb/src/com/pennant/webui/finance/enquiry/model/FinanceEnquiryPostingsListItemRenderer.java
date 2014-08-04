@@ -12,50 +12,44 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
-public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer, Serializable{
+public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<ReturnDataSet>, Serializable{
 	
 	private static final long serialVersionUID = 5574543684897936853L;
 	
-	private int formatter;
-
-	public FinanceEnquiryPostingsListItemRenderer(int formatter) {
-		super();
-		this.formatter = formatter;
-	}
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, ReturnDataSet dataSet, int count) throws Exception {
 
 		if (item instanceof Listgroup) { 
-			Object groupData = (Object) data; 
-			final ReturnDataSet dataSet= (ReturnDataSet)groupData;
 			item.appendChild(new Listcell(dataSet.getFinEvent()+"\t:\t"+dataSet.getLovDescEventCodeName()));
 		} else if (item instanceof Listgroupfoot) { 
 			Listcell cell = new Listcell("");
-			cell.setSpan(6);
+			cell.setSpan(8);
 			item.appendChild(cell); 
 		} else { 
 
 			Listcell lc;
-			ReturnDataSet entry = (ReturnDataSet) data;
-			lc = new Listcell(DateUtility.getDBDate(entry.getValueDate().toString()).toString());
+			lc = new Listcell(DateUtility.getDBDate(dataSet.getValueDate().toString()).toString());
 			lc.setParent(item);
-			lc = new Listcell(entry.getTranDesc());
+			lc = new Listcell(dataSet.getTranDesc());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(entry.getDrOrCr(),PennantAppUtil.getTranType()));
+			lc = new Listcell(PennantAppUtil.getlabelDesc(dataSet.getDrOrCr(),PennantStaticListUtil.getTranType()));
 			lc.setParent(item);
-			lc = new Listcell(entry.getTranCode());
+			lc = new Listcell(dataSet.getTranCode());
 			lc.setParent(item);
-			lc = new Listcell(entry.getRevTranCode());
+			lc = new Listcell(dataSet.getRevTranCode());
 			lc.setParent(item);
-			lc = new Listcell(entry.getAccount());
+			lc = new Listcell(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
 			lc.setStyle("font-weight:bold;");
 			lc.setParent(item);
-			BigDecimal amt = new BigDecimal(entry.getPostAmount().toString()).setScale(0,RoundingMode.HALF_DOWN);
+			lc = new Listcell(dataSet.getAcCcy());
+			lc.setParent(item);
+			BigDecimal amt = new BigDecimal(dataSet.getPostAmount().toString()).setScale(0,RoundingMode.HALF_DOWN);
 			lc = new Listcell(PennantAppUtil.amountFormate(amt,
-					this.formatter));
+					dataSet.getFormatter()));
 			lc.setStyle("font-weight:bold;text-align:right;");
 			lc.setParent(item);
 		}

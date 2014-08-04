@@ -29,9 +29,13 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRuleConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 
@@ -163,10 +167,25 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl implements Serializabl
 			// create a JavaScript engine
 			ScriptEngine engine = factory.getEngineByName("JavaScript");
 			// evaluate JavaScript code from String
+			
+			//Currency Conversions if Courrency Constants Exists in Rule 
+			String amountRule = this.ruleDialogCtrl.sqlRule.getValue();
+			String localCcy = SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY).toString();
+			String[] ccyConstantsList = amountRule.split("[^"+PennantRuleConstants.RULEFIELD_CCY+"0-9]+");
+			if(ccyConstantsList != null && ccyConstantsList.length > 0){
+				for (String ruleField : ccyConstantsList) {
+					if(ruleField.startsWith(PennantRuleConstants.RULEFIELD_CCY)){
+						BigDecimal ruleValue = new BigDecimal(Integer.parseInt(ruleField.replace(
+								PennantRuleConstants.RULEFIELD_CCY, ""))*PennantRuleConstants.RULEFIELD_CCY_AMT);
+						String convRuleValue = CalculationUtil.convertedUnFormatAmount(null, localCcy, ruleValue);
+						amountRule = amountRule.replace(ruleField, convRuleValue);
+					}
+	            }
+			}
 
 			// Execute the engine
-			String rule="function Rule(){ "+ this.ruleDialogCtrl.sqlRule.getValue() +"}Rule();";
-			BigDecimal tempResult=new BigDecimal("0");		
+			String rule="function Rule(){ "+ amountRule +"}Rule();";
+			BigDecimal tempResult= BigDecimal.ZERO;		
 			String result="0";		
 
 			if (engine.eval(rule)!=null) {
@@ -224,8 +243,24 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl implements Serializabl
 					engine.put(checkbox.getId().trim(), checkbox.isChecked());
 				}
 			}
+			
+			String amountRule = ruleResult;
+			String localCcy = SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY).toString();
+			String[] ccyConstantsList = amountRule.split("[^"+PennantRuleConstants.RULEFIELD_CCY+"0-9]+");
+			if(ccyConstantsList != null && ccyConstantsList.length > 0){
+				for (String ruleField : ccyConstantsList) {
+					if(ruleField.startsWith(PennantRuleConstants.RULEFIELD_CCY)){
+						BigDecimal ruleValue = new BigDecimal(Integer.parseInt(ruleField.replace(
+								PennantRuleConstants.RULEFIELD_CCY, ""))*PennantRuleConstants.RULEFIELD_CCY_AMT);
+						String convRuleValue = CalculationUtil.convertedUnFormatAmount(null, localCcy, ruleValue);
+						amountRule = amountRule.replace(ruleField, convRuleValue);
+					}
+	            }
+			}
+
+			
 			// Execute the engine
-			String rule="function Rule(){"+ ruleResult +"}Rule();";
+			String rule="function Rule(){"+ amountRule +"}Rule();";
 			BigDecimal tempResult=new BigDecimal("0");		
 			String result="0";		
 
@@ -240,7 +275,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl implements Serializabl
 							tempResult=new BigDecimal(result);
 							tempResult = tempResult.setScale(2,RoundingMode.UP);
 							result = tempResult.toString();
-						}else if(this.ruleDialogCtrl.ruleType.getValue().equalsIgnoreCase("Text")){
+						}else if(this.ruleDialogCtrl.ruleType.getValue().equalsIgnoreCase("String")){
 							result = result.trim().toString();
 						}else{
 							tempResult=new BigDecimal(result);
@@ -291,7 +326,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl implements Serializabl
 		MultiLineMessageBox.doSetTemplate();
 		if (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
 				| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true,
-				new EventListener() {
+				new EventListener<Event>() {
 			@Override
 			public void onEvent(Event evt) {
 				switch (((Integer) evt.getData()).intValue()) {

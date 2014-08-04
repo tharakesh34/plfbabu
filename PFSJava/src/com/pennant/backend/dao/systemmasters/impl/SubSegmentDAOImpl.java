@@ -121,7 +121,7 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 	@Override
 	public SubSegment getSubSegmentById(final String id, String subSegmentCode,String type) {
 		logger.debug("Entering");
-		SubSegment subSegment = getSubSegment();
+		SubSegment subSegment = new SubSegment();
 		subSegment.setId(id);
 		subSegment.setSubSegmentCode(subSegmentCode);
 		StringBuilder selectSql = new StringBuilder();

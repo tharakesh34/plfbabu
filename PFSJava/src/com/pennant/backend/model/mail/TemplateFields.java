@@ -7,29 +7,36 @@ public class TemplateFields implements Serializable{
 
 	private static final long serialVersionUID = 5970895533633063298L;
 	
-	private long id;
+	private String module;
+	private String field;
 	private String fieldDesc;
 	private String fieldFormat;
-	private String field;
 	
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	public String getModule() {
+    	return module;
+    }
+	public void setModule(String module) {
+    	this.module = module;
+    }
+	
 	public String getFieldDesc() {
 		return fieldDesc;
 	}
 	public void setFieldDesc(String fieldDesc) {
 		this.fieldDesc = fieldDesc;
 	}
+	
 	public String getFieldFormat() {
 		return fieldFormat;
 	}
 	public void setFieldFormat(String fieldFormat) {
 		this.fieldFormat = fieldFormat;
 	}
+	
 	public String getField() {
 		return field;
 	}

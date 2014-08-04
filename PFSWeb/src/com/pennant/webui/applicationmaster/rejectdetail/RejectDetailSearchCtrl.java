@@ -64,6 +64,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
 import com.pennant.backend.service.applicationmaster.RejectDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -152,18 +153,18 @@ public class RejectDetailSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_rejectCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_rejectCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_rejectCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_rejectDesc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_rejectDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_rejectDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		this.sortOperator_rejectIsActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_rejectIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_rejectIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
@@ -297,6 +298,8 @@ public class RejectDetailSearchCtrl extends GFCBaseCtrl implements Serializable 
 		} else {
 			so.addTabelName("BMTRejectCodes_AView");
 		}
+		
+		so.addFilter(new Filter("RejectCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
 
 		if (StringUtils.isNotEmpty(this.rejectCode.getValue())) {
 

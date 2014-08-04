@@ -45,19 +45,26 @@ package com.pennant.webui.bmtmasters.product;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +77,14 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.bmtmasters.product.model.ProductListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -105,6 +116,28 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 	protected Listheader listheader_RecordStatus; 		// autoWired
 	protected Listheader listheader_RecordType;
 
+	// Searching Fields
+	protected Textbox productCode; 					// autowired
+	protected Listbox sortOperator_productCode; 	// autowired
+	protected Textbox productDesc; 					// autowired
+	protected Listbox sortOperator_productDesc; 	// autowired
+	protected Textbox recordStatus; 				// autowired
+	protected Listbox recordType; 					// autowired
+	protected Listbox sortOperator_recordStatus; 	// autowired
+	protected Listbox sortOperator_recordType; 		// autowired
+
+	protected Label label_ProductSearch_RecordStatus; // autowired
+	protected Label label_ProductSearch_RecordType;	  // autowired
+	protected Label label_ProductSearchResult; 		  // autowired
+	
+	private Grid 			searchGrid;							// autowired
+	protected Textbox 		moduleType; 						// autowired
+	protected Radio			fromApproved;
+	protected Radio			fromWorkFlow;
+	protected Row			workFlowFrom;
+
+	private transient boolean  approvedList=false;
+	
 	// checkRights
 	protected Button btnHelp; 								 // autoWired
 	protected Button button_ProductList_NewProduct; 		 // autoWired
@@ -156,11 +189,43 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 			wfAvailable = false;
 		}
 
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_productCode.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getStringOperators()));
+		this.sortOperator_productCode
+		.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_productDesc.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getStringOperators()));
+		this.sortOperator_productDesc
+		.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
+					new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus
+			.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
+					new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType
+			.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = PennantAppUtil.setRecordType(this.recordType);
+		} else {
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_ProductSearch_RecordStatus.setVisible(false);
+			this.label_ProductSearch_RecordType.setVisible(false);
+		}
+		
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_ProductList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxProduct.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
+		
 		// set the paging parameters
 		this.pagingProductList.setPageSize(getListRows());
 		this.pagingProductList.setDetailed(true);
@@ -179,12 +244,10 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<Product>(Product.class,getListRows());
-		this.searchObj.addSort("ProductCode", false);
-		this.searchObj.addTabelName("BMTProduct_View");
-
+		
+		// set the itemRenderer
+		this.listBoxProduct.setItemRenderer(new ProductListModelItemRenderer());
+		
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			if (isFirstTask()) {
@@ -192,22 +255,19 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 			} else {
 				button_ProductList_NewProduct.setVisible(false);
 			}
-
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		}
 
-		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_ProductList_NewProduct.setVisible(false);
 			this.button_ProductList_ProductSearchDialog.setVisible(false);
 			this.button_ProductList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
-		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxProduct,
-					this.pagingProductList);
-			// set the itemRenderer
-			this.listBoxProduct.setItemRenderer(new ProductListModelItemRenderer());
+		} else{
+			doSearch();
+			if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -219,7 +279,7 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("ProductList");
 
-		this.button_ProductList_NewProduct.setVisible(false);//getUserWorkspace().isAllowed("button_ProductList_NewProduct")
+		this.button_ProductList_NewProduct.setVisible(false);
 		this.button_ProductList_ProductSearchDialog.setVisible(getUserWorkspace().isAllowed("button_ProductList_ProductFindDialog"));
 		this.button_ProductList_PrintList.setVisible(getUserWorkspace().isAllowed("button_ProductList_PrintList"));
 		logger.debug("Leaving");
@@ -355,9 +415,19 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingProductList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_ProductList, event);
-		this.window_ProductList.invalidate();
+		  this.sortOperator_productCode.setSelectedIndex(0);
+		  this.productCode.setValue("");
+		  this.sortOperator_productDesc.setSelectedIndex(0);
+		  this.productDesc.setValue("");
+		  if (isWorkFlowEnabled()) {
+				this.sortOperator_recordStatus.setSelectedIndex(0);
+				this.recordStatus.setValue("");
+
+				this.sortOperator_recordType.setSelectedIndex(0);
+				this.recordType.setSelectedIndex(0);
+			}
+			doSearch();
+			logger.debug("Leaving");
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -370,23 +440,7 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 	public void onClick$button_ProductList_ProductSearchDialog(Event event)
 	throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our ProductDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Product. For handed over
-		 * these parameter only a Map is accepted. So we put the Product object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("productCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Product/ProductSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		  doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -399,8 +453,75 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 	@SuppressWarnings("unused")
 	public void onClick$button_ProductList_PrintList(Event event)throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTListReportUtils reportUtils = new PTListReportUtils("Product", getSearchObj(),this.pagingProductList.getTotalSize()+1);
+		PTListReportUtils reportUtils = new PTListReportUtils("Product", getSearchObj(),
+				this.pagingProductList.getTotalSize() + 1);
 		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void doSearch(){
+		 logger.debug("Entering");
+			// ++ create the searchObject and init sorting ++//
+			this.searchObj = new JdbcSearchObject<Product>(Product.class,getListRows());
+
+			// Defualt Sort on the table
+			this.searchObj.addSort("ProductCode", false);
+			
+			// Workflow
+			if (isWorkFlowEnabled()) {
+				this.searchObj.addTabelName("BMTProduct_View");
+
+				if(this.moduleType==null){
+					this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+					approvedList=false;
+					
+				}else{
+					if(this.fromApproved.isSelected()){
+						approvedList=true;
+					}else{
+						approvedList=false;
+					}
+				}
+			}else{
+				approvedList=true;
+			}
+			if(approvedList){
+				this.searchObj.addTabelName("BMTProduct_AView");
+			}else{
+				this.searchObj.addTabelName("BMTProduct_View");
+			}
+			//Product Code
+			if (!StringUtils.trimToEmpty(this.productCode.getValue()).equals("")) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_productCode.getSelectedItem(),this.productCode.getValue(), "productCode");
+			}
+			//Product Description
+			if (!StringUtils.trimToEmpty(this.productDesc.getValue()).equals("")) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_productDesc.getSelectedItem(),this.productDesc.getValue(), "productDesc");
+			}
+			// Record Status
+			if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+			}
+			
+			// Record Type
+			if (this.recordType.getSelectedItem() != null
+					&& !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+						this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+			}
+
+			if (logger.isDebugEnabled()) {
+				final List<Filter> lf = this.searchObj.getFilters();
+				for (final Filter filter : lf) {
+					logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+					if (Filter.OP_ILIKE == filter.getOperator()) {
+						logger.debug(filter.getOperator());
+					}
+				}
+			}
+			// Set the ListModel for the articles.
+			getPagedListWrapper().init(this.searchObj, this.listBoxProduct,this.pagingProductList);
+			logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

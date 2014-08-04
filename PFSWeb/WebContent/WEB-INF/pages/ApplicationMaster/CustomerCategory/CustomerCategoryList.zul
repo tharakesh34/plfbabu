@@ -64,26 +64,26 @@
 
 					<listbox id="listBoxCustomerCategory" vflex="true"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
+						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_CustCtgCode"
 								label="${c:l('listheader_CustCtgCode_label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_CustCtgDesc"
 								label="${c:l('listheader_CustCtgDesc.label')}" sort="auto"
-								width="40%" />
+								hflex="min" />
 							<listheader id="listheader_CustCtgType"
 								label="${c:l('listheader_CustCtgType.label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_CustCtgIsActive"
 								label="${c:l('listheader_CustCtgIsActive.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 						</listhead>
 					</listbox>
 

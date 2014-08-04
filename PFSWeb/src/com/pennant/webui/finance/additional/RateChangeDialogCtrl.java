@@ -77,11 +77,12 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.RateValidator;
-import com.pennant.webui.finance.financemain.FinanceMainDialogCtrl;
-import com.pennant.webui.finance.wiffinancemain.WIFFinanceMainDialogCtrl;
+import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
@@ -89,7 +90,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4578996988245614938L;
 	private final static Logger logger = Logger.getLogger(RateChangeDialogCtrl.class);
 
 	/*
@@ -114,14 +115,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Row baseRateRow;	 								// autoWire
 	protected Row splRateRow; 									// autoWire
 	protected Row marginRateRow; 								// autoWire
+	protected Row row_effectiveRate; 								// autoWire
 	protected Row rateAmountRow; 								// autoWire
 	protected Row tillDateRow; 									// autoWire
 
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 					// overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; 		// overhanded per param
-	private transient WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl;
-	private transient FinanceMainDialogCtrl financeMainDialogCtrl;
+	private transient ScheduleDetailDialogCtrl financeMainDialogCtrl;
 	
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
@@ -134,7 +135,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient BigDecimal oldVar_marginRate;
 	Calendar calender=Calendar.getInstance();
 	private transient boolean validationOn;
-	static final List<ValueLabel>	      recalTypes	              = PennantAppUtil.getSchCalCodes();
+	final List<ValueLabel>	      recalTypes	              = PennantStaticListUtil.getSchCalCodes();
 
 	/**
 	 * default constructor.<br>
@@ -179,16 +180,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// we get the WIFFinanceMainDialogCtrl controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete WIFFinanceMain here.
-		if (args.containsKey("wIFFinanceMainDialogCtrl")) {
-			setwIFFinanceMainDialogCtrl((WIFFinanceMainDialogCtrl) args
-					.get("wIFFinanceMainDialogCtrl"));
-		} else {
-			setwIFFinanceMainDialogCtrl(null);
-		}
-		
 		if (args.containsKey("financeMainDialogCtrl")) {
-			setFinanceMainDialogCtrl((FinanceMainDialogCtrl) args
-					.get("financeMainDialogCtrl"));
+			setFinanceMainDialogCtrl((ScheduleDetailDialogCtrl) args.get("financeMainDialogCtrl"));
 		} else {
 			setFinanceMainDialogCtrl(null);
 		}
@@ -234,71 +227,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
 		logger.debug("Leaving");
-	}
-
-	public FinScheduleData getFinScheduleData() {
-		return finScheduleData;
-	}
-
-	public void setFinScheduleData(FinScheduleData finScheduleData) {
-		this.finScheduleData = finScheduleData;
-	}
-
-	/**
-	 * @return the financeScheduleDetail
-	 */
-	public FinanceScheduleDetail getFinanceScheduleDetail() {
-		return financeScheduleDetail;
-	}
-
-	/**
-	 * @param financeScheduleDetail the financeScheduleDetail to set
-	 */
-	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
-		this.financeScheduleDetail = financeScheduleDetail;
-	}
-
-	/**
-	 * @return the wIFFinanceMainDialogCtrl
-	 */
-	public WIFFinanceMainDialogCtrl getwIFFinanceMainDialogCtrl() {
-		return wIFFinanceMainDialogCtrl;
-	}
-
-	/**
-	 * @param wIFFinanceMainDialogCtrl the wIFFinanceMainDialogCtrl to set
-	 */
-	public void setwIFFinanceMainDialogCtrl(
-			WIFFinanceMainDialogCtrl wIFFinanceMainDialogCtrl) {
-		this.wIFFinanceMainDialogCtrl = wIFFinanceMainDialogCtrl;
-	}
-
-	/**
-	 * @return the financeMainDialogCtrl
-	 */
-	public FinanceMainDialogCtrl getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
-	}
-
-	/**
-	 * @param financeMainDialogCtrl the financeMainDialogCtrl to set
-	 */
-	public void setFinanceMainDialogCtrl(FinanceMainDialogCtrl financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
-	}
-
-	/**
-	 * @return the validationOn
-	 */
-	public boolean isValidationOn() {
-		return validationOn;
-	}
-
-	/**
-	 * @param validationOn the validationOn to set
-	 */
-	public void setValidationOn(boolean validationOn) {
-		this.validationOn = validationOn;
 	}
 
 	/**
@@ -372,6 +300,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.baseRateRow.setVisible(true);
 				this.splRateRow.setVisible(true);
 				this.marginRateRow.setVisible(true);
+				this.row_effectiveRate.setVisible(true);
 		} else if(((aFinanceMain.getGraceBaseRate()!=null) && 
 				(getFinanceScheduleDetail()!=null && 
 						(getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.GRACE) ||
@@ -382,11 +311,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.baseRateRow.setVisible(true);
 			this.splRateRow.setVisible(true);
 			this.marginRateRow.setVisible(true);
+			this.row_effectiveRate.setVisible(true);
 			this.marginRate.setValue(aFinanceMain.getGrcMargin());
 		} else if(getFinanceScheduleDetail()==null && (aFinanceMain.getRepayBaseRate()!=null)){
 			this.baseRateRow.setVisible(true);
 			this.splRateRow.setVisible(true);
 			this.marginRateRow.setVisible(true);
+			this.row_effectiveRate.setVisible(true);
 			this.marginRate.setValue(aFinanceMain.getRepayMargin());
 		}else {
 			this.rateChange.setVisible(true);
@@ -456,26 +387,80 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		
+		boolean includedPrvSchTerm  = false;
+		
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				if (financeScheduleDetails.get(i).isRvwOnSchDate() || 
-						(financeScheduleDetails.get(i).getSchDate().
-								compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0)) {
-					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate)+" "+financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
-					comboitem.setAttribute("fromSpecifier",financeScheduleDetails.get(i).getSpecifier());
-					if (getFinanceScheduleDetail() != null) {
-						dateCombobox.appendChild(comboitem);
-						if(financeScheduleDetails.get(i).getSchDate()
-								.compareTo(getFinanceScheduleDetail().getSchDate())==0) {
-							dateCombobox.setSelectedItem(comboitem);
-						}
-					} else { 
-						dateCombobox.appendChild(comboitem);
+
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+
+				//Not Review Date
+				if (!curSchd.isRvwOnSchDate() ) {
+					continue;
+				}
+
+				//Profit Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				//Principal Paid (Partial/Full)
+				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				//Schedule Date Passed last review date
+				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayRvwDate())) {
+					continue;
+				}
+
+				//Schedule Date Passed last repay date
+				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayDate())) {
+					continue;
+				}
+				
+				/*//Schedule Date Passed last capitalize date
+				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayCpzDate())) {
+					continue;
+				}*/
+
+				//Profit repayment on frequency is TRUE
+				if (getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
+					if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayPftDate())) {
+						continue;
 					}
+				}
+				
+				if((i-1 > 0) && !includedPrvSchTerm){
+					
+					FinanceScheduleDetail prvSchd = financeScheduleDetails.get(i-1);
+					
+					comboitem = new Comboitem();
+					comboitem.setLabel(PennantAppUtil.formateDate(prvSchd.getSchDate(), PennantConstants.dateFormate)+" "+prvSchd.getSpecifier());
+					comboitem.setValue(prvSchd.getSchDate());
+					comboitem.setAttribute("fromSpecifier",prvSchd.getSpecifier());
+					dateCombobox.appendChild(comboitem);
+					
+					includedPrvSchTerm = true;
+				}
+				
+				if(i==0){
+					includedPrvSchTerm = true;
+				}
+
+				comboitem = new Comboitem();
+				comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
+				comboitem.setValue(curSchd.getSchDate());
+				comboitem.setAttribute("fromSpecifier",curSchd.getSpecifier());
+
+				if (getFinanceScheduleDetail() != null) {
+					dateCombobox.appendChild(comboitem);
+					if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+						dateCombobox.setSelectedItem(comboitem);
+					}
+				} else { 
+					dateCombobox.appendChild(comboitem);
 				}
 			}
 		}
@@ -492,28 +477,63 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		Date maturityDate = getFinScheduleData().getFinanceMain().getMaturityDate();
+
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				if (financeScheduleDetails.get(i).isRvwOnSchDate() || 
-						(financeScheduleDetails.get(i).getSchDate().
-								compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0)) {
-					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate)+" "+financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
-					comboitem.setAttribute("toSpecifier",financeScheduleDetails.get(i).getSpecifier());
-					if (getFinanceScheduleDetail() != null && 
-							financeScheduleDetails.get(i).getSchDate()
-							.compareTo(getFinanceScheduleDetail().getSchDate()) >= 0) {
-						dateCombobox.appendChild(comboitem);
-						if(financeScheduleDetails.get(i).getSchDate()
-								.compareTo(getFinanceScheduleDetail().getSchDate())==0) {
-							dateCombobox.setSelectedItem(comboitem);
-						}
-					} else if(financeScheduleDetails.get(i).getSchDate().compareTo(fillAfter) >= 0) {
-							dateCombobox.appendChild(comboitem);
+
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+
+				//Not Review Date
+				if (!curSchd.isRvwOnSchDate()) {
+					if (curSchd.getSchDate().compareTo(maturityDate)!=0) {
+						continue;	
 					}
+				}
+
+				//Profit Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				//Principal Paid (Partial/Full)
+				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					continue;
+				}
+
+				//Schedule Date Passed last review date
+				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayRvwDate())) {
+					continue;
+				}
+
+				//Schedule Date Passed last repay date
+				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayDate())) {
+					continue;
+				}
+
+				/*//Schedule Date Passed last capitalize date
+				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayCpzDate())) {
+					continue;
+				}*/
+
+				//Profit repayment on frequency is TRUE
+				if (getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
+					if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayPftDate())) {
+						continue;
+					}
+				}
+
+				comboitem = new Comboitem();
+				comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
+				comboitem.setValue(curSchd.getSchDate());
+				comboitem.setAttribute("toSpecifier",curSchd.getSpecifier());
+				if (getFinanceScheduleDetail() != null &&  curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) >= 0) {
+					dateCombobox.appendChild(comboitem);
+					if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+						dateCombobox.setSelectedItem(comboitem);
+					}
+				} else if(curSchd.getSchDate().compareTo(fillAfter) > 0) {
+					dateCombobox.appendChild(comboitem);
 				}
 			}
 		}
@@ -524,10 +544,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
+	 * @throws InterruptedException 
 	 */
-	public void doWriteComponentsToBean() {
+	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
-		doSetValidation();
+		//doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
@@ -628,18 +649,19 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		setFinScheduleData(ScheduleCalculator.changeRate(getFinScheduleData(),this.baseRate.getValue(),
 				this.splRate.getValue(), this.marginRate.getValue()==null? BigDecimal.ZERO:this.marginRate.getValue(),
-				this.rateChange.getValue(), true));
-		getFinScheduleData().setSchduleGenerated(true);
-		if(getFinanceMainDialogCtrl()!=null){
-			this.financeMainDialogCtrl.doFillScheduleList(getFinScheduleData(),null);
-			this.financeMainDialogCtrl.effectiveRateOfReturn.setValue(getFinScheduleData().getFinanceMain().getEffectiveRateOfReturn() == null ? 
-					BigDecimal.ZERO+"%" : getFinScheduleData().getFinanceMain().getEffectiveRateOfReturn()+"%");
-		}else {
-			this.wIFFinanceMainDialogCtrl.doFillScheduleList(getFinScheduleData());
-			this.wIFFinanceMainDialogCtrl.effectiveRateOfReturn.setValue(getFinScheduleData().getFinanceMain().getEffectiveRateOfReturn() == null ? 
-					BigDecimal.ZERO+"%" : getFinScheduleData().getFinanceMain().getEffectiveRateOfReturn()+"%");
+				this.rateChange.getValue()==null? BigDecimal.ZERO:this.rateChange.getValue(), true));
+		
+		//Show Error Details in Schedule Maintainance
+		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+		}else{
+			getFinScheduleData().setSchduleGenerated(true);
+
+			if(getFinanceMainDialogCtrl()!=null){
+				getFinanceMainDialogCtrl().doFillScheduleList(getFinScheduleData());
+			}
+			this.window_RateChangeDialog.onClose();
 		}
-		this.window_RateChangeDialog.onClose();
 		logger.debug("Leaving");
 	}
 
@@ -650,13 +672,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (this.rateChange.isVisible()) {
-			this.rateChange.setConstraint("NO ZERO, NO NEGATIVE:" + 
+			this.rateChange.setConstraint(" NO NEGATIVE:" + 
 					Labels.getLabel("RATE_NO_LESS_ZERO",new String[]{Labels
 							.getLabel("label_RateChangeDialog_Rate.value")}));
 		}
-		if (!this.marginRate.isDisabled()) {
+		if (this.marginRateRow.isVisible()) {
 			this.marginRate.setConstraint(new RateValidator(13, 9, 
-							Labels.getLabel("label_RateChangeDialog_MarginRate.value"),true));
+							Labels.getLabel("label_RateChangeDialog_MarginRate.value")));
 		}
 		if(this.baseRateRow.isVisible()) {
 			this.baseRate.setConstraint("NO EMPTY:"
@@ -847,7 +869,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			RateDetail rateDetail = RateUtil.rates(this.baseRate.getValue(),
 					this.splRate.getValue(), this.marginRate.getValue()==null?BigDecimal.ZERO:this.marginRate.getValue());
 			if(rateDetail.getErrorDetails() == null){
-				this.effectiveRate.setValue(PennantAppUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
+				this.effectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 			} else {
 				PTMessageUtils.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 				this.baseRate.setValue("");
@@ -875,7 +897,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			RateDetail rateDetail = RateUtil.rates(this.baseRate.getValue(),
 					this.splRate.getValue(),this.marginRate.getValue()==null?BigDecimal.ZERO:this.marginRate.getValue());
 			if(rateDetail.getErrorDetails() == null){
-				this.effectiveRate.setValue(PennantAppUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
+				this.effectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 			} else {
 				PTMessageUtils.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 				this.splRate.setValue("");
@@ -900,25 +922,26 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	
 	/** To calculate the effective rate value including margin rate.*/
 	public void onChange$marginRate(Event event) throws InterruptedException {
-		logger.debug("Entering onChange$finGrcMargin()");
 		logger.debug("Entering" + event.toString());
 		RateDetail rateDetail = RateUtil.rates(this.baseRate.getValue(),
 				this.splRate.getValue(),this.marginRate.getValue()==null?BigDecimal.ZERO:this.marginRate.getValue());
 		if(rateDetail.getErrorDetails() == null){
-			this.effectiveRate.setValue(PennantAppUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
+			this.effectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 		} else {
 			PTMessageUtils.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			this.splRate.setValue("");
 		}
-		logger.debug("Leaving onChange$finGrcMargin()");
+		logger.debug("Leaving" + event.toString());
 	}
 	
 	/** To fill todates based on selected from date*/
 	public void onChange$cbRateChangeFromDate(Event event) {
-		logger.debug("Entering");
+		logger.debug("Entering" + event.toString());
+		
 		this.baseRate.setValue("");
 		this.splRate.setValue("");
 		this.effectiveRate.setValue(BigDecimal.ZERO);
+		fillComboBox(this.cbReCalType, "", recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
 		if (isValidComboValue(this.cbRateChangeFromDate,Labels.getLabel("label_RateChangeDialog_FromDate.value"))) {
 			this.cbRateChangeToDate.getItems().clear();
 			String frSpecifier = this.cbRateChangeFromDate.getSelectedItem().getAttribute("fromSpecifier").toString();
@@ -933,6 +956,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 							getFinScheduleData().getFinanceMain().getGraceSpecialRate(), BigDecimal.ZERO);
 					this.effectiveRate.setValue(rateDetail.getNetRefRateLoan());
 				}
+				
+				if(frSpecifier.equals(CalculationConstants.GRACE) && 
+						getFinScheduleData().getFinanceMain().getGrcSchdMthd().equals(CalculationConstants.NOPAY)){
+					
+					fillComboBox(this.cbReCalType, "", recalTypes, ",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+				}
+				
 			}else if((frSpecifier.equals(CalculationConstants.REPAY)) ||
 					(frSpecifier.equals(CalculationConstants.GRACE_END))) {
 				if(getFinScheduleData().getFinanceMain().getRepayBaseRate()!=null) {
@@ -944,6 +974,39 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	public FinScheduleData getFinScheduleData() {
+		return finScheduleData;
+	}
+	public void setFinScheduleData(FinScheduleData finScheduleData) {
+		this.finScheduleData = finScheduleData;
+	}
+
+	public FinanceScheduleDetail getFinanceScheduleDetail() {
+		return financeScheduleDetail;
+	}
+	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
+		this.financeScheduleDetail = financeScheduleDetail;
+	}
+
+	public boolean isValidationOn() {
+		return validationOn;
+	}
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
+	}
+
+	public ScheduleDetailDialogCtrl getFinanceMainDialogCtrl() {
+		return financeMainDialogCtrl;
+	}
+	public void setFinanceMainDialogCtrl(ScheduleDetailDialogCtrl financeMainDialogCtrl) {
+		this.financeMainDialogCtrl = financeMainDialogCtrl;
+	}
+	
 }

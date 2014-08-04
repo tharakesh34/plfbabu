@@ -41,7 +41,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoginUserDetails;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.SplRate;
@@ -80,7 +79,7 @@ public class ExtFinanceUploadService {
 	private AccountInterfaceService accountInterfaceService;
 	private HostConnection hostConnection;
 
-	private BigDecimal zeroValue = new BigDecimal(0);
+	private BigDecimal zeroValue = BigDecimal.ZERO;
 	private Date dateValueDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 	private FinanceMain finMain;
 	private FinanceMain old_finMain;
@@ -167,7 +166,8 @@ public class ExtFinanceUploadService {
 						processFinanceData(usrDetails);
 					}
 				} else {
-					getHostConnection().disConnection();
+					//FIXME Don't Know why it is called here 
+					//getHostConnection().disConnection();
 					status = successRcdCount + " records has been processed out of " + rcdCount;
 					break;
 				}
@@ -729,7 +729,7 @@ public class ExtFinanceUploadService {
 		// Branch
 		extFinData.setLovDescCustCIF(getValue(finRow.getCell(8)));
 		try {
-			Customer customer = getCustomerDAO().getCustomerByCIF(extFinData.getLovDescCustCIF());
+			Customer customer = getCustomerDAO().getCustomerByCIF(extFinData.getLovDescCustCIF(),"");
 			if (customer != null) {
 				if (StringUtils.trimToNull(customer.getCustDftBranch()) != null) {
 					extFinData.setFinBranch(StringUtils.trim(customer.getCustDftBranch()));
@@ -1160,7 +1160,7 @@ public class ExtFinanceUploadService {
 		} else {
 			try {
 				if (!finCcyMap.containsKey(extFinData.getFinCcy())) {
-					ValueLabel currency = getCurrencyDAO().getCurrencyById(extFinData.getFinCcy());
+					String currency = getCurrencyDAO().getCurrencyById(extFinData.getFinCcy());
 					if (currency != null) {
 						financeMain.setFinCcy(extFinData.getFinCcy());
 						finCcyMap.put(extFinData.getFinCcy(), extFinData.getFinCcy());
@@ -1298,7 +1298,7 @@ public class ExtFinanceUploadService {
 
 		try {
 			if (!customerMap.containsKey(extFinData.getLovDescCustCIF())) {
-				customer = getCustomerDAO().getCustomerByCIF(extFinData.getLovDescCustCIF());
+				customer = getCustomerDAO().getCustomerByCIF(extFinData.getLovDescCustCIF(),"");
 				if (customer != null) {
 					customerMap.put(extFinData.getLovDescCustCIF(), customer);
 				} else {
@@ -1362,8 +1362,7 @@ public class ExtFinanceUploadService {
 
 		// Fetch account ids from Equation
 		try {
-			iAccountsList = getAccountInterfaceService().fetchExistAccount(iAccountsList, "N",
-			        false);
+			iAccountsList = getAccountInterfaceService().fetchExistAccount(iAccountsList, "N");
 		} catch (Exception e) {
 			extFinData.setRecordStatus("E");
 			extFinData.setErrDesc(ErrorUtil.getErrorDetail(
@@ -2055,7 +2054,7 @@ public class ExtFinanceUploadService {
 	}
 
 	private static BigDecimal getPercentageValue(BigDecimal amount, BigDecimal percent) {
-		BigDecimal bigDecimal = new BigDecimal(0);
+		BigDecimal bigDecimal = BigDecimal.ZERO;
 
 		if (amount != null) {
 			bigDecimal = (amount.multiply(unFormateAmount(percent, 2).divide(new BigDecimal(100))))
@@ -2067,7 +2066,7 @@ public class ExtFinanceUploadService {
 	private static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
 
 		if (amount == null) {
-			return new BigDecimal(0);
+			return BigDecimal.ZERO;
 		}
 		BigInteger bigInteger = amount.multiply(new BigDecimal(Math.pow(10, dec))).toBigInteger();
 		return new BigDecimal(bigInteger);

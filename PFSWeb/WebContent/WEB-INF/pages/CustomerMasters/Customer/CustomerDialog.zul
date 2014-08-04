@@ -1,1964 +1,860 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-
-	<window id="window_CustomerDialog" title="${c:l('window_CustomerDialog.title')}"
-		border="normal" apply="${customerDialogCtrl}" width="100%" height="100%"
+	<window id="window_CustomerDialog" border="normal"
+		apply="${customerDialogCtrl}" width="100%" height="100%"
 		sizable="false">
-
-		<div sclass="z-toolbar" style="padding:0px">
-			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
-				style=" padding:0px;">
-
-				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					style="float:left; border-style: none; padding:0px;">
-					<button id="btnNew" height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}" />
-					<button id="btnEdit" height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}" />
-					<button id="btnDelete" height="24px"
-						tooltiptext="${c:l('btnDelete.tooltiptext')}" />
-					<button id="btnSave" height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}" />
-					<button id="btnCancel" height="24px"
-						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-					<button id="btnNotes" height="24px"
-						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
-				</toolbar>
-
-				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none; padding:0px;">
-					<hbox align="center" style="padding: 0px"></hbox>
-				</toolbar>
-
-				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none; padding:0px;">
-					<button id="btnHelp" height="24px" label = "${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-					<button id="btnClose" height="24px"
-						tooltiptext="${c:l('btnClose.tooltiptext')}" />
-				</toolbar>
-			</hbox>
-		</div>
-
 		<borderlayout id="borderlayoutCustomer">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" height="24px"
+								tooltiptext="${c:l('btnNew.tooltiptext')}" />
+							<button id="btnEdit" height="24px"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}" />
+							<button id="btnDelete" height="24px"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}" />
+							<button id="btnSave" height="24px"
+								tooltiptext="${c:l('btnSave.tooltiptext')}" />
+							<button id="btnCancel" height="24px"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+							<button id="btnNotes" height="24px"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+						</toolbar>
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_CustomerDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" height="24px"
+								label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							<button id="btnClose" height="24px"
+								tooltiptext="${c:l('btnClose.tooltiptext')}" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
 			<center border="none">
-				<tabbox width="98%" height="100%">
+				<tabbox width="100%" height="100%">
 					<tabs>
-						<tab label="Basic Details" id="basicDetails" />
-						<tab label="Generic Information" id="genericInformation" />
-						<tab label="Demographic Details" id="demographicDetails" />
-						<tab label="KYC Details" id="kYCDetails" />
-						<tab label="Employment Details" id="employmentDetails"
-							visible="false" />
-						<tab label="Preferential Details" id="preferentialDetails" />
-						<tab label="Communication Details" id="CommunicationDetails" />
-						<tab label="Non-Financial Details" id="nonFinancialDetails"
-							visible="false" />
-						<tab label="Financial Details" id="financialDetails" visible="false" />
-						<!--<tab label="Additional Details" id="tabAdditional" />
-					--></tabs>
+						<tab label="Personal Details" id="basicDetails" />
+						<tab label="KYC Details" id="tabkYCDetails" />
+						<tab label="Financials" id="tabfinancial" />
+						<tab label="Share Holder Details" id="directorDetails" visible="false"/>
+					</tabs>
 					<tabpanels>
 						<tabpanel style="overflow:auto">
 							<groupbox id="gb_keyDetails">
-								<caption label="${c:l('KeyDetails')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-									style="border:0px; padding:0px;">
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px; padding:0px;">
 									<columns>
-										<column width="150px" />
+										<column width="220px" />
 										<column />
-										<column width="150px" />
+										<column width="220px" />
 										<column />
 									</columns>
 									<rows>
 										<row visible="false">
-											<label id="label_CustomerDialog_CustID" value="${c:l('label_CustomerDialog_CustID.value')}" />
+											<label
+												id="label_CustomerDialog_CustID"
+												value="${c:l('label_CustomerDialog_CustID.value')}" />
 											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<longbox id="custID" width="108px" maxlength="26" />
+												<space spacing="2px"
+													sclass="mandatory" />
+												<longbox id="custID"
+													width="108px" maxlength="26" />
 											</hbox>
-											<label />
-											<label />
 										</row>
 										<row visible="true">
-											<label id="label_CustomerDialog_CustCIF"
+											<label
+												id="label_CustomerDialog_CustCIF"
 												value="${c:l('label_CustomerDialog_CustCIF.value')}" />
 											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<uppercasebox id="custCIF" maxlength="12"
-													width="108px" style="overflow: hidden;" visible="false"/>
-												<textbox id="customerCIF" 
-													width="150px" style="overflow: hidden;" readonly="true" visible="true"/>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<uppercasebox
+													id="custCIF" maxlength="12" width="108px"
+													style="overflow: hidden;" visible="false" />
+												<textbox
+													id="customerCIF" width="250px" style="overflow: hidden;"
+													readonly="true" visible="true" />
 											</hbox>
-											<label id="label_CustomerDialog_CustCoreBank"
+											<label
+												id="label_CustomerDialog_CustCoreBank"
 												value="${c:l('label_CustomerDialog_CustCoreBank.value')}" />
 											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<uppercasebox id="custCoreBank" maxlength="50"
-													width="300px" style="overflow: hidden;" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustTypeCode"
-												value="${c:l('label_CustomerDialog_CustTypeCode.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custTypeCode" width="200px" style="overflow: hidden;"
-													visible="false" />
-												<textbox id="lovDescCustTypeCodeName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustTypeCode" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustDftBranch"
-												value="${c:l('label_CustomerDialog_CustDftBranch.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custDftBranch" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustDftBranchName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustDftBranch" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustGroupID"
-												value="${c:l('label_CustomerDialog_CustGroupID.value')}" />
-											<hbox>
 												<space spacing="2px" />
-												<longbox id="custGroupID" width="108px" visible="false"
-													maxlength="26" />
-												<textbox id="lovDesccustGroupIDName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchcustGroupID" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustBaseCcy"
-												value="${c:l('label_CustomerDialog_CustBaseCcy.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custBaseCcy" width="200px" style="overflow: hidden;"
-													visible="false" />
-												<textbox id="lovDescCustBaseCcyName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustBaseCcy" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustLng"
-												value="${c:l('label_CustomerDialog_CustLng.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custLng" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustLngName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustLng" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-
-							<groupbox id="gb_personalDetails" visible="false">
-								<caption label="${c:l('PersonalDetails')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustGenderCode"
-												value="${c:l('label_CustomerDialog_CustGenderCode.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custGenderCode" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustGenderCodeName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustGenderCode" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustSalutationCode"
-												value="${c:l('label_CustomerDialog_CustSalutationCode.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custSalutationCode" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustSalutationCodeName" style="overflow: hidden;"
-													width="250px" readonly="true" />
-												<button id="btnSearchCustSalutationCode" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustFName"
-												value="${c:l('label_CustomerDialog_CustFName.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custFName" maxlength="50" width="300px"
-													style="overflow: hidden;" />
-											</hbox>
-											<label id="label_CustomerDialog_CustMName"
-												value="${c:l('label_CustomerDialog_CustMName.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custMName" maxlength="50" width="300px"
+												<uppercasebox
+													id="custCoreBank" maxlength="50" width="250px"
 													style="overflow: hidden;" />
 											</hbox>
 										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustLName"
-												value="${c:l('label_CustomerDialog_CustLName.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custLName" maxlength="50" width="300px"
-													style="overflow: hidden;" />
-											</hbox>
-											<label id="label_CustomerDialog_CustShrtName"
+										<row>
+											<label
+												id="label_CustomerDialog_CustShrtName"
 												value="${c:l('label_CustomerDialog_CustShrtName.value')}" />
 											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custShrtName" maxlength="50" width="300px"
+												<space spacing="2px"
+													sclass="mandatory" />
+												<textbox
+													id="custShrtName" maxlength="50" width="250px"
 													style="overflow: hidden;" />
 											</hbox>
+											<label
+												id="label_CustomerDialog_CustCtgCode"
+												value="${c:l('label_CustomerDialog_CustCtgCode.value')}" />
+											<extendedcombobox id="custCtgCode"/>
 										</row>
-										<row id="row_localLngFM" visible="false">
-											<label id="label_CustomerDialog_CustFNameLclLng"
-												value="${c:l('label_CustomerDialog_CustFNameLclLng.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custFNameLclLng" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustMNameLclLng"
-												value="${c:l('label_CustomerDialog_CustMNameLclLng.value')}" />
-											<hbox>
-												<space id="space_custMNameLclLng" spacing="2px"
-													sclass="mandatory" />
-												<textbox id="custMNameLclLng" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
+										<row>
+											<label
+												id="label_CustomerDialog_CustDftBranch"
+												value="${c:l('label_CustomerDialog_CustDftBranch.value')}" />
+											<extendedcombobox id="custDftBranch"/>
+											<label
+												id="label_CustomerDialog_CustTypeCode"
+												value="${c:l('label_CustomerDialog_CustTypeCode.value')}" />
+											<extendedcombobox id="custTypeCode"/>
 										</row>
-
-										<row id="row_localLngLS" visible="false">
-											<label id="label_CustomerDialog_CustLNameLclLng"
-												value="${c:l('label_CustomerDialog_CustLNameLclLng.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custLNameLclLng" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustShrtNameLclLng"
-												value="${c:l('label_CustomerDialog_CustShrtNameLclLng.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custShrtNameLclLng" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
+										<row>
+											<label id="label_custRelation" value="${c:l('label_CustomerDialog_CustRelation.value')}" />
+											<radiogroup id="custRelation"/>
+										</row>
+										<row>
+											<label
+												id="label_CustomerDialog_CustGroupID"
+												value="${c:l('label_CustomerDialog_CustGroupID.value')}" />
+											<extendedcombobox id="custGroupID"/>
+											<label
+												id="label_CustomerDialog_CustBaseCcy"
+												value="${c:l('label_CustomerDialog_CustBaseCcy.value')}" />
+											<extendedcombobox id="custBaseCcy"/>
 										</row>
 										<row visible="true">
-											<label id="label_CustomerDialog_CustDOB"
+											<label
+												id="label_CustomerDialog_CustRO1"
+												value="${c:l('label_CustomerDialog_CustRO1.value')}" />
+											<extendedcombobox id="custRO1"/>
+											<label
+												id="label_CustomerDialog_CustRO2"
+												value="${c:l('label_CustomerDialog_CustRO2.value')}" />
+											<extendedcombobox id="custRO2"/>
+										</row>
+										<row visible="true">
+											<label
+												id="label_CustomerDialog_CustSector"
+												value="${c:l('label_CustomerDialog_CustSector.value')}" />
+											<extendedcombobox id="custSector"/>
+											<label
+												id="label_CustomerDialog_CustSubSector"
+												value="${c:l('label_CustomerDialog_CustSubSector.value')}" />
+											<extendedcombobox id="custSubSector"/>
+										</row>
+										<row id="rowCustEmpSts">
+											<label
+												id="label_CustomerDialog_CustEmpSts"
+												value="${c:l('label_CustomerDialog_CustEmpSts.value')}" />
+											<extendedcombobox id="custEmpSts"/>
+										</row>
+										<row id="rowCustCRCPR">
+											<label
+												id="label_CustomerDialog_CustCRCPR"
+												value="${c:l('label_CustomerDialog_CustCRCPR.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<textbox id="custCPR"
+													readonly="false" width="130px" />
+												<hbox id="hboxCustCR"
+													visible="false">
+													<textbox id="custCR1"
+														width="78px" />
+													<label value="-" />
+													<textbox id="custCR2"
+														width="30px" />
+												</hbox>
+											</hbox>
+										</row>
+										<row>
+											<label
+												id="label_CustomerDialog_CustNationality"
+												value="${c:l('label_CustomerDialog_CustNationality.value')}" />
+											<extendedcombobox id="custNationality"/>
+											<label
+												id="label_CustomerDialog_CustRiskCountry"
+												value="${c:l('label_CustomerDialog_CustRiskCountry.value')}" />
+											<extendedcombobox id="custRiskCountry"/>
+										</row>
+										<row>
+											<label
+												id="label_CustomerDialog_CustDOB"
 												value="${c:l('label_CustomerDialog_CustDOB.value')}" />
 											<hbox>
-												<space id="space_custDOB" spacing="2px" sclass="mandatory" />
-												<datebox id="custDOB" width="100px" />
+												<space
+													id="space_custDOB" spacing="2px" sclass="mandatory" />
+												<datebox id="custDOB"
+													width="140px" constraint="no future:"/>
 											</hbox>
-											<label id="label_CustomerDialog_CustPOB"
-												value="${c:l('label_CustomerDialog_CustPOB.value')}" />
-											<hbox>
-												<space id="space_custPOB" spacing="2px" sclass="mandatory" />
-												<textbox id="custPOB" maxlength="100" width="300px"
-													style="overflow: hidden;" />
-											</hbox>
+											<label
+												id="label_CustomerDialog_CustSts"
+												value="${c:l('label_CustomerDialog_CustSts.value')}" />
+											<extendedcombobox id="custSts"/>
 										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustCOB"
-												value="${c:l('label_CustomerDialog_CustCOB.value')}" />
+										<row
+											id="row_GenderSalutation">
+											<label
+												id="label_CustomerDialog_CustGenderCode"
+												value="${c:l('label_CustomerDialog_CustGenderCode.value')}" />
 											<hbox>
-												<space id="space_custCOB" spacing="2px" sclass="mandatory" />
-												<textbox id="custCOB" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustCOBName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustCOB" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustMotherMaiden"
-												value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
-											<hbox>
-												<space id="space_custMotherMaiden" spacing="2px"
+												<space id="space_Gender" spacing="2px"
 													sclass="mandatory" />
-												<textbox id="custMotherMaiden" maxlength="50"
-													style="overflow: hidden;" width="300px" />
+												<combobox
+													id="custGenderCode" />
+											</hbox>
+											<label
+												id="label_CustomerDialog_CustSalutationCode"
+												value="${c:l('label_CustomerDialog_CustSalutationCode.value')}" />
+											<hbox>
+												<space id="space_Salutation" spacing="2px"
+													sclass="mandatory" />
+												<combobox
+													id="custSalutationCode" />
 											</hbox>
 										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustProfession"
-												value="${c:l('label_CustomerDialog_CustProfession.value')}" />
-											<hbox>
-												<space id="space_custProfession" spacing="2px" sclass="mandatory" />
-												<textbox id="custProfession" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustProfessionName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustProfession" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustMaritalSts"
+										<row visible="true"
+											id="row_MartialDependents">
+											<label
+												id="label_CustomerDialog_CustMaritalSts"
 												value="${c:l('label_CustomerDialog_CustMaritalSts.value')}" />
 											<hbox>
-												<space id="space_custMaritalStaus" spacing="2px"
+												<space id="space_MaritalSts" spacing="2px"
 													sclass="mandatory" />
-												<textbox id="custMaritalSts" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustMaritalStsName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustMaritalSts" image="/images/icons/LOVSearch.png"
-													height="24px" />
+												<combobox
+													id="custMaritalSts" />
 											</hbox>
-										</row>
-										<row visible="false">
-											<label id="label_CustomerDialog_CustIsMinor"
-												value="${c:l('label_CustomerDialog_CustIsMinor.value')}" />
+											<label
+												id="label_CustomerDialog_noOfDependents"
+												value="${c:l('label_CustomerDialog_noOfDependents.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<checkbox id="custIsMinor" checked="false" />
+												<intbox
+													id="noOfDependents" maxlength="3" />
 											</hbox>
 										</row>
-									</rows>
-								</grid>
-							</groupbox>
-
-							<groupbox id="gb_corporateCustomerPersonalDetails"
-								visible="false">
-								<caption label="${c:l('OrganizationDetails')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-											<label id="label_CustomerDialog_CorpCustOrgName"
-												value="${c:l('label_CustomerDialog_CustOrgName.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="corpCustOrgName" maxlength="50" width="300px"
-													style="overflow: hidden;" />
-											</hbox>
-											<label id="label_CustomerDialog_CorpCustShrtName"
-												value="${c:l('label_CustomerDialog_CustShrtName.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="corpCustShrtName" maxlength="50" width="300px"
-													style="overflow: hidden;" />
-											</hbox>
-										</row>
-										<row id="row_localLngCorpCustCS" visible="false">
-											<label id="label_CustomerDialog_CorpCustLNameLclLng"
-												value="${c:l('label_CustomerDialog_CustOrgNameLclLng.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="corpCustOrgNameLclLng" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-											<label id="label_CustomerDialog_CorpCustShrtNameLclLng"
-												value="${c:l('label_CustomerDialog_CustShrtNameLclLng.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="corpCustShrtNameLclLng" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CorpCustPOB"
-												value="${c:l('label_CustomerDialog_CorpCustPOB.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="corpCustPOB" maxlength="100" width="300px"
-													style="overflow: hidden;" />
-											</hbox>
-											<label id="label_CustomerDialog_CorpCustCOB"
-												value="${c:l('label_CustomerDialog_CorpCustCOB.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="corpCustCOB" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCorpCustCOBName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCorpCustCOB" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-						</tabpanel>
-
-						<tabpanel style="overflow:auto">
-							<groupbox id="gb_generalDetails">
-								<caption label="${c:l('GeneralDetails')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="false">
-											<label id="label_CustomerDialog_CustSts"
-												value="${c:l('label_CustomerDialog_CustSts.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custSts" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustStsName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustSts" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustStsChgDate"
-												value="${c:l('label_CustomerDialog_CustStsChgDate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<datebox id="custStsChgDate" width="100px" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label id="label_CustomerDialog_CustGroupSts"
-												value="${c:l('label_CustomerDialog_CustGroupSts.value')}" />
-											<hbox>
-												<space id="space_custGroupSts" spacing="2px" sclass="mandatory" />
-												<textbox id="custGroupSts" width="200px" style="overflow: hidden;"
-													visible="false" />
-												<textbox id="lovDescCustGroupStsName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustGroupSts" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustIsBlocked"
-												value="${c:l('label_CustomerDialog_CustIsBlocked.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="custIsBlocked" checked="false" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label id="label_CustomerDialog_CustIsActive"
-												value="${c:l('label_CustomerDialog_CustIsActive.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="custIsActive" checked="false" />
-											</hbox>
-											<label id="label_CustomerDialog_CustInactiveReason"
-												value="${c:l('label_CustomerDialog_CustInactiveReason.value')}" />
-											<hbox>
-												<space id="space_inactiveReason" spacing="2px" sclass="mandatory" />
-												<textbox id="custInactiveReason" maxlength="200"
-													style="overflow: hidden;" multiline="true" rows="4" width="300px" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label id="label_CustomerDialog_CustIsClosed"
-												value="${c:l('label_CustomerDialog_CustIsClosed.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="custIsClosed" checked="false" />
-											</hbox>
-											<label id="label_CustomerDialog_CustClosedOn"
-												value="${c:l('label_CustomerDialog_CustClosedOn.value')}" />
-											<hbox>
-												<space id="space_closedDate" spacing="2px" sclass="mandatory" />
-												<datebox id="custClosedOn" width="144px" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label id="label_CustomerDialog_CustIsDecease"
-												value="${c:l('label_CustomerDialog_CustIsDecease.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="custIsDecease" checked="false" />
-											</hbox>
-											<label id="label_CustomerDialog_CustIsDormant"
-												value="${c:l('label_CustomerDialog_CustIsDormant.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="custIsDormant" checked="false" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label id="label_CustomerDialog_CustIsDelinquent"
-												value="${c:l('label_CustomerDialog_CustIsDelinquent.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="custIsDelinquent" checked="false" />
-											</hbox>
-											<label id="label_CustomerDialog_CustFirstBusinessDate"
-												value="${c:l('label_CustomerDialog_CustFirstBusinessDate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<datebox id="custFirstBusinessDate" width="100px"
-													format="dd/MM/yyyy" readonly="true" />
-											</hbox>
-										</row>
-										<row id="row_retailPPT" visible="true">
-											<label id="label_CustomerDialog_CustPassportNo"
-												value="${c:l('label_CustomerDialog_CustPassportNo.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<uppercasebox id="custPassportNo" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustPassportExpiryDate"
-												value="${c:l('label_CustPassportExpiryDate.value')}" />
-											<hbox>
-												<space id="space_custPassportExpiry" spacing="2px"
-													sclass="mandatory" />
-												<datebox id="custPassportExpiry" width="100px"
-													disabled="true" />
-											</hbox>
-										</row>
-										<row id="row_retailVisa" visible="true">
-											<label id="label_CustomerDialog_CustVisaNum"
-												value="${c:l('label_CustomerDialog_CustVisaNum.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<uppercasebox id="custVisaNum" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustVisaExpiryDate"
-												value="${c:l('label_CustVisaExpiryDate.value')}" />
-											<hbox>
-												<space id="space_custVisaExpiry" spacing="2px" sclass="mandatory" />
-												<datebox id="custVisaExpiry" width="100px" disabled="true" />
-											</hbox>
-										</row>
-										<row id="row_corpTL" visible="true">
-											<label id="label_CustomerDialog_CustTradeLicenceNum"
-												value="${c:l('label_CustomerDialog_CustTradeLicenceNum.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<uppercasebox id="custTradeLicenceNum" width="200px"
-													style="overflow: hidden;" />
-											</hbox>
-											<label id="label_CustomerDialog_CustDateOfIncorporation"
-												value="${c:l('label_CustomerDialog_CustDateOfIncorporation.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<datebox id="custDateOfIncorporation" width="100px" />
-											</hbox>
-										</row>
-										<row id="row_corpTLED" visible="true">
-											<label id="label_CustomerDialog_CustTradeLicenceExpiryDate"
-												value="${c:l('label_CustTradeLicenceExpiryDate.value')}" />
-											<hbox>
-												<space id="space_custTradeLicenceExpiry" spacing="2px"
-													sclass="mandatory" />
-												<datebox id="custTradeLicenceExpiry" width="100px" />
-											</hbox>
-											<label />
-											<label />
-										</row>
-										<row id="row_custStaff" visible="true">
-											<label id="label_CustomerDialog_CustIsStaff"
-												value="${c:l('label_CustomerDialog_CustIsStaff.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="custIsStaff" checked="false" />
-											</hbox>
-											<label id="label_CustomerDialog_CustStaffID"
-												value="${c:l('label_CustomerDialog_CustStaffID.value')}" />
-											<hbox>
-												<space id="space_isStaff" spacing="2px" sclass="mandatory" />
-												<textbox id="custStaffID" maxlength="8" width="108px"
-													style="overflow: hidden;" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustIsBlackListed"
+										<row>
+											<label
+												id="label_CustomerDialog_CustIsBlackListed"
 												value="${c:l('label_CustomerDialog_CustIsBlackListed.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<checkbox id="custIsBlackListed" checked="false" />
+												<checkbox
+													id="custIsBlackListed" disabled="true" />
 											</hbox>
-											<label id="label_CustomerDialog_CustBLRsnCode"
-												value="${c:l('label_CustomerDialog_CustBLRsnCode.value')}" />
-											<hbox>
-												<space id="space_blackListReason" spacing="2px"
-													sclass="mandatory" />
-												<textbox id="custBLRsnCode" maxlength="8" width="108px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustBLRsnCodeName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustBLRsnCode" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustIsRejected"
-												value="${c:l('label_CustomerDialog_CustIsRejected.value')}" />
+											<label
+												id="label_CustomerDialog_CustBlackListDate"
+												value="${c:l('label_CustomerDialog_CustBlackListDate.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<checkbox id="custIsRejected" checked="false" />
-											</hbox>
-											<label id="label_CustomerDialog_CustRejectedRsn"
-												value="${c:l('label_CustomerDialog_CustRejectedRsn.value')}" />
-											<hbox>
-												<space id="space_rejectedReason" spacing="2px" sclass="mandatory" />
-												<textbox id="custRejectedRsn" maxlength="8"
-													style="overflow: hidden;" width="108px" visible="false" />
-												<textbox id="lovDescCustRejectedRsnName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustRejectedRsn" image="/images/icons/LOVSearch.png"
-													height="24px" />
+												<datebox
+													id="custBlackListDate" readonly="true" disabled="true" />
 											</hbox>
 										</row>
-										<row id="row_EmpSts" visible="true">
-											<label id="label_CustomerDialog_CustEmpSts"
-												value="${c:l('label_CustomerDialog_CustEmpSts.value')}" />
+										<row>
+											<label
+												id="label_CustomerDialog_CustJointCustomer"
+												value="${c:l('label_CustomerDialog_CustIsJointCustomer.value')}" />
 											<hbox>
-												<space id="space_custEmpSts" spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpSts" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustEmpStsName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustEmpSts" image="/images/icons/LOVSearch.png"
-													height="24px" />
+												<space spacing="2px" />
+												<checkbox
+													id="custIsJointCust" />
 											</hbox>
-											<label />
-											<label />
+											<space></space>
+										</row>
+										<row id="custJoint">
+											<label
+												id="label_CustomerDialog_CustJointCustomerName"
+												value="${c:l('label_CustomerDialog_CustJointCustomerName')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<textbox
+													id="custJointCustName" maxlength="50" width="250px"
+													style="overflow: hidden;" />
+											</hbox>
+											<label
+												id="label_CustomerDialog_CustJointCustDob"
+												value="${c:l('label_CustomerDialog_CustJointCustDob.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<datebox
+													id="custJointCustDob" />
+											</hbox>
+										</row>
+										<row id="row_ContactPersonDetails">
+											<label
+												id="label_CustomerDialog_ContactPersonName"
+												value="${c:l('label_CustomerDialog_ContactPersonName.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="contactPersonName"  width="250px"
+													style="overflow: hidden;" />
+											</hbox>
+												<label
+												id="label_CustomerDialog_EmailID"
+												value="${c:l('label_CustomerDialog_EmailID.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="emailID"  width="200px"
+													style="overflow: hidden;" />
+											</hbox>
+										</row>
+										<row id="row_PhoneNumber">
+											<label
+												id="label_CustomerDialog_PhoneNumber"
+												value="${c:l('label_CustomerDialog_PhoneNumber.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="phoneNumber" width="250px"/>
+											</hbox>
 										</row>
 									</rows>
 								</grid>
 							</groupbox>
-
 							<groupbox id="gb_rating">
-								<div sclass="z-toolbar" style="padding:0" height="24px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-										height="24px" width="100%" style=" padding:0px;">
-
-										<!-- COMMON BUTTONS -->
+								<div sclass="z-toolbar"
+									style="padding:0" height="24px">
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+										style=" padding:1px;">
 										<toolbar align="start"
-											style="float:left; border-style: none; padding:0px;" width="150px"
-											height="24px">
-											<hbox align="center" style="padding: 0px">
-												<label value="${c:l('Rating')}" style="font-weight:bold; font-size: 11px;" />
-											</hbox>
+											style="border:none;">
+											<label
+												value="${c:l('Rating')}" sclass="listboxHeading">
+											</label>
 										</toolbar>
-
-										<!-- SEARCH AREA -->
-										<toolbar align="center"
-											style="float:left; border-style: none; padding:0px;" height="24px">
-										</toolbar>
-
-										<!-- CRUD BUTTONS -->
 										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;" height="24px">
-											<button id="btnNew_CustomerRatings" height="24px"
-												label = "${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerRatings.tooltiptext')}" />
+											style="float:right; border-style: none; padding:0px;"
+											height="24px">
+											<button
+												id="btnNew_CustomerRatings" height="24px"
+												label="${c:l('label_New')}"
+												tooltiptext="${c:l('btnNew_CustomerRatings.tooltiptext')}" />
 										</toolbar>
-										<space width="2px" />
 									</hbox>
 								</div>
-								<listbox id="listBoxCustomerRating" vflex="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="120px" multiple="false">
+								<listbox id="listBoxCustomerRating" span="true" sizedByContent="true" 
+									vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+									width="100%" multiple="false">
 									<listhead sizable="true">
-										<listheader id="listheader_CustRating_CustRatingType"
-											label="${c:l('listheader_CustRatingType.label')}" sort="false"
-											width="25%" />
-										<listheader id="listheader_CustRating_CustRatingCode"
-											label="${c:l('listheader_CustRatingCode.label')}" sort="false"
-											width="25%" />
-										<listheader id="listheader_CustRating_CustRating"
+										<listheader
+											id="listheader_CustRating_CustRatingType"
+											label="${c:l('listheader_CustRatingType.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_CustRating_CustRatingCode"
+											label="${c:l('listheader_CustRatingCode.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_CustRating_CustRating"
 											label="${c:l('listheader_CustRating.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustRating_RecordStatus"
+											hflex="min" />
+										<listheader
+											id="listheader_CustRating_RecordStatus"
 											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											width="15%" />
-										<listheader id="listheader_CustRating_RecordType"
+											hflex="min" />
+										<listheader
+											id="listheader_CustRating_RecordType"
 											label="${c:l('listheader_RecordType.label')}" sort="false"
-											width="15%" />
+											hflex="min" />
 									</listhead>
 								</listbox>
-								<paging id="pagingCustomerRatingList" />
 							</groupbox>
 						</tabpanel>
 						<tabpanel style="overflow:auto">
-							<groupbox id="gb_segmentationDetails">
-								<caption label="${c:l('SegmentationDetails')}"/>
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<div id="divKycDetails">
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px; padding:0px;">
 									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
+										<column width="33%" />
+										<column width="33%" />
 										<column />
 									</columns>
 									<rows>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustCtgCode"
-												value="${c:l('label_CustomerDialog_CustCtgCode.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custCtgCode" width="200px" style="overflow: hidden;"
-													visible="false" />
-												<textbox id="lovDescCustCtgCodeName" width="300px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustCtgCode" image="/images/icons/LOVSearch.png"
-													height="24px"/>
-											</hbox>
-											<label id="label_CustomerDialog_CustSector"
-												value="${c:l('label_CustomerDialog_CustSector.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custSector" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustSectorName" width="300px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustSector" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
+										<row spans="3">
+											<groupbox sclass="gb_dialog">
+												<div sclass="z-toolbar"
+													style="padding:0" height="24px">
+													<hbox pack="stretch"
+														sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+														height="24px" width="100%">
+														<toolbar
+															align="start" style="border:none;">
+															<label
+																value="${c:l('EmploymentDetails')}"
+																sclass="listboxHeading">
+															</label>
+														</toolbar>
+														<toolbar
+															align="end"
+															style="float:right; border-style: none; padding:0px;"
+															height="24px">
+															<button
+																id="btnNew_CustomerEmploymentDetail" height="24px"
+																label="${c:l('label_New')}"
+																tooltiptext="${c:l('btnNew_CustomerIncome.tooltiptext')}" />
+														</toolbar>
+													</hbox>
+												</div>
+												<listbox
+													id="listBoxCustomerEmploymentDetail" span="true" sizedByContent="true" 
+													fixedLayout="true" vflex="true"
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+													multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
+													<listhead
+														sizable="true">
+														<listheader
+															id="listheader_CustEmpCIF"
+															label="${c:l('listheader_CustEmpCIF.label')}" sort="false"
+															hflex="min" />
+														<listheader
+															id="listheader_CustEmpName"
+															label="${c:l('listheader_CustEmpName.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustEmpDesg"
+															label="${c:l('listheader_CustEmpDesg.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustEmpDept"
+															label="${c:l('listheader_CustEmpDept.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustEmpType"
+															label="${c:l('listheader_CustEmpType.label')}"
+															sort="false" hflex="min" />
+														<listheader 
+														    id="listheader_CustEmp_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}"
+															sort="false" hflex="min" />
+														<listheader
+														    id="listheader_CustEmp_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false"
+															hflex="min" />
+													</listhead>
+												</listbox>
+											</groupbox>
 										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustSubSector"
-												value="${c:l('label_CustomerDialog_CustSubSector.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custSubSector" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustSubSectorName" width="300px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustSubSector" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustIndustry"
-												value="${c:l('label_CustomerDialog_CustIndustry.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custIndustry" width="200px" style="overflow: hidden;"
-													visible="false" />
-												<textbox id="lovDescCustIndustryName" width="300px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustIndustry" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
+										<row spans="3">
+											<groupbox sclass="gb_dialog">
+												<div sclass="z-toolbar"
+													style="padding:0" height="24px">
+													<hbox pack="stretch"
+														sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+														height="24px" width="100%">
+														<toolbar
+															align="start" style="border:none;">
+															<label
+																value="${c:l('DocumentDetails')}"
+																sclass="listboxHeading">
+															</label>
+														</toolbar>
+														<toolbar
+															align="end"
+															style="float:right; border-style: none; padding:0px;"
+															height="24px">
+															<button
+																id="btnNew_CustomerDocuments" height="24px"
+																label="${c:l('label_New')}"
+																tooltiptext="${c:l('button_CustomerDocumentList_NewCustomerDocument.tooltiptext')}" />
+														</toolbar>
+													</hbox>
+												</div>
+												<listbox
+													id="listBoxCustomerDocuments" span="true" sizedByContent="true" 
+													fixedLayout="true" vflex="true"
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+													multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
+													<listhead
+														sizable="true">
+														<listheader
+															id="listheader_CustDocType"
+															label="${c:l('listheader_CustDocType.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustDocTitle"
+															label="${c:l('listheader_CustDocTitle.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustDocIssuedCountry"
+															label="${c:l('listheader_CustDocIssuedCountry.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustDocIssuedAuthority"
+															label="${c:l('listheader_CustDocIssuedAuthority.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustDocIssuedOn"
+															label="${c:l('listheader_CustDocIssuedOn.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustDocExpDate"
+															label="${c:l('listheader_CustDocExpDate.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustDoc_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustDoc_RecordType"
+															label="${c:l('listheader_RecordType.label')}"
+															sort="false" hflex="min" />
+													</listhead>
+												</listbox>
+											</groupbox>
 										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustSegment"
-												value="${c:l('label_CustomerDialog_CustSegment.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custSegment" width="200px" style="overflow: hidden;"
-													visible="false" />
-												<textbox id="lovDescCustSegmentName" width="300px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustSegment" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustSubSegment"
-												value="${c:l('label_CustomerDialog_CustSubSegment.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custSubSegment" maxlength="8"
-													style="overflow: hidden;" visible="false" width="108px" />
-												<textbox id="lovDescCustSubSegmentName" width="300px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustSubSegment" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
+										<row style="vertical-align: top;">
+											<groupbox
+												id="gb_customerAddressDetails" sclass="gb_dialog">
+												<div sclass="z-toolbar"
+													style="padding:0" height="24px">
+													<hbox pack="stretch"
+														sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:0px;" height="24px">
+														<toolbar
+															align="start" style="border:none;">
+															<label
+																value="${c:l('AddressDetails')}"
+																sclass="listboxHeading">
+															</label>
+														</toolbar>
+														<toolbar
+															align="end"
+															style="float:right; border-style: none; padding:0px;"
+															height="24px">
+															<button
+																id="btnNew_CustomerAddress" height="24px"
+																label="${c:l('label_New')}"
+																tooltiptext="${c:l('btnNew_CustomerAddress.tooltiptext')}" />
+														</toolbar>
+													</hbox>
+												</div>
+												<listbox
+													id="listBoxCustomerAddress" vflex="true" span="true" sizedByContent="true" 
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+													height="120px" multiple="false" 
+													emptyMessage="${c:l('listbox.emptyMessage')}">
+													<listhead
+														sizable="true">
+														<listheader
+															id="listheader_CustAddr_CustAddrType"
+															label="${c:l('listheader_CustAddrType.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustAddr_CustAddrCity"
+															label="${c:l('listheader_CustAddrCity.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustAddr_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustAddr_RecordType"
+															label="${c:l('listheader_RecordType.label')}"
+															sort="false" hflex="min" />
+													</listhead>
+												</listbox>
+											</groupbox>
+											<groupbox
+												id="gb_customerPhoneDetails" sclass="gb_dialog">
+												<div sclass="z-toolbar"
+													style="padding:0" height="24px">
+													<hbox pack="stretch"
+														sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:0px;" height="24px">
+														<toolbar
+															align="start" style="border:none;">
+															<label
+																value="${c:l('PhoneDetails')}"
+																sclass="listboxHeading">
+															</label>
+														</toolbar>
+														<toolbar
+															align="end"
+															style="float:right; border-style: none; padding:0px;"
+															height="24px">
+															<button
+																id="btnNew_CustomerPhoneNumbers" height="24px"
+																label="${c:l('label_New')}"
+																tooltiptext="${c:l('btnNew_CustomerPhone.tooltiptext')}" />
+														</toolbar>
+													</hbox>
+												</div>
+												<listbox
+													id="listBoxCustomerPhoneNumbers" vflex="true" span="true" sizedByContent="true" 
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+													height="auto" multiple="false" 
+													emptyMessage="${c:l('listbox.emptyMessage')}">
+													<listhead
+														sizable="true">
+														<listheader
+															id="listheader_CustPhone_Type"
+															label="${c:l('listheader_PhoneTypeCode.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustPhone_CountryCode"
+															label="${c:l('listheader_PhoneCountryCode.label')}"
+															sort="false" hflex="min" visible="false" />
+														<listheader
+															id="listheader_CustPhone_AreaCode"
+															label="${c:l('listheader_PhoneAreaCode.label')}"
+															sort="false" hflex="min" visible="false" />
+														<listheader
+															id="listheader_CustPhone_PhoneNumber"
+															label="${c:l('listheader_PhoneNumber.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustPhone_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustPhone_RecordType"
+															label="${c:l('listheader_RecordType.label')}"
+															sort="false" hflex="min" />
+													</listhead>
+												</listbox>
+											</groupbox>
+											<groupbox
+												id="gb_customerEmailDetails" sclass="gb_dialog">
+												<div sclass="z-toolbar"
+													style="padding:0" height="24px">
+													<hbox pack="stretch"
+														sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:0px;" height="24px">
+														<toolbar
+															align="start" style="border:none;">
+															<label
+																value="${c:l('EmailDetails')}"
+																sclass="listboxHeading">
+															</label>
+														</toolbar>
+														<toolbar
+															align="end"
+															style="float:right; border-style: none; padding:0px;"
+															height="24px">
+															<button
+																id="btnNew_CustomerEmailAddress" height="24px"
+																label="${c:l('label_New')}"
+																tooltiptext="${c:l('btnNew_CustomerEmail.tooltiptext')}" />
+														</toolbar>
+													</hbox>
+												</div>
+												<listbox
+													id="listBoxCustomerEmailAddress" vflex="true" span="true" sizedByContent="true" 
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+													height="120px" multiple="false" 
+													emptyMessage="${c:l('listbox.emptyMessage')}">
+													<listhead
+														sizable="true">
+														<listheader
+															id="listheader_CustCIF"
+															label="${c:l('listheader_CustCIF.label')}" sort="auto"
+															hflex="min" visible="false" />
+														<listheader
+															id="listheader_CustEmail_Type"
+															label="${c:l('listheader_CustEMailTypeCode.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustEmail_Priority"
+															label="${c:l('listheader_CustEMailPriority.label')}"
+															sort="false" hflex="min" visible="false" />
+														<listheader
+															id="listheader_CustEmail_EmailID"
+															label="${c:l('listheader_CustomerEmail.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustEmail_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}"
+															sort="false" hflex="min" />
+														<listheader
+															id="listheader_CustEmail_RecordType"
+															label="${c:l('listheader_RecordType.label')}"
+															sort="false" hflex="min" />
+													</listhead>
+												</listbox>
+											</groupbox>
+
 										</row>
 									</rows>
 								</grid>
-							</groupbox>
-							<groupbox id="gb_familyDetails">
-								<div sclass="z-toolbar" style="padding:0" height="24px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-										height="24px" width="100%">
-
-										<!-- COMMON BUTTONS -->
-										<toolbar align="start"
-											style="float:left; border-style: none; padding:0px;" height="24px"
-											width="150px">
-											<hbox align="center">
-												<label value="${c:l('FamilyDetails')}" style="font-weight:bold; font-size: 11px;" />
-											</hbox>
-										</toolbar>
-
-										<!-- SEARCH AREA -->
-										<toolbar align="center"
-											style="float:left; border-style: none; padding:0px;" height="24px">
-										</toolbar>
-
-										<!-- CRUD BUTTONS -->
-										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;" height="24px">
-											<button id="btnNew_CustomerPRelation" height="24px"
-												label = "${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerPRelation.tooltiptext')}" />
-										</toolbar>
-										<space width="2px" />
-									</hbox>
-								</div>
-								<listbox id="listBoxCustomerPRelation" vflex="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="120px" multiple="false">
-									<listhead sizable="true">
-										<listheader id="listheader_CustPR_PRRelationCode"
-											label="${c:l('listheader_PRRelationCode.label')}" sort="false"
-											width="30%" />
-										<listheader id="listheader_CustPR_PRRelationCustID"
-											label="${c:l('listheader_PRRelationCustID.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustPR_PRSName" label="${c:l('listheader_PRSName.label')}"
-											sort="false" width="20%" />
-										<listheader id="listheader_CustPR_RecordStatus"
-											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											width="15%" />
-										<listheader id="listheader_CustPR_RecordType"
-											label="${c:l('listheader_RecordType.label')}" sort="false"
-											width="15%" />
-									</listhead>
-								</listbox>
-								<paging id="pagingCustomerPRelationList" />
-							</groupbox>
+							</div>
 						</tabpanel>
 						<tabpanel style="overflow:auto">
 							<groupbox id="gb_incomeDetails">
-								<div sclass="z-toolbar" style="padding:0" height="24px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+								<div sclass="z-toolbar"
+									style="padding:0" height="24px">
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
 										height="24px" width="100%">
-
-										<!-- COMMON BUTTONS -->
 										<toolbar align="start"
-											style="float:left; border-style: none; padding:0px;" height="24px"
-											width="150px">
-											<hbox align="center" style="padding: 0px">
-												<label value="${c:l('IncomeDetails')}" style="font-weight:bold;font-size: 11px;" />
-											</hbox>
+											style="border:none;">
+											<label
+												value="${c:l('IncomeDetails')}" sclass="listboxHeading">
+											</label>
 										</toolbar>
-
-										<!-- SEARCH AREA -->
-										<toolbar align="center"
-											style="float:left; border-style: none; padding:0px;" height="24px">
-										</toolbar>
-
-										<!-- CRUD BUTTONS -->
 										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;" height="24px">
-											<button id="btnNew_CustomerIncome" height="24px"
-												label = "${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerIncome.tooltiptext')}" />
+											style="float:right; border-style: none; padding:0px;"
+											height="24px">
+											<button
+												id="btnNew_CustomerIncome" height="24px"
+												label="${c:l('label_New')}"
+												tooltiptext="${c:l('btnNew_CustomerIncome.tooltiptext')}" />
 										</toolbar>
-										<space width="2px" />
 									</hbox>
 								</div>
-								<listbox id="listBoxCustomerIncome" vflex="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="120px" multiple="false">
+								<listbox id="listBoxCustomerIncome" span="true" sizedByContent="true" 
+									vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+									multiple="false" >
 									<listhead sizable="true">
-										<listheader id="listheader_CustInc_CustIncomeType"
-											label="${c:l('listheader_CustIncomeType.label')}" sort="false"
-											width="30%" />
-										<listheader id="listheader_CustInc_CustIncome"
+										<listheader
+											id="listheader_IncomeExpense"
+											label="${c:l('listheader_IncomeExpense.label')} ${c:l('listheader_IncomeTypeCategory.label')}"
+											sort="auto" hflex="min" />
+										<listheader
+											id="listheader_CustInc_CustIncomeType"
+											label="${c:l('listheader_CustIncomeType.label')}"
+											sort="false" hflex="min" />
+										<listheader
+											id="listheader_CustInc_CustIncome"
 											label="${c:l('listheader_CustIncome.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustInc_CustIncomeCountry"
-											label="${c:l('listheader_CustIncomeCountry.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustInc_RecordStatus"
+											hflex="min" />
+										<listheader
+											id="listheader_JointCust"
+											label="${c:l('listheader_JointCust.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_CustInc_RecordStatus"
 											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											width="15%" />
-										<listheader id="listheader_CustInc_RecordType"
+											hflex="min" />
+										<listheader
+											id="listheader_CustInc_RecordType"
 											label="${c:l('listheader_RecordType.label')}" sort="false"
-											width="15%" />
+											hflex="min" />
 									</listhead>
 								</listbox>
-								<paging id="pagingCustomerIncomeList" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" visible="false"
+									height="0px">
 									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
+										<column width="500px" />
 										<column />
 									</columns>
 									<rows>
 										<row visible="true">
-											<label id="label_CustomerDialog_CustTotalIncome"
+											<label
+												id="label_CustomerDialog_CustTotalIncome"
 												value="${c:l('label_CustomerDialog_CustTotalIncome.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<decimalbox id="custTotalIncome" width="108px"
+												<decimalbox
+													id="custTotalIncome" width="108px"
+													style="text-align:right;" maxlength="25" readonly="true" />
+												<decimalbox
+													id="custTotalExpense" width="108px"
 													style="text-align:right;" maxlength="25" readonly="true" />
 											</hbox>
 										</row>
 									</rows>
 								</grid>
 							</groupbox>
-							<groupbox id="gb_DocumentDetails">
-								<div sclass="z-toolbar" style="padding:0" height="24px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-										height="24px" width="100%">
-
-										<!-- COMMON BUTTONS -->
+						</tabpanel>
+						<tabpanel id="directorTabPanel">
+							<groupbox id="gb_directorDetails" width="100%" height="100%">
+								<div sclass="z-toolbar"
+									style="padding:0" >
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+										height="100%" width="100%">
 										<toolbar align="start"
-											style="float:left; border-style: none; padding:0px;" height="24px"
-											width="150px">
-											<hbox align="center" style="padding: 0px">
-												<label value="${c:l('DocumentDetails')}" style="font-weight:bold;font-size: 11px;" />
-											</hbox>
+											style="border:none;">
+											<label
+												value="${c:l('DirectorDetails')}" sclass="listboxHeading">
+											</label>
 										</toolbar>
-
-										<!-- SEARCH AREA -->
-										<toolbar align="center"
-											style="float:left; border-style: none; padding:0px;" height="24px">
-										</toolbar>
-
-										<!-- CRUD BUTTONS -->
 										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;" height="24px">
-											<button id="btnNew_CustomerDocuments" height="24px"
-												label = "${c:l('label_New')}"
-												tooltiptext="${c:l('button_CustomerDocumentList_NewCustomerDocument.tooltiptext')}" />
+											style="float:right; border-style: none; padding:0px;"
+											height="100%">
+											<button
+												id="btnNew_DirectorDetail" height="24px"
+												label="${c:l('label_New')}"
+												tooltiptext="${c:l('btnNew_CustomerDirector.tooltiptext')}" />
 										</toolbar>
-										<space width="2px" />
 									</hbox>
 								</div>
-								<listbox id="listBoxCustomerDocuments" vflex="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="120px" multiple="false">
+								<listbox id="listBoxCustomerDirectory" span="true" sizedByContent="true" 
+									vflex="true" 
+									fixedLayout="true"
+									tooltiptext="${c:l('listbox.tooltiptext')}"
+									emptyMessage="${c:l('listbox.emptyMessage')}" 
+									multiple="false">
 									<listhead sizable="true">
-										<listheader id="listheader_CustDocType"
-											label="${c:l('listheader_CustDocType.label')}" sort="false"
-											width="25%" />
-										<listheader id="listheader_CustDocIssuedCountry"
-											label="${c:l('listheader_CustDocIssuedCountry.label')}" sort="false"
-											width="25%" />
-										<listheader id="listheader_CustDocTitle"
-											label="${c:l('listheader_CustDocTitle.label')}" sort="false"
-											width="25%" />
-										<listheader id="listheader_CustDoc_RecordStatus"
-											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											width="15%" />
-										<listheader id="listheader_CustDoc_RecordType"
-											label="${c:l('listheader_RecordType.label')}" sort="false"
-											width="10%" />
+										<listheader
+											id="listheader_ShortName"
+											label="${c:l('listheader_ShortName.label')}" sort="false" hflex="min" />
+										<listheader
+											id="listheader_CustCountry"
+											label="${c:l('listheader_CustCountry.label')}" sort="false" hflex="min" />
+										<listheader
+											id="listheader_CustSharePerc"
+											label="${c:l('listheader_CustSharePerc.label')}" sort="false" hflex="min" />
+										<listheader
+											id="listheader_IDType"
+											label="${c:l('listheader_IDType.label')}" sort="false" hflex="min" />
+										<listheader
+											id="listheader_IDReference"
+											label="${c:l('listheader_IDReference.label')}" sort="false" hflex="min" />
+										<listheader
+											id="listheader_Nationality"
+											label="${c:l('listheader_Nationality.label')}" sort="false" hflex="min" />
+										<listheader
+											id="listheader_CustDirector_RecordStatus"
+											label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
+										<listheader
+											id="listheader_CustDirector_RecordType"
+											label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 									</listhead>
 								</listbox>
-								<paging id="pagingCustomerDocumentList" />
-							</groupbox>
-							<groupbox id="gb_identityDetails">
-								<caption label="${c:l('IdentityDetails')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="false">
-											<label id="label_CustomerDialog_CustParentCountry"
-												value="${c:l('label_CustomerDialog_CustParentCountry.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custParentCountry" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustParentCountryName" style="overflow: hidden;"
-													width="250px" readonly="true" />
-												<button id="btnSearchCustParentCountry" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustRiskCountry"
-												value="${c:l('label_CustomerDialog_CustRiskCountry.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custRiskCountry" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustRiskCountryName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustRiskCountry" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustResdCountry"
-												value="${c:l('label_CustomerDialog_CustResdCountry.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custResdCountry" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustResdCountryName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustResdCountry" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustNationality"
-												value="${c:l('label_CustomerDialog_CustNationality.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custNationality" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustNationalityName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustNationality" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
 							</groupbox>
 						</tabpanel>
-						<tabpanel style="overflow:auto">
-							<groupbox id="gb_employerDetails" visible="false">
-								<caption label="${c:l('EmployerDetails')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpName"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpName.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpName" maxlength="50" width="300px"
-													style="overflow: hidden;" />
-											</hbox>
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpFrom"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpFrom.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<datebox id="custEmpFrom" width="100px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpDesg"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpDesg.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpDesg" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustEmpDesgName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustEmpDesg" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpDept"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpDept.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpDept" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustEmpDeptName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustEmpDept" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpID"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpID.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<uppercasebox id="custEmpID" maxlength="50"
-													width="300px" style="overflow: hidden;" />
-											</hbox>
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpType"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpType.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpType" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustEmpTypeName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustEmpType" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpHNbr"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpHNbr.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custEmpHNbr" maxlength="50" width="300px"
-													style="overflow: hidden;" />
-											</hbox>
-											<label id="label_CustomerEmploymentDetailDialog_CustEMpFlatNbr"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEMpFlatNbr.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custEmpFlatNbr" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label
-												id="label_CustomerEmploymentDetailDialog_CustEmpAddrStreet"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrStreet.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custEmpAddrStreet" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-											<label
-												id="label_CustomerEmploymentDetailDialog_CustEMpAddrLine1"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEMpAddrLine1.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custEMpAddrLine1" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label
-												id="label_CustomerEmploymentDetailDialog_CustEMpAddrLine2"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEMpAddrLine2.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custEMpAddrLine2" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpPOBox"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpPOBox.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpPOBox" maxlength="8" width="108px"
-													style="overflow: hidden;" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label
-												id="label_CustomerEmploymentDetailDialog_CustEmpAddrPhone"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrPhone.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpAddrPhone" maxlength="50"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-											<label
-												id="label_CustomerEmploymentDetailDialog_CustEmpAddrCountry"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrCountry.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpAddrCountry" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustEmpAddrCountryName" style="overflow: hidden;"
-													width="250px" readonly="true" />
-												<button id="btnSearchCustEmpAddrCountry" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label
-												id="label_CustomerEmploymentDetailDialog_CustEmpAddrProvince"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrProvince.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpAddrProvince" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustEmpAddrProvinceName" style="overflow: hidden;"
-													width="250px" readonly="true" />
-												<button id="btnSearchCustEmpAddrProvince" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpAddrCity"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrCity.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custEmpAddrCity" width="200px"
-													style="overflow: hidden;" visible="false" />
-												<textbox id="lovDescCustEmpAddrCityName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustEmpAddrCity" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerEmploymentDetailDialog_CustEmpAddrZIP"
-												value="${c:l('label_CustomerEmploymentDetailDialog_CustEmpAddrZIP.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custEmpAddrZIP" maxlength="6"
-													style="overflow: hidden;" width="300px" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-						</tabpanel>
-						<tabpanel style="overflow:auto">
-							<groupbox id="gb_nonFinancialRelationshipDetails">
-								<caption label="${c:l('NonFinancialRelationshipDetails')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustDSA"
-												value="${c:l('label_CustomerDialog_CustDSA.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<uppercasebox id="custDSA" maxlength="8" width="108px"
-													style="overflow: hidden;" />
-											</hbox>
-											<label id="label_CustomerDialog_CustDSADept"
-												value="${c:l('label_CustomerDialog_CustDSADept.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custDSADept" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustDSADeptName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustDSADept" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustRO1"
-												value="${c:l('label_CustomerDialog_CustRO1.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custRO1" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustRO1Name" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustRO1" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-											<label id="label_CustomerDialog_CustRO2"
-												value="${c:l('label_CustomerDialog_CustRO2.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custRO2" width="200px" visible="false"
-													style="overflow: hidden;" />
-												<textbox id="lovDescCustRO2Name" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustRO2" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustReferedBy"
-												value="${c:l('label_CustomerDialog_CustReferedBy.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custReferedBy" maxlength="50" width="300px"
-													style="overflow: hidden;" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-							<groupbox id="gb_statementDetails">
-								<caption label="${c:l('StatementDetails')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustStmtFrq"
-												value="${c:l('label_CustomerDialog_CustStmtFrq.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custStmtFrq" maxlength="8" width="98px"
-													style="overflow: hidden;" visible="false" />
-												<combobox id="custStmtFrqCode" width="100px"
-													readonly="true" />
-												<combobox id="custStmtFrqMth" width="130px"
-													readonly="true" />
-												<combobox id="custStmtFrqDays" width="50px"
-													readonly="true" />
-											</hbox>
-											<label id="label_CustomerDialog_CustStmtNextDate"
-												value="${c:l('label_CustomerDialog_CustStmtNextDate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<datebox id="custStmtNextDate" width="100px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CustomerDialog_CustIsStmtCombined"
-												value="${c:l('label_CustomerDialog_CustIsStmtCombined.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="custIsStmtCombined" checked="false" />
-											</hbox>
-											<label id="label_CustomerDialog_CustStmtDispatchMode"
-												value="${c:l('label_CustomerDialog_CustStmtDispatchMode.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="custStmtDispatchMode" width="108px"
-													visible="false" style="overflow: hidden;" />
-												<textbox id="lovDescDispatchModeDescName" width="250px"
-													style="overflow: hidden;" readonly="true" />
-												<button id="btnSearchCustStmtDispatchMode" image="/images/icons/LOVSearch.png"
-													height="24px" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label id="label_CustomerDialog_CustStmtLastDate"
-												value="${c:l('label_CustomerDialog_CustStmtLastDate.value')}"
-												visible="false" />
-											<hbox>
-												<space spacing="2px" />
-												<datebox id="custStmtLastDate" width="100px"
-													visible="false" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-						</tabpanel>
-						<tabpanel style="overflow:auto">
-							<groupbox id="gb_customerAddressDetails">
-								<div sclass="z-toolbar" style="padding:0" height="24px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
-										style=" padding:0px;" height="24px">
-
-										<!-- COMMON BUTTONS -->
-										<toolbar align="start"
-											style="float:left; border-style: none; padding:0px;" height="24px"
-											width="150px">
-											<hbox align="center" style="padding: 0px">
-												<label value="${c:l('AddressDetails')}" style="font-weight:bold; font-size: 11px;" />
-											</hbox>
-										</toolbar>
-
-										<!-- SEARCH AREA -->
-										<toolbar align="center"
-											style="float:left; border-style: none; padding:0px;" height="24px">
-										</toolbar>
-
-										<!-- CRUD BUTTONS -->
-										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;" height="24px">
-											<button id="btnNew_CustomerAddress" height="24px"
-												label = "${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerAddress.tooltiptext')}" />
-										</toolbar>
-										<space width="2px" />
-									</hbox>
-								</div>
-								<listbox id="listBoxCustomerAddress" vflex="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="120px" multiple="false">
-									<listhead sizable="true">
-										<listheader id="listheader_CustAddr_CustAddrType"
-											label="${c:l('listheader_CustAddrType.label')}" sort="false"
-											width="30%" />
-										<listheader id="listheader_CustAddr_CustAddrCity"
-											label="${c:l('listheader_CustAddrCity.label')}" sort="false"
-											width="30%" />
-										<listheader id="listheader_CustAddr_RecordStatus"
-											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustAddr_RecordType"
-											label="${c:l('listheader_RecordType.label')}" sort="false"
-											width="20%" />
-									</listhead>
-								</listbox>
-								<paging id="pagingCustomerAddressList" />
-							</groupbox>
-							<groupbox id="gb_customerEmailDetails">
-								<div sclass="z-toolbar" style="padding:0" height="24px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
-										style=" padding:0px;" height="24px">
-
-										<!-- COMMON BUTTONS -->
-										<toolbar align="start"
-											style="float:left; border-style: none; padding:0px;" height="24px"
-											width="150px">
-											<hbox align="center" style="padding: 0px">
-												<label value="${c:l('EmailDetails')}" style="font-weight:bold; font-size: 11px;" />
-											</hbox>
-										</toolbar>
-
-										<!-- SEARCH AREA -->
-										<toolbar align="center"
-											style="float:left; border-style: none; padding:0px;" height="24px">
-										</toolbar>
-
-										<!-- CRUD BUTTONS -->
-										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;" height="24px">
-											<button id="btnNew_CustomerEmailAddress" height="24px"
-												label = "${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerEmail.tooltiptext')}" />
-										</toolbar>
-										<space width="2px" />
-									</hbox>
-								</div>
-								<listbox id="listBoxCustomerEmailAddress" vflex="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="120px" multiple="false">
-									<listhead sizable="true">
-										<listheader id="listheader_CustEmail_Type"
-											label="${c:l('listheader_CustEMailTypeCode.label')}" sort="false"
-											width="25%" />
-										<listheader id="listheader_CustEmail_Priority"
-											label="${c:l('listheader_CustEMailPriority.label')}" sort="false"
-											width="10%" />
-										<listheader id="listheader_CustEmail_EmailID"
-											label="${c:l('listheader_CustomerEmail_EMailId.value')}"
-											sort="false" width="35%" />
-										<listheader id="listheader_CustEmail_RecordStatus"
-											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustEmail_RecordType"
-											label="${c:l('listheader_RecordType.label')}" sort="false"
-											width="10%" />
-
-									</listhead>
-								</listbox>
-								<paging id="pagingCustomerEmailList" />
-							</groupbox>
-							<groupbox id="gb_customerPhoneDetails">
-								<div sclass="z-toolbar" style="padding:0" height="24px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
-										style=" padding:0px;" height="24px">
-
-										<!-- COMMON BUTTONS -->
-										<toolbar align="start"
-											style="float:left; border-style: none; padding:0px;" height="24px"
-											width="150px">
-											<hbox align="center" style="padding: 0px">
-												<label value="${c:l('PhoneDetails')}" style="font-weight:bold; font-size: 11px;" />
-											</hbox>
-										</toolbar>
-
-										<!-- SEARCH AREA -->
-										<toolbar align="center"
-											style="float:left; border-style: none; padding:0px;" height="24px">
-										</toolbar>
-
-										<!-- CRUD BUTTONS -->
-										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;" height="24px">
-											<button id="btnNew_CustomerPhoneNumbers" height="24px"
-												label = "${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerPhone.tooltiptext')}" />
-										</toolbar>
-										<space width="2px" />
-									</hbox>
-								</div>
-								<listbox id="listBoxCustomerPhoneNumbers" vflex="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="120px" multiple="false">
-									<listhead sizable="true">
-										<listheader id="listheader_CustPhone_Type"
-											label="${c:l('listheader_PhoneTypeCode.label')}" sort="false"
-											width="25%" />
-										<listheader id="listheader_CustPhone_CountryCode"
-											label="${c:l('listheader_PhoneCountryCode.label')}" sort="false"
-											width="15%" />
-										<listheader id="listheader_CustPhone_AreaCode"
-											label="${c:l('listheader_PhoneAreaCode.label')}" sort="false"
-											width="15%" />
-										<listheader id="listheader_CustPhone_PhoneNumber"
-											label="${c:l('listheader_PhoneNumber.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustPhone_RecordStatus"
-											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											width="10%" />
-										<listheader id="listheader_CustPhone_RecordType"
-											label="${c:l('listheader_RecordType.label')}" sort="false"
-											width="15%" />
-									</listhead>
-								</listbox>
-								<paging id="pagingCustomerPhoneList" />
-							</groupbox>
-						</tabpanel>
-						<tabpanel style="overflow:auto">
-							<groupbox id="gb_contactDetails">
-								<caption label="${c:l('ContactDetails')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-											<label id="label_CorporateCustomerDetailDialog_Name"
-												value="${c:l('label_CorporateCustomerDetailDialog_Name.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="name" maxlength="20" width="120px" />
-											</hbox>
-											<label id="label_CorporateCustomerDetailDialog_PhoneNumber"
-												value="${c:l('label_CorporateCustomerDetailDialog_PhoneNumber.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="phoneNumber" maxlength="20" width="120px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CorporateCustomerDetailDialog_PhoneNumber1"
-												value="${c:l('label_CorporateCustomerDetailDialog_PhoneNumber1.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="phoneNumber1" maxlength="20" width="120px" />
-											</hbox>
-											<label id="label_CorporateCustomerDetailDialog_EmailId"
-												value="${c:l('label_CorporateCustomerDetailDialog_EmailId.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="emailId" maxlength="50" width="250px" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-							<groupbox id="gb_GeneralDetails">
-								<caption label="${c:l('GeneralDetails')}"  />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-											<label id="label_CorporateCustomerDetailDialog_BussCommenceDate"
-												value="${c:l('label_CorporateCustomerDetailDialog_BussCommenceDate.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<datebox id="bussCommenceDate" width="100px" />
-											</hbox>
-											<label id="label_CorporateCustomerDetailDialog_ServCommenceDate"
-												value="${c:l('label_CorporateCustomerDetailDialog_ServCommenceDate.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<datebox id="servCommenceDate" width="100px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label
-												id="label_CorporateCustomerDetailDialog_BankRelationshipDate"
-												value="${c:l('label_CorporateCustomerDetailDialog_BankRelationshipDate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<datebox id="bankRelationshipDate" width="100px" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-							<groupbox id="gb_directorDetails">
-								<div sclass="z-toolbar" style="padding:0" height="24px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
-										style=" padding:0px;" height="24px">
-
-										<!-- COMMON BUTTONS -->
-										<toolbar align="start"
-											style="float:left; border-style: none; padding:0px;" height="24px"
-											width="150px">
-											<hbox align="center" style="padding: 0px">
-												<label value="${c:l('DirectorDetails')}" style="font-weight:bold; font-size: 11px;" />
-											</hbox>
-										</toolbar>
-
-										<!-- SEARCH AREA -->
-										<toolbar align="center"
-											style="float:left; border-style: none; padding:0px;" height="24px">
-										</toolbar>
-
-										<!-- CRUD BUTTONS -->
-										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;" height="24px">
-											<button id="btnNew_CustomerDirector" height="24px"
-												label = "${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerDirector.tooltiptext')}" />
-										</toolbar>
-										<space width="2px" />
-									</hbox>
-								</div>
-								<listbox id="listBoxCustomerDirectors" vflex="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="120px" multiple="false">
-									<listhead sizable="true">
-										<listheader id="listheader_CustDirector_firstName"
-											label="${c:l('listheader_FirstName.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustDirector_shrtName"
-											label="${c:l('listheader_ShortName.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustDirector_gender"
-											label="${c:l('listheader_CustGenderCode.label')}" sort="false"
-											width="20%" />
-										<listheader id="listheader_CustDirector_phoneNumber"
-											label="${c:l('listheader_CustSalutationCode.label')}" sort="false"
-											width="20%" />
-
-										<listheader id="listheader_CustDirector_RecordStatus"
-											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											width="10%" />
-										<listheader id="listheader_CustDirector_RecordType"
-											label="${c:l('listheader_RecordType.label')}" sort="false"
-											width="10%" />
-									</listhead>
-								</listbox>
-								<paging id="pagingCustomerDirectorList" />
-							</groupbox>
-						</tabpanel>
-						<tabpanel style="overflow:auto">
-							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-								<columns>
-									<column width="150px" />
-									<column />
-									<column width="150px" />
-									<column />
-								</columns>
-								<rows>
-									<row visible="true">
-										<label id="label_CorporateCustomerDetailDialog_PaidUpCapital"
-											value="${c:l('label_CorporateCustomerDetailDialog_PaidUpCapital.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="paidUpCapital" maxlength="18"
-												width="170px" />
-										</hbox>
-										<label id="label_CorporateCustomerDetailDialog_AuthorizedCapital"
-											value="${c:l('label_CorporateCustomerDetailDialog_AuthorizedCapital.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="authorizedCapital" maxlength="18"
-												width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_CorporateCustomerDetailDialog_ReservesAndSurPlus"
-											value="${c:l('label_CorporateCustomerDetailDialog_ReservesAndSurPlus.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="reservesAndSurPlus" maxlength="18"
-												width="170px" />
-										</hbox>
-										<label id="label_CorporateCustomerDetailDialog_IntangibleAssets"
-											value="${c:l('label_CorporateCustomerDetailDialog_IntangibleAssets.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="intangibleAssets" maxlength="18"
-												width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label id="label_CorporateCustomerDetailDialog_TangibleNetWorth"
-											value="${c:l('label_CorporateCustomerDetailDialog_TangibleNetWorth.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="tangibleNetWorth" maxlength="18"
-												width="170px" />
-										</hbox>
-										<label
-											id="label_CorporateCustomerDetailDialog_LongTermLiabilities"
-											value="${c:l('label_CorporateCustomerDetailDialog_LongTermLiabilities.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="longTermLiabilities" maxlength="18"
-												width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label id="label_CorporateCustomerDetailDialog_CapitalEmployed"
-											value="${c:l('label_CorporateCustomerDetailDialog_CapitalEmployed.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="capitalEmployed" maxlength="18"
-												width="170px" />
-										</hbox>
-										<label id="label_CorporateCustomerDetailDialog_Investments"
-											value="${c:l('label_CorporateCustomerDetailDialog_Investments.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="investments" maxlength="18" width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label id="label_CorporateCustomerDetailDialog_NonCurrentAssets"
-											value="${c:l('label_CorporateCustomerDetailDialog_NonCurrentAssets.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="nonCurrentAssets" maxlength="18"
-												width="170px" />
-										</hbox>
-										<label id="label_CorporateCustomerDetailDialog_NetWorkingCapital"
-											value="${c:l('label_CorporateCustomerDetailDialog_NetWorkingCapital.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="netWorkingCapital" maxlength="18"
-												width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label id="label_CorporateCustomerDetailDialog_NetSales"
-											value="${c:l('label_CorporateCustomerDetailDialog_NetSales.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="netSales" maxlength="18" width="170px" />
-										</hbox>
-										<label id="label_CorporateCustomerDetailDialog_OtherIncome"
-											value="${c:l('label_CorporateCustomerDetailDialog_OtherIncome.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="otherIncome" maxlength="18" width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label id="label_CorporateCustomerDetailDialog_NetProfitAfterTax"
-											value="${c:l('label_CorporateCustomerDetailDialog_NetProfitAfterTax.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="netProfitAfterTax" maxlength="18"
-												width="170px" />
-										</hbox>
-										<label id="label_CorporateCustomerDetailDialog_Depreciation"
-											value="${c:l('label_CorporateCustomerDetailDialog_Depreciation.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="depreciation" maxlength="18"
-												width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label id="label_CorporateCustomerDetailDialog_CashAccurals"
-											value="${c:l('label_CorporateCustomerDetailDialog_CashAccurals.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="cashAccurals" maxlength="18"
-												width="170px" />
-										</hbox>
-										<label id="label_CorporateCustomerDetailDialog_AnnualTurnover"
-											value="${c:l('label_CorporateCustomerDetailDialog_AnnualTurnover.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="annualTurnover" maxlength="18"
-												width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_CorporateCustomerDetailDialog_ReturnOnCapitalEmp"
-											value="${c:l('label_CorporateCustomerDetailDialog_ReturnOnCapitalEmp.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="returnOnCapitalEmp" maxlength="18"
-												width="170px" />
-										</hbox>
-										<label id="label_CorporateCustomerDetailDialog_CurrentAssets"
-											value="${c:l('label_CorporateCustomerDetailDialog_CurrentAssets.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="currentAssets" maxlength="18"
-												width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_CorporateCustomerDetailDialog_CurrentLiabilities"
-											value="${c:l('label_CorporateCustomerDetailDialog_CurrentLiabilities.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="currentLiabilities" maxlength="18"
-												width="170px" />
-										</hbox>
-										<label id="label_CorporateCustomerDetailDialog_CurrentBookValue"
-											value="${c:l('label_CorporateCustomerDetailDialog_CurrentBookValue.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="currentBookValue" maxlength="18"
-												width="170px" />
-										</hbox>
-									</row>
-									<row visible="true">
-										<label
-											id="label_CorporateCustomerDetailDialog_CurrentMarketValue"
-											value="${c:l('label_CorporateCustomerDetailDialog_CurrentMarketValue.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="currentMarketValue" maxlength="18"
-												width="170px" />
-										</hbox>
-									</row>
-								</rows>
-							</grid>
-							<groupbox id="gb_shareHolderDetails">
-								<caption label="${c:l('ShareHolderDetails')}"  />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-										<column width="150px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-
-											<label id="label_CorporateCustomerDetailDialog_PromotersShare"
-												value="${c:l('label_CorporateCustomerDetailDialog_PromotersShare.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="promotersShare" maxlength="5"
-													width="72px" />
-											</hbox>
-											<label id="label_CorporateCustomerDetailDialog_AssociatesShare"
-												value="${c:l('label_CorporateCustomerDetailDialog_AssociatesShare.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="associatesShare" maxlength="5"
-													width="72px" />
-											</hbox>
-										</row>
-										<row visible="true">
-
-											<label id="label_CorporateCustomerDetailDialog_PublicShare"
-												value="${c:l('label_CorporateCustomerDetailDialog_PublicShare.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="publicShare" maxlength="5" width="72px" />
-											</hbox>
-											<label id="label_CorporateCustomerDetailDialog_FinInstShare"
-												value="${c:l('label_CorporateCustomerDetailDialog_FinInstShare.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="finInstShare" maxlength="5"
-													width="72px" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_CorporateCustomerDetailDialog_Others"
-												value="${c:l('label_CorporateCustomerDetailDialog_Others.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="others" maxlength="5" width="72px" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-
-							<groupbox id="gb_balanceSheetDetails">
-								<div sclass="z-toolbar" style="padding:0" height="24px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
-										style=" padding:0px;" height="24px">
-
-										<!-- COMMON BUTTONS -->
-										<toolbar align="start"
-											style="float:left; border-style: none; padding:0px;" height="24px"
-											width="250px">
-											<hbox align="center" style="padding: 0px">
-												<label value="${c:l('CustomerBalanceSheet')}" style="font-weight:bold; font-size: 11px;" />
-											</hbox>
-										</toolbar>
-
-										<!-- SEARCH AREA -->
-										<toolbar align="center"
-											style="float:left; border-style: none; padding:0px;" height="24px">
-										</toolbar>
-
-										<!-- CRUD BUTTONS -->
-										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;" height="24px">
-											<button id="btnNew_CustomerBalanceSheet" height="24px"
-												label = "${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerBalanceSheet.tooltiptext')}" />
-										</toolbar>
-										<space width="2px" />
-									</hbox>
-								</div>
-								<listbox id="listBoxCustomerBalanceSheet" vflex="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="120px" multiple="false">
-									<listhead sizable="true">
-										<listheader id="listheader_FinancialYear"
-											label="${c:l('listheader_FinancialYear.label')}" sort="auto"
-											width="20%" />
-										<listheader id="listheader_TotalAssets"
-											label="${c:l('listheader_TotalAssets.label')}" sort="auto"
-											width="20%" />
-										<listheader id="listheader_TotalLiabilities"
-											label="${c:l('listheader_TotalLiabilities.label')}" sort="auto"
-											width="20%" />
-										<listheader id="listheader_NetProfit"
-											label="${c:l('listheader_NetProfit.label')}" sort="auto"
-											width="20%" />
-										<listheader id="listheader_RecordStatus"
-											label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-											width="10%" />
-										<listheader id="listheader_RecordType"
-											label="${c:l('listheader_RecordType.label')}" sort="auto"
-											width="10%" />
-									</listhead>
-								</listbox>
-								<paging id="pagingCustomerBalanceSheetList" />
-							</groupbox>
-
-						</tabpanel>
-						<tabpanel style="overflow:auto">
-							<groupbox id="gb_AdditionalDetail">
-								<caption label="${c:l('AdditionalDetails')}"  />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="150px" />
-										<column />
-
-									</columns>
-									<rows id="addtionaldetails"></rows>
-								</grid>
-							</groupbox>
-						</tabpanel>
-
 					</tabpanels>
 				</tabbox>
-
 			</center>
-			<south height="100px" border="none">
-				<groupbox id="gb_statusDetails" width="97%">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px; padding:0px;">
-						<columns>
-							<column width="150px" />
-							<column />
-						</columns>
-						<rows>
-							<row id="statusRow">
-								<label id="label_CustomerDialog_RecordStatus"
-									value="${c:l('label_CustomerDialog_RecordStatus.value')}" />
-								<label id="recordStatus" style="font-weight:bold;" />
-							</row>
-							<row spans="2">
-								<groupbox id="gb_Action" width="98%">
-									<caption label="${c:l('Action')}" />
-									<hbox>
-										<radiogroup id="userAction" name="action" />
-									</hbox>
-								</groupbox>
-							</row>
-						</rows>
-					</grid>
+			<south height="48px" border="none" style="padding:5px;">
+				<groupbox id="gb_Action" width="99%" closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_CustomerDialog_RecordStatus"
+							value="${c:l('label_CustomerDialog_RecordStatus.value')}:"
+							sclass="label-status" />
+						<label id="recordStatus"
+							style="font-weight:bold;" />
+					</hbox>
 				</groupbox>
-
 			</south>
 		</borderlayout>
 	</window>

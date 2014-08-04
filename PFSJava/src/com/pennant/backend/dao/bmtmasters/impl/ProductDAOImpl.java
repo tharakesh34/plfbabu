@@ -120,7 +120,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 	@Override
 	public Product getProductByID(final String id, String code, String type) {
 		logger.debug("Entering");
-		Product product = getProduct();
+		Product product = new Product();
 		product.setId(id);
 		product.setProductCode(code);
 

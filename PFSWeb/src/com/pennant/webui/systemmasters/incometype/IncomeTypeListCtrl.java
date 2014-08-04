@@ -100,6 +100,8 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 	protected Listbox 		listBoxIncomeType; 				        // autoWired
 
 	// List headers
+	protected Listheader listheader_IncomeExpense; 		        	// autoWired
+	protected Listheader listheader_IncomeTypeCategory; 		    // autoWired
 	protected Listheader listheader_IncomeTypeCode; 		        // autoWired
 	protected Listheader listheader_IncomeTypeDesc; 		        // autoWired
 	protected Listheader listheader_IncomeTypeIsActive; 	        // autoWired
@@ -173,6 +175,10 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 
 		this.listheader_IncomeTypeCode.setSortAscending(new FieldComparator("incomeTypeCode", true));
 		this.listheader_IncomeTypeCode.setSortDescending(new FieldComparator("incomeTypeCode", false));
+		this.listheader_IncomeExpense.setSortAscending(new FieldComparator("IncomeExpense", true));
+		this.listheader_IncomeExpense.setSortDescending(new FieldComparator("IncomeExpense", false));
+		this.listheader_IncomeTypeCategory.setSortAscending(new FieldComparator("Category", true));
+		this.listheader_IncomeTypeCategory.setSortDescending(new FieldComparator("Category", false));
 		this.listheader_IncomeTypeDesc.setSortAscending(new FieldComparator("incomeTypeDesc", true));
 		this.listheader_IncomeTypeDesc.setSortDescending(new FieldComparator("incomeTypeDesc", false));
 		this.listheader_IncomeTypeIsActive.setSortAscending(new FieldComparator("incomeTypeIsActive",true));
@@ -190,7 +196,7 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<IncomeType>(IncomeType.class,getListRows());
-		this.searchObj.addSort("IncomeTypeCode", false);
+		this.searchObj.addSort("IncomeExpense", true);
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -253,7 +259,7 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final IncomeType aIncomeType = (IncomeType) item.getAttribute("data");
-			final IncomeType incomeType = getIncomeTypeService().getIncomeTypeById(aIncomeType.getId());
+			final IncomeType incomeType = getIncomeTypeService().getIncomeTypeById(aIncomeType.getId(),aIncomeType.getIncomeExpense(),aIncomeType.getCategory());
 
 			if (incomeType == null) {
 

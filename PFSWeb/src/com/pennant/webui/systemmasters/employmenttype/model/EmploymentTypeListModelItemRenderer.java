@@ -60,11 +60,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class EmploymentTypeListModelItemRenderer implements ListitemRenderer<EmploymentType>, Serializable {
 
 	private static final long serialVersionUID = -900657208463120770L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, EmploymentType employmentType, int count) throws Exception {
 
-		//final EmploymentType employmentType = (EmploymentType) data;
 		Listcell lc;
 	  	lc = new Listcell(employmentType.getEmpType());
 		lc.setParent(item);

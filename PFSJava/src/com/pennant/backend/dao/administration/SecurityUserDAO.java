@@ -43,7 +43,10 @@
 
 package com.pennant.backend.dao.administration;
 
+import java.util.List;
+
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
 
 public interface SecurityUserDAO {
 
@@ -67,4 +70,15 @@ public interface SecurityUserDAO {
 
 	public SecurityUser getSecurityUserByLogin(final String id, String type);
 	
+	public long saveDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
+	
+	public void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
+	
+	public void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
+	
+	public List<SecurityUserDivBranch> getSecUserDivBrList(long usrID,String type);
+	
+	public SecurityUserDivBranch getSecUserDivBrDetailsById(SecurityUserDivBranch securityUserDivBranch, String type);
+	
+	public void deleteBranchs(SecurityUser securityUser,String type) ;
 }

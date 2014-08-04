@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.mail.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -70,7 +72,6 @@ import com.pennant.backend.util.WorkFlowUtil;
  * DAO methods implementation for the <b>MailTemplate model</b> class.<br>
  * 
  */
-
 public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implements MailTemplateDAO {
 
 	private static Logger logger = Logger.getLogger(MailTemplateDAOImpl.class);
@@ -82,7 +83,6 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 	 * This method set the Work Flow id based on the module name and return the new MailTemplate 
 	 * @return MailTemplate
 	 */
-
 	@Override
 	public MailTemplate getMailTemplate() {
 		logger.debug("Entering");
@@ -95,13 +95,11 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		return mailTemplate;
 	}
 
-
 	/**
-	 * This method get the module from method getMailTemplate() and set the new record flag as true and return MailTemplate()   
+	 * This method get the module from method getMailTemplate() and set the 
+	 * new record flag as true and return MailTemplate()   
 	 * @return MailTemplate
 	 */
-
-
 	@Override
 	public MailTemplate getNewMailTemplate() {
 		logger.debug("Entering");
@@ -122,16 +120,15 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 	@Override
 	public MailTemplate getMailTemplateById(final long id, String templateFor, String type) {
 		logger.debug("Entering");
-		MailTemplate mailTemplate = getMailTemplate();
+		MailTemplate mailTemplate = new MailTemplate();
 		
 		mailTemplate.setId(id);
 		mailTemplate.setTemplateFor(templateFor);
 		
-		StringBuilder selectSql = new StringBuilder("Select TemplateId, TemplateFor, Module, TemplateCode, TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			//selectSql.append(",lovDescTemplateTypeName,lovDescEmailFormatName");
-		}
+		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, " );
+		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, " );
+		selectSql.append(" EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From Templates");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where TemplateId =:TemplateId AND TemplateFor=:TemplateFor ");
@@ -141,7 +138,8 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		RowMapper<MailTemplate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MailTemplate.class);
 		
 		try{
-			mailTemplate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			mailTemplate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), 
+					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			mailTemplate = null;
 		}
@@ -150,7 +148,7 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 	}
 	
 	/**
-	 * This method initialise the Record.
+	 * This method initialize the Record.
 	 * @param MailTemplate (mailTemplate)
  	 * @return MailTemplate
 	 */
@@ -158,6 +156,7 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 	public void initialize(MailTemplate mailTemplate) {
 		super.initialize(mailTemplate);
 	}
+	
 	/**
 	 * This method refresh the Record.
 	 * @param MailTemplate (mailTemplate)
@@ -172,7 +171,6 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 	 * To Set  dataSource
 	 * @param dataSource
 	 */
-	
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
@@ -235,15 +233,16 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 			logger.debug("get NextID:" + mailTemplate.getId());
 		}
 		
-		StringBuilder insertSql =new StringBuilder("Insert Into Templates");
+		StringBuilder insertSql =new StringBuilder(" Insert Into Templates");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (TemplateId,  TemplateFor, Module, TemplateCode, TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:TemplateId, :TemplateFor, :Module, :TemplateCode, :TemplateDesc, :SmsTemplate, :SmsContent, :EmailTemplate, :EmailContent, :EmailFormat, :EmailSubject, :EmailSendTo, :TurnAroundTime, :Repeat, :Active");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" (TemplateId,  TemplateFor, Module, TemplateCode, TemplateDesc, SmsTemplate, SmsContent, " );
+		insertSql.append(" EmailTemplate, EmailContent, EmailFormat, EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:TemplateId, :TemplateFor, :Module, :TemplateCode, :TemplateDesc, :SmsTemplate, :SmsContent, " );
+		insertSql.append(" :EmailTemplate, :EmailContent, :EmailFormat, :EmailSubject, :EmailSendTo, :TurnAroundTime, :Repeat, :Active,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
-		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
@@ -262,7 +261,6 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-	
 	@SuppressWarnings("serial")
 	@Override
 	public void update(MailTemplate mailTemplate,String type) {
@@ -270,9 +268,14 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update Templates");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set TemplateId = :TemplateId, TemplateFor=:TemplateFor, Module=:Module, TemplateCode = :TemplateCode, TemplateDesc = :TemplateDesc, SmsTemplate = :SmsTemplate, SmsContent = :SmsContent,");
-		updateSql.append(" EmailTemplate = :EmailTemplate, EmailContent = :EmailContent, EmailFormat = :EmailFormat, EmailSubject = :EmailSubject, EmailSendTo= :EmailSendTo,TurnAroundTime=:TurnAroundTime, Repeat = :Repeat, Active = :Active");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Set TemplateId = :TemplateId, TemplateFor=:TemplateFor, Module=:Module, TemplateCode = :TemplateCode, " );
+		updateSql.append(" TemplateDesc = :TemplateDesc, SmsTemplate = :SmsTemplate, SmsContent = :SmsContent, ");
+		updateSql.append(" EmailTemplate = :EmailTemplate, EmailContent = :EmailContent, EmailFormat = :EmailFormat, " );
+		updateSql.append(" EmailSubject = :EmailSubject, EmailSendTo= :EmailSendTo,TurnAroundTime=:TurnAroundTime, " );
+		updateSql.append(" Repeat = :Repeat, Active = :Active ,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, " );
+		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, " );
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where TemplateId =:TemplateId AND TemplateFor=:TemplateFor");
 		
 		if (!type.endsWith("_TEMP")){
@@ -280,7 +283,6 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		}
 		
 		logger.debug("updateSql: " + updateSql.toString());
-		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
@@ -299,5 +301,29 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 
-	
+	public List<MailTemplate> getMailTemplates(){
+		List<MailTemplate> mailTemplateList = new ArrayList<MailTemplate>();
+		MailTemplate mailTemplate = new MailTemplate();
+		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, " );
+		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, " );
+		selectSql.append(" EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From Templates");
+		selectSql.append(" Where EmailTemplate = 1 ");
+		
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
+		RowMapper<MailTemplate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MailTemplate.class);
+		
+		try{
+			mailTemplateList = this.namedParameterJdbcTemplate.query(selectSql.toString(), 
+					beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.error(e);
+			throw e;
+		}
+		logger.debug("Leaving");
+		return mailTemplateList;
+	}
 }

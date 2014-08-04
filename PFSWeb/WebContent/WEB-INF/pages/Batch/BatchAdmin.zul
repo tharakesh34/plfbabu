@@ -6,23 +6,48 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<style>
+	.batch-loading {
+		background-color: #6eadff;
+		cursor: wait;
+		white-space: nowrap;
+		padding:3px;
+		border: 1px solid #83B5F7;
+	}
 
-	<window id="window_BatchAdmin" border="normal" width="100%"
-		apply="${batchAdminCtrl}">
+	.batch-loading-indicator {
+		background-color: #FFFFFF;
+		color: #102B6D;
+		border:1px solid #83B5F7;
+		white-space: nowrap;
+		padding:6px;
+	}
 
-		<timer id="timer" delay="5000" repeats="true" />
+	.batch-loading-icon {
+		background: transparent no-repeat center;
+		background-image: url(${c:encodeURL('~./zk/img/progress3.gif')}); 
+		height: 16px;
+		width: 16px;
+		background-color: red;
+		font-weight: bold; 
+		font-size:12px;
+		color:#FF4500;
+		
+	}
+</style>
+
+	 <window id="window_BatchAdmin" apply="${batchAdminCtrl}" border="normal" width="100%" height="100%" sizable="false" >
+		<timer id="timer" repeats="true" />
 
 		<div sclass="z-toolbar" height="28px">
-			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%" widths="20%,40%,20%,20%">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="20%,40%,20%,20%">
 				<toolbar align="start" sclass="toolbar-start">
 					<button id="btnStartJob" height="24px"
 						tooltiptext="${c:l('label_BatchAdminCtrl_Run.tooltiptext')}"
-						label="${c:l('label_BatchAdminCtrl_Run.value')}" />
+						label="Start" />
 				</toolbar>
 				<toolbar align="center" sclass="toolbar-center">
-					<label id="lable_current_step"
-						style="font-weight: bold;" />
+					<label id="lable_current_step" style="font-weight: bold; font-size:12px;color:#FF4500;" />
 				</toolbar>
 				<toolbar align="center" sclass="toolbar-center">
 					<hbox>
@@ -40,62 +65,103 @@
 			</hbox>
 		</div>
 
-		<borderlayout id ="borderLayoutBatchAdmin" height="100%">
-			<center border="none" autoscroll="false">
+		<borderlayout id ="borderLayoutBatchAdmin" height="99%">
+			<north border="none">
 				<groupbox id="gb_basicDetails" mold="3d">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px">
-						<columns>
-							<column width="150px" />
-							<column />
-							<column width="150px" />
-							<column />
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:1px">
+						<columns >
+							<column width="20%" />
+							<column width="12%"/>
+							<column width="20%" />
+							<column width="12%"/>
+							<column width="15%"/>
+							<column width="12%"/>
 						</columns>
 						<rows>
 							<row>
-								<label
-									value="${c:l('label_BatchAdminCtrl_LastBussDate.value')}" />
-								<label id="lable_LastBusiness_Date" />
-								<label
-									value="${c:l('label_BatchAdminCtrl_ValueDate.value')}" />
-								<label id="lable_Value_Date" />
+								<label value="${c:l('label_BatchAdminCtrl_LastBussDate.value')}" />
+								<textbox id="lable_LastBusiness_Date" width="100px" readonly="true"/>
+								<label value="${c:l('label_BatchAdminCtrl_NextBussDate.value')}" />
+								<textbox id="lable_NextBusiness_Date" width="100px" readonly="true"/>
+								<label value="${c:l('label_BatchAdminCtrl_ValueDate.value')}" />
+								<textbox id="lable_Value_Date" width="100px" readonly="true"/>
 							</row>
+					
 							<row>
-								<label
-									value="${c:l('label_BatchAdminCtrl_NextBussDate.value')}" />
-								<label id="lable_NextBusiness_Date" />
-								<label
-									value="${c:l('label_BatchAdminCtrl_BatchStatus.value')}" />
-								<hbox id="BatchStatus" />
+								<label value="${c:l('label_estimated_completed_Time')}" />
+								<textbox id="estimatedTime" width="100px" readonly="true" style="font-weight: bold; font-size:12px;color:#FF4500;"/>
+								<label id="label_elapsed_Time" value="${c:l('label_completed_Time')}" />
+								<textbox id="completedTime" width="100px" readonly="true"/>
+								<label value="${c:l('label_BatchAdminCtrl_BatchStatus.value')}" />
+								<hbox id="batchStatus" />
 							</row>
 						</rows>
-					</grid>
-					<listbox id="listBoxStepExecution" width="100%"  height="100%">
-						<listhead width="100%" height="100%">
-							<listheader
-								label="${c:l('listheader_BatchAdminCtrl_StepId')}" width="10%"
-								sort="auto" />
-							<listheader
-								label="${c:l('listheader_BatchAdminCtrl_StepName')}"
-								width="35%" />
-							<listheader
-								label="${c:l('listheader_BatchAdminCtrl_ValueDate')}"
-								width="15%" sort="auto" />
-							<listheader
-								label="${c:l('listheader_BatchAdminCtrl_StartTime')}"
-								width="10%" />
-							<listheader
-								label="${c:l('listheader_BatchAdminCtrl_EndTime')}" width="10%" />
-							<listheader
-								label="${c:l('listheader_BatchAdminCtrl_Duration')}"
-								width="10%" />
-							<listheader
-								label="${c:l('listheader_BatchAdminCtrl_ExitStatus')}"
-								width="10%" />
-						</listhead>
-					</listbox>
+					</grid>	
 				</groupbox>
-			</center>
+			</north>
+			
+			<center border="none" autoscroll="true">		
+				<groupbox width="99%">	
+				<grid sclass="GridLayoutNoBorder">
+						<columns>
+							<column width="99%" />
+						</columns>					
+					<rows>
+					<row>
+						<hbox>
+							<exePannel id="databaseBackupBeforeEod"
+								border="normal" title="${c:l('label_databaseBackupBeforeEod')}"
+								width="320px" />
+						</hbox>
+					</row>
+					<row>
+							<hbox >
+							<exePannel id="refreshRateChanges" border="normal"  title="${c:l('label_refreshRateChanges')}" width="320px" imgSrc="/images/icons/calc.gif" />
+							<exePannel id="repayQueueCalculation" border="normal"  title="${c:l('label_repayQueueCalculation')}" width="320px" imgSrc="/images/icons/calc.gif" />
+							<exePannel id="repayQueuePostings" border="normal"  title="${c:l('label_repayQueuePostings')}" width="320px" imgSrc="/images/icons/send.gif" />
+							</hbox>
+						</row>
+						<row>
+							<hbox>
+							<exePannel id="amortizationCalculation" border="normal"  title="${c:l('label_amortizationCalculation')}" width="320px" imgSrc="/images/icons/calc.gif" />
+							<exePannel id="amortizationPostings" border="normal"  title="${c:l('label_amortizationPostings')}" width="320px" imgSrc="/images/icons/send.gif" />
+							<exePannel id="uploadPftDetails" border="normal"  title="${c:l('label_uploadPftDetails')}" width="320px" imgSrc="/images/icons/send.gif" />
+							</hbox>
+						</row>
+						<row>
+							<hbox>
+							<exePannel id="provisionCalculation" border="normal"  title="${c:l('label_provisionCalculation')}" width="320px" imgSrc="/images/icons/calc.gif" />
+							<exePannel id="provisionPostings" border="normal"  title="${c:l('label_provisionPostings')}" width="320px" imgSrc="/images/icons/send.gif" />
+							<exePannel id="depreciationPostings" border="normal"  title="${c:l('label_depreciationPostings')}" width="320px" imgSrc="/images/icons/send.gif" />
+							</hbox>
+						</row>
+						<row>
+							<hbox>
+								<exePannel id="dibursementPostings" border="normal"  title="${c:l('label_dibursementPostings')}" width="320px" imgSrc="/images/icons/send.gif" />
+								<exePannel id="rateReviewCalculation" border="normal"  title="${c:l('label_rateReviewCalculation')}" width="320px" imgSrc="/images/icons/calc.gif" />
+							</hbox>
+						</row>
+						<row>
+						<hbox>
+							<exePannel id="auditDataPurging" border="normal" title="${c:l('label_auditDataPurging')}" width="320px" />
+							<exePannel id="databaseBackupAfterEod" border="normal" title="${c:l('label_databaseBackupAfterEod')}" width="320px" />
+						</hbox>
+					</row>
+						<row>
+							<hbox>
+								<space></space>
+							</hbox>
+						</row>
+					</rows>
+					</grid>
+				</groupbox>
+		</center>
+		<east>
+			
+		</east>				
+		
 		</borderlayout>
+		
+		<exePannel id="databaseBackup" border="normal"  title="${c:l('label_databaseBackup')}" width="320px" imgSrc="/images/icons/calc.gif" />
 	</window>
 </zk>

@@ -43,8 +43,8 @@ public class ExtFinanceData implements java.io.Serializable {
 	private String scheduleMethod;
 	private String profitDaysBasis;
 	private Date finStartDate;
-	private BigDecimal finAmount = new BigDecimal(0);
-	private BigDecimal finAssetValue = new BigDecimal(0);
+	private BigDecimal finAmount = BigDecimal.ZERO;
+	private BigDecimal finAssetValue = BigDecimal.ZERO;
 	private String disbAccountId;
 	private String repayAccountId;
 	private String finAccount;
@@ -63,8 +63,8 @@ public class ExtFinanceData implements java.io.Serializable {
 	private boolean allowGrcPeriod = false;
 	private String graceBaseRate;
 	private String graceSpecialRate;
-	private BigDecimal grcMargin = new BigDecimal(0);
-	private BigDecimal grcPftRate = new BigDecimal(0);
+	private BigDecimal grcMargin = BigDecimal.ZERO;
+	private BigDecimal grcPftRate = BigDecimal.ZERO;
 	private String grcPftFrq;
 	private Date nextGrcPftDate;
 	private boolean allowGrcPftRvw = false;
@@ -79,8 +79,8 @@ public class ExtFinanceData implements java.io.Serializable {
 	private String repayRateBasis;
 	private String repayBaseRate;
 	private String repaySpecialRate;
-	private BigDecimal repayMargin = new BigDecimal(0);
-	private BigDecimal repayProfitRate = new BigDecimal(0);
+	private BigDecimal repayMargin = BigDecimal.ZERO;
+	private BigDecimal repayProfitRate = BigDecimal.ZERO;
 	private String repayFrq;
 	private Date nextRepayDate;
 	private String repayPftFrq;
@@ -93,7 +93,7 @@ public class ExtFinanceData implements java.io.Serializable {
 	private Date nextRepayCpzDate;
 	private Date maturityDate;
 	private BigDecimal downPayment;
-	private BigDecimal reqRepayAmount = new BigDecimal(0);
+	private BigDecimal reqRepayAmount = BigDecimal.ZERO;
 	private boolean alwIndRate = false;
 	private String indBaseRate;
 	private boolean calculateRepay = false;

@@ -19,7 +19,7 @@
 
 					<toolbar align="start"
 						style="border-style: none;">
-						<button height="24px" id="button_Print"
+						<button height="24px" id="button_Print" visible="false"
 							label = "${c:l('label_Print')}"
 							tooltiptext="${c:l('button_CustomerEnquiryDialog_PrintList.tooltiptext')}" />
 					</toolbar>
@@ -67,16 +67,7 @@
 									<label
 										id="label_CustomerEnquiryDialog_CustName"
 										value="${c:l('label_CustomerEnquiryDialog_CustName.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="custCIF"
-											width="100px" readonly="true" />
-										<button id="btnSearchCustCIF"
-											image="/images/icons/LOVSearch.png" height="24px">
-										</button>
-							<label id="custShrtName"
-											width="100px" />
-									</hbox>
+									<extendedcombobox id="custCIF"/>
 									<label
 										id="label_CustomerEnquiryDialog_DefaultBranch"
 										value="${c:l('label_CustomerEnquiryDialog_DefaultBranch.value')}" />
@@ -89,50 +80,52 @@
 							</rows>
 						</grid>
 
-						<listbox id="listBoxEnquiryResult" vflex="true"
-							tooltiptext="${c:l('listbox.tooltiptext')}" width="99%"
+						<listbox id="listBoxEnquiryResult"
+							emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+							vflex="true" span="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 							height="100%" multiple="false">
 							<listhead sizable="true">
 								<listheader id="listheader_FinRef"
 									sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_FinRef.label')}"
-									width="14%" />
+									hflex="min" />
 								<listheader
 									id="listheader_CustDftBranch" sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_CustDftBranch.label')}"
-									width="8%" />
+									hflex="min" />
 								<listheader id="listheader_FinStartDate"
 									sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_FinStartDate.label')}"
-									width="12%" />
+									hflex="min" />
 								<listheader id="listheader_GrcEndDate"
 									sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_GrcEndDate.label')}"
-									width="13%" />
+									hflex="min" />
 								<listheader
 									id="listheader_NumberOfTerms" sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_NumberOfTerms.label')}"
-									width="7%" />
+									hflex="min" />
 								<listheader id="listheader_MaturityDate"
 									sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_MaturityDate.label')}"
-									width="13%" />
+									hflex="min" />
 								<listheader id="listheader_FinAmount"
 									sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_FinAmount.label') }"
-									width="16%" />
+									hflex="min" />
 								<listheader
 									id="listheader_CurrentFinAmount" sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_CurrentFinAmount.label') }"
-									width="16%" />
-								<listheader
+									hflex="min" />
+								<listheader visible="false"
 									id="listheader_FinNextDueDate" sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_FinNextDueDate.label') }"
-									width="13%" />
-								<listheader
+									hflex="min" />
+								<listheader visible="false"
 									id="listheader_FinNextDueAmount" sort="false"
 									label="${c:l('listheader_CustomerEnquiryDialog_FinNextDueAmount.label') }"
-									width="16%" />
+									hflex="min" />
 							</listhead>
 						</listbox>
 

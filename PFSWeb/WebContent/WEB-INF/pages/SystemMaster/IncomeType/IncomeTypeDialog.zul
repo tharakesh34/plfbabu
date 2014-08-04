@@ -63,11 +63,31 @@
 					<grid sclass="GridLayoutNoBorder"
 						fixedLayout="true">
 						<columns>
-							<column width="150px" />
+							<column width="200px" />
 							<column />
 						</columns>
 						<rows>
 							<row>
+								<label
+									
+									value="${c:l('label_IncomeTypeDialog_IncomeExpense.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox readonly="true" width="200px" id="incomeExpense"></combobox>	
+								</hbox>
+							</row>
+							<row>
+								<label
+									
+									value="${c:l('label_IncomeTypeDialog_Category.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+										<combobox readonly="true" width="200px" id="category"></combobox>	
+								</hbox>
+							</row>
+														<row>
 								<label
 									id="label_IncomeTypeDialog_IncomeTypeCode"
 									value="${c:l('label_IncomeTypeDialog_IncomeTypeCode.value')}" />
@@ -87,6 +107,16 @@
 										sclass="mandatory" />
 									<textbox id="incomeTypeDesc"
 										maxlength="50" width="450px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									value="${c:l('label_IncomeTypeDialog_Margin.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<decimalbox id="margin"
+										maxlength="5" width="200px" />
 								</hbox>
 							</row>
 							<row>

@@ -138,16 +138,16 @@ public class PropertyRelationTypeSearchCtrl extends GFCBaseCtrl implements Seria
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_propertyRelationTypeId.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_propertyRelationTypeId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_propertyRelationTypeId.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_propertyRelationTypeName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_propertyRelationTypeName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_propertyRelationTypeName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

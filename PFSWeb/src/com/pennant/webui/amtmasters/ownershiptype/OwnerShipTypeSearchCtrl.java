@@ -138,16 +138,16 @@ public class OwnerShipTypeSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_ownerShipTypeId.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_ownerShipTypeId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_ownerShipTypeId.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_ownerShipTypeName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_ownerShipTypeName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_ownerShipTypeName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

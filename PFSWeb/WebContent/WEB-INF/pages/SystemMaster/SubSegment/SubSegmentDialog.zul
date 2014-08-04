@@ -83,7 +83,7 @@
 									<textbox id="lovDescSegmentCodeName"
 										width="300px" readonly="true" />
 									<button
-										label="${c:l('btnSearch.label')}" id="btnSearchSegmentCode"
+										id="btnSearchSegmentCode"
 										image="/images/icons/LOVSearch.png" height="24px" />
 								</hbox>
 							</row>

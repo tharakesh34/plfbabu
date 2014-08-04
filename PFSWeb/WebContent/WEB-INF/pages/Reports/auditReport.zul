@@ -38,13 +38,11 @@
 						<row visible="true">
 
 							<label value="From Date" />
-							<datebox id="fromDate" width="100px"
-								format="dd/MM/yyyy" readonly="true"/>
+							<datebox id="fromDate" width="100px"   />
 						</row>
 						<row visible="true">
 							<label value="To Date" />
-							<datebox id="toDate" width="100px"
-								format="dd/MM/yyyy" readonly="true"/>
+							<datebox id="toDate" width="100px" />
 						</row>
 						<row spans="2">
 							<label value="   " />

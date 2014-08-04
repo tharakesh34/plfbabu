@@ -75,16 +75,16 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.CAFFacilityType;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.search.Filter;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.Constraint.StaticListValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -113,19 +113,19 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	protected Textbox 		finType; 						// autoWired
 	protected Combobox 		screenCode; 					// autoWired
 	protected Textbox 		workFlowType; 					// autoWired
-
+	protected Combobox 		moduleName; 					// autoWired
 	protected Label 		recordStatus; 					// autoWired
 	protected Radiogroup 	userAction;
 	protected Groupbox 		groupboxWf;
 
 	// not auto wired variables
 	private FinanceWorkFlow financeWorkFlow; // overHanded per parameter
-	private FinanceWorkFlow prvFinanceWorkFlow; // overHanded per parameter
 	private transient FinanceWorkFlowListCtrl financeWorkFlowListCtrl; // overHanded per parameter
 
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
 	private transient String  		oldVar_finType;
+	private transient String  		oldVar_moduleName;
 	private transient String  		oldVar_screenCode;
 	private transient String  		oldVar_workFlowType;
 	private transient String 		oldVar_recordStatus;
@@ -155,10 +155,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 
 	// ServiceDAOs / Domain Classes
 	private transient FinanceWorkFlowService financeWorkFlowService;
-	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
-
-	private List<ValueLabel> listScreenCode=PennantAppUtil.getScreenCodes(); // autoWired
 
 	/**
 	 * default constructor.<br>
@@ -237,7 +234,9 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		//Empty sent any required attributes
 		this.finType.setMaxlength(8);
 		this.workFlowType.setMaxlength(50);
-
+        this.screenCode.setSelectedIndex(0);
+        readOnlyComponent(true, this.screenCode);
+        
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 			
@@ -307,6 +306,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void onClick$btnEdit(Event event) {
 		logger.debug(event.toString());
 		doEdit();
+		// remember the old variables
+				doStoreInitValues();
 		logger.debug("Leaving");
 	}
 
@@ -410,7 +411,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 
 		if(close){
-			closeDialog(this.window_FinanceWorkFlowDialog, "FinanceWorkFlow");	
+			closeDialog(this.window_FinanceWorkFlowDialog, "FinanceWorkFlowDialog");	
 		}
 
 		logger.debug("Leaving") ;
@@ -438,15 +439,21 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	public void doWriteBeanToComponents(FinanceWorkFlow aFinanceWorkFlow) {
 		logger.debug("Entering") ;
+		
+		fillComboBox(this.moduleName, aFinanceWorkFlow.getModuleName(), PennantStaticListUtil.getWorkFlowModules(), "");
 		this.finType.setValue(aFinanceWorkFlow.getFinType());
-		this.screenCode.setValue(PennantAppUtil.getlabelDesc(aFinanceWorkFlow.getScreenCode(),listScreenCode));
+		this.screenCode.setValue(PennantAppUtil.getlabelDesc(aFinanceWorkFlow.getScreenCode(),PennantStaticListUtil.getScreenCodes()));
 		this.workFlowType.setValue(aFinanceWorkFlow.getWorkFlowType());
 
 		if (aFinanceWorkFlow.isNewRecord()){
 			this.lovDescFinTypeName.setValue("");
 			this.lovDescWorkFlowTypeName.setValue("");
 		}else{
-			this.lovDescFinTypeName.setValue(aFinanceWorkFlow.getFinType()+"-"+aFinanceWorkFlow.getLovDescFinTypeName());
+			if (aFinanceWorkFlow.getModuleName().equals(PennantConstants.WORFLOW_MODULE_FINANCE)) {
+				this.lovDescFinTypeName.setValue(aFinanceWorkFlow.getFinType()+"-"+aFinanceWorkFlow.getLovDescFinTypeName());
+			}else if (aFinanceWorkFlow.getModuleName().equals(PennantConstants.WORFLOW_MODULE_FACILITY)) {
+				this.lovDescFinTypeName.setValue(aFinanceWorkFlow.getFinType()+"-"+aFinanceWorkFlow.getLovDescFacilityTypeName());
+			}
 			this.lovDescWorkFlowTypeName.setValue(aFinanceWorkFlow.getWorkFlowType()+"-"+aFinanceWorkFlow.getLovDescWorkFlowTypeName());
 		}
 		this.recordStatus.setValue(aFinanceWorkFlow.getRecordStatus());
@@ -464,6 +471,15 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		try {
+			if (this.moduleName.getSelectedItem() == null || this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.moduleName,Labels.getLabel("FIELD_IS_MAND",new String[]{Labels.getLabel("label_FinanceWorkFlowDialog_moduleName.value")}));
+			}
+			aFinanceWorkFlow.setModuleName(this.moduleName.getSelectedItem().getValue().toString());
+			
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
 		try {
 			aFinanceWorkFlow.setLovDescFinTypeName(this.lovDescFinTypeName.getValue());
 			aFinanceWorkFlow.setFinType(this.finType.getValue());	
@@ -565,6 +581,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	private void doStoreInitValues() {
 		logger.debug("Entering");
 		this.oldVar_finType = this.finType.getValue();
+		this.oldVar_moduleName = this.moduleName.getSelectedItem().getValue().toString();
 		this.oldVar_lovDescFinTypeName = this.lovDescFinTypeName.getValue();
 		this.oldVar_screenCode = this.screenCode.getValue();
 		this.oldVar_workFlowType = this.workFlowType.getValue();
@@ -605,6 +622,9 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		if (this.oldVar_finType != this.finType.getValue()) {
 			return true;
 		}
+		if (this.oldVar_moduleName != this.moduleName.getSelectedItem().getValue().toString()) {
+			return true;
+		}
 		if (this.oldVar_screenCode != this.screenCode.getValue()) {
 			return true;
 		}
@@ -623,8 +643,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		setValidationOn(true);
 
 		if (!this.screenCode.isDisabled()){
-			this.screenCode.setConstraint(new StaticListValidator(
-					listScreenCode,Labels.getLabel("label_FinanceWorkFlowDialog_ScreenCode.value")));
+			this.screenCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_ScreenCode.value"), null, true));
 		}	
 		logger.debug("Leaving");
 	}
@@ -643,10 +662,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * Set Validations for LOV Fields
 	 */	
 	private void doSetLOVValidation() {
-		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value")}));
-		this.lovDescWorkFlowTypeName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceWorkFlowDialog_WorkFlowType.value")}));
+		this.lovDescFinTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value"), null, true));
+		this.lovDescWorkFlowTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_WorkFlowType.value"), null, true));
 	}
 	
 	/**
@@ -721,7 +738,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 			try {
 				if(doProcess(aFinanceWorkFlow,tranType)){
 					refreshList();
-					closeDialog(this.window_FinanceWorkFlowDialog, "FinanceWorkFlow"); 
+					closeDialog(this.window_FinanceWorkFlowDialog, "FinanceWorkFlowDialog"); 
 				}
 
 			}catch (DataAccessException e){
@@ -739,15 +756,15 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	private void doNew() {
 		logger.debug("Entering");
 
+		// remember the old variables
+		doStoreInitValues();
+		
 		final FinanceWorkFlow aFinanceWorkFlow = getFinanceWorkFlowService().getNewFinanceWorkFlow();
 		aFinanceWorkFlow.setNewRecord(true);
 		setFinanceWorkFlow(aFinanceWorkFlow);
 		doClear(); // clear all components
 		doEdit(); // edit mode
 		this.btnCtrl.setBtnStatus_New();
-
-		// remember the old variables
-		doStoreInitValues();
 
 		// setFocus
 		this.finType.focus();
@@ -762,9 +779,11 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 
 		if (getFinanceWorkFlow().isNewRecord()){
 			this.btnSearchFinType.setDisabled(false);
+			this.moduleName.setDisabled(false);
 			this.btnCancel.setVisible(false);
 		}else{
 			this.btnSearchFinType.setDisabled(true);
+			this.moduleName.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
 
@@ -786,8 +805,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
-		// remember the old variables
-		doStoreInitValues();
+		
 		logger.debug("Leaving");
 	}
 
@@ -876,9 +894,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		// save it to database
 		try {
 			if(doProcess(aFinanceWorkFlow,tranType)){
-				doWriteBeanToComponents(aFinanceWorkFlow);
 				refreshList();
-				closeDialog(this.window_FinanceWorkFlowDialog, "FinanceWorkFlow");
+				closeDialog(this.window_FinanceWorkFlowDialog, "FinanceWorkFlowDialog");
 			}
 
 		} catch (final DataAccessException e) {
@@ -1055,11 +1072,11 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 					auditHeader.setOverideMessage(null);
 				}
 			}
+			setOverideMap(auditHeader.getOverideMap());
 		} catch (InterruptedException e) {
 			logger.error(e);
 			e.printStackTrace();
 		}
-		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
@@ -1072,29 +1089,42 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
 	public void onClick$btnSearchFinType(Event event){
-
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("FinIsActive", 1, Filter.OP_EQUAL); 
+		logger.debug("Entering" + event.toString());
 		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceWorkFlowDialog,"FinanceType",filters);
+		if (this.moduleName.getSelectedItem() == null || this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
+			throw new WrongValueException(this.moduleName,Labels.getLabel("FIELD_IS_MAND",new String[]{Labels.getLabel("label_FinanceWorkFlowDialog_moduleName.value")}));
+		}
+		Object dataObject=null;
+		if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_FINANCE)) {
+			dataObject = ExtendedSearchListBox.show(this.window_FinanceWorkFlowDialog,"FinanceType");
+		}else if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_FACILITY)) {
+			dataObject = ExtendedSearchListBox.show(this.window_FinanceWorkFlowDialog,"CAFFacilityType");
+		}
 		if (dataObject instanceof String){
 			this.finType.setValue(dataObject.toString());
 			this.lovDescFinTypeName.setValue("");
-		}else{
-			FinanceType details= (FinanceType) dataObject;
-			if (details != null) {
-				this.finType.setValue(details.getFinType());
-				this.lovDescFinTypeName.setValue(details.getFinType()+"-"+details.getFinTypeDesc());
+		} else {
+			if (dataObject instanceof FinanceType) {
+				FinanceType details = (FinanceType) dataObject;
+				if (details != null) {
+					this.finType.setValue(details.getFinType());
+					this.lovDescFinTypeName.setValue(details.getFinType() + "-" + details.getFinTypeDesc());
+				}
+			} else if (dataObject instanceof CAFFacilityType) {
+				CAFFacilityType details = (CAFFacilityType) dataObject;
+				if (details != null) {
+					this.finType.setValue(details.getFacilityType());
+					this.lovDescFinTypeName.setValue(details.getFacilityType() + "-" + details.getFacilityDesc());
+				}
 			}
 		}
+		logger.debug("Leaving" + event.toString());
 	}
 	
 	public void onClick$btnSearchWorkFlowType(Event event){
-
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("WorkFlowActive", 1, Filter.OP_EQUAL); 
+		logger.debug("Entering" + event.toString());
 		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceWorkFlowDialog,"WorkFlowDetails",filters);
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceWorkFlowDialog,"WorkFlowDetails");
 		if (dataObject instanceof String){
 			this.workFlowType.setValue(dataObject.toString());
 			this.lovDescWorkFlowTypeName.setValue("");
@@ -1105,6 +1135,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 				this.lovDescWorkFlowTypeName.setValue(details.getWorkFlowType()+"-"+details.getWorkFlowDesc());
 			}
 		}
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**	
@@ -1112,6 +1143,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	private void setListScreenCode(){
 		logger.debug("Entering");
+		
+		List<ValueLabel> listScreenCode = PennantStaticListUtil.getScreenCodes();
 		for (int i = 0; i < listScreenCode.size(); i++) {
 			Comboitem comboitem = new Comboitem();
 			comboitem = new Comboitem();
@@ -1120,6 +1153,13 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 			this.screenCode.appendChild(comboitem);
 		} 
 		logger.debug("Leaving");
+	}
+	
+	public void onChange$moduleName(Event event){
+		logger.debug("Entering" + event.toString());
+		this.finType.setValue("");
+		this.lovDescFinTypeName.setValue("");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1209,7 +1249,6 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
-
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1217,7 +1256,6 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	public FinanceWorkFlow getFinanceWorkFlow() {
 		return this.financeWorkFlow;
 	}
-
 	public void setFinanceWorkFlow(FinanceWorkFlow financeWorkFlow) {
 		this.financeWorkFlow = financeWorkFlow;
 	}
@@ -1225,7 +1263,6 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
-
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return this.financeWorkFlowService;
 	}
@@ -1233,36 +1270,22 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void setFinanceWorkFlowListCtrl(FinanceWorkFlowListCtrl financeWorkFlowListCtrl) {
 		this.financeWorkFlowListCtrl = financeWorkFlowListCtrl;
 	}
-
 	public FinanceWorkFlowListCtrl getFinanceWorkFlowListCtrl() {
 		return this.financeWorkFlowListCtrl;
 	}
 
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
-	
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
 		this.overideMap = overideMap;
 	}
-
 	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
 		return overideMap;
-	}
-
-	public FinanceWorkFlow getPrvFinanceWorkFlow() {
-		return prvFinanceWorkFlow;
 	}
 	
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-
 	public void setNotes_Entered(boolean notes_Entered) {
 		this.notes_Entered = notes_Entered;
 	}
+	
 }

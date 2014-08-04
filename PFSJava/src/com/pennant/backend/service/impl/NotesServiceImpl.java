@@ -90,8 +90,13 @@ public class NotesServiceImpl implements NotesService {
 	}
 	
 	@Override
-	public List<Notes> getNotesList(Notes notes) {
-		return getNotesDAO().getNotesList(notes);
+	public List<Notes> getNotesList(Notes notes, boolean isNotes) {
+		return getNotesDAO().getNotesList(notes, isNotes);
+	}	
+	
+	@Override
+	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes,String[] roleCodes) {
+		return getNotesDAO().getNotesListByRole(notes, isNotes, roleCodes);
 	}	
 
 	@Override

@@ -28,6 +28,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 /**
@@ -37,27 +38,24 @@ import com.pennant.util.PennantAppUtil;
 public class CustomerIncomeListItemRenderer implements ListitemRenderer<CustomerIncome>, Serializable {
 
 	private static final long serialVersionUID = 6321996138703133595L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
 	public void render(Listitem item, CustomerIncome income, int count) throws Exception {
 
-		//final CustomerIncome income = (CustomerIncome) data;
 		Listcell lc;
-		if(income.getRecordType().equals(PennantConstants.RCD_ADD) 
-				|| income.getRecordType().equals(PennantConstants.RCD_UPD)){
+		lc = new Listcell(PennantAppUtil.getlabelDesc(income.getIncomeExpense(), PennantStaticListUtil.getIncomeExpense()));
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.getlabelDesc(income.getCategory(), PennantAppUtil.getIncomeExpenseCategory()));
+		lc.setParent(item);
+		if(income.getRecordType().equals(PennantConstants.RCD_ADD) || income.getRecordType().equals(PennantConstants.RCD_UPD)){
 			
 			lc = new Listcell(income.getLovDescCustIncomeTypeName());
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.amountFormate(income.getCustIncome(),income.getLovDescCcyEditField()));
 			lc.setParent(item);
-			lc = new Listcell(income.getLovDescCustIncomeCountryName());
-			lc.setParent(item);
 		}else{
-			lc = new Listcell(income.getCustIncomeType()+"-"+income.getLovDescCustIncomeTypeName());
+			lc = new Listcell(income.getCustIncomeType());
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.amountFormate(income.getCustIncome(),income.getLovDescCcyEditField()));
-			lc.setParent(item);
-			lc = new Listcell(income.getCustIncomeCountry()+"-"+income.getLovDescCustIncomeCountryName());
 			lc.setParent(item);
 		}
 		lc = new Listcell(income.getRecordStatus());

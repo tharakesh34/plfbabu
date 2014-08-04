@@ -132,9 +132,10 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 	@Override
 	public DefermentDetail getDefermentDetailById(final String id, final Date schdDate,String type,boolean isWIF) {
 		logger.debug("Entering");
-		DefermentDetail defermentDetail = getDefermentDetail(isWIF);
 		
+		DefermentDetail defermentDetail = new DefermentDetail();
 		defermentDetail.setId(id);
+		defermentDetail.setDeferedSchdDate(schdDate);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, DeferedSchdDate," );
 		selectSql.append(" DefSchdProfit, DefSchdPrincipal, DeferedRpyDate, DefRpySchdPft," );
@@ -149,6 +150,40 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference AND DeferedSchdDate =:DeferedSchdDate ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentDetail);
+		RowMapper<DefermentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DefermentDetail.class);
+		
+		try{
+			defermentDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			defermentDetail = null;
+		}
+		logger.debug("Leaving");
+		return defermentDetail;
+	}
+	
+	/**
+	 * Fetch the Record  Deferement Details details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return DeferementDetail
+	 */
+	@Override
+	public DefermentDetail getDefermentDetailForBatch(final String id, final Date schdDate) {
+		logger.debug("Entering");
+		
+		DefermentDetail defermentDetail = new DefermentDetail();
+		defermentDetail.setId(id);
+		defermentDetail.setDeferedRpyDate(schdDate);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, DeferedSchdDate," );
+		selectSql.append(" DefPaidPftTillDate, DefPaidPriTillDate, DefPftBalance, DefPriBalance ");
+		selectSql.append(" From FinDefermentDetail");	
+		selectSql.append(" Where FinReference =:FinReference AND DeferedRpyDate =:DeferedRpyDate ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentDetail);
@@ -203,7 +238,7 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void deleteByFinReference(String id,String type, boolean isWIF) {
+	public void deleteByFinReference(String id,String type, boolean isWIF, long logKey) {
 		logger.debug("Entering");
 		DefermentDetail defermentDetail = new DefermentDetail();
 		defermentDetail.setId(id);
@@ -215,6 +250,9 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 		}
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference");
+		if(logKey != 0){
+			deleteSql.append(" AND LogKey =:LogKey");
+		}
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentDetail);
@@ -325,10 +363,16 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 			insertSql.append(" FinDefermentDetail");	
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, DeferedSchdDate, DefSchdProfit, DefSchdPrincipal, DeferedRpyDate, DefRpySchdPft, DefRpySchdPri, DefRpySchdPftBal, DefRpySchdPriBal, DefPaidPftTillDate, DefPaidPriTillDate, DefPftBalance, DefPriBalance");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference, :DeferedSchdDate, :DefSchdProfit, :DefSchdPrincipal, :DeferedRpyDate, :DefRpySchdPft, :DefRpySchdPri, :DefRpySchdPftBal, :DefRpySchdPriBal, :DefPaidPftTillDate, :DefPaidPriTillDate, :DefPftBalance, :DefPriBalance");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" (FinReference, DeferedSchdDate, DefSchdProfit, DefSchdPrincipal, DeferedRpyDate, DefRpySchdPft, DefRpySchdPri, DefRpySchdPftBal, DefRpySchdPriBal, DefPaidPftTillDate, DefPaidPriTillDate, DefPftBalance, DefPriBalance,");
+		if(type.contains("Log")){
+			insertSql.append(" LogKey , ");
+		}
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:FinReference, :DeferedSchdDate, :DefSchdProfit, :DefSchdPrincipal, :DeferedRpyDate, :DefRpySchdPft, :DefRpySchdPri, :DefRpySchdPftBal, :DefRpySchdPriBal, :DefPaidPftTillDate, :DefPaidPriTillDate, :DefPftBalance, :DefPriBalance,");
+		if(type.contains("Log")){
+			insertSql.append(" :LogKey , ");
+		}
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
@@ -416,6 +460,30 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 		logger.debug("Leaving");
 	}
 	
+	@SuppressWarnings("serial")
+	@Override
+	public void updateBatch(DefermentDetail defermentDetail) {
+		int recordCount = 0;
+		
+		logger.debug("Entering");
+		StringBuilder	updateSql =new StringBuilder("Update FinDefermentDetail");	
+		updateSql.append(" Set DefPaidPftTillDate = :DefPaidPftTillDate, DefPaidPriTillDate = :DefPaidPriTillDate, " );
+		updateSql.append(" DefPftBalance = :DefPftBalance, DefPriBalance = :DefPriBalance");
+		updateSql.append(" Where FinReference =:FinReference  AND DeferedSchdDate =:DeferedSchdDate ");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentDetail);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError("41004",defermentDetail.getId() ,defermentDetail.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");
+	}
+	
 	/**
 	 * Fetch the List of Finance Disbursement Detail Records by key field
 	 * 
@@ -427,8 +495,8 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 	@Override
 	public List<DefermentDetail> getDefermentDetails(final String id, String type, boolean isWIF) {
 		logger.debug("Entering");
-		DefermentDetail defermentDetail = getDefermentDetail(isWIF);
 		
+		DefermentDetail defermentDetail = new DefermentDetail();
 		defermentDetail.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, DeferedSchdDate, DefSchdProfit, DefSchdPrincipal, DeferedRpyDate, DefRpySchdPft, DefRpySchdPri, DefRpySchdPftBal, DefRpySchdPriBal, DefPaidPftTillDate, DefPaidPriTillDate, DefPftBalance, DefPriBalance");
@@ -446,6 +514,40 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentDetail);
+		RowMapper<DefermentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DefermentDetail.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+	
+	/**
+	 * Fetch the List of Finance Disbursement Detail Records by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return WIFFinanceDisbursement
+	 */
+	@Override
+	public List<DefermentDetail> getDefermentDetails(final String id, String type, boolean isWIF, long logKey) {
+		logger.debug("Entering");
+		
+		DefermentDetail defermentDetail = new DefermentDetail();
+		defermentDetail.setId(id);
+		defermentDetail.setLogKey(logKey);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, DeferedSchdDate, DefSchdProfit, DefSchdPrincipal, DeferedRpyDate, DefRpySchdPft, DefRpySchdPri, DefRpySchdPftBal, DefRpySchdPriBal, DefPaidPftTillDate, DefPaidPriTillDate, DefPftBalance, DefPriBalance");
+		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		
+		if(isWIF){
+			selectSql.append(" From WIFFinDefermentDetail");	
+		}else{
+			selectSql.append(" From FinDefermentDetail");	
+		}
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference AND LogKey =:LogKey");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentDetail);

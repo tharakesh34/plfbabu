@@ -60,23 +60,23 @@
 
 				<listbox id="listBoxSplRateCode" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
+					height="100%" multiple="false" sizedByContent="true" span="true">
 					<listhead sizable="true">
 						<listheader id="listheader_SRType"
 							label="${c:l('listheader_SRType.label')}" sort="auto"
-							width="20%" />
+							hflex="min" />
 						<listheader id="listheader_SRTypeDesc"
 							label="${c:l('listheader_SRTypeDesc.label')}" sort="auto"
-							width="53%" />
+							hflex="min" />
 						<listheader id="listheader_SRIsActive"
 							label="${c:l('listheader_SRIsActive.label')}" sort="auto"
-							width="7%" />
+							hflex="min" />
 						<listheader id="listheader_RecordStatus"
 							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 						<listheader id="listheader_RecordType"
 							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
+							hflex="min" />
 					</listhead>
 				</listbox>
 			</center>

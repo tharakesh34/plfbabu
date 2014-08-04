@@ -65,7 +65,7 @@ import com.pennant.common.menu.util.ILabelElement;
 import com.pennant.webui.util.PTMessageUtils;
 
 
-class DefaultDropDownMenuItem extends Menuitem implements EventListener, Serializable, ILabelElement {
+class DefaultDropDownMenuItem extends Menuitem implements EventListener<Event>, Serializable, ILabelElement {
 
 	private static final long serialVersionUID = -2813840859147955432L;
 	private static final Logger logger = Logger.getLogger(DefaultDropDownMenuItem.class);

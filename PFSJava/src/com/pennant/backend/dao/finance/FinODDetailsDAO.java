@@ -44,7 +44,9 @@
 package com.pennant.backend.dao.finance;
 
 import java.util.Date;
+import java.util.List;
 
+import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinODDetails;
 
 /**
@@ -53,11 +55,25 @@ import com.pennant.backend.model.finance.FinODDetails;
  */
 public interface FinODDetailsDAO {
 	
-	public FinODDetails getFinODDetailsById(String finReference, Date schdDate, String overDueFor);
+	public FinODDetails getFinODDetailsById(String finReference, Date schdDate, String overDueFor, String type);
 	public void update(FinODDetails finOdDetails);
 	public void save(FinODDetails finOdDetails);
 	public int getFinOverDueCntInPast(String finReference,boolean instCond);
-	public int getFinCurODDays(String finReference);
 	public int getPendingOverDuePayment(String finReference);
-	
+	public void updateTotals(FinODDetails detail);
+	public void resetTotals(FinODDetails detail);
+	public int getFinODDays(String finReference, String type);
+	public FinODDetails getFinODSummary(String finReference, String type);
+	public int getFinCurSchdODDays(String finReference, Date finODSchdDate, String finODFor);
+	public Long checkCustPastDue(long custID);
+	public void updateBatch(FinODDetails finOdDetails);
+	public FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate, String overDueFor);
+	public List<AccountHoldStatus> getFinODAmtByRepayAc(Date dateValuedate);
+	public void saveHoldAccountStatus(List<AccountHoldStatus> returnAcList);
+	public List<FinODDetails> getFinODDetailsByFinReference(String finReference, String type);
+	public void saveODDeferHistory(String finReference, List<Date> pastdueDefDateList);
+	public void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
+	public int getMaxODDaysOnDeferSchd(String finReference, List<Date> pastdueDefDateList);
+	public FinODDetails getMaxDaysFinODDetails(String finReference);
+	public List<Date> getMismatchODDates(String finReference, List<Date> schDateList);
 }

@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.finance;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -55,9 +56,19 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 public interface FinanceProfitDetailDAO {
 
 	public FinanceProfitDetail getFinProfitDetailsById(String finReference);
-	public void update(FinanceProfitDetail finProfitDetails);
-	public String save(FinanceProfitDetail finProfitDetails);
-	public void profitDetailsBatchUpdate(List<FinanceProfitDetail> finProfitDetailList, boolean updateOnly);
-	public List<FinanceProfitDetail> getFinPftDetailListToAMZ(Date lastMdfDate);
-	
+	public void update(FinanceProfitDetail finProfitDetails, boolean isRpyProcess);
+	public void update(List<FinanceProfitDetail> finProfitDetails, String type);
+	public String save(FinanceProfitDetail finProfitDetails, String type);
+	public void save(List<FinanceProfitDetail> finProfitDetails, String type);
+	public BigDecimal getAccrueAmount(String finReference);
+	public void updateBatchList(List<FinanceProfitDetail> finProfitDetails, String type);
+	public FinanceProfitDetail getFinProfitDetailsByRef(String finReference);
+	public FinanceProfitDetail getFinPftDetailForBatch(String finReference);
+	public void updateCpzDetail(List<FinanceProfitDetail> pftDetailsList, String type);
+	public void refreshTemp();
+	public FinanceProfitDetail getProfitDetailForWriteOff(String finReference);
+	public FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
+	public void updateLatestRpyDetails(FinanceProfitDetail financeProfitDetail);
+	public void updateRpyAccount(String finReference, String repayAccountId);
+	public void saveAccumulates(Date valueDate);
 }

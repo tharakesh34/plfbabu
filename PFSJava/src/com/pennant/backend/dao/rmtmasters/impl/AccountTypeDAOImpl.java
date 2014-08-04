@@ -43,6 +43,10 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +63,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.PennantConstants;
@@ -123,7 +128,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 	public AccountType getAccountTypeById(final String id, String type) {
 		logger.debug("Entering");
 
-		AccountType accountType = getAccountType();
+		AccountType accountType = new AccountType();
 		accountType.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select AcType, AcTypeDesc, AcPurpose, AcHeadCode,");
@@ -249,11 +254,11 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTAccountTypes" );
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AcType, AcTypeDesc, AcPurpose, AcHeadCode," );
-		insertSql.append(" InternalAc, CustSysAc, AcTypeIsActive,");
+		insertSql.append(" InternalAc, CustSysAc, AcTypeIsActive, AcLmtCategory, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:AcType, :AcTypeDesc, :AcPurpose, :AcHeadCode, " );
-		insertSql.append(" :InternalAc, :CustSysAc,:AcTypeIsActive," );
+		insertSql.append(" :InternalAc, :CustSysAc,:AcTypeIsActive, :AcLmtCategory," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -288,7 +293,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		StringBuilder updateSql = new StringBuilder("Update RMTAccountTypes");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set AcType = :AcType, AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose," );
-		updateSql.append(" AcHeadCode = :AcHeadCode, InternalAc = :InternalAc," );
+		updateSql.append(" AcHeadCode = :AcHeadCode, InternalAc = :InternalAc, AcLmtCategory=:AcLmtCategory," );
 		updateSql.append(" CustSysAc = :CustSysAc, AcTypeIsActive = :AcTypeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
@@ -314,6 +319,34 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		}
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Fetch the Record Account Types details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return AccountType
+	 */
+	@Override
+	public List<ValueLabel> getAccountTypeDesc(final List<String> acTypeList) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder("Select AcType AS Label, AcTypeDesc AS Value From RMTAccountTypes" );
+		selectSql.append(" Where AcType IN(:acTypeList)");
+		
+		Map<String, List<String>> params = new HashMap<String, List<String>>();
+		params.put("acTypeList", acTypeList);
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
+
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), params, typeRowMapper);
+	}
+
 	
 	private ErrorDetails  getError(String errorId,String accountType, String userLanguage){
 		String[][] parms= new String[2][1]; 

@@ -58,7 +58,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -97,16 +96,16 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window 		window_ProfessionList; 			// autoWired
-	protected Panel 		panel_ProfessionList; 			// autoWired
 	protected Borderlayout 	borderLayout_ProfessionList;	// autoWired
 	protected Paging 		pagingProfessionList; 			// autoWired
 	protected Listbox 		listBoxProfession; 				// autoWired
 
 	// List headers
-	protected Listheader 	listheader_ProfessionCode; 		// autoWired
-	protected Listheader 	listheader_ProfessionDesc; 		// autoWired
-	protected Listheader 	listheader_ProfessionIsActive; 	// autoWired
-	protected Listheader 	listheader_RecordStatus; 		// autoWired
+	protected Listheader 	listheader_ProfessionCode; 		    // autoWired
+	protected Listheader 	listheader_ProfessionDesc; 		    // autoWired
+	protected Listheader    listheader_ProfessionSelfEmployee;  // autoWired
+	protected Listheader 	listheader_ProfessionIsActive; 	    // autoWired
+	protected Listheader 	listheader_RecordStatus; 		    // autoWired
 	protected Listheader 	listheader_RecordType;
 
 	// checkRights
@@ -178,6 +177,8 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 		this.listheader_ProfessionCode.setSortDescending(new FieldComparator("professionCode", false));
 		this.listheader_ProfessionDesc.setSortAscending(new FieldComparator("professionDesc", true));
 		this.listheader_ProfessionDesc.setSortDescending(new FieldComparator("professionDesc", false));
+		this.listheader_ProfessionSelfEmployee.setSortAscending(new FieldComparator("professionSelfEmployee", true));
+		this.listheader_ProfessionSelfEmployee.setSortDescending(new FieldComparator("professionSelfEmployee", false));
 		this.listheader_ProfessionIsActive.setSortAscending(new FieldComparator("professionIsActive", true));
 		this.listheader_ProfessionIsActive.setSortDescending(new FieldComparator("professionIsActive", false));
 

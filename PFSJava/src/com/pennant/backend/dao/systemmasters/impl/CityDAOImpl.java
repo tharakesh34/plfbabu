@@ -118,22 +118,22 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	 * @return City
 	 */
 	@Override
-	public City getCityById(final String PCCounty,String PCProvince,String PCCity, String type) {
+	public City getCityById(final String pCCountry,String PCProvince,String PCCity, String type) {
 		logger.debug("Entering ");
-		City city = getCity();
-		city.setPCCounty(PCCounty);
+		City city = new City();
+		city.setPCCountry(pCCountry);
 		city.setPCProvince(PCProvince);
 		city.setPCCity(PCCity);
 		
-		StringBuilder selectSql = new StringBuilder("SELECT PCCounty, PCProvince, PCCity, PCCityName,");
+		StringBuilder selectSql = new StringBuilder("SELECT PCCountry, PCProvince, PCCity, PCCityName,");
 		if(type.contains("View")){
-			selectSql.append(" LovDescPCProvinceName, LovDescPCCountyName," );
+			selectSql.append(" LovDescPCProvinceName, LovDescPCCountryName," );
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTProvinceVsCity");
 		selectSql.append(StringUtils.trimToEmpty(type)); 
-		selectSql.append(" Where PCCounty =:PCCounty and PCProvince=:PCProvince and PCCity=:PCCity " );
+		selectSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity " );
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
@@ -183,7 +183,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	/**
 	 * This method Deletes the Record from the RMTProvinceVsCity or
 	 * RMTProvinceVsCity_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete City by key PCCounty
+	 * DataAccessException with error 41003. delete City by key PCCountry
 	 * 
 	 * @param City
 	 *            (city)
@@ -199,7 +199,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder(" Delete From RMTProvinceVsCity" );
 		deleteSql.append(StringUtils.trimToEmpty(type) );
-		deleteSql.append(" Where PCCounty =:PCCounty and PCProvince=:PCProvince and PCCity=:PCCity ");
+		deleteSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity ");
 		
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
@@ -208,13 +208,13 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails=getError("41003", city.getPCCounty(),
+				ErrorDetails errorDetails=getError("41003", city.getPCCountry(),
 						city.getPCProvince(),city.getPCCity(),  city.getUserDetails().getUsrLanguage());
 				throw new DataAccessException(errorDetails.getError()) {};
 			}
 		}catch(DataAccessException e){
 			logger.error(e);
-			ErrorDetails errorDetails= getError("41006", city.getPCCounty(),
+			ErrorDetails errorDetails= getError("41006", city.getPCCountry(),
 					city.getPCProvince(),city.getPCCity(),  city.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {};
 		}
@@ -241,10 +241,10 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTProvinceVsCity" );
 		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (PCCounty, PCProvince, PCCity, PCCityName," );
+		insertSql.append(" (PCCountry, PCProvince, PCCity, PCCityName," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:PCCounty, :PCProvince, :PCCity, :PCCityName," );
+		insertSql.append(" Values(:PCCountry, :PCProvince, :PCCity, :PCCityName," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -257,7 +257,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	/**
 	 * This method updates the Record RMTProvinceVsCity or RMTProvinceVsCity_Temp.
 	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update City by key PCCounty and Version
+	 * update City by key PCCountry and Version
 	 * 
 	 * @param Ciry (city)
 	 * @param  type (String)
@@ -274,13 +274,13 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTProvinceVsCity" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set PCCounty = :PCCounty, PCProvince = :PCProvince, PCCity = :PCCity,");
+		updateSql.append(" Set PCCountry = :PCCountry, PCProvince = :PCProvince, PCCity = :PCCity,");
 		updateSql.append(" PCCityName = :PCCityName," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where PCCounty =:PCCounty and PCProvince=:PCProvince and PCCity=:PCCity ");
+		updateSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity ");
 		
 		if (!type.endsWith("_TEMP")){
 			updateSql.append("  AND Version= :Version-1");
@@ -291,7 +291,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		
 		if (recordCount <= 0) {
 			logger.debug("Error in Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004", city.getPCCounty(),
+			ErrorDetails errorDetails= getError("41004", city.getPCCountry(),
 					city.getPCProvince(),city.getPCCity(),  city.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {};
 		}
@@ -306,7 +306,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		parms[1][1] = province;
 		parms[1][2] = city;
 
-		parms[0][0] = PennantJavaUtil.getLabel("label_PCCounty")+ ":" + parms[1][0]
+		parms[0][0] = PennantJavaUtil.getLabel("label_PCCountry")+ ":" + parms[1][0]
 		                +" "+ PennantJavaUtil.getLabel("label_PCProvince")+ ":" + parms[1][1];
 		parms[0][1]= PennantJavaUtil.getLabel("label_PCCity")+ ":" + parms[1][2];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 

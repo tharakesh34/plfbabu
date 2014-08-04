@@ -58,31 +58,105 @@
 				<north border="none" />
 
 				<center border="none">
-					<listbox id="listBoxCheckList" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false">
+				   <div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+							</columns>
+				                 <rows>
+								<row >
+									<label
+										id="label_CheckListSearch_CheckListDesc"
+										value="${c:l('label_CheckListSearch_CheckListDesc.value')}" />
+									<listbox
+										id="sortOperator_checkListDesc" width="43px" mold="select"
+										rows="1" />
+									<textbox id="checkListDesc"
+										width="200px" maxlength="100" />
+
+                                    <label
+										id="label_CheckListSearch_CheckMinCount"
+										value="${c:l('label_CheckListSearch_CheckMinCount.value')}" />
+									<listbox
+										id="sortOperator_checkMinCount" width="43px" mold="select"
+										rows="1" />
+									<intbox id="checkMinCount"
+										width="90px" maxlength="10" />
+								</row>
+								<row>
+									<label
+										id="label_CheckListSearch_CheckMaxCount"
+										value="${c:l('label_CheckListSearch_CheckMaxCount.value')}" />
+									<listbox
+										id="sortOperator_checkMaxCount" width="43px" mold="select"
+										rows="1" />
+									<intbox id="checkMaxCount"
+										width="90px" maxlength="10" />
+										
+									<label
+										id="label_CheckListSearch_Active"
+										value="${c:l('label_CheckListSearch_Active.value')}" />
+									<listbox id="sortOperator_active"
+										width="43px" mold="select" rows="1" />
+									<checkbox id="active"
+										checked="false" />
+								</row>
+								<row>
+									<label
+										id="label_CheckListSearch_RecordStatus"
+										value="${c:l('label_CheckListSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+								
+									<label
+										id="label_CheckListSearch_RecordType"
+										value="${c:l('label_CheckListSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+			    	</grid>
+					<listbox id="listBoxCheckList"  
+					        emptyMessage="${c:l('listbox.emptyMessage')}"
+							fixedLayout="true" vflex="true" span="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
 						<listhead sizable="true">
 							<listheader id="listheader_CheckListDesc"
 								label="${c:l('listheader_CheckListDesc.label')}" sort="auto"
-								width="60%" />
+								hflex="min" />
 							<listheader id="listheader_CheckListMinCount"
 								label="${c:l('listheader_CheckListMinCount.label')}" sort="auto"
-								width="8%" />
+								hflex="min" />
 							<listheader id="listheader_CheckListMaxCount"
 								label="${c:l('listheader_CheckListMaxCount.label')}" sort="auto"
-								width="8%" />
+								hflex="min" />
 							<listheader id="listheader_Active"
 								label="${c:l('listheader_Active.label')}" sort="auto"
-								width="8%" />
+								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="8%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="8%" />
+								hflex="min" />
 						</listhead>
 
 					</listbox>
+					</div>
 				</center>
 
 				<south border="none">

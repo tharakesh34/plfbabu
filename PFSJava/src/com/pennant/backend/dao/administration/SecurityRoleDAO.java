@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.administration ;
 
+import java.util.List;
+
 import com.pennant.backend.model.administration.SecurityRole;
 
 public interface SecurityRoleDAO {
@@ -64,5 +66,7 @@ public interface SecurityRoleDAO {
 	public void refresh(SecurityRole entity);
 
 	public SecurityRole getSecurityRoleByRoleCd(final String roleCd, String type);
+	
+	public List<SecurityRole> getApprovedSecurityRole();
 	
 }

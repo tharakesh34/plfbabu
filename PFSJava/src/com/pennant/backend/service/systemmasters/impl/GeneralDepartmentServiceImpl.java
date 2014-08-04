@@ -66,8 +66,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartment> implements GeneralDepartmentService {
 
-	private static Logger logger = Logger
-			.getLogger(GeneralDepartmentDAOImpl.class);
+	private static Logger logger = Logger.getLogger(GeneralDepartmentDAOImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private GeneralDepartmentDAO generalDepartmentDAO;

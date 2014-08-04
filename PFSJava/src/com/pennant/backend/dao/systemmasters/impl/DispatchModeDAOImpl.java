@@ -121,7 +121,7 @@ public class DispatchModeDAOImpl extends BasisCodeDAO<DispatchMode> implements D
 	@Override
 	public DispatchMode getDispatchModeById(final String id, String type) {
 		logger.debug("Entering");
-		DispatchMode dispatchMode = getDispatchMode();
+		DispatchMode dispatchMode = new DispatchMode();
 		dispatchMode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

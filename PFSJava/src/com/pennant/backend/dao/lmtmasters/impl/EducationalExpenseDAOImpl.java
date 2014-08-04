@@ -125,7 +125,7 @@ public class EducationalExpenseDAOImpl extends BasisNextidDaoImpl<EducationalExp
 	@Override
 	public EducationalExpense getEducationalExpenseByID(final String loanRefNumber, long id, String type) {
 		logger.debug("Entering");
-		EducationalExpense educationalExpense = getEducationalExpense();
+		EducationalExpense educationalExpense = new EducationalExpense();
 		educationalExpense.setId(id);
 		educationalExpense.setLoanRefNumber(loanRefNumber);
 
@@ -154,7 +154,7 @@ public class EducationalExpenseDAOImpl extends BasisNextidDaoImpl<EducationalExp
 
 	public List<EducationalExpense> getEducationalExpenseByEduLoanId(final String  loanRefNumber, String type) {
 		logger.debug("Entering");
-		EducationalExpense educationalExpense = getEducationalExpense();
+		EducationalExpense educationalExpense = new EducationalExpense();
 		educationalExpense.setLoanRefNumber(loanRefNumber);
 		List<EducationalExpense>  eduExpenseList;
 
@@ -256,7 +256,6 @@ public class EducationalExpenseDAOImpl extends BasisNextidDaoImpl<EducationalExp
 	 * delete Educational Expenses by key loanRefNumber
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(String  loanRefNumber,String type) {
 		logger.debug("Entering");
 		EducationalExpense educationalExpense=new EducationalExpense();

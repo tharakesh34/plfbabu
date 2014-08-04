@@ -45,7 +45,9 @@ package com.pennant.backend.model.lmtmasters;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -97,13 +99,21 @@ public class FinanceCheckListReference implements java.io.Serializable {
 	public FinanceCheckListReference() {
 		this.workflowId = WorkFlowUtil.getWorkFlowID("FinanceCheckListReference");
 	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		
+		return excludeFields;
+	}
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 	public FinanceCheckListReference(String id) {
 		this.setId(id);
 	}
 
-	//Getter and Setter methods
-	
 	public String getId() {
 		return finReference;
 	}

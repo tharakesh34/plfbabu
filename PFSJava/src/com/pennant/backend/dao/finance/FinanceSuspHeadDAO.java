@@ -43,8 +43,10 @@
 
 package com.pennant.backend.dao.finance;
 
+import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinanceSuspDetails;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 
@@ -60,5 +62,9 @@ public interface FinanceSuspHeadDAO {
 	public void initialize(FinanceSuspHead suspHead);
 	public void refresh(FinanceSuspHead suspHead);
 	public List<String> getSuspFinanceList();
+	public void delete(FinanceSuspHead financeSuspHead, String string);
+	public List<FinStatusDetail> getCustSuspDate(List<Long> CustIdList);
+	public Date getCustSuspDate(long custId);
+	public void updateSuspFlag(String finReference);
 	 
 }

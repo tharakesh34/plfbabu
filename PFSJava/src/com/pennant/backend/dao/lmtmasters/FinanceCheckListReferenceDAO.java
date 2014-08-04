@@ -56,6 +56,6 @@ public interface FinanceCheckListReferenceDAO {
 	public String save(FinanceCheckListReference financeCheckListReference,String type);
 	public void initialize(FinanceCheckListReference financeCheckListReference);
 	public void refresh(FinanceCheckListReference entity);
-	public List<FinanceCheckListReference> getFinanceCheckListReferenceByFinRef(final String id, String type);
+	public List<FinanceCheckListReference> getCheckListByFinRef(final String id, String showinStageCheckListIds, String type);
 	public void delete(String  finReference,String type) ;
 }

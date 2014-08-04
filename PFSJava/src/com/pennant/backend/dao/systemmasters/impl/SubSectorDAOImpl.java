@@ -121,7 +121,7 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 	@Override
 	public SubSector getSubSectorById(final String id, String subSectorCode,String type) {
 		logger.debug("Entering");
-		SubSector subSector = getSubSector();
+		SubSector subSector = new SubSector();
 		subSector.setId(id);
 		subSector.setSubSectorCode(subSectorCode);
 		StringBuilder selectSql = new StringBuilder();

@@ -90,26 +90,14 @@
 								<label
 									id="label_CustomerEMailDialog_CustEMailTypeCode"
 									value="${c:l('label_CustomerEMailDialog_CustEMailTypeCode.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="custEMailTypeCode"
-										width="72px" visible="false" readonly="true" />
-									<textbox
-										id="lovDescCustEMailTypeCodeName" width="200px"
-										readonly="true" />
-									<button
-										id="btnSearchCustEMailTypeCode"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="custEMailTypeCode"/>
 							</row>
 							<row>
 								<label
 									id="label_CustomerEMailDialog_CustEMailPriority"
 									value="${c:l('label_CustomerEMailDialog_CustEMailPriority.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px" />
 									<intbox id="custEMailPriority"
 										width="90px" maxlength="14" />
 								</hbox>
@@ -130,7 +118,7 @@
 				</groupbox>
 
 			</center>
-			<south sclass="south-dialog">
+			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />
 					<hbox width="75%">

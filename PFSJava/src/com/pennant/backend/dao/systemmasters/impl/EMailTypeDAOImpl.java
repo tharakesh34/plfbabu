@@ -121,7 +121,7 @@ public class EMailTypeDAOImpl extends BasisCodeDAO<EMailType> implements EMailTy
 	@Override
 	public EMailType getEMailTypeById(final String id, String type) {
 		logger.debug("Entering");
-		EMailType eMailType = getEMailType();
+		EMailType eMailType = new EMailType();
 		eMailType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

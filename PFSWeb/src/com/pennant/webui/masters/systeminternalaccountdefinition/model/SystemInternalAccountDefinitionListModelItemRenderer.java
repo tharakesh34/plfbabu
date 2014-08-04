@@ -54,40 +54,38 @@ import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
  */
-public class SystemInternalAccountDefinitionListModelItemRenderer implements ListitemRenderer, Serializable {
+public class SystemInternalAccountDefinitionListModelItemRenderer implements ListitemRenderer<SystemInternalAccountDefinition>, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+	private static final long serialVersionUID = 2899536916520031539L;
+
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, SystemInternalAccountDefinition sysIntAccDef, int count) throws Exception {
 
-		final SystemInternalAccountDefinition systemInternalAccountDefinition = (SystemInternalAccountDefinition) data;
 		Listcell lc;
-	  	lc = new Listcell(systemInternalAccountDefinition.getSIACode());
+	  	lc = new Listcell(sysIntAccDef.getSIACode());
 		lc.setParent(item);
-	  	lc = new Listcell(systemInternalAccountDefinition.getSIAName());
+	  	lc = new Listcell(sysIntAccDef.getSIAName());
 		lc.setParent(item);
-	  	lc = new Listcell(systemInternalAccountDefinition.getSIAShortName());
+	  	lc = new Listcell(sysIntAccDef.getSIAShortName());
 		lc.setParent(item);
-	  	lc = new Listcell(systemInternalAccountDefinition.getSIAAcType());
+	  	lc = new Listcell(sysIntAccDef.getSIAAcType());
 		lc.setParent(item);
 	  	lc = new Listcell();
-	  	String sIANumber = systemInternalAccountDefinition.getSIANumber();
+	  	String sIANumber = sysIntAccDef.getSIANumber();
 	  	if(SystemParameterDetails.getSystemParameterValue("CBI_AVAIL").equals("Y")){
 	  		sIANumber = sIANumber.substring(2);
 	  	}
 	  	lc.setLabel(sIANumber);
 		lc.setParent(item);
-	  	lc = new Listcell(systemInternalAccountDefinition.getRecordStatus());
+	  	lc = new Listcell(sysIntAccDef.getRecordStatus());
 		lc.setParent(item);
-		lc = new Listcell(PennantJavaUtil.getLabel(systemInternalAccountDefinition.getRecordType()));
+		lc = new Listcell(PennantJavaUtil.getLabel(sysIntAccDef.getRecordType()));
 		lc.setParent(item);
-		item.setAttribute("data", data);
+		item.setAttribute("data", sysIntAccDef);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onSystemInternalAccountDefinitionItemDoubleClicked");
 	}
 }

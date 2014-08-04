@@ -61,35 +61,43 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class CheckListDetailListModelItemRenderer implements ListitemRenderer<CheckListDetail>, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+	private static final long serialVersionUID = -7502706317125873983L;
+
 	@Override
 	public void render(Listitem item, CheckListDetail checkListDetail, int count) throws Exception {
 
-		//final CheckListDetail checkListDetail = (CheckListDetail) data;
 		Listcell lc;
-	  	/*lc = new Listcell(PennantAppUtil.formateLong(checkListDetail.getCheckListId()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.formateLong(checkListDetail.getAnsSeqNo()));
-	  	lc.setParent(item);*/
+		
 	  	lc = new Listcell(checkListDetail.getAnsDesc());
 		lc.setParent(item);
+		
 		lc = new Listcell();
 		final Checkbox cbMandatory = new Checkbox();
 		cbMandatory.setDisabled(true);
 		cbMandatory.setChecked(checkListDetail.isRemarksAllow());
 		lc.appendChild(cbMandatory);
 		lc.setParent(item);
+		
+		lc = new Listcell();
+		final Checkbox docMandatory = new Checkbox();
+		docMandatory.setDisabled(true);
+		docMandatory.setChecked(checkListDetail.isDocRequired());
+		lc.appendChild(docMandatory);
+		lc.setParent(item);
+		
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
 		cbActive.setDisabled(true);
 		cbActive.setChecked(checkListDetail.isRemarksMand());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
+		
 	  	lc = new Listcell(checkListDetail.getRecordStatus());
 		lc.setParent(item);
+		
 		lc = new Listcell(PennantJavaUtil.getLabel(checkListDetail.getRecordType()));
 		lc.setParent(item);
+		
 		item.setAttribute("data", checkListDetail);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCheckListDetailItemDoubleClicked");
 	}

@@ -88,10 +88,7 @@ public class UserServiceImpl implements UserService {
 
 
 	public SecurityUser getUserByLogin(final String userName) {
-	if(getUserDAO().getUserByLogin(userName)!=null){
 		return getUserDAO().getUserByLogin(userName);
-	}
-	    return null;
 	}
 
 	@Override
@@ -132,16 +129,16 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
-	public Collection<SecurityRight> getPageRights(SecurityRight secRight) {
-		return getSecurityRightDAO().getPageRights(secRight);
+	public Collection<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName) {
+		return getSecurityRightDAO().getPageRights(secRight, menuRightName);
 	}
 	
 	public List<SecurityRole> getUserRolesByUserID(long userID) {
 		return getUserDAO().getUserRolesByUserID(userID);
 	}
 
-	public List<SecurityRight> getRoleRights(SecurityRight secRight){
-		return getSecurityRightDAO().getRoleRights(secRight); 
+	public List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName){
+		return getSecurityRightDAO().getRoleRights(secRight, menuRightName); 
 	}
 
 	public List<SecurityRight> getRoleRights(SecurityRight secRight,String[] roles){

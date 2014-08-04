@@ -34,6 +34,7 @@
 
 package com.pennant.app.util;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -110,6 +111,9 @@ public final class DateUtility {
 	 * @return String
 	 */
 	public static String formatDate(java.util.Date date, String format) {
+		if(date == null){
+			return "";
+		}
 		SimpleDateFormat df = new SimpleDateFormat(format);
 		return df.format(date) + "";
 	}
@@ -272,6 +276,23 @@ public final class DateUtility {
 		return convert(new GregorianCalendar(year, month - 1, day));
 	}
 
+	/**
+	 * Returns the last date of the month
+	 * 
+	 * @param date
+	 *            (Date)
+	 * 
+	 * @return int
+	 */
+	public static java.sql.Date getMonthStartDate(java.util.Date date) {
+
+		int month = getMonth(date) - 1;
+		int year = getYear(date);
+		int day = 01;
+
+		return convert(new GregorianCalendar(year, month, day));
+	}
+	
 	/**
 	 * Returns the year part of the Date. This method is provided because
 	 * <code> getYear() <code> method in Date is deprecated
@@ -672,8 +693,7 @@ public final class DateUtility {
 		return months;
 	}
 
-	public static int getMonthsBetween(java.util.Date date1, java.util.Date date2,
-	        boolean includeDate2) {
+	public static int getMonthsBetween(java.util.Date date1, java.util.Date date2, boolean includeDate2) {
 
 		if (date1 == null || date2 == null)
 			return -1;
@@ -682,26 +702,23 @@ public final class DateUtility {
 			date2 = date1;
 			date1 = temp;
 		}
+		
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
 		int months = convert(date1).get(Calendar.MONTH) - convert(date2).get(Calendar.MONTH);
-
-		if (includeDate2) {
-
-			int calMonths = 0;
-			calMonths = convert(addDays(date1, 1)).get(Calendar.MONTH)
-			        - convert(date2).get(Calendar.MONTH);
-
-			if (months == 11 && calMonths == 0) {
-				months = 0;
-				years = years + 1;
-			} else {
-				months = calMonths;
-			}
-		}
+		
 		months += years * 12;
+		java.util.Date date3 = addMonths(date2, months);
 
-		if (convert(date1).get(Calendar.DATE) < convert(date2).get(Calendar.DATE))
-			months--;
+		int days = 0;
+		if (includeDate2) {
+			days = convert(addDays(date1, 1)).get(Calendar.DATE) - convert(date3).get(Calendar.DATE);
+		}else{
+			days = convert(date1).get(Calendar.DATE) - convert(date3).get(Calendar.DATE);
+		}
+		
+		if(days > 0){
+			months++;
+		}
 
 		return months;
 	}
@@ -805,6 +822,9 @@ public final class DateUtility {
 	 */
 	public static Date getDate(String date) {
 		return parseDate(date);
+	}
+	public static Date getDate(String date, String format) {
+		return parseDate(date, format);
 	}
 
 	/**
@@ -951,9 +971,40 @@ public final class DateUtility {
 		return formatedDate;
 
 	}
-	public static Date getformatAS400Date(String date) {
+//	public static Date getformatAS400Date(String date) {
+//		String temp=date.substring(1);		
+//		SimpleDateFormat df = new SimpleDateFormat(PennantConstants.AS400DateFormat);
+//		java.util.Date uDate = null;
+//		try {
+//			uDate = df.parse(temp);
+//		} catch (ParseException pe) {
+//			pe.printStackTrace();
+//		}
+//		return new Date(uDate.getTime());
+//	}
+	
+	public static java.util.Date convertDateFromAS400(BigDecimal as400Date){
+		if (as400Date != null){
+			if  (BigDecimal.ZERO.equals(as400Date)) {
+				return getUtilDate("1900-01-01","yyyy-MM-dd");
+			}else if (as400Date.equals(new BigDecimal(9999999))){
+				return getUtilDate("2049-12-31","yyyy-MM-dd"); 
+			}else{			
+				SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+				try {
+					return df.parse(new BigDecimal(19000000).add(as400Date).toString());
+				} catch (ParseException pe) {
+					pe.printStackTrace();
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	public static Date getformatCDate(String date) {
 		String temp=date.substring(1);		
-		SimpleDateFormat df = new SimpleDateFormat(PennantConstants.AS400DateFormat);
+		SimpleDateFormat df = new SimpleDateFormat("yyMMdd");
 		java.util.Date uDate = null;
 		try {
 			uDate = df.parse(temp);
@@ -963,5 +1014,23 @@ public final class DateUtility {
 		return new Date(uDate.getTime());
 	}
 	
+	/**
+	 * Format date
+	 * 
+	 * @param date
+	 * @param dateFormat
+	 * @return
+	 */
+	public static Date getFormattedDate(String date) {
+		SimpleDateFormat df = new SimpleDateFormat("yyMMdd");
+		java.util.Date uDate = null;
+		try {
+			uDate = df.parse(date);
+		} catch (ParseException pe) {
+			return null;
+		}
+		return getDBDate(formatDate(new Date(uDate.getTime()),
+		        PennantConstants.DBDateFormat));
+	}
 	
 }

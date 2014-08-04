@@ -65,6 +65,7 @@ public class ReportConfiguration implements java.io.Serializable, Entity{
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
+	private boolean alwMultiFormat = false;
 	private boolean newRecord=false;
 	private String lovValue;
 	private ReportConfiguration befImage;
@@ -323,4 +324,10 @@ public class ReportConfiguration implements java.io.Serializable, Entity{
 	public long getReportID() {
 		return reportID;
 	}
+	public void setAlwMultiFormat(boolean alwMultiFormat) {
+	    this.alwMultiFormat = alwMultiFormat;
+    }
+	public boolean isAlwMultiFormat() {
+	    return alwMultiFormat;
+    }
 }

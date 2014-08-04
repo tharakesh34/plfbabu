@@ -11,4 +11,6 @@ public interface CommitmentMovementDAO {
 	public String save(CommitmentMovement commitmentMovement,String type);
 	public void initialize(CommitmentMovement commitmentMovement);
 	public void refresh(CommitmentMovement entity);
+	public int getMaxMovementOrderByRef(String cmtReference);
+	public void deleteByRef(String cmtReference, String type);
 }

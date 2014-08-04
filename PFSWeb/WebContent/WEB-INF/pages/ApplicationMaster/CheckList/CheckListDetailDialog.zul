@@ -121,9 +121,27 @@
 									value="${c:l('label_CheckListDetailDialog_RemarksAllow.value')}" />
 								<hbox>
 									<space spacing="2px" />
-
 									<checkbox id="remarkAllow"
 										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CheckListDetailDialog_DocRequired"
+									value="${c:l('label_CheckListDetailDialog_DocRequired.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="docRequired"
+										checked="false" />
+								</hbox>
+							</row>
+							<row id="row_DocType" visible="false">
+								<label
+									id="label_CheckListDetailDialog_DocType"
+									value="${c:l('label_CheckListDetailDialog_DocType.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory"/>
+									<combobox id="docType" width="180px" readonly="true"/>
 								</hbox>
 							</row>
 							<row visible="true">
@@ -132,7 +150,6 @@
 									value="${c:l('label_CheckListDetailDialog_RemarksMand.value')}" />
 								<hbox>
 									<space spacing="2px" />
-
 									<checkbox id="remarkMand"
 										checked="false" />
 								</hbox>

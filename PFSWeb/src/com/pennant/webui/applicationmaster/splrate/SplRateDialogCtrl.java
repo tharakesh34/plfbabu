@@ -85,6 +85,8 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -445,6 +447,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -591,7 +594,6 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 				doReadOnly();
 				btnCancel.setVisible(false);
 			}
-			this.btnDelete.setVisible(false);
 			//Checking condition for deletion of Object or not
 			/*if(splRate.getRecordStatus().equals(Labels.getLabel("Approved"))){
 				final boolean  splRateDel= getSplRateService().getSplRateListById(
@@ -695,8 +697,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.sREffDate.isDisabled()){
-			this.sREffDate.setConstraint("NO EMPTY:" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_SplRateDialog_SREffDate.value")}));
+			this.sREffDate.setConstraint(new PTDateValidator(Labels.getLabel("label_SplRateDialog_SREffDate.value"), true));
 		}
 		if (!this.sRRate.isReadonly()){
 			this.sRRate.setConstraint(new RateValidator(
@@ -721,8 +722,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescSRTypeName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_SplRateDialog_SRType.value")}));
+		this.lovDescSRTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_SplRateDialog_SRType.value"), null, true));
 		logger.debug("Leaving");
 	}
 	
@@ -865,7 +865,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

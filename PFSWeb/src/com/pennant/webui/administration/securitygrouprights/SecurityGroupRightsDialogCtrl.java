@@ -88,6 +88,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseListCtrl<SecurityRight
 	protected Button        btnEdit;                                                   // autoWired
 	protected Button        btnDelete;                                                 // autoWired
 	protected Button        btnNotes;                                                  // autoWired
+	@SuppressWarnings("unused")
 	private transient ButtonStatusCtrl             btnCtrl;
 	private transient final String     btnCtroller_ClassPrefix = "button_SecRoleGroupsDialog_";
 
@@ -139,16 +140,15 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseListCtrl<SecurityRight
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace()
 				,this.btnCtroller_ClassPrefix, true, this.btnNew, this.btnEdit,
 				this.btnDelete, this.btnSave, this.btnCancel, this.btnClose,this.btnNotes);
+		
 		this.borderLayout_SecurityGroupRights.setHeight(getBorderLayoutHeight());
 		this.label_GroupCode.setValue(getSecurityGroup().getGrpCode());
 		this.label_GroupDesc.setValue(getSecurityGroup().getGrpDesc());
 		this.listbox_UnAssignedRights.setItemRenderer(new SecurityGroupRightModelItemRenderer());
 		/*get all assigned rights*/
-		assignedRights=getSecurityGroupRightsService()
-		.getRightsByGroupId(getSecurityGroup().getGrpID(),true);
+		assignedRights=getSecurityGroupRightsService().getRightsByGroupId(getSecurityGroup().getGrpID(),true);
 		/*get all unassigned rights*/
-		unAssignedRights=getSecurityGroupRightsService()
-		.getRightsByGroupId(getSecurityGroup().getGrpID(),false);
+		unAssignedRights=getSecurityGroupRightsService().getRightsByGroupId(getSecurityGroup().getGrpID(),false);
 		tempUnAssignedRights=unAssignedRights;
 		doShowDialog();
 		setDialog(this.win_SecGroupRightsDialog);

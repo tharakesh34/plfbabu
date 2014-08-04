@@ -45,19 +45,26 @@ package com.pennant.webui.lmtmasters.financeworkflow;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +77,14 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.lmtmasters.financeworkflow.model.FinanceWorkFlowListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -107,6 +118,30 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 	protected Listheader listheader_RecordStatus; 	// autoWired
 	protected Listheader listheader_RecordType;
 
+	// Filtering Fields
+	protected Textbox finType; 								// autoWired
+	protected Listbox sortOperator_finType; 				// autoWired
+	protected Textbox screenCode; 							// autoWired
+	protected Listbox sortOperator_screenCode; 				// autoWired
+	protected Textbox workFlowType; 						// autoWired
+	protected Listbox sortOperator_workFlowType; 			// autoWired
+	protected Textbox recordStatus; 						// autoWired
+	protected Listbox recordType;							// autoWired
+	protected Listbox sortOperator_recordStatus; 			// autoWired
+	protected Listbox sortOperator_recordType; 				// autoWired
+	
+	protected Label label_FinanceWorkFlowSearch_RecordStatus; 	// autoWired
+	protected Label label_FinanceWorkFlowSearch_RecordType; 	// autoWired
+	protected Label label_FinanceWorkFlowSearchResult;			// autoWired
+	
+	private Grid 			searchGrid;							// autowired
+	protected Textbox 		moduleType; 						// autowired
+	protected Radio			fromApproved;
+	protected Radio			fromWorkFlow;
+	protected Row			workFlowFrom;
+
+	private transient boolean  approvedList=false;
+	
 	// checkRights
 	protected Button btnHelp; 													// autoWired
 	protected Button button_FinanceWorkFlowList_NewFinanceWorkFlow; 			// autoWired
@@ -158,13 +193,40 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 			wfAvailable=false;
 		}
 		
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		
+		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_screenCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_screenCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_workFlowType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_workFlowType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+		}else{
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_FinanceWorkFlowSearch_RecordStatus.setVisible(false);
+			this.label_FinanceWorkFlowSearch_RecordType.setVisible(false);
+		}
+		
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 		
 		this.borderLayout_FinanceWorkFlowList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxFinanceWorkFlow.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount())); 
+		
 		// set the paging parameters
-		this.pagingFinanceWorkFlowList.setPageSize(getListRows());
+	    this.pagingFinanceWorkFlowList.setPageSize(getListRows());
 		this.pagingFinanceWorkFlowList.setDetailed(true);
 
 		this.listheader_FinType.setSortAscending(new FieldComparator("finType", true));
@@ -179,40 +241,31 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
 			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
 			this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
+			if (isFirstTask()) {
+				button_FinanceWorkFlowList_NewFinanceWorkFlow.setVisible(true);
+			   } else {
+				button_FinanceWorkFlowList_NewFinanceWorkFlow.setVisible(false);
+			}
 		}else{
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
 		
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<FinanceWorkFlow>(FinanceWorkFlow.class,getListRows());
-		this.searchObj.addSort("FinType", false);
+
+		// set the itemRenderer
+		this.listBoxFinanceWorkFlow.setItemRenderer(new FinanceWorkFlowListModelItemRenderer());
 		
-		// WorkFlow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("LMTFinanceWorkFlowDef_View");
-			if (isFirstTask()) {
-				button_FinanceWorkFlowList_NewFinanceWorkFlow.setVisible(true);
-			} else {
-				button_FinanceWorkFlowList_NewFinanceWorkFlow.setVisible(false);
-			}
-
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}else{
-			this.searchObj.addTabelName("LMTFinanceWorkFlowDef_AView");
-		}
-
-		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_FinanceWorkFlowList_NewFinanceWorkFlow.setVisible(false);
 			this.button_FinanceWorkFlowList_FinanceWorkFlowSearchDialog.setVisible(false);
 			this.button_FinanceWorkFlowList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxFinanceWorkFlow,this.pagingFinanceWorkFlowList);
-			// set the itemRenderer
-			this.listBoxFinanceWorkFlow.setItemRenderer(new FinanceWorkFlowListModelItemRenderer());
+			doSearch();
+			if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -351,9 +404,20 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingFinanceWorkFlowList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_FinanceWorkFlowList, event);
-		this.window_FinanceWorkFlowList.invalidate();
+		this.sortOperator_finType.setSelectedIndex(0);
+		this.finType.setValue("");
+		this.sortOperator_screenCode.setSelectedIndex(0);
+		this.screenCode.setValue("");
+		this.sortOperator_workFlowType.setSelectedIndex(0);
+		this.workFlowType.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -362,23 +426,7 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 	 */
 	public void onClick$button_FinanceWorkFlowList_FinanceWorkFlowSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" +event.toString());
-		/*
-		 * we can call our FinanceWorkFlowDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected FinanceWorkFlow. For handed over
-		 * these parameter only a Map is accepted. So we put the FinanceWorkFlow object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("financeWorkFlowCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		   doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -393,6 +441,80 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 		logger.debug("Entering" +event.toString());
 		PTListReportUtils reportUtils = new PTListReportUtils("FinanceWorkFlow", getSearchObj(),this.pagingFinanceWorkFlowList.getTotalSize()+1);
 		logger.debug("Leaving" +event.toString());
+	}
+	
+	public void doSearch(){
+		 logger.debug("Entering");
+			// ++ create the searchObject and init sorting ++//
+			this.searchObj = new JdbcSearchObject<FinanceWorkFlow>(FinanceWorkFlow.class,getListRows());
+
+			// Defualt Sort on the table
+			this.searchObj.addSort("FinType", false);
+			
+			// Workflow
+			if (isWorkFlowEnabled()) {
+				this.searchObj.addTabelName("LMTFinanceWorkFlowDef_View");
+
+				if(this.moduleType==null){
+					this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+					approvedList=false;
+					
+				}else{
+					if(this.fromApproved.isSelected()){
+						approvedList=true;
+					}else{
+						approvedList=false;
+					}
+				}
+			}else{
+				approvedList=true;
+			}
+			if(approvedList){
+				this.searchObj.addTabelName("LMTFinanceWorkFlowDef_AView");
+			}else{
+				this.searchObj.addTabelName("LMTFinanceWorkFlowDef_View");
+			}
+			
+			//Finance Type
+			if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_finType.getSelectedItem(),this.finType.getValue(), "finType");
+			}
+			//Screen Code
+			if (!StringUtils.trimToEmpty(this.screenCode.getValue()).equals("")) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_screenCode.getSelectedItem(),this.screenCode.getValue(), "screenCode");
+			}
+			//Screen Code
+			if (!StringUtils.trimToEmpty(this.workFlowType.getValue()).equals("")) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_workFlowType.getSelectedItem(),this.workFlowType.getValue(), "workFlowType");
+			}
+		
+			// Record Status
+			if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+			}
+			
+			// Record Type
+			if (this.recordType.getSelectedItem() != null
+					&& !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+						this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+			}
+
+			if (logger.isDebugEnabled()) {
+				final List<Filter> lf = this.searchObj.getFilters();
+				for (final Filter filter : lf) {
+					logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+					if (Filter.OP_ILIKE == filter.getOperator()) {
+						logger.debug(filter.getOperator());
+					}
+				}
+			}
+
+			// Set the ListModel for the articles.
+			getPagedListWrapper().init(this.searchObj, this.listBoxFinanceWorkFlow,this.pagingFinanceWorkFlowList);
+
+			logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

@@ -45,7 +45,9 @@ package com.pennant.webui.customermasters.customeremploymentdetail;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -53,11 +55,18 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +80,13 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customeremploymentdetail.model.CustomerEmploymentDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -109,6 +121,56 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 	protected Listheader listheader_CustEmpID; 		//autoWired
 	protected Listheader listheader_RecordStatus; 	//autoWired
 	protected Listheader listheader_RecordType;
+	
+	//search
+	protected Textbox custCIF; 									// autowired
+	protected Listbox sortOperator_custCIF; 					// autowired
+	protected Textbox custEmpName; 								// autowired
+	protected Listbox sortOperator_custEmpName; 				// autowired
+	protected Datebox custEmpFrom; 								// autowired
+	protected Listbox sortOperator_custEmpFrom; 				// autowired
+	protected Textbox custEmpDesg; 								// autowired
+	protected Listbox sortOperator_custEmpDesg; 				// autowired
+	protected Textbox custEmpDept; 								// autowired
+	protected Listbox sortOperator_custEmpDept; 				// autowired
+	protected Textbox custEmpID; 								// autowired
+	protected Listbox sortOperator_custEmpID; 					// autowired
+	protected Textbox custEmpType; 								// autowired
+	protected Listbox sortOperator_custEmpType; 				// autowired
+	protected Textbox custEmpHNbr; 								// autowired
+	protected Listbox sortOperator_custEmpHNbr; 				// autowired
+	protected Textbox custEMpFlatNbr; 							// autowired
+	protected Listbox sortOperator_custEMpFlatNbr; 				// autowired
+	protected Textbox custEmpAddrStreet; 						// autowired
+	protected Listbox sortOperator_custEmpAddrStreet; 			// autowired
+	protected Textbox custEmpPOBox; 							// autowired
+	protected Listbox sortOperator_custEmpPOBox; 				// autowired
+	protected Textbox custEmpAddrCity; 							// autowired
+	protected Listbox sortOperator_custEmpAddrCity; 			// autowired
+	protected Textbox custEmpAddrProvince; 						// autowired
+	protected Listbox sortOperator_custEmpAddrProvince; 		// autowired
+	protected Textbox custEmpAddrCountry; 						// autowired
+	protected Listbox sortOperator_custEmpAddrCountry; 			// autowired
+	protected Textbox custEmpAddrZIP; 							// autowired
+	protected Listbox sortOperator_custEmpAddrZIP; 				// autowired
+	protected Textbox custEmpAddrPhone; 						// autowired
+	protected Listbox sortOperator_custEmpAddrPhone; 			// autowired
+	protected Textbox recordStatus; 							// autowired
+	protected Listbox recordType;								// autowired
+	protected Listbox sortOperator_recordStatus; 				// autowired
+	protected Listbox sortOperator_recordType; 					// autowired
+	
+	protected Label label_CustomerEmploymentDetailSearch_RecordStatus; 	// autowired
+	protected Label label_CustomerEmploymentDetailSearch_RecordType; 	// autowired
+	protected Label label_CustomerEmploymentDetailSearchResult; 		// autowired
+	
+	protected Grid	                       searchGrid;	                                                  // autowired
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+	
+	private transient boolean	           approvedList	    = false;
 
 	// checkRights
 	protected Button btnHelp; 																	//autoWired
@@ -159,6 +221,37 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 		}else{
 			wfAvailable=false;
 		}
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_custEmpName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custEmpName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_custEmpDesg.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custEmpDesg.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_custEmpDept.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custEmpDept.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_custEmpID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custEmpID.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+		}else{
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CustomerEmploymentDetailSearch_RecordStatus.setVisible(false);
+			this.label_CustomerEmploymentDetailSearch_RecordType.setVisible(false);
+		}
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -169,6 +262,7 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CustomerEmploymentDetailList.setHeight(getBorderLayoutHeight());
+		this.listBoxCustomerEmploymentDetail.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCustomerEmploymentDetailList.setPageSize(getListRows());
@@ -184,6 +278,7 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 		this.listheader_CustEmpDept.setSortDescending(new FieldComparator("custEmpDept", false));
 		this.listheader_CustEmpID.setSortAscending(new FieldComparator("custEmpID", true));
 		this.listheader_CustEmpID.setSortDescending(new FieldComparator("custEmpID", false));
+		this.listBoxCustomerEmploymentDetail.setItemRenderer(new CustomerEmploymentDetailListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
@@ -194,26 +289,6 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<CustomerEmploymentDetail>(CustomerEmploymentDetail.class,getListRows());
-		this.searchObj.addSort("CustID", false);
-		this.searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
-
-		this.searchObj.addTabelName("CustomerEmpDetails_View");
-
-		// Work flow
-		if (isWorkFlowEnabled()) {
-			if (isFirstTask()) {
-				button_CustomerEmploymentDetailList_NewCustomerEmploymentDetail.setVisible(true);
-			} else {
-				button_CustomerEmploymentDetailList_NewCustomerEmploymentDetail.setVisible(false);
-			}
-
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}
-
-		setSearchObj(this.searchObj);
 		
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_CustomerEmploymentDetailList_NewCustomerEmploymentDetail.setVisible(false);
@@ -221,8 +296,11 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 			this.button_CustomerEmploymentDetailList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			getPagedListWrapper().init(this.searchObj,this.listBoxCustomerEmploymentDetail,	this.pagingCustomerEmploymentDetailList);
-			this.listBoxCustomerEmploymentDetail.setItemRenderer(new CustomerEmploymentDetailListModelItemRenderer());
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}	
 		logger.debug("Leaving" + event.toString());
 	}
@@ -262,8 +340,7 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerEmploymentDetail aCustomerEmploymentDetail = (CustomerEmploymentDetail) 
 								item.getAttribute("data");
-			final CustomerEmploymentDetail customerEmploymentDetail = getCustomerEmploymentDetailService()
-							.getCustomerEmploymentDetailById(aCustomerEmploymentDetail.getId());
+			final CustomerEmploymentDetail customerEmploymentDetail = getCustomerEmploymentDetailService().getCustomerEmploymentDetailById(aCustomerEmploymentDetail.getId(),aCustomerEmploymentDetail.getCustEmpName());
 
 			if (customerEmploymentDetail == null) {
 
@@ -368,6 +445,18 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
+		this.sortOperator_custCIF.setSelectedIndex(0);
+		this.custCIF.setValue("");
+		this.sortOperator_custEmpDept.setSelectedIndex(0);
+		this.custEmpDept.setValue("");
+		this.sortOperator_custEmpDesg.setSelectedIndex(0);
+		this.custEmpDesg.setValue("");
+		this.sortOperator_custEmpID.setSelectedIndex(0);
+		this.custEmpID.setValue("");
+		this.sortOperator_custEmpName.setSelectedIndex(0);
+		this.custEmpName.setValue("");
+		this.sortOperator_recordStatus.setSelectedIndex(0);
+		this.recordStatus.setValue("");
 		this.pagingCustomerEmploymentDetailList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_CustomerEmploymentDetailList, event);
 		this.window_CustomerEmploymentDetailList.invalidate();
@@ -381,25 +470,7 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 	 */
 	public void onClick$button_CustomerEmploymentDetailList_CustomerEmploymentDetailSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our CustomerEmploymentDetailDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected CustomerEmploymentDetail. For handed over
-		 * these parameter only a Map is accepted. So we put the CustomerEmploymentDetail object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerEmploymentDetailCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/CustomerEmploymentDetail/CustomerEmploymentDetailSearchDialog.zul",
-							null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -409,11 +480,99 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_CustomerEmploymentDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("CustomerEmploymentDetail", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("CustomerEmploymentDetail", getSearchObj(),this.pagingCustomerEmploymentDetailList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	
+	public void doSearch() {
+		logger.debug("Entering");
+		// ++ create the searchObject and initialize sorting ++//
+		this.searchObj = new JdbcSearchObject<CustomerEmploymentDetail>(CustomerEmploymentDetail.class,getListRows());
+		this.searchObj.addSort("CustID", false);
+		//this.searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		this.searchObj.addTabelName("CustomerEmpDetails_View");
+
+		// Work flow
+		if (isWorkFlowEnabled()) {
+
+			if (isFirstTask() && this.moduleType == null) {
+				button_CustomerEmploymentDetailList_NewCustomerEmploymentDetail.setVisible(true);
+			} else {
+				button_CustomerEmploymentDetailList_NewCustomerEmploymentDetail.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("CustomerEmpDetails_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("CustomerEmpDetails_AView");
+		}
+		
+		
+		// Customer CIF
+		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custCIF.getSelectedItem(), this.custCIF.getValue(), "lovDescCustCIF");
+		}
+		
+		// Customer EMPName
+		if (!StringUtils.trimToEmpty(this.custEmpName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custEmpName.getSelectedItem(), this.custEmpName.getValue(), "custEmpName");
+		}
+		
+		// Customer EmpDesg
+		if (!StringUtils.trimToEmpty(this.custEmpDesg.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custEmpDesg.getSelectedItem(), this.custEmpDesg.getValue(), "custEmpDesg");
+		}
+		
+		// Customer EmpDept
+		if (!StringUtils.trimToEmpty(this.custEmpDept.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custEmpDept.getSelectedItem(), this.custEmpDept.getValue(), "custEmpDept");
+		}
+		
+		// Customer EMPID
+		if (!StringUtils.trimToEmpty(this.custEmpID.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custEmpID.getSelectedItem(), this.custEmpID.getValue(), "custEmpID");
+		}
+		
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		
+		getPagedListWrapper().init(this.searchObj,this.listBoxCustomerEmploymentDetail,	this.pagingCustomerEmploymentDetailList);
+		logger.debug("Leaving");
+	}
+
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

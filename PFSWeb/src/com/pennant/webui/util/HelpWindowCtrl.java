@@ -9,6 +9,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Window;
 
+@SuppressWarnings("rawtypes")
 public class HelpWindowCtrl extends GenericForwardComposer implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -27,6 +28,7 @@ public class HelpWindowCtrl extends GenericForwardComposer implements Serializab
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void doAfterCompose(Component window) throws Exception {
 		super.doAfterCompose(window);

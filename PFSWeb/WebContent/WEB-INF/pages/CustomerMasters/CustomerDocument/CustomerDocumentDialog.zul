@@ -59,10 +59,13 @@
 				</div>
 			</north>
 			<center border="none" autoscroll="true">
+			<div>
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<grid sclass="GridLayoutNoBorder"
-						fixedLayout="true">
+					<grid id = "grid_basicDetails" sclass="GridLayoutNoBorder"
+						fixedLayout="true" >
 						<columns>
+							<column width="150px" />
+							<column />
 							<column width="150px" />
 							<column />
 						</columns>
@@ -82,25 +85,25 @@
 									<button id="btnSearchPRCustid"
 										image="/images/icons/LOVSearch.png" height="24px" />
 									<label id="custShrtName"
-										width="150px" />
+										width="250px" />
 								</hbox>
-							</row>
-							<row>
 								<label
 									id="label_CustomerDocumentDialog_CustDocType"
 									value="${c:l('label_CustomerDocumentDialog_CustDocType.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="custDocType"
-										width="72px" visible="false" readonly="true" />
-									<textbox id="lovDescCustDocTypeName"
-										width="160px" readonly="true" />
-									<button id="btnSearchCustDocType"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+								<extendedcombobox id="custDocType"/>
 							</row>
 							<row>
+								<label
+										id="label_FinDocumentDetailDialog_DocumnetName"
+										value="${c:l('label_FinDocumentDetailDialog_DocumnetName.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="documnetName"
+											width="150px" maxlength="200" readonly="true" />
+										<button upload="true"
+											label="${c:l('btBrowse_label')}" id="btnUploadDoc" hflex="1" />
+									</hbox>
 								<label
 									id="label_CustomerDocumentDialog_CustDocTitle"
 									value="${c:l('label_CustomerDocumentDialog_CustDocTitle.value')}" />
@@ -108,40 +111,21 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="custDocTitle"
-										maxlength="100" width="171px" />
+										maxlength="100" width="250px" />
 								</hbox>
 							</row>
 							<row>
+								<label
+									id="label_CustomerDocumentDialog_CustDocIssuedCountry"
+									value="${c:l('label_CustomerDocumentDialog_CustDocIssuedCountry.value')}" />
+								<extendedcombobox id="custDocIssuedCountry"/>
 								<label
 									id="label_CustomerDocumentDialog_CustDocSysName"
 									value="${c:l('label_CustomerDocumentDialog_CustDocSysName.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px"/>
 									<textbox id="custDocSysName"
-										maxlength="100" width="171px" />
-								</hbox>
-							</row>
-							<row>
-								<label
-									id="label_CustomerDocumentDialog_CustDocRcvdOn"
-									value="${c:l('label_CustomerDocumentDialog_CustDocRcvdOn.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<datebox id="custDocRcvdOn"
-										width="100px" />
-								</hbox>
-							</row>
-							<row>
-								<label
-									id="label_CustomerDocumentDialog_CustDocExpDate"
-									value="${c:l('label_CustomerDocumentDialog_CustDocExpDate.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<datebox id="custDocExpDate"
-										width="100px" />
+										maxlength="100" width="250px" />
 								</hbox>
 							</row>
 							<row>
@@ -149,30 +133,22 @@
 									id="label_CustomerDocumentDialog_CustDocIssuedOn"
 									value="${c:l('label_CustomerDocumentDialog_CustDocIssuedOn.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px" />
 									<datebox id="custDocIssuedOn"
-										width="100px" />
+										width="150px" constraint="no future:"/>
 								</hbox>
-							</row>
-							<row>
 								<label
-									id="label_CustomerDocumentDialog_CustDocIssuedCountry"
-									value="${c:l('label_CustomerDocumentDialog_CustDocIssuedCountry.value')}" />
+									id="label_CustomerDocumentDialog_CustDocExpDate"
+									value="${c:l('label_CustomerDocumentDialog_CustDocExpDate.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="custDocIssuedCountry"
-										width="18px" visible="false" readonly="true" />
-									<textbox
-										id="lovDescCustDocIssuedCountryName" width="160px"
-										readonly="true" />
-									<button
-										id="btnSearchCustDocIssuedCountry"
-										image="/images/icons/LOVSearch.png" height="24px" />
+									<datebox id="custDocExpDate"
+										width="150px" />
 								</hbox>
+	
 							</row>
-							<row>
+							<row visible="false">
 								<label
 									id="label_CustomerDocumentDialog_CustDocIsVerified"
 									value="${c:l('label_CustomerDocumentDialog_CustDocIsVerified.value')}" />
@@ -181,8 +157,6 @@
 									<checkbox id="custDocIsVerified"
 										checked="false" />
 								</hbox>
-							</row>
-							<row>
 								<label
 									id="label_CustomerDocumentDialog_CustDocVerifiedBy"
 									value="${c:l('label_CustomerDocumentDialog_CustDocVerifiedBy.value')}" />
@@ -195,7 +169,17 @@
 										id="lovDescCustDocVerifiedBy" width="160px" readonly="true" />
 								</hbox>
 							</row>
-							<row>
+							<row visible="false">
+								<label
+									id="label_CustomerDocumentDialog_CustDocRcvdOn"
+									value="${c:l('label_CustomerDocumentDialog_CustDocRcvdOn.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<datebox id="custDocRcvdOn"
+										width="150px" />
+								</hbox>
+							
 								<label
 									id="label_CustomerDocumentDialog_CustDocIsAcrive"
 									value="${c:l('label_CustomerDocumentDialog_CustDocIsAcrive.value')}" />
@@ -208,8 +192,17 @@
 						</rows>
 					</grid>
 				</groupbox>
+					<div id="docDiv">
+					
+					
+					</div>
+					<div id="finDocumentDiv">
+						<iframe id="finDocumentPdfView" width="100%" height = "100%"
+							autohide="true" />
+					</div>
+				</div>
 			</center>
-			<south sclass="south-dialog">
+			<south id="south" sclass="south-dialog" visible="false">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />
 					<hbox width="75%">

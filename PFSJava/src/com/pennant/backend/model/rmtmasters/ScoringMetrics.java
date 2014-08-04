@@ -67,6 +67,7 @@ public class ScoringMetrics implements java.io.Serializable {
 	private String lovDescMetricTotPerc;
 	private int lovDescScoreMetricSeq; // Scoring Metric Group Seq / Rule Seq order
 	private String lovDescSQLRule;
+	private BigDecimal lovDescExecutedScore; // Scoring Metric Group Seq / Rule Seq order
 	
 	private int version;
 	private long lastMntBy;
@@ -155,6 +156,18 @@ public class ScoringMetrics implements java.io.Serializable {
     }
 	public void setLovDescSQLRule(String lovDescSQLRule) {
     	this.lovDescSQLRule = lovDescSQLRule;
+    }
+	
+	public BigDecimal getLovDescExecutedScore() {
+
+		if (lovDescExecutedScore == null) {
+			lovDescExecutedScore = BigDecimal.ZERO;
+		}
+		return lovDescExecutedScore;
+	}
+
+	public void setLovDescExecutedScore(BigDecimal lovDescExecutedScore) {
+    	this.lovDescExecutedScore = lovDescExecutedScore;
     }
 
 	public String getCategoryType() {

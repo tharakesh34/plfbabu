@@ -59,7 +59,7 @@ public class OverdueChargeRecoveryComparator  implements Comparator<Object>,Seri
     public int compare(Object o1, Object o2) { 
 		OverdueChargeRecovery data = (OverdueChargeRecovery) o1; 
 		OverdueChargeRecovery data2 = (OverdueChargeRecovery) o2; 
-        return String.valueOf(data.getFinReference()).compareTo(String.valueOf(data2.getFinReference())); 
+        return String.valueOf(data.getFinODSchdDate()).compareTo(String.valueOf(data2.getFinODSchdDate())); 
     }
 
 

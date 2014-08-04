@@ -65,7 +65,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,7 +77,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.PenaltyCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -104,7 +106,7 @@ public class PenaltyCodeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window   window_PenaltyCodeDialog;// autoWired
-	protected Textbox  penaltyType; 			// autoWired
+	protected Uppercasebox  penaltyType; 			// autoWired
 	protected Textbox  penaltyDesc; 			// autoWired
 	protected Checkbox penaltyIsActive; 		// autoWired
 
@@ -605,14 +607,12 @@ public class PenaltyCodeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.penaltyType.isReadonly()){
-			this.penaltyType.setConstraint(new SimpleConstraint(PennantConstants.ALPHA_CAPS_REGEX,
-					Labels.getLabel("FIELD_CHAR_CAPS",new String[]{Labels.getLabel("" +
-							"label_PenaltyCodeDialog_PenaltyType.value")})));
+			this.penaltyType.setConstraint(new PTStringValidator(Labels.getLabel("label_PenaltyCodeDialog_PenaltyType.value"), 
+					PennantRegularExpressions.REGEX_ALPHA, true));
 		}	
 		if (!this.penaltyDesc.isReadonly()){
-			this.penaltyDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX,
-					Labels.getLabel("MAND_FIELD_DESC",new String[]{Labels.getLabel("" +
-							"label_PenaltyCodeDialog_PenaltyDesc.value")})));
+			this.penaltyDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_PenaltyCodeDialog_PenaltyDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}	
 		logger.debug("Leaving");
 	}

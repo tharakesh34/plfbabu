@@ -72,8 +72,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 public class EmploymentTypeDAOImpl extends BasisCodeDAO<EmploymentType>
 		implements EmploymentTypeDAO {
 
-	private static Logger logger = Logger
-			.getLogger(EmploymentTypeDAOImpl.class);
+	private static Logger logger = Logger.getLogger(EmploymentTypeDAOImpl.class);
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -124,7 +123,7 @@ public class EmploymentTypeDAOImpl extends BasisCodeDAO<EmploymentType>
 	@Override
 	public EmploymentType getEmploymentTypeById(final String id, String type) {
 		logger.debug("Entering");
-		EmploymentType employmentType = getEmploymentType();
+		EmploymentType employmentType = new EmploymentType();
 		employmentType.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select EmpType, EmpTypeDesc," );

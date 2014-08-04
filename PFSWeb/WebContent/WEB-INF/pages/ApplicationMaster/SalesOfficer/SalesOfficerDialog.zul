@@ -138,7 +138,7 @@
 									<textbox
 										id="lovDescSalesOffDeptName" width="200px" readonly="true" />
 									<button
-										label="${c:l('btnSearch.label')}" id="btnSearchSalesOffDept"
+										id="btnSearchSalesOffDept"
 										image="/images/icons/LOVSearch.png" height="24px" />
 								</hbox>
 							</row>

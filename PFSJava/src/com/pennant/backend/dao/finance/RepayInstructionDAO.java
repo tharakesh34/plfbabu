@@ -52,11 +52,12 @@ public interface RepayInstructionDAO {
 	public RepayInstruction getNewRepayInstruction(boolean isWIF);
 	public RepayInstruction getRepayInstructionById(String id,String type,boolean isWIF);
 	public void update(RepayInstruction repayInstruction,String type,boolean isWIF);
-	public void deleteByFinReference(String id,String type,boolean isWIF);
+	public void deleteByFinReference(String id,String type,boolean isWIF, long logKey);
 	public String save(RepayInstruction repayInstruction,String type,boolean isWIF);
 	public void initialize(RepayInstruction repayInstruction);
 	public void refresh(RepayInstruction entity);
-	List<RepayInstruction> getRepayInstructions(String id, String type,boolean isWIF);
+	public List<RepayInstruction> getRepayInstructions(String id, String type,boolean isWIF);
+	public List<RepayInstruction> getRepayInstructions(String id, String type,boolean isWIF, long logKey);
 	public void delete(RepayInstruction repayInstruction,String type,boolean isWIF);
 	public void saveList(List<RepayInstruction> repayInstruction, String type,boolean isWIF);
 	public void updateList(List<RepayInstruction> repayInstruction, String type, boolean isWIF);

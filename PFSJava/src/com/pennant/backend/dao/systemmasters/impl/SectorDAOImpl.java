@@ -121,7 +121,7 @@ public class SectorDAOImpl extends BasisCodeDAO<Sector> implements SectorDAO {
 	@Override
 	public Sector getSectorById(final String id, String type) {
 		logger.debug("Entering");
-		Sector sector = getSector();
+		Sector sector = new Sector();
 		sector.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

@@ -84,8 +84,7 @@ import com.pennant.webui.util.PTMessageUtils;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class BlackListReasonCodeListCtrl extends
-GFCBaseListCtrl<BlackListReasonCode> implements Serializable {
+public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReasonCode> implements Serializable {
 
 	private static final long serialVersionUID = -4787094221203301336L;
 	private final static Logger logger = Logger .getLogger(BlackListReasonCodeListCtrl.class);
@@ -117,7 +116,6 @@ GFCBaseListCtrl<BlackListReasonCode> implements Serializable {
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<BlackListReasonCode> searchObj;
-
 	private transient BlackListReasonCodeService blackListReasonCodeService;
 	private transient WorkFlowDetails workFlowDetails = null;
 

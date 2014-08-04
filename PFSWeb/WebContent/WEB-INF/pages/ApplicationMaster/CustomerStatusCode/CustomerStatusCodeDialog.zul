@@ -94,13 +94,23 @@
 							</row>
 							<row visible="true">
 								<label
-									id="label_CustomerStatusCodeDialog_CustStsOrder"
-									value="${c:l('label_CustomerStatusCodeDialog_CustStsOrder.value')}" />
+									id="label_CustomerStatusCodeDialog_DueDays"
+									value="${c:l('label_CustomerStatusCodeDialog_DueDays.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<intbox id="custStsOrder"
+									<intbox id="dueDays"
 										maxlength="8" width="72px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CustomerStatusCodeDialog_SuspendProfit"
+									value="${c:l('label_CustomerStatusCodeDialog_SuspendProfit.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="suspendProfit"
+										checked="false" />
 								</hbox>
 							</row>
 							<row visible="true">

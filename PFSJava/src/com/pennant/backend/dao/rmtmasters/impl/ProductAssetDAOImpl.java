@@ -121,7 +121,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 	public ProductAsset getProductAssetById(final long id, String type) {
 		logger.debug("Entering");
 
-		ProductAsset productAsset = getProductAsset();
+		ProductAsset productAsset = new ProductAsset();
 		productAsset.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
@@ -159,7 +159,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 	@Override
 	public List<ProductAsset> getProductAssetByProdCode(final String prodCode, String type) {
 		logger.debug("Entering");
-		ProductAsset productAsset = getProductAsset();
+		ProductAsset productAsset = new ProductAsset();
 		productAsset.setProductCode(prodCode);
 		StringBuilder selectSql = new StringBuilder();
 

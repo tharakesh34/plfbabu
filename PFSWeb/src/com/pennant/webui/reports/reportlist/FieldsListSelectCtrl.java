@@ -295,7 +295,6 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl implements Serializable {
 	 * 
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("unchecked")
 	private void doSave()throws InterruptedException {
 		boolean error=false;
 		int selectedCount=0;
@@ -492,7 +491,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl implements Serializable {
 	 * @param event
 	 * @throws Exception
 	 */
-	public final class onCheckBoxCheked implements EventListener{
+	public final class onCheckBoxCheked implements EventListener<Event>{
 		public void onEvent(Event event) throws Exception {
 			logger.debug("Entering");
 

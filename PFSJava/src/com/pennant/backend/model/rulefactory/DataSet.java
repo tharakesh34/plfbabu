@@ -10,6 +10,7 @@ public class DataSet {
 	private Date postDate;
 	private Date valueDate;
 	private Date schdDate;
+	private Date maturityDate;
 	private String disburseAccount;
 	private String repayAccount;
 	private String finAccount;
@@ -20,11 +21,27 @@ public class DataSet {
 	private BigDecimal disburseAmount = BigDecimal.ZERO;
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private BigDecimal downPayment = BigDecimal.ZERO;
+	private BigDecimal downPayBank = BigDecimal.ZERO;
+	private BigDecimal downPaySupl = BigDecimal.ZERO;
+	private BigDecimal feeAmount = BigDecimal.ZERO;
+	private String downPayAccount;
 	private String finType;
+	private String finPurpose;
 	private int noOfTerms;
+	private int tenure;
 	private boolean isNewRecord = false;
+	private int finJointAcCount = 0;
+	private int curRpyDefCount = 0;
+	private BigDecimal securityDeposit = BigDecimal.ZERO;
+	private BigDecimal curDisbRet = BigDecimal.ZERO;
+	private BigDecimal netRetDue = BigDecimal.ZERO;
+	private BigDecimal grcPftChg = BigDecimal.ZERO;
+	private BigDecimal claimAmt = BigDecimal.ZERO;
+	private BigDecimal grcPftTillNow = BigDecimal.ZERO;
+	private BigDecimal advDue = BigDecimal.ZERO;
 	
 	//Commitment
+	private String cmtReference;
 	private String cmtAccount;
 	private String cmtChargeAccount;
 	private BigDecimal cmtChargeAmount = BigDecimal.ZERO;
@@ -146,6 +163,13 @@ public class DataSet {
 		this.finType = finType;
 	}
 	
+	public String getFinPurpose() {
+    	return finPurpose;
+    }
+	public void setFinPurpose(String finPurpose) {
+    	this.finPurpose = finPurpose;
+    }
+	
 	public int getNoOfTerms() {
 		return noOfTerms;
 	}
@@ -186,6 +210,112 @@ public class DataSet {
     }
 	public boolean isOpenNewCmtAc() {
 	    return openNewCmtAc;
+    }
+	
+	public void setCmtReference(String cmtReference) {
+	    this.cmtReference = cmtReference;
+    }
+	public String getCmtReference() {
+	    return cmtReference;
+    }
+	
+	public void setFinJointAcCount(int finJointAcCount) {
+	    this.finJointAcCount = finJointAcCount;
+    }
+	public int getFinJointAcCount() {
+	    return finJointAcCount;
+    }
+	
+	public void setDownPayBank(BigDecimal downPayBank) {
+	    this.downPayBank = downPayBank;
+    }
+	public BigDecimal getDownPayBank() {
+	    return downPayBank;
+    }
+	
+	public void setDownPaySupl(BigDecimal downPaySupl) {
+	    this.downPaySupl = downPaySupl;
+    }
+	public BigDecimal getDownPaySupl() {
+	    return downPaySupl;
+    }
+	
+	public void setDownPayAccount(String downPayAccount) {
+	    this.downPayAccount = downPayAccount;
+    }
+	public String getDownPayAccount() {
+	    return downPayAccount;
+    }
+	
+	public void setSecurityDeposit(BigDecimal securityDeposit) {
+	    this.securityDeposit = securityDeposit;
+    }
+	public BigDecimal getSecurityDeposit() {
+	    return securityDeposit;
+    }
+	
+	public void setCurDisbRet(BigDecimal curDisbRet) {
+	    this.curDisbRet = curDisbRet;
+    }
+	public BigDecimal getCurDisbRet() {
+	    return curDisbRet;
+    }
+	
+	public void setNetRetDue(BigDecimal netRetDue) {
+	    this.netRetDue = netRetDue;
+    }
+	public BigDecimal getNetRetDue() {
+	    return netRetDue;
+    }
+	
+	public void setGrcPftChg(BigDecimal grcPftChg) {
+	    this.grcPftChg = grcPftChg;
+    }
+	public BigDecimal getGrcPftChg() {
+	    return grcPftChg;
+    }
+	
+	public void setClaimAmt(BigDecimal claimAmt) {
+	    this.claimAmt = claimAmt;
+    }
+	public BigDecimal getClaimAmt() {
+	    return claimAmt;
+    }
+	public void setGrcPftTillNow(BigDecimal grcPftTillNow) {
+	    this.grcPftTillNow = grcPftTillNow;
+    }
+	public BigDecimal getGrcPftTillNow() {
+	    return grcPftTillNow;
+    }
+	public void setAdvDue(BigDecimal advDue) {
+	    this.advDue = advDue;
+    }
+	public BigDecimal getAdvDue() {
+	    return advDue;
+    }
+	public void setTenure(int tenure) {
+	    this.tenure = tenure;
+    }
+	public int getTenure() {
+	    return tenure;
+    }
+	public Date getMaturityDate() {
+	    return maturityDate;
+    }
+	public void setMaturityDate(Date maturityDate) {
+	    this.maturityDate = maturityDate;
+    }
+	public int getCurRpyDefCount() {
+	    return curRpyDefCount;
+    }
+	public void setCurRpyDefCount(int curRpyDefCount) {
+	    this.curRpyDefCount = curRpyDefCount;
+    }
+	public BigDecimal getFeeAmount() {
+	    return feeAmount;
+    }
+	public void setFeeAmount(BigDecimal feeAmount) {
+	    this.feeAmount = feeAmount;
     }
 	
 }

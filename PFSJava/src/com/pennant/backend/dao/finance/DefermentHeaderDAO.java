@@ -52,11 +52,12 @@ public interface DefermentHeaderDAO {
 	public DefermentHeader getNewDefermentHeader(boolean isWIF);
 	public DefermentHeader getDefermentHeaderById(String id,String type,boolean isWIF);
 	public void update(DefermentHeader defermentHeader,String type,boolean isWIF);
-	public void deleteByFinReference(String id,String type,boolean isWIF);
+	public void deleteByFinReference(String id,String type,boolean isWIF, long logKey);
 	public String save(DefermentHeader defermentHeader,String type,boolean isWIF);
 	public void initialize(DefermentHeader defermentHeader);
 	public void refresh(DefermentHeader entity);
-	List<DefermentHeader> getDefermentHeaders(String id, String type,boolean isWIF);
+	public List<DefermentHeader> getDefermentHeaders(String id, String type,boolean isWIF);
+	public List<DefermentHeader> getDefermentHeaders(String id, String type,boolean isWIF, long logKey);
 	public void delete(DefermentHeader defermentHeader,String type,boolean isWIF);
 	public int getRpyDfrCount(String finReference);
 	public void saveList(List<DefermentHeader> defermentHeader, String type, boolean isWIF);

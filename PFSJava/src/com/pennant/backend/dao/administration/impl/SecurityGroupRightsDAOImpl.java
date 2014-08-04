@@ -105,6 +105,26 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		logger.debug("Leaving ");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
+	
+	/**
+	 * This method selects the  List<SecurityGroupRights> from SecGroupRights
+	 * @param    SecurityGroup (SecurityGroup)
+	 * @returns  List<SecurityGroupRights>
+	 */
+	public List<SecurityGroupRights> getSecurityGroupRightsByGrpId(long grpId){
+
+		logger.debug("Entering ");
+		Map<String, Long> namedParamters=Collections.singletonMap("GrpID", grpId);
+		StringBuilder   selectSql = new StringBuilder("SELECT GrpRightID,GrpID,RightID,AccessType,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,");
+		selectSql.append("NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId, LovDescGrpCode ,");     
+		selectSql.append("LovDescRightName FROM SecGroupRights_Aview where GrpID =:GrpID");
+
+		logger.debug("selectSql: " + selectSql.toString());      
+
+		RowMapper< SecurityGroupRights> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityGroupRights.class);
+		logger.debug("Leaving ");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), namedParamters,typeRowMapper);
+	}
 
 	/**
 	 * This method saves new record into SecGroupRights table

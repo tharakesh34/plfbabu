@@ -302,7 +302,7 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl implements Seria
 			newAccount.setFlagCreateNew(false);
 			newAccount.setInternalAc(false);
 			iAccountList.add(newAccount);//TODO
-			newAccount = getAccountInterfaceService().fetchExistAccount(iAccountList,"N",true).get(0);
+			newAccount = getAccountInterfaceService().fetchExistAccount(iAccountList,"N").get(0);
 
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			this.accounts.setNewRecord(true);

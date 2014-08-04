@@ -110,7 +110,7 @@ public class RateUtil implements Serializable {
 				rateDetail.setBaseRefRate(getBaseRateDAO().getBaseRateByType(
 				        rateDetail.getBaseRateCode(), rateDetail.getValueDate()).getBRRate());
 			} else {
-				rateDetail.setBaseRefRate(new BigDecimal(0));
+				rateDetail.setBaseRefRate(BigDecimal.ZERO);
 			}
 
 			if (rateDetail.getBaseRefRate() == null) {
@@ -119,7 +119,7 @@ public class RateUtil implements Serializable {
 				errorParm[0] = PennantJavaUtil.getLabel("label_BaseRate") + ": " + valueParm[0];
 
 				errorDetails.add(new ErrorDetails("BaseRate", "41002", errorParm, valueParm));
-				rateDetail.setBaseRefRate(new BigDecimal(0));
+				rateDetail.setBaseRefRate(BigDecimal.ZERO);
 				error = true;
 			}
 
@@ -128,7 +128,7 @@ public class RateUtil implements Serializable {
 					rateDetail.setSplRefRate(getSplRateDAO().getSplRateByID(
 					        rateDetail.getSplRateCode(), rateDetail.getValueDate()).getSRRate());
 				} else {
-					rateDetail.setSplRefRate(new BigDecimal(0));
+					rateDetail.setSplRefRate(BigDecimal.ZERO);
 				}
 
 				if (rateDetail.getSplRefRate() == null) {
@@ -136,7 +136,7 @@ public class RateUtil implements Serializable {
 					errorParm[0] = PennantJavaUtil.getLabel("label_SplRateCode") + ": "
 					        + valueParm[0];
 					errorDetails.add(new ErrorDetails("SplRate", "41002", errorParm, valueParm));
-					rateDetail.setBaseRefRate(new BigDecimal(0));
+					rateDetail.setBaseRefRate(BigDecimal.ZERO);
 					error = true;
 				}
 			}

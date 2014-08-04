@@ -73,11 +73,12 @@ public interface UserService {
 	
 	public Collection<SecurityRight> getMenuRightsByUser(SecurityUser user);
 	
-	public Collection<SecurityRight> getPageRights(SecurityRight secRight);
+	public Collection<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName);
 
 	public List<SecurityRole> getUserRolesByUserID(long userID);
 	
-	public List<SecurityRight> getRoleRights(SecurityRight secRight);
+	public List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName);
+	
 	public List<SecurityRight> getRoleRights(SecurityRight secRight,String[] roles); 
 	
 }

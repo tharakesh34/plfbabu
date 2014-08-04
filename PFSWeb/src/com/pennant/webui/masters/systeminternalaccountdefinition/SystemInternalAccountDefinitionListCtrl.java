@@ -43,22 +43,28 @@
 
 package com.pennant.webui.masters.systeminternalaccountdefinition;
 
-
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +77,14 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.masters.systeminternalaccountdefinition.model.SystemInternalAccountDefinitionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -85,7 +95,7 @@ import com.pennant.webui.util.PTReportUtils;
  */
 public class SystemInternalAccountDefinitionListCtrl extends GFCBaseListCtrl<SystemInternalAccountDefinition> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 5774729281482510692L;
 	private final static Logger logger = Logger.getLogger(SystemInternalAccountDefinitionListCtrl.class);
 
 	/*
@@ -108,6 +118,34 @@ public class SystemInternalAccountDefinitionListCtrl extends GFCBaseListCtrl<Sys
 	protected Listheader listheader_SIANumber; // autowired
 	protected Listheader listheader_RecordStatus; // autowired
 	protected Listheader listheader_RecordType;
+	
+	//search
+	protected Textbox sIACode; // autowired
+	protected Listbox sortOperator_sIACode; // autowired
+	protected Textbox sIAName; // autowired
+	protected Listbox sortOperator_sIAName; // autowired
+	protected Textbox sIAShortName; // autowired
+	protected Listbox sortOperator_sIAShortName; // autowired
+	protected Textbox sIAAcType; // autowired
+	protected Listbox sortOperator_sIAAcType; // autowired
+	protected Textbox sIANumber; // autowired
+	protected Listbox sortOperator_sIANumber; // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType;	// autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+	
+	protected Label label_SystemInternalAccountDefinitionSearch_RecordStatus; // autowired
+	protected Label label_SystemInternalAccountDefinitionSearch_RecordType; // autowired
+	protected Label label_SystemInternalAccountDefinitionSearchResult; // autowired
+	
+	protected Grid	                       searchGrid;	
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+
+	private transient boolean	           approvedList	    = false;
 
 	// checkRights
 	protected Button btnHelp; // autowired
@@ -147,11 +185,43 @@ public class SystemInternalAccountDefinitionListCtrl extends GFCBaseListCtrl<Sys
 		}else{
 			wfAvailable=false;
 		}
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		
+		this.sortOperator_sIACode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sIACode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_sIAName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sIAName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_sIAShortName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sIAShortName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_sIAAcType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sIAAcType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_sIANumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sIANumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+		}else{
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_SystemInternalAccountDefinitionSearch_RecordStatus.setVisible(false);
+			this.label_SystemInternalAccountDefinitionSearch_RecordType.setVisible(false);
+		}
 		
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 		
 		this.borderLayout_SystemInternalAccountDefinitionList.setHeight(getBorderLayoutHeight());
+		this.listBoxSystemInternalAccountDefinition.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingSystemInternalAccountDefinitionList.setPageSize(getListRows());
@@ -177,35 +247,19 @@ public class SystemInternalAccountDefinitionListCtrl extends GFCBaseListCtrl<Sys
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
-		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<SystemInternalAccountDefinition>(SystemInternalAccountDefinition.class,getListRows());
-		this.searchObj.addSort("SIACode", false);
-		// Workflow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("SystemInternalAccountDef_View");
-			if (isFirstTask()) {
-				button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition.setVisible(true);
-			} else {
-				button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition.setVisible(false);
-			}
-
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}else{
-			this.searchObj.addTabelName("SystemInternalAccountDef_AView");
-		}
-
-		setSearchObj(this.searchObj);
+		// set the itemRenderer
+		this.listBoxSystemInternalAccountDefinition.setItemRenderer(new SystemInternalAccountDefinitionListModelItemRenderer());
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition.setVisible(false);
 			this.button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog.setVisible(false);
 			this.button_SystemInternalAccountDefinitionList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxSystemInternalAccountDefinition,this.pagingSystemInternalAccountDefinitionList);
-			// set the itemRenderer
-			this.listBoxSystemInternalAccountDefinition.setItemRenderer(new SystemInternalAccountDefinitionListModelItemRenderer());
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -340,9 +394,29 @@ public class SystemInternalAccountDefinitionListCtrl extends GFCBaseListCtrl<Sys
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingSystemInternalAccountDefinitionList.setActivePage(0);
+		this.sortOperator_sIAAcType.setSelectedIndex(0);
+		this.sIAAcType.setValue("");
+		this.sortOperator_sIACode.setSelectedIndex(0);
+		this.sIACode.setValue("");
+		this.sortOperator_sIAName.setSelectedIndex(0);
+		this.sIAName.setValue("");
+		this.sortOperator_sIANumber.setSelectedIndex(0);
+		this.sIANumber.setValue("");
+		this.sortOperator_sIAShortName.setSelectedIndex(0);
+		this.sIAShortName.setValue("");
+		
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		doSearch();
+		/*this.pagingSystemInternalAccountDefinitionList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_SystemInternalAccountDefinitionList, event);
-		this.window_SystemInternalAccountDefinitionList.invalidate();
+		this.window_SystemInternalAccountDefinitionList.invalidate();*/
 		logger.debug("Leaving");
 	}
 
@@ -352,24 +426,7 @@ public class SystemInternalAccountDefinitionListCtrl extends GFCBaseListCtrl<Sys
 	
 	public void onClick$button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog(Event event) throws Exception {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		/*
-		 * we can call our SystemInternalAccountDefinitionDialog zul-file with parameters. So we can
-		 * call them with a object of the selected SystemInternalAccountDefinition. For handed over
-		 * these parameter only a Map is accepted. So we put the SystemInternalAccountDefinition object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("systemInternalAccountDefinitionCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/Account/SystemInternalAccountDefinition/SystemInternalAccountDefinitionSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -379,13 +436,89 @@ public class SystemInternalAccountDefinitionListCtrl extends GFCBaseListCtrl<Sys
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_SystemInternalAccountDefinitionList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		PTReportUtils.getReport("SystemInternalAccountDefinition", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("SystemInternalAccountDefinition", getSearchObj(),this.pagingSystemInternalAccountDefinitionList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<SystemInternalAccountDefinition>(SystemInternalAccountDefinition.class,getListRows());
+		this.searchObj.addSort("SIACode", false);
+		this.searchObj.addTabelName("SystemInternalAccountDef_View");
+		if (isWorkFlowEnabled()) {
 
+			if (isFirstTask() && this.moduleType == null) {
+				button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition.setVisible(true);
+			} else {
+				button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("SystemInternalAccountDef_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("SystemInternalAccountDef_AView");
+		}
+		// System Internal A/c code
+		if (!StringUtils.trimToEmpty(this.sIACode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_sIACode.getSelectedItem(), this.sIACode.getValue(), "sIACode");
+		}
+		
+		// System Internal A/c Name
+		if (!StringUtils.trimToEmpty(this.sIAName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_sIAName.getSelectedItem(), this.sIAName.getValue(), "sIAName");
+		}
+		// System Internal A/c Short Name
+		if (!StringUtils.trimToEmpty(this.sIAShortName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_sIAShortName.getSelectedItem(), this.sIAShortName.getValue(), "sIAShortName");
+		}
+		//System Internal A/c Type
+		if (!StringUtils.trimToEmpty(this.sIAAcType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_sIAAcType.getSelectedItem(), this.sIAAcType.getValue(), "sIAAcType");
+		}
+		//System Internal A/c Number
+		if (!StringUtils.trimToEmpty(this.sIANumber.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_sIANumber.getSelectedItem(), this.sIANumber.getValue(), "sIANumber");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSystemInternalAccountDefinition, this.pagingSystemInternalAccountDefinitionList);
+		logger.debug("Leaving" );
+	}
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	public void setSystemInternalAccountDefinitionService(SystemInternalAccountDefinitionService systemInternalAccountDefinitionService) {
 		this.systemInternalAccountDefinitionService = systemInternalAccountDefinitionService;
 	}

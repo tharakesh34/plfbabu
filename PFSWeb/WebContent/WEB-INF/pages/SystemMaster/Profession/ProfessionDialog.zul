@@ -95,6 +95,16 @@
 							</row>
 							<row visible="true">
 								<label
+									id="label_ProfessionDialog_ProfessionSelfEmployee"
+									value="${c:l('label_ProfessionDialog_ProfessionSelfEmployee.value')}" />
+								<hbox>
+									<space spacing="2px"  />
+									<checkbox id="professionSelfEmployee"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
 									id="label_ProfessionDialog_ProfessionIsActive"
 									value="${c:l('label_ProfessionDialog_ProfessionIsActive.value')}" />
 								<hbox>

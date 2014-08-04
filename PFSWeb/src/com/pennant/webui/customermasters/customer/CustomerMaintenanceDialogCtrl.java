@@ -113,9 +113,11 @@ import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -2973,29 +2975,23 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 		//Basic Details Tab-->2.Personal Details(Retail Customer)
 		if (this.gb_personalDetails.isVisible()) {
 			if (!this.custFName.isReadonly()) {
-				this.custFName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustFName.value") })));
+				this.custFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustFName.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custMName.isReadonly()) {
-				this.custMName.setConstraint(new SimpleConstraint(PennantConstants.NM_NAME_REGEX,
-					Labels.getLabel("FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustMName.value") })));
+				this.custMName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustMName.value"), PennantRegularExpressions.REGEX_NAME, false));
 			}
 			if (!this.custLName.isReadonly()) {
-				this.custLName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustLName.value") })));
+				this.custLName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustFName.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custShrtName.isReadonly()) {
-				this.custShrtName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustShrtName.value") })));
+				this.custShrtName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustShrtName.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custPOB.isReadonly() && !this.custPOB.isDisabled()) {
-				this.custPOB.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustPOB.value") })));
+				this.custPOB.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustPOB.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custDOB.isReadonly() && !this.custDOB.isDisabled()) {
 				this.custDOB.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:"+ Labels.getLabel(
@@ -3003,58 +2999,48 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 							"label_CustomerMaintenanceDialog_CustDOB.value") }));
 			}
 			if (!this.custMotherMaiden.isReadonly()) {
-				this.custMotherMaiden.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustMotherMaiden.value") })));
+				this.custMotherMaiden.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustMotherMaiden.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!(this.custLng.getValue().equals(PennantConstants.default_Language))
 					&& this.row_localLngFM.isVisible()) {
 
-				this.custFNameLclLng.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustFNameLclLng.value") })));
+				this.custFNameLclLng.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustFNameLclLng.value"),
+						PennantRegularExpressions.REGEX_NAME, true));
 
 				if (!(this.custMName.getValue().equals(""))) {
-					this.custMNameLclLng.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-							Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-									"label_CustomerMaintenanceDialog_CustMNameLclLng.value") })));
+					this.custMNameLclLng.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustMNameLclLng.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 				}
 
-				this.custLNameLclLng.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-						Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-								"label_CustomerMaintenanceDialog_CustLNameLclLng.value") })));
+				this.custLNameLclLng.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustLNameLclLng.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 
-				this.custShrtNameLclLng.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-						Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-								"label_CustomerMaintenanceDialog_CustShrtNameLclLng.value") })));
+				this.custShrtNameLclLng.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustShrtNameLclLng.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 
 			}
 		} else if(this.gb_corporateCustomerPersonalDetails.isVisible()){
 			//Basic Details Tab-->3.Organization Details(Corporate Customer)
 			if (!this.corpCustOrgName.isReadonly()) {
-				this.corpCustOrgName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustLName.value") })));
+				this.corpCustOrgName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustLNameLclLng.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.corpCustShrtName.isReadonly()) {
-				this.corpCustShrtName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustShrtName.value") })));
+				this.corpCustShrtName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustShrtNameLclLng.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.corpCustPOB.isReadonly()) {
-				this.corpCustPOB.setConstraint(new SimpleConstraint( PennantConstants.NAME_REGEX,
-						Labels.getLabel( "MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-								"label_CustomerMaintenanceDialog_CorpCustPOB.value") })));
+				this.corpCustPOB.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CorpCustPOB.value"),
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!(this.custLng.getValue().equals(PennantConstants.default_Language))
 					&& this.row_localLngCorpCustCS.isVisible()) {
-				this.corpCustOrgNameLclLng.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustOrgNameLclLng.value") })));
+				this.corpCustOrgNameLclLng.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustOrgNameLclLng.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 
-				this.corpCustShrtNameLclLng.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX,
-					Labels.getLabel("MAND_FIELD_CHARACTER",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustShrtNameLclLng.value") })));
+				this.corpCustShrtNameLclLng.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustShrtNameLclLng.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 
 			}
 		}
@@ -3085,9 +3071,8 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 								"label_CustomerMaintenanceDialog_CustVisaExpiryDate.value") }));
 				}
 				if (this.custIsStaff.isChecked()) {
-					this.custStaffID.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_REGEX,
-						Labels.getLabel("MAND_FIELD_CHAR_NUMBER", new String[] { Labels.getLabel(
-								"label_CustomerMaintenanceDialog_CustStaffID.value") })));
+					this.custStaffID.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustStaffID.value"), 
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 				}
 			}
 			
@@ -3111,9 +3096,8 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 			}
 		}
 		if (!this.custIsActive.isChecked()) {
-			this.custInactiveReason.setConstraint(new SimpleConstraint( PennantConstants.NAME_REGEX,
-				Labels.getLabel("MAND_FIELD_CHARACTER", new String[] { Labels.getLabel(
-						"label_CustomerMaintenanceDialog_CustInactiveReason.value") })));
+			this.custInactiveReason.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustInactiveReason.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (custIsClosed.isChecked()) {
 			this.custClosedOn.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
@@ -3130,8 +3114,8 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 		
 		// Preferential Details Tab
 		if (!this.custDSA.isReadonly()) {
-			this.custDSA.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_REGEX,Labels.getLabel(
-				"MAND_FIELD_CHARACTER",new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustDSA.value") })));
+			this.custDSA.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustDSA.value"), 
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.custReferedBy.isReadonly() && !this.custReferedBy.getValue().equals("")) {
 			this.custReferedBy.setConstraint(new SimpleConstraint(this.CUSTCIF_REGEX,Labels.getLabel(
@@ -5063,10 +5047,7 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 
 	public void onSelect$custStmtFrqDays(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = validateCombobox(this.custStmtFrqCode);
-		String StmtFrqMonth = validateCombobox(this.custStmtFrqMth);
-		String StmtFrqday = validateCombobox(this.custStmtFrqDays);
-		onSelectFrqDay(StmtFrqCode, StmtFrqMonth, StmtFrqday, this.custStmtFrq);
+		onSelectFrqDay(custStmtFrqCode, custStmtFrqMth, custStmtFrqDays, this.custStmtFrq);
 		logger.debug("Leaving" + event.toString());
 	}
 

@@ -43,7 +43,10 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -57,10 +60,15 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinanceSuspDetails;
 import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 
 public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> implements FinanceSuspHeadDAO {
 
@@ -94,7 +102,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 	}
 	
 	/**
-	 * This method initialise the Record.
+	 * This method initialize the Record.
 	 * @param FinanceSuspHead (suspHead)
  	 * @return FinanceSuspHead
 	 */
@@ -128,10 +136,11 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		financeSuspHead.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinBranch, FinType," );
-		selectSql.append(" CustId, FinSuspSeq, FinIsInSusp, ManualSusp, FinSuspDate, FinSuspAmt, FinCurSuspAmt ");
+		selectSql.append(" CustId, FinSuspSeq, FinIsInSusp, ManualSusp, FinSuspDate, FinSuspTrfDate, FinSuspAmt, FinCurSuspAmt, ");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(", lovDescFinFormatter, lovDescCustCIFName,lovDescCustShrtName ");
+			selectSql.append(" lovDescFinFormatter, lovDescCustCIFName,lovDescCustShrtName, ");
 		}
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" From FinSuspHead");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
@@ -148,7 +157,6 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		logger.debug("Leaving");
 		return financeSuspHead;
 	}
-	
 	
 	@Override
 	public List<String> getSuspFinanceList() {
@@ -182,10 +190,11 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		StringBuilder insertSql =new StringBuilder("Insert Into FinSuspHead");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference, FinBranch, FinType, CustId," );
-		insertSql.append(" FinSuspSeq, FinIsInSusp, ManualSusp, FinSuspDate, FinSuspAmt, FinCurSuspAmt )");
+		insertSql.append(" FinSuspSeq, FinIsInSusp, ManualSusp, FinSuspDate, FinSuspTrfDate, FinSuspAmt, FinCurSuspAmt, " );
+		insertSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId )");
 		insertSql.append(" Values(:FinReference, :FinBranch, :FinType, :CustId, ");
-		insertSql.append(" :FinSuspSeq, :FinIsInSusp, :ManualSusp, :FinSuspDate, :FinSuspAmt,");
-		insertSql.append(" :FinCurSuspAmt) ");
+		insertSql.append(" :FinSuspSeq, :FinIsInSusp, :ManualSusp, :FinSuspDate, :FinSuspTrfDate, :FinSuspAmt, :FinCurSuspAmt, " );
+		insertSql.append(" :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId ) ");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
@@ -214,7 +223,9 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set FinReference = :FinReference, FinBranch = :FinBranch, FinType = :FinType,");
 		updateSql.append(" CustId = :CustId, FinSuspSeq = :FinSuspSeq, FinIsInSusp = :FinIsInSusp, ManualSusp =:ManualSusp,");
-		updateSql.append(" FinSuspDate = :FinSuspDate, FinSuspAmt = :FinSuspAmt, FinCurSuspAmt = :FinCurSuspAmt ");
+		updateSql.append(" FinSuspDate = :FinSuspDate, FinSuspTrfDate=:FinSuspTrfDate, FinSuspAmt = :FinSuspAmt, FinCurSuspAmt = :FinCurSuspAmt, " );
+		updateSql.append(" Version =:Version , LastMntOn=:LastMntOn, LastMntBy=:LastMntBy,RecordStatus=:RecordStatus, RoleCode=:RoleCode, " );
+		updateSql.append(" NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
 		
 		logger.debug("updateSql: " + updateSql.toString());
@@ -224,6 +235,50 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * This method Deletes the Record from the BMTAcademics or
+	 * BMTAcademics_Temp. if Record not deleted then throws DataAccessException
+	 * with error 41003. delete Academic Details by key AcademicLevel
+	 * 
+	 * @param Academic
+	 *            Details (academic)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public void delete(FinanceSuspHead financeSuspHead,String type) {
+		logger.debug("Entering");
+		int recordCount = 0;
+
+		StringBuilder deleteSql =new StringBuilder();
+		deleteSql.append("Delete From FinSuspHead");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where FinReference =:FinReference ");
+
+		logger.debug("deleteSql: "+ deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
+
+		try {
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
+
+			if (recordCount <= 0) {
+				ErrorDetails errorDetails= getError("41004", financeSuspHead.getFinReference(), financeSuspHead.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) {
+				};
+			}
+		} catch (DataAccessException e) {
+			logger.debug("Error in delete Method");
+			logger.error(e);
+			ErrorDetails errorDetails= getError("41006", financeSuspHead.getFinReference(), financeSuspHead.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {
+			};
 		}
 		logger.debug("Leaving");
 	}
@@ -272,6 +327,92 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		RowMapper<FinanceSuspDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSuspDetails.class);
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+	}
+	
+	/**
+	 * Method for Fetch Finance Suspend Details List
+	 */
+	@Override
+	public List<FinStatusDetail> getCustSuspDate(List<Long> CustIdList) {
+		logger.debug("Entering");
+		
+		Map<String, List<Long>> beanParameters=new HashMap<String, List<Long>>();
+		beanParameters.put("CustId", CustIdList);
+		
+		StringBuilder selectSql =new StringBuilder("Select CustId, MIN(FinSuspTrfDate) AS ValueDate " );
+		selectSql.append(" FROM FinSuspHead where CustId IN(:CustId) AND FinIsInSusp = 1 GROUP BY CustId ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinStatusDetail.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+	}
+	
+	/**
+	 * Method for Fetch Finance Suspend Details List
+	 */
+	@Override
+	public Date getCustSuspDate(long custId) {
+		logger.debug("Entering");
+		
+		FinanceSuspHead suspHead = new FinanceSuspHead();
+		suspHead.setCustId(custId);
+		
+		StringBuilder selectSql =new StringBuilder("Select CustStsChgDate FROM Customers where CustId = :CustId ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(suspHead);
+		logger.debug("Leaving");
+		
+		Date suspFromDate = null;
+		try {
+			suspFromDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Date.class);
+        } catch (Exception e) {
+        	logger.error(e.getMessage());
+        	suspFromDate = null;
+        }
+		return suspFromDate;
+	}
+
+	/**
+	 * This method updates the Record FinanceSuspHead Flag
+	 */
+	@Override
+	public void updateSuspFlag(String finReference ) {
+		logger.debug("Entering");
+		
+		FinanceSuspHead suspHead = new FinanceSuspHead();
+		suspHead.setFinReference(finReference);
+		
+		StringBuilder	updateSql =new StringBuilder(" Update FinSuspHead ");
+		updateSql.append(" Set FinIsInSusp = 0  Where FinReference =:FinReference");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(suspHead);
+		try {
+			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.debug("Finance Reference Record Not in Suspense.");
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * This method for getting the error details
+	 * @param errorId (String)
+	 * @param Id (String)
+	 * @param userLanguage (String)
+	 * @return ErrorDetails
+	 */
+	private ErrorDetails  getError(String errorId, String finReference ,String userLanguage){
+		String[][] parms= new String[1][1]; 
+		parms[1][0] = finReference;
+
+		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference")+ ":" + parms[1][0];
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 
 }

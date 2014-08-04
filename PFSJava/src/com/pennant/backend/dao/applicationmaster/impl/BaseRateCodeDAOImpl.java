@@ -120,7 +120,7 @@ public class BaseRateCodeDAOImpl extends BasisCodeDAO<BaseRateCode> implements
 	@Override
 	public BaseRateCode getBaseRateCodeById(final String id, String type) {
 		logger.debug("Entering");
-		BaseRateCode baseRateCode = getBaseRateCode();
+		BaseRateCode baseRateCode = new BaseRateCode();
 		baseRateCode.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select BRType, BRTypeDesc," );

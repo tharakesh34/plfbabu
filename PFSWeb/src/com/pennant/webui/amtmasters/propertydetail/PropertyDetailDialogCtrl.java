@@ -76,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.amtmasters.PropertyDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -565,7 +567,7 @@ public class PropertyDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(true);
 		
 		if (!this.propertyDetailDesc.isReadonly()){
-			this.propertyDetailDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_PropertyDetailDialog_PropertyDetailDesc.value")}));
+			this.propertyDetailDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_PropertyDetailDialog_PropertyDetailDesc.value"), PennantRegularExpressions.REGEX_ALPHA, true));
 		}	
 	logger.debug("Leaving");
 	}

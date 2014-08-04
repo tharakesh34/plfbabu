@@ -61,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class LovFieldDetailListModelItemRenderer implements ListitemRenderer<LovFieldDetail>, Serializable {
 
 	private static final long serialVersionUID = -5660446477604159549L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
-	@Override
-	public void render(Listitem item, LovFieldDetail data, int count) throws Exception {
 
-		final LovFieldDetail lovFieldDetail = (LovFieldDetail) data;
+	@Override
+	public void render(Listitem item, LovFieldDetail lovFieldDetail, int count) throws Exception {
+
 		Listcell lc;
 	  	lc = new Listcell(lovFieldDetail.getFieldCode()+"-"+lovFieldDetail.getLovDescFieldCodeName());
 		lc.setParent(item);
@@ -81,7 +80,7 @@ public class LovFieldDetailListModelItemRenderer implements ListitemRenderer<Lov
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(lovFieldDetail.getRecordType()));
 		lc.setParent(item);
-		item.setAttribute("data", data);
+		item.setAttribute("data", lovFieldDetail);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onLovFieldDetailItemDoubleClicked");
 	}
 }

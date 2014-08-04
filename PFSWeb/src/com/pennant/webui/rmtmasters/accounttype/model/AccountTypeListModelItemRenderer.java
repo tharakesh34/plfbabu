@@ -53,6 +53,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 
@@ -75,7 +76,8 @@ public class AccountTypeListModelItemRenderer implements ListitemRenderer<Accoun
 		lc.setParent(item);
 		lc = new Listcell(accountType.getAcHeadCode());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.getlabelDesc(accountType.getAcPurpose(),PennantAppUtil.getAccountPurpose()));
+	  	lc = new Listcell(PennantAppUtil.getlabelDesc(accountType.getAcPurpose(),
+	  			PennantStaticListUtil.getAccountPurpose()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbIsInternalAc = new Checkbox();

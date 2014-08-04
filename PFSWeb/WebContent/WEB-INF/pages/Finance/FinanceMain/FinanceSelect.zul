@@ -54,7 +54,7 @@
 								sclass="GridLayoutNoBorder" fixedLayout="true"
 								style="border:0px">
 								<columns>
-									<column width="130px" />
+									<column width="150px" />
 									<column width="50px" />
 									<column />
 									<column width="130px" />
@@ -65,16 +65,17 @@
 								<rows>
 									<row>
 										<label
-											id="label_FinanceMainSearch_FinReference"
-											value="${c:l('label_FinanceMainSelect_FinReference.value')}" />
+											id="label_FinanceMainSearch_CustCIF"
+											value="${c:l('label_FinanceMainSelect_CustCIF.value')}" />
 										<listbox
-											id="sortOperator_finReference" width="43px" mold="select"
+											id="sortOperator_custCIF" width="43px" mold="select"
 											rows="1" />
 										<hbox>
-											<uppercasebox
-												id="finReference" width="150px" />
-											<button id="btnSearchFinRef"
-												tooltiptext="${c:l('label_FinanceMainSelect_btnSearchFinRef.tooltiptext')}"
+											<uppercasebox id="custCIF"
+												width="150px" />
+											<button
+												id="btnSearchCustCIF"
+												tooltiptext="${c:l('label_FinanceMainSelect_btnSearchCustCIF.tooltiptext')}"
 												image="/images/icons/LOVSearch.png" height="24px" />
 										</hbox>
 										<label
@@ -148,17 +149,16 @@
 									</row>
 									<row>
 										<label
-											id="label_FinanceMainSearch_CustCIF"
-											value="${c:l('label_FinanceMainSelect_CustCIF.value')}" />
+											id="label_FinanceMainSearch_FinReference"
+											value="${c:l('label_FinanceMainSelect_FinReference.value')}" />
 										<listbox
-											id="sortOperator_custCIF" width="43px" mold="select"
+											id="sortOperator_finReference" width="43px" mold="select"
 											rows="1" />
 										<hbox>
-											<uppercasebox id="custCIF"
-												width="150px" />
-											<button
-												id="btnSearchCustCIF"
-												tooltiptext="${c:l('label_FinanceMainSelect_btnSearchCustCIF.tooltiptext')}"
+											<uppercasebox
+												id="finReference" width="150px" />
+											<button id="btnSearchFinRef"
+												tooltiptext="${c:l('label_FinanceMainSelect_btnSearchFinRef.tooltiptext')}"
 												image="/images/icons/LOVSearch.png" height="24px" />
 										</hbox>
 									</row>
@@ -177,32 +177,58 @@
 								label="${c:l('btnClear.label')}"
 								tooltiptext="${c:l('btnClear.tooltiptext')}"/>
 						</toolbar>
-						<listbox id="listBoxFinance" vflex="true"
-							tooltiptext="${c:l('listbox.tooltiptext1')}" width="99.7%"
-							height="98%" multiple="false">
+						<listbox id="listBoxFinance" 
+						    emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+							vflex="true" span="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
 							<listhead sizable="true">
-								<listheader id="listheader_FinReference"
-									label="${c:l('listheader_FinReference.label')}" sort="false"
-									width="20%" />
 								<listheader id="listheader_FinType"
-									label="${c:l('listheader_FinType.label')}" sort="false"
-									width="12%" />
-								<listheader id="listheader_FinCcy"
-									label="${c:l('listheader_FinCcy.label')}" sort="false"
-									width="8%" />
-								<listheader
-									id="listheader_ScheduleMethod"
-									label="${c:l('label_ScheduleMethod.value')}" sort="false"
-									width="15%" />
-								<listheader
-									id="listheader_ProfitDaysBasis"
-									label="${c:l('label_ProfitDaysBasis.value')}" sort="false"
-									width="17%" />
+									sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_FinType.label')}"
+									hflex="min" />
+								<listheader id="listheader_FinProduct"
+									sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_FinProduct.label')}"
+									hflex="min" />
 								<listheader id="listheader_CustCIF"
-									label="${c:l('label_CustCIF.value')}" sort="false" width="13%" />
+									sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_CustCIF.label')}"
+									hflex="min" />
+								<listheader id="listheader_FinRef"
+									sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_FinRef.label')}"
+									hflex="min" />
 								<listheader id="listheader_FinBranch"
-									label="${c:l('label_FinBranc.value')}" sort="false"
-									width="15%" />
+									sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_FinBranch.label')}"
+									hflex="min" />
+								<listheader id="listheader_FinStartDate"
+									sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_FinStartDate.label')}"
+									hflex="min" />
+								<listheader
+									id="listheader_NumberOfTerms" sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_NumberOfTerms.label')}"
+									hflex="min" />
+								<listheader id="listheader_MaturityDate"
+									sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_MaturityDate.label')}"
+									hflex="min" />
+								<listheader id="listheader_FinCcy"
+									sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_FinCcy.label')}"
+									hflex="min" />
+								<listheader id="listheader_FinAmount"
+									sort="auto"
+									label="${c:l('listheader_FinanceEnquiryList_FinAmount.label')}"
+									hflex="min" />
+								<listheader id="listheader_CurFinAmount"
+									label="${c:l('listheader_FinanceEnquiryList_CurFinAmount.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_FinanceEnquiryList_RecordStatus.label')}"
+									sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</vlayout>

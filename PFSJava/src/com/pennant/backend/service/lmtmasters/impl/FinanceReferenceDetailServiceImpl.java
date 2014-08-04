@@ -168,7 +168,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 
 			financeReference.setCheckList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, "","_AQView"));
 			financeReference.setAggrementList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,"", "_AAView"));
-			//financeReference.setEligibilityRuleList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,"", "_AEView"));
+			financeReference.setEligibilityRuleList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,"", "_AEView"));
 			financeReference.setScoringGroupList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,"", "_ASGView"));
 			financeReference.setCorpScoringGroupList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,"", "_ACSGView"));
 
@@ -565,7 +565,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	 */
 	public List<FinanceCheckListReference> getFinanceCheckListReferenceFinRef(final String id, String type){
 
-		return getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceByFinRef(id, type);
+		return getFinanceCheckListReferenceDAO().getCheckListByFinRef(id, null, type);
 
 	}
 	

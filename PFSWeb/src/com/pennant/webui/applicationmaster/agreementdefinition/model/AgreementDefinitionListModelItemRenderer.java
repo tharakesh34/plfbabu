@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listItems in the listBox.
  * 
@@ -62,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class AgreementDefinitionListModelItemRenderer implements ListitemRenderer<AgreementDefinition>, Serializable {
 
 	private static final long serialVersionUID = 1277410242979825193L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, AgreementDefinition agreementDefinition, int count) throws Exception {
 
-		//final AgreementDefinition agreementDefinition = (AgreementDefinition) data;
 		Listcell lc;
 	  	lc = new Listcell(agreementDefinition.getAggCode());
 		lc.setParent(item);

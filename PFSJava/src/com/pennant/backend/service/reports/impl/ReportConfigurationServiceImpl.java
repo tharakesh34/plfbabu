@@ -58,6 +58,7 @@ import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.dao.reports.ReportFilterFieldsDAO;
 import com.pennant.backend.dao.reports.ReportSearchTemplateDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.reports.ReportConfiguration;
@@ -333,8 +334,8 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		ReportConfiguration aReportConfiguration = (ReportConfiguration) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = aReportConfiguration.getUserDetails().getUsrLanguage();
+	//	ReportConfiguration aReportConfiguration = (ReportConfiguration) auditHeader.getAuditDetail().getModelData();
+		//String usrLanguage = aReportConfiguration.getUserDetails().getUsrLanguage();
 
 		if(auditHeader.getAuditDetails()!=null && !auditHeader.getAuditDetails().isEmpty()){
 			//auditHeader.setAuditDetails(getDetailValidation().detailListValidation(auditHeader.getAuditDetails(), method,usrLanguage));
@@ -742,6 +743,18 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	public ReportConfiguration getNewReportConfiguration() {
 		return getReportConfigurationDAO().getNewReportConfiguration();
 	}
+
+	//Month End Report Data Fetching
+	
+	@Override
+    public List<ValueLabel> getMonthEndReportGrpCodes() {
+	    return getReportConfigurationDAO().getMonthEndReportGrpCodes();
+    }
+
+	@Override
+    public List<ValueLabel> getReportListByGrpCode(String grpCode) {
+	    return getReportConfigurationDAO().getReportListByGrpCode(grpCode);
+    }
 
 
 }

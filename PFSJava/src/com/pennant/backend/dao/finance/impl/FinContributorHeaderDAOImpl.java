@@ -124,7 +124,7 @@ public class FinContributorHeaderDAOImpl extends BasisCodeDAO<FinContributorHead
 	@Override
 	public FinContributorHeader getFinContributorHeaderById(final String id, String type) {
 		logger.debug("Entering");
-		FinContributorHeader contributorHeader = getFinContributorHeader();
+		FinContributorHeader contributorHeader = new FinContributorHeader();
 
 		contributorHeader.setId(id);
 
@@ -204,7 +204,7 @@ public class FinContributorHeaderDAOImpl extends BasisCodeDAO<FinContributorHead
 		logger.debug("Entering");
 		int recordCount = 0;
 		
-		FinContributorHeader contributorHeader = getFinContributorHeader();
+		FinContributorHeader contributorHeader = new FinContributorHeader();
 		contributorHeader.setFinReference(finReference);
 
 		StringBuilder deleteSql = new StringBuilder("Delete From ");

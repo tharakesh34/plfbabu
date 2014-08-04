@@ -86,11 +86,14 @@ public class CustomerLimitIntefaceServiceEquationImpl implements CustomerLimitIn
     }
 	
 	@Override
-    public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit) throws CustomerLimitProcessException {
+    public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit customerLimit)
+            throws CustomerLimitProcessException {
 		logger.debug("Entering");
 		List<CustomerLimit> customerLimits = null;
 		try{
-			customerLimits =  getCustLimitProcess().fetchGroupLimitDetails(custLimit);
+			
+			customerLimits =  getCustLimitProcess().fetchGroupLimitDetails(customerLimit);
+			
 		}catch (CustomerLimitProcessException e) {
 			throw e;
 		}
@@ -98,11 +101,13 @@ public class CustomerLimitIntefaceServiceEquationImpl implements CustomerLimitIn
 	    return customerLimits;
     }
 
+
 	public CustomerLimitProcess getCustLimitProcess() {
     	return custLimitProcess;
     }
 	public void setCustLimitProcess(CustomerLimitProcess custLimitProcess) {
     	this.custLimitProcess = custLimitProcess;
     }
+
 
 }

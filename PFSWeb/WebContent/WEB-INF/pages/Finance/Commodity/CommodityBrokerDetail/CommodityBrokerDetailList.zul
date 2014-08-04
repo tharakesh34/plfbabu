@@ -59,13 +59,13 @@
 					<listhead sizable="true">
 						<listheader id="listheader_BrokerCode"
 							label="${c:l('listheader_BrokerCode.label')}" sort="auto"
-							width="8%" />
+							width="13%" />
 						<listheader id="listheader_BrokerCIF"
 							label="${c:l('listheader_BrokerCIF.label')}" sort="auto"
 							width="20%" />
 						<listheader id="listheader_BrokerFrom"
 							label="${c:l('listheader_BrokerFrom.label')}" sort="auto"
-							width="35%" />
+							width="20%" />
 						<listheader id="listheader_BrokerAddrHNbr"
 							label="${c:l('listheader_BrokerAddrHNbr.label')}" sort="auto"
 							width="18%" />
@@ -76,7 +76,8 @@
 							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 							width="10%" />
 						<listheader id="listheader_RecordType"
-							label="${c:l('listheader_RecordType.label')}" sort="auto" />
+							label="${c:l('listheader_RecordType.label')}" sort="auto" 
+							width="10%"/>
 					</listhead>
 
 				</listbox>

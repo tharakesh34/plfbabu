@@ -3,13 +3,16 @@ package com.pennant.webui.dedup.dedupparm;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.util.PennantConstants;
 
 
 public class FetchDedupDetails {
@@ -33,6 +36,12 @@ public class FetchDedupDetails {
 		return new FetchDedupDetails(userRole, aFinanceDetail, parent).getFinanceDetail();
 	}
 	
+	/**
+	 * Method of Dedup Check for Customer Details
+	 * @param userRole
+	 * @param aCustomerDetails
+	 * @param parent
+	 */
 	private  FetchDedupDetails(String userRole, CustomerDetails aCustomerDetails,Component parent){
 		super();
 
@@ -42,8 +51,10 @@ public class FetchDedupDetails {
 		ShowDedupListBox details = null;
 
 		if(customerDedup.size() > 0) {
-
-			Object dataObject = ShowDedupListBox.show(parent,customerDedup,aCustomerDetails.getCustDedup().getDedupFields());
+			String compareFileds[]=new String[2];
+			compareFileds[0]=PennantConstants.CUST_DEDUP_LISTFILED2;
+			compareFileds[1]=PennantConstants.CUST_DEDUP_LISTFILED3;
+			Object dataObject = ShowDedupListBox.show(parent,customerDedup,PennantConstants.CUST_DEDUP_LIST_FIELDS,aCustomerDetails.getCustomer(),aCustomerDetails.getCustomerDocumentsList(),compareFileds);
 			details 	= (ShowDedupListBox) dataObject;
 
 			if (details != null) {
@@ -70,18 +81,30 @@ public class FetchDedupDetails {
 		setCustomerDetails(aCustomerDetails);
 	}
 	
-	//TODO Edit for Finance Details DeDup
+	/**
+	 * Method of Dedup Check for Finance Details
+	 * @param userRole
+	 * @param aFinanceDetail
+	 * @param parent
+	 */
 	private  FetchDedupDetails(String userRole, FinanceDetail aFinanceDetail,Component parent){
 		super();
 
 		setFinanceDetail(aFinanceDetail);
-
-		/*List<?> loanDedup = getDedupParmService().fetchLoanDedupDetails(userRole, aFinanceDetail);
+		FinanceDedup financeDedup = getDedupParmService().getCustomerById(aFinanceDetail.getFinScheduleData().getFinanceMain().getCustID());
+		if(financeDedup != null){
+			financeDedup.setFinReference(aFinanceDetail.getFinScheduleData().getFinReference());
+			financeDedup.setLikeCustFName(financeDedup.getCustFName()!=null?"%"+financeDedup.getCustFName()+"%":"");
+			financeDedup.setLikeCustMName(financeDedup.getCustMName()!=null?"%"+financeDedup.getCustMName()+"%":"");
+			financeDedup.setLikeCustLName(financeDedup.getCustLName()!=null?"%"+financeDedup.getCustLName()+"%":"");
+		}
+		
+		List<?> loanDedup = getDedupParmService().fetchFinDedupDetails(userRole, financeDedup);
 		ShowDedupListBox details = null;
 
 		if(loanDedup.size() > 0) {
 
-			Object dataObject = ShowDedupListBox.show(parent,loanDedup,);
+			Object dataObject = ShowDedupListBox.show(parent,loanDedup,Labels.getLabel("label_FinDedupFields_label"));
 			details 	= (ShowDedupListBox) dataObject;
 
 			if (details != null) {
@@ -94,17 +117,17 @@ public class FetchDedupDetails {
 		}
 
 		if (userAction == -1) {
-			aCustomerDetails.getCustomer().setDedupFound(false);
+			aFinanceDetail.getFinScheduleData().getFinanceMain().setDedupFound(false);
 		} else {
-			aCustomerDetails.getCustomer().setDedupFound(true);
+			aFinanceDetail.getFinScheduleData().getFinanceMain().setDedupFound(true);
 
 			if (userAction == 1) {
-				aCustomerDetails.getCustomer().setSkipDedup(true);
+				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(true);
 			} else {
-				aCustomerDetails.getCustomer().setSkipDedup(false);
+				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(false);
 			}
 		}
-*/
+
 		setFinanceDetail(aFinanceDetail);
 	}
 	
@@ -139,6 +162,5 @@ public class FetchDedupDetails {
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
-	
 	
 }

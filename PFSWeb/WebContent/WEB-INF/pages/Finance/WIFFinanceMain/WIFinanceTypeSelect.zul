@@ -7,43 +7,89 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window id="window_FinanceTypeSelect"
-		title="${c:l('window_FinanceTypeSelect.title')}" border="none"
-		apply="${wifinanceTypeSelectListCtrl}" width="1000px" height="500px"
+		title="${c:l('window_FinanceTypeSelect.title')}" border="normal"
+		apply="${wifinanceTypeSelectListCtrl}" width="45%" height="25%"
 		sizable="false"
 		style="border:0px; padding-left:5px; padding-right:5px;"  closable="true">
-		<listbox id="listBoxFinanceType"
-			tooltiptext="${c:l('listbox.tooltiptext1')}" multiple="false"
-			height="400px">
-			<listhead sizable="true">
-				<listheader id="listheader_FinType"
-					label="${c:l('listheader_FinType.label')}" sort="auto" width="15%" />
-				<listheader id="listheader_FinTypeDesc"
-					label="${c:l('listheader_FinTypeDesc.label')}" sort="auto"
-					width="25%" />
-				<listheader id="listheader_FinCcy"
-					label="${c:l('listheader_FinCcy.label')}" sort="auto" width="20%" />
-				<listheader id="listheader_FinBasicType"
-					label="${c:l('listheader_FinDaysCalType.label')}" sort="auto"
-					width="15%" />
-				<listheader id="listheader_FinAcType"
-					label="${c:l('listheader_FinAcType.label')}" sort="auto"
-					width="25%" />
-			</listhead>
-		</listbox>
-		<paging id="pagingFinanceTypeList" />
-		<grid>
-			<rows>
-				<row valign="top">
-					<hbox align="start">
-						<button id="btnSelect" height="25px"
-							label="${c:l('btnSelect.label')}"
-							tooltiptext="${c:l('btnSelect.tooltiptext')}" />
-						<button id="btnClose" height="25px"
-							label="${c:l('btnClose.label')}"
-							tooltiptext="${c:l('btnClose.tooltiptext')}" />
-					</hbox>
-				</row>
-			</rows>
-		</grid>
+		<borderlayout id="borderLayout_FinanceTypeList">
+		
+			<center border="none" autoscroll="true">
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px">
+					<columns>
+						<column width="150px" />
+						<column />
+					</columns>
+					<rows>
+						<row id="finTypeRow" visible="true">
+							<label
+								id="label_WIFFinanceMainDialog_FinType"
+								value="${c:l('label_WIFFinanceMainDialog_FinType.value')}" />
+							<extendedcombobox id="finType"/>
+						</row>
+						<row id="wIfCustSelectionRow" visible="true">
+							<label
+								id="label_WIFFinanceMainDialog_Customer"
+								value="${c:l('label_WIFFinanceMainDialog_Customer.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory"/>
+								<hbox>
+									<radiogroup
+											id="custType" >
+											<grid
+												sclass="GridLayoutNoBorder" fixedLayout="true"
+												style="border:0px">
+												<columns>
+													<column
+														width="150px" />
+													<column />
+												</columns>
+												<rows>
+													<row
+														visible="true">
+														<radio
+															id="custType_New" label="New Customer" />
+														<radio
+															id="custType_Exist" label="Existing Customer" />
+													</row>
+												</rows>
+											</grid>
+										</radiogroup>
+								</hbox>
+							</hbox>
+						</row>
+						<row id="customerRow" visible="false">
+							<label
+								id="label_WIFFinanceMainDialog_CustomerCIF"
+								value="${c:l('label_WIFFinanceMainDialog_CustomerCIF.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<longbox id="custID" width="171px"
+									maxlength="26" visible="false" />
+								<textbox id="lovDescCustCIF"
+									width="150px" />
+								<button id="btnSearchCustCIF"
+									image="/images/icons/LOVSearch.png" height="24px" tabindex="5" />
+								<label id="custShrtName" />
+							</hbox>
+						</row>
+						<row visible="true">
+							<space spacing="200px" />
+							<hbox>
+								<space spacing="2px" />
+								<hbox>
+									<space spacing="10px" />
+									<button id="btnProceed"
+										label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
+										height="24px" style="align:center"
+										tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}">
+									</button>
+								</hbox>
+							</hbox>
+						</row>
+					</rows>
+				</grid>
+			</center>
+		</borderlayout>
 	</window>
 </zk>

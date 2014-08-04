@@ -39,44 +39,48 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.lmtmasters.impl;
 
+import java.util.ArrayList;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.lmtmasters.MortgageLoanDetailDAO;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.finance.validation.MortgageLoanDetailValidation;
 import com.pennant.backend.service.lmtmasters.MortgageLoanDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 
 /**
  * Service implementation for methods that depends on <b>MortgageLoanDetail</b>.<br>
  */
 public class MortgageLoanDetailServiceImpl extends GenericService<MortgageLoanDetail> implements MortgageLoanDetailService {
 	private final static Logger logger = Logger.getLogger(MortgageLoanDetailServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private MortgageLoanDetailDAO mortgageLoanDetailDAO;
-	
-	private MortgageLoanDetailValidation mortgageLoanDetailValidation;
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 	public MortgageLoanDetailDAO getMortgageLoanDetailDAO() {
 		return mortgageLoanDetailDAO;
 	}
@@ -88,22 +92,13 @@ public class MortgageLoanDetailServiceImpl extends GenericService<MortgageLoanDe
 	public MortgageLoanDetail getMortgageLoanDetail() {
 		return getMortgageLoanDetailDAO().getMortgageLoanDetail();
 	}
-	
+
 	@Override
 	public MortgageLoanDetail getNewMortgageLoanDetail() {
 		return getMortgageLoanDetailDAO().getNewMortgageLoanDetail();
 	}
-	
-	/**
-	 * @return the mortgageLoanDetailValidation
-	 */
-	public MortgageLoanDetailValidation getMortgageLoanDetailValidation() {
-		if(mortgageLoanDetailValidation==null){
-			this.mortgageLoanDetailValidation = new MortgageLoanDetailValidation(mortgageLoanDetailDAO);
-		}
-		return this.mortgageLoanDetailValidation;
-	}
-	
+
+
 	/**
 	 * saveOrUpdate	method method do the following steps.
 	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
@@ -123,7 +118,7 @@ public class MortgageLoanDetailServiceImpl extends GenericService<MortgageLoanDe
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");	
-		
+
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -131,7 +126,7 @@ public class MortgageLoanDetailServiceImpl extends GenericService<MortgageLoanDe
 		}
 		String tableType="";
 		MortgageLoanDetail mortgageLoanDetail = (MortgageLoanDetail) auditHeader.getAuditDetail().getModelData();
-		
+
 		if (mortgageLoanDetail.isWorkflow()) {
 			tableType="_TEMP";
 		}
@@ -168,10 +163,10 @@ public class MortgageLoanDetailServiceImpl extends GenericService<MortgageLoanDe
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		MortgageLoanDetail mortgageLoanDetail = (MortgageLoanDetail) auditHeader.getAuditDetail().getModelData();
 		getMortgageLoanDetailDAO().delete(mortgageLoanDetail,"");
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -191,7 +186,7 @@ public class MortgageLoanDetailServiceImpl extends GenericService<MortgageLoanDe
 	public MortgageLoanDetail getMortgageLoanDetailById(String id) {
 		return getMortgageLoanDetailDAO().getMortgageLoanDetailById(id,"_View");
 	}
-	
+
 	/**
 	 * getApprovedMortgageLoanDetailById fetch the details by using
 	 * MortgageLoanDetailDAO's getMortgageLoanDetailById method . with parameter
@@ -205,11 +200,11 @@ public class MortgageLoanDetailServiceImpl extends GenericService<MortgageLoanDe
 	public MortgageLoanDetail getApprovedMortgageLoanDetailById(String id) {
 		return getMortgageLoanDetailDAO().getMortgageLoanDetailById(id,"_AView");
 	}	
-		
+
 	/**
 	 * This method refresh the Record.
 	 * @param MortgageLoanDetail (mortgageLoanDetail)
- 	 * @return mortgageLoanDetail
+	 * @return mortgageLoanDetail
 	 */
 	@Override
 	public MortgageLoanDetail refresh(MortgageLoanDetail mortgageLoanDetail) {
@@ -332,9 +327,173 @@ public class MortgageLoanDetailServiceImpl extends GenericService<MortgageLoanDe
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
 		logger.debug("Entering");
-		auditHeader = getMortgageLoanDetailValidation().mortgageLoanDetailValidation(auditHeader, method);
+		auditHeader = doValidation(auditHeader, method);
 		auditHeader=nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+
+	@Override
+	public AuditDetail validate(MortgageLoanDetail mortgageLoanDetail, String method, String auditTranType, String  usrLanguage){
+		return doValidation(mortgageLoanDetail, auditTranType, method, usrLanguage);
+	}
+
+	@Override
+	public AuditDetail saveOrUpdate(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType) {
+		logger.debug("Entering");
+
+		String[] fields = PennantJavaUtil.getFieldDetails(mortgageLoanDetail, mortgageLoanDetail.getExcludeFields());
+
+		mortgageLoanDetail.setWorkflowId(0);
+		if (mortgageLoanDetail.isNewRecord()) {
+			getMortgageLoanDetailDAO().save(mortgageLoanDetail, tableType);
+		} else {
+			getMortgageLoanDetailDAO().update(mortgageLoanDetail, tableType);
+		}
+
+		logger.debug("Leaving");
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], mortgageLoanDetail.getBefImage(), mortgageLoanDetail);
+
+	}
+
+
+	@Override
+	public AuditDetail doApprove(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType) {
+		logger.debug("Entering");
+
+		String[] fields = PennantJavaUtil.getFieldDetails(mortgageLoanDetail, mortgageLoanDetail.getExcludeFields());
+
+		mortgageLoanDetail.setRoleCode("");
+		mortgageLoanDetail.setNextRoleCode("");
+		mortgageLoanDetail.setTaskId("");
+		mortgageLoanDetail.setNextTaskId("");
+		mortgageLoanDetail.setWorkflowId(0);
+
+		getMortgageLoanDetailDAO().save(mortgageLoanDetail, tableType);
+
+		logger.debug("Leaving");
+		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], mortgageLoanDetail.getBefImage(), mortgageLoanDetail);
+	}
+
+	@Override
+	public AuditDetail delete(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType) {
+		logger.debug("Entering");
+
+		String[] fields = PennantJavaUtil.getFieldDetails(mortgageLoanDetail, mortgageLoanDetail.getExcludeFields());	
+
+		getMortgageLoanDetailDAO().delete(mortgageLoanDetail, tableType);
+
+		logger.debug("Leaving");
+		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], mortgageLoanDetail.getBefImage(), mortgageLoanDetail);
+	}
+
+
+	public AuditHeader doValidation(AuditHeader auditHeader, String method){
+		logger.debug("Entering");
+		
+		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	public AuditDetail doValidation(MortgageLoanDetail mortgageLoanDetail, String auditTranType, String method, String  usrLanguage){
+		logger.debug("Entering");
+		String[] fields = PennantJavaUtil.getFieldDetails(mortgageLoanDetail, mortgageLoanDetail.getExcludeFields());
+		
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1], mortgageLoanDetail.getBefImage(), mortgageLoanDetail);
+		
+		logger.debug("Leaving");
+		return validate(auditDetail, method, usrLanguage);
+	}
+
+
+	private AuditDetail validate(AuditDetail auditDetail,  String method, String usrLanguage){
+		logger.debug("Entering");
+
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+		MortgageLoanDetail mortgageLoanDetail= (MortgageLoanDetail) auditDetail.getModelData();
+
+		MortgageLoanDetail tempMortgageLoanDetail= null;
+		if (mortgageLoanDetail.isWorkflow()){
+			tempMortgageLoanDetail = getMortgageLoanDetailDAO().getMortgageLoanDetailById(
+					mortgageLoanDetail.getId(), "_Temp");
+		}
+		MortgageLoanDetail befMortgageLoanDetail= getMortgageLoanDetailDAO().getMortgageLoanDetailById(
+				mortgageLoanDetail.getId(), "");
+
+		MortgageLoanDetail old_MortgageLoanDetail= mortgageLoanDetail.getBefImage();
+
+
+		String[] errParm= new String[1];
+		String[] valueParm= new String[1];
+		valueParm[0]=String.valueOf(mortgageLoanDetail.getId());
+		errParm[0]=PennantJavaUtil.getLabel("label_LoanRefNumber")+":"+valueParm[0];
+
+		if (mortgageLoanDetail.isNew()){ // for New record or new record into work flow
+
+			if (!mortgageLoanDetail.isWorkflow()){// With out Work flow only new records  
+				if (befMortgageLoanDetail !=null){	// Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+				}	
+			}else{ // with work flow
+				if (mortgageLoanDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
+					if (befMortgageLoanDetail !=null || tempMortgageLoanDetail!=null ){ // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+								PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+					}
+				}else{ // if records not exists in the Main flow table
+					if (befMortgageLoanDetail ==null || tempMortgageLoanDetail!=null ){
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+								PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+					}
+				}
+			}
+		}else{
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!mortgageLoanDetail.isWorkflow()){	// With out Work flow for update and delete
+
+				if (befMortgageLoanDetail ==null){ // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
+				}else{
+					if (old_MortgageLoanDetail!=null && !old_MortgageLoanDetail.getLastMntOn().equals(
+							befMortgageLoanDetail.getLastMntOn())){
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
+								PennantConstants.TRAN_DEL)){
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+									PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
+						}else{
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+									PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+						}
+					}
+				}
+			}else{
+
+				if (tempMortgageLoanDetail==null ){ // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				}
+
+				if (tempMortgageLoanDetail!=null  && old_MortgageLoanDetail!=null && !old_MortgageLoanDetail.getLastMntOn().equals(
+						tempMortgageLoanDetail.getLastMntOn())){ 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				}
+			}
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		if(StringUtils.trimToEmpty(method).equals("doApprove") || !mortgageLoanDetail.isWorkflow()){
+			mortgageLoanDetail.setBefImage(befMortgageLoanDetail);	
+		}
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+
 }

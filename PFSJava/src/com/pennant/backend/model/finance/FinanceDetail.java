@@ -1,5 +1,4 @@
 /**
- * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. All
  * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
@@ -34,13 +33,20 @@ import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerScoringCheck;
+import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.lmtmasters.CarLoanDetail;
+import com.pennant.backend.model.lmtmasters.CommidityLoanDetail;
+import com.pennant.backend.model.lmtmasters.CommidityLoanHeader;
 import com.pennant.backend.model.lmtmasters.EducationalLoan;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.lmtmasters.GenGoodsLoanDetail;
+import com.pennant.backend.model.lmtmasters.GoodsLoanDetail;
 import com.pennant.backend.model.lmtmasters.HomeLoanDetail;
 import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
+import com.pennant.backend.model.lmtmasters.SharesDetail;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -71,12 +77,25 @@ public class FinanceDetail implements java.io.Serializable {
 	private EducationalLoan educationalLoan;
 	private HomeLoanDetail homeLoanDetail;
 	private MortgageLoanDetail mortgageLoanDetail;
+	private List<GoodsLoanDetail> goodsLoanDetails;
+	private List<GenGoodsLoanDetail> genGoodsLoanDetails;
+	private CommidityLoanHeader commidityLoanHeader;
+	private List<CommidityLoanDetail> commidityLoanDetails;
+	private List<SharesDetail> sharesDetails;
+	private IndicativeTermDetail indicativeTermDetail;
+	private FinancePremiumDetail premiumDetail;
 
 	private List<FinanceCheckListReference> financeCheckList = new ArrayList<FinanceCheckListReference>();
 	private List<FinanceReferenceDetail> checkList = new ArrayList<FinanceReferenceDetail>();
+	private Map<Long, Long> lovDescSelAnsCountMap = new HashMap<Long, Long>();
+	private List<FinanceReferenceDetail> finRefDetailsList;
+	
 	private List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>();
-	private List<FinAgreementDetail> finAgrDetailList = new ArrayList<FinAgreementDetail>();
+	//private List<FinAgreementDetail> finAgrDetailList = new ArrayList<FinAgreementDetail>();
+	
 	private List<FinanceReferenceDetail> eligibilityRuleList = new ArrayList<FinanceReferenceDetail>();
+	private List<FinanceEligibilityDetail> finElgRuleList = new ArrayList<FinanceEligibilityDetail>();
+	private List<FinanceEligibilityDetail> elgRuleList = new ArrayList<FinanceEligibilityDetail>();
 	
 	//Scoring Details Purpose
 	private List<FinanceReferenceDetail> scoringGroupList = new ArrayList<FinanceReferenceDetail>();
@@ -86,9 +105,6 @@ public class FinanceDetail implements java.io.Serializable {
 	private HashMap<Long, List<ScoringSlab>> scoringSlabs = new HashMap<Long, List<ScoringSlab>>();
 	private List<FinanceScoreHeader> finScoreHeaderList = new ArrayList<FinanceScoreHeader>();
 	private HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
-	
-	private Map<Long, Long> lovDescSelAnsCountMap = new HashMap<Long, Long>();
-	private List<FinanceReferenceDetail> finRefDetailsList;
 	
 	private List<Rule> feeCharges = new ArrayList<Rule>();	
 	
@@ -100,12 +116,20 @@ public class FinanceDetail implements java.io.Serializable {
 	
 	private List<TransactionEntry> stageTransactionEntries = new ArrayList<TransactionEntry>();
 	private List<ReturnDataSet> stageAccountingList = new ArrayList<ReturnDataSet>();
+	
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-
+	
+	private List<GuarantorDetail> gurantorsDetailList = new ArrayList<GuarantorDetail>();
+	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>();
+	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<ContractorAssetDetail>();
+	
+	private WIFCustomer customer;
+	
 	private String accountingEventCode;
 	private boolean actionSave = false;
+	private boolean dataFetchComplete = false;
 	private String userAction;
-
+	
 	//Additional Fields
 	//**********************************************************************
 	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
@@ -121,6 +145,10 @@ public class FinanceDetail implements java.io.Serializable {
 		}
 		this.lovDescExtendedFieldValues.put(string, object);
 	}
+	
+	
+	private boolean sufficientScore;
+	
 
 	//***********************************************************************
 
@@ -234,6 +262,27 @@ public class FinanceDetail implements java.io.Serializable {
 	public MortgageLoanDetail getMortgageLoanDetail() {
 		return mortgageLoanDetail;
 	}
+	public void setGoodsLoanDetails(List<GoodsLoanDetail> goodsLoanDetails) {
+	    this.goodsLoanDetails = goodsLoanDetails;
+    }
+
+	public List<GoodsLoanDetail> getGoodsLoanDetails() {
+	    return goodsLoanDetails;
+    }
+
+	public void setCommidityLoanHeader(CommidityLoanHeader commidityLoanHeader) {
+	    this.commidityLoanHeader = commidityLoanHeader;
+    }
+	public CommidityLoanHeader getCommidityLoanHeader() {
+	    return commidityLoanHeader;
+    }
+
+	public List<CommidityLoanDetail> getCommidityLoanDetails() {
+    	return commidityLoanDetails;
+    }
+	public void setCommidityLoanDetails(List<CommidityLoanDetail> commidityLoanDetails) {
+    	this.commidityLoanDetails = commidityLoanDetails;
+    }
 
 	public CustomerEligibilityCheck getCustomerEligibilityCheck() {
 		return customerEligibilityCheck;
@@ -284,12 +333,12 @@ public class FinanceDetail implements java.io.Serializable {
 		this.aggrementList = aggrementList;
 	}
 
-	public void setFinAgrDetailList(List<FinAgreementDetail> finAgrDetailList) {
-		this.finAgrDetailList = finAgrDetailList;
-	}
-	public List<FinAgreementDetail> getFinAgrDetailList() {
-		return finAgrDetailList;
-	}
+//	public void setFinAgrDetailList(List<FinAgreementDetail> finAgrDetailList) {
+//		this.finAgrDetailList = finAgrDetailList;
+//	}
+//	public List<FinAgreementDetail> getFinAgrDetailList() {
+//		return finAgrDetailList;
+//	}
 
 	public void setFinContributorHeader(FinContributorHeader finContributorHeader) {
 		this.finContributorHeader = finContributorHeader;
@@ -312,6 +361,20 @@ public class FinanceDetail implements java.io.Serializable {
 		this.eligibilityRuleList = eligibilityRuleList;
 	}
 	
+	public List<FinanceEligibilityDetail> getFinElgRuleList() {
+    	return finElgRuleList;
+    }
+	public void setFinElgRuleList(List<FinanceEligibilityDetail> finElgRuleList) {
+    	this.finElgRuleList = finElgRuleList;
+    }
+
+	public List<FinanceEligibilityDetail> getElgRuleList() {
+    	return elgRuleList;
+    }
+	public void setElgRuleList(List<FinanceEligibilityDetail> elgRuleList) {
+    	this.elgRuleList = elgRuleList;
+    }
+
 	public List<FinanceReferenceDetail> getScoringGroupList() {
 		return scoringGroupList;
 	}
@@ -443,7 +506,6 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
 	    this.documentDetailsList = documentDetailsList;
     }
-
 	public List<DocumentDetails> getDocumentDetailsList() {
 	    return documentDetailsList;
     }
@@ -451,7 +513,6 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setFinScoringMetricList(List<ScoringMetrics> finScoringMetricList) {
 	    this.finScoringMetricList = finScoringMetricList;
     }
-
 	public List<ScoringMetrics> getFinScoringMetricList() {
 	    return finScoringMetricList;
     }
@@ -459,7 +520,6 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setNonFinScoringMetricList(List<ScoringMetrics> nonFinScoringMetricList) {
 	    this.nonFinScoringMetricList = nonFinScoringMetricList;
     }
-
 	public List<ScoringMetrics> getNonFinScoringMetricList() {
 	    return nonFinScoringMetricList;
     }
@@ -467,7 +527,6 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setScoreDetailListMap(HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap) {
 	    this.scoreDetailListMap = scoreDetailListMap;
     }
-
 	public HashMap<Long, List<FinanceScoreDetail>> getScoreDetailListMap() {
 	    return scoreDetailListMap;
     }
@@ -475,9 +534,79 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setFinScoreHeaderList(List<FinanceScoreHeader> finScoreHeaderList) {
 	    this.finScoreHeaderList = finScoreHeaderList;
     }
-
 	public List<FinanceScoreHeader> getFinScoreHeaderList() {
 	    return finScoreHeaderList;
+    }
+
+	public List<GuarantorDetail> getGurantorsDetailList() {
+    	return gurantorsDetailList;
+    }
+	public void setGurantorsDetailList(List<GuarantorDetail> gurantorsDetailList) {
+    	this.gurantorsDetailList = gurantorsDetailList;
+    }
+
+	public List<JointAccountDetail> getJountAccountDetailList() {
+    	return jountAccountDetailList;
+    }
+	public void setJountAccountDetailList(List<JointAccountDetail> jountAccountDetailList) {
+    	this.jountAccountDetailList = jountAccountDetailList;
+    }
+
+	public List<SharesDetail> getSharesDetails() {
+    	return sharesDetails;
+    }
+	public void setSharesDetails(List<SharesDetail> sharesDetails) {
+    	this.sharesDetails = sharesDetails;
+    }
+
+	public void setGenGoodsLoanDetails(List<GenGoodsLoanDetail> genGoodsLoanDetails) {
+	    this.genGoodsLoanDetails = genGoodsLoanDetails;
+    }
+	public List<GenGoodsLoanDetail> getGenGoodsLoanDetails() {
+	    return genGoodsLoanDetails;
+    }
+
+	public List<ContractorAssetDetail> getContractorAssetDetails() {
+    	return contractorAssetDetails;
+    }
+	public void setContractorAssetDetails(List<ContractorAssetDetail> contractorAssetDetails) {
+    	this.contractorAssetDetails = contractorAssetDetails;
+    }
+
+	public boolean isSufficientScore() {
+    	return sufficientScore;
+    }
+	public void setSufficientScore(boolean sufficientScore) {
+    	this.sufficientScore = sufficientScore;
+    }
+
+	public WIFCustomer getCustomer() {
+    	return customer;
+    }
+	public void setCustomer(WIFCustomer customer) {
+    	this.customer = customer;
+    }
+
+	public void setIndicativeTermDetail(IndicativeTermDetail indicativeTermDetail) {
+	    this.indicativeTermDetail = indicativeTermDetail;
+    }
+	public IndicativeTermDetail getIndicativeTermDetail() {
+	    return indicativeTermDetail;
+    }
+
+	public void setDataFetchComplete(boolean dataFetchComplete) {
+	    this.dataFetchComplete = dataFetchComplete;
+    }
+	public boolean isDataFetchComplete() {
+	    return dataFetchComplete;
+    }
+
+	public FinancePremiumDetail getPremiumDetail() {
+	    return premiumDetail;
+    }
+
+	public void setPremiumDetail(FinancePremiumDetail premiumDetail) {
+	    this.premiumDetail = premiumDetail;
     }
 
 }

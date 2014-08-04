@@ -1,6 +1,9 @@
 package com.pennant.backend.model.documentdetails;
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
@@ -16,7 +19,21 @@ public class DocumentDetails implements java.io.Serializable, Entity {
 	private String				doctype;
 	private String				docName;
 	private byte[]				docImage;
+	private boolean				docIsCustDoc;
 	
+	private String 				custDocTitle;
+	private String 				custDocSysName;
+	private Timestamp 			custDocRcvdOn;
+	private Date 				custDocExpDate;
+	private Date 				custDocIssuedOn;
+	private String				custDocIssuedCountry;
+	private String 				lovDescCustDocIssuedCountry;
+	private boolean 			custDocIsVerified;
+	private long 				custDocVerifiedBy;
+	private boolean 			custDocIsAcrive;
+	private String				lovDescCustCIF;
+	
+	private String 				lovDescDocCategoryName;
 	private DocumentDetails 	befImage;
 	private LoginUserDetails	userDetails;
 	private boolean 			newRecord = false;
@@ -43,6 +60,21 @@ public class DocumentDetails implements java.io.Serializable, Entity {
 		this.docName = docName;
 		this.docImage = docImage;
 		this.newRecord  = true;
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("custDocTitle");
+		excludeFields.add("custDocSysName");
+		excludeFields.add("custDocRcvdOn");
+		excludeFields.add("custDocExpDate");
+		excludeFields.add("custDocIssuedOn");
+		excludeFields.add("custDocIssuedCountry");
+		excludeFields.add("custDocIsVerified");
+		excludeFields.add("custDocVerifiedBy");
+		excludeFields.add("custDocIsAcrive");
+		excludeFields.add("docIsCustDoc");
+		return excludeFields;
 	}
 
 	@Override
@@ -257,5 +289,109 @@ public class DocumentDetails implements java.io.Serializable, Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
+	public void setLovDescDocCategoryName(String lovDescDocCategoryName) {
+	    this.lovDescDocCategoryName = lovDescDocCategoryName;
+    }
+
+	public String getLovDescDocCategoryName() {
+	    return lovDescDocCategoryName;
+    }
+
+	public boolean isDocIsCustDoc() {
+    	return docIsCustDoc;
+    }
+
+	public String getCustDocTitle() {
+    	return custDocTitle;
+    }
+
+	public void setCustDocTitle(String custDocTitle) {
+    	this.custDocTitle = custDocTitle;
+    }
+
+	public String getCustDocSysName() {
+    	return custDocSysName;
+    }
+
+	public void setCustDocSysName(String custDocSysName) {
+    	this.custDocSysName = custDocSysName;
+    }
+
+	public Timestamp getCustDocRcvdOn() {
+    	return custDocRcvdOn;
+    }
+
+	public void setCustDocRcvdOn(Timestamp custDocRcvdOn) {
+    	this.custDocRcvdOn = custDocRcvdOn;
+    }
+
+	public Date getCustDocExpDate() {
+    	return custDocExpDate;
+    }
+
+	public void setCustDocExpDate(Date custDocExpDate) {
+    	this.custDocExpDate = custDocExpDate;
+    }
+
+	public Date getCustDocIssuedOn() {
+    	return custDocIssuedOn;
+    }
+
+	public void setCustDocIssuedOn(Date custDocIssuedOn) {
+    	this.custDocIssuedOn = custDocIssuedOn;
+    }
+
+	public String getCustDocIssuedCountry() {
+    	return custDocIssuedCountry;
+    }
+
+	public void setCustDocIssuedCountry(String custDocIssuedCountry) {
+    	this.custDocIssuedCountry = custDocIssuedCountry;
+    }
+
+	public String getLovDescCustDocIssuedCountry() {
+    	return lovDescCustDocIssuedCountry;
+    }
+
+	public void setLovDescCustDocIssuedCountry(String lovDescCustDocIssuedCountry) {
+    	this.lovDescCustDocIssuedCountry = lovDescCustDocIssuedCountry;
+    }
+
+	public boolean isCustDocIsVerified() {
+    	return custDocIsVerified;
+    }
+
+	public void setCustDocIsVerified(boolean custDocIsVerified) {
+    	this.custDocIsVerified = custDocIsVerified;
+    }
+
+	public long getCustDocVerifiedBy() {
+    	return custDocVerifiedBy;
+    }
+
+	public void setCustDocVerifiedBy(long custDocVerifiedBy) {
+    	this.custDocVerifiedBy = custDocVerifiedBy;
+    }
+
+	public boolean isCustDocIsAcrive() {
+    	return custDocIsAcrive;
+    }
+
+	public void setCustDocIsAcrive(boolean custDocIsAcrive) {
+    	this.custDocIsAcrive = custDocIsAcrive;
+    }
+
+	public void setDocIsCustDoc(boolean docIsCustDoc) {
+    	this.docIsCustDoc = docIsCustDoc;
+    }
+
+	public String getLovDescCustCIF() {
+    	return lovDescCustCIF;
+    }
+
+	public void setLovDescCustCIF(String lovDescCustCIF) {
+    	this.lovDescCustCIF = lovDescCustCIF;
+    }
 
 }

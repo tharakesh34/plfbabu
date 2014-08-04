@@ -4,18 +4,29 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.RepayScheduleDetail;
 
 public interface FinanceRepaymentsDAO {
 
-	public FinanceRepayments getFinanceRepaymentsById(String finRef,Date finSchdDate, int finPaySeq, String type);
-	public void update(FinanceRepayments financeRepayments, String type);
-	public void delete(FinanceRepayments financeRepayments, String type);
 	public long save(FinanceRepayments financeRepayments, String type);
 	public void initialize(FinanceRepayments financeRepayments);
 	public void refresh(FinanceRepayments entity);
-	public void deleteByFinRef(String finref, String type);
-	public List<FinanceRepayments> getFinRepayListById(String finRef, Date finSchdDate, String type);
-	List<FinanceRepayments> getFinRepayListByFinRef(String finRef, String type);
-	public void saveRepayList(List<FinanceRepayments> repaymentList,String type);
+	public List<FinanceRepayments> getFinRepayListByFinRef(String finRef, boolean isRpyCancelProc, String type);
+	public void deleteRpyDetailbyLinkedTranId(long linkedTranId, String finReference);
+	
+	//Manual Repayment Details :  Finance Repay Header Details & Finance Repay Schedule Details
+	public FinRepayHeader getFinRepayHeader(String finReference, String type);
+	public void saveFinRepayHeader(FinRepayHeader finRepayHeader, String type);
+	public void updateFinRepayHeader(FinRepayHeader finRepayHeader, String type);
+	public void deleteFinRepayHeader(FinRepayHeader finRepayHeader, String type);
+	
+	public List<RepayScheduleDetail> getRpySchdList(String finReference, String type);
+	public void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, String type);
+	public void deleteRpySchdList(String finReference, String type);
+	public void deleteRpyDetailbyMaxPostDate(Date finPostDate, String finReference);
+	public FinRepayHeader getFinRepayHeader(String finReference, long linkedTranId, String type);
+	public void deleteFinRepayHeaderByTranId(String finReference, long linkedTranId, String string);
+	public void deleteFinRepaySchListByTranId(String finReference, long linkedTranId, String string);
 
 }

@@ -74,7 +74,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -89,8 +88,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.CheckListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.applicationmaster.checklist.model.CheckListDetailListModelItemRenderer;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -466,11 +468,11 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 		this.checkMinCount.setValue(aCheckList.getCheckMinCount());
 		this.checkMaxCount.setValue(aCheckList.getCheckMaxCount());
 		this.checkRule.setValue(aCheckList.getCheckRule());
-		this.lovDescCheckRule.setValue(aCheckList.getCheckRule() == null ? "" : aCheckList.getCheckRule()+"-"+aCheckList.getLovDescCheckRuleName());
+		this.lovDescCheckRule.setValue(StringUtils.trimToEmpty(aCheckList.getCheckRule()).equals("")? "" : aCheckList.getCheckRule()+"-"+aCheckList.getLovDescCheckRuleName());
 		this.active.setChecked(aCheckList.isActive());
 		this.recordStatus.setValue(aCheckList.getRecordStatus());
 		
-		if(aCheckList.isNew() || aCheckList.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aCheckList.isNew() || StringUtils.trimToEmpty(aCheckList.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -677,18 +679,16 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.checkListDesc.isReadonly()){
-			this.checkListDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_QUESTION_DESC",new String[]{Labels.getLabel("label_CheckListDialog_CheckListDesc.value")})));
+			this.checkListDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CheckListDialog_CheckListDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.checkMinCount.isReadonly()){
-			this.checkMinCount.setConstraint("NO ZERO,NO EMPTY, NO NEGATIVE:" + Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO"
-					,new String[] { Labels.getLabel("label_CheckListDialog_CheckMinCount.value")}));
+			this.checkMinCount.setConstraint(new IntValidator(5, Labels.getLabel("label_CheckListDialog_CheckMinCount.value"), false));
 
 		}	
 		if (!this.checkMaxCount.isReadonly()){
-			this.checkMaxCount.setConstraint("NO ZERO,NO EMPTY, NO NEGATIVE:" + Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO"
-					,new String[] { Labels.getLabel("label_CheckListDialog_CheckMaxCount.value")}));
+			this.checkMaxCount.setConstraint(new IntValidator(5, Labels.getLabel("label_CheckListDialog_CheckMaxCount.value"), false));
 		}	
 		logger.debug("Leaving");
 	}
@@ -711,8 +711,7 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		if (!this.btnSearchCheckRule.isDisabled()){
-			this.lovDescCheckRule.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CheckListDialog_CheckRule.value") }));
+			this.lovDescCheckRule.setConstraint(new PTStringValidator(Labels.getLabel("label_CheckListDialog_CheckRule.value"), null, true));
 		}	
 		logger.debug("Leaving");
 	}

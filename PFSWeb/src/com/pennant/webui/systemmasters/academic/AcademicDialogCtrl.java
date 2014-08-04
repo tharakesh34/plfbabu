@@ -63,8 +63,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +75,10 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.AcademicService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -103,8 +104,8 @@ public class AcademicDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window 		window_AcademicDialog; 	// autoWired
-	protected Textbox 		academicLevel; 			// autoWired
-	protected Textbox 		academicDecipline; 		// autoWired
+	protected Uppercasebox	academicLevel; 			// autoWired
+	protected Uppercasebox	academicDecipline; 		// autoWired
 	protected Textbox 		academicDesc; 			// autoWired
 	protected Label 		recordStatus; 			// autoWired
 	protected Radiogroup 	userAction;
@@ -235,7 +236,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("AcademicDialog");
+		getUserWorkspace().alocateAuthorities("AcademicDialog",getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_AcademicDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_AcademicDialog_btnEdit"));
@@ -402,6 +403,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -583,17 +585,17 @@ public class AcademicDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.academicLevel.isReadonly()) {
-			this.academicLevel.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX,Labels.getLabel(
-					"FIELD_ALNUM_CAPS",	new String[] { Labels.getLabel("label_AcademicDialog_AcademicLevel.value") })));
+			this.academicLevel.setConstraint(new PTStringValidator(Labels.getLabel("label_AcademicDialog_AcademicLevel.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.academicDecipline.isReadonly()) {
-			this.academicDecipline.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel(
-					"FIELD_CHAR_CAPS",new String[] { Labels.getLabel("label_AcademicDialog_AcademicDecipline.value") })));
+			this.academicDecipline.setConstraint(new PTStringValidator(Labels.getLabel("label_AcademicDialog_AcademicDecipline.value"),
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.academicDesc.isReadonly()) {
-			this.academicDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[] { Labels.getLabel("label_AcademicDialog_AcademicDesc.value") })));
+			this.academicDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_AcademicDialog_AcademicDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -733,7 +735,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving ");
 	}

@@ -60,7 +60,7 @@ public class NumberToEnglishWords {
 		"seven", "eight", "nine", "ten",   "eleven", "twelve", "thirteen",
 		"fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
 
-	static String[] wrdtens  = {"", "ten","twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
+	static String[] wrdtens  = {"", "ten","twenty", "thirty", "fourty", "fifty", "sixty", "seventy", "eighty", "ninety"};
 
 	static String[] wrdmillion= { "",
 		"thousand",     "million",         "billion",       "trillion",       "quadrillion",
@@ -83,10 +83,10 @@ public class NumberToEnglishWords {
 			sign="-";
 		}
 		if(PennantConstants.DFTNUMCONVFMT.equals("C")){
-			return sign+" "+convertWordToCrores(number);
+			return StringUtils.trimToEmpty(sign+" "+convertWordToCrores(number));
 		}
 		logger.debug("Leaving ");
-		return sign+" "+convertWordToBillions(number);
+		return StringUtils.trimToEmpty(sign+" "+convertWordToBillions(number));
 
 	}
 	/**
@@ -103,29 +103,38 @@ public class NumberToEnglishWords {
 		String strAmount="";
 		String minorCcyDesc="";
 		String currnecySymbol="";
-		if(amount.compareTo(new BigDecimal(0))<0){
+		if(amount.compareTo(BigDecimal.ZERO)<0){
 			minus=true;
 		}
-		amount = amount.abs();	
+		//amount = amount.abs();	
 		int decPos = amount.toString().lastIndexOf("."); 
+		int ccyDecPos = 0;
 		if(!StringUtils.equals(ccyCode.trim(), "")){
 			Currency currency=getCurrencyDAO().getCurrencyById(ccyCode, "_view");
 			if(currency!=null){
 				/*	if minor currency is more than zero and  minor currency Description is not null in Currency table */
-				if(currency. getCcyMinorCcyDesc()!=null &&(decPos>0)){
+				if(currency.getCcyMinorCcyDesc()!=null &&(decPos>0)){
 					minorCcyDesc=currency. getCcyMinorCcyDesc();
 				}
 				/*if Currency symbol is not null in Currency table*/
 				if(currency.getCcySymbol()!=null ){
 					currnecySymbol=currency.getCcySymbol();
 				}
+				ccyDecPos = currency.getCcyEditField();
 			}
 		}
 		if(decPos>0){// if after decimal point is greater than zero than only add minorCcyDesc
 			String majorCcy = amount.toString().substring(0, decPos);
 			String minorCcy = amount.toString().substring(decPos+1);
-			strAmount = currnecySymbol +" "+ getNumberToWords(new BigInteger(majorCcy)) + " and " 
-			+ getNumberToWords(new BigInteger(minorCcy)) +" " +minorCcyDesc;
+			minorCcy = StringUtils.rightPad(minorCcy, ccyDecPos, '0');
+			
+			if(!StringUtils.trimToEmpty(currnecySymbol).equals("")){
+				strAmount = StringUtils.trimToEmpty(currnecySymbol +" "+ getNumberToWords(new BigInteger(majorCcy)) + " and " 
+				+ getNumberToWords(new BigInteger(minorCcy)) +" " +minorCcyDesc);
+			}else{
+				strAmount = StringUtils.trimToEmpty(getNumberToWords(new BigInteger(majorCcy)) + " " + ccyCode +  " and " 
+				+ getNumberToWords(new BigInteger(minorCcy)) +" " +minorCcyDesc);
+			}
 
 		}else{
 			strAmount = currnecySymbol +" "+ getNumberToWords(amount.toBigInteger());
@@ -146,7 +155,7 @@ public class NumberToEnglishWords {
 	private static String convertWordToBillions(BigInteger number) throws Exception {
 		logger.debug("Entering ");
 		String word="";
-		if(number.equals(new BigDecimal(0))){
+		if(number.equals(BigDecimal.ZERO)){
 			return wrdOnes[0];
 		}
 		DecimalFormat df = new DecimalFormat();
@@ -172,7 +181,7 @@ public class NumberToEnglishWords {
 		logger.debug("Entering ");
 		String result="";
 		int count=0;
-		if(number.equals(new BigDecimal(0))){
+		if(number.equals(BigDecimal.ZERO)){
 			return wrdOnes[0];
 		}
 		String numString[]=new String[10];

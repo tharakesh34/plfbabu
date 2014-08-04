@@ -19,9 +19,9 @@
 							sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="padding-left:20px;padding-bottom:5px;padding-top:0px;">
 							<columns>
-								<column width="170px" />
+								<column width="190px" />
 								<column />
-								<column width="170px" />
+								<column width="190px" />
 								<column />
 							</columns>
 							<rows>
@@ -49,34 +49,47 @@
 								</row>
 							</rows>
 						</grid>
-						<listbox id="listBoxFinPostings" vflex="true" emptyMessage="No Records Found"
-							tooltiptext="" width="99%" multiple="false">
+						<toolbar>
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" width="100%">
+								<button id="btnPrintAccounting"
+									height="24px" label="${c:l('label_Print')}" />
+							</hbox>
+						</toolbar>
+						<listbox id="listBoxFinPostings"   emptyMessage="${c:l('listbox.emptyMessage')}"
+							fixedLayout="true" vflex="true" span="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
 							<listhead sizable="true">
 								<listheader
 									id="listheader_Acc_ValueDate"
 									label="${c:l('listheader_Acc_ValueDate.label')}" sort="false"
-									width="12%" />
+									hflex="min" />
 								<listheader id="listheader_Acc_TranDesc"
 									label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false"
-									width="24%" />
+									hflex="min" />
 								<listheader
 									id="listheader_Acc_DebitOrCredit"
 									label="${c:l('listheader_Acc_DebitOrCredit.label')}"
-									sort="false" width="10%" />
+									sort="false" hflex="min" />
 								<listheader id="listheader_Acc_TranCode"
 									label="${c:l('listheader_Acc_TranCode.label')}" sort="false"
-									width="12%" />
+									hflex="min" />
 								<listheader
 									id="listheader_Acc_RevTranCode"
 									label="${c:l('listheader_Acc_RevTranCode.label')}" sort="false"
-									width="12%" />
+									hflex="min" />
 								<listheader
 									id="listheader_Acc_AccountNo"
 									label="${c:l('listheader_Acc_AccountNo.label')}" sort="false"
-									width="15%" />
+									hflex="min" />
+								<listheader
+									id="listheader_Acc_AcCcy"
+									label="${c:l('listheader_Acc_AcCcy.label')}" sort="false"
+									hflex="min" />
 								<listheader id="listheader_Acc_Amount"
 									label="${c:l('listheader_Acc_Amount.label')}" sort="false"
-									width="15%" />
+									hflex="min" />
 							</listhead>
 						</listbox>
 					</vlayout>

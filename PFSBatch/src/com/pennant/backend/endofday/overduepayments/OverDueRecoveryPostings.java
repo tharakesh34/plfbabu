@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+ *//*
 package com.pennant.backend.endofday.overduepayments;
 
 import java.lang.reflect.InvocationTargetException;
@@ -107,19 +107,18 @@ public class OverDueRecoveryPostings implements Tasklet {
 			 			
 			while (resultSet.next()) {
 				
-				//Check Pendings for Recovery
-				BigDecimal pendingAmount = resultSet.getBigDecimal("FinODCPenalty")
-						.subtract(resultSet.getBigDecimal("FinODCPaid"));
+				//Check Pending Amount for Recovery
+				BigDecimal pendingAmount = resultSet.getBigDecimal("FinODCPenalty").subtract(resultSet.getBigDecimal("FinODCPenaltyPaid"));
 				
-				if(pendingAmount.compareTo(new BigDecimal(0)) == 0){
+				if(pendingAmount.compareTo(BigDecimal.ZERO) == 0){
 					
 					//Update Recovery Status to 'C'(Completed)
-					doUpdateRecoveryData(resultSet,true, new BigDecimal(0),new BigDecimal(0), true);
+					doUpdateRecoveryData(resultSet,true, BigDecimal.ZERO,BigDecimal.ZERO, true);
 					
 				}else{
 					
 					//Update Recovery Data By Check FundingBalance Amount & Posting Status
-					OverdueChargeRecovery chargeRecovery  = doUpdateRecoveryData(resultSet,false, new BigDecimal(0), new BigDecimal(0), false);
+					OverdueChargeRecovery chargeRecovery  = doUpdateRecoveryData(resultSet,false, BigDecimal.ZERO, BigDecimal.ZERO, false);
 					
 					List<Object> list = getRecoveryPostingsUtil().oDRPostingProcess(chargeRecovery, dateValueDate, 
 							resultSet.getBoolean("AllowRIAInvestment"));
@@ -129,7 +128,7 @@ public class OverDueRecoveryPostings implements Tasklet {
 					if(penaltyPaid.compareTo(new BigDecimal(-1)) != 0){
 						doUpdateRecoveryData(resultSet,false, penaltyPaid, waiverPaid, true);
 					}
-					getBatchAdminDAO().saveStepDetails(resultSet.getString("FinReference"), getODChargeRecory(chargeRecovery.getFinODCPLShare(), penaltyPaid, waiverPaid), context.getStepContext().getStepExecution().getId());
+					getBatchAdminDAO().saveStepDetails(resultSet.getString("FinReference"), getODChargeRecory(penaltyPaid, waiverPaid), context.getStepContext().getStepExecution().getId());
 					context.getStepContext().getStepExecution().getExecutionContext().putInt("FIELD_COUNT", resultSet.getRow());
 				}
 						
@@ -156,31 +155,30 @@ public class OverDueRecoveryPostings implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 	
-	/**
+	*//**
 	 * Method for get the List of OverDue Recoveries List
 	 * @param selectSql
 	 * @return
-	 */
+	 *//*
 	private StringBuffer prepareSelectQuery(StringBuffer selectSql){
 		
-		selectSql = new StringBuffer(" SELECT T1.FinReference, T1.FinSchdDate, T1.FinODCPLShare," );
-		selectSql.append(" T1.FinODFor, T1.FinBranch, T1.FinType, T1.FinCustID, T1.FinCcy, T1.FinODDate," );
-		selectSql.append(" T1.FinODCSweep, T1.FinODCPenalty, T1.FinODCWaived, T1.FinODCPLPenalty, " );
-		selectSql.append(" T1.FinODCCPenalty, T1.FinODCPaid, T1.FinODCWaiverPaid, T1.FinODCLastPaidDate, T2.AllowRIAInvestment " );
+		selectSql = new StringBuffer(" SELECT T1.FinReference, T1.FinSchdDate, T1.FinODFor, T1.SeqOrder, T1.FinBranch, T1.FinType, " );
+		selectSql.append(" T1.FinCustID, T1.FinCcy, T1.FinODDate, T1.FinODCPenalty, T1.FinODCWaived, " );
+		selectSql.append(" T1.FinODCPenaltyPaid, T1.FinODCLastPaidDate, T2.AllowRIAInvestment " );
 		selectSql.append(" FROM FinODCRecovery AS T1 " );
 		selectSql.append(" INNER JOIN RMTFinanceTypes AS T2 ON T1.FinType = T2.FinType " );
-		selectSql.append(" WHERE T1.FinODCRecoverySts = 'R'");
+		selectSql.append(" WHERE T1.FinODCRecoverySts = 'R' ORDER BY T1.FinSchdDate, T1.FinODFor, T1.SeqOrder");
 		return selectSql;
 	}
 	
-	/**
+	*//**
 	 * Prepare OverDue Recovery Data and update DB on Condition
 	 * @param set
 	 * @param isPaidClear
 	 * @param penaltyPaid
 	 * @param dbUpdate
 	 * @return
-	 */
+	 *//*
 	@SuppressWarnings("serial")
 	private OverdueChargeRecovery doUpdateRecoveryData(ResultSet set, boolean isPaidClear,
 			BigDecimal penaltyPaid, BigDecimal waiverPaid, boolean dbUpdate){
@@ -191,39 +189,34 @@ public class OverDueRecoveryPostings implements Tasklet {
 			recovery.setFinReference(set.getString("FinReference"));
 			recovery.setFinSchdDate(set.getDate("FinSchdDate"));
 			recovery.setFinODFor(set.getString("FinODFor"));
-			recovery.setFinODCPaid(set.getBigDecimal("FinODCPaid"));
+			recovery.setSeqOrder(set.getInt("SeqOrder"));
+			recovery.setFinODCPenaltyPaid(set.getBigDecimal("FinODCPenaltyPaid"));
 			recovery.setFinODCLastPaidDate(set.getDate("FinODCLastPaidDate"));
-			recovery.setFinODCWaiverPaid(set.getBigDecimal("FinODCWaiverPaid"));
 			recovery.setFinODCWaived(set.getBigDecimal("FinODCWaived"));
 			
 			if(!dbUpdate){
 				
 				//Used for Accounting Engine Postings
-				recovery.setFinODCSweep(set.getBoolean("FinODCSweep"));
 				recovery.setFinODCPenalty(set.getBigDecimal("FinODCPenalty"));
-				recovery.setFinODCPLPenalty(set.getBigDecimal("FinODCPLPenalty"));
-				recovery.setFinODCCPenalty(set.getBigDecimal("FinODCCPenalty"));
-				recovery.setFinODCPLShare(set.getBigDecimal("FinODCPLShare"));
 				
 			}else{
 
 				if(isPaidClear){
 					recovery.setFinODCRecoverySts("C");
 				}else{
-					BigDecimal balance = set.getBigDecimal("FinODCPenalty").subtract(set.getBigDecimal("FinODCPaid"))
+					BigDecimal balance = set.getBigDecimal("FinODCPenalty").subtract(set.getBigDecimal("FinODCPenaltyPaid"))
 								.subtract(penaltyPaid);
 
-					recovery.setFinODCPaid(set.getBigDecimal("FinODCPaid").add(penaltyPaid));
-					recovery.setFinODCWaiverPaid(set.getBigDecimal("FinODCWaiverPaid").add(waiverPaid));
+					recovery.setFinODCPenaltyPaid(set.getBigDecimal("FinODCPenaltyPaid").add(penaltyPaid));
 					recovery.setFinODCLastPaidDate(dateValueDate);
-					if(balance.compareTo(new BigDecimal(0)) == 0){
+					if(balance.compareTo(BigDecimal.ZERO) == 0){
 						recovery.setFinODCRecoverySts("C");
 					}else{
 						recovery.setFinODCRecoverySts("R");
 					}
 				}
 				
-				getRecoveryDAO().update(recovery, "");
+				getRecoveryDAO().update(recovery, true, "");
 			}
 			
 		} catch (SQLException e) {
@@ -234,14 +227,9 @@ public class OverDueRecoveryPostings implements Tasklet {
 		return recovery;
 	}
 	
-	private String getODChargeRecory(BigDecimal ODCPLShare, BigDecimal penaltyPaid, BigDecimal waiverPaid) {
+	private String getODChargeRecory(BigDecimal penaltyPaid, BigDecimal waiverPaid) {
 		StringBuffer strodcr = new StringBuffer();
 		
-		strodcr.append("ODCPLShare");
-		strodcr.append("-");
-		strodcr.append(ODCPLShare);
-		strodcr.append(";");
-
 		strodcr.append("Penalty Paid");
 		strodcr.append("-");
 		strodcr.append(penaltyPaid);
@@ -251,9 +239,6 @@ public class OverDueRecoveryPostings implements Tasklet {
 		strodcr.append("-");			
 		strodcr.append(waiverPaid);
 		strodcr.append(";");
-		
-		
-		
 		
 		return strodcr.toString();
 
@@ -287,9 +272,9 @@ public class OverDueRecoveryPostings implements Tasklet {
 	public BatchAdminDAO getBatchAdminDAO() {
 		return batchAdminDAO;
 	}
-
 	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
 		this.batchAdminDAO = batchAdminDAO;
 	}
 	
 }
+*/

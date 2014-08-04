@@ -67,10 +67,11 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
+import org.zkoss.zul.South;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -86,6 +87,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -115,7 +117,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected Window window_CustomerEMailDialog; 		// autoWired
 
 	protected Longbox 	custID; 						// autoWired
-	protected Textbox 	custEMailTypeCode; 				// autoWired
+	protected ExtendedCombobox 	custEMailTypeCode; 				// autoWired
 	protected Intbox 	custEMailPriority; 				// autoWired
 	protected Textbox 	custEMail; 						// autoWired
 	protected Textbox 	custCIF;						// autoWired
@@ -124,6 +126,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected Label recordStatus; 						// autoWired
 	protected Radiogroup userAction;
 	protected Groupbox groupboxWf;
+	protected South 	south;
 	
 	// not auto wired variables
 	private CustomerEMail customerEMail; // overHanded per parameter
@@ -153,8 +156,6 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected Button btnNotes; 			// autoWired
 	protected Button btnSearchPRCustid; // autoWired
 
-	protected Button btnSearchCustEMailTypeCode; // autoWired
-	protected Textbox lovDescCustEMailTypeCodeName;
 	private transient String oldVar_lovDescCustEMailTypeCodeName;
 
 	// ServiceDAOs / Domain Classes
@@ -169,6 +170,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	private CustomerDialogCtrl customerDialogCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private String moduleType="";
+	private String userRole="";
 
 	/**
 	 * default constructor.<br>
@@ -192,8 +194,6 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public void onCreate$window_CustomerEMailDialog(Event event)throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
 
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(),
@@ -234,12 +234,15 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			}
 			this.customerEMail.setWorkflowId(0);
 			if(args.containsKey("roleCode")){
-				getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "CustomerEMailDialog");
+				userRole = args.get("roleCode").toString();
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEMailDialog");
 			}
 		}
 		doLoadWorkFlow(this.customerEMail.isWorkflow(),
 				this.customerEMail.getWorkflowId(), this.customerEMail.getNextTaskId());
-
+		/* set components visible dependent of the users rights */
+		doCheckRights();
+		
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().alocateRoleAuthorities(getRole(),"CustomerEMailDialog");
@@ -274,6 +277,13 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.custEMailTypeCode.setMaxlength(8);
+		this.custEMailTypeCode.setMandatoryStyle(true);
+		this.custEMailTypeCode.getTextbox().setWidth("110px");
+		this.custEMailTypeCode.setModuleName("EMailType");
+		this.custEMailTypeCode.setValueColumn("EmailTypeCode");
+		this.custEMailTypeCode.setDescColumn("EmailTypeDesc");
+		this.custEMailTypeCode.setValidateColumns(new String[] { "EmailTypeCode" });
+		
 		this.custEMailPriority.setMaxlength(10);
 		this.custEMail.setMaxlength(100);
 
@@ -281,6 +291,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
+			this.south.setHeight("0px");
 		}
 		logger.debug("Leaving");
 	}
@@ -295,7 +306,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("CustomerEMailDialog");
+		getUserWorkspace().alocateAuthorities("CustomerEMailDialog",userRole);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerEMailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerEMailDialog_btnEdit"));
@@ -460,9 +471,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Entering");
 
 		if(isNewCustomer()){
-			window_CustomerEMailDialog.onClose();	
+			closePopUpWindow(this.window_CustomerEMailDialog,"CustomerEMailDialog");
 		}else{
-			closeDialog(this.window_CustomerEMailDialog, "CustomerEMail");
+			closeDialog(this.window_CustomerEMailDialog, "CustomerEMailDialog");
 		}
 		logger.debug("Leaving");
 	}
@@ -500,9 +511,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.custShrtName.setValue(aCustomerEMail.getLovDescCustShrtName()==null?"":aCustomerEMail.getLovDescCustShrtName().trim());
 
 		if (isNewRecord()){
-			this.lovDescCustEMailTypeCodeName.setValue("");
+			this.custEMailTypeCode.setDescription("");
 		}else{
-			this.lovDescCustEMailTypeCodeName.setValue(aCustomerEMail.getLovDescCustEMailTypeCode());
+			this.custEMailTypeCode.setDescription(aCustomerEMail.getLovDescCustEMailTypeCode());
 		}
 		this.recordStatus.setValue(aCustomerEMail.getRecordStatus());
 		logger.debug("Leaving");
@@ -526,13 +537,13 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		try {
-			aCustomerEMail.setLovDescCustEMailTypeCode(this.lovDescCustEMailTypeCodeName.getValue());
-			aCustomerEMail.setCustEMailTypeCode(this.custEMailTypeCode.getValue());
+			aCustomerEMail.setLovDescCustEMailTypeCode(this.custEMailTypeCode.getDescription());
+			aCustomerEMail.setCustEMailTypeCode(this.custEMailTypeCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerEMail.setCustEMailPriority(this.custEMailPriority.getValue());
+			aCustomerEMail.setCustEMailPriority(this.custEMailPriority.getValue()==null ? 0 : this.custEMailPriority.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -595,9 +606,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 
 			// stores the initial data for comparing if they are changed during user action.
 			doStoreInitValues();
-
+            doCheckEnquiry();
 			if(isNewCustomer()){
-				this.window_CustomerEMailDialog.setHeight("40%");
+				this.window_CustomerEMailDialog.setHeight("35%");
 				this.window_CustomerEMailDialog.setWidth("70%");
 				this.groupboxWf.setVisible(false);
 				this.window_CustomerEMailDialog.doModal() ;
@@ -613,6 +624,13 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Leaving");
 	}
 
+	private void doCheckEnquiry() {
+		if("ENQ".equals(this.moduleType)){
+			this.custEMailPriority.setReadonly(true);
+			this.custEMail.setReadonly(true);
+		}
+	}
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -624,7 +642,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Entering");
 		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_custEMailTypeCode = this.custEMailTypeCode.getValue();
-		this.oldVar_lovDescCustEMailTypeCodeName = this.lovDescCustEMailTypeCodeName.getValue();
+		this.oldVar_lovDescCustEMailTypeCodeName = this.custEMailTypeCode.getDescription();
 		this.oldVar_custEMailPriority = this.custEMailPriority.intValue();
 		this.oldVar_custEMail = this.custEMail.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
@@ -638,7 +656,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Entering");
 		this.custID.setValue(this.oldVar_custID);
 		this.custEMailTypeCode.setValue(this.oldVar_custEMailTypeCode);
-		this.lovDescCustEMailTypeCodeName.setValue(this.oldVar_lovDescCustEMailTypeCodeName);
+		this.custEMailTypeCode.setDescription(this.oldVar_lovDescCustEMailTypeCodeName);
 		this.custEMailPriority.setValue(this.oldVar_custEMailPriority);
 		this.custEMail.setValue(this.oldVar_custEMail);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
@@ -686,14 +704,12 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.custCIF.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
 					new String[] { Labels.getLabel("label_CustomerEMailDialog_CustID.value") }));
 		}
-		if (!this.custEMailPriority.isReadonly()) {
+		/*if (!this.custEMailPriority.isReadonly()) {
 			this.custEMailPriority.setConstraint(new IntValidator(10,
 					Labels.getLabel("label_CustomerEMailDialog_CustEMailPriority.value")));
-		}
+		}*/
 		if (!this.custEMail.isReadonly()) {
-			this.custEMail.setConstraint(new SimpleConstraint(PennantConstants.MAIL_REGEX,
-					Labels.getLabel("MAND_FIELD_MAIL",new String[] { Labels.getLabel(
-					"label_CustomerEMailDialog_CustEMail.value") })));
+			this.custEMail.setConstraint(new PTEmailValidator(Labels.getLabel("label_CustomerEMailDialog_CustEMail.value"),true));
 		}
 		logger.debug("Leaving");
 	}
@@ -715,7 +731,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustEMailTypeCodeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
+		this.custEMailTypeCode.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
 				new String[] { Labels.getLabel("label_CustomerEMailDialog_CustEMailTypeCode.value") }));
 		logger.debug("Leaving");
 	}
@@ -725,7 +741,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustEMailTypeCodeName.setConstraint("");
+		this.custEMailTypeCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -737,14 +753,16 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.custCIF.setErrorMessage("");
 		this.custEMailPriority.setErrorMessage("");
 		this.custEMail.setErrorMessage("");
-		this.lovDescCustEMailTypeCodeName.setErrorMessage("");
+		this.custEMailTypeCode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
 	// Method for refreshing the list after successful updating
 	private void refreshList() {
 		logger.debug("Entering");
-		getCustomerEMailListCtrl().findSearchObject();
+		final JdbcSearchObject<CustomerEMail> soCustomerEmail = getCustomerEMailListCtrl().getSearchObj();
+		getCustomerEMailListCtrl().pagingCustomerEMailList.setActivePage(0);
+		getCustomerEMailListCtrl().getPagedListWrapper().setSearchObject(soCustomerEmail);
 		if (getCustomerEMailListCtrl().listBoxCustomerEMail != null) {
 			getCustomerEMailListCtrl().listBoxCustomerEMail.getListModel();
 		}
@@ -783,8 +801,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			if (StringUtils.trimToEmpty(aCustomerEMail.getRecordType()).equals("")) {
 				aCustomerEMail.setVersion(aCustomerEMail.getVersion() + 1);
 				aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aCustomerEMail.setNewRecord(true);
-
+				if(getCustomerDialogCtrl() != null &&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
+					aCustomerEMail.setNewRecord(true);	
+				}
 				if (isWorkFlowEnabled()) {
 					aCustomerEMail.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
@@ -852,11 +871,12 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			}else{
 				this.btnSearchPRCustid.setVisible(true);
 			}
-			this.btnSearchCustEMailTypeCode.setDisabled(isReadOnly("CustomerEMailDialog_custEMailTypeCode"));
+			this.custEMailTypeCode.setReadonly(isReadOnly("CustomerEMailDialog_custEMailTypeCode"));
+			this.custEMailTypeCode.setMandatoryStyle(!isReadOnly("CustomerEMailDialog_custEMailTypeCode"));
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
-			this.btnSearchCustEMailTypeCode.setVisible(false);
+			this.custEMailTypeCode.setReadonly(true);
 		}
 		this.custCIF.setReadonly(true);
 		this.custID.setReadonly(isReadOnly("CustomerEMailDialog_custID"));
@@ -896,7 +916,11 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	}
 
 	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewCustomer()){
+		boolean isCustomerWorkflow = false;
+		if(getCustomerDialogCtrl() != null){
+			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -909,7 +933,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Entering");
 
 		this.custCIF.setReadonly(true);
-		this.btnSearchCustEMailTypeCode.setDisabled(true);
+		this.custEMailTypeCode.setReadonly(true);
 		this.custEMailPriority.setReadonly(true);
 		this.custEMail.setReadonly(true);
 
@@ -936,7 +960,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.custCIF.setValue("");
 		this.custShrtName.setValue("");
 		this.custEMailTypeCode.setValue("");
-		this.lovDescCustEMailTypeCodeName.setValue("");
+		this.custEMailTypeCode.setDescription("");
 		this.custEMailPriority.setText("");
 		this.custEMail.setValue("");
 		logger.debug("Leaving");
@@ -1282,19 +1306,18 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	// ++++++++++++ Search Button Component Events+++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchCustEMailTypeCode(Event event) {
+	public void onFulfill$custEMailTypeCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerEMailDialog, "EMailType");
+		Object dataObject = custEMailTypeCode.getObject();
 		if (dataObject instanceof String) {
 			this.custEMailTypeCode.setValue(dataObject.toString());
-			this.lovDescCustEMailTypeCodeName.setValue("");
+			this.custEMailTypeCode.setDescription("");
 		} else {
 			EMailType details = (EMailType) dataObject;
 			if (details != null) {
-				this.custEMailTypeCode.setValue(details.getLovValue());
-				this.lovDescCustEMailTypeCodeName.setValue(details.getLovValue()
-						+ "-" + details.getEmailTypeDesc());
+				this.custEMailTypeCode.setValue(details.getEmailTypeCode());
+				this.custEMailTypeCode.setDescription(details.getEmailTypeDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1510,5 +1533,17 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	}
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
+	}
+	
+	private String getLovDescription(String value) {
+		value = StringUtils.trimToEmpty(value);
+
+		try {
+			value = StringUtils.split(value, "-", 2)[1];
+		} catch (Exception e) {
+			//
+		}
+
+		return value;
 	}
 }

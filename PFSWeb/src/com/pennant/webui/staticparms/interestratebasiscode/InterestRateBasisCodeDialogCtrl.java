@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.staticparms.InterestRateBasisCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -600,16 +601,11 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl implements Seri
 		setValidationOn(true);
 
 		if (!this.intRateBasisCode.isReadonly()){
-			this.intRateBasisCode.setConstraint(new SimpleConstraint(
-					PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-							"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-							"label_InterestRateBasisCodeDialog_IntRateBasisCode.value")})));
+			this.intRateBasisCode.setConstraint(new PTStringValidator(Labels.getLabel("label_InterestRateBasisCodeDialog_IntRateBasisCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.intRateBasisDesc.isReadonly()){
-			this.intRateBasisDesc.setConstraint(new SimpleConstraint(
-					PennantConstants.DESC_REGEX, Labels.getLabel(
-							"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_InterestRateBasisCodeDialog_IntRateBasisDesc.value")})));
+			this.intRateBasisDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_InterestRateBasisCodeDialog_IntRateBasisDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");

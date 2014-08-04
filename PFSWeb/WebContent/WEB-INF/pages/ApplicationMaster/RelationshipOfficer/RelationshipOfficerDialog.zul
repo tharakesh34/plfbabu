@@ -105,7 +105,6 @@
 										id="lovDescROfficerDeptCodeName" width="200px"
 										readonly="true" />
 									<button
-										label="${c:l('btnSearch.label')}"
 										id="btnSearchROfficerDeptCode"
 										image="/images/icons/LOVSearch.png" height="24px" />
 								</hbox>

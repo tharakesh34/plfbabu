@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		: SecurityUserRoles.java                                                   * 	  
+ * FileName    		: SecurityUserRoles.java                                                * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -52,30 +52,42 @@ public class SecurityUserRoles implements java.io.Serializable,Entity{
 	private static final long serialVersionUID = 3894711431224067298L;
 	private long      usrRoleID=Long.MIN_VALUE;
 	private long      usrID;
+	private String    lovDescFirstName;
+	private String 	  lovDescMiddleName;
+	private String    lovDescLastName;
+	
 	private long      roleID;
+	private String    lovDescRoleCd;//role code
+	private String    lovDescRoleDesc;
 	private int       version;
 	private long      lastMntBy;
+	
 	private Timestamp lastMntOn;;
 	private String    recordStatus;
 	private String    roleCode;  // work flow role code
 	private String    nextRoleCode;
-	private String    lovDescRoleCd;//role code
+	
 	private String    taskId;
 	private String    nextTaskId;
 	private String    recordType;
 	private long      workflowId=0;  
-	private String    lovDescUserLogin;
+	
 	private LoginUserDetails  userDetails;
 	private SecurityUserRoles befImage;
+	private boolean newRecord=false;
 	
-
+	private String lovDescUsrFName;
+	private String lovDescUsrMName;
+	private String lovDescUsrLName;
+	private String lovDescUserLogin;
+	
 	public SecurityUserRoles() {
 		super();
 	}
 
-	public SecurityUserRoles(long usrRoleId) {
+	public SecurityUserRoles(long usrRoleID) {
 		super();
-		this.usrRoleID=usrRoleId;
+		this.usrRoleID=usrRoleID;
 	}
 
 	public long getUsrRoleID() {
@@ -183,18 +195,31 @@ public class SecurityUserRoles implements java.io.Serializable,Entity{
 		return false;
 	}
 
-	public void setLovDescUserLogin(String lovDescUserLogin) {
-		this.lovDescUserLogin = lovDescUserLogin;
+	public String getLovDescFirstName() {
+		return lovDescFirstName;
 	}
-	public String getLovDescUserLogin() {
-		return lovDescUserLogin;
+
+	public void setLovDescFirstName(String lovDescFirstName) {
+		this.lovDescFirstName = lovDescFirstName;
 	}
-	public void setLovDescRoleCd(String lovDescRoleCd) {
-		this.lovDescRoleCd = lovDescRoleCd;
+
+
+	public String getLovDescMiddleName() {
+		return lovDescMiddleName;
 	}
-	public String getLovDescRoleCd() {
-		return lovDescRoleCd;
+
+	public void setLovDescMiddleName(String lovDescMiddleName) {
+		this.lovDescMiddleName = lovDescMiddleName;
 	}
+
+	public String getLovDescLastName() {
+		return lovDescLastName;
+	}
+
+	public void setLovDescLastName(String lovDescLastName) {
+		this.lovDescLastName = lovDescLastName;
+	}
+
 
 	public boolean isWorkflow() {
 		if (this.workflowId == 0) {
@@ -203,4 +228,58 @@ public class SecurityUserRoles implements java.io.Serializable,Entity{
 		return true;
 	}
 
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public String getLovDescUsrFName() {
+		return lovDescUsrFName;
+	}
+
+	public void setLovDescUsrFName(String lovDescUsrFName) {
+		this.lovDescUsrFName = lovDescUsrFName;
+	}
+
+	public String getLovDescUsrMName() {
+		return lovDescUsrMName;
+	}
+
+	public void setLovDescUsrMName(String lovDescUsrMName) {
+		this.lovDescUsrMName = lovDescUsrMName;
+	}
+
+	public String getLovDescUsrLName() {
+		return lovDescUsrLName;
+	}
+	public void setLovDescUsrLName(String lovDescUsrLName) {
+		this.lovDescUsrLName = lovDescUsrLName;
+	}
+
+	public String getLovDescRoleCd() {
+		return lovDescRoleCd;
+	}
+
+	public void setLovDescRoleCd(String lovDescRoleCd) {
+		this.lovDescRoleCd = lovDescRoleCd;
+	}
+
+	public String getLovDescRoleDesc() {
+		return lovDescRoleDesc;
+	}
+
+	public void setLovDescRoleDesc(String lovDescRoleDesc) {
+		this.lovDescRoleDesc = lovDescRoleDesc;
+	}
+
+	public String getLovDescUserLogin() {
+	    return lovDescUserLogin;
+    }
+
+	public void setLovDescUserLogin(String lovDescUserLogin) {
+	    this.lovDescUserLogin = lovDescUserLogin;
+    }
 }

@@ -60,13 +60,11 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class FinanceApplicationCodeListModelItemRenderer implements ListitemRenderer<FinanceApplicationCode>, Serializable {
 
-
 	private static final long serialVersionUID = -6336194516320385692L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, FinanceApplicationCode financeApplicationCode, int count) throws Exception {
 
-		//final FinanceApplicationCode financeApplicationCode = (FinanceApplicationCode) data;
 		Listcell lc;
 		lc = new Listcell(financeApplicationCode.getFinAppType());
 		lc.setParent(item);

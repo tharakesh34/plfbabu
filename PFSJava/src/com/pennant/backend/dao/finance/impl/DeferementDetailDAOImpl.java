@@ -122,7 +122,7 @@ public class DeferementDetailDAOImpl extends BasisCodeDAO<DeferementDetail> impl
 	@Override
 	public DeferementDetail getDeferementDetailById(final String id, String type) {
 		logger.debug("Entering");
-		DeferementDetail deferementDetail = getDeferementDetail();
+		DeferementDetail deferementDetail = new DeferementDetail();
 		
 		deferementDetail.setId(id);
 		

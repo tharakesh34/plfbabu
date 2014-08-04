@@ -5,18 +5,18 @@ import java.math.BigDecimal;
 public class TEPPDetail {
 
 	private int tPPNoOfDays =0;
-	private BigDecimal tPPProfitCalc= new BigDecimal(0);
-	private BigDecimal tPPProfitSchd= new BigDecimal(0);
-	private BigDecimal tPPPrincipalSchd= new BigDecimal(0);
-	private BigDecimal tPPRepayAmount= new BigDecimal(0);
-	private BigDecimal tPPDisbAmount= new BigDecimal(0);
-	private BigDecimal tPPDownPaymentAmount= new BigDecimal(0);
-	private BigDecimal tPPCpzAmount= new BigDecimal(0);
-	private BigDecimal tPPDefRepaySchd= new BigDecimal(0);
-	private BigDecimal tPPDefProfitSchd= new BigDecimal(0);
-	private BigDecimal tPPDefPrincipalSchd= new BigDecimal(0);
-	private BigDecimal tPPSchdPftPaid= new BigDecimal(0);
-	private BigDecimal tPPSchdPriPaid= new BigDecimal(0);
+	private BigDecimal tPPProfitCalc= BigDecimal.ZERO;
+	private BigDecimal tPPProfitSchd= BigDecimal.ZERO;
+	private BigDecimal tPPPrincipalSchd= BigDecimal.ZERO;
+	private BigDecimal tPPRepayAmount= BigDecimal.ZERO;
+	private BigDecimal tPPDisbAmount= BigDecimal.ZERO;
+	private BigDecimal tPPDownPaymentAmount= BigDecimal.ZERO;
+	private BigDecimal tPPCpzAmount= BigDecimal.ZERO;
+	private BigDecimal tPPDefRepaySchd= BigDecimal.ZERO;
+	private BigDecimal tPPDefProfitSchd= BigDecimal.ZERO;
+	private BigDecimal tPPDefPrincipalSchd= BigDecimal.ZERO;
+	private BigDecimal tPPSchdPftPaid= BigDecimal.ZERO;
+	private BigDecimal tPPSchdPriPaid= BigDecimal.ZERO;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

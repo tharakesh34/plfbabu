@@ -121,7 +121,7 @@ public class LanguageDAOImpl extends BasisCodeDAO<Language> implements LanguageD
 	@Override
 	public Language getLanguageById(final String id, String type) {
 		logger.debug("Entering");
-		Language language = getLanguage();
+		Language language = new Language();
 		language.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

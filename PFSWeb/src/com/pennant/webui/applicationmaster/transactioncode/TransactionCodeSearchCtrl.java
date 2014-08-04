@@ -158,27 +158,27 @@ public class TransactionCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_tranCode.setModel(new ListModelList(
+		this.sortOperator_tranCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_tranCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_tranDesc.setModel(new ListModelList(
+		this.sortOperator_tranDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_tranDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_tranType.setModel(new ListModelList(
+		this.sortOperator_tranType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_tranType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_tranIsActive.setModel(new ListModelList(
+		this.sortOperator_tranIsActive.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_tranIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	

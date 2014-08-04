@@ -70,17 +70,17 @@
 						</columns>
 						<rows>
 							<row visible="true">
-								<label id="label_CityDialog_PCCounty"
-									value="${c:l('label_CityDialog_PCCounty.value')}" />
+								<label id="label_CityDialog_PCCountry"
+									value="${c:l('label_CityDialog_PCCountry.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="pCCounty" width="18px"
+									<textbox id="pCCountry" width="18px"
 										visible="false" />
-									<textbox id="lovDescPCCountyName"
+									<textbox id="lovDescPCCountryName"
 										readonly="true" width="150px" />
 									<button
-										label="${c:l('btnSearch.label')}" id="btnSearchPCCounty"
+										id="btnSearchPCCountry"
 										image="/images/icons/LOVSearch.png" height="24px" />
 								</hbox>
 							</row>
@@ -95,7 +95,7 @@
 									<textbox id="lovDescPCProvinceName"
 										readonly="true" width="150px" />
 									<button
-										label="${c:l('btnSearch.label')}" id="btnSearchPCProvince"
+										id="btnSearchPCProvince"
 										image="/images/icons/LOVSearch.png" height="24px" />
 								</hbox>
 							</row>
@@ -105,7 +105,7 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="pCCity" maxlength="8"
+									<uppercasebox id="pCCity" maxlength="8"
 										width="72px" />
 								</hbox>
 							</row>

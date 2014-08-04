@@ -8,14 +8,14 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_RateChangeDialog" border="normal"
-		apply="${rateChangeDialogCtrl}" width="525px" height="265px"
+		apply="${rateChangeDialogCtrl}" width="525px" height="285px"
 		sizable="false" title="${c:l('window_RateChangeDialog.title')}"
 		closable="true">
 
 		<borderlayout id="borderlayoutRateChange">
 			<center border="none" autoscroll="true">
 
-				<groupbox id="gb_RateDetails" height="175px" style="border:1px solid #F38C60;">
+				<groupbox id="gb_RateDetails" height="195px" style="border:1px solid #F38C60;">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
 						style="border:0px">
 						<columns>
@@ -103,7 +103,7 @@
                                     </hbox>
                                 </hbox>
                             </row>
-							<row>
+							<row id="row_effectiveRate" visible="false">
 							    <label></label>
 								<hbox>
 									<space spacing="2px" />

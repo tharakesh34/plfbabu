@@ -55,8 +55,8 @@ public interface CustomerEmploymentDetailService {
 	CustomerEmploymentDetail getCustomerEmploymentDetail();
 	CustomerEmploymentDetail getNewCustomerEmploymentDetail();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CustomerEmploymentDetail getCustomerEmploymentDetailById(long id);
-	CustomerEmploymentDetail getApprovedCustomerEmploymentDetailById(long id);
+	CustomerEmploymentDetail getCustomerEmploymentDetailById(long id,long custEmpName);
+	CustomerEmploymentDetail getApprovedCustomerEmploymentDetailById(long id,long custEmpName);
 	CustomerEmploymentDetail refresh(CustomerEmploymentDetail customerEmploymentDetail);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);

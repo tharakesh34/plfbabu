@@ -124,7 +124,7 @@ public class BasicFinanceTypeDAOImpl extends BasisCodeDAO<BasicFinanceType>
 	@Override
 	public BasicFinanceType getBasicFinanceTypeById(final String id, String type) {
 		logger.debug("Entering");
-		BasicFinanceType basicFinanceType = getBasicFinanceType();
+		BasicFinanceType basicFinanceType = new BasicFinanceType();
 		basicFinanceType.setId(id);
 
 		String selectListSql = "Select FinBasicType, FinBasicDesc, Version , LastMntBy, LastMntOn," +

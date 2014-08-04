@@ -54,7 +54,7 @@ public interface DirectorDetailDAO {
 
 	public DirectorDetail getDirectorDetail();
 	public DirectorDetail getNewDirectorDetail();
-	public DirectorDetail getDirectorDetailById(long id,String type);
+	public DirectorDetail getDirectorDetailById(final long id,final long custID,String type);
 	public void update(DirectorDetail directorDetail,String type);
 	public void delete(DirectorDetail directorDetail,String type);
 	public long save(DirectorDetail directorDetail,String type);

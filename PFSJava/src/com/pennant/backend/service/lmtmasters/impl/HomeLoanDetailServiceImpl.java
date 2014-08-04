@@ -43,13 +43,18 @@
 
 package com.pennant.backend.service.lmtmasters.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.lmtmasters.HomeLoanDetailDAO;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.HomeLoanDetail;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
@@ -57,6 +62,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.validation.HomeLoanDetailValidation;
 import com.pennant.backend.service.lmtmasters.HomeLoanDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 
 /**
  * Service implementation for methods that depends on <b>HomeLoanDetail</b>.<br>
@@ -359,9 +365,187 @@ public class HomeLoanDetailServiceImpl extends GenericService<HomeLoanDetail>
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader,String method) {
 		logger.debug("Entering");
-		auditHeader = getHomeLoanDetailValidation().homeLoanDetailValidation(auditHeader, method);
+		auditHeader = doValidation(auditHeader, method);
 		auditHeader=nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	@Override
+	public AuditDetail validate(HomeLoanDetail homeLoanDetail, String method, String auditTranType, String  usrLanguage){
+		return doValidation(homeLoanDetail, auditTranType, method, usrLanguage);
+	}
+
+		
+	@Override
+	public AuditDetail saveOrUpdate(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType) {
+		logger.debug("Entering");
+
+		String[] fields = PennantJavaUtil.getFieldDetails(homeLoanDetail, homeLoanDetail.getExcludeFields());
+
+		homeLoanDetail.setWorkflowId(0);
+		if (homeLoanDetail.isNewRecord()) {
+			getHomeLoanDetailDAO().save(homeLoanDetail, tableType);
+		} else {
+			getHomeLoanDetailDAO().update(homeLoanDetail, tableType);
+		}
+
+		logger.debug("Leaving");
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], homeLoanDetail.getBefImage(), homeLoanDetail);
+
+	}
+	
+	@Override
+	public AuditDetail doApprove(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType) {
+		logger.debug("Entering");
+
+		String[] fields = PennantJavaUtil.getFieldDetails(homeLoanDetail, homeLoanDetail.getExcludeFields());
+
+		homeLoanDetail.setRoleCode("");
+		homeLoanDetail.setNextRoleCode("");
+		homeLoanDetail.setTaskId("");
+		homeLoanDetail.setNextTaskId("");
+		homeLoanDetail.setWorkflowId(0);
+
+		getHomeLoanDetailDAO().save(homeLoanDetail, tableType);
+
+		logger.debug("Leaving");
+		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], homeLoanDetail.getBefImage(), homeLoanDetail);
+	}
+	
+	@Override
+	public AuditDetail delete(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType) {
+		logger.debug("Entering");
+
+		String[] fields = PennantJavaUtil.getFieldDetails(homeLoanDetail, homeLoanDetail.getExcludeFields());	
+
+		getHomeLoanDetailDAO().delete(homeLoanDetail, tableType);
+
+		logger.debug("Leaving");
+		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], homeLoanDetail.getBefImage(), homeLoanDetail);
+	}
+	
+	
+	
+	public AuditHeader doValidation(AuditHeader auditHeader, String method){
+		logger.debug("Entering");
+		
+		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	public AuditDetail doValidation(HomeLoanDetail homeLoanDetail, String auditTranType, String method,String  usrLanguage){
+		logger.debug("Entering");
+		String[] fields = PennantJavaUtil.getFieldDetails(homeLoanDetail, homeLoanDetail.getExcludeFields());
+		
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1], homeLoanDetail.getBefImage(), homeLoanDetail);
+		
+		logger.debug("Leaving");
+		return validate(auditDetail, usrLanguage, method);
+	}
+	
+	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage) {
+		logger.debug("Entering");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		HomeLoanDetail homeLoanDetail = (HomeLoanDetail) auditDetail.getModelData();
+
+		HomeLoanDetail tempHomeLoanDetail = null;
+		if (homeLoanDetail.isWorkflow()) {
+			tempHomeLoanDetail = getHomeLoanDetailDAO().getHomeLoanDetailByID(
+					homeLoanDetail.getId(), "_Temp");
+		}
+		HomeLoanDetail befHomeLoanDetail = getHomeLoanDetailDAO().getHomeLoanDetailByID(
+				homeLoanDetail.getId(), "");
+
+		HomeLoanDetail old_HomeLoanDetail = homeLoanDetail.getBefImage();
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = String.valueOf(homeLoanDetail.getId());
+		errParm[0] = PennantJavaUtil.getLabel("label_LoanRefNumber") + ":" + valueParm[0];
+
+		if (homeLoanDetail.isNew()) { // for New record or new record into work flow
+
+			if (!homeLoanDetail.isWorkflow()) {// With out Work flow only new
+												// records
+				if (befHomeLoanDetail != null) { // Record Already Exists in the
+													// table then error
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD,
+									"41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (homeLoanDetail.getRecordType().equals(
+						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																// is new
+					if (befHomeLoanDetail != null || tempHomeLoanDetail != null) { 
+						// if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD,
+										"41001", errParm, valueParm),usrLanguage));
+					}
+				} else { // if records not exists in the Main flow table
+					if (befHomeLoanDetail == null || tempHomeLoanDetail != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD,
+										"41005", errParm, valueParm),usrLanguage));
+					}
+				}
+			}
+		} else {
+			// for work flow process records or (Record to update or Delete with
+			// out work flow)
+			if (!homeLoanDetail.isWorkflow()) { // With out Work flow for update
+												// and delete
+
+				if (befHomeLoanDetail == null) { // if records not exists in the
+													// main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD,
+									"41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (old_HomeLoanDetail != null
+							&& !old_HomeLoanDetail.getLastMntOn().equals(
+									befHomeLoanDetail.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+								PennantConstants.KEY_FIELD,"41003", errParm, valueParm),usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+								PennantConstants.KEY_FIELD,"41004", errParm, valueParm),usrLanguage));
+						}
+					}
+				}
+			} else {
+
+				if (tempHomeLoanDetail == null) { // if records not exists in
+													// the Work flow table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD,
+									"41005", errParm, valueParm), usrLanguage));
+				}
+
+				if (tempHomeLoanDetail != null && old_HomeLoanDetail != null
+						&& !old_HomeLoanDetail.getLastMntOn().equals(
+								tempHomeLoanDetail.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD,
+									"41005", errParm, valueParm), usrLanguage));
+				}
+			}
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		if (StringUtils.trimToEmpty(method).equals("doApprove") || !homeLoanDetail.isWorkflow()) {
+			homeLoanDetail.setBefImage(befHomeLoanDetail);
+		}
+		logger.debug("Leaving");
+		return auditDetail;
 	}
 }

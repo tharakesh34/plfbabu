@@ -42,8 +42,6 @@
  */
 package com.pennant.backend.endofday.main;
 
-import java.io.Serializable;
-
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
@@ -51,211 +49,137 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.explore.support.SimpleJobExplorer;
-import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.batch.core.launch.support.SimpleJobOperator;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennant.app.util.DateUtility;
 
-public class PFSBatchAdmin implements Runnable, Serializable {
+public class PFSBatchAdmin {
 
 	private static final long serialVersionUID = -1648550888126596125L;
 	private final static Logger logger = Logger.getLogger(PFSBatchAdmin.class);
 	
-	private JobLauncher 			joblauncher;
-	private Job 					job;
-	private JobRepository 			jobRepository;
-	private JobParametersBuilder 	builder;
-	private JobParameters 			jobParameters;
-	private JobOperator 			jobOperator;
+	private static PFSBatchAdmin instance = null;
+	private static ClassPathXmlApplicationContext PFS_JOB_CONTEXT;	
+	
+	
+	private static  JobParametersBuilder 	builder;
+	private static  JobParameters 			jobParameters;
+	private static  JobRepository  			jobRepository;
+	private static  SimpleJobOperator 		jobOperator;
+	private static  JobLauncher 			jobLauncher;
+	private static  Job 					job;
 
-	private String 					jobStatus;
-	private JobExecution 			jobExecution;
-	private SimpleJobExplorer 		simpleJobExplorer;
+	private static String args[] = new String[1];
+	private static String runType = "";
 
-	private String args[] = null;
-	private static ClassPathXmlApplicationContext PFS_JOB_CONTEXT;
-	//private static ClassPathXmlApplicationContext PFS_JOB_CONTEXT;
-
-	public PFSBatchAdmin() {
+	private PFSBatchAdmin() {
 		logger.debug("Entering");
 		
-		//Application Context For END OF DAY job intiation
-		PFS_JOB_CONTEXT = new ClassPathXmlApplicationContext("PFSEquationEodJob.xml");
-		//PFS_JOB_CONTEXT = new ClassPathXmlApplicationContext("PFSBDEodJob.xml");//--FOR CORE DB
+		//Application Context For END OF DAY job initiation
+		PFS_JOB_CONTEXT = new ClassPathXmlApplicationContext("PFSEquationEodJob.xml");	
 		
-		//Initialization of Properties of Spring Job through Context
-		this.joblauncher = (JobLauncher) PFS_JOB_CONTEXT.getBean("jobLauncher");
-		setSimpleJobExplorer((SimpleJobExplorer) PFS_JOB_CONTEXT.getBean("jobExplorer"));
-		//this.job = (Job) PFS_JOB_CONTEXT.getBean("dbEodJob");//--FOR CORE DB
-		this.job = (Job) PFS_JOB_CONTEXT.getBean("equationEodJob");
-		this.jobRepository = (JobRepository) PFS_JOB_CONTEXT.getBean("jobRepository");
-		this.jobOperator = (SimpleJobOperator) PFS_JOB_CONTEXT.getBean("jobOperator");
+		jobRepository 	= (JobRepository)PFS_JOB_CONTEXT.getBean("jobRepository");
+		jobOperator 	= (SimpleJobOperator)PFS_JOB_CONTEXT.getBean("jobOperator");
+		jobLauncher 	= (JobLauncher)PFS_JOB_CONTEXT.getBean("jobLauncher");
+		job 			= (Job) PFS_JOB_CONTEXT.getBean("equationEodJob");
 		
+		builder = new JobParametersBuilder();		
 		logger.debug("Leaving");
 	}
-
-	public JobExecution getJobExecution(String[] args) {
-		logger.debug("Entering");
-		
-		this.builder = new JobParametersBuilder();
-		this.builder.addString("Date", (String) args[0]);
-		this.jobExecution = this.jobRepository.getLastJobExecution(this.job.getName(), builder.toJobParameters());
-		
-		logger.debug("Leaving");
-		return this.jobExecution;
-	}
-
-	public void statrJob(String args[]) {
-		logger.debug("Entering");
-		
-		this.args = args;
-		this.builder = new JobParametersBuilder();
-		this.builder.addString("Date", (String) args[0]);
-		this.jobParameters = this.builder.toJobParameters();
-
-		Thread thread = new Thread(this);
-		try {
-			thread.start();
-			Thread.sleep(2000);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
+	
+	public static PFSBatchAdmin getInstance() {
+		if (instance == null) {
+			instance = new PFSBatchAdmin();
 		}
-		logger.debug("Leaving");
+		return instance;
 	}
 
-	public void reStatrJob(JobExecution jobExecution) {
+	public static boolean resetStaleJob(JobExecution jobExecution) throws Exception {
 		logger.debug("Entering");
-		
-		this.args = null;
-		this.jobExecution = jobExecution;
-		Thread thread = new Thread(this);
-		try {
-			thread.start();
-			Thread.sleep(2000);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-		}
-		logger.debug("Leaving");
-	}
 
-	@SuppressWarnings("serial")
-	private void startJob() throws Exception {
-		logger.debug("Entering");
-		
-		try {
-			joblauncher.run(job, jobParameters).getId();
-
-		} catch (JobExecutionAlreadyRunningException e) {
-			logger.error(e.getMessage());
-			throw new JobExecutionAlreadyRunningException(e.getMessage()) {};
-		} catch (JobInstanceAlreadyCompleteException e) {
-			logger.error(e.getMessage());
-			throw new JobInstanceAlreadyCompleteException(e.getMessage()) {};
-		} catch (JobParametersInvalidException e) {
-			logger.error(e.getMessage());
-			throw new JobParametersInvalidException(e.getMessage()) {};
-		}
-		logger.debug("Leaving");
-	}
-
-	@SuppressWarnings("serial")
-	private void reStartJob() throws Exception {
-		logger.debug("Entering");
-		
-		try {
-			this.jobOperator.startNextInstance(this.job.getName());
-			this.jobOperator.restart(jobExecution.getId());			
-			
-		} catch (JobRestartException e) {
-			logger.error(e.getMessage());
-			throw new JobRestartException(e.getMessage()) {};
-		} catch (JobInstanceAlreadyCompleteException e) {
-			logger.error(e.getMessage());
-			throw new JobInstanceAlreadyCompleteException(e.getMessage()) {};
-		} catch (JobParametersInvalidException e) {
-			logger.error(e.getMessage());
-			throw new JobParametersInvalidException(e.getMessage()) {};
-		}
-		logger.debug("Leaving");
-	}
-
-	public boolean resetStaleJob(JobExecution jobExecution) {
-		logger.debug("Entering");
-		
 		if (jobExecution == null) {
 			logger.debug("Leaving");
 			return false;
 		}
-
+		
+		try {
+			jobOperator.stop(jobExecution.getId());
+		} catch (Exception e) {	
+			// 
+		}
+		
+		jobExecution = getJobExecution();
 		jobExecution.setStatus(BatchStatus.STOPPED);
 		jobExecution.setExitStatus(ExitStatus.STOPPED);
 		jobExecution.setEndTime(DateUtility.getUtilDate());
+		jobRepository.update(jobExecution);
 		
-		try {
-			this.jobOperator.stop(jobExecution.getId());
-		} catch (NoSuchJobExecutionException e) {	
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		} catch (JobExecutionNotRunningException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-
-		this.jobRepository.update(jobExecution);
 		logger.debug("Leaving");
 		return true;
 	}
 
-	public void run() {
+	public static void statrJob() {
 		logger.debug("Entering");
-
 		try {
-			this.jobStatus = null;
-			if (this.args != null) {
-				startJob();
+			if (runType.equals("START")) {
+				builder.addString("Date", (String) args[0]);				
+				jobParameters = builder.toJobParameters();				
+				jobLauncher.run(job, jobParameters).getId();
 			} else {
-				reStartJob();
+				//this.jobOperator.startNextInstance(this.job.getName());
+				jobOperator.restart(getJobExecution().getId());
 			}
-
 		} catch (Exception e) {
 			try {
 				throw e;
 			} catch (Exception e1) {
 				logger.error(e1.getMessage());
-				this.jobStatus = e1.getMessage();
 			}
 		}
 		logger.debug("Leaving");
+	}
+	
+	public static JobExecution getJobExecution() {
+		builder.addString("Date", (String) args[0]);				
+		jobParameters = builder.toJobParameters();		
+		return jobRepository.getLastJobExecution(job.getName(), jobParameters);
+	}
+	
+	
+	public static void destroy() {
+		instance = null;
+		PFS_JOB_CONTEXT = null;
+		builder = null;
+		jobParameters = null;
+		jobRepository = null;
+		jobOperator = null;
+		jobLauncher = null;
+		job = null;
+
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public String getJobStatus() {
-		return jobStatus;
-	}
-	public void setJobStatus(String jobStatus) {
-		this.jobStatus = jobStatus;
+	public static String[] getArgs() {
+		return args;
 	}
 
-	public void setSimpleJobExplorer(SimpleJobExplorer simpleJobExplorer) {
-		this.simpleJobExplorer = simpleJobExplorer;
+	public static void setArgs(String[] args) {
+		PFSBatchAdmin.args = args;
 	}
-	public SimpleJobExplorer getSimpleJobExplorer() {
-		return simpleJobExplorer;
+
+	public static String getRunType() {
+		return runType;
 	}
+
+	public static void setRunType(String runType) {
+		PFSBatchAdmin.runType = runType;
+	}
+
 
 }

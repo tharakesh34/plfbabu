@@ -157,22 +157,22 @@ public class AddressTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_addrTypeCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_addrTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_addrTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_addrTypeDesc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_addrTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_addrTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_addrTypePriority.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_addrTypePriority.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_addrTypePriority.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_addrTypeIsActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_addrTypeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_addrTypeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
@@ -438,7 +438,7 @@ public class AddressTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		this.addressTypeCtrl.setSearchObj(so);
 
 		this.label_AddressTypeSearchResult.setValue(Labels.getLabel(
-		"label_AddressTypeSearchResult.value") + " " + String.valueOf(paging.getTotalSize()));
+				"label_AddressTypeSearchResult.value") + " " + String.valueOf(paging.getTotalSize()));
 		logger.debug("Leaving");
 	}
 

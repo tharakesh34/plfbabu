@@ -74,6 +74,7 @@ public class FinanceReferenceDetail implements java.io.Serializable, Entity {
 	private int overRideValue;
 	private String lovDescCodelov;
 	private String lovDescNamelov;
+	private String lovDescAggImage;
 	private boolean lovDescIsRemarksAllowed;
 	private long lovDescCheckMinCount;
 	private long lovDescCheckMaxCount;
@@ -108,6 +109,7 @@ public class FinanceReferenceDetail implements java.io.Serializable, Entity {
 	private String lovDescFinCcyCode;
 	private String lovDescProductCodeName;
 	private String lovDescRuleReturnType;
+	private String lovDescFinTypeDescName;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -386,8 +388,15 @@ public class FinanceReferenceDetail implements java.io.Serializable, Entity {
 	public void setLovDescNamelov(String lovDescNamelov) {
 		this.lovDescNamelov = lovDescNamelov;
 	}
-
 	
+	public String getLovDescAggImage() {
+    	return lovDescAggImage;
+    }
+
+	public void setLovDescAggImage(String lovDescAggImage) {
+    	this.lovDescAggImage = lovDescAggImage;
+    }
+
 	public String getLovDescElgRuleValue() {
 		return lovDescElgRuleValue;
 	}
@@ -526,5 +535,13 @@ public class FinanceReferenceDetail implements java.io.Serializable, Entity {
 
 	public String getLovDescRuleReturnType() {
 	    return lovDescRuleReturnType;
+    }
+
+	public void setLovDescFinTypeDescName(String lovDescFinTypeDescName) {
+	    this.lovDescFinTypeDescName = lovDescFinTypeDescName;
+    }
+
+	public String getLovDescFinTypeDescName() {
+	    return lovDescFinTypeDescName;
     }
 }

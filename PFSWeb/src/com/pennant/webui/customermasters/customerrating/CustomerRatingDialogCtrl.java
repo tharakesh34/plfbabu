@@ -69,12 +69,12 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.bmtmasters.RatingCode;
 import com.pennant.backend.model.bmtmasters.RatingType;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerRating;
@@ -90,7 +90,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -114,9 +113,9 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Window 		window_CustomerRatingDialog;// autowired
 
 	protected Longbox 		custID; 					// autowired
-	protected Textbox 		custRatingType; 			// autowired
-	protected Textbox 		custRatingCode; 			// autowired
-	protected Textbox 		custRating; 				// autowired
+	protected ExtendedCombobox 		custRatingType; 			// autowired
+	protected ExtendedCombobox 		custRatingCode; 			// autowired
+	protected ExtendedCombobox 		custRating; 				// autowired
 	protected Textbox 		custCIF;					// autowired
 	protected Label 		custShrtName;				// autowired
 
@@ -153,13 +152,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Button btnNotes; 			// autowire
 	protected Button btnSearchPRCustid; // autowire
 
-	protected Button 	btnSearchCustRatingType; 	// autowire
-	protected Textbox 	lovDescCustRatingTypeName;
 	private transient String 		oldVar_lovDescCustRatingTypeName;
 
-	protected Button 	btnSearchCustRatingCode; 	// autowire
-	protected Textbox 	lovDescCustRatingCodeName;
-	private transient String 		oldVar_lovDescCustRatingCodeName;
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerRatingService customerRatingService;
@@ -172,6 +166,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private transient boolean isRatingTypeNumeric;
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private String moduleType="";
+	private String sCustRatingType;
+	private String role="";
 
 	/**
 	 * default constructor.<br>
@@ -195,8 +191,6 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void onCreate$window_CustomerRatingDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
 
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix,
@@ -205,6 +199,11 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		// get the params map that are overhanded by creation.
 		final Map<String, Object> args = getCreationArgsMap(event);
+		if(args.containsKey("roleCode")){
+			role=(String) args.get("roleCode");
+		}
+		/* set components visible dependent of the users rights */
+		doCheckRights();
 
 		// READ OVERHANDED params !
 		if (args.containsKey("customerRating")) {
@@ -236,9 +235,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 				setNewRecord(false);
 			}
 			this.customerRating.setWorkflowId(0);
-			if(args.containsKey("roleCode")){
-				getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "CustomerRatingDialog");
-			}
+			getUserWorkspace().alocateRoleAuthorities(role, "CustomerRatingDialog");
+	
 		}
 
 		doLoadWorkFlow(this.customerRating.isWorkflow(),this.customerRating.getWorkflowId(),
@@ -279,8 +277,27 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.custRatingType.setMaxlength(8);
+		this.custRatingType.setMandatoryStyle(true);
+		this.custRatingType.getTextbox().setWidth("110px");
+		this.custRatingType.setModuleName("RatingType");
+		this.custRatingType.setValueColumn("RatingType");
+		this.custRatingType.setDescColumn("RatingTypeDesc");
+		this.custRatingType.setValidateColumns(new String[] { "RatingType" });
+		
+		this.custRatingCode.setTextBoxWidth(110);
+		this.custRatingCode.setModuleName("RatingCode");
+		this.custRatingCode.setValueColumn("RatingCode");
+		this.custRatingCode.setDescColumn("RatingCodeDesc");
+		this.custRatingCode.setValidateColumns(new String[] { "RatingCode" });
+		
+		this.custRating.setTextBoxWidth(110);
+		this.custRating.setModuleName("RatingCode");
+		this.custRating.setValueColumn("RatingCode");
+		this.custRating.setDescColumn("RatingCodeDesc");
+		this.custRating.setValidateColumns(new String[] { "RatingCode" });
+	
 		this.custRatingCode.setMaxlength(8);
-		this.custRating.setMaxlength(50);
+		this.custRating.setMaxlength(8);
 
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
@@ -505,23 +522,23 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		this.custRatingType.setValue(aCustomerRating.getCustRatingType());
-		this.custRatingCode.setValue(aCustomerRating.getCustRatingCode());
-		this.custRating.setValue(aCustomerRating.getCustRating());
+		doSetRatingCodeFilters(aCustomerRating.getCustRatingType());
+		
+		this.custRatingCode.setValue(aCustomerRating.getCustRatingCode(),StringUtils.trimToEmpty(aCustomerRating.getLovDesccustRatingCodeDesc()));
+		this.custRating.setValue(aCustomerRating.getCustRating(),StringUtils.trimToEmpty(aCustomerRating.getLovDescCustRatingName()));
+		
 		this.isRatingTypeNumeric = aCustomerRating.isValueType();
+		
 		this.custCIF.setValue(aCustomerRating.getLovDescCustCIF()==null?"":aCustomerRating.getLovDescCustCIF().trim());
 		this.custShrtName.setValue(aCustomerRating.getLovDescCustShrtName()==null?"":aCustomerRating.getLovDescCustShrtName().trim());
 
 		if (isNewRecord()){
-			this.lovDescCustRatingTypeName.setValue("");
-			this.lovDescCustRatingCodeName.setValue("");
-			this.btnSearchCustRatingCode.setVisible(false);
-			this.btnSearchCustRatingType.setVisible(true);
+			this.custRatingType.setDescription("");
+			this.custRatingType.setReadonly(false);
 
 		}else{
-			this.lovDescCustRatingTypeName.setValue(aCustomerRating.getLovDescCustRatingTypeName());
-			this.lovDescCustRatingCodeName.setValue(aCustomerRating.getLovDescCustRatingCodeName());
-			this.btnSearchCustRatingType.setVisible(false);
-			this.btnSearchCustRatingCode.setVisible(true);
+			this.custRatingType.setDescription(aCustomerRating.getLovDescCustRatingTypeName());
+			this.custRatingType.setReadonly(true);
 		}
 		this.recordStatus.setValue(aCustomerRating.getRecordStatus());
 		logger.debug("Leaving");
@@ -545,18 +562,23 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 			wve.add(we);
 		}
 		try {
-			aCustomerRating.setLovDescCustRatingTypeName(this.lovDescCustRatingTypeName.getValue());
+			aCustomerRating.setLovDescCustRatingTypeName(this.custRatingType.getDescription());
 			aCustomerRating.setCustRatingType(this.custRatingType.getValue());
 			aCustomerRating.setValueType(this.isRatingTypeNumeric);
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			aCustomerRating.setLovDescCustRatingCodeName(this.lovDescCustRatingCodeName.getValue());
-			aCustomerRating.setCustRatingCode(this.custRatingCode.getValue());
-			aCustomerRating.setCustRating(this.custRating.getValue());
-
-		}catch (WrongValueException we ) {
+			aCustomerRating.setCustRatingCode(this.custRatingCode.getValidatedValue());
+			aCustomerRating.setLovDesccustRatingCodeDesc(this.custRatingCode.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			
+			aCustomerRating.setCustRating(this.custRating.getValidatedValue());
+			aCustomerRating.setLovDescCustRatingName(this.custRating.getDescription());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
@@ -617,7 +639,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
-
+			this.btnCancel.setVisible(false);
+			this.btnDelete.setVisible(false);
 			if(isNewCustomer()){
 				this.window_CustomerRatingDialog.setHeight("228px");
 				this.window_CustomerRatingDialog.setWidth("800px");
@@ -647,9 +670,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_custRatingType = this.custRatingType.getValue();
-		this.oldVar_lovDescCustRatingTypeName = this.lovDescCustRatingTypeName.getValue();
+		this.oldVar_lovDescCustRatingTypeName = this.custRatingType.getDescription();
 		this.oldVar_custRatingCode = this.custRatingCode.getValue();
-		this.oldVar_lovDescCustRatingCodeName = this.lovDescCustRatingCodeName.getValue();
 		this.oldVar_custRating = this.custRating.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
@@ -662,9 +684,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.custID.setValue(this.oldVar_custID);
 		this.custRatingType.setValue(this.oldVar_custRatingType);
-		this.lovDescCustRatingTypeName.setValue(this.oldVar_lovDescCustRatingTypeName);
+		this.custRatingType.setDescription(this.oldVar_lovDescCustRatingTypeName);
 		this.custRatingCode.setValue(this.oldVar_custRatingCode);
-		this.lovDescCustRatingCodeName.setValue(this.oldVar_lovDescCustRatingCodeName);
 		this.custRating.setValue(this.oldVar_custRating);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -732,11 +753,11 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 
-		this.lovDescCustRatingTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+		this.custRatingType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 				new String[]{ Labels.getLabel("label_CustomerRatingDialog_CustRatingType.value")}));
 
-		this.lovDescCustRatingCodeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{ Labels.getLabel("label_CustomerRatingDialog_CustRatingCode.value")}));
+//		this.custRatingCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+//				new String[]{ Labels.getLabel("label_CustomerRatingDialog_CustRatingCode.value")}));
 
 		logger.debug("Leaving");
 	}
@@ -746,8 +767,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustRatingTypeName.setConstraint("");
-		this.lovDescCustRatingCodeName.setConstraint("");
+		this.custRatingType.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -758,14 +778,22 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.custCIF.setErrorMessage("");
 		this.custRating.setErrorMessage("");
-		this.lovDescCustRatingTypeName.setErrorMessage("");
-		this.lovDescCustRatingCodeName.setErrorMessage("");
+		this.custRatingCode.setErrorMessage("");
+		this.custRating.setErrorMessage("");
+		this.custRatingType.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
 	// Method for refreshing the list after successful updating
 	private void refreshList() {
-		getCustomerRatingListCtrl().findSearchObject();
+		/*getCustomerRatingListCtrl().findSearchObject();
+		if (getCustomerRatingListCtrl().listBoxCustomerRating != null) {
+			getCustomerRatingListCtrl().listBoxCustomerRating.getListModel();
+		}*/
+		
+		final JdbcSearchObject<CustomerRating> soAcademic = getCustomerRatingListCtrl().getSearchObj();
+		getCustomerRatingListCtrl().pagingCustomerRatingList.setActivePage(0);
+		getCustomerRatingListCtrl().getPagedListWrapper().setSearchObject(soAcademic);
 		if (getCustomerRatingListCtrl().listBoxCustomerRating != null) {
 			getCustomerRatingListCtrl().listBoxCustomerRating.getListModel();
 		}
@@ -801,8 +829,9 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if (StringUtils.trimToEmpty(aCustomerRating.getRecordType()).equals("")){
 				aCustomerRating.setVersion(aCustomerRating.getVersion()+1);
 				aCustomerRating.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aCustomerRating.setNewRecord(true);
-
+				if(getCustomerDialogCtrl() != null &&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
+					aCustomerRating.setNewRecord(true);	
+				}
 				if (isWorkFlowEnabled()){
 					aCustomerRating.setNewRecord(true);
 					tranType=PennantConstants.TRAN_WF;
@@ -869,15 +898,16 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}else{
 				this.btnSearchPRCustid.setVisible(true);
 			}
-			this.btnSearchCustRatingType.setDisabled(isReadOnly("CustomerRatingDialog_custRatingType"));
+			this.custRatingType.setReadonly(isReadOnly("CustomerRatingDialog_custRatingType"));
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
-			this.btnSearchCustRatingType.setVisible(false);
+			this.custRatingType.setReadonly(true);
 		}
 		this.custCIF.setReadonly(true);
 		this.custID.setReadonly(isReadOnly("CustomerRatingDialog_custID"));
-		this.btnSearchCustRatingCode.setDisabled(isReadOnly("CustomerRatingDialog_custRatingCode"));
+		this.custRatingCode.setReadonly(isReadOnly("CustomerRatingDialog_custRatingCode"));
+		this.custRating.setReadonly(isReadOnly("CustomerRatingDialog_custRating"));
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -912,7 +942,11 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	}
 
 	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewCustomer()){
+		boolean isCustomerWorkflow = false;
+		if(getCustomerDialogCtrl() != null){
+			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -924,8 +958,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.custCIF.setReadonly(true);
-		this.btnSearchCustRatingType.setDisabled(true);
-		this.btnSearchCustRatingCode.setDisabled(true);
+		this.custRatingType.setReadonly(true);
+		this.custRatingCode.setReadonly(true);
 		this.custRating.setReadonly(true);
 
 		if(isWorkFlowEnabled()){
@@ -950,9 +984,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custCIF.setValue("");
 		this.custShrtName.setValue("");
 		this.custRatingType.setValue("");
-		this.lovDescCustRatingTypeName.setValue("");
+		this.custRatingType.setDescription("");
 		this.custRatingCode.setValue("");
-		this.lovDescCustRatingCodeName.setValue("");
 		this.custRating.setValue("");
 		logger.debug("Leaving");		
 	}
@@ -1301,58 +1334,32 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// ++++++++++++ Search Button Component Events+++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchCustRatingType(Event event){
+	public void onFulfill$custRatingType(Event event){
 		logger.debug("Entering" + event.toString());
-		String sCustRatingType= this.custRatingType.getValue();
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerRatingDialog,"RatingType");
+		Object dataObject = custRatingType.getObject();
 		if (dataObject instanceof String){
 			this.custRatingType.setValue(dataObject.toString());
-			this.lovDescCustRatingTypeName.setValue("");
+			this.custRatingType.setDescription("");
 
 		}else{
 			RatingType details= (RatingType) dataObject;
 			if (details != null) {
 				this.custRatingType.setValue(details.getRatingType());
-				this.lovDescCustRatingTypeName.setValue(details.getRatingTypeDesc());
+				this.custRatingType.setDescription(details.getRatingTypeDesc());
 				this.isRatingTypeNumeric = details.isValueType();
+				doSetRatingCodeFilters(details.getRatingType());
 			}
 		}
 
 		if (!StringUtils.trimToEmpty(sCustRatingType).equals(this.custRatingType.getValue())){
 			this.custRatingCode.setValue("");
-			this.lovDescCustRatingCodeName.setValue("");
 		} 
-		if(!this.custRatingType.getValue().equals("")){
-			this.btnSearchCustRatingCode.setVisible(true);
-		}
-		else{
-			this.btnSearchCustRatingCode.setVisible(false);	   
-		}
+		sCustRatingType= this.custRatingType.getValue();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchCustRatingCode(Event event){
-		logger.debug("Entering" + event.toString());
 
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("RatingType", this.custRatingType.getValue(), Filter.OP_EQUAL);  
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerRatingDialog,"RatingCode",filters);
-		if (dataObject instanceof String){
-			this.custRatingCode.setValue(dataObject.toString());
-			this.lovDescCustRatingCodeName.setValue("");
-			this.custRating.setValue("");
-		}else{
-			RatingCode details= (RatingCode) dataObject;
-			if (details != null) {
-				this.custRatingCode.setValue(details.getRatingCode());
-				this.lovDescCustRatingCodeName.setValue(details.getRatingCodeDesc());
-				this.custRating.setValue(details.getRatingCode());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
 
 	/**
 	 * Method for Calling list Of existed Customers
@@ -1556,5 +1563,15 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
-
+	
+	public void doSetRatingCodeFilters(String sectorcode) {
+		if (!StringUtils.trimToEmpty(sectorcode).equals("")) {
+			Filter filters[] = new Filter[1];
+			filters[0] = new Filter("RatingType", sectorcode, Filter.OP_EQUAL);
+			this.custRatingCode.setFilters(filters);
+			this.custRating.setFilters(filters);
+		} 
+		this.custRatingCode.setValue("", "");
+		this.custRating.setValue("", "");
+	}
 }

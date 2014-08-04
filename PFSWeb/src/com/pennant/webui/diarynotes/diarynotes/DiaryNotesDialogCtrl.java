@@ -91,6 +91,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.diarynotes.DiaryNotesService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -188,7 +189,7 @@ public class DiaryNotesDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// ServiceDAOs / Domain Classes
 	private transient DiaryNotesService diaryNotesService;
 	private transient PagedListService pagedListService;
-	private List<ValueLabel> listDnType=PennantAppUtil.getNotesType(); // autoWired
+	private List<ValueLabel> listDnType=PennantStaticListUtil.getNotesType(); // autoWired
 		
 	private HashMap<String, ArrayList<ErrorDetails>> overrideMap = new HashMap<String, ArrayList<ErrorDetails>>();
 	
@@ -1610,10 +1611,7 @@ public class DiaryNotesDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onSelect$cbfrqDays(Event event) {
 		logger.debug("Entering" + event.toString());
-		String stmtFrqCode = validateCombobox(this.cbfrqCode);
-		String stmtFrqMonth = validateCombobox(this.cbfrqMth);
-		String stmtFrqday = validateCombobox(this.cbfrqDays);
-		onSelectFrqDay(stmtFrqCode, stmtFrqMonth, stmtFrqday, frqCode);
+		onSelectFrqDay(cbfrqCode, cbfrqMth, cbfrqDays, frqCode);
 		logger.debug("Leaving" + event.toString());
 	}	
 	

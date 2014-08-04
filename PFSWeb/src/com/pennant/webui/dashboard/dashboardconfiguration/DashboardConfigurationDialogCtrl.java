@@ -71,7 +71,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -88,11 +87,14 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -200,8 +202,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 	private transient DashboardConfigurationService dashboardConfigurationService;
 	private transient PagedListService pagedListService;
 
-	private List<ValueLabel> listDashboardType = PennantAppUtil.getDashBoardType(); 	// autoWiredgetChartDimensions()
-	private List<ValueLabel> listDimensions = PennantAppUtil.getChartDimensions();
+	private List<ValueLabel> listDashboardType = PennantStaticListUtil.getDashBoardType(); 	// autoWiredgetChartDimensions()
+	private List<ValueLabel> listDimensions = PennantStaticListUtil.getChartDimensions();
 
 	/**
 	 * default constructor.<br>
@@ -619,19 +621,19 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 		this.isMultiSeries.setChecked(aDashboardConfiguration.isMultiSeries());
 		if(aDashboardConfiguration.isNew()){
 			this.dashboardType.setValue(PennantAppUtil.getlabelDesc(
-					"",PennantAppUtil.getDashBoardType()));
+					"",PennantStaticListUtil.getDashBoardType()));
 		}else{
 			this.dashboardType.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(aDashboardConfiguration.getDashboardType()),PennantAppUtil.getDashBoardType()));
+					String.valueOf(aDashboardConfiguration.getDashboardType()),PennantStaticListUtil.getDashBoardType()));
 		}
 		if(aDashboardConfiguration.isNew()){
 			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(
 					String.valueOf(Labels
-							.getLabel("label_Select_2D")),PennantAppUtil.getChartDimensions()));
+							.getLabel("label_Select_2D")),PennantStaticListUtil.getChartDimensions()));
 
 		}else{
 			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(aDashboardConfiguration.getDimension()),PennantAppUtil.getChartDimensions()));
+					String.valueOf(aDashboardConfiguration.getDimension()),PennantStaticListUtil.getChartDimensions()));
 
 		}
 
@@ -987,15 +989,13 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 		setValidationOn(true);
 
 		if (!this.dashboardCode.isReadonly()) {
-			this.dashboardCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHA_SPACE_UNDERSCORE_REGEX,Labels.getLabel(
-					"MAND_FIELD_CHARACTER_SPECIALCHAR"
-					,	new String[] { Labels.getLabel("label_DashboardConfigurationDialog_DashboardCode.value") })));
+			this.dashboardCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_DashboardCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 
 		}
 
 		if (!this.dashboardDesc.isReadonly()) {
-			this.dashboardDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[] { Labels.getLabel("label_DashboardConfigurationDialog_DashboardDesc.value") })));
+			this.dashboardDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_DashboardDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.dashboardType.isDisabled()) {
@@ -1003,8 +1003,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 					,Labels.getLabel("label_DashboardConfigurationDialog_DashboardType.value")));
 		}
 		if (!this.dashboardCaption.isDisabled()) {
-			this.dashboardCaption.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_SPACE_REGEX,Labels.getLabel(
-					"FIELD_ALNUM_CAPS",	new String[] { Labels.getLabel("label_DashboardConfigurationDialog_Caption.value") })));
+			this.dashboardCaption.setConstraint(new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_Caption.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}
 
 		logger.debug("Leaving");

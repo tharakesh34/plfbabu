@@ -82,20 +82,10 @@
 										maxlength="50"  style="overflow: hidden;" />
 									<button id="btnSearchCustId"
 										image="/images/icons/LOVSearch.png" height="24px" />
+									<label id="contributorName"/>	
 								</hbox>
 							</row>
-							<row>
-								<label
-									id="label_FinContributorDetailDialog_ContributorName"
-									value="${c:l('label_FinContributorDetailDialog_ContributorName.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="contributorName" width="150px" readonly="true"
-										maxlength="50"  style="overflow: hidden;" />
-								</hbox>
-							</row>
-							<row>
+					        <row>
 								<label
 									id="label_FinContributorDetailDialog_ContributorInvestment"
 									value="${c:l('label_FinContributorDetailDialog_ContributorInvestment.value')}" />
@@ -117,6 +107,7 @@
 										width="150px" readonly="true"/>
 									<button id="btnSearchInvestmentAcc"
 										image="/images/icons/LOVSearch.png" height="24px" />
+									<label id="investmentAcctBal" />
 								</hbox>
 							</row>
 							<row>
@@ -134,18 +125,16 @@
 									id="label_FinContributorDetailDialog_RecordDate"
 									value="${c:l('label_FinContributorDetailDialog_RecordDate.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px"/>
 									<datebox id="recordDate" width="100px" format="dd/MM/yyyy"/>
 								</hbox>
 							</row>
-							<row>
+							<row id = "row_mudaribPerc">
 								<label
 									id="label_FinContributorDetailDialog_MudaribPerc"
 									value="${c:l('label_FinContributorDetailDialog_MudaribPerc.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px"/>
 									<decimalbox id="mudaribPerc"
 										width="72px" />
 								</hbox>

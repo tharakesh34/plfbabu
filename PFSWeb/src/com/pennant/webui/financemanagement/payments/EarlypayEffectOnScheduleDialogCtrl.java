@@ -45,6 +45,7 @@ package com.pennant.webui.financemanagement.payments;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -54,11 +55,12 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 
 /**
@@ -93,7 +95,7 @@ public class EarlypayEffectOnScheduleDialogCtrl extends GFCBaseListCtrl<FinanceM
 	private ManualPaymentDialogCtrl manualPaymentDialogCtrl = null;
 	private RepayData repayData = null;
 
-	static final List<ValueLabel> earlyRpyEffectList = PennantAppUtil.getScheduleOn();
+	static final List<ValueLabel> earlyRpyEffectList = PennantStaticListUtil.getScheduleOn();
 
 	/**
 	 * default constructor.<br>
@@ -127,7 +129,12 @@ public class EarlypayEffectOnScheduleDialogCtrl extends GFCBaseListCtrl<FinanceM
 			repayData = (RepayData) args.get("repayData");
 		}
 		
-		fillComboBox(this.effectOnSchedule, "", earlyRpyEffectList, "");
+		if(repayData.getFinanceMain() != null && 
+				CalculationConstants.RATE_BASIS_D.equals(StringUtils.trimToEmpty(repayData.getFinanceMain().getRepayRateBasis()))){
+			fillComboBox(this.effectOnSchedule, "", earlyRpyEffectList, ",ADJMUR,ADMPFI,RECRPY,RECPFI,");
+		}else{
+			fillComboBox(this.effectOnSchedule, "", earlyRpyEffectList, "");
+		}
 		this.window_EarlypayEffectOnSchedule.doModal();
 		logger.debug("Leaving" + event.toString());
 	}

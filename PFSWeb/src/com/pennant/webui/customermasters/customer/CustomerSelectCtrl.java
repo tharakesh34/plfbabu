@@ -66,6 +66,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.customermasters.customer.model.CustomerSelectItemRenderer;
@@ -137,7 +138,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 	private JdbcSearchObject<Customer> searchObj;
 	private List<Filter> filterList = new ArrayList<Filter>();
 	protected Button btnClear;
-
+    private String finDivision=null;
 	/**
 	 * Default constructor
 	 */
@@ -169,35 +170,35 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 		}
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
-
-		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		List<SearchOperators> list = new SearchOperators().getStringOperators();
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custCoreBank.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCoreBank.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custCoreBank.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custCtgCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCtgCode.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custCtgCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
-		this.sortOperator_custTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		
+		this.sortOperator_custTypeCode.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custSalutationCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custSalutationCode.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custSalutationCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custFName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custFName.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custFName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custMName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custMName.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custMName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custLName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custLName.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custLName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custShrtName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custShrtName.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custShrtName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custDftBranch.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custDftBranch.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custDftBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		// get the params map that are overhanded by creation.
@@ -206,10 +207,24 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 		if (args.containsKey("DialogCtrl")) {
 			setDialogCtrl(args.get("DialogCtrl"));
 		}
+	
+		if (args.containsKey("finDivision")) {
+			finDivision = (String) args.get("finDivision");
+		}
+		
 		if (args.containsKey("filtersList")) {
 			filterList = (List<Filter>) args.get("filtersList");
 		}
-	
+		
+		if(!StringUtils.trimToEmpty(finDivision).equals("")){
+			if(finDivision.equals(PennantConstants.FIN_DIVISION_COMMERCIAL) || finDivision.equals(PennantConstants.FIN_DIVISION_RETAIL)) {
+				filterList.add(new Filter("custDftBranch", PennantConstants.IBD_Branch, Filter.OP_NOT_EQUAL));
+			} else if(finDivision.equals(PennantConstants.FIN_DIVISION_CORPORATE)){
+				filterList.add(new Filter("custDftBranch", PennantConstants.IBD_Branch, Filter.OP_EQUAL));
+			}
+		}
+		
+		
 		// +++++++++++++++++++++++ Stored search object and paging ++++++++++++++++++++++ //
 			
 		if (args.containsKey("searchObject")) {

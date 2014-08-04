@@ -47,6 +47,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +60,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
@@ -68,6 +70,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -75,7 +78,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.amtmasters.ExpenseTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -101,6 +108,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	protected Window window_ExpenseTypeDialog; // autowired
 	protected Textbox expenceTypeName; // autowired
+	protected Combobox cb_expenceFor; // autowired
 
 	protected Label recordStatus; // autowired
 	protected Radiogroup userAction;
@@ -115,6 +123,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
 	private transient String  		oldVar_expenceTypeName;
+	private transient String  		oldVar_expenceFor;
 	private transient String oldVar_recordStatus;
 
 	private transient boolean validationOn;
@@ -137,6 +146,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient ExpenseTypeService expenseTypeService;
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
+	private List<ValueLabel> expenseForList = PennantStaticListUtil.getExpenseForList();
 	
 
 	/**
@@ -203,6 +213,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		// set Field Properties
 		doSetFieldProperties();
+		fillComboBox(cb_expenceFor, "", expenseForList, "");
 		doShowDialog(getExpenseType());
 		logger.debug("Leaving");
 	}
@@ -416,7 +427,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public void doWriteBeanToComponents(ExpenseType aExpenseType) {
 		logger.debug("Entering") ;
 		this.expenceTypeName.setValue(aExpenseType.getExpenceTypeName());
-	
+		fillComboBox(this.cb_expenceFor, aExpenseType.getExpenseFor(), PennantStaticListUtil.getExpenseForList(), "");	
 		this.recordStatus.setValue(aExpenseType.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -434,6 +445,12 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		try {
 		    aExpenseType.setExpenceTypeName(this.expenceTypeName.getValue());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		
+		try {
+			aExpenseType.setExpenseFor(this.cb_expenceFor.getSelectedItem().getValue().toString());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -521,6 +538,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doStoreInitValues() {
 		logger.debug("Entering");
 		this.oldVar_expenceTypeName = this.expenceTypeName.getValue();
+		this.oldVar_expenceFor = this.cb_expenceFor.getSelectedItem().getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving") ;
 	}
@@ -531,6 +549,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doResetInitValues() {
 		logger.debug("Entering");
 		this.expenceTypeName.setValue(this.oldVar_expenceTypeName);
+		this.cb_expenceFor.setValue(this.oldVar_expenceFor);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 		
 		if(isWorkFlowEnabled()){
@@ -552,6 +571,9 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.oldVar_expenceTypeName != this.expenceTypeName.getValue()) {
 			return true;
 		}
+		if (this.oldVar_expenceFor != this.cb_expenceFor.getSelectedItem().getValue()) {
+			return true;
+		}
 		logger.debug("Leaving"); 
 		return false;
 	}
@@ -564,8 +586,14 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 		
 		if (!this.expenceTypeName.isReadonly()){
-			this.expenceTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_ExpenseTypeDialog_ExpenceTypeName.value")}));
+			this.expenceTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_ExpenseTypeDialog_ExpenceTypeName.value"), PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}	
+		
+		if (!this.cb_expenceFor.isDisabled()){
+			this.cb_expenceFor.setConstraint(new StaticListValidator(PennantStaticListUtil.getExpenseForList(), 
+					Labels.getLabel("label_ExpenseTypeDialog_ExpenceFor.value")));
+		}
+			
 	logger.debug("Leaving");
 	}
 
@@ -576,6 +604,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.expenceTypeName.setConstraint("");
+		this.cb_expenceFor.setConstraint("");
 	logger.debug("Leaving");
 	}
 
@@ -664,6 +693,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 	
 		this.expenceTypeName.setReadonly(isReadOnly("ExpenseTypeDialog_expenceTypeName"));
+		//this.cb_expenceFor.setDisabled(isReadOnly("ExpenseTypeDialog_expenceFor"));
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -691,6 +721,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.expenceTypeName.setReadonly(true);
+		this.cb_expenceFor.setDisabled(true);
 		
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -713,6 +744,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// remove validation, if there are a save before
 		
 		this.expenceTypeName.setValue("");
+		this.cb_expenceFor.setValue("");
 	logger.debug("Leaving");
 	}
 
@@ -1052,6 +1084,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doClearMessage() {
 		logger.debug("Entering");
 			this.expenceTypeName.setErrorMessage("");
+			this.cb_expenceFor.setErrorMessage("");
 	logger.debug("Leaving");
 	}
 	

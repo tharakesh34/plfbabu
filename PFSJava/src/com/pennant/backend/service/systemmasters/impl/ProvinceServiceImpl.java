@@ -65,8 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class ProvinceServiceImpl extends GenericService<Province> implements ProvinceService {
 
-	private final static Logger logger = Logger
-			.getLogger(ProvinceServiceImpl.class);
+	private final static Logger logger = Logger.getLogger(ProvinceServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProvinceDAO provinceDAO;

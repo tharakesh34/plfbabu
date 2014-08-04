@@ -38,6 +38,11 @@
 		</property>
 	</component>
 	<component>
+		<component-name>ptCKeditor</component-name>
+		<component-class>com.pennant.component.PTCKeditor</component-class>
+		<extends>ckeditor</extends>
+  	</component>
+	<component>
 		<component-name>uppercasebox</component-name>
 		<component-class>com.pennant.component.Uppercasebox</component-class>
 		<extends>textbox</extends>
@@ -55,6 +60,26 @@
 		<component-name>extendedcombobox</component-name>
 		<component-class>com.pennant.ExtendedCombobox</component-class>
 		<extends>hbox</extends>
+	</component>
+	<component>
+		<component-name>accountSelectionBox</component-name>
+		<component-class>com.pennant.AccountSelectionBox</component-class>
+		<extends>hbox</extends>
+	</component>
+	<component>
+		<component-name>exePannel</component-name>
+		<component-class>com.pennant.ProcessExecution</component-class>
+		<extends>panel</extends>
+	</component>
+	<component>
+		<component-name>javaScriptBuilder</component-name>
+		<component-class>com.pennant.JavaScriptBuilder</component-class>
+		<extends>groupbox</extends>
+	</component>
+	<component>
+		<component-name>queryBuilder</component-name>
+		<component-class>com.pennant.QueryBuilder</component-class>
+		<extends>groupbox</extends>
 	</component>
 	<stylesheet href="/css/zul/pennant.css.dsp" type="text/css" />
 </language-addon>

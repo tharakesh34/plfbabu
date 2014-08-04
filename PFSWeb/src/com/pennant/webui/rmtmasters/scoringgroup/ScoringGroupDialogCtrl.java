@@ -83,7 +83,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -99,8 +98,11 @@ import com.pennant.backend.service.rmtmasters.ScoringGroupService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.scoringslab.model.ScoringSlabListModelItemRenderer;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -597,6 +599,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 		map.put("scoringMetrics", scoreMetric);
 		map.put("scoringGroup",getScoringGroup());
 		map.put("categoryValue",categoryValue);
+		map.put("categoryType",this.categoryType.getSelectedItem().getValue().toString());
 		map.put("originalScoringMetricsList",scoringMetrics);
 		
 		// call the ZUL-file with the parameters packed in a map
@@ -804,8 +807,10 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 		lc.setParent(item);
 		String perc = scoringMetric.getLovDescMetricTotPerc();
 		if(!addDoubleClickEvent){
-			perc = (scoringMetric.getLovDescMetricMaxPoints()
-			.multiply(new BigDecimal(100))).divide(subGroupScore, 2, RoundingMode.HALF_UP).toString();
+			if(subGroupScore != null){
+				perc = (scoringMetric.getLovDescMetricMaxPoints()
+						.multiply(new BigDecimal(100))).divide(subGroupScore, 2, RoundingMode.HALF_UP).toString();
+			}
 		}
 		lc = new Listcell(perc);
 		lc.setStyle("text-align:right;");
@@ -860,7 +865,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 		cell.setSpan(2);
 		listgroupfoot.appendChild(cell);
 		
-		cell = new Listcell(String.valueOf(scoringMetric.getLovDescMetricMaxPoints()));
+		cell = new Listcell(scoringMetric.getLovDescMetricMaxPoints() == null ? "" : String.valueOf(scoringMetric.getLovDescMetricMaxPoints()));
 		cell.setStyle("font-weight:bold;text-align:right;");
 		listgroupfoot.appendChild(cell);
 		
@@ -948,10 +953,10 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 		logger.debug("Entering") ;
 		this.scoreGroupCode.setValue(aScoringGroup.getScoreGroupCode());
 		this.scoreGroupName.setValue(aScoringGroup.getScoreGroupName());
-		fillComboBox(this.categoryType, aScoringGroup.getCategoryType(), PennantAppUtil.getCategoryType(), "");
+		fillComboBox(this.categoryType, aScoringGroup.getCategoryType(), PennantStaticListUtil.getCategoryType(), "");
 		
 		if(!aScoringGroup.isNewRecord()){
-			if("C".equals(aScoringGroup.getCategoryType())){
+			if("C".equals(aScoringGroup.getCategoryType()) || "B".equals(aScoringGroup.getCategoryType())){
 				this.finScoreMetricTab.setVisible(true);
 				this.nonFinScoreMetricTab.setVisible(true);
 			}else{
@@ -1010,7 +1015,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 		}
 		
 		long totalScorePoints = 0;
-		if("C".equals(this.categoryType.getSelectedItem().getValue().toString())){
+		if("C".equals(this.categoryType.getSelectedItem().getValue().toString()) ||
+				"B".equals(this.categoryType.getSelectedItem().getValue().toString())){
 			totalScorePoints = getScoringGroup().getLovDescTotFinScorPoints() + getScoringGroup().getLovDescTotNFScorPoints();
 		}else{
 			totalScorePoints = getScoringGroup().getLovDescTotRetailScorPoints() ;
@@ -1229,28 +1235,23 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 		setValidationOn(true);
 
 		if (!this.scoreGroupCode.isReadonly()){
-			this.scoreGroupCode.setConstraint(new SimpleConstraint(	PennantConstants.ALPHANUM_UNDERSCORE_REGEX , 
-					Labels.getLabel("MAND_ALPHANUM_UNDERSCORE"
-							,new String[]{Labels.getLabel("label_ScoringGroupDialog_ScoreGroupCode.value")})));
+			this.scoreGroupCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringGroupDialog_ScoreGroupCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 		}	
 		if (!this.scoreGroupName.isReadonly()){
-			this.scoreGroupName.setConstraint(new SimpleConstraint(	PennantConstants.ALPHANUM_SPACE_REGEX, 
-					Labels.getLabel("FIELD_CHAR_NUMBERS"
-							,new String[]{Labels.getLabel("label_ScoringGroupDialog_ScoreGroupName.value")})));
+			this.scoreGroupName.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringGroupDialog_ScoreGroupName.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}	
 		if (!this.categoryType.isDisabled()){
-			this.categoryType.setConstraint(new StaticListValidator(PennantAppUtil.getCategoryType(), 
+			this.categoryType.setConstraint(new StaticListValidator(PennantStaticListUtil.getCategoryType(), 
 					Labels.getLabel("label_ScoringGroupDialog_CategoryType.value")));
 		}	
 		if (!this.minScore.isReadonly()){
-			this.minScore.setConstraint("NO EMPTY, NO NEGATIVE:" + Labels.getLabel("FIELD_NO_EMPTY_NO_NEG"
-					,new String[] { Labels.getLabel("label_ScoringGroupDialog_MinScore.value")}));
+			this.minScore.setConstraint(new IntValidator(5, Labels.getLabel("label_ScoringGroupDialog_MinScore.value"), false));
 
 		}	
 		if (!this.overrideScore.isReadonly()){
 			if(this.isoverride.isChecked()){
-				this.overrideScore.setConstraint("NO EMPTY, NO NEGATIVE:" + Labels.getLabel("FIELD_NO_EMPTY_NO_NEG"
-						,new String[] { Labels.getLabel("label_ScoringGroupDialog_OverrideScore.value")}));
+				this.overrideScore.setConstraint(new IntValidator(5, Labels.getLabel("label_ScoringGroupDialog_OverrideScore.value"), false));
 			}
 		}	
 		logger.debug("Leaving");
@@ -1338,7 +1339,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 				this.nonFinScoreMetricTab.setVisible(false);
 				this.retailScoreMetricTab.setVisible(false);
 				if(this.categoryType.getSelectedIndex() != 0){
-					if("C".equals(this.categoryType.getSelectedItem().getValue().toString())){
+					if("C".equals(this.categoryType.getSelectedItem().getValue().toString()) ||
+							"B".equals(this.categoryType.getSelectedItem().getValue().toString())){
 						this.finScoreMetricTab.setVisible(true);
 						this.nonFinScoreMetricTab.setVisible(true);
 					}else{
@@ -1351,7 +1353,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 			this.nonFinScoreMetricTab.setVisible(false);
 			this.retailScoreMetricTab.setVisible(false);
 			if(this.categoryType.getSelectedIndex() != 0){
-				if("C".equals(this.categoryType.getSelectedItem().getValue().toString())){
+				if("C".equals(this.categoryType.getSelectedItem().getValue().toString()) || 
+						"B".equals(this.categoryType.getSelectedItem().getValue().toString())){
 					this.finScoreMetricTab.setVisible(true);
 					this.nonFinScoreMetricTab.setVisible(true);
 				}else{
@@ -1808,8 +1811,11 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 						for (ScoringMetrics scoreMetric : subMetricList) {
 							BigDecimal subRuleScore = BigDecimal.ZERO;
 							if("F".equals(categoryType)){
-								subRuleScore = getMetricMaxScore(scoreMetric.getLovDescSQLRule());
-								scoreMetric.setLovDescMetricMaxPoints(subRuleScore);
+								/*subRuleScore = getMetricMaxScore(scoreMetric.getLovDescSQLRule());
+								scoreMetric.setLovDescMetricMaxPoints(subRuleScore);*/
+								
+								subRuleScore = scoreMetric.getLovDescMetricMaxPoints();
+								
 							}else if("N".equals(categoryType)){
 								subRuleScore = scoreMetric.getLovDescMetricMaxPoints();
 							}

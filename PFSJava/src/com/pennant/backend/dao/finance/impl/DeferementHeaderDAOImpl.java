@@ -122,7 +122,7 @@ public class DeferementHeaderDAOImpl extends BasisCodeDAO<DeferementHeader> impl
 	@Override
 	public DeferementHeader getDeferementHeaderById(final String id, String type) {
 		logger.debug("Entering");
-		DeferementHeader deferementHeader = getDeferementHeader();
+		DeferementHeader deferementHeader = new DeferementHeader();
 		
 		deferementHeader.setId(id);
 		

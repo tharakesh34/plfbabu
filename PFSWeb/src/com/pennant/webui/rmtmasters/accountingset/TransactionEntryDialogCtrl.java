@@ -75,6 +75,7 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
@@ -85,7 +86,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -97,15 +97,14 @@ import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.IntValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -212,16 +211,17 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	// ServiceDAOs / Domain Classes
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
-	private List<ValueLabel> listDebitcredit = PennantAppUtil.getTranType(); // autowired
+	private List<ValueLabel> listDebitcredit = PennantStaticListUtil.getTranType(); // autowired
 
 	private transient AccountingSetService accountingSetService;
 	private transient AccountingSetDialogCtrl accountingSetDialogCtrl;
 	private List<TransactionEntry> transactionEntryList;
 
-	protected Listbox CustomerData; // auto wired
+	protected Listbox amountCodeListbox; // auto wired
+	protected Listbox feeCodeListbox; // auto wired
 	protected Listbox operator; // auto wired
 	protected Button btnCopyTo;
-	ArrayList<ValueLabel> operatorValues = PennantAppUtil.getMathBasicOperator();
+	ArrayList<ValueLabel> operatorValues = PennantStaticListUtil.getMathBasicOperator();
 
 	protected Grid	 grid_Basicdetails;
 	protected Column column_CustomerData;
@@ -237,9 +237,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	protected Space spSubHead;
 
 	protected Radiogroup chargeType;
-	ArrayList<ValueLabel> chargeTypes = PennantAppUtil.getChargeTypes();
+	ArrayList<ValueLabel> chargeTypes = PennantStaticListUtil.getChargeTypes();
 	
-	protected Combobox ruleDecider;
+	//protected Combobox ruleDecider;
 	protected Groupbox gb_RuleCode;
 
 	/**
@@ -312,7 +312,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		getBorderLayoutHeight();
 		int dialogHeight =  grid_Basicdetails.getRows().getVisibleItemCount()* 20 + 115; 
 		int listboxHeight = borderLayoutHeight-dialogHeight;
-		this.CustomerData.setHeight((listboxHeight+15)+"px");
+		this.amountCodeListbox.setHeight((listboxHeight+15)+"px");
+		this.feeCodeListbox.setHeight((listboxHeight+15)+"px");
 		this.amountRule.setHeight((listboxHeight+40)+"px");
 		this.operator.setHeight((listboxHeight+15)+"px");
 
@@ -392,15 +393,15 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	 * @throws InterruptedException
 	 */
 	public void onUser$btnValidateSave(ForwardEvent event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		if (!StringUtils.trimToEmpty(this.amountRule.getValue()).equals("") && validate(event)) {
 			doSave();
 		}
 		
-		if("PROVSN".equals(this.eventCode.getValue()) || "REFUND".equals(this.eventCode.getValue())){
+		/*if("PROVSN".equals(this.eventCode.getValue()) || "REFUND".equals(this.eventCode.getValue())){
 			doSave();
-		}
-		logger.debug("Leaving");
+		}*/
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -550,7 +551,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 
 		fillComboBox(debitcredit, aTransactionEntry.getDebitcredit(), listDebitcredit);
 		dofillAccount(this.account, aTransactionEntry.getAccount());
-		doFillRuleDecider(this.ruleDecider, aTransactionEntry.getRuleDecider());
+		doFillAccountType(aTransactionEntry.getAccount());
+		//doFillRuleDecider(this.ruleDecider, aTransactionEntry.getRuleDecider());
 		doFillChargeType(this.chargeType, aTransactionEntry.getChargeType());
 		this.eventCode.setValue(aTransactionEntry.getLovDescEventCodeName());
 		this.lovDescEventCodeName.setValue(aTransactionEntry.getLovDescEventCodeDesc());
@@ -568,9 +570,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		// Amount Rule Formula Set to CodeMirror
 		this.amountRule.setValue(aTransactionEntry.getAmountRule());
 		
-		if(this.eventCode.getValue().equals("LATEPAY")){
+		/*if(this.eventCode.getValue().equals("LATEPAY")){
 			this.btnDelete.setVisible(false);
-		}
+		}*/
 		
 		this.transcationCode.setValue(aTransactionEntry.getTranscationCode());
 		this.rvsTransactionCode.setValue(aTransactionEntry.getRvsTransactionCode());
@@ -611,15 +613,14 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			this.lovDescAccountSubHeadRuleName.setValue("");
 		}
 		
-		if(this.accountingSetDialogCtrl.entryByInvestment.isChecked()){
+		/*if(this.accountingSetDialogCtrl.entryByInvestment.isChecked()){
 			this.ruleDecider.setSelectedIndex(0);
 			this.ruleDecider.setDisabled(true);
-		}
+		}*/
 		
 		// Fill AmountCode And Operators
 		fillListbox(this.operator, operatorValues, true);
-		doCheckRuleDecider(this.ruleDecider.getSelectedItem().getValue().toString());
-		doFillAccountType(aTransactionEntry.getAccount());
+		doCheckRuleDecider();
 		
 		this.recordStatus.setValue(aTransactionEntry.getRecordStatus());
 		logger.debug("Leaving");
@@ -683,6 +684,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		try {
 			aTransactionEntry.setLovDescAccountTypeName(this.lovDescAccountTypeName.getValue());
 			aTransactionEntry.setAccountType(this.accountType.getValue());
+			if(this.accountType.getValue().equals("")){
+				aTransactionEntry.setLovDescSysInAcTypeName("");
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -711,7 +715,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			wve.add(we);
 		}
 
-		aTransactionEntry.setRuleDecider(this.ruleDecider.getSelectedItem().getValue().toString());
+		//aTransactionEntry.setRuleDecider(this.ruleDecider.getSelectedItem().getValue().toString());
 
 		try {
 			if (this.amountRule.getValue().equals("")) {
@@ -928,7 +932,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			this.debitcredit.setConstraint(new StaticListValidator(listDebitcredit, Labels.getLabel("label_TransactionEntryDialog_Debitcredit.value")));
 		}
 		if (!this.account.isDisabled()) {
-			this.account.setConstraint(new StaticListValidator(PennantAppUtil.getTransactionalAccount(
+			this.account.setConstraint(new StaticListValidator(PennantStaticListUtil.getTransactionalAccount(
 					this.accountingSetDialogCtrl.entryByInvestment.isChecked()), Labels.getLabel("label_TransactionEntryDialog_Account.value")));
 		}
 		logger.debug("Leaving");
@@ -954,21 +958,26 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 
 		if (this.account.getSelectedItem() != null) {
 
-			if (this.account.getSelectedItem().getValue().toString().equals(PennantConstants.GLNPL)) {
+			if (this.account.getSelectedItem().getValue().toString().equals(PennantConstants.GLNPL)
+					|| this.account.getSelectedItem().getValue().toString().equals(PennantConstants.CUSTSYS)
+					|| this.account.getSelectedItem().getValue().toString().equals(PennantConstants.BUILD)) {
 
 				this.lovDescAccountTypeName.setConstraint("NO EMPTY:"
 				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_AccountType.value") }));
 
-				if (this.account.getSelectedItem().getValue().toString().equals(PennantConstants.GLNPL)) {
+				if (this.account.getSelectedItem().getValue().toString().equals(PennantConstants.GLNPL)
+						|| this.account.getSelectedItem().getValue().toString().equals(PennantConstants.BUILD)) {
 					this.lovDescAccountSubHeadRuleName.setConstraint("NO EMPTY:"
-					        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_AccountSubHeadEule.value") }));
+					        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_AccountSubHeadRule.value") }));
 
 				}
 
 			}
 		}
+		
 		this.lovDescTranscationCodeName.setConstraint("NO EMPTY:"
 		        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_TranscationCode.value") }));
+		
 		this.lovDescRvsTransactionCodeName.setConstraint("NO EMPTY:"
 		        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_RvsTransactionCode.value") }));
 		logger.debug("Leaving");
@@ -1100,7 +1109,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.entryByInvestment.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_entryByInvestment"));
 		this.openNewFinAc.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_openNewFinAc"));
 		this.account.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_account"));
-		this.ruleDecider.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_ruleDecider"));
+		//this.ruleDecider.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_ruleDecider"));
 		this.btnSearchAccountBranch.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountBranch"));
 		this.btnSearchAccountType.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
 		this.btnSearchSystemIntAccount.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
@@ -1115,7 +1124,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		}
 
 		//Only for LatePay
-		if(!getTransactionEntry().isNewRecord() && getTransactionEntry().getLovDescEventCodeName().equals("LATEPAY")){
+		/*if(!getTransactionEntry().isNewRecord() && getTransactionEntry().getLovDescEventCodeName().equals("LATEPAY")){
 			this.debitcredit.setDisabled(true);
 			this.shadowPosting.setDisabled(true);
 			this.account.setDisabled(true);
@@ -1125,11 +1134,14 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			this.btnSearchAccountSubHeadRule.setVisible(false);
 		}
 		
-		if (getUserWorkspace().isReadOnly("TransactionEntryDialog_amountRule") 
-				|| (!getTransactionEntry().isNewRecord() && getTransactionEntry().getLovDescEventCodeName().equals("LATEPAY"))) {
+		 
+		|| (!getTransactionEntry().isNewRecord() && getTransactionEntry().getLovDescEventCodeName().equals("LATEPAY"))*/
+		
+		if (getUserWorkspace().isReadOnly("TransactionEntryDialog_amountRule")) {
 			this.amountRule.setReadonly(true);
 			this.column_CustomerData.setWidth("0%");
-			this.CustomerData.setVisible(false);
+			this.amountCodeListbox.setVisible(false);
+			this.feeCodeListbox.setVisible(false);
 			this.column_RULE.setWidth("100%");
 			this.column_Operators.setWidth("0%");
 			this.operator.setVisible(false);
@@ -1137,7 +1149,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		} else {
 			this.amountRule.setReadonly(false);
 			this.column_CustomerData.setWidth("30%");
-			this.CustomerData.setVisible(true);
+			this.amountCodeListbox.setVisible(true);
+			this.feeCodeListbox.setVisible(true);
 			this.column_RULE.setWidth("50%");
 			this.column_Operators.setWidth("20%");
 			this.operator.setVisible(true);
@@ -1181,7 +1194,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.btnSearchRvsTransactionCode.setDisabled(true);
 		this.amountRule.setReadonly(true);
 		this.column_CustomerData.setWidth("0%");
-		this.CustomerData.setVisible(false);
+		this.amountCodeListbox.setVisible(false);
+		this.feeCodeListbox.setVisible(false);
 		this.column_RULE.setWidth("100%");
 		this.column_Operators.setWidth("0%");
 		this.operator.setVisible(false);
@@ -1523,7 +1537,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	 */
 	private void getAmountCodes(String allowedevent) {
 		logger.debug("Entering");
-		this.CustomerData.getItems().clear();
+		this.amountCodeListbox.getItems().clear();
 		List<AmountCode> amountCodesList = new ArrayList<AmountCode>();
 		JdbcSearchObject<AmountCode> searchObj = new JdbcSearchObject<AmountCode>(AmountCode.class);
 		searchObj.addTabelName("BMTAmountCodes");
@@ -1537,11 +1551,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		}
 		amountCodesList = this.pagedListService.getBySearchObject(searchObj);
 
-		if(amountCodesList != null && amountCodesList.size() == 0 &&
+		/*if(amountCodesList != null && amountCodesList.size() == 0 &&
 				!this.accountingSetDialogCtrl.entryByInvestment.isChecked()){
 			this.ruleDecider.setSelectedIndex(1);
 			this.ruleDecider.setDisabled(true);
-		}
+		}*/
 		for (int i = 0; i < amountCodesList.size(); i++) {
 			Listitem item = new Listitem();
 			Listcell lc = new Listcell(amountCodesList.get(i).getAmountCode());
@@ -1551,7 +1565,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			lc.setParent(item);
 			lc = new Listcell(amountCodesList.get(i).getAmountCodeDesc());
 			lc.setParent(item);
-			this.CustomerData.appendChild(item);
+			this.amountCodeListbox.appendChild(item);
 		}
 
 		logger.debug("Leaving");
@@ -1564,13 +1578,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	private void getFeeCodes(String allowedevent) {
 		logger.debug("Entering");
 
-		this.CustomerData.getItems().clear();
-		List<Rule> amountCodesList = new ArrayList<Rule>();
+		this.feeCodeListbox.getItems().clear();
+		List<Rule> feeRulesList = new ArrayList<Rule>();
 		JdbcSearchObject<Rule> searchObj = new JdbcSearchObject<Rule>(Rule.class);
 		searchObj.addTabelName("Rules");
 		
 		if(allowedevent.contains("REPAY")){
-			searchObj.addFilterIn("RuleModule", new String[]{"FEES","REFUND"});
+			searchObj.addFilterIn("RuleModule", new Object[]{"FEES","REFUND"});
 		}else{
 			searchObj.addFilterEqual("RuleModule", "FEES");
 		}
@@ -1580,24 +1594,52 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 				allowedevent = "ADDDBS";
 			}
 			if(allowedevent.contains("REPAY")){
-				searchObj.addFilterIn("RuleEvent", new String[]{allowedevent,""});
+				searchObj.addFilterIn("RuleEvent", new Object[]{allowedevent,""});
 			}else{
 				searchObj.addFilterEqual("RuleEvent",allowedevent);
 			}
 		}
 		
-		amountCodesList = this.pagedListService.getBySearchObject(searchObj);
+		feeRulesList = this.pagedListService.getBySearchObject(searchObj);
 
-		for (int i = 0; i < amountCodesList.size(); i++) {
-			Listitem item = new Listitem();
-			Listcell lc = new Listcell(amountCodesList.get(i).getRuleCode());
-			if (!amountcodes.contains(amountCodesList.get(i).getRuleCode())) {
-				amountcodes.add(amountCodesList.get(i).getRuleCode());
+		Listitem item = null;
+		Listgroup group = null;
+		Listcell lc = null;
+		
+		for (int i = 0; i < feeRulesList.size(); i++) {
+			
+			String ruleCode =feeRulesList.get(i).getRuleCode();
+			String ruleCodeDesc =feeRulesList.get(i).getRuleCodeDesc();
+			
+			group = new Listgroup(ruleCode);
+			this.feeCodeListbox.appendChild(group);
+			
+			for (int j = 0; j < 3; j++) {
+				
+				String newRuleCode = ruleCode;
+				String newRuleCodeDesc = ruleCodeDesc;
+				
+				if(j==0){
+					newRuleCode = newRuleCode+"_C";
+					newRuleCodeDesc = newRuleCodeDesc+" (Calculated Amount)";
+				}else if(j==1){
+					newRuleCode = newRuleCode+"_W";
+					newRuleCodeDesc = newRuleCodeDesc+" (Waiver Amount)";
+				}else if(j==2){
+					newRuleCode = newRuleCode+"_P";
+					newRuleCodeDesc = newRuleCodeDesc+" (Customer Paid)";
+				}
+				
+				item = new Listitem();
+				lc = new Listcell(newRuleCode);
+				if (!amountcodes.contains(newRuleCode)) {
+					amountcodes.add(newRuleCode);
+				}
+				lc.setParent(item);
+				lc = new Listcell(newRuleCodeDesc);
+				lc.setParent(item);
+				this.feeCodeListbox.appendChild(item);
 			}
-			lc.setParent(item);
-			lc = new Listcell(amountCodesList.get(i).getRuleCodeDesc());
-			lc.setParent(item);
-			this.CustomerData.appendChild(item);
 		}
 		logger.debug("Leaving");
 	}
@@ -1651,7 +1693,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	public void onUser$btnValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		if (validate(event)) {
-			int answer = Messagebox.show("NO Errors Found ! Proceed With Simulation ?", "Validated", Messagebox.YES | Messagebox.NO, Messagebox.QUESTION);
+			int answer = Messagebox.show("NO Errors Found ! Proceed With Simulation ?", "Validated", 
+					Messagebox.YES | Messagebox.NO, Messagebox.QUESTION);
 			if (answer == Messagebox.YES) {
 				// create a new window for input values
 				createSimulationWindow(variables);
@@ -1678,7 +1721,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			variables = (JSONArray) data[1];
 
 			// if no errors
-			if (errors.size() == 0) {
+			if (variables != null && errors.size() == 0) {
 				// check for new declared variables
 				for (int i = 0; i < variables.size(); i++) {
 					JSONObject variable = (JSONObject) variables.get(i);
@@ -1755,7 +1798,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		combobox.appendChild(comboitem);
 		combobox.setSelectedItem(comboitem);
-		List<ValueLabel> list = PennantAppUtil.getTransactionalAccount(
+		List<ValueLabel> list = PennantStaticListUtil.getTransactionalAccount(
 				this.accountingSetDialogCtrl.entryByInvestment.isChecked());
 		for (int i = 0; i < list.size(); i++) {
 			comboitem = new Comboitem();
@@ -1770,10 +1813,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		logger.debug("Leaving");
 	}
 
-	public void doFillRuleDecider(Combobox combobox, String value) {
+	/*public void doFillRuleDecider(Combobox combobox, String value) {
 		logger.debug("Entering");
 		combobox.getChildren().clear();
-		List<ValueLabel> list = PennantAppUtil.getRuleDecider();
+		List<ValueLabel> list = PennantStaticListUtil.getRuleDecider();
 		for (int i = 0; i < list.size(); i++) {
 			Comboitem comboitem = new Comboitem();
 			comboitem.setValue(StringUtils.trim(list.get(i).getValue()));
@@ -1788,7 +1831,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		}
 
 		logger.debug("Leaving");
-	}
+	}*/
 	
 	public void doFillChargeType(Radiogroup radiogroup, String value) {
 		logger.debug("Entering");
@@ -1820,9 +1863,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			if (!this.debitcredit.getSelectedItem().getValue().equals("#")) {
 				this.btnSearchTranscationCode.setDisabled(isReadOnly("TransactionEntryDialog_transcationCode"));
 				this.btnSearchRvsTransactionCode.setDisabled(isReadOnly("TransactionEntryDialog_transcationCode"));
-				if(this.eventCode.getValue().equals("LATEPAY")){
+				/*if(this.eventCode.getValue().equals("LATEPAY")){
 					transCodeChange();
-				}
+				}*/
 			}else{
 				this.btnSearchTranscationCode.setDisabled(true);
 				this.btnSearchRvsTransactionCode.setDisabled(true);
@@ -1837,7 +1880,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	/**
 	 * Transaction Entry Data From SMTParameters
 	 */
-	private void transCodeChange(){
+	/*private void transCodeChange(){
 		
 		PFSParameter debitCode = SystemParameterDetails.getSystemParameterObject("ODC_DTCD");
 		PFSParameter creditCode = SystemParameterDetails.getSystemParameterObject("ODC_CTCD");
@@ -1853,7 +1896,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			this.lovDescRvsTransactionCodeName.setValue(debitCode.getSysParmValue()+"-"+debitCode.getSysParmDesc());
 		}
 		
-	}
+	}*/
 	
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1953,11 +1996,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.btnSearchAccountType.setDisabled(true);
 		this.btnSearchSystemIntAccount.setDisabled(true);
 		this.btnSearchAccountSubHeadRule.setDisabled(true);
-		
+		this.lovDescAccountTypeName.setValue("");
+		this.spAccountType.setSclass("");
+
 		if (value != null && !value.equals("#")) {
 			
 			if(value.equals(PennantConstants.DISB) || value.equals(PennantConstants.REPAY) ||
-					value.equals(PennantConstants.INVSTR)){
+					value.equals(PennantConstants.INVSTR) || value.equals(PennantConstants.DOWNPAY)){
 				
 				this.btnSearchAccountType.setDisabled(true);
 				this.spSubHead.setSclass("");
@@ -1972,7 +2017,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 				this.openNewFinAc.setChecked(false);
 				this.row_OpenNewFinAc.setVisible(false);
 				
-			} else if (value.equals(PennantConstants.GLNPL)) {
+			} else if (value.equals(PennantConstants.GLNPL) || value.equals(PennantConstants.BUILD)) {
 				
 				this.btnSearchAccountType.setVisible(false);
 				this.accountType.setValue("");
@@ -1980,13 +2025,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 				this.spSubHead.setSclass("mandatory");
 				this.spAccountType.setSclass("mandatory");
 				this.btnSearchAccountSubHeadRule.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountSubHeadEule"));
-				if(!getTransactionEntry().isNewRecord() && 
+				/*if(!getTransactionEntry().isNewRecord() && value.equals(PennantConstants.GLNPL) &&
 						getTransactionEntry().getLovDescEventCodeName().equals("LATEPAY")){
 					this.btnSearchSystemIntAccount.setVisible(false);
-				}else{
+				}else{*/
 					this.btnSearchSystemIntAccount.setVisible(true);
 					this.btnSearchSystemIntAccount.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
-				}
+				//}
 				this.openNewFinAc.setChecked(false);
 				this.row_OpenNewFinAc.setVisible(false);
 				
@@ -2000,6 +2045,18 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 				this.btnSearchSystemIntAccount.setVisible(false);
 				this.accountSubHeadRule.setValue("");
 				this.lovDescAccountSubHeadRuleName.setValue("");
+				this.row_OpenNewFinAc.setVisible(true);
+				
+			}else if (value.equals(PennantConstants.UNEARN)) {
+				
+				this.row_OpenNewFinAc.setVisible(true);
+				
+			}else if (value.equals(PennantConstants.SUSP)) {
+				
+				this.row_OpenNewFinAc.setVisible(true);
+				
+			}else if (value.equals(PennantConstants.PROVSN)) {
+				
 				this.row_OpenNewFinAc.setVisible(true);
 				
 			}else if (value.equals(PennantConstants.COMMIT)) {
@@ -2023,22 +2080,19 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		logger.debug("Leaving");
 	}
 
-	public void onChange$ruleDecider(Event event) {
+	/*public void onChange$ruleDecider(Event event) {
 		logger.debug("Entering" + event.toString());
 		doCheckRuleDecider(this.ruleDecider.getSelectedItem().getValue().toString());
 		logger.debug("Leaving");
+	}*/
 
-	}
-
-	private void doCheckRuleDecider(String value) {
+	private void doCheckRuleDecider() {
 		logger.debug("Entering");
-		if (value.equals(PennantConstants.CLAAMT)) {
+		//if (value.equals(PennantConstants.CLAAMT)) {
 			this.amountcodes.clear();
 			getAmountCodes(getTransactionEntry().getLovDescEventCodeName());
-		} else {
-			this.amountcodes.clear();
 			getFeeCodes(getTransactionEntry().getLovDescEventCodeName());
-		}
+		//}
 		logger.debug("Leaving");
 	}
 

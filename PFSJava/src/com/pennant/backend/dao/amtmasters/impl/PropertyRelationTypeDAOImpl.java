@@ -119,7 +119,7 @@ public class PropertyRelationTypeDAOImpl extends BasisNextidDaoImpl<PropertyRela
 	@Override
 	public PropertyRelationType getPropertyRelationTypeById(final long id, String type) {
 		logger.debug("Entering");
-		PropertyRelationType propertyRelationType = getPropertyRelationType();
+		PropertyRelationType propertyRelationType = new PropertyRelationType();
 		propertyRelationType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

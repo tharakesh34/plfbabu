@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.smtmasters.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -58,7 +59,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.smtmasters.HolidayMasterDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -130,7 +133,7 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 	public HolidayMaster getHolidayMasterByID(final String id,
 			final BigDecimal year, final String holidayType, String type) {
 		logger.debug("Entering");
-		HolidayMaster holidayMaster = getHolidayMaster();
+		HolidayMaster holidayMaster = new HolidayMaster();
 		holidayMaster.setId(id);
 		holidayMaster.setHolidayYear(year);
 		holidayMaster.setHolidayType(holidayType);
@@ -175,7 +178,7 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 	public List<HolidayMaster> getHolidayMasterCodeYear(
 			final String holidayCode, final BigDecimal year, String type) {
 		logger.debug("Entering");
-		HolidayMaster holidayMaster = getHolidayMaster();
+		HolidayMaster holidayMaster = new HolidayMaster();
 		holidayMaster.setHolidayCode(holidayCode);
 		holidayMaster.setHolidayYear(year);
 
@@ -210,14 +213,19 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 	@Override
 	public List<HolidayMaster> getHolidayMasterCode(final String holidayCode) {
 		logger.debug("Entering");
-		HolidayMaster holidayMaster = getHolidayMaster();
+		
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
+		int holidayYear = DateUtility.getYear(curBussDate);
+		
+		HolidayMaster holidayMaster = new HolidayMaster();
 		holidayMaster.setHolidayCode(holidayCode);
+		holidayMaster.setHolidayYear(new BigDecimal(holidayYear));
 		
 		StringBuilder selectListSql = new StringBuilder("Select HolidayCode, HolidayYear, HolidayType,");
 		selectListSql.append(" Holidays, HolidayDesc1, HolidayDesc2, HolidayDesc3, ");
 		selectListSql.append(" Version , LastMntBy, LastMntOn ");
 		selectListSql.append(" From SMTHolidayMaster");
-		selectListSql.append(" Where HolidayCode =:HolidayCode ORDER BY HolidayYear asc");
+		selectListSql.append(" Where HolidayCode =:HolidayCode AND (HolidayYear >= :HolidayYear-1 AND HolidayYear <= :HolidayYear+1) ORDER BY HolidayYear asc");
 
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(

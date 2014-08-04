@@ -58,37 +58,41 @@
 				<center border="none">
 
 					<listbox id="listBoxWIFFinanceMain"
-						fixedLayout="true" vflex="true" style="white-space:nowrap;"
-						span="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-						width="100%" height="100%" multiple="false">
+						emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+						vflex="true" span="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
 						<listhead sizable="true">
 							<listheader id="listheader_FinReference"
 								label="${c:l('listheader_FinReference.label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
+							<listheader id="listheader_CustomerCIF"
+								label="${c:l('listheader_CustomerCIF.label')}" sort="auto"
+								hflex="min" visible="false"/>	
 							<listheader id="listheader_FinType"
 								label="${c:l('listheader_FinType.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_Amount"
 								label="${c:l('listheader_Amount.label')}" sort="auto"
-								width="15%" />
+								hflex="min" />
 							<listheader id="listheader_FinCcy"
 								label="${c:l('listheader_FinCcy.label')}" sort="auto"
-								width="8%" />
+								hflex="min" />
 							<listheader id="listheader_ScheduleMethod"
 								label="${c:l('listheader_ScheduleMethod.label')}" sort="auto"
-								width="11%" />
+								hflex="min" />
 							<listheader id="listheader_NoOfTerms"
 								label="${c:l('listheader_NoOfTerms.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_StartDate"
 								label="${c:l('listheader_StartDate.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 							<listheader id="listheader_GraceEndDate"
 								label="${c:l('listheader_GraceEndDate.label')}" sort="auto"
-								width="11%" />
+								hflex="min" />
 							<listheader id="listheader_MaturityDate"
 								label="${c:l('listheader_MaturityDate.label')}" sort="auto"
-								width="10%" />
+								hflex="min" />
 						</listhead>
 					</listbox>
 				</center>

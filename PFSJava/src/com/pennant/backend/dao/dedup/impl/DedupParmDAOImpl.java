@@ -64,6 +64,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -125,7 +126,7 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 			String type) {
 		logger.debug("Entering");
 		
-		DedupParm dedupParm = getDedupParm();
+		DedupParm dedupParm = new DedupParm();
 		dedupParm.setId(id);
 		dedupParm.setQuerySubCode(querySubCode);
 		dedupParm.setQueryModule(QueryModule);
@@ -138,7 +139,6 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where QueryCode = :QueryCode AND QuerySubCode=:QuerySubCode " );
 		selectSql.append(" AND QueryModule=:QueryModule" );
-	
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
@@ -344,6 +344,61 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 		logger.debug("Leaving");
 		return rowTypes;
 	}
+	
+	/**
+	 * Fetched the Dedup Fields if Dedup Exist for a Customer
+	 *
+	 */
+	public List<FinanceDedup> fetchFinDedupDetails(FinanceDedup dedup,String sqlQuery) {
+		logger.debug("Entering");
+		List<FinanceDedup> rowTypes = null;
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT * FROM FinanceDedup_View ");
+		selectSql.append(StringUtils.trimToEmpty(sqlQuery));
+		selectSql.append(" AND FinReference != :FinReference ");
+
+		logger.debug("selectSql: " +  selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
+		ParameterizedBeanPropertyRowMapper<FinanceDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(FinanceDedup.class);
+
+		try{
+			rowTypes = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		}catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+			logger.error(e);
+			dedup = null;
+		}
+		logger.debug("Leaving");
+		return rowTypes;
+	}
+	
+	@Override
+    public FinanceDedup getFinDedupByCustId(long custID) {
+		logger.debug("Entering");
+		FinanceDedup financeDedup = new FinanceDedup();
+		financeDedup.setCustId(custID);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT * FROM FinanceDedup_AView ");
+		selectSql.append(" WHERE CustId = :CustId ");
+
+		logger.debug("selectSql: " +  selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDedup);
+		ParameterizedBeanPropertyRowMapper<FinanceDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(FinanceDedup.class);
+
+		try{
+			financeDedup = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+					beanParameters,typeRowMapper);
+		}catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+			logger.error(e);
+		}
+		logger.debug("Leaving");
+		return financeDedup;
+    }
 
 	/**
 	 * This method for getting the error details

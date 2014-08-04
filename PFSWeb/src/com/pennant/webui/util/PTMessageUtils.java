@@ -56,6 +56,9 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.util.PennantConstants;
+
 /**
  * 
  * 1. doShowNotImplementedMessage / Shows a messagebox.<br>
@@ -139,6 +142,19 @@ public class PTMessageUtils implements Serializable {
 		final String title = Labels.getLabel("message.Error");
 		MultiLineMessageBox.doSetTemplate();
 		MultiLineMessageBox.show(e, title, MultiLineMessageBox.OK, "ERROR", true);
+	}
+	
+	/**
+	 * Shows a multiline ErrorMessage.<br>
+	 * 
+	 * @param e
+	 * @throws InterruptedException
+	 */
+	public static void showErrorMessage(ErrorDetails errorDetail) throws InterruptedException {
+		final String title = Labels.getLabel("message.Error");
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(errorDetail.getErrorCode() +PennantConstants.KEY_SEPERATOR+errorDetail.getErrorMessage(), 
+				title, MultiLineMessageBox.OK, "ERROR", true);
 	}
 	
 	public static void showHelpWindow(Event event, Window parentWindow) {

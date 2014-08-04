@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.customermasters;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -86,6 +87,16 @@ public class DirectorDetail implements java.io.Serializable, Entity {
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
+	private boolean shareholder = false;
+	private boolean director = false;
+	private String designation;
+	private String lovDescDesignationName;
+	private String idType;
+	private String idReference;
+	private String nationality;
+	private String lovDescNationalityName;
+	private String lovDescCustDocCategoryName;
+	private Date dob;
 	
 	private int version;
 	private long lastMntBy;
@@ -104,6 +115,8 @@ public class DirectorDetail implements java.io.Serializable, Entity {
 	private String userAction = "Save";
 	private long workflowId = 0;
 
+	private BigDecimal sharePerc;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -463,4 +476,93 @@ public class DirectorDetail implements java.io.Serializable, Entity {
 		}
 		return false;
 	}
+
+	public BigDecimal getSharePerc() {
+    	return sharePerc;
+    }
+
+	public void setSharePerc(BigDecimal sharePerc) {
+    	this.sharePerc = sharePerc;
+    }
+
+	public boolean isShareholder() {
+	    return shareholder;
+    }
+
+	public void setShareholder(boolean shareholder) {
+	    this.shareholder = shareholder;
+    }
+
+	public boolean isDirector() {
+	    return director;
+    }
+
+	public void setDirector(boolean director) {
+	    this.director = director;
+    }
+
+	public String getDesignation() {
+	    return designation;
+    }
+
+	public void setDesignation(String designation) {
+	    this.designation = designation;
+    }
+
+	public String getLovDescDesignationName() {
+	    return lovDescDesignationName;
+    }
+
+	public void setLovDescDesignationName(String lovDescDesignationName) {
+	    this.lovDescDesignationName = lovDescDesignationName;
+    }
+
+	public String getIdType() {
+	    return idType;
+    }
+
+	public void setIdType(String idType) {
+	    this.idType = idType;
+    }
+
+	public String getIdReference() {
+	    return idReference;
+    }
+
+	public void setIdReference(String idReference) {
+	    this.idReference = idReference;
+    }
+
+	public String getNationality() {
+	    return nationality;
+    }
+
+	public void setNationality(String nationality) {
+	    this.nationality = nationality;
+    }
+
+	public String getLovDescNationalityName() {
+	    return lovDescNationalityName;
+    }
+
+	public void setLovDescNationalityName(String lovDescNationalityName) {
+	    this.lovDescNationalityName = lovDescNationalityName;
+    }
+
+	public String getLovDescCustDocCategoryName() {
+    	return lovDescCustDocCategoryName;
+    }
+
+	public void setLovDescCustDocCategoryName(String lovDescCustDocCategoryName) {
+    	this.lovDescCustDocCategoryName = lovDescCustDocCategoryName;
+    }
+
+	public Date getDob() {
+	    return dob;
+    }
+
+	public void setDob(Date dob) {
+	    this.dob = dob;
+    }
+	
 }

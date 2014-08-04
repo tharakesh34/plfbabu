@@ -114,7 +114,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 	@Override
 	public SecurityRight getSecurityRightByID(final long id, String type) {
 		logger.debug("Entering ");
-		SecurityRight secRight = getSecurityRight();
+		SecurityRight secRight = new SecurityRight();
 		secRight.setId(id);
 
 		StringBuilder   selectSql = new StringBuilder  ("Select RightID, RightType, RightName, ");
@@ -147,7 +147,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 	@Override
 	public SecurityRight getSecurityRightByRightName(final String rightName,String type) {
 		logger.debug("Entering ");
-		SecurityRight secRight = getSecurityRight();
+		SecurityRight secRight = new SecurityRight();
 		secRight.setRightName(rightName);
 
 		StringBuilder   selectSql = new StringBuilder  ("Select RightID, RightType, RightName, ");
@@ -380,14 +380,23 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 	 * @return List<SecurityRight>
 	 */
 	@Override
-	public List<SecurityRight> getPageRights(SecurityRight secRight) {
+	public List<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName) {
 		logger.debug("Entering ");
 		StringBuilder   selectSql = new StringBuilder  (" Select distinct RightID, RightType, RightName, " );
 		selectSql.append(" Version , UsrID , AppCode from UserRights_View ");
 		selectSql.append(" WHERE RightType <> 0  and UsrID = :UsrID and  AppCode=:loginAppCode");
+		if(!StringUtils.trimToEmpty(secRight.getRoleCd()).equals("")){
+			selectSql.append(" and RoleCd = :RoleCd ");
+		}
 		selectSql.append(" and RightName like '%");
 		selectSql.append(secRight.getRightName());
 		selectSql.append("%' ");
+		
+		if(!StringUtils.trimToEmpty(menuRightName).equals("")){
+			selectSql.append(" AND GrpCode IN(select GrpCode from SecGroupRights_View " );
+			selectSql.append(" where RightName ='"+menuRightName+"')");
+		}
+
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRight);
 		RowMapper<SecurityRight> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
@@ -401,7 +410,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 	 *  @return List<SecurityRight>
 	 */
 	@Override
-	public List<SecurityRight> getRoleRights(SecurityRight secRight) {
+	public List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName) {
 		logger.debug("Entering ");
 		
 		StringBuilder   selectSql = new StringBuilder  (" Select distinct RoleCd, GrpCode, " );
@@ -410,7 +419,13 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		selectSql.append(" where RightType=3 and RoleCd = :RoleCd and  AppCode=:loginAppCode");
 		selectSql.append(" and RightName like '%");
 		selectSql.append(secRight.getRightName());
-		selectSql.append("%' AND UsrId=:UsrID");
+		selectSql.append("%' AND UsrId=:UsrID " );
+		
+		//Checking Rights Based on Menu Right Item
+		if(!StringUtils.trimToEmpty(menuRightName).equals("")){
+			selectSql.append(" AND GrpCode IN(select GrpCode from SecGroupRights_View " );
+			selectSql.append(" WHERE RightName ='"+ menuRightName +"')");
+		}
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRight);
 		RowMapper<SecurityRight> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);

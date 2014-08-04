@@ -45,7 +45,6 @@ package com.pennant.backend.service.mail;
 
 import java.util.List;
 
-import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.mail.MailTemplate;
 
@@ -57,8 +56,8 @@ public interface MailTemplateService {
 	MailTemplate getMailTemplateById(long id, String templateFor);
 	MailTemplate getApprovedMailTemplateById(long id, String templateFor);
 	MailTemplate refresh(MailTemplate mailTemplate);
+	List<MailTemplate> getMailTemplates();
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-	List<SecurityUser> getSecurityUsersByIds(String userIds);
 }

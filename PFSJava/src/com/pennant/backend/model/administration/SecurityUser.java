@@ -44,6 +44,7 @@ package com.pennant.backend.model.administration;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
@@ -98,6 +99,11 @@ public class SecurityUser implements java.io.Serializable, Entity {
 	private String    usrDftAppCode;
 	private String    loginAppCode=PennantConstants.applicationCode;
 
+	private String usrDesg; 
+	private String lovDescUsrDesg; 
+	private List<SecurityUserDivBranch> securityUserDivBranchList;
+	private List<SecurityUserRoles> securityUserRolesList;
+	
 	public boolean isNew() {
 		return (getUsrID() == Long.MIN_VALUE);
 	}
@@ -514,6 +520,23 @@ public class SecurityUser implements java.io.Serializable, Entity {
 		return lovDescUsrLanguage;
 	}	
 	
+	public void setUsrDesg(String usrDesg) {
+	    this.usrDesg = usrDesg;
+    }
+
+	public String getUsrDesg() {
+	    return usrDesg;
+    }
+
+	public String getLovDescUsrDesg() {
+    	return lovDescUsrDesg;
+    }
+
+	public void setLovDescUsrDesg(String lovDescUsrDesg) {
+    	this.lovDescUsrDesg = lovDescUsrDesg;
+    }
+
+
 	// Overridden Equals method to handle the comparison
 	public boolean equals(SecurityUser secUser) {
 		return getUsrID() == secUser.getUsrID();
@@ -535,4 +558,19 @@ public class SecurityUser implements java.io.Serializable, Entity {
 		}
 		return false;
 	}
+	public List<SecurityUserDivBranch> getSecurityUserDivBranchList() {
+    	return securityUserDivBranchList;
+    }
+
+	public void setSecurityUserDivBranchList(List<SecurityUserDivBranch> securityUserDivBranchList) {
+    	this.securityUserDivBranchList = securityUserDivBranchList;
+    }
+
+	public List<SecurityUserRoles> getSecurityUserRolesList() {
+	    return securityUserRolesList;
+    }
+
+	public void setSecurityUserRolesList(List<SecurityUserRoles> securityUserRolesList) {
+	    this.securityUserRolesList = securityUserRolesList;
+    }
 }

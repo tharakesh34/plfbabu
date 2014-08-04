@@ -45,6 +45,7 @@ package com.pennant.webui.customermasters.customergroup.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
@@ -73,7 +74,16 @@ public class CustomerGroupListModelItemRenderer implements ListitemRenderer<Cust
 		lc.setParent(item);
 	  	lc = new Listcell(customerGroup.getCustGrpDesc());
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(customerGroup.getCustGrpRO1())+PennantConstants.KEY_SEPERATOR+customerGroup.getLovDescCustGrpRO1Name());
+		
+		String GrpRelation  = "";
+		if(!StringUtils.trimToEmpty(customerGroup.getCustGrpRO1()).equals("")){
+			if(!StringUtils.trimToEmpty(customerGroup.getLovDescCustGrpRO1Name()).equals("")){
+				GrpRelation = customerGroup.getCustGrpRO1()+PennantConstants.KEY_SEPERATOR+customerGroup.getLovDescCustGrpRO1Name();
+			}else{
+				GrpRelation = customerGroup.getCustGrpRO1();
+			}
+		}
+		lc = new Listcell(GrpRelation);
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbCustGrpIsActive = new Checkbox();

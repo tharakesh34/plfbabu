@@ -120,7 +120,7 @@ public class BranchDAOImpl extends BasisCodeDAO<Branch> implements BranchDAO {
 	@Override
 	public Branch getBranchById(final String id, String type) {
 		logger.debug("Entering");
-		Branch branch = getBranch();
+		Branch branch = new Branch();
 		branch.setId(id);		
 	
 		StringBuilder selectSql = new StringBuilder("SELECT  BranchCode, BranchDesc, BranchAddrLine1," );

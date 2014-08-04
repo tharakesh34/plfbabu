@@ -121,7 +121,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 	@Override
 	public ReportFilterFields getReportFilterFieldsById(final long id, String type) {
 		logger.debug("Entering ");
-		ReportFilterFields reportFilterFields = getReportFilterFields();
+		ReportFilterFields reportFilterFields = new ReportFilterFields();
 		reportFilterFields.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("SELECT ReportID, FieldID, FieldName, FieldType, FieldLabel, FieldDBName," );
@@ -160,7 +160,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 	@Override
 	public List<ReportFilterFields> getReportFilterFieldsByReportId(final long ReportID,String type){
 		logger.debug("Entering");
-		ReportFilterFields reportFilterFields = getReportFilterFields();
+		ReportFilterFields reportFilterFields = new ReportFilterFields();
 		reportFilterFields.setReportID(ReportID);
 
 		StringBuilder selectSql = new StringBuilder("SELECT ReportID, FieldID, FieldName, FieldType, FieldLabel, FieldDBName," );
@@ -256,7 +256,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 	 */
 	public void deleteByReportId(final long ReportID,String type){
 		logger.debug("Entering");
-		ReportFilterFields reportFilterFields = getReportFilterFields();
+		ReportFilterFields reportFilterFields = new ReportFilterFields();
 		reportFilterFields.setReportID(ReportID);
 
 		StringBuilder deleteSql = new StringBuilder();

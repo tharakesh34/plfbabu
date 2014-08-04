@@ -9,7 +9,7 @@
 
 	<window id="window_VehicleVersionSearch"
 		title="${c:l('window_VehicleVersionSearch.title')}" border="none"
-		apply="${vehicleVersionSearchCtrl}" closable="true" width="400px"
+		apply="${vehicleVersionSearchCtrl}" closable="true" width="550px"
 		height="284px" sizable="true">
 
 		<borderlayout>
@@ -26,7 +26,7 @@
 								<column width="100%" />
 							</columns>
 							<rows>
-								<row>
+								<row visible = "false">
 									<label id="label_VehicleVersionSearch_VehicleVersionId" value="${c:l('label_VehicleVersionSearch_VehicleVersionId.value')}" />
 									<listbox id="sortOperator_vehicleVersionId" width="43px" mold="select" rows="1" />
 									 <textbox id="vehicleVersionId" width="171px" maxlength="19" />
@@ -43,7 +43,7 @@
 								<row>
 									<label id="label_VehicleVersionSearch_VehicleVersionCode" value="${c:l('label_VehicleVersionSearch_VehicleVersionCode.value')}" />
 									<listbox id="sortOperator_vehicleVersionCode" width="43px" mold="select" rows="1" />
-									 <textbox id="vehicleVersionCode" width="450px" maxlength="50" />
+									 <textbox id="vehicleVersionCode" width="330px" maxlength="50" />
 								  
 										
 								</row>

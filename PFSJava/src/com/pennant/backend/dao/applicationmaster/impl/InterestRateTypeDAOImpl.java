@@ -121,7 +121,7 @@ public class InterestRateTypeDAOImpl extends BasisCodeDAO<InterestRateType> impl
 	@Override
 	public InterestRateType getInterestRateTypeById(final String id, String type) {
 		logger.debug("Entering");
-		InterestRateType interestRateType = getInterestRateType();
+		InterestRateType interestRateType = new InterestRateType();
 		interestRateType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

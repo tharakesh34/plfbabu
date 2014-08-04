@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
@@ -66,12 +67,12 @@ public class CustomerPhoneNumberValidation {
 	String[] valueParm = new String[2];
 	String[] errParm = new String[2];
 
-	valueParm[0] = String.valueOf(customerPhoneNumber.getPhoneCustID());
+	valueParm[0] = StringUtils.trimToEmpty(customerPhoneNumber.getLovDescCustCIF());
 	valueParm[1] = customerPhoneNumber.getPhoneTypeCode();
 
-	errParm[0] = PennantJavaUtil.getLabel("label_PhoneCustID")+ ":" + valueParm[0];
-	errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypeCode")+ ":"+ valueParm[1];			
-
+    errParm[0] = PennantJavaUtil.getLabel("PhoneDetails") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
+    errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypeCode") + "-" + valueParm[1];
+	
 	if (customerPhoneNumber.isNew()){ // for New record or new record into work flow
 
 		if (!customerPhoneNumber.isWorkflow()){// With out Work flow only new records  
@@ -130,13 +131,36 @@ public class CustomerPhoneNumberValidation {
 
 		}
 	}
+	
+	auditDetail.setErrorDetail(screenValidations(customerPhoneNumber));
+	
 	auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 	if(StringUtils.trimToEmpty(method).equals("doApprove") || !customerPhoneNumber.isWorkflow()){
 		customerPhoneNumber.setBefImage(befCustomerPhoneNumber);	
 	}
 
-	return auditDetail;}
+	return auditDetail;
+	}
 
-	
+	/**
+	 * Method For Screen Level Validations
+	 * 
+	 * @param auditHeader
+	 * @param usrLanguage
+	 * @return
+	 */
+	public ErrorDetails  screenValidations(CustomerPhoneNumber customerPhoneNumber){
+		
+		if(StringUtils.trimToEmpty(customerPhoneNumber.getPhoneNumber()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("PhoneDetails"),
+					Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),
+					Labels.getLabel("listheader_PhoneTypeCode.label"),
+					customerPhoneNumber.getPhoneTypeCode()},
+					new String[] {});	
+		}
+
+		return null;
+	}	
 }

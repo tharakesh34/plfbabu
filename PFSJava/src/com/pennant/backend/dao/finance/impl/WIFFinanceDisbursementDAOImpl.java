@@ -123,7 +123,7 @@ public class WIFFinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursem
 	@Override
 	public FinanceDisbursement getWIFFinanceDisbursementById(final String id, String type) {
 		logger.debug("Entering");
-		FinanceDisbursement wIFFinanceDisbursement = getWIFFinanceDisbursement();
+		FinanceDisbursement wIFFinanceDisbursement = new FinanceDisbursement();
 		
 		wIFFinanceDisbursement.setId(id);
 		
@@ -299,7 +299,7 @@ public class WIFFinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursem
 	@Override
 	public List<FinanceDisbursement> getWIFFinanceDisbursementDetails(final String id, String type) {
 		logger.debug("Entering");
-		FinanceDisbursement wIFFinanceDisbursement = getWIFFinanceDisbursement();
+		FinanceDisbursement wIFFinanceDisbursement = new FinanceDisbursement();
 		
 		wIFFinanceDisbursement.setId(id);
 		

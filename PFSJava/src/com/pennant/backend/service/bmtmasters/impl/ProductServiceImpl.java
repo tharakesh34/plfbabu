@@ -576,7 +576,6 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 				isRcdType=true;
 			}else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				productAsset.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType=true;
 			}
 
 			if(method.equals("saveOrUpdate") && (isRcdType==true)){

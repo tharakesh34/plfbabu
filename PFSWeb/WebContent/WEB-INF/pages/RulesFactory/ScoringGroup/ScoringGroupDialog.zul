@@ -22,25 +22,25 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
 								sclass="toolbar-start">
-								<button id="btnNew" height="24px"
+								<button id="btnNew" 
 									tooltiptext="${c:l('btnNew.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNewScoringMetrics,btnCopyTo" />
-								<button id="btnEdit" height="24px"
+								<button id="btnEdit" 
 									tooltiptext="${c:l('btnEdit.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNewScoringMetrics,btnCopyTo" />
-								<button id="btnDelete" height="24px"
+								<button id="btnDelete" 
 									tooltiptext="${c:l('btnDelete.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNewScoringMetrics,btnCopyTo" />
-								<button id="btnSave" height="24px"
+								<button id="btnSave" 
 									tooltiptext="${c:l('btnSave.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNewScoringMetrics,btnCopyTo" />
-								<button id="btnCancel" height="24px"
+								<button id="btnCancel" 
 									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-								<button id="btnNotes" height="24px"
+								<button id="btnNotes" 
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNewScoringMetrics,btnCopyTo" />
-								<button id="btnCopyTo" height="24px"
-									image="/images/icons/copyto.png"
+								<button id="btnCopyTo" 
+									label="${c:l('label_Copy')}"
 									tooltiptext="${c:l('btnCopyTo.tooltiptext')}" visible="true"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNewScoringMetrics,btnCopyTo" />
 							</toolbar>
@@ -55,11 +55,11 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" height="24px"
+								<button id="btnHelp" 
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnClose" height="24px"
+								<button id="btnClose" 
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							</toolbar>
@@ -179,7 +179,7 @@
 													<toolbar align="end"
 														sclass="toolbar-end">
 														<button
-															id="btnNewScoringSlab" visible="false" height="24px"
+															id="btnNewScoringSlab" visible="false" 
 															label="${c:l('label_New')}"
 															tooltiptext="${c:l('btnNewScoringSlab.tooltiptext')}" />
 													</toolbar>
@@ -233,7 +233,7 @@
 														sclass="toolbar-end">
 														<button
 															id="btnNewRetailScoringMetrics" visible="false"
-															height="24px" label="${c:l('label_New')}"
+															 label="${c:l('label_New')}"
 															tooltiptext="${c:l('btnNewScoringMetrics.tooltiptext')}"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes
 																		,btnHelp,btnClose,btnNewRetailScoringMetrics,btnCopyTo" />
@@ -300,7 +300,7 @@
 														sclass="toolbar-end">
 														<button
 															id="btnNewFinScoringMetrics" visible="false"
-															height="24px" label="${c:l('label_New')}"
+															 label="${c:l('label_New')}"
 															tooltiptext="${c:l('btnNewScoringMetrics.tooltiptext')}"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes
 																,btnHelp,btnClose,btnNewRetailScoringMetrics,btnCopyTo" />
@@ -361,7 +361,7 @@
 													<toolbar align="end"
 														sclass="toolbar-end">
 														<button
-															id="btnNewNFScoringMetrics" visible="false" height="24px"
+															id="btnNewNFScoringMetrics" visible="false" 
 															label="${c:l('label_New')}"
 															tooltiptext="${c:l('btnNewScoringMetrics.tooltiptext')}"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes

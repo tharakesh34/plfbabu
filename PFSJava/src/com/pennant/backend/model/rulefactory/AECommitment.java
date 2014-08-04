@@ -7,10 +7,10 @@ import java.util.HashMap;
 public class AECommitment {
 
 	//Amount Code Details
-	private BigDecimal CMTAMT = new BigDecimal(0);
-	private BigDecimal CHGAMT = new BigDecimal(0);
-	private BigDecimal DISBURSE = new BigDecimal(0);
-	private BigDecimal RPPRI = new BigDecimal(0);
+	private BigDecimal CMTAMT = BigDecimal.ZERO;
+	private BigDecimal CHGAMT = BigDecimal.ZERO;
+	private BigDecimal DISBURSE = BigDecimal.ZERO;
+	private BigDecimal RPPRI = BigDecimal.ZERO;
 
 	//Commitment Details
 	private BigDecimal cmtAmount;

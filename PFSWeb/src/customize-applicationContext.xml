@@ -42,6 +42,25 @@
 	  <property name="username" value="${auditjdbc.username}" />
 	  <property name="password" value="${auditjdbc.password}" />
 	</bean>
+	
+	<bean id="equationDatasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	  <property name="driverClassName" value="${equationReportsjdbc.driverClassName}" />
+	  <property name="url" value="${equationReportsjdbc.url}" />
+	  <property name="username" value="${equationReportsjdbc.username}" />
+	  <property name="password" value="${equationReportsjdbc.password}" />
+	</bean>
+	
+		<!--LDAP Environment   -->
+		
+	<bean id="ldapEnvironment" class="com.pennant.backend.model.administration.LDAPEnvironment" scope="prototype" >
+	        <property name="contextFactory" value="${ladp.contextFactory}" />
+			<property name="authentication" value="${ldap.authentication}" />
+			<property name="principal" value="${ldap.principal}" />
+			<property name="credentials" value="${ldap.credentials}" />
+			<property name="providerURL" value="${ldap.provider.url}" />
+			<property name="base"  value="${ldap.base}" />
+	</bean>
+	
 		
 	<!-- ====================================================== -->
 	<!--    THIS PLACE IS FOR CONFIGURING a Jndi CONNECTION     -->

@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -55,7 +57,14 @@ public class FinContributorHeader implements Serializable {
 	public FinContributorHeader(String id) {
 		this.setId(id);
 	}
-
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("contributorDetailList");
+		
+		return excludeFields;
+	}
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

@@ -55,8 +55,8 @@ public interface DirectorDetailService {
 	DirectorDetail getDirectorDetail();
 	DirectorDetail getNewDirectorDetail();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	DirectorDetail getDirectorDetailById(long id);
-	DirectorDetail getApprovedDirectorDetailById(long id);
+	DirectorDetail getDirectorDetailById(long id,long custID);
+	DirectorDetail getApprovedDirectorDetailById(long id,long custID);
 	DirectorDetail refresh(DirectorDetail directorDetail);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);

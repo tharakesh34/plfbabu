@@ -207,8 +207,9 @@ import com.pennant.webui.util.PTReportUtils;
 	 private void doCheckRights() {
 		 logger.debug("Entering ");
 		 getUserWorkspace().alocateAuthorities("SecurityGroupList");
-		 this.button_SecurityGroupList_SecurityGroupSearchDialog.setVisible(
+/*		 this.button_SecurityGroupList_SecurityGroupSearchDialog.setVisible(
 				 getUserWorkspace().isAllowed("button_SecurityGroupList_SecurityGroupFindDialog"));
+*/		 this.button_SecurityGroupList_SecurityGroupSearchDialog.setVisible(true);
 		 this.button_SecurityGroupList_PrintList.setVisible(
 				 getUserWorkspace().isAllowed("button_SecurityGroupList_PrintList"));
 		 logger.debug("Leaving ");

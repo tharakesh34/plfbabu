@@ -55,8 +55,8 @@ public interface CityService {
 	City getCity();
 	City getNewCity();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	City getCityById(String PCCounty,String PCProvince,String PCCity);
-	City getApprovedCityById(String PCCounty,String PCProvince,String PCCity);
+	City getCityById(String PCCountry,String PCProvince,String PCCity);
+	City getApprovedCityById(String PCCountry,String PCProvince,String PCCity);
 	City refresh(City city);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);

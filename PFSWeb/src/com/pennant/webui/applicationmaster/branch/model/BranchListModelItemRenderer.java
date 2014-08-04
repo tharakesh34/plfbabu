@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for list items in the list box.
  * 
@@ -62,10 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class BranchListModelItemRenderer implements ListitemRenderer<Branch>, Serializable {
 
 	private static final long serialVersionUID = -4870847307910889683L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, Branch branch, int count) throws Exception {
-		//final Branch branch = (Branch) data;
+
 		Listcell lc;
 	  	lc = new Listcell(branch.getBranchCode());
 		lc.setParent(item);

@@ -68,8 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class DepartmentServiceImpl extends GenericService<Department> implements
 		DepartmentService {
 
-	private static Logger logger = Logger
-			.getLogger(DepartmentServiceImpl.class);
+	private static Logger logger = Logger.getLogger(DepartmentServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DepartmentDAO departmentDAO;

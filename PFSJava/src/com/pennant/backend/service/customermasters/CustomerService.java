@@ -43,8 +43,11 @@
 
 package com.pennant.backend.service.customermasters;
 
+import java.util.Date;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.WIFCustomer;
 
 public interface CustomerService {
 	
@@ -57,5 +60,8 @@ public interface CustomerService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-
+	boolean isJointCustExist(long custID);
+	WIFCustomer getWIFCustomerByID(long custId, String custCRCPR);
+	Date getCustBlackListedDate(String custCRCPR);
+	String getCustomerByCRCPR(String custCRCPR, String type);
 }

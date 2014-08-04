@@ -121,7 +121,7 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode>imp
 	@Override
 	public MaritalStatusCode getMaritalStatusCodeById(final String id,String type) {
 		logger.debug("Entering");
-		MaritalStatusCode maritalStatusCode = getMaritalStatusCode();
+		MaritalStatusCode maritalStatusCode = new MaritalStatusCode();
 		maritalStatusCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

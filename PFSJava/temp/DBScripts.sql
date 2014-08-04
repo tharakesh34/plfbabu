@@ -2072,5 +2072,171 @@ FROM    	FinODCRecovery AS T1
 WHERE     NOT EXISTS (SELECT 1 FROM FinODCRecovery_TEMP WHERE FinReference = T1.FinReference)
 
 GO
+
+
+-- Create View for EmployerDetail Module
+
+CREATE VIEW [dbo].[EmployerDetail_AView]
+AS
+SELECT		T1.EmployerId, T1.EmpIndustry, T1.EmpName, T1.EstablishDate, T1.EmpAddrHNbr, T1.EmpFlatNbr, T1.EmpAddrStreet, T1.EmpAddrLine1, T1.EmpAddrLine2, T1.EmpPOBox, T1.EmpCountry, T1.EmpProvince, T1.EmpCity, T1.EmpPhone, T1.EmpFax, T1.EmpTelexNo, T1.EmpEmailId, T1.EmpWebSite, T1.ContactPersonName, T1.ContactPersonNo, T1.EmpAlocationType		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EmployerDetail AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+GO
+
+
+CREATE VIEW [dbo].[EmployerDetail_TView]
+AS
+SELECT		T1.EmployerId, T1.EmpIndustry, T1.EmpName, T1.EstablishDate, T1.EmpAddrHNbr, T1.EmpFlatNbr, T1.EmpAddrStreet, T1.EmpAddrLine1, T1.EmpAddrLine2, T1.EmpPOBox, T1.EmpCountry, T1.EmpProvince, T1.EmpCity, T1.EmpPhone, T1.EmpFax, T1.EmpTelexNo, T1.EmpEmailId, T1.EmpWebSite, T1.ContactPersonName, T1.ContactPersonNo, T1.EmpAlocationType		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EmployerDetail_Temp AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+GO
+
+CREATE VIEW [dbo].[EmployerDetail_View]
+AS
+SELECT		T1.EmployerId, T1.EmpIndustry, T1.EmpName, T1.EstablishDate, T1.EmpAddrHNbr, T1.EmpFlatNbr, T1.EmpAddrStreet, T1.EmpAddrLine1, T1.EmpAddrLine2, T1.EmpPOBox, T1.EmpCountry, T1.EmpProvince, T1.EmpCity, T1.EmpPhone, T1.EmpFax, T1.EmpTelexNo, T1.EmpEmailId, T1.EmpWebSite, T1.ContactPersonName, T1.ContactPersonNo, T1.EmpAlocationType		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EmployerDetail_Temp AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+UNION ALL
+
+SELECT		T1.EmployerId, T1.EmpIndustry, T1.EmpName, T1.EstablishDate, T1.EmpAddrHNbr, T1.EmpFlatNbr, T1.EmpAddrStreet, T1.EmpAddrLine1, T1.EmpAddrLine2, T1.EmpPOBox, T1.EmpCountry, T1.EmpProvince, T1.EmpCity, T1.EmpPhone, T1.EmpFax, T1.EmpTelexNo, T1.EmpEmailId, T1.EmpWebSite, T1.ContactPersonName, T1.ContactPersonNo, T1.EmpAlocationType		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EmployerDetail AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+
+WHERE     NOT EXISTS (SELECT 1 FROM EmployerDetail_TEMP WHERE EmployerId = T1.EmployerId)
+
+GO
+
+--Sequence Tabele
+CREATE TABLE [dbo].[SeqEmployerDetail](
+	[SeqNo] [bigint] NOT NULL
+) ON [PRIMARY]
+
+INSERT INTO [dbo].[SeqEmployerDetail]VALUES (0)
+
+
+-- Create View for DivisionDetail Module
+
+CREATE VIEW [dbo].[SMTDivisionDetail_AView]
+AS
+SELECT		T1.DivisionCode, T1.DivisionCodeDesc, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	SMTDivisionDetail AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+GO
+
+
+CREATE VIEW [dbo].[SMTDivisionDetail_TView]
+AS
+SELECT		T1.DivisionCode, T1.DivisionCodeDesc, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	SMTDivisionDetail_Temp AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+GO
+
+CREATE VIEW [dbo].[SMTDivisionDetail_View]
+AS
+SELECT		T1.DivisionCode, T1.DivisionCodeDesc, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	SMTDivisionDetail_Temp AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+UNION ALL
+
+SELECT		T1.DivisionCode, T1.DivisionCodeDesc, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	SMTDivisionDetail AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+
+WHERE     NOT EXISTS (SELECT 1 FROM SMTDivisionDetail_TEMP WHERE DivisionCode = T1.DivisionCode)
+
+GO
+
+-- Create View for GoodsLoanDetail Module
+
+CREATE VIEW [dbo].[LMTGoodsLoanDetail_AView]
+AS
+SELECT		T1.LoanRefNumber, T1.ItemType, T1.ItemNumber, T1.ItemDescription, T1.UnitPrice, T1.Quantity, T1.Addtional1, T1.Addtional2, T1.Addtional3, T1.Addtional4, T1.Addtional5, T1.Addtional6, T1.Addtional7, T1.Addtional8		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	LMTGoodsLoanDetail AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+GO
+
+
+CREATE VIEW [dbo].[LMTGoodsLoanDetail_TView]
+AS
+SELECT		T1.LoanRefNumber, T1.ItemType, T1.ItemNumber, T1.ItemDescription, T1.UnitPrice, T1.Quantity, T1.Addtional1, T1.Addtional2, T1.Addtional3, T1.Addtional4, T1.Addtional5, T1.Addtional6, T1.Addtional7, T1.Addtional8		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	LMTGoodsLoanDetail_Temp AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+GO
+
+CREATE VIEW [dbo].[LMTGoodsLoanDetail_View]
+AS
+SELECT		T1.LoanRefNumber, T1.ItemType, T1.ItemNumber, T1.ItemDescription, T1.UnitPrice, T1.Quantity, T1.Addtional1, T1.Addtional2, T1.Addtional3, T1.Addtional4, T1.Addtional5, T1.Addtional6, T1.Addtional7, T1.Addtional8		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	LMTGoodsLoanDetail_Temp AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+UNION ALL
+
+SELECT		T1.LoanRefNumber, T1.ItemType, T1.ItemNumber, T1.ItemDescription, T1.UnitPrice, T1.Quantity, T1.Addtional1, T1.Addtional2, T1.Addtional3, T1.Addtional4, T1.Addtional5, T1.Addtional6, T1.Addtional7, T1.Addtional8		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	LMTGoodsLoanDetail AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+
+WHERE     NOT EXISTS (SELECT 1 FROM LMTGoodsLoanDetail_TEMP WHERE LoanRefNumber = T1.LoanRefNumber)
+
+GO
+
+
+-- Create View for Authorization Module
+
+CREATE VIEW [dbo].[AMTAuthorization_AView]
+AS
+SELECT		T1.AuthorizedId, T1.AuthUserId, T1.AuthType, T1.AuthName, T1.AuthDept, T1.AuthDesig, T1.AuthSignature		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	AMTAuthorization AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+GO
+
+
+CREATE VIEW [dbo].[AMTAuthorization_TView]
+AS
+SELECT		T1.AuthorizedId, T1.AuthUserId, T1.AuthType, T1.AuthName, T1.AuthDept, T1.AuthDesig, T1.AuthSignature		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	AMTAuthorization_Temp AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+GO
+
+CREATE VIEW [dbo].[AMTAuthorization_View]
+AS
+SELECT		T1.AuthorizedId, T1.AuthUserId, T1.AuthType, T1.AuthName, T1.AuthDept, T1.AuthDesig, T1.AuthSignature		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	AMTAuthorization_Temp AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+UNION ALL
+
+SELECT		T1.AuthorizedId, T1.AuthUserId, T1.AuthType, T1.AuthName, T1.AuthDept, T1.AuthDesig, T1.AuthSignature		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	AMTAuthorization AS T1 INNER JOIN
+            dbo.SecUsers AS T2 ON T1.LastMntBy = T2.UsrID
+
+WHERE     NOT EXISTS (SELECT 1 FROM AMTAuthorization_TEMP WHERE AuthorizedId = T1.AuthorizedId)
+
+GO
+
+--Sequence Tabele
+CREATE TABLE [dbo].[SeqAMTAuthorization](
+	[SeqNo] [bigint] NOT NULL
+) ON [PRIMARY]
+
+INSERT INTO [dbo].[SeqAMTAuthorization]VALUES (0)
+
+
+
+
+
 <!--//APPEND AFTER THIS//-->
 

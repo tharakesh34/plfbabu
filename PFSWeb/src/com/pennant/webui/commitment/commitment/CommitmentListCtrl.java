@@ -49,7 +49,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
@@ -82,11 +81,11 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.util.WorkflowLoad;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.commitment.commitment.model.CommitmentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -118,7 +117,8 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 	protected Listheader	               listheader_CmtReference;	                                  // autowired
 	protected Listheader	               listheader_custID;	                                          // autowired
 	protected Listheader	               listheader_CmtBranch;	                                      // autowired
-	protected Listheader	               listheader_CmtAccount;	                                      // autowired
+	//protected Listheader	               listheader_CmtAccount;	                                      // autowired
+	protected Listheader	               listheader_CustName;	                                      // autowired
 	protected Listheader	               listheader_CmtCcy;	                                          // autowired
 	protected Listheader	               listheader_CmtAmount;	                                      // autowired
 	protected Listheader	               listheader_CmtUtilizedAmount;	                              // autowired
@@ -146,16 +146,18 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 	protected Listbox	                   sortOperator_CmtReference;	                                  // autowired
 
 	protected Textbox	                   custID;	                                                      // autowired
-	protected Listbox	                   sortOperator_custID;	                                      // autowired
+	protected Listbox	                   sortOperator_custID;	                                  	      // autowired
 
 	protected Textbox	                   cmtBranch;	                                                  // autowired
 	protected Listbox	                   sortOperator_CmtBranch;	                                      // autowired
 
-	protected Textbox	                   cmtAccount;	                                                  // autowired
-	protected Listbox	                   sortOperator_CmtAccount;	                                  // autowired
+/*	protected Textbox	                   cmtAccount;	                                                  // autowired
+	protected Listbox	                   sortOperator_CmtAccount;	                                  	  // autowired
+*/	protected Textbox	                   custName;	                                                  // autowired
+	protected Listbox	                   sortOperator_CustName;	                                 	  // autowired
 
 	protected Textbox	                   cmtCcy;	                                                      // autowired
-	protected Listbox	                   sortOperator_CmtCcy;	                                      // autowired
+	protected Listbox	                   sortOperator_CmtCcy;	                                      	  // autowired
 
 	protected Decimalbox	               cmtAmount;	                                                  // autowired
 	protected Listbox	                   sortOperator_CmtAmount;	                                      // autowired
@@ -226,8 +228,10 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 		this.sortOperator_CmtBranch.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_CmtBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_CmtAccount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
-		this.sortOperator_CmtAccount.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		/*this.sortOperator_CmtAccount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_CmtAccount.setItemRenderer(new SearchOperatorListModelItemRenderer());*/
+		this.sortOperator_CustName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_CustName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_CmtCcy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_CmtCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
@@ -250,11 +254,12 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 		if (isWorkFlowEnabled()) {
 			this.sortOperator_RecordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_RecordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			
 			this.sortOperator_RecordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_RecordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.recordType = setRecordType(this.recordType);
+			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 
-			this.sortOperator_RecordType.setSelectedIndex(1);
+			this.sortOperator_RecordType.setSelectedIndex(0);
 			this.recordType.setSelectedIndex(0);
 
 		} else {
@@ -269,7 +274,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 		doCheckRights();
 
 		this.borderLayout_CommitmentList.setHeight(getBorderLayoutHeight());
-		this.listBoxCommitment.setHeight(getListBoxHeight(searchGrid.getRows().getChildren().size()));
+		this.listBoxCommitment.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCommitmentList.setPageSize(getListRows());
@@ -277,12 +282,15 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 
 		this.listheader_CmtReference.setSortAscending(new FieldComparator("cmtReference", true));
 		this.listheader_CmtReference.setSortDescending(new FieldComparator("cmtReference", false));
-		this.listheader_custID.setSortAscending(new FieldComparator("custID", true));
-		this.listheader_custID.setSortDescending(new FieldComparator("custID", false));
+		this.listheader_custID.setSortAscending(new FieldComparator("custCIF", true));
+		this.listheader_custID.setSortDescending(new FieldComparator("custCIF", false));
 		this.listheader_CmtBranch.setSortAscending(new FieldComparator("cmtBranch", true));
 		this.listheader_CmtBranch.setSortDescending(new FieldComparator("cmtBranch", false));
-		this.listheader_CmtAccount.setSortAscending(new FieldComparator("cmtAccount", true));
+/*		this.listheader_CmtAccount.setSortAscending(new FieldComparator("cmtAccount", true));
 		this.listheader_CmtAccount.setSortDescending(new FieldComparator("cmtAccount", false));
+*/		
+		this.listheader_CustName.setSortAscending(new FieldComparator("CustShrtName", true));
+		this.listheader_CustName.setSortDescending(new FieldComparator("CustShrtName", false));
 		this.listheader_CmtCcy.setSortAscending(new FieldComparator("cmtCcy", true));
 		this.listheader_CmtCcy.setSortDescending(new FieldComparator("cmtCcy", false));
 		this.listheader_CmtAmount.setSortAscending(new FieldComparator("cmtAmount", true));
@@ -307,6 +315,10 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 			this.listheader_RecordType.setVisible(false);
 		}
 
+		this.cmtStartDate.setFormat(PennantConstants.dateFormat);
+		this.cmtExpDate.setFormat(PennantConstants.dateFormat);
+		
+		
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_CommitmentList_NewCommitment.setVisible(false);
 			this.button_CommitmentList_CommitmentSearch.setVisible(false);
@@ -364,15 +376,15 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 						commitment.setWorkflowId(workFlowDetails.getWorkFlowId());
 					}
 
-					WorkflowLoad flowLoad = new WorkflowLoad(commitment.getWorkflowId(), commitment.getNextTaskId(), getUserWorkspace().getUserRoleSet());
+					//WorkflowLoad flowLoad = new WorkflowLoad(commitment.getWorkflowId(), commitment.getNextTaskId(), getUserWorkspace().getUserRoleSet());
 
-					boolean userAcces = validateUserAccess("Commitment", new String[] { "CmtReference" }, flowLoad.getRole(), getUserWorkspace().getLoginUserDetails()
-					        .getLoginUsrID(), commitment);
-					if (userAcces) {
-						showDetailView(commitment);
-					} else {
-						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
-					}
+					showDetailView(commitment);
+//					boolean userAcces = validateUserAccess("Commitment", new String[] { "CmtReference" }, flowLoad.getRole(), getUserWorkspace().getLoginUserDetails()
+//					        .getLoginUsrID(), commitment);
+//					if (userAcces) {
+//					} else {
+//						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+//					}
 				} else {
 					showDetailView(commitment);
 				}
@@ -423,8 +435,8 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 		this.custID.setValue("");
 		this.sortOperator_CmtBranch.setSelectedIndex(0);
 		this.cmtBranch.setValue("");
-		this.sortOperator_CmtAccount.setSelectedIndex(0);
-		this.cmtAccount.setValue("");
+		this.sortOperator_CustName.setSelectedIndex(0);
+		this.custName.setValue("");
 		this.sortOperator_CmtCcy.setSelectedIndex(0);
 		this.cmtCcy.setValue("");
 		this.sortOperator_CmtAmount.setSelectedIndex(0);
@@ -476,7 +488,8 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 	public void onClick$button_CommitmentList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("Commitment", getSearchObj());
+		@SuppressWarnings("unused")
+		PTListReportUtils reportUtils = new PTListReportUtils("Commitment",getSearchObj(), this.pagingCommitmentList.getTotalSize() + 1);
 		logger.debug("Leaving");
 	}
 
@@ -511,8 +524,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("CommitmentList");
-
+		getUserWorkspace().alocateAuthorities("CommitmentList",getRole());
 		if (moduleType == null) {
 			this.button_CommitmentList_NewCommitment.setVisible(getUserWorkspace().isAllowed("button_CommitmentList_NewCommitment"));
 		} else {
@@ -627,15 +639,15 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 		}
 		// cust I D
 		if (!StringUtils.trimToEmpty(this.custID.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_custID.getSelectedItem(), this.custID.getValue(), "custID");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custID.getSelectedItem(), this.custID.getValue(), "custCIF");
 		}
 		// Cmt Branch
 		if (!StringUtils.trimToEmpty(this.cmtBranch.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_CmtBranch.getSelectedItem(), this.cmtBranch.getValue(), "CmtBranch");
 		}
 		// Cmt Account
-		if (!StringUtils.trimToEmpty(this.cmtAccount.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_CmtAccount.getSelectedItem(), this.cmtAccount.getValue(), "CmtAccount");
+		if (!StringUtils.trimToEmpty(this.custName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_CustName.getSelectedItem(), this.custName.getValue(), "CustShrtName");
 		}
 		// Cmt Ccy
 		if (!StringUtils.trimToEmpty(this.cmtCcy.getValue()).equals("")) {
@@ -673,7 +685,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 		}
 
 		// Record Type
-		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_RecordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
 		}
 

@@ -10,6 +10,7 @@ public class CorpScoreGroupDetail implements Serializable {
     private String groupDesc;
     private int groupSeq;
     private String categoryType;
+    private String custCategory;
     
     public CorpScoreGroupDetail() {
 	    super();
@@ -49,6 +50,13 @@ public class CorpScoreGroupDetail implements Serializable {
     }
 	public void setCategoryType(String categoryType) {
     	this.categoryType = categoryType;
+    }
+
+	public void setCustCategory(String custCategory) {
+	    this.custCategory = custCategory;
+    }
+	public String getCustCategory() {
+	    return custCategory;
     }
     
 }

@@ -121,7 +121,7 @@ public class FinanceApplicationCodeDAOImpl extends BasisCodeDAO<FinanceApplicati
 	@Override
 	public FinanceApplicationCode getFinanceApplicationCodeById(final String id, String type) {
 		logger.debug("Entering");
-		FinanceApplicationCode financeApplicationCode = getFinanceApplicationCode();
+		FinanceApplicationCode financeApplicationCode = new FinanceApplicationCode();
 		financeApplicationCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

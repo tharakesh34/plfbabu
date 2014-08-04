@@ -78,12 +78,10 @@ import com.pennant.webui.util.searching.SearchOperators;
  * file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
-public class GeneralDesignationSearchCtrl extends GFCBaseCtrl implements
-		Serializable {
+public class GeneralDesignationSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 	private static final long serialVersionUID = 1607010033517693903L;
-	private final static Logger logger = Logger
-			.getLogger(GeneralDesignationSearchCtrl.class);
+	private final static Logger logger = Logger.getLogger(GeneralDesignationSearchCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -156,22 +154,22 @@ public class GeneralDesignationSearchCtrl extends GFCBaseCtrl implements
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_genDesignation.setModel(new ListModelList(
+		this.sortOperator_genDesignation.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_genDesignation.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_genDesgDesc.setModel(new ListModelList(
+		this.sortOperator_genDesgDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_genDesgDesc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

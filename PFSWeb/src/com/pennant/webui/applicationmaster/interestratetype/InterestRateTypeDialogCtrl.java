@@ -67,7 +67,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -81,8 +80,11 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.InterestRateTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -148,7 +150,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 	// ServiceDAOs / Domain Classes
 	private transient InterestRateTypeService interestRateTypeService;
 	private transient PagedListService pagedListService;
-	public List<ValueLabel> listRateType = PennantAppUtil.getInterestRateType();
+	public List<ValueLabel> listRateType = PennantStaticListUtil.getInterestRateType(true);
 
 	/**
 	 * default constructor.<br>
@@ -419,6 +421,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -437,7 +440,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 		this.intRateTypeIsActive.setChecked(aInterestRateType.isIntRateTypeIsActive());
 		this.recordStatus.setValue(aInterestRateType.getRecordStatus());
 		
-		if(aInterestRateType.isNew() || aInterestRateType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aInterestRateType.isNew() || (aInterestRateType.getRecordType() != null ? aInterestRateType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.intRateTypeIsActive.setChecked(true);
 			this.intRateTypeIsActive.setDisabled(true);
 		}
@@ -644,10 +647,8 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 							"label_InterestRateTypeDialog_IntRateTypeCode.value")})));
 		}*/
 		if (!this.intRateTypeDesc.isReadonly()){
-			this.intRateTypeDesc.setConstraint(new SimpleConstraint(
-					PennantConstants.DESC_REGEX, Labels.getLabel(
-							"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-							"label_InterestRateTypeDialog_IntRateTypeDesc.value")})));
+			this.intRateTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_InterestRateTypeDialog_IntRateTypeDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -787,7 +788,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

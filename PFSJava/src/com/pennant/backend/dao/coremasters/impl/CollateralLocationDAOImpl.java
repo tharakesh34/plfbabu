@@ -124,7 +124,7 @@ public class CollateralLocationDAOImpl extends BasisCodeDAO<CollateralLocation> 
 	@Override
 	public CollateralLocation getCollateralLocationById(final String id, String type) {
 		logger.debug("Entering");
-		CollateralLocation collateralLocation = getCollateralLocation();
+		CollateralLocation collateralLocation = new CollateralLocation();
 		
 		collateralLocation.setId(id);
 		

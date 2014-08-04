@@ -24,25 +24,26 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private String drOrCr;
 	private boolean shadowPosting;
 	private String account;
-	private BigDecimal postAmount = new BigDecimal(0);
+	private BigDecimal postAmount = BigDecimal.ZERO;
 	private String amountType;
 	private String postStatus;
 	private String errorId;
 	private String errorMsg;
-	private String hostAccountNumber;
+	private long custId = Long.MIN_VALUE;
+	private String acCcy;
 
 	//External Purpose fields
 	private String accountType;
-	private String ruleDecider;
+	//private String ruleDecider;
 	private String eventCodeName;
 	private String finType;
 	private String CustCIF;
-	private String finCcy;
 	private String finBranch;
 	private String flagCreateNew;
 	private String flagCreateIfNF;
 	private String internalAc;
 	private String tranOrderId;
+	private int formatter = 0;
 
 	@Override
 	public boolean isNew() {
@@ -207,28 +208,12 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 		this.errorMsg = errorMsg;
 	}
 
-	public String getHostAccountNumber() {
-		return hostAccountNumber;
-	}
-
-	public void setHostAccountNumber(String hostAccountNumber) {
-		this.hostAccountNumber = hostAccountNumber;
-	}
-
 	public String getAccountType() {
 		return accountType;
 	}
 
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
-	}
-
-	public String getRuleDecider() {
-		return ruleDecider;
-	}
-
-	public void setRuleDecider(String ruleDecider) {
-		this.ruleDecider = ruleDecider;
 	}
 
 	public String getEventCodeName() {
@@ -253,14 +238,6 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 
 	public void setCustCIF(String custCIF) {
 		CustCIF = custCIF;
-	}
-
-	public String getFinCcy() {
-		return finCcy;
-	}
-
-	public void setFinCcy(String finCcy) {
-		this.finCcy = finCcy;
 	}
 
 	public String getFinBranch() {
@@ -316,6 +293,30 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 
 	public String getTranOrderId() {
 	    return tranOrderId;
+    }
+
+	public void setCustId(long custId) {
+	    this.custId = custId;
+    }
+
+	public long getCustId() {
+	    return custId;
+    }
+
+	public String getAcCcy() {
+	    return acCcy;
+    }
+
+	public void setAcCcy(String acCcy) {
+	    this.acCcy = acCcy;
+    }
+
+	public int getFormatter() {
+	    return formatter;
+    }
+
+	public void setFormatter(int formatter) {
+	    this.formatter = formatter;
     }
 
 }

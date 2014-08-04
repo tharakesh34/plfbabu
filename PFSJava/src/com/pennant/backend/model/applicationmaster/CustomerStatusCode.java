@@ -59,7 +59,8 @@ public class CustomerStatusCode implements java.io.Serializable {
 	private String custStsCode = null;
 	private String custStsDescription;
 	private boolean custStsIsActive;
-	private int custStsOrder;
+	private int dueDays;
+	private boolean suspendProfit;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -121,12 +122,19 @@ public class CustomerStatusCode implements java.io.Serializable {
 		this.custStsIsActive = custStsIsActive;
 	}
 	
-	public void setCustStsOrder(int custStsOrder) {
-		this.custStsOrder = custStsOrder;
-	}
-	public int getCustStsOrder() {
-		return custStsOrder;
-	}
+	public int getDueDays() {
+    	return dueDays;
+    }
+	public void setDueDays(int dueDays) {
+    	this.dueDays = dueDays;
+    }
+
+	public boolean isSuspendProfit() {
+    	return suspendProfit;
+    }
+	public void setSuspendProfit(boolean suspendProfit) {
+    	this.suspendProfit = suspendProfit;
+    }
 
 	public int getVersion() {
 		return version;

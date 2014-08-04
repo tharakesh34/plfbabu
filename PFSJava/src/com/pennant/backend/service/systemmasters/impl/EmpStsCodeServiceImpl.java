@@ -68,8 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 		EmpStsCodeService {
 
-	private static Logger logger = Logger
-			.getLogger(EmpStsCodeServiceImpl.class);
+	private static Logger logger = Logger.getLogger(EmpStsCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private EmpStsCodeDAO empStsCodeDAO;

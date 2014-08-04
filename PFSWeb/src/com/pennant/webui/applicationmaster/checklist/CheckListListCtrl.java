@@ -46,19 +46,28 @@ package com.pennant.webui.applicationmaster.checklist;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +80,14 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.applicationmaster.checklist.model.CheckListListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -108,6 +121,34 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> implements Ser
 	protected Listheader listheader_CheckListMaxCount;             // autoWired
 	protected Listheader listheader_CheckListMinCount;             // autoWired
 
+	
+	// Filtering Fields
+	
+	protected Textbox checkListDesc; 					// autowired
+	protected Listbox sortOperator_checkListDesc; 		// autowired
+  	protected Intbox checkMinCount; 					// autowired
+  	protected Listbox sortOperator_checkMinCount; 		// autowired
+  	protected Intbox checkMaxCount; 					// autowired
+  	protected Listbox sortOperator_checkMaxCount; 		// autowired
+	protected Checkbox active; 							// autowired
+	protected Listbox sortOperator_active; 				// autowired
+	protected Textbox recordStatus; 					// autowired
+	protected Listbox recordType;						// autowired
+	protected Listbox sortOperator_recordStatus; 		// autowired
+	protected Listbox sortOperator_recordType; 			// autowired
+	
+	protected Label label_CheckListSearch_RecordStatus; // autowired
+	protected Label label_CheckListSearch_RecordType; 	// autowired
+	protected Label label_CheckListSearchResult; 		// autowired
+
+	private Grid 			searchGrid;							// autowired
+	protected Textbox 		moduleType; 						// autowired
+	protected Radio			fromApproved;
+	protected Radio			fromWorkFlow;
+	protected Row			workFlowFrom;
+
+	private transient boolean  approvedList=false;
+	
 	// checkRights
 	protected Button btnHelp;                                       // autoWired
 	protected Button button_CheckListList_NewCheckList;             // autoWired
@@ -147,11 +188,41 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> implements Ser
 			wfAvailable=false;
 		}
 		
+	
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		this.sortOperator_checkListDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_checkListDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_checkMinCount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_checkMinCount.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_checkMaxCount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_checkMaxCount.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_active.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_active.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+		}else{
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CheckListSearch_RecordStatus.setVisible(false);
+			this.label_CheckListSearch_RecordType.setVisible(false);
+		}
+		
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 		
 		this.borderLayout_CheckListList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxCheckList.setHeight(getListBoxHeight(searchGrid.getRows().getChildren().size())); 
+		
 		// set the paging parameters
 		this.pagingCheckListList.setPageSize(getListRows());
 		this.pagingCheckListList.setDetailed(true);
@@ -174,34 +245,21 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> implements Ser
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
+	
+		// set the itemRenderer
+		this.listBoxCheckList.setItemRenderer(new CheckListListModelItemRenderer());
 		
-		// ++ create the searchObject and initial sorting ++//
-		this.searchObj = new JdbcSearchObject<CheckList>(CheckList.class,getListRows());
-		this.searchObj.addSort("CheckListId", false);
-		// WorkFlow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("BMTCheckList_View");
-			if (isFirstTask()) {
-				button_CheckListList_NewCheckList.setVisible(true);
-			} else {
-				button_CheckListList_NewCheckList.setVisible(false);
-			}
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}else{
-			this.searchObj.addTabelName("BMTCheckList_AView");
-		}
-
-		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_CheckListList_NewCheckList.setVisible(false);
 			this.button_CheckListList_CheckListSearchDialog.setVisible(false);
 			this.button_CheckListList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxCheckList,this.pagingCheckListList);
-			// set the itemRenderer
-			this.listBoxCheckList.setItemRenderer(new CheckListListModelItemRenderer());
+			doSearch();
+			if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -274,6 +332,89 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> implements Ser
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch(){
+     logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<CheckList>(CheckList.class,getListRows());
+
+		// Defualt Sort on the table
+		this.searchObj.addSort("checkListDesc", false);
+		
+		// Workflow
+		if (isWorkFlowEnabled()) {
+			this.searchObj.addTabelName("BMTCheckList_View");
+
+			if(this.moduleType==null){
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+				approvedList=false;
+				
+			}else{
+				if(this.fromApproved.isSelected()){
+					approvedList=true;
+				}else{
+					approvedList=false;
+				}
+			}
+		}else{
+			approvedList=true;
+		}
+		
+		if(approvedList){
+			this.searchObj.addTabelName("BMTCheckList_AView");
+		}else{
+			this.searchObj.addTabelName("BMTCheckList_View");
+		}
+		
+		//check List Description
+		if (!StringUtils.trimToEmpty(this.checkListDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_checkListDesc.getSelectedItem(),this.checkListDesc.getValue(), "checkListDesc");
+		}
+		//check List Minimum Count
+		if (this.checkMinCount.intValue()!=0) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_checkMinCount.getSelectedItem(),this.checkMinCount.getValue(), "checkMinCount");
+		}
+		
+		//check List Maximum Count
+		if (this.checkMaxCount.intValue()!=0) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_checkMaxCount.getSelectedItem(),this.checkMaxCount.getValue(), "checkMaxCount");
+		}
+		
+		// Check List is Active or Inactive
+		if (active.isChecked()) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_active.getSelectedItem(), 1,"active");
+		} else {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_active.getSelectedItem(), 0,"active");
+		}
+		
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+		
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxCheckList,this.pagingCheckListList);
+
+		logger.debug("Leaving");
+	}
+	
 	/**
 	 * Opens the detail view. <br>
 	 * OverHanded some parameters in a map if needed. <br>
@@ -335,9 +476,25 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> implements Ser
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingCheckListList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_CheckListList, event);
-		this.window_CheckListList.invalidate();
+		
+		this.sortOperator_checkListDesc.setSelectedIndex(0);
+		this.checkListDesc.setValue("");
+		this.sortOperator_checkMaxCount.setSelectedIndex(0);
+		this.checkMaxCount.setValue(null);
+		this.sortOperator_checkMinCount.setSelectedIndex(0);
+		this.checkMinCount.setValue(null);
+        this.sortOperator_active.setSelectedIndex(0);
+        this.active.setChecked(false);
+         
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -347,23 +504,7 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> implements Ser
 	
 	public void onClick$button_CheckListList_CheckListSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our CheckListDialog zul-file with parameters. So we can
-		 * call them with a object of the selected CheckList. For handed over
-		 * these parameter only a Map is accepted. So we put the CheckList object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("checkListCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CheckList/CheckListSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		   doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -376,8 +517,7 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> implements Ser
 	@SuppressWarnings("unused")
 	public void onClick$button_CheckListList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		PTListReportUtils reportUtils = new PTListReportUtils("CheckList", getSearchObj(),this.pagingCheckListList.getTotalSize()+1);
+		PTListReportUtils reportUtils = new PTListReportUtils("CheckList", getSearchObj(),this.pagingCheckListList.getTotalSize() + 1);
 		logger.debug("Leaving");
 	}
 

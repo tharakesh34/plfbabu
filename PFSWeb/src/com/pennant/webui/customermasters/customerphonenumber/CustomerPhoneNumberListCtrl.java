@@ -39,26 +39,32 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.customermasters.customerphonenumber;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
-import org.zkoss.zul.GroupsModelArray;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,25 +72,25 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
-import com.pennant.webui.customermasters.customerphonenumber.model.CustomerPhoneComparater;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customerphonenumber.model.CustomerPhoneNumberListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
-
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberList.zul
- * file.<br>
+ * This is the controller class for the
+ * /WEB-INF/pages/CustomerMasters/CustomerPhoneNumber
+ * /CustomerPhoneNumberList.zul file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -100,71 +106,130 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window 		window_CustomerPhoneNumberList; 		// autowired
-	protected Borderlayout 	borderLayout_CustomerPhoneNumberList; 	// autowired
-	protected Paging 		pagingCustomerPhoneNumberList; 			// autowired
-	protected Listbox 		listBoxCustomerPhoneNumber; 			// autowired
+	protected Window window_CustomerPhoneNumberList; // autowired
+	protected Borderlayout borderLayout_CustomerPhoneNumberList; // autowired
+	protected Paging pagingCustomerPhoneNumberList; // autowired
+	protected Listbox listBoxCustomerPhoneNumber; // autowired
 
 	// List headers
-	protected Listheader listheader_PhoneTypeCode; 		// autowired
-	protected Listheader listheader_PhoneCountryCode; 	// autowired
-	protected Listheader listheader_PhoneAreaCode; 		// autowired
-	protected Listheader listheader_PhoneNumber; 		// autowired
-	protected Listheader listheader_RecordStatus; 		// autowired
+	protected Listheader listheader_CustCIF; // autowired
+	protected Listheader listheader_PhoneTypeCode; // autowired
+	protected Listheader listheader_PhoneCountryCode; // autowired
+	protected Listheader listheader_PhoneAreaCode; // autowired
+	protected Listheader listheader_PhoneNumber; // autowired
+	protected Listheader listheader_RecordStatus; // autowired
 	protected Listheader listheader_RecordType;
 
+	// Searching Fields
+	protected Textbox phoneCustCIF; // autowired
+	protected Listbox sortOperator_phoneCustCIF; // autowired
+	protected Textbox phoneTypeCode; // autowired
+	protected Listbox sortOperator_phoneTypeCode; // autowired
+	protected Textbox phoneCountryCode; // autowired
+	protected Listbox sortOperator_phoneCountryCode; // autowired
+	protected Textbox phoneAreaCode; // autowired
+	protected Listbox sortOperator_phoneAreaCode; // autowired
+	protected Textbox phoneNumber; // autowired
+	protected Listbox sortOperator_phoneNumber; // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType; // autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+
+	protected Grid searchGrid; // autowired
+	protected Textbox moduleType; // autowired
+	protected Radio fromApproved;
+	protected Radio fromWorkFlow;
+	protected Row workFlowFrom;
+
+	private transient boolean approvedList = false;
+
+	protected Label label_CustomerPhoneNumberSearch_RecordStatus; // autowired
+	protected Label label_CustomerPhoneNumberSearch_RecordType; // autowired
+	protected Label label_CustomerPhoneNumberSearchResult; // autowired
+
 	// checkRights
-	protected Button btnHelp; 															// autowired
-	protected Button button_CustomerPhoneNumberList_NewCustomerPhoneNumber; 			// autowired
-	protected Button button_CustomerPhoneNumberList_CustomerPhoneNumberSearchDialog; 	// autowired
-	protected Button button_CustomerPhoneNumberList_PrintList; 							// autowired
+	protected Button btnHelp; // autowired
+	protected Button button_CustomerPhoneNumberList_NewCustomerPhoneNumber; // autowired
+	protected Button button_CustomerPhoneNumberList_CustomerPhoneNumberSearchDialog; // autowired
+	protected Button button_CustomerPhoneNumberList_PrintList; // autowired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<CustomerPhoneNumber> searchObj;
-	private transient PagedListService pagedListService;
-	
 	private transient CustomerPhoneNumberService customerPhoneNumberService;
-	private transient WorkFlowDetails workFlowDetails=null;
-	
+	private transient WorkFlowDetails workFlowDetails = null;
+
 	/**
 	 * default constructor.<br>
 	 */
 	public CustomerPhoneNumberListCtrl() {
 		super();
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
 	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerPhoneNumber object in
-	 * a Map.
+	 * ZUL-file is called with a parameter for a selected CustomerPhoneNumber
+	 * object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_CustomerPhoneNumberList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("CustomerPhoneNumber");
-		boolean wfAvailable=true;
-		
-		if (moduleMapping.getWorkflowType()!=null){
+		boolean wfAvailable = true;
+
+		if (moduleMapping.getWorkflowType() != null) {
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("CustomerPhoneNumber");
-			
-			if (workFlowDetails==null){
+
+			if (workFlowDetails == null) {
 				setWorkFlowEnabled(false);
-			}else{
+			} else {
 				setWorkFlowEnabled(true);
 				setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 				setWorkFlowId(workFlowDetails.getId());
-			}	
-		}else{
-			wfAvailable=false;
+			}
+		} else {
+			wfAvailable = false;
 		}
-		
+
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_phoneCustCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_phoneCustCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_phoneTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_phoneTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_phoneCountryCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_phoneCountryCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_phoneAreaCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_phoneAreaCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_phoneNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_phoneNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = PennantAppUtil.setRecordType(this.recordType);
+		} else {
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CustomerPhoneNumberSearch_RecordStatus.setVisible(false);
+			this.label_CustomerPhoneNumberSearch_RecordType.setVisible(false);
+		}
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -174,11 +239,14 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CustomerPhoneNumberList.setHeight(getBorderLayoutHeight());
+		this.listBoxCustomerPhoneNumber.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCustomerPhoneNumberList.setPageSize(getListRows());
 		this.pagingCustomerPhoneNumberList.setDetailed(true);
 
+		this.listheader_CustCIF.setSortAscending(new FieldComparator("lovDescCustCIF", true));
+		this.listheader_CustCIF.setSortDescending(new FieldComparator("lovDescCustCIF", false));
 		this.listheader_PhoneTypeCode.setSortAscending(new FieldComparator("phoneTypeCode", true));
 		this.listheader_PhoneTypeCode.setSortDescending(new FieldComparator("phoneTypeCode", false));
 		this.listheader_PhoneCountryCode.setSortAscending(new FieldComparator("phoneCountryCode", true));
@@ -187,68 +255,42 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 		this.listheader_PhoneAreaCode.setSortDescending(new FieldComparator("phoneAreaCode", false));
 		this.listheader_PhoneNumber.setSortAscending(new FieldComparator("phoneNumber", true));
 		this.listheader_PhoneNumber.setSortDescending(new FieldComparator("phoneNumber", false));
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
 			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
 			this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
-		}else{
+		} else {
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
 		
-		// ++ create the searchObject and initial sorting ++//
-		this.searchObj = new JdbcSearchObject<CustomerPhoneNumber>(CustomerPhoneNumber.class,getListRows());
-		this.searchObj.addSort("PhoneCustID", false);
-		this.searchObj.addFilter(new Filter("lovDescCustRecordType",
-				PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		// set the itemRenderer
+		this.listBoxCustomerPhoneNumber.setItemRenderer(new CustomerPhoneNumberListModelItemRenderer());
 
-		this.searchObj.addTabelName("CustomerPhoneNumbers_View");
-		
-		// WorkFlow
-		if (isWorkFlowEnabled()) {
-			if (isFirstTask()) {
-				button_CustomerPhoneNumberList_NewCustomerPhoneNumber.setVisible(true);
-			} else {
-				button_CustomerPhoneNumberList_NewCustomerPhoneNumber.setVisible(false);
-			}
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}
-
-		setSearchObj(this.searchObj);
-		if (!isWorkFlowEnabled() && wfAvailable){
+		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_CustomerPhoneNumberList_NewCustomerPhoneNumber.setVisible(false);
 			this.button_CustomerPhoneNumberList_CustomerPhoneNumberSearchDialog.setVisible(false);
 			this.button_CustomerPhoneNumberList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
-		}else{
-			// Set the ListModel for the articles.
-			findSearchObject();
-			this.listBoxCustomerPhoneNumber.setItemRenderer(new CustomerPhoneNumberListModelItemRenderer());
-		}	
+		} else {
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * Method For getting List of Objects and set Grouping
-	 */
-	public void findSearchObject(){
-		logger.debug("Entering");
-		final SearchResult<CustomerPhoneNumber> searchResult = getPagedListService().getSRBySearchObject(
-				this.searchObj);
-		listBoxCustomerPhoneNumber.setModel(new GroupsModelArray(
-				searchResult.getResult().toArray(),new CustomerPhoneComparater()));
-		logger.debug("Leaving");
-	}
-	
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("CustomerPhoneNumberList");
-		
+
 		this.button_CustomerPhoneNumberList_NewCustomerPhoneNumber.setVisible(getUserWorkspace()
 				.isAllowed("button_CustomerPhoneNumberList_NewCustomerPhoneNumber"));
 		this.button_CustomerPhoneNumberList_CustomerPhoneNumberSearchDialog.setVisible(getUserWorkspace()
@@ -275,7 +317,8 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerPhoneNumber aCustomerPhoneNumber = (CustomerPhoneNumber) item.getAttribute("data");
-			final CustomerPhoneNumber customerPhoneNumber = getCustomerPhoneNumberService().getCustomerPhoneNumberById(aCustomerPhoneNumber.getId(),aCustomerPhoneNumber.getPhoneTypeCode());
+			final CustomerPhoneNumber customerPhoneNumber = getCustomerPhoneNumberService().getCustomerPhoneNumberById(aCustomerPhoneNumber.getId(),
+							aCustomerPhoneNumber.getPhoneTypeCode());
 			if (customerPhoneNumber == null) {
 
 				String[] valueParm = new String[2];
@@ -285,7 +328,7 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 				valueParm[1] = aCustomerPhoneNumber.getPhoneTypeCode();
 
 				errParm[0] = PennantJavaUtil.getLabel("label_PhoneCustID")+ ":" + valueParm[0];
-				errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypeCode")+ ":"+ valueParm[1];
+				errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypeCode")+ ":" + valueParm[1];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
@@ -293,20 +336,18 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			} else {
 				customerPhoneNumber.setLovDescPhoneTypeCodeName(aCustomerPhoneNumber.getLovDescPhoneTypeCodeName());
-				String whereCond =  " AND PhoneCustID='"+ customerPhoneNumber.getPhoneCustID()+
-									"' AND PhoneTypeCode='" + customerPhoneNumber.getPhoneTypeCode()+
-									"' AND version=" + customerPhoneNumber.getVersion()+" ";
+				String whereCond = " AND PhoneCustID='" + customerPhoneNumber.getPhoneCustID() + "' AND PhoneTypeCode='"
+						+ customerPhoneNumber.getPhoneTypeCode() + "' AND version=" + customerPhoneNumber.getVersion()+ " ";
 
-				if(isWorkFlowEnabled()){
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),
-							getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "CustomerPhoneNumber",
-							whereCond, customerPhoneNumber.getTaskId(), customerPhoneNumber.getNextTaskId());
-					if (userAcces){
+				if (isWorkFlowEnabled()) {
+					boolean userAcces = validateUserAccess(workFlowDetails.getId(), getUserWorkspace().getLoginUserDetails().getLoginUsrID(),
+							"CustomerPhoneNumber", whereCond,customerPhoneNumber.getTaskId(),customerPhoneNumber.getNextTaskId());
+					if (userAcces) {
 						showDetailView(customerPhoneNumber);
-					}else{
+					} else {
 						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
-				}else{
+				} else {
 					showDetailView(customerPhoneNumber);
 				}
 			}
@@ -329,18 +370,20 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param CustomerPhoneNumber (aCustomerPhoneNumber)
+	 * @param CustomerPhoneNumber
+	 *            (aCustomerPhoneNumber)
 	 * @throws Exception
 	 */
-	private void showDetailView(CustomerPhoneNumber aCustomerPhoneNumber) throws Exception {
+	private void showDetailView(CustomerPhoneNumber aCustomerPhoneNumber)
+			throws Exception {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
-		if(aCustomerPhoneNumber.getWorkflowId()==0 && isWorkFlowEnabled()){
+
+		if (aCustomerPhoneNumber.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aCustomerPhoneNumber.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 
@@ -352,9 +395,10 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 		try {
 			Executions.createComponents(
 					"/WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberDialog.zul",
-							null,map);
+					null, map);
 		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			logger.error("onOpenWindow:: error opening window / "
+					+ e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
 		logger.debug("Leaving");
@@ -382,38 +426,42 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingCustomerPhoneNumberList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_CustomerPhoneNumberList, event);
-		this.window_CustomerPhoneNumberList.invalidate();
-		logger.debug("Leaving" + event.toString());
+
+		this.sortOperator_phoneCustCIF.setSelectedIndex(0);
+		this.phoneCustCIF.setValue("");
+		this.sortOperator_phoneAreaCode.setSelectedIndex(0);
+		this.phoneAreaCode.setValue("");
+		this.sortOperator_phoneCountryCode.setSelectedIndex(0);
+		this.phoneCountryCode.setValue("");
+		this.sortOperator_phoneTypeCode.setSelectedIndex(0);
+		this.phoneTypeCode.setValue("");
+		this.sortOperator_phoneNumber.setSelectedIndex(0);
+		this.phoneNumber.setValue("");
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		doSearch();
+
+		logger.debug("Leaving");
+
 	}
 
 	/**
 	 * call the CustomerPhoneNumber dialog
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$button_CustomerPhoneNumberList_CustomerPhoneNumberSearchDialog(Event event) throws Exception {
+	public void onClick$button_CustomerPhoneNumberList_CustomerPhoneNumberSearchDialog(
+			Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our CustomerPhoneNumberDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected CustomerPhoneNumber. For handed over
-		 * these parameter only a Map is accepted. So we put the CustomerPhoneNumber object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerPhoneNumberCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberSearchDialog.zul",
-							null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -423,17 +471,112 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$button_CustomerPhoneNumberList_PrintList(Event event) throws InterruptedException {
+	@SuppressWarnings("unused")
+	public void onClick$button_CustomerPhoneNumberList_PrintList(Event event)
+			throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("CustomerPhoneNumber", getSearchObj());
+		// PTReportUtils.getReport("CustomerPhoneNumber", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils(
+				"CustomerPhoneNumber", getSearchObj(),
+				this.pagingCustomerPhoneNumberList.getTotalSize() + 1);
+
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doSearch() {
+
+		logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<CustomerPhoneNumber>(
+				CustomerPhoneNumber.class, getListRows());
+		this.searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		this.searchObj.addSort("lovDescCustCIF", false);
+		this.searchObj.addTabelName("CustomerPhoneNumbers_View");
+
+		// Workflow
+		if (isWorkFlowEnabled()) {
+
+			if (isFirstTask() && this.moduleType == null) {
+				button_CustomerPhoneNumberList_NewCustomerPhoneNumber.setVisible(true);
+			} else {
+				button_CustomerPhoneNumberList_NewCustomerPhoneNumber.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("CustomerPhoneNumbers_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("CustomerPhoneNumbers_AView");
+		}
+
+		// Customer CIF
+		if (!StringUtils.trimToEmpty(this.phoneCustCIF.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_phoneCustCIF.getSelectedItem(),this.phoneCustCIF.getValue(), "lovDescCustCIF");
+		}
+		// Customer Phone Type
+		if (!StringUtils.trimToEmpty(this.phoneTypeCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_phoneTypeCode.getSelectedItem(),this.phoneTypeCode.getValue(), "phoneTypeCode");
+		}
+		// Customer Phone Area Code
+		if (!StringUtils.trimToEmpty(this.phoneAreaCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_phoneAreaCode.getSelectedItem(),this.phoneAreaCode.getValue(), "phoneAreaCode");
+		}
+		// Customer Phone Country Code
+		if (!StringUtils.trimToEmpty(this.phoneCountryCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_phoneCountryCode.getSelectedItem(),this.phoneCountryCode.getValue(), "phoneCountryCode");
+		}
+		// Customer Phone Number
+		if (!StringUtils.trimToEmpty(this.phoneNumber.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_phoneNumber.getSelectedItem(),this.phoneNumber.getValue(), "phoneNumber");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxCustomerPhoneNumber,this.pagingCustomerPhoneNumberList);
+
+		logger.debug("Leaving");
+
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
-	public void setCustomerPhoneNumberService(CustomerPhoneNumberService customerPhoneNumberService) {
+
+	public void setCustomerPhoneNumberService(
+			CustomerPhoneNumberService customerPhoneNumberService) {
 		this.customerPhoneNumberService = customerPhoneNumberService;
 	}
 	public CustomerPhoneNumberService getCustomerPhoneNumberService() {
@@ -447,10 +590,4 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 		this.searchObj = searchObj;
 	}
 
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
 }

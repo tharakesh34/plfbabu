@@ -121,7 +121,7 @@ public class SegmentDAOImpl extends BasisCodeDAO<Segment> implements SegmentDAO 
 	@Override
 	public Segment getSegmentById(final String id, String type) {
 		logger.debug("Entering");
-		Segment segment = getSegment();
+		Segment segment = new Segment();
 		segment.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

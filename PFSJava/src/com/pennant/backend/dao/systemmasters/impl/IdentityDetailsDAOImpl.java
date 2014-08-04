@@ -121,7 +121,7 @@ public class IdentityDetailsDAOImpl extends BasisCodeDAO<IdentityDetails> implem
 	@Override
 	public IdentityDetails getIdentityDetailsById(final String id, String type) {
 		logger.debug("Entering");
-		IdentityDetails identityDetails = getIdentityDetails();
+		IdentityDetails identityDetails = new IdentityDetails();
 		identityDetails.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

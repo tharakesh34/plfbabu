@@ -30,7 +30,7 @@ public class PostingsInterfaceServiceEquationImpl implements PostingsInterfaceSe
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public List<ReturnDataSet> doFillPostingDetails(List<ReturnDataSet> setDetails,String finBranch,
+	public List<ReturnDataSet> doFillPostingDetails(List<ReturnDataSet> setDetails,String postBranch,
 			long linkTransId, String createNow) throws AccountNotFoundException  {
 		logger.debug("Entering");
 				
@@ -48,7 +48,7 @@ public class PostingsInterfaceServiceEquationImpl implements PostingsInterfaceSe
 			accountPosting.setValueDate(dataSet.getValueDate());
 			accountPosting.setCustCIF(dataSet.getCustCIF());
 			accountPosting.setAcBranch(dataSet.getFinBranch());
-			accountPosting.setAcCcy(dataSet.getFinCcy());
+			accountPosting.setAcCcy(dataSet.getAcCcy());
 			accountPosting.setAcType(dataSet.getAccountType());
 			accountPosting.setCreateNew(dataSet.getFlagCreateNew());
 			accountPosting.setInternalAc(dataSet.getInternalAc());
@@ -66,7 +66,7 @@ public class PostingsInterfaceServiceEquationImpl implements PostingsInterfaceSe
 		
 		//Connecting to CoreBanking Interface
 		coreBankPostingDetails = getAccountPostingProcess().doFillPostingDetails(coreBankPostingDetails,
-					finBranch,createNow);
+					postBranch,createNow);
 		
 		//Fill the Account data using Core Banking Object
 		List<ReturnDataSet> dataSetList = new ArrayList<ReturnDataSet>(coreBankPostingDetails.size());
@@ -84,7 +84,7 @@ public class PostingsInterfaceServiceEquationImpl implements PostingsInterfaceSe
 			dataSet.setValueDate(detail.getValueDate());
 			dataSet.setCustCIF(detail.getCustCIF());
 			dataSet.setFinBranch(detail.getAcBranch());
-			dataSet.setFinCcy(detail.getAcCcy());
+			dataSet.setAcCcy(detail.getAcCcy());
 			dataSet.setAccountType(detail.getAcType());
 			dataSet.setFlagCreateNew(detail.getCreateNew());
 			dataSet.setInternalAc(detail.getInternalAc());

@@ -25,11 +25,11 @@
 					</columns>
 					<rows>
 						<row>
-							<label id="label_CitySearch_PCCounty"
-								value="${c:l('label_CitySearch_PCCounty.value')}" />
-							<listbox id="sortOperator_pCCounty"
+							<label id="label_CitySearch_PCCountry"
+								value="${c:l('label_CitySearch_PCCountry.value')}" />
+							<listbox id="sortOperator_pCCountry"
 								width="43px" mold="select" rows="1" />
-							<uppercasebox id="pCCounty" width="100px"
+							<uppercasebox id="pCCountry" width="100px"
 								maxlength="2" />
 						</row>
 						<row>

@@ -1,4 +1,4 @@
-package com.pennant.backend.endofday.ratereview;
+/*package com.pennant.backend.endofday.ratereview;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -80,13 +80,13 @@ public class RateReviewPostings  implements Tasklet {
 		
 	}
 	
-	/**
+	*//**
 	 * Method for preparation of Select Query To get Finances , which are
 	 * changed rates on Particular dates
 	 * 
 	 * @param selQuery
 	 * @return
-	 */
+	 *//*
 	private StringBuffer prepareSelectQuery(StringBuffer selQuery) {
 		selQuery.append(" SELECT fsd.FinReference AS FinReference " );
 		selQuery.append(" FROM FinanceMain AS fm, FinScheduleDetails AS fsd, RMTBaseRates br " );
@@ -101,12 +101,12 @@ public class RateReviewPostings  implements Tasklet {
 	}
 	
 	
-	/**
+	*//**
 	 * Method for fetching Finance Schedule Data based on FinReference
 	 * @param financeReference
 	 * @param type
 	 * @return
-	 */
+	 *//*
 	public FinScheduleData getFinSchDataByFinRef(String financeReference, String type) {
 
 		FinScheduleData finSchData = new FinScheduleData();
@@ -174,3 +174,4 @@ public class RateReviewPostings  implements Tasklet {
 	}
 
 }
+*/

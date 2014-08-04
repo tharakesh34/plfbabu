@@ -153,7 +153,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseListCtrl<ExtendedFieldDetail
 				getUserWorkspace().alocateRoleAuthorities(getRole(), "ExtendedFieldDetailDialog");
 			}
 			
-			this.listBoxFieldDet.setHeight(getListBoxHeight(this.grid_basicDetails.getRows().getVisibleItemCount()+6));
+			this.listBoxFieldDet.setHeight(getListBoxHeight(this.grid_basicDetails.getRows().getVisibleItemCount()+4));
 			this.pagingFieldDetList.setPageSize(getListRows());
 			this.pagingFieldDetList.setDetailed(true);
 

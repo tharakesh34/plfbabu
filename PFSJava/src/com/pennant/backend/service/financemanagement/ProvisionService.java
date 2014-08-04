@@ -43,18 +43,23 @@
 
 package com.pennant.backend.service.financemanagement;
 
+import java.lang.reflect.InvocationTargetException;
+
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.financemanagement.Provision;
+import com.pennant.coreinterface.exception.AccountNotFoundException;
 
 public interface ProvisionService {
 	
 	Provision getProvision();
 	Provision getNewProvision();
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws AccountNotFoundException, IllegalAccessException, InvocationTargetException;
 	Provision getProvisionById(String id, boolean isEnquiry);
 	Provision getApprovedProvisionById(String id);
 	Provision refresh(Provision provision);
 	AuditHeader delete(AuditHeader auditHeader);
-	AuditHeader doApprove(AuditHeader auditHeader);
+	AuditHeader doApprove(AuditHeader auditHeader) throws AccountNotFoundException, IllegalAccessException, InvocationTargetException;
 	AuditHeader doReject(AuditHeader auditHeader);
+	FinanceProfitDetail getProfitDetailById(String finReference);
 }

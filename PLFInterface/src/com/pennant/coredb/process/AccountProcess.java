@@ -54,7 +54,7 @@ public class AccountProcess {
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public List<CoreBankAccountDetail> fetchAccount(List<CoreBankAccountDetail> bankAccountDetails, String createNow, boolean newConnection) throws AccountNotFoundException {
+	public List<CoreBankAccountDetail> fetchAccount(List<CoreBankAccountDetail> bankAccountDetails, String createNow) throws AccountNotFoundException {
 		logger.debug("Entering");
 	
 		List<CoreBankAccountDetail> list = new ArrayList<CoreBankAccountDetail>();
@@ -84,7 +84,7 @@ public class AccountProcess {
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public CoreBankAccountDetail fetchAccountAvailableBal(CoreBankAccountDetail coreAcct, boolean newConnection) throws AccountNotFoundException {
+	public CoreBankAccountDetail fetchAccountAvailableBal(CoreBankAccountDetail coreAcct) throws AccountNotFoundException {
 		logger.debug("Entering");
 		
 		try {

@@ -63,47 +63,62 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Constraint;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
 import org.zkoss.zul.SimpleConstraint;
+import org.zkoss.zul.Space;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timebox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.staticparms.Language;
 import com.pennant.backend.model.systemmasters.Department;
+import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.UserService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTPhoneNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.administration.securityuser.changepassword.ChangePasswordModel;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
@@ -152,7 +167,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	protected Label      recordStatus;                             // autoWired
 	protected Radiogroup userAction;                               // autoWired
 	protected Groupbox   groupboxWf;                               // autoWired
-	protected Row        statusRow;                                // autoWired
+	//protected Row        statusRow;                                // autoWired
 	protected Panel      panelPasswordInstructions;                // autoWired
 	protected Button     btnNew;                                   // autoWired
 	protected Button     btnEdit;                                  // autoWired
@@ -170,7 +185,13 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	protected Textbox    lovDescUsrLanguage;                       // autoWired
 	protected Label      label_PwdStatus;                          // autoWired
 	protected Div        div_PwdStatusMeter;                       // autoWired
-
+	protected ExtendedCombobox        usrDesg;                     // autoWired
+	
+    protected Grid       usrDivBranchsGrid;                        // autoWired 
+    protected Tab        secUserDetailsTab;                        // autoWired 
+    protected Tab        secUserDivBranchsTab;                     // autoWired 
+    protected Rows        divBranch_Rows;                          // autoWired 
+    
 	/* not auto wired variables*/
 	private SecurityUser securityUser;                            // overHanded per parameters
 	private transient SecurityUserListCtrl securityUserListCtrl;  // overHanded per parameters
@@ -202,6 +223,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	private transient String        oldVar_usrConfirmPwd;
 	private transient String        oldVar_lovDescUsrDeptCodeName;
 	private transient String        oldVar_lovDescUsrBranchCodeName;
+	private transient String        oldVar_usrDesg;
 
 	private transient boolean       validationOn;
 	private boolean                 notes_Entered=false;
@@ -215,8 +237,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	private transient UserService          userService;
 	private transient PagedListService     pagedListService;
 	private transient ChangePasswordModel  changePasswordModel=new ChangePasswordModel();
-	private List<ValueLabel>  listUsrDftAppId = PennantAppUtil.getAppCodes(); 
-
+	private List<ValueLabel>  listUsrDftAppId = PennantStaticListUtil.getAppCodes(); 
+	protected Map<String, Object> divBranchs = new HashMap<String, Object>();
+	protected Map<String,HashMap<String, Object>> dynamicDivBranchs = new HashMap<String, HashMap<String, Object>>();
+	private SecurityUserDivBranch securityUserDivBranch = new SecurityUserDivBranch();
+	private List<SecurityUserDivBranch> befImgUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
+	protected boolean newRecord=false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -239,8 +265,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	public void onCreate$window_SecurityUserDialog(Event event) throws Exception {
 		logger.debug("Entering "+event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
 
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace()
@@ -267,6 +291,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			this.userAction	= setListRecordStatus(this.userAction);
 			getUserWorkspace().alocateRoleAuthorities(getRole(), "SecurityUserDialog");
 		}
+		/* set components visible dependent of the users rights */
+		doCheckRights();
 		// READ OVERHANDED parameters !
 		// we get the securityUserListWindow controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
@@ -308,13 +334,18 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrLanguage.setMaxlength(4);
 		this.usrBranchCode.setMaxlength(10);
 		this.usrDeptCode.setMaxlength(8);
-
+		this.usrDesg.setMaxlength(8);
+        this.usrDesg.setMandatoryStyle(true);
+		this.usrDesg.setModuleName("Designation");
+		this.usrDesg.setValueColumn("DesgCode");
+		this.usrDesg.setDescColumn("DesgDesc");
+		this.usrDesg.setValidateColumns(new String[] { "DesgCode" });
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
-			this.statusRow.setVisible(true);
+		//	this.statusRow.setVisible(true);
 		}else{
 			this.groupboxWf.setVisible(false);
-			this.statusRow.setVisible(false);
+		//	this.statusRow.setVisible(false);
 		}
 		logger.debug("Leaving ");
 	}
@@ -329,7 +360,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
-		getUserWorkspace().alocateAuthorities("SecurityUserDialog");
+		getUserWorkspace().alocateAuthorities("SecurityUserDialog",getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SecurityUserDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SecurityUserDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SecurityUserDialog_btnDelete"));
@@ -484,7 +515,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			logger.debug("doClose isDataChanged : False");
 		}
 		if(close){
-			closeDialog(this.window_SecurityUserDialog, "SecurityUser");
+			closeDialog(this.window_SecurityUserDialog, "SecurityUserDialog");
 		}
 
 		logger.debug("Leaving") ;
@@ -503,6 +534,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.btnCtrl.setBtnStatus_Save();
 		this.btnEdit.setVisible(true);
 		this.btnCancel.setVisible(false);
+		doDisableDivBranchs(true);
 		logger.debug("Leaving ");
 	}
 
@@ -534,7 +566,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			this.usrDftAppId.setSelectedIndex(0);
 		}else{
 			this.usrDftAppId.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(securityUser.getUsrDftAppId()),PennantAppUtil.getAppCodes()));
+					String.valueOf(securityUser.getUsrDftAppId()),PennantStaticListUtil.getAppCodes()));
 		}
 
 		this.usrBranchCode.setValue(aSecurityUser.getUsrBranchCode());
@@ -553,6 +585,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 					+"-"+aSecurityUser.getLovDescUsrDeptCodeName());
 			this.lovDescUsrLanguage.setValue(aSecurityUser.getUsrLanguage()+"-"+aSecurityUser.getLovDescUsrLanguage());
 		}
+		this.usrDesg.setValue(aSecurityUser.getUsrDesg());
+		this.usrDesg.setDescription(aSecurityUser.getLovDescUsrDesg());
+
 		this.recordStatus.setValue(aSecurityUser.getRecordStatus());
 		logger.debug("Leaving ");
 	}
@@ -757,6 +792,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 				wve.add(we);
 			}
 		}	
+		try {
+			aSecurityUser.setLovDescUsrDesg(this.usrDesg.getDescription());
+			aSecurityUser.setUsrDesg(this.usrDesg.getValue());	
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -770,6 +811,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
+			secUserDetailsTab.setSelected(true);
 			throw new WrongValuesException(wvea);
 		}
 
@@ -822,13 +864,18 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aSecurityUser);
-
+           
+			//fill the data in divisionBranch tab 
+			if(this.secUserDivBranchsTab.isVisible()){
+			doFillDivisionBranchTab();
+			}
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
 			setDialog(this.window_SecurityUserDialog);
 		} catch (final Exception e) {
 			PTMessageUtils.showErrorMessage(e.toString());
+			e.printStackTrace();
 		}
 		logger.debug("Leaving ");
 	}
@@ -883,6 +930,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		this.oldVar_lovDescUsrLanguage=this.lovDescUsrLanguage.getValue();
 		this.oldVar_usrConfirmPwd=this.usrConfirmPwd.getValue();
+		this.oldVar_usrDesg=this.usrDesg.getValue();
 		logger.debug("Leaving ");
 
 	}
@@ -919,6 +967,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrConfirmPwd.setValue(this.oldVar_usrConfirmPwd);
 		this.div_PwdStatusMeter.setStyle("background-color:white");
 		this.label_PwdStatus.setValue("");
+		this.usrDesg.setValue(this.oldVar_usrDesg);
 
 		if(isWorkFlowEnabled()){
 			this.userAction.setSelectedIndex(0);	
@@ -1019,6 +1068,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			changed = true;
 		}
 
+		if (!this.oldVar_usrDesg.equals(this.usrDesg.getValue())) {
+			changed = true;
+		}
 
 
 		logger.debug("Leaving ");
@@ -1034,42 +1086,32 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		setValidationOn(true);
 
 		if (!this.usrLogin.isReadonly()){
-			this.usrLogin.setConstraint(
-					new SimpleConstraint(PennantConstants.USER_LOGIN_REGIX, Labels.getLabel("FIELD_NO_EMPTY_SPECIALCHAR_SPACE_MIN5"
-							,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrLogin.value")})));
+			this.usrLogin.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_SecurityUserDialog_UsrLogin.value") }));
 		}
 		if (!this.userStaffID.isReadonly()){
-			this.userStaffID.setConstraint(
-					new SimpleConstraint(PennantConstants.ALPHANUM_REGEX, Labels.getLabel("MAND_FIELD_CHAR_NUMBER"
-							,new String[]{Labels.getLabel("label_SecurityUserDialog_UserStaffID.value")})));
+			this.userStaffID.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UserStaffID.value"), 
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.usrFName.isReadonly()){
-			this.usrFName.setConstraint(
-					new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel("MAND_FIELD_CHARACTER"
-							,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrFName.value")})));
+			this.usrFName.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrFName.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.usrMName.isReadonly()){
-			this.usrMName.setConstraint(
-					new SimpleConstraint(PennantConstants.NM_NAME_REGEX, Labels.getLabel("FIELD_CHARACTER"
-							,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrMName.value")})));
+			this.usrMName.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrMName.value"), PennantRegularExpressions.REGEX_NAME, false));
 		}	
 		if (!this.usrLName.isReadonly()){
-			this.usrLName.setConstraint(
-					new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel("MAND_FIELD_CHARACTER"
-							,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrLName.value")})));
-		}	
+			this.usrLName.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrLName.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
+		}
 		if (!this.usrMobile.isReadonly()){
-			this.usrMobile.setConstraint(
-					new SimpleConstraint(PennantConstants.PH_REGEX,Labels.getLabel("MAND_FIELD_PHONENUM"
-							,new String[]{Labels.getLabel("label_SecurityUserSearch_UsrMobile.value")})));
+			this.usrMobile.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"),false));
 
 		}	
 		if (!this.usrEmail.isReadonly()){
-			this.usrEmail.setConstraint(
-					new SimpleConstraint(PennantConstants.MAIL_REGEX ,Labels.getLabel("MAND_FIELD_MAIL"
-							,new String[]{Labels.getLabel("label_SecurityUserSearch_UsrEmail.value")})));
+			this.usrEmail.setConstraint(new PTEmailValidator(Labels.getLabel("label_SecurityUserSearch_UsrEmail.value"),false));
 
-		}	
+		}
 		if (!this.usrDftAppId.isDisabled()) {
 			this.usrDftAppId.setConstraint(new StaticListValidator(listUsrDftAppId
 					,Labels.getLabel("label_SecurityUserDialog_UsrDftAppCode.value")));
@@ -1110,6 +1152,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrDeptCode.value")}));
 		this.lovDescUsrLanguage.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
 				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrLanguage.value")}));
+		this.usrDesg.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
+				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrDesg.value")}));
 		logger.debug("Leaving ");
 	}
 
@@ -1121,6 +1165,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.lovDescUsrBranchCodeName.setConstraint("");
 		this.lovDescUsrDeptCodeName.setConstraint("");
 		this.lovDescUsrLanguage.setConstraint("");
+		this.usrDesg.setConstraint("");
 		logger.debug("Leaving ");
 	}
 
@@ -1145,6 +1190,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.lovDescUsrDeptCodeName.setErrorMessage("");
 		this.lovDescUsrLanguage.setErrorMessage("");
 		this.usrDftAppId.setErrorMessage("");
+		this.usrDesg.setErrorMessage("");
 		logger.debug("Leaving ");
 
 	}
@@ -1201,6 +1247,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 
 				if (isWorkFlowEnabled()){
 					aSecurityUser.setNewRecord(true);
+					setNewRecord(true);
 					tranType=PennantConstants.TRAN_WF;
 				}else{
 					tranType=PennantConstants.TRAN_DEL;
@@ -1264,6 +1311,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			this.usrAcExp.setDisabled(isReadOnly("SecurityUserDialog_usrAcExp"));
 			this.usrAcLocked.setDisabled(isReadOnly("SecurityUserDialog_usrAcLocked"));
 		}
+		this.usrLogin.setReadonly(isReadOnly("SecurityUserDialog_usrLogin"));
 		this.usrPwd.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));
 		this.userStaffID.setReadonly(isReadOnly("SecurityUserDialog_userStaffID"));
 		this.usrFName.setReadonly(isReadOnly("SecurityUserDialog_usrFName"));
@@ -1271,16 +1319,21 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrLName.setReadonly(isReadOnly("SecurityUserDialog_usrLName"));
 		this.usrMobile.setReadonly(isReadOnly("SecurityUserDialog_usrMobile"));
 		this.usrEmail.setReadonly(isReadOnly("SecurityUserDialog_usrEmail"));
+		this.usrAcExp.setDisabled(isReadOnly("SecurityUserDialog_usrAcExp"));
+		this.usrAcLocked.setDisabled(isReadOnly("SecurityUserDialog_usrAcLocked"));
+		this.usrEnabled.setDisabled(isReadOnly("SecurityUserDialog_usrEnabled"));
 		this.usrCanSignonFrom.setDisabled(isReadOnly("SecurityUserDialog_usrCanSignonFrom"));
 		this.usrCanSignonTo.setDisabled(isReadOnly("SecurityUserDialog_usrCanSignonTo"));
 		this.usrCanOverrideLimits.setDisabled(isReadOnly("SecurityUserDialog_usrCanOverrideLimits"));
 		this.usrCredentialsExp.setDisabled(isReadOnly("SecurityUserDialog_usrCredentialsExp"));
 		this.usrLanguage.setReadonly(isReadOnly("SecurityUserDialog_usrLanguage"));
+		this.btnSearchUsrLanguage.setDisabled(isReadOnly("SecurityUserDialog_usrLanguage")); 
+		this.usrDftAppId.setDisabled(isReadOnly("SecurityUserDialog_usrDftAppCode")); 
 		this.btnSearchUsrBranchCode.setDisabled(isReadOnly("SecurityUserDialog_usrBranchCode"));
 		this.btnSearchUsrDeptCode.setDisabled(isReadOnly("SecurityUserDialog_usrDeptCode"));
 		this.usrIsMultiBranch.setDisabled(isReadOnly("SecurityUserDialog_usrIsMultiBranch"));
 		this.usrConfirmPwd.setReadonly(isReadOnly("SecurityUserDialog_usrConfirmPwd"));
-		this.btnSearchUsrLanguage.setDisabled(false); 
+		this.usrDesg.setReadonly(isReadOnly("SecurityUserDialog_usrLanguage"));
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1290,13 +1343,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			if (this.securityUser.isNewRecord()){
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-				this.usrDftAppId.setDisabled(false);
+				this.usrDftAppId.setDisabled(isReadOnly("SecurityUserDialog_usrDftAppCode"));
 			}else{
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
 		}
+		doDisableDivBranchs(false);
 		logger.debug("Leaving ");
 	}
 
@@ -1327,6 +1381,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.btnSearchUsrDeptCode.setDisabled(true);
 		this.usrIsMultiBranch.setDisabled(true);
 		this.btnSearchUsrLanguage.setDisabled(true);
+		this.usrDesg.setReadonly(true);
 
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1368,6 +1423,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrDeptCode.setValue("");
 		this.lovDescUsrDeptCodeName.setValue("");
 		this.usrIsMultiBranch.setChecked(false);
+		this.usrDesg.setValue("");
+		this.usrDesg.setDescription("");
 		logger.debug("Leaving ");
 	}
 
@@ -1381,14 +1438,15 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		final SecurityUser aSecurityUser = new SecurityUser();
 		BeanUtils.copyProperties(getSecurityUser(), aSecurityUser);
 		boolean isNew = false;
-
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// force validation, if on, than execute by component.getValue()
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		doSetValidation();
 		// fill the SecurityUser object with the components data
 		doWriteComponentsToBean(aSecurityUser);
-
+		if(this.secUserDivBranchsTab.isVisible() && (divBranch_Rows != null && !divBranch_Rows.getChildren().isEmpty())){
+			doSaveDivBranchDetails(aSecurityUser);
+		}
 		/* Write the additional validations as per below example
 		   get the selected branch object from the listBox
 		   Do data level validations here*/
@@ -1408,6 +1466,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 				} else{
 					aSecurityUser.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aSecurityUser.setNewRecord(true);
+					setNewRecord(true);
 				}
 			}
 		}else{
@@ -1427,12 +1486,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		}
 		// save it to database
 		try {
-
 			if(doProcess(aSecurityUser,tranType)){
-				refreshList();
-				closeDialog(this.window_SecurityUserDialog, "SecurityUser");
+					refreshList();
+					closeDialog(this.window_SecurityUserDialog, "SecurityUser");
 			}
-
 		} catch (final DataAccessException e) {
 			this.usrPwd.setValue("");
 			this.usrConfirmPwd.setValue("");
@@ -1440,6 +1497,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			logger.debug("error in save method");
 			logger.error(e.toString());
 			showMessage(e);
+		}catch(Exception e){
+			logger.debug("error in save method");
+			logger.error(e.toString());
+			showMessage(e);
+			e.printStackTrace();
 		}
 		logger.debug("Leaving ");
 	}
@@ -1629,7 +1691,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		}else{
 			Branch details= (Branch) dataObject;
 			if (details != null) {
-				this.usrBranchCode.setValue(details.getLovValue());
+				this.usrBranchCode.setValue(details.getBranchCode());
 				this.lovDescUsrBranchCodeName.setValue(details.getBranchCode()
 						+"-"+details.getBranchDesc());
 			}
@@ -1674,12 +1736,13 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		}else{
 			Department details= (Department) dataObject;
 			if (details != null) {
-				this.usrDeptCode.setValue(details.getLovValue());
+				this.usrDeptCode.setValue(details.getDeptCode());
 				this.lovDescUsrDeptCodeName.setValue(details.getDeptCode()+"-"+details.getDeptDesc());
 			}
 		}
 		logger.debug("Leaving " + event.toString());
 	}
+	
 
 	/**
 	 * This is onChanging EventListener class for password field .
@@ -1779,7 +1842,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			break;
 		}
 	}
-
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1792,9 +1855,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	 */
 	private AuditHeader getAuditHeader(SecurityUser aSecurityUser, String tranType){
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityUser.getBefImage(), aSecurityUser);   
-		return new AuditHeader(String.valueOf(aSecurityUser.getId()),null,null,null,
+		return new AuditHeader(String.valueOf(aSecurityUser.getUsrID()),null,null,null,
 				auditDetail,aSecurityUser.getUserDetails(),getOverideMap());
-
 	}
 
 	/**
@@ -1869,15 +1931,275 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	 */
 	private void refreshList(){
 		logger.debug("Entering ");
-		final JdbcSearchObject<SecurityUser> soAcademic = 	getSecurityUserListCtrl().getSearchObj();
-		getSecurityUserListCtrl().pagingSecurityUserList.setActivePage(0);
-		getSecurityUserListCtrl().getPagedListWrapper().setSearchObject(soAcademic);
-		if(getSecurityUserListCtrl().listBoxSecurityUser!=null){
-			getSecurityUserListCtrl().listBoxSecurityUser.getListModel();
+		
+		final JdbcSearchObject<SecurityUser> soSecUser = getSecurityUserListCtrl().getSearchObj();
+		getSecurityUserListCtrl().getPagingSecurityUserList().setActivePage(0);
+		getSecurityUserListCtrl().getPagedListWrapper().setSearchObject(soSecUser);
+		if (getSecurityUserListCtrl().getListBoxSecurityUser() != null) {
+			getSecurityUserListCtrl().getListBoxSecurityUser().getListModel();
 		}
+		
 		logger.debug("Leaving ");
 	}
+	
+	/**
+	 * Method for Rendering Division Branch  Details 
+	 */
+	public void doFillDivisionBranchTab(){
+		logger.debug("Entering");
+		List<SecurityUserDivBranch> userBranchsList = getSecurityUserService().getSecUserDivBrList(getSecurityUser().getUsrID(), "_View");
+		List<DivisionDetail> divisions = getDivisionDetails();
+		if(divisions != null && !divisions.isEmpty()){
+			Row row;
+			Label divCode;
+			Label divDesc;
+			Hbox hbox;
+			Hbox divBox;
+			Space space;
+			Textbox textbox;
+			Button button;
+			for (int i=0;i<divisions.size();i++) {
+				String userDivision = divisions.get(i).getDivisionCode();
+				row = new Row();
+				divBox = new Hbox();
+				divCode = new Label(userDivision);
+				divCode.setVisible(false);
+				divDesc = new Label(divisions.get(i).getDivisionCodeDesc());
+				divCode.setParent(divBox);
+				divDesc.setParent(divBox);
+				divBox.setParent(row);
 
+				hbox = new Hbox();
+				space = new Space();
+				textbox = new Textbox();
+				textbox.setReadonly(true);
+				textbox.setId(userDivision);
+				button = new Button();
+				button.setDisabled(isReadOnly("SecurityUserDialog_usrDivBranch"));
+				button.setImage("/images/icons/LOVSearch.png");
+				button.setHeight("24px");
+				button.setId(userDivision);
+				space.setParent(hbox);
+				textbox.setParent(hbox);
+				button.addForward("onClick", window_SecurityUserDialog, "onButtonClick");
+				button.setParent(hbox);
+				hbox.setParent(row);
+
+				if(getSecurityUser().isNew()){
+					dynamicDivBranchs.put(userDivision,  new HashMap<String, Object>());
+				}else{
+					HashMap<String, Object> tempSecDivBrMap  =	new HashMap<String, Object>();
+					String branchs="";
+					String toolTipDesc="";
+					for (SecurityUserDivBranch securityUserDivBranch : userBranchsList) {
+						if(securityUserDivBranch.getUserDivision().equals(userDivision)){
+								tempSecDivBrMap.put(securityUserDivBranch.getUserBranch(), securityUserDivBranch.getUserBranchDesc());
+								branchs = branchs + securityUserDivBranch.getUserBranch()+"," ;
+								toolTipDesc = toolTipDesc + securityUserDivBranch.getUserBranchDesc()+" , ";
+								securityUserDivBranch.setBefImage(securityUserDivBranch);
+								this.befImgUsrDivBranchsList.add(securityUserDivBranch);
+						}
+					}
+					if(!StringUtils.trimToEmpty(branchs).equals("") && branchs.endsWith(",")){
+						branchs = branchs.substring(0,branchs.length()-1);
+						if(toolTipDesc.endsWith(", ")){
+							toolTipDesc = toolTipDesc.substring(0,toolTipDesc.length()-2);
+						}
+					}
+					textbox.setTooltiptext(toolTipDesc);
+					textbox.setValue(branchs);
+					dynamicDivBranchs.put(divisions.get(i).getDivisionCode(), tempSecDivBrMap);
+				}
+				this.divBranch_Rows.appendChild(row); 
+			}
+		}else{
+			this.secUserDivBranchsTab.setVisible(false);
+		}
+		setBefImgUsrDivBranchsList(this.befImgUsrDivBranchsList);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 *  This method is to Fetch Division Details
+	 * @return
+	 */
+	public List<DivisionDetail> getDivisionDetails(){
+		logger.debug("Entering");
+		JdbcSearchObject<DivisionDetail> jdbcSearchObject = new JdbcSearchObject<DivisionDetail>(DivisionDetail.class);
+		jdbcSearchObject.addTabelName("SMTDivisionDetail_AView");
+		List<DivisionDetail> divisions = getPagedListService().getBySearchObject(jdbcSearchObject);
+		logger.debug("Leaving");
+		return divisions;
+	}
+	
+	/**
+	 *  This Method is called when division button is clicked
+	 * @param event
+	 */
+	public void onButtonClick(ForwardEvent event) {
+		logger.debug("Entering " + event.toString());
+		Button btn = (Button)event.getOrigin().getTarget();
+		this.divBranchs = dynamicDivBranchs.get(btn.getId()); 
+		
+		Object dataObject = ExtendedMultipleSearchListBox.show(this.window_SecurityUserDialog, "Branch", this.divBranchs);
+		
+		Textbox txtbx = (Textbox) btn.getPreviousSibling();
+		if (dataObject instanceof String){
+			txtbx.setValue(dataObject.toString());
+		}else{
+			HashMap<String,Object> details= (HashMap<String,Object>) dataObject;
+			if (details != null) {
+				String multivalues=details.keySet().toString();
+				txtbx.setValue(multivalues.replace("[","").replace("]","").replace(" ", ""));
+				String toolTipDesc="";
+				for (String  key : details.keySet()) {
+					Object obj = (Object)details.get(key);
+					if(obj instanceof String){
+						//	
+					}else{
+						Branch branch = (Branch)obj;
+						if(branch != null){
+							toolTipDesc = toolTipDesc.concat(branch.getBranchDesc()+" , ");
+						}
+					}
+				}
+				if(!StringUtils.trimToEmpty(toolTipDesc).equals("") && toolTipDesc.endsWith(", ")){
+				toolTipDesc = toolTipDesc.substring(0,toolTipDesc.length()-2);
+				}
+				txtbx.setTooltiptext(toolTipDesc);
+			}
+		}
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	/**
+	 * This method is to save the division branch details
+	 * @param securityUser
+	 * @return
+	 */
+	public void doSaveDivBranchDetails(SecurityUser securityUser){
+		logger.debug("Entering");
+		SecurityUserDivBranch aSecurityUserDivBranch;
+		List<SecurityUserDivBranch> secUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
+		try  {
+			for (Component row : divBranch_Rows.getChildren()) {
+				Label division = (Label) row.getFirstChild().getFirstChild();
+				String div = (division==null?"":division.getValue());
+				Textbox branch = (Textbox) row.getFirstChild().getNextSibling().getFirstChild().getNextSibling();
+				String divBranches =(branch==null?"":branch.getValue());
+				if(!StringUtils.trimToEmpty(divBranches).equals("")){
+					String[] divBranchs = divBranches.split(",");
+					for (String divBranch : divBranchs) {
+						aSecurityUserDivBranch = new SecurityUserDivBranch();
+						aSecurityUserDivBranch.setUsrID(getSecurityUser().getUsrID());
+						aSecurityUserDivBranch.setUserDivision(div);
+						aSecurityUserDivBranch.setUserBranch(divBranch);
+						aSecurityUserDivBranch.setRecordStatus("");
+						aSecurityUserDivBranch.setLastMntBy(getUserWorkspace().getLoginUserDetails().getLoginUsrID());
+						aSecurityUserDivBranch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						aSecurityUserDivBranch.setUserDetails(getUserWorkspace().getLoginUserDetails());
+
+						secUsrDivBranchsList.add(aSecurityUserDivBranch);
+					}
+				}
+			}
+			if(!secUsrDivBranchsList.isEmpty()){
+				securityUser.setSecurityUserDivBranchList(newDivBranchsProcess(secUsrDivBranchsList));
+			}
+		}catch(Exception e) {
+			logger.error(e);
+			this.befImgUsrDivBranchsList .clear();
+			showMessage(e);
+		}
+		logger.debug("Leaving");
+	} 
+	
+	public boolean isBranchNewRecord(SecurityUserDivBranch aSecurityUserDivBranch){
+		boolean isNew = false;
+		for (SecurityUserDivBranch securityUserDivBranch : getBefImgUsrDivBranchsList()) {
+			if(!aSecurityUserDivBranch.getUserDivision().equals(securityUserDivBranch.getUserDivision()) && 
+					!aSecurityUserDivBranch.getUserBranch().equals(securityUserDivBranch.getUserBranch())){
+				isNew = true;
+			}
+		}
+		return isNew;
+	}
+	
+	/**
+	 * This method is to process division branch details
+	 * @param selectedUsrDivBranchsList
+	 * @return
+	 */
+	public List<SecurityUserDivBranch> newDivBranchsProcess(List<SecurityUserDivBranch> selectedUsrDivBranchsList){
+		logger.debug("Entering");
+		List<SecurityUserDivBranch> newSecUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
+		//if(!isNewRecord()){
+		//Below loop is to check deleted branchs from existing branchs 
+		  for (SecurityUserDivBranch asecurityUserDivBranch : getBefImgUsrDivBranchsList()) {
+				boolean Recordexists = false;
+				for (SecurityUserDivBranch securityUserDivBranch2 : selectedUsrDivBranchsList) {
+					if(securityUserDivBranch2.getUserDivision().equals(asecurityUserDivBranch.getUserDivision()) && 
+							securityUserDivBranch2.getUserBranch().equals(asecurityUserDivBranch.getUserBranch())){
+						Recordexists = true;
+						securityUserDivBranch2.setNewRecord(true);
+						securityUserDivBranch2.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						newSecUsrDivBranchsList.add(securityUserDivBranch2);
+					}
+				}
+				if(!Recordexists && !isNewRecord()){
+					asecurityUserDivBranch.setNewRecord(false);
+					asecurityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					newSecUsrDivBranchsList.add(asecurityUserDivBranch);
+				}
+			}
+		//Below loop is to check newly added branchs to existing branchs
+			for (SecurityUserDivBranch asecurityUserDivBranch : selectedUsrDivBranchsList) {
+				boolean Recordexists = false;
+				for (SecurityUserDivBranch securityUserDivBranch2 : newSecUsrDivBranchsList) {
+					if(securityUserDivBranch2.getUserDivision().equals(asecurityUserDivBranch.getUserDivision()) && 
+							securityUserDivBranch2.getUserBranch().equals(asecurityUserDivBranch.getUserBranch())){
+						Recordexists = true;
+					}
+				}
+				if(!Recordexists && !isNewRecord()){
+					asecurityUserDivBranch.setNewRecord(true);
+					asecurityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					newSecUsrDivBranchsList.add(asecurityUserDivBranch);
+				}
+			}
+		logger.debug("Leaving");
+		return  newSecUsrDivBranchsList;
+	}
+
+	/**
+	 * This method is to set disable for dynamically created division buttons
+	 * @param disable
+	 */
+	public void doDisableDivBranchs(boolean disable){
+		logger.debug("Entering");
+		this.divBranch_Rows.getChildren();
+		for (Component component : this.divBranch_Rows.getChildren()) {
+			Row row =(Row)component;
+			if(row != null){
+				Button button = (Button)row.getFirstChild().getNextSibling().getLastChild();
+				if(button != null){
+					button.setDisabled(disable);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void validateBranchs() throws InterruptedException{
+		if(!isReadOnly("SecurityUserDialog_usrDivBranch")){
+			if(StringUtils.trimToEmpty((String) userAction.getSelectedItem().getValue()).equals(PennantConstants.RCD_STATUS_SAVED) ||
+			StringUtils.trimToEmpty((String) userAction.getSelectedItem().getValue()).equals(PennantConstants.RCD_STATUS_SUBMITTED)){
+				this.secUserDivBranchsTab.setSelected(true);
+				PTMessageUtils.showErrorMessage(Labels.getLabel("SecUserDivBranchs_NotEmpty"));	
+			}
+		}
+	}
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1931,4 +2253,28 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.notes_Entered = notes_Entered;
 	}
 
+	public SecurityUserDivBranch getSecurityUserDivBranch() {
+		return securityUserDivBranch;
+	}
+
+	public void setSecurityUserDivBranch(SecurityUserDivBranch securityUserDivBranch) {
+		this.securityUserDivBranch = securityUserDivBranch;
+	}
+
+	public List<SecurityUserDivBranch> getBefImgUsrDivBranchsList() {
+		return this.befImgUsrDivBranchsList;
+	}
+
+	public void setBefImgUsrDivBranchsList(List<SecurityUserDivBranch> usrDivBranchsList) {
+		this.befImgUsrDivBranchsList = usrDivBranchsList;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+	
 }

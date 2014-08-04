@@ -81,7 +81,6 @@ import com.pennant.webui.util.searching.SearchOperators;
 public class CustomerStatusCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 	private static final long serialVersionUID = -9099271941967128237L;
-
 	private final static Logger logger = Logger.getLogger(CustomerStatusCodeSearchCtrl.class);
 
 	/*
@@ -156,19 +155,19 @@ public class CustomerStatusCodeSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_custStsCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custStsCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custStsCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custStsDescription.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_custStsDescription.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custStsDescription.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custStsIsActive.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_custStsIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_custStsIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {

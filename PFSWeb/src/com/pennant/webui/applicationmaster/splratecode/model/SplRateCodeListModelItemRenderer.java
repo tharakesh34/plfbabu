@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listItems in the listBox.
  * 
@@ -62,11 +61,10 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class SplRateCodeListModelItemRenderer implements ListitemRenderer<SplRateCode>, Serializable {
 
 	private static final long serialVersionUID = -1623457201283911487L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, SplRateCode splRateCode, int count) throws Exception {
 
-		//final SplRateCode splRateCode = (SplRateCode) data;
 		Listcell lc;
 		lc = new Listcell(splRateCode.getSRType());
 		lc.setParent(item);

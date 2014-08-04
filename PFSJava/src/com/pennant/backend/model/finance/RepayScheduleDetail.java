@@ -34,24 +34,30 @@ public class RepayScheduleDetail implements java.io.Serializable {
 	private Date schDate;
 	private Date defSchdDate;
 	private String schdFor = "";
-	private BigDecimal profitSchd = new BigDecimal(0);
-	private BigDecimal profitSchdPaid = new BigDecimal(0);
-	private BigDecimal profitSchdBal = new BigDecimal(0);
-	private BigDecimal profitSchdPayNow = new BigDecimal(0);
-	private BigDecimal principalSchd = new BigDecimal(0);
-	private BigDecimal principalSchdPaid = new BigDecimal(0);
-	private BigDecimal principalSchdBal = new BigDecimal(0);
-	private BigDecimal principalSchdPayNow = new BigDecimal(0);
-	private BigDecimal refundMax = new BigDecimal(0);
-	private BigDecimal refundReq = new BigDecimal(0);
-	private BigDecimal refundDefault = new BigDecimal(0);
-	private int dasyLate = 0;
+	private BigDecimal profitSchd = BigDecimal.ZERO;
+	private BigDecimal profitSchdPaid = BigDecimal.ZERO;
+	private BigDecimal profitSchdBal = BigDecimal.ZERO;
+	private BigDecimal profitSchdPayNow = BigDecimal.ZERO;
+	private BigDecimal principalSchd = BigDecimal.ZERO;
+	private BigDecimal principalSchdPaid = BigDecimal.ZERO;
+	private BigDecimal principalSchdBal = BigDecimal.ZERO;
+	private BigDecimal principalSchdPayNow = BigDecimal.ZERO;
+	private BigDecimal refundMax = BigDecimal.ZERO;
+	private BigDecimal refundReq = BigDecimal.ZERO;
+	private int daysLate = 0;
 	private int daysEarly = 0;
 	private boolean allowRefund = false;
-	private BigDecimal repayNet = new BigDecimal(0);
-	private BigDecimal repayBalance = new BigDecimal(0);
+	private BigDecimal repayNet = BigDecimal.ZERO;
+	private BigDecimal repayBalance = BigDecimal.ZERO;
 	private int schdIndex = 0;
-
+	
+	private boolean allowWaiver = false;
+	private BigDecimal penaltyAmt = BigDecimal.ZERO;
+	private BigDecimal maxWaiver = BigDecimal.ZERO;
+	private BigDecimal waivedAmt = BigDecimal.ZERO;
+	private String chargeType = "";
+	private long linkedTranId = 0;
+	
 	public String getFinReference() {
 		return finReference;
 	}
@@ -164,20 +170,12 @@ public class RepayScheduleDetail implements java.io.Serializable {
 		this.refundReq = refundReq;
 	}
 
-	public BigDecimal getRefundDefault() {
-		return refundDefault;
+	public int getDaysLate() {
+		return daysLate;
 	}
 
-	public void setRefundDefault(BigDecimal refundDefault) {
-		this.refundDefault = refundDefault;
-	}
-
-	public int getDasyLate() {
-		return dasyLate;
-	}
-
-	public void setDasyLate(int dasyLate) {
-		this.dasyLate = dasyLate;
+	public void setDaysLate(int daysLate) {
+		this.daysLate = daysLate;
 	}
 
 	public int getDaysEarly() {
@@ -199,7 +197,6 @@ public class RepayScheduleDetail implements java.io.Serializable {
 	public BigDecimal getRepayNet() {
 		return repayNet;
 	}
-
 	public void setRepayNet(BigDecimal repayNet) {
 		this.repayNet = repayNet;
 	}
@@ -207,7 +204,6 @@ public class RepayScheduleDetail implements java.io.Serializable {
 	public BigDecimal getRepayBalance() {
 		return repayBalance;
 	}
-
 	public void setRepayBalance(BigDecimal repayBalance) {
 		this.repayBalance = repayBalance;
 	}
@@ -215,9 +211,51 @@ public class RepayScheduleDetail implements java.io.Serializable {
 	public int getSchdIndex() {
 		return schdIndex;
 	}
-
 	public void setSchdIndex(int schdIndex) {
 		this.schdIndex = schdIndex;
 	}
+
+	public boolean isAllowWaiver() {
+    	return allowWaiver;
+    }
+	public void setAllowWaiver(boolean allowWaiver) {
+    	this.allowWaiver = allowWaiver;
+    }
+
+	public BigDecimal getPenaltyAmt() {
+    	return penaltyAmt;
+    }
+	public void setPenaltyAmt(BigDecimal penaltyAmt) {
+    	this.penaltyAmt = penaltyAmt;
+    }
+
+	public BigDecimal getMaxWaiver() {
+    	return maxWaiver;
+    }
+	public void setMaxWaiver(BigDecimal maxWaiver) {
+    	this.maxWaiver = maxWaiver;
+    }
+
+	public BigDecimal getWaivedAmt() {
+    	return waivedAmt;
+    }
+	public void setWaivedAmt(BigDecimal waivedAmt) {
+    	this.waivedAmt = waivedAmt;
+    }
+
+	public String getChargeType() {
+    	return chargeType;
+    }
+	public void setChargeType(String chargeType) {
+    	this.chargeType = chargeType;
+    }
+
+	public long getLinkedTranId() {
+	    return linkedTranId;
+    }
+
+	public void setLinkedTranId(long linkedTranId) {
+	    this.linkedTranId = linkedTranId;
+    }
 
 }

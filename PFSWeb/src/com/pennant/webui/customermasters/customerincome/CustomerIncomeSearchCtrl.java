@@ -52,11 +52,11 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.GroupsModelArray;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -66,11 +66,10 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.customermasters.customerincome.model.CustomerIncomeComparator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -152,26 +151,26 @@ public class CustomerIncomeSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_custCIF.setModel(new ListModelList(
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custIncomeType.setModel(new ListModelList(
+		this.sortOperator_custIncomeType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_custIncomeType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custIncome.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_custIncome.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_custIncome.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custIncomeCountry.setModel(new ListModelList(
+		this.sortOperator_custIncomeCountry.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_custIncomeCountry.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
@@ -291,6 +290,7 @@ public class CustomerIncomeSearchCtrl extends GFCBaseCtrl implements Serializabl
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */
+	@SuppressWarnings("unchecked")
 	public void doSearch() {
 		logger.debug("Entering");
 
@@ -422,12 +422,15 @@ public class CustomerIncomeSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		// set the model to the listBox with the initial resultSet get by the
 		// DAO method.
-		final SearchResult<CustomerIncome> searchResult = this.customerIncomeCtrl.getPagedListService().getSRBySearchObject(so);
-		this.customerIncomeCtrl.listBoxCustomerIncome.setModel(new GroupsModelArray(searchResult.getResult().toArray(), new CustomerIncomeComparator()));
+		 final Listbox listBox = this.customerIncomeCtrl.listBoxCustomerIncome;
+			final Paging paging = this.customerIncomeCtrl.pagingCustomerIncomeList;
+			
+			((PagedListWrapper<CustomerIncome>) listBox.getModel()).init(so, listBox, paging);
+			
 
 		this.label_CustomerIncomeSearchResult.setValue(Labels.getLabel(
 				"label_CustomerIncomeSearchResult.value")+ " "
-				+ String.valueOf(searchResult.getTotalCount()));
+				+ String.valueOf(paging.getTotalSize()));
 		logger.debug("Leaving");
 	}
 

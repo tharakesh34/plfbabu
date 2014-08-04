@@ -5,18 +5,18 @@ import java.math.BigDecimal;
 public class TEDetail {
 
 	private int tENoOfDays = 0;
-	private BigDecimal tEProfitCalc= new BigDecimal(0);
-	private BigDecimal tEProfitSchd= new BigDecimal(0);
-	private BigDecimal tEPrincipalSchd= new BigDecimal(0);
-	private BigDecimal tERepayAmount= new BigDecimal(0);
-	private BigDecimal tEDisbAmount= new BigDecimal(0);
-	private BigDecimal tEDownPaymentAmount= new BigDecimal(0);
-	private BigDecimal tECpzAmount= new BigDecimal(0);
-	private BigDecimal tEDefRepaySchd= new BigDecimal(0);
-	private BigDecimal tEDefProfitSchd= new BigDecimal(0);
-	private BigDecimal tEDefPrincipalSchd= new BigDecimal(0);
-	private BigDecimal tESchdPftPaid= new BigDecimal(0);
-	private BigDecimal tESchdPriPaid= new BigDecimal(0);
+	private BigDecimal tEProfitCalc= BigDecimal.ZERO;
+	private BigDecimal tEProfitSchd= BigDecimal.ZERO;
+	private BigDecimal tEPrincipalSchd= BigDecimal.ZERO;
+	private BigDecimal tERepayAmount= BigDecimal.ZERO;
+	private BigDecimal tEDisbAmount= BigDecimal.ZERO;
+	private BigDecimal tEDownPaymentAmount= BigDecimal.ZERO;
+	private BigDecimal tECpzAmount= BigDecimal.ZERO;
+	private BigDecimal tEDefRepaySchd= BigDecimal.ZERO;
+	private BigDecimal tEDefProfitSchd= BigDecimal.ZERO;
+	private BigDecimal tEDefPrincipalSchd= BigDecimal.ZERO;
+	private BigDecimal tESchdPftPaid= BigDecimal.ZERO;
+	private BigDecimal tESchdPriPaid= BigDecimal.ZERO;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

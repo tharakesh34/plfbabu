@@ -58,7 +58,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -97,7 +96,6 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window 		window_MaritalStatusCodeList; 		 // autoWired
-	protected Panel 		panel_MaritalStatusCodeList; 		 // autoWired
 	protected Borderlayout 	borderLayout_MaritalStatusCodeList;  // autoWired
 	protected Paging 		pagingMaritalStatusCodeList; 		 // autoWired
 	protected Listbox 		listBoxMaritalStatusCode; 			 // autoWired

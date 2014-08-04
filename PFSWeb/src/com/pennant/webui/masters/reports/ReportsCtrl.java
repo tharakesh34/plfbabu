@@ -1,4 +1,4 @@
-package com.pennant.webui.masters.reports;
+/*package com.pennant.webui.masters.reports;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,6 +31,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinanceMainService;
 
+@SuppressWarnings("rawtypes")
 public class ReportsCtrl extends GenericForwardComposer {
 	private static final long serialVersionUID = -3455808868502431564L;
 	private transient FinanceMainService financeMainService;
@@ -43,6 +44,7 @@ public class ReportsCtrl extends GenericForwardComposer {
 	private West menuWest;
 	private Groupbox groupboxMenu;
 	private Tab tab;
+	@SuppressWarnings("unused")
 	private transient DataSource pfsDataSourceObj = (DataSource) SpringUtil
 			.getBean("pfsDatasource");
 	private String reportName;
@@ -114,4 +116,4 @@ public class ReportsCtrl extends GenericForwardComposer {
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
-}
+}*/

@@ -75,7 +75,6 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
 
-
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/Branch/BranchList.zul

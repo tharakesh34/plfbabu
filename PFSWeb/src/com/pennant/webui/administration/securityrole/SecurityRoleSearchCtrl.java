@@ -67,6 +67,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -119,7 +120,7 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl implements Serializable 
 	private Listbox listBox;
 	private Paging  paging;
 	private Object  object;
-	private List<ValueLabel> listAppCodes = PennantAppUtil.getAppCodes();
+	private List<ValueLabel> listAppCodes = PennantStaticListUtil.getAppCodes();
 	
 	/**
 	 * constructor
@@ -163,25 +164,25 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl implements Serializable 
 		setApplicationCodes();
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_roleID.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_roleID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_roleApp.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleApp.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_roleApp.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_roleCd.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleCd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_roleCd.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_roleDesc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_roleDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_roleCategory.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleCategory.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_roleCategory.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

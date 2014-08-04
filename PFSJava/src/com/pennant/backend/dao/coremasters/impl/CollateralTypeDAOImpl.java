@@ -124,7 +124,7 @@ public class CollateralTypeDAOImpl extends BasisCodeDAO<CollateralType> implemen
 	@Override
 	public CollateralType getCollateralTypeById(final String id, String type) {
 		logger.debug("Entering");
-		CollateralType collateralType = getCollateralType();
+		CollateralType collateralType = new CollateralType();
 		
 		collateralType.setId(id);
 		

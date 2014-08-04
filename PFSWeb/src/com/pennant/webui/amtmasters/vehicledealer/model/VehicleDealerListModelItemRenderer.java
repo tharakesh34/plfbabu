@@ -52,6 +52,8 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -63,10 +65,14 @@ public class VehicleDealerListModelItemRenderer implements ListitemRenderer<Vehi
 	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
 	public void render(Listitem item, VehicleDealer vehicleDealer, int count) throws Exception {
-
-		//final VehicleDealer vehicleDealer = (VehicleDealer) data;
 		Listcell lc;
+		lc = new Listcell(PennantAppUtil.getlabelDesc(vehicleDealer.getDealerType(), PennantStaticListUtil.getDealerType()));
+		lc.setParent(item);
 	  	lc = new Listcell(vehicleDealer.getDealerName());
+		lc.setParent(item);
+		lc = new Listcell(vehicleDealer.getDealerTelephone());
+		lc.setParent(item);
+		lc = new Listcell(vehicleDealer.getDealerFax());
 		lc.setParent(item);
 	  	lc = new Listcell(vehicleDealer.getRecordStatus());
 		lc.setParent(item);

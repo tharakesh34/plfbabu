@@ -121,7 +121,7 @@ public class BlackListReasonCodeDAOImpl extends BasisCodeDAO<BlackListReasonCode
 	@Override
 	public BlackListReasonCode getBlackListReasonCodeById(final String id, String type) {
 		logger.debug("Entering");
-		BlackListReasonCode blackListReasonCode = getBlackListReasonCode();
+		BlackListReasonCode blackListReasonCode = new BlackListReasonCode();
 		blackListReasonCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

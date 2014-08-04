@@ -55,17 +55,23 @@ public class CustomerEmploymentDetailValidation {
 		CustomerEmploymentDetail customerEmploymentDetail= (CustomerEmploymentDetail) auditDetail.getModelData();
 		CustomerEmploymentDetail tempCustomerEmploymentDetail= null;
 		if (customerEmploymentDetail.isWorkflow()){
-			tempCustomerEmploymentDetail = getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailByID(customerEmploymentDetail.getId(),"_Temp");
+			tempCustomerEmploymentDetail = getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailByID(customerEmploymentDetail.getId(),customerEmploymentDetail.getCustEmpName(),"_Temp");
 		}
 		
-		CustomerEmploymentDetail befCustomerEmploymentDetail= getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailByID(customerEmploymentDetail.getId(),"");
+		CustomerEmploymentDetail befCustomerEmploymentDetail= getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailByID(customerEmploymentDetail.getId(),customerEmploymentDetail.getCustEmpName(),"");
 		CustomerEmploymentDetail old_CustomerEmploymentDetail= customerEmploymentDetail.getBefImage();
 		
-		String[] valueParm = new String[1];
-		String[] errParm = new String[1];
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
 
-		valueParm[0] = String.valueOf(customerEmploymentDetail.getId());
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
+		valueParm[0] = StringUtils.trimToEmpty(customerEmploymentDetail.getLovDescCustCIF());
+		valueParm[1] = String.valueOf(customerEmploymentDetail.getLovDesccustEmpName());
+		
+		errParm[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":"+ valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustEmpName") + ":"+valueParm[1];
+
+        errParm[0] = PennantJavaUtil.getLabel("EmploymentDetails") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
+        errParm[1] = PennantJavaUtil.getLabel("label_CustEmpName") + "-" + valueParm[1];
 		
 		if (customerEmploymentDetail.isNew()){ // for New record or new record into work flow
 

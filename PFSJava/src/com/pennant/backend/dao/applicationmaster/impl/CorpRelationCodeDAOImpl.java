@@ -121,7 +121,7 @@ public class CorpRelationCodeDAOImpl extends BasisCodeDAO<CorpRelationCode>	impl
 	@Override
 	public CorpRelationCode getCorpRelationCodeById(final String id, String type) {
 		logger.debug("Entering");
-		CorpRelationCode corpRelationCode = getCorpRelationCode();
+		CorpRelationCode corpRelationCode = new CorpRelationCode();
 		corpRelationCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

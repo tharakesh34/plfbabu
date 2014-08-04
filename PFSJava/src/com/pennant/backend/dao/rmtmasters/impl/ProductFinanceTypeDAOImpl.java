@@ -126,7 +126,7 @@ public class ProductFinanceTypeDAOImpl extends
 	public ProductFinanceType getProductFinanceTypeById(final long id,
 			String type) {
 		logger.debug("Entering");
-		ProductFinanceType productFinanceType = getProductFinanceType();
+		ProductFinanceType productFinanceType = new ProductFinanceType();
 		productFinanceType.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select PrdFinId, ProductCode, FinType, ");
@@ -361,7 +361,7 @@ public class ProductFinanceTypeDAOImpl extends
 	public List<ProductFinanceType> getFinanceType(String productCode,boolean selected, String type) {
 
 		logger.debug("Entering");
-		ProductFinanceType productFinanceType = getProductFinanceType();
+		ProductFinanceType productFinanceType = new ProductFinanceType();
 		productFinanceType.setProductCode(productCode);
 		
 		StringBuilder selectSql = new StringBuilder("");
@@ -396,7 +396,7 @@ public class ProductFinanceTypeDAOImpl extends
 		logger.debug("Entering");
 		
 		boolean result=false;
-		ProductFinanceType productFinanceType = getProductFinanceType();
+		ProductFinanceType productFinanceType = new ProductFinanceType();
 		productFinanceType.setFinType(fintype);
 
 		StringBuilder selectSql = new StringBuilder("Select PrdFinId, ProductCode, FinType,");

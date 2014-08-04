@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+*//*
 
 package com.pennant.webui.customermasters.customeridentity;
 
@@ -76,24 +76,24 @@ import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
-/**
+*//**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the
  * /WEB-INF/pages/CustomerMasters/customerIdentity/CustomerIdentitySearchDialog.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- */
+ *//*
 public class CustomerIdentitySearchCtrl extends GFCBaseCtrl implements Serializable {
 
 	private static final long serialVersionUID = -1417377971533088564L;
 	private final static Logger logger = Logger.getLogger(CustomerIdentitySearchCtrl.class);
 
-	/*
+	
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the ZUL-file are getting autowired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 */
+	 
 	protected Window  window_CustomerIdentitySearch;// autowired
 	
 	protected Textbox idCustCIF; 					// autowired
@@ -127,9 +127,9 @@ public class CustomerIdentitySearchCtrl extends GFCBaseCtrl implements Serializa
 	private transient CustomerIdentityService customerIdentityService;
 	private transient WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("CustomerIdentity");
 	
-	/**
+	*//**
 	 * constructor
-	 */
+	 *//*
 	public CustomerIdentitySearchCtrl() {
 		super();
 	}
@@ -138,14 +138,14 @@ public class CustomerIdentitySearchCtrl extends GFCBaseCtrl implements Serializa
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	
-	/**
+	*//**
 	 * Before binding the data and calling the Search window we check, if the
 	 * ZUL-file is called with a parameter for a selected CustomerIdentity object in a
 	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onCreate$window_CustomerIdentitySearch(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
@@ -289,22 +289,22 @@ public class CustomerIdentitySearchCtrl extends GFCBaseCtrl implements Serializa
 	// +++++++++++++++++++++++ Components events +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * when the "search/filter" button is clicked.
 	 * 
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnSearch(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
+	*//**
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnClose(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		doClose();
@@ -315,18 +315,18 @@ public class CustomerIdentitySearchCtrl extends GFCBaseCtrl implements Serializa
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * closes the dialog window
-	 */
+	 *//*
 	private void doClose() {
 		logger.debug("Entering");
 		this.window_CustomerIdentitySearch.onClose();
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Opens the SearchDialog window modal.
-	 */
+	 *//*
 	private void showCustomerIdentitySeekDialog() throws InterruptedException {
 		logger.debug("Entering");
 		try {
@@ -343,14 +343,14 @@ public class CustomerIdentitySearchCtrl extends GFCBaseCtrl implements Serializa
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * Search/filter data for the filled out fields<br>
 	 * <br>
 	 * 1. Checks for each textBox if there are a value. <br>
 	 * 2. Checks which operator is selected. <br>
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
-	 */ 
+	 *//* 
 	public void doSearch() {
 		logger.debug("Entering");
 		
@@ -576,4 +576,4 @@ public class CustomerIdentitySearchCtrl extends GFCBaseCtrl implements Serializa
 		this.customerIdentityCtrl = customerIdentityCtrl;
 	}
 
-}
+}*/

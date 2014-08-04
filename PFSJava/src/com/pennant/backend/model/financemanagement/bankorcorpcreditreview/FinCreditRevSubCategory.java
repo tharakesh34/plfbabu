@@ -14,8 +14,10 @@ public class FinCreditRevSubCategory implements java.io.Serializable {
 	private String subCategoryItemType;
 	private String itemsToCal;
 	private String itemRule;	
+	private String calcSeque;
 	private boolean isCreditCCY;
 	private boolean format;
+	private boolean percentCategory;
 	private boolean grand;
 	private String mainSubCategoryCode;
 	private int version;
@@ -25,7 +27,9 @@ public class FinCreditRevSubCategory implements java.io.Serializable {
 	private String lovValue;
 	private FinCreditRevSubCategory befImage;
 	private LoginUserDetails userDetails;
-
+	
+	private String remarks;
+	
 	private String recordStatus;
 	private String roleCode = "";
 	private String nextRoleCode = "";
@@ -34,6 +38,8 @@ public class FinCreditRevSubCategory implements java.io.Serializable {
 	private String recordType;
 	private String userAction = "Save";
 	private long workflowId = 0;
+	
+	
 	
 	public int getVersion() {
 		return version;
@@ -147,6 +153,12 @@ public class FinCreditRevSubCategory implements java.io.Serializable {
 		this.workflowId = workflowId;
 	}
 	
+	public String getRemarks() {
+    	return remarks;
+    }
+	public void setRemarks(String remarks) {
+    	this.remarks = remarks;
+    }
 	public long getCategoryId() {
     	return categoryId;
     }
@@ -207,11 +219,35 @@ public class FinCreditRevSubCategory implements java.io.Serializable {
 	public boolean isFormat() {
 	    return format;
     }
+	
+	public boolean isPercentCategory() {
+    	return percentCategory;
+    }
+	public void setPercentCategory(boolean percentCategory) {
+    	this.percentCategory = percentCategory;
+    }
 	public void setGrand(boolean grand) {
 	    this.grand = grand;
     }
 	public boolean isGrand() {
 	    return grand;
+    }
+	public void setCalcSeque(String calcSeque) {
+	    this.calcSeque = calcSeque;
+    }
+	public String getCalcSeque() {
+	    return calcSeque;
     }	
+	
+	public boolean isNew(){
+		return isNewRecord();
+	}
+	public String getId() {
+		return subCategoryCode;
+	}
+	
+	public void setId (String id) {
+		this.subCategoryCode = id;
+	}
 
 }

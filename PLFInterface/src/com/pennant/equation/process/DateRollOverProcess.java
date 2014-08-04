@@ -6,8 +6,10 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
+import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
 import com.pennant.equation.util.HostConnection;
 
@@ -34,10 +36,6 @@ public class DateRollOverProcess {
 		int dsRspCount;              // Number of records returned 
 				
 		try {
-			
-			if(this.hostConnection == null){
-				this.hostConnection= new HostConnection();
-			}
 			
 			as400 = this.hostConnection.getConnection();
 			
@@ -67,10 +65,15 @@ public class DateRollOverProcess {
 				throw new AccountNotFoundException(pcmlDoc.getValue(pcml + ".@ERPRM").toString());
 			}
 			
+		} catch (ConnectionPoolException e){
+			logger.error("Exception " + e);
+			throw new CustomerNotFoundException("Host Connection Failed.. Please contact administrator ");
 		} catch (Exception e) {
 			logger.error("Exception " + e);
 			throw new EquationInterfaceException(e.getMessage());
-		} 
+		} finally{
+				this.hostConnection.closeConnection(as400);
+		}
 		
 		logger.debug("Leaving");
 		return calendarDaysMap;

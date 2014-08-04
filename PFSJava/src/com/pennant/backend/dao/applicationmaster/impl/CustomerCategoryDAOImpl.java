@@ -121,7 +121,7 @@ public class CustomerCategoryDAOImpl extends BasisCodeDAO<CustomerCategory>	impl
 	@Override
 	public CustomerCategory getCustomerCategoryById(final String id, String type) {
 		logger.debug("Entering");
-		CustomerCategory customerCategory = getCustomerCategory();
+		CustomerCategory customerCategory = new CustomerCategory();
 		customerCategory.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		

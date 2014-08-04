@@ -81,6 +81,7 @@ public class PTDecimalValidator implements Constraint{
 		setNegative(negative);
 		setMaxValue(maxValue);
 		setMinValue(minValue);
+		setDecPos(decPos);
 		
 	}
 
@@ -90,12 +91,14 @@ public class PTDecimalValidator implements Constraint{
 		setNegative(negative);
 		setMaxValue(0);
 		setMinValue(0);
+		setDecPos(decPos);
 		
 	}
 
 	public PTDecimalValidator(String fieldParm, int decPos,boolean mandatory) {
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
+		setDecPos(decPos);
 		setMaxValue(0);
 		setMinValue(0);
 	}
@@ -152,8 +155,8 @@ public class PTDecimalValidator implements Constraint{
 		}
 		
 
-		String strMaxAmount = PennantApplicationUtil.amountFormate(maxValue, decPos);
-		String strMinAmount=PennantApplicationUtil.amountFormate(minValue, decPos);
+		String strMaxAmount = PennantApplicationUtil.amountFormate(maxValue, 0);
+		String strMinAmount=PennantApplicationUtil.amountFormate(minValue, 0);
 		
 		
 		if(minValid & maxValid){

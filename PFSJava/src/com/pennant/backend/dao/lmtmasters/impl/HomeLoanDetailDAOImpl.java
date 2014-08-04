@@ -122,7 +122,7 @@ public class HomeLoanDetailDAOImpl extends BasisCodeDAO<HomeLoanDetail> implemen
 	@Override
 	public HomeLoanDetail getHomeLoanDetailByID(String loanRefNumber, String type) {
 		logger.debug("Entering");
-		HomeLoanDetail homeLoanDetail = getHomeLoanDetail();
+		HomeLoanDetail homeLoanDetail = new HomeLoanDetail();
 		homeLoanDetail.setId(loanRefNumber);
 		
 		StringBuilder selectSql = new StringBuilder();
@@ -131,7 +131,7 @@ public class HomeLoanDetailDAOImpl extends BasisCodeDAO<HomeLoanDetail> implemen
 		selectSql.append(" HomeConstructionStage, HomeDateOfPocession, HomeAreaOfLand, HomeAreaOfFlat," );
 		selectSql.append(" HomePropertyType, HomeOwnerShipType, HomeAddrFlatNbr, HomeAddrStreet,");
 		selectSql.append(" HomeAddrLane1, HomeAddrLane2, HomeAddrPOBox,HomeAddrCountry, HomeAddrProvince,");
-		selectSql.append(" HomeAddrCity, HomeAddrZIP,HomeAddrPhone,");
+		selectSql.append(" HomeAddrCity, HomeAddrZIP,HomeAddrPhone,HomeTitleDeedNo,");
 		if(type.contains("View")){
 			selectSql.append(" LovDescHomeDetailsName,LovDescHomePropertyTypeName, LovDescHomeAddrCityName,");
 			selectSql.append(" LovDescHomeOwnerShipTypeName,LovDescHomeAddrCountryName,LovDescHomeAddrProvinceName,");
@@ -253,14 +253,14 @@ public class HomeLoanDetailDAOImpl extends BasisCodeDAO<HomeLoanDetail> implemen
 		insertSql.append(" HomeCostOfLand, HomeCostOfConstruction, HomeConstructionStage,");
 		insertSql.append(" HomeDateOfPocession, HomeAreaOfLand, HomeAreaOfFlat, HomePropertyType,");
 		insertSql.append(" HomeOwnerShipType, HomeAddrFlatNbr, HomeAddrStreet, HomeAddrLane1, HomeAddrLane2,");
-		insertSql.append(" HomeAddrPOBox, HomeAddrCountry, HomeAddrProvince, HomeAddrCity, HomeAddrZIP, HomeAddrPhone,");
+		insertSql.append(" HomeAddrPOBox, HomeAddrCountry, HomeAddrProvince, HomeAddrCity, HomeAddrZIP, HomeAddrPhone,HomeTitleDeedNo,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:LoanRefNumber, :LoanRefType, :HomeDetails, :HomeBuilderName,");
 		insertSql.append(" :HomeCostPerFlat, :HomeCostOfLand, :HomeCostOfConstruction, :HomeConstructionStage,");
 		insertSql.append(" :HomeDateOfPocession, :HomeAreaOfLand, :HomeAreaOfFlat, :HomePropertyType,");
 		insertSql.append(" :HomeOwnerShipType, :HomeAddrFlatNbr, :HomeAddrStreet, :HomeAddrLane1, :HomeAddrLane2,");
-		insertSql.append(" :HomeAddrPOBox, :HomeAddrCountry, :HomeAddrProvince, :HomeAddrCity, :HomeAddrZIP, :HomeAddrPhone,");
+		insertSql.append(" :HomeAddrPOBox, :HomeAddrCountry, :HomeAddrProvince, :HomeAddrCity, :HomeAddrZIP, :HomeAddrPhone, :HomeTitleDeedNo,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -305,7 +305,7 @@ public class HomeLoanDetailDAOImpl extends BasisCodeDAO<HomeLoanDetail> implemen
 		updateSql.append(" HomeAddrStreet = :HomeAddrStreet, HomeAddrLane1 = :HomeAddrLane1,");
 		updateSql.append(" HomeAddrLane2 = :HomeAddrLane2, HomeAddrPOBox = :HomeAddrPOBox,");
 		updateSql.append(" HomeAddrCountry = :HomeAddrCountry, HomeAddrProvince = :HomeAddrProvince,");
-		updateSql.append(" HomeAddrCity = :HomeAddrCity, HomeAddrZIP = :HomeAddrZIP, HomeAddrPhone = :HomeAddrPhone,");
+		updateSql.append(" HomeAddrCity = :HomeAddrCity, HomeAddrZIP = :HomeAddrZIP, HomeAddrPhone = :HomeAddrPhone, HomeTitleDeedNo = :HomeTitleDeedNo,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

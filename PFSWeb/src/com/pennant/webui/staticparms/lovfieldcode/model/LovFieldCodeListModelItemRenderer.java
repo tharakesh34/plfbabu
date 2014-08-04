@@ -53,6 +53,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.staticparms.LovFieldCode;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 
@@ -73,7 +74,8 @@ public class LovFieldCodeListModelItemRenderer implements ListitemRenderer<LovFi
 		lc.setParent(item);
 	  	lc = new Listcell(lovFieldCode.getFieldCodeDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(lovFieldCode.getFieldCodeType().trim(),PennantAppUtil.getLovFieldType()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(lovFieldCode.getFieldCodeType().trim(),
+				PennantStaticListUtil.getLovFieldType()));
 	  	lc.setParent(item);
 	  	lc = new Listcell();
 		final Checkbox cbFieldEdit = new Checkbox();

@@ -64,7 +64,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityGroupService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -579,15 +580,12 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl implements Serializable
 		setValidationOn(true);
 
 		if (!this.grpCode.isReadonly()){
-			this.grpCode.setConstraint(
-					new SimpleConstraint(PennantConstants.ALPHANUM_UNDERSCORE_REGEX, Labels.getLabel("MAND_ALPHANUM_UNDERSCORE"
-							,new String[]{Labels.getLabel("label_SecurityGroupDialog_GrpCode.value")})));
+			this.grpCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityGroupDialog_GrpCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 		}
 		
 		if (!this.grpDesc.isReadonly()){
-			this.grpDesc.setConstraint(
-					new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel("MAND_FIELD_DESC"
-							,new String[]{Labels.getLabel("label_SecurityGroupDialog_GrpDesc.value")})));
+			this.grpDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityGroupDialog_GrpDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		
 		logger.debug("Leaving ");

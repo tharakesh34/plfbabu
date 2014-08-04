@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.model;
 
+import java.util.List;
+
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
+
 public class LoginUserDetails {
 
 	public LoginUserDetails() {
@@ -54,6 +58,7 @@ public class LoginUserDetails {
 	private String loginSessionID;
 	private String usrLanguage;
 	private boolean   usrCanOverrideLimits = false;
+	private List<SecurityUserDivBranch> securityUserDivBranchList;
 	
 	public long getLoginUsrID() {
 		return loginUsrID;
@@ -111,4 +116,11 @@ public class LoginUserDetails {
     	this.usrCanOverrideLimits = usrCanOverrideLimits;
     }
 
+	public List<SecurityUserDivBranch> getSecurityUserDivBranchList() {
+    	return securityUserDivBranchList;
+    }
+
+	public void setSecurityUserDivBranchList(List<SecurityUserDivBranch> securityUserDivBranchList) {
+    	this.securityUserDivBranchList = securityUserDivBranchList;
+    }
 }

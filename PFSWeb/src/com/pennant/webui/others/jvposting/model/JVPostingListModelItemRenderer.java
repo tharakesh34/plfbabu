@@ -65,11 +65,10 @@ import com.pennant.util.PennantAppUtil;
 public class JVPostingListModelItemRenderer implements ListitemRenderer<JVPosting>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	int format=getformatter();
 	@Override
 	public void render(Listitem item, JVPosting jVPosting, int count) throws Exception {
 		Listcell lc;
-	  	lc = new Listcell(jVPosting.getBatchReference());
+	  	lc = new Listcell(String.valueOf(jVPosting.getBatchReference()));
 		lc.setParent(item);
 	  	lc = new Listcell(jVPosting.getBatch());
 		lc.setParent(item);
@@ -77,9 +76,13 @@ public class JVPostingListModelItemRenderer implements ListitemRenderer<JVPostin
 	  	lc.setParent(item);
 	  	lc = new Listcell(PennantApplicationUtil.formateInt(jVPosting.getCreditsCount()));
 	  	lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.amountFormate(jVPosting.getTotDebitsByBatchCcy(),format));
+	  	lc = new Listcell(PennantApplicationUtil.amountFormate(jVPosting.getTotDebitsByBatchCcy(),jVPosting.getCurrencyEditField()));
 	  	lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.amountFormate(jVPosting.getTotCreditsByBatchCcy(),format));
+	  	lc = new Listcell(PennantApplicationUtil.amountFormate(jVPosting.getTotCreditsByBatchCcy(),jVPosting.getCurrencyEditField()));
+	  	lc.setParent(item);
+	  	lc = new Listcell(jVPosting.getValidationStatus());
+	  	lc.setParent(item);
+	  	lc = new Listcell(jVPosting.getBatchPostingStatus());
 	  	lc.setParent(item);
 	  	lc = new Listcell(jVPosting.getRecordStatus());
 		lc.setParent(item);
@@ -87,14 +90,5 @@ public class JVPostingListModelItemRenderer implements ListitemRenderer<JVPostin
 		lc.setParent(item);
 		item.setAttribute("data", jVPosting);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onJVPostingItemDoubleClicked");
-	}
-	
-	private int getformatter() {
-		Currency currency= PennantAppUtil.getCuurencyBycode(SystemParameterDetails.getSystemParameterValue("EXT_BASE_CCY").toString());
-		if (currency!=null) {
-	        return currency.getCcyEditField();
-        }else{
-        	return 0;
-        }
 	}
 }

@@ -9,88 +9,94 @@
 
 	<window>
 		<window id="window_OverdueChargeRecoveryList"
-			apply="${overdueChargeRecoveryListCtrl}" border="none"  style="padding-top:10px" 
-			width="100%">
+			apply="${overdueChargeRecoveryListCtrl}" border="none"
+			 width="100%" height="100%" sizable="false">
+					<div id="div_OverdueChargeRecoveryList"
+						sclass="z-toolbar" style="padding:0px" height="28px">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="30%,40%,30%">
 
-			<div id="div_OverdueChargeRecoveryList" sclass="z-toolbar"
-				style="padding:0px" height="28px">
-				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%" widths="30%,40%,30%">
+							<!-- COMMON BUTTONS -->
+							<label value="" />
 
-					<!-- COMMON BUTTONS -->
-					<label value="" />
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								style="border-style: none;">
+								<button
+									id="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog"
+									height="24px" label="${c:l('label_Filter')}"
+									autodisable="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog,button_OverdueChargeRecoveryList_PrintList,button_OverdueChargeRecoveryList_NewOverdueChargeRecovery,btnRefresh,btnHelp"
+									tooltiptext="${c:l('button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog.tooltiptext')}" />
+								<button
+									id="button_OverdueChargeRecoveryList_PrintList" height="24px"
+									label="${c:l('label_Print')}"
+									autodisable="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog,button_OverdueChargeRecoveryList_PrintList,button_OverdueChargeRecoveryList_NewOverdueChargeRecovery,btnRefresh,btnHelp"
+									tooltiptext="${c:l('button_OverdueChargeRecoveryList_PrintList.tooltiptext')}" />
+							</toolbar>
 
-					<!-- SEARCH AREA -->
-					<toolbar align="center"
-						style="border-style: none;">
-						<button
-							id="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog"
-							height="24px" label = "${c:l('label_Filter')}"
-							autodisable="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog,button_OverdueChargeRecoveryList_PrintList,button_OverdueChargeRecoveryList_NewOverdueChargeRecovery,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog.tooltiptext')}" />
-						<button
-							id="button_OverdueChargeRecoveryList_PrintList" height="24px"
-							label = "${c:l('label_Print')}"
-							autodisable="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog,button_OverdueChargeRecoveryList_PrintList,button_OverdueChargeRecoveryList_NewOverdueChargeRecovery,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_OverdueChargeRecoveryList_PrintList.tooltiptext')}" />
-					</toolbar>
-
-					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
-						<button id="btnRefresh" height="24px"
-							label = "${c:l('label_Refresh')}"
-							autodisable="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog,button_OverdueChargeRecoveryList_PrintList,button_OverdueChargeRecoveryList_NewOverdueChargeRecovery,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
-							label = "${c:l('label_Help')}"
-							autodisable="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog,button_OverdueChargeRecoveryList_PrintList,button_OverdueChargeRecoveryList_NewOverdueChargeRecovery,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-					</toolbar>
-				</hbox>
-			</div>
-
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end"
+								style="border-style: none;">
+								<button id="btnRefresh" height="24px"
+									label="${c:l('label_Refresh')}"
+									autodisable="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog,button_OverdueChargeRecoveryList_PrintList,button_OverdueChargeRecoveryList_NewOverdueChargeRecovery,btnRefresh,btnHelp"
+									tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+								<button id="btnHelp" height="24px"
+									label="${c:l('label_Help')}"
+									autodisable="button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog,button_OverdueChargeRecoveryList_PrintList,button_OverdueChargeRecoveryList_NewOverdueChargeRecovery,btnRefresh,btnHelp"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							</toolbar>
+						</hbox>
+					</div>
 			<borderlayout id="borderLayout_OverdueChargeRecoveryList">
-				<north border="none">
+				<north border="none" visible="false">
 					<textbox id="recoveryCode" value="Y"
-						visible="false" />
+							visible="false" />
 				</north>
-				<center border="none" autoscroll="true">
-					<listbox id="listBoxOverdueChargeRecovery" emptyMessage="No Records Found"
-						vflex="true" width="99%" multiple="false">
+				<center border="none" >
+				<groupbox>
+					<listbox id="listBoxOverdueChargeRecovery"
+						emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+						vflex="true" span="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
 						<listhead sizable="true">
-							<listheader id="listheader_FinSchdDate"
-								label="${c:l('listheader_FinSchdDate.label')}" sort="auto"
-								width="10%" />
 							<listheader id="listheader_FinODDate"
-								label="${c:l('listheader_FinODDate.label')}" sort="auto"
-								width="10%" />
+								label="${c:l('listheader_FinOdDate.label')}" sort="false"
+								hflex="true" />
+							<listheader id="listheader_FinODDays"
+								label="${c:l('listheader_FinODDays.label')}" sort="false"
+								hflex="true" />
 							<listheader id="listheader_FinODPri"
-								label="${c:l('listheader_FinODPri.label')}" sort="auto"
-								width="10%" />
+								label="${c:l('listheader_FinODPri.label')}" sort="false"
+								hflex="true" />
 							<listheader id="listheader_FinODPft"
-								label="${c:l('listheader_FinODPft.label')}" sort="auto"
-								width="10%" />
+								label="${c:l('listheader_FinODPft.label')}" sort="false"
+								hflex="true" />
 							<listheader id="listheader_FinODTot"
-								label="${c:l('listheader_FinODTot.label')}" sort="auto"
-								width="10%" />
+								label="${c:l('listheader_FinODTot.label')}" sort="false"
+								hflex="true" />
 							<listheader id="listheader_FinODCPenalty"
-								label="${c:l('listheader_FinODCPenalty.label')}" sort="auto"
-								width="10%" />
+								label="${c:l('listheader_FinODCPenalty.label')}" sort="false"
+								hflex="true" />
 							<listheader id="listheader_FinODCWaived"
-								label="${c:l('listheader_FinODCWaived.label')}" sort="auto"
-								width="10%" />
-							<listheader id="listheader_FinODCPLPenalty"
-								label="${c:l('listheader_FinODCPLPenalty.label')}" sort="auto"
-								width="10%" />
-							<listheader id="listheader_FinODCCPenalty"
-								label="${c:l('listheader_FinODCCPenalty.label')}" sort="auto"
-								width="10%" />
+								label="${c:l('listheader_FinODCWaived.label')}" sort="false"
+								hflex="true" />
+							<listheader
+								id="listheader_FinODCPenaltyPaid"
+								label="${c:l('listheader_FinODCPenaltyPaid.label')}"
+								sort="false" hflex="true" />
+							<listheader id="listheader_FinODCPenaltyBal"
+								label="${c:l('listheader_FinODCPenaltyBal.label')}" sort="false"
+								hflex="true" />
 							<listheader
 								id="listheader_FinODCRecoverySts"
-								label="${c:l('listheader_FinODCRecoverySts.label')}" sort="auto"
-								width="10%" />
+								label="${c:l('listheader_FinODCRecoverySts.label')}"
+								sort="false" hflex="true" />
 						</listhead>
 					</listbox>
+					</groupbox>
 				</center>
 			</borderlayout>
 		</window>

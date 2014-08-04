@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.systemmasters;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.pennant.backend.model.LoginUserDetails;
@@ -52,7 +53,7 @@ import com.pennant.backend.util.WorkFlowUtil;
  * Model class for the <b>Department table</b>.<br>
  *
  */
-public class Department implements java.io.Serializable {
+public class Department implements Serializable {
 
 	private static final long serialVersionUID = 7138696402908769540L;
 

@@ -6,62 +6,68 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<style>
-		.decimalToString{ border:none; background-color:white; }
-		.fontBold{font-weight:bold;}
 
+	<style>
+		.decimalToString{ 
+			border:none; background-color:white; 
+		}
+		.fontBold{
+			font-weight:bold;
+		}
 	</style>
 	<window>
 		<window id="window_CommitmentDialog" border="normal"
 			apply="${commitmentDialogCtrl}" width="100%" height="100%"
 			sizable="false">
-			<div sclass="z-toolbar" style="padding:0">
-				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%">
 
-					<!-- COMMON BUTTONS -->
-					<toolbar align="start"
-						style="float:left; border-style: none;">
-
-						<button id="btnNew" visible="false"
-							height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnEdit" visible="false"
-							height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnDelete" visible="false"
-							height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnSave" visible="false"
-							height="24px" image="/images/icons/btn_save2_16x16.gif"
-							tooltiptext="${c:l('btnSave.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnCancel" visible="false"
-							height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-						<button id="btnNotes" visible="false"
-							height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-					</toolbar>
-					<!-- SEARCH AREA -->
-					<toolbar align="center"
-						style="float:left; border-style: none;">
-						<hbox align="center" style="padding: 2px"></hbox>
-					</toolbar>
-
-					<!-- CRUD BUTTONS -->
-					<toolbar align="end"
-						style="float:right; border-style: none;">
-						<button id="btnHelp" height="24px"
-							label = "${c:l('label_Help')}"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnClose" height="24px"
-							tooltiptext="${c:l('btnClose.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-					</toolbar>
-				</hbox>
-			</div>
 			<borderlayout id="borderlayoutCommitment">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"  widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+
+								<button id="btnNew" visible="false"
+									height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnEdit" visible="false"
+									height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnDelete" visible="false"
+									height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnSave" visible="false"
+									height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnCancel" visible="false"
+									height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+								<button id="btnNotes" visible="false"
+									height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label id="label_windowTitle"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" height="24px"
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnClose" height="24px"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
 				<center border="none" autoscroll="true">
 					<div>
 						<tabbox>
@@ -122,53 +128,29 @@
 														<space
 															id="space_custID" spacing="2px" />
 														<longbox
-															id="custID"  visible="false" />
-														<textbox
-															id="custIDName" width="180px" readonly="true" />
+															id="custID" visible="false" />
+														<textbox id="custIDName" width="180px" />
 														<button label=""
 															id="btnSearchcustID" image="/images/icons/LOVSearch.png"
 															height="24px" />
-															<label	id="labelCustIDName"/>	
-											
+														<label
+															id="labelCustIDName" />
+
 													</hlayout>
 													<label
 														id="label_CmtBranch"
 														value="${c:l('label_CommitmentDialog_CmtBranch.value')}" />
-													<hlayout
-														id="hlayout_CmtBranch" spacing="2px">
-														<space
-															id="space_CmtBranch" spacing="2px" />
-														<textbox
-															id="cmtBranch" width="72px" visible="false" />
-														<textbox
-															id="cmtBranchName" width="180px" readonly="true" />
-														<button label=""
-															id="btnSearchCmtBranch"
-															image="/images/icons/LOVSearch.png" height="24px" />
-														<label
-															id="labelCmtBranchName">
-														</label>
-													</hlayout>
+													<extendedcombobox id="cmtBranch"/>
 												</row>
 												<row id="row2">
 													<label
 														id="label_CmtCcy"
 														value="${c:l('label_CommitmentDialog_CmtCcy.value')}" />
-													<hlayout
-														id="hlayout_CmtCcy" spacing="2px">
-														<space
-															id="space_CmtCcy" spacing="2px" />
-														<textbox
-															id="cmtCcy" width="27px" visible="false" />
-														<textbox
-															id="cmtCcyName" width="180px" readonly="true" />
-														<button label=""
-															id="btnSearchCmtCcy" image="/images/icons/LOVSearch.png"
-															height="24px" />
-														<label
-															id="labelCmtCcy">
-														</label>
-													</hlayout>
+													<extendedcombobox id="cmtCcy"/>
+													<label
+														id="label_FacilityRef"
+														value="${c:l('label_CommitmentDialog_FacilityRef.value')}" />
+													<extendedcombobox id="facilityRef"/>
 												</row>
 												<row id="row3">
 													<label
@@ -271,13 +253,8 @@
 													<label
 														id="label_CmtAmount"
 														value="${c:l('label_CommitmentDialog_CmtAmount.value')}" />
-													<hlayout
-														id="hlayout_CmtAmount">
-														<space
-															id="space_CmtAmount" spacing="2px" />
-														<decimalbox
-															id="cmtAmount" width="162px" maxlength="25" />
-													</hlayout>
+													<currencyBox
+															id="cmtAmount"/>
 													<label
 														id="label_CmtPromisedDate"
 														value="${c:l('label_CommitmentDialog_CmtPromisedDate.value')}" />
@@ -286,7 +263,7 @@
 														<space
 															id="space_CmtPromisedDate" spacing="2px" />
 														<datebox
-															id="cmtPromisedDate" width="100px" />
+															id="cmtPromisedDate" width="120px" />
 													</hlayout>
 												</row>
 												<row id="row7">
@@ -298,7 +275,7 @@
 														<space
 															id="space_CmtStartDate" spacing="2px" />
 														<datebox
-															id="cmtStartDate" width="100px" />
+															id="cmtStartDate" width="120px" />
 													</hlayout>
 													<label
 														id="label_CmtExpDate"
@@ -308,7 +285,7 @@
 														<space
 															id="space_CmtExpDate" spacing="2px" />
 														<datebox
-															id="cmtExpDate" width="100px" />
+															id="cmtExpDate" width="120px" />
 													</hlayout>
 												</row>
 												<row id="row10">
@@ -350,25 +327,9 @@
 													<label
 														id="label_CmtChargesAccount"
 														value="${c:l('label_CommitmentDialog_CmtChargesAccount.value')}" />
-													<hlayout
-														id="hlayout_CmtChargesAccount">
-														<space
-															id="space_CmtChargesAccount" spacing="2px" />
-														<hlayout
-															spacing="0px">
-															<textbox
-																id="cmtChargesAccount" width="72px" visible="false" />
-															<textbox
-																id="cmtChargesAccountName" width="180px"
-																readonly="true" />
-															<button
-																label="" id="btnSearchCmtChargesAccount"
-																image="/images/icons/LOVSearch.png" height="24px" />
-															<label
-																id="lableCmtChargesAccountName">
-															</label>
-														</hlayout>
-													</hlayout>
+														<hlayout id="hlayout_CmtChargesAccount">
+														<accountSelectionBox id="cmtChargesAccount" />
+													  </hlayout>
 												</row>
 												<row id="row9">
 													<label
@@ -405,9 +366,21 @@
 															width="300px" />
 													</hlayout>
 													<cell colspan="2"
-														style="padding:0px" zclass="none">
+														style="padding:0px" zclass="none" id="summaryCell"> 
+														<groupbox id="gbCommitmentSummary" visible="false">
+															<caption label="${c:l('label_Customer_Existing_Commitments')}"></caption>
+															<listbox id="commitmentSummary"  sizedByContent="true" span="true" height="100px" emptyMessage="${c:l('listbox.emptyMessage')}">
+																<listhead>
+																	<listheader label="${c:l('label_CommitmentSummary_CmtCcy')}" sort="none" hflex="min"/>
+																	<listheader label="${c:l('label_CommitmentSummary_CmtCommitments')}" sort="none" hflex="min"/>
+																	<listheader label="${c:l('label_CommitmentSummary_CmtAmount')}" sort="none" hflex="min"/>
+																	<listheader label="${c:l('label_CommitmentSummary_CmtUtilizedTotAmount')}" sort="none" hflex="min"/>
+																	<listheader label="${c:l('label_CommitmentSummary_CmtUnUtilizedAmount')}" sort="none" hflex="min"/>
+																</listhead>
+															</listbox>
+														</groupbox>
 														<grid
-															width="75%" style="background-color:#f38c60;">
+															width="75%" style="background-color:#f38c60;"  id="gridSummary" visible="false">
 															<columns>
 																<column />
 																<column />
@@ -470,8 +443,8 @@
 										<listbox
 											id="listBoxCommitmentFinance" fixedLayout="true" vflex="true"
 											style="white-space:nowrap;" span="true"
-											tooltiptext="${c:l('listbox.FinaceDetails.tooltiptext')}" width="100%"
-											height="150px" multiple="false">
+											tooltiptext="${c:l('listbox.FinaceDetails.tooltiptext')}"
+											width="100%" height="150px" multiple="false">
 											<listhead sizable="true">
 												<listheader
 													id="listheader_FinReference"
@@ -517,9 +490,8 @@
 											label="Movement Details" />
 										<listbox
 											id="listBoxCommitmentMovement" fixedLayout="true"
-											vflex="true" span="true"
-											 width="100%"
-											height="150px" multiple="false">
+											vflex="true" span="true" width="100%" height="150px"
+											multiple="false">
 											<listhead sizable="true">
 												<listheader
 													id="listheader_MovementType"
@@ -528,6 +500,10 @@
 												<listheader
 													id="listheader_MovementOrder"
 													label="${c:l('listheader_MovementOrder.label')}"
+													sort="auto" hflex="min" />
+												<listheader
+													id="listheader_MovementFinReference"
+													label="${c:l('listheader_FinReference.label')}"
 													sort="auto" hflex="min" />
 												<listheader
 													id="listheader_MovementDate"
@@ -559,18 +535,17 @@
 								</tabpanel>
 								<tabpanel>
 									<groupbox>
-										<listbox id="listBoxCommitmentPostings"
-											 fixedLayout="true"
-											vflex="true" span="true"
-											 width="100%"
-											height="150px" multiple="false" sizedByContent="true">
+										<listbox
+											id="listBoxCommitmentPostings" fixedLayout="true"
+											vflex="true" span="true" width="100%" height="150px"
+											multiple="false" sizedByContent="true">
 											<listhead sizable="true">
 												<listheader
-													label="${c:l('listheader_Acc_LinkedTranId.label')}" sort="auto"
-													hflex="min" />
+													label="${c:l('listheader_Acc_LinkedTranId.label')}"
+													sort="auto" hflex="min" />
 												<listheader
-													label="${c:l('listheader_Acc_DebitOrCredit.label')}" sort="auto"
-													hflex="min" />
+													label="${c:l('listheader_Acc_DebitOrCredit.label')}"
+													sort="auto" hflex="min" />
 												<listheader
 													label="${c:l('listheader_Acc_EntryDesc.label')}"
 													sort="auto" hflex="min" />
@@ -579,13 +554,13 @@
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_Acc_FinReference.label')}"
-													sort="auto" hflex="min"  />
+													sort="auto" hflex="min" />
 												<listheader
 													label="${c:l('listheader_Acc_AccountNo.label')}"
-													sort="auto" hflex="min"  />
+													sort="auto" hflex="min" />
 												<listheader
-													label="${c:l('listheader_Acc_Amount.label')}"
-													sort="auto" hflex="min"  align="right"/>
+													label="${c:l('listheader_Acc_Amount.label')}" sort="auto"
+													hflex="min" align="right" />
 											</listhead>
 										</listbox>
 									</groupbox>
@@ -594,6 +569,7 @@
 						</tabbox>
 					</div>
 				</center>
+				
 				<south id="south" height="105px" border="none">
 					<groupbox id="gb_statusDetails" mold="3d"
 						width="100%">

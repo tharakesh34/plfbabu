@@ -45,35 +45,51 @@ package com.pennant.webui.rmtmasters.accounttype;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.rmtmasters.accounttype.model.AccountTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -109,6 +125,37 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 	protected Listheader listheader_RecordType;
 	protected Listheader listheader_AcHead;                 // auto wired
 	protected Listheader listheader_IsCustSysAccount;       // auto wired
+	
+	//Search
+	protected Textbox 	acType; 							// auto wired
+	protected Listbox 	sortOperator_acType; 				// auto wired
+	protected Textbox 	acTypeDesc; 						// auto wired
+	protected Listbox 	sortOperator_acTypeDesc; 			// auto wired
+	protected Combobox 	acPurpose; 							// auto wired
+	protected Listbox 	sortOperator_acPurpose; 			// auto wired
+	protected Checkbox 	internalAc; 						// auto wired
+	protected Listbox 	sortOperator_internalAc; 			// auto wired
+	protected Checkbox 	acTypeIsActive; 					// auto wired
+	protected Listbox 	sortOperator_acTypeIsActive; 		// auto wired
+	protected Checkbox 	isCustSysAccount; 					// auto wired
+	protected Listbox 	sortOperator_isCustSysAccount; 		// auto wired
+	protected Textbox 	recordStatus; 						// auto wired
+	protected Listbox 	recordType;							// auto wired
+	protected Listbox 	sortOperator_recordStatus; 			// auto wired
+	protected Listbox 	sortOperator_recordType; 			// auto wired
+
+	protected Label label_AccountTypeSearch_RecordStatus; 	// auto wired
+	protected Label label_AccountTypeSearch_RecordType; 	// auto wired
+	protected Label label_AccountTypeSearchResult; 			// auto wired
+	
+	protected Grid	                       searchGrid;	
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+
+	private transient boolean	           approvedList	    = false;
+	private List<ValueLabel>           listAccPurposeType = PennantStaticListUtil.getAccountPurpose();
 
 	// checkRights
 	protected Button btnHelp; 										// auto wired
@@ -160,7 +207,40 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 		}else{
 			wfAvailable=false;
 		}
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_acType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_acType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_acTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_acTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_acPurpose.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_acPurpose.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_internalAc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_internalAc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_acTypeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_acTypeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
+		this.sortOperator_isCustSysAccount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_isCustSysAccount.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = PennantAppUtil.setRecordType(this.recordType);
+		} else {
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_AccountTypeSearch_RecordStatus.setVisible(false);
+			this.label_AccountTypeSearch_RecordType.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -170,6 +250,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_AccountTypeList.setHeight(getBorderLayoutHeight());
+		this.listBoxAccountType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingAccountTypeList.setPageSize(getListRows());
@@ -199,27 +280,8 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<AccountType>(AccountType.class,getListRows());
-		this.searchObj.addSort("AcType", false);
-
-		// Work flow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("RMTAccountTypes_View");
-			if (isFirstTask()) {
-				button_AccountTypeList_NewAccountType.setVisible(true);
-			} else {
-				button_AccountTypeList_NewAccountType.setVisible(false);
-			}
-
-			this.searchObj.addFilterIn("nextRoleCode", 
-					getUserWorkspace().getUserRoles(),isFirstTask());
-		}else{
-			this.searchObj.addTabelName("RMTAccountTypes_AView");
-		}
-
-		setSearchObj(this.searchObj);
+		// set the itemRenderer
+		this.listBoxAccountType.setItemRenderer(new AccountTypeListModelItemRenderer());
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_AccountTypeList_NewAccountType.setVisible(false);
 			this.button_AccountTypeList_AccountTypeSearchDialog.setVisible(false);
@@ -227,16 +289,30 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 			PTMessageUtils.showErrorMessage(
 					PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,
-					this.listBoxAccountType,this.pagingAccountTypeList);
-			// set the itemRenderer
-			this.listBoxAccountType.setItemRenderer(
-					new AccountTypeListModelItemRenderer());
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
+		setListAccountPurpose();
 		logger.debug("Leaving"+event.toString());
 	}
-
+	/**
+	 * This method sets all rightsTypes as ComboItems for ComboBox
+	 */
+	private void setListAccountPurpose() {
+		logger.debug("Entering ");
+		Comboitem comboitem;
+		for (int i = 0; i < listAccPurposeType.size(); i++) {
+			comboitem = new Comboitem();
+			comboitem.setLabel(listAccPurposeType.get(i).getLabel());
+			comboitem.setValue(listAccPurposeType.get(i).getValue());
+			this.acPurpose.appendChild(comboitem);
+		}
+		this.acPurpose.setSelectedIndex(0);
+		logger.debug("Leaving ");
+	}
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
@@ -394,9 +470,29 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering"+event.toString());
-		this.pagingAccountTypeList.setActivePage(0);
+		this.sortOperator_acType.setSelectedIndex(0);
+		this.acType.setValue("");
+		this.sortOperator_acTypeDesc.setSelectedIndex(0);
+		this.acTypeDesc.setValue("");
+		this.sortOperator_acPurpose.setSelectedIndex(0);
+		this.acPurpose.setSelectedIndex(0);
+		this.sortOperator_acTypeIsActive.setSelectedIndex(0);
+		this.acTypeIsActive.setValue("");
+		this.sortOperator_internalAc.setSelectedIndex(0);
+		this.internalAc.setValue("");
+		this.sortOperator_isCustSysAccount.setSelectedIndex(0);
+		this.isCustSysAccount.setValue("");
+		
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		/*this.pagingAccountTypeList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_AccountTypeList, event);
-		this.window_AccountTypeList.invalidate();
+		this.window_AccountTypeList.invalidate();*/
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -405,28 +501,9 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$button_AccountTypeList_AccountTypeSearchDialog(
-			Event event) throws Exception {
+	public void onClick$button_AccountTypeList_AccountTypeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering"+event.toString());
-		/*
-		 * we can call our AccountTypeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected AccountType. For handed over
-		 * these parameter only a Map is accepted. So we put the AccountType object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("accountTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SolutionFactory/AccountType/AccountTypeSearchDialog.zul",
-							null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -442,7 +519,87 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 		PTListReportUtils reportUtils = new PTListReportUtils("AccountType", getSearchObj(),this.pagingAccountTypeList.getTotalSize()+1);
 		logger.debug("Leaving"+event.toString());
 	}
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and initialize sorting ++//
+		this.searchObj = new JdbcSearchObject<AccountType>(AccountType.class,getListRows());
+		this.searchObj.addSort("AcType", false);
+		this.searchObj.addTabelName("RMTAccountTypes_View");
+		if (isWorkFlowEnabled()) {
 
+			if (isFirstTask() && this.moduleType == null) {
+				button_AccountTypeList_NewAccountType.setVisible(true);
+			} else {
+				button_AccountTypeList_NewAccountType.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("RMTAccountTypes_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("RMTAccountTypes_AView");
+		}
+		// System Internal A/c code
+		if (!StringUtils.trimToEmpty(this.acType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_acType.getSelectedItem(), this.acType.getValue(), "acType");
+		}
+		
+		// System Internal A/c Name
+		if (!StringUtils.trimToEmpty(this.acTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_acTypeDesc.getSelectedItem(), this.acTypeDesc.getValue(), "acTypeDesc");
+		}
+		if (null !=this.acPurpose.getSelectedItem() && !StringUtils.trimToEmpty(this.acPurpose.getSelectedItem().getValue().toString()).equals("")){
+			searchObj = getSearchFilter(searchObj, this.sortOperator_acPurpose.getSelectedItem(), this.acPurpose.getSelectedItem().getValue().toString(), "acPurpose");
+		}
+		 if (internalAc.isChecked()) { 
+			 searchObj = getSearchFilter(searchObj,this.sortOperator_internalAc.getSelectedItem(), 1,"internalAc");
+			 } else { 
+				 searchObj = getSearchFilter(searchObj,this.sortOperator_internalAc.getSelectedItem(), 0,"internalAc"); 
+				 }
+		 if (acTypeIsActive.isChecked()) { 
+			 searchObj = getSearchFilter(searchObj,this.sortOperator_acTypeIsActive.getSelectedItem(), 1,"acTypeIsActive"); 
+			 } else { 
+				 searchObj = getSearchFilter(searchObj,this.sortOperator_acTypeIsActive.getSelectedItem(), 0,"acTypeIsActive"); 
+				 }
+		 if (isCustSysAccount.isChecked()) { 
+			 searchObj = getSearchFilter(searchObj,this.sortOperator_isCustSysAccount.getSelectedItem(), 1,"custSysAc"); 
+			 } else { 
+				 searchObj = getSearchFilter(searchObj,this.sortOperator_isCustSysAccount.getSelectedItem(), 0,"custSysAc"); 
+				 }
+		
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxAccountType,this.pagingAccountTypeList);
+		logger.debug("Leaving" );
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

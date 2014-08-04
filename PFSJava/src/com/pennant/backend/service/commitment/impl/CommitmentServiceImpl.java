@@ -50,6 +50,8 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
+import com.pennant.backend.model.commitment.CommitmentSummary;
+import com.pennant.backend.model.reports.AvailCommitment;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.commitment.CommitmentService;
@@ -346,24 +348,39 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			if (commitment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				commitment.setRecordType("");
-				linkTranid = processPosting(commitment, PennantConstants.NEWCMT);
+				List<Object> returnList = processPosting(commitment, PennantConstants.NEWCMT);
+				if(returnList != null && (returnList.get(3) == null)){
+					linkTranid = (Long) returnList.get(1);
+					if (commitment.isOpenAccount()) {
+						commitment.setCmtAccount((String) returnList.get(2));
+                    }
+				}else{
+					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
+			        auditHeader.setErrorDetails(new ErrorDetails(errorMessage.substring(0, errorMessage.indexOf("-")).trim(),
+			        		errorMessage.substring(errorMessage.indexOf("-")+1).trim(), null));
+			        return auditHeader;
+				}
 				getCommitmentDAO().save(commitment, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				commitment.setRecordType("");
-				linkTranid = processPosting(commitment, PennantConstants.MNTCMT);
+				List<Object> returnList  = processPosting(commitment, PennantConstants.MNTCMT);
+				if(returnList != null && (returnList.get(3) == null)){
+					linkTranid = (Long) returnList.get(1);
+				}else{
+					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
+			        auditHeader.setErrorDetails(new ErrorDetails(errorMessage.substring(0, errorMessage.indexOf("-")).trim(),
+			        		errorMessage.substring(errorMessage.indexOf("-")+1).trim(), null));
+			        return auditHeader;
+				}
 				getCommitmentDAO().update(commitment, "");
 			}
 		}
-		if (linkTranid==0) {
-	        auditHeader.setErrorDetails(new ErrorDetails("5000", "Posting process Failed", null));
-	        return auditHeader;
-        }
-		
 		
 		getCommitmentDAO().delete(commitment, "_TEMP");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeader.getAuditDetail().setModelData(auditHeader.getAuditDetail().getModelData());
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		//Retrieving List of Audit Details For checkList details modules
 
@@ -399,7 +416,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "doApprove", false);
+		auditHeader = businessValidation(auditHeader, "doReject", false);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -469,6 +486,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		String[] valueParm = new String[1];
 		valueParm[0] = commitment.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_CmtReference") + ":" + valueParm[0];
+		String[] errParmFacRef = new String[1];
+		String[] valueParmFacRef = new String[1];
+		errParmFacRef[0] = PennantJavaUtil.getLabel("label_FacilityRef")+":"+commitment.getFacilityRef()+" For";
+		valueParmFacRef[0] = PennantJavaUtil.getLabel("label_custID")+":"+commitment.getCustCIF();
 
 		if (commitment.isNew()) { // for New record or new record into work flow
 
@@ -491,6 +512,11 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 						        usrLanguage));
 					}
 				}
+			}
+			Commitment facilityRef = getCommitmentDAO().getCommitmentByFacilityRef(commitment.getId(), "_AView");
+			if(facilityRef != null){
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						PennantConstants.KEY_FIELD, "41001", errParmFacRef , valueParmFacRef), usrLanguage));
 			}
 		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
@@ -569,7 +595,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				auditDetailMap.put("CommitmentMovement", auditDetail);
 			}
 			//auditDetailMap.put("CommitmentMovement", setChkListDetailAuditData(commitmentmovement,auditTranType,method));
-			auditDetails.add(auditDetailMap.get("" + ""));
+			//auditDetails.add(auditDetailMap.get("" + ""));
 		}
 
 		commitmentmovement.getCommitmentMovement().setLovDescAuditDetailMap(auditDetailMap);
@@ -827,11 +853,17 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	public Map<String, Object> getAmountSummary(long custID) {
 		return getCommitmentDAO().getAmountSummary(custID);
 	}
+	@Override
+	public List<CommitmentSummary> getCommitmentSummary(long custID) {
+		return getCommitmentDAO().getCommitmentSummary(custID);
+	}
 
-	private long processPosting(Commitment commitment, String event) {
+	private List<Object> processPosting(Commitment commitment, String event) {
 
+		List<Object> returnResultList = null;
 		try {
-			List<Object> objects=null;
+			
+			//Preparation for Commitment Postings
 			Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
 			if (PennantConstants.MNTCMT.equals(event)) {
 				Commitment prvCommitment =  getCommitmentDAO().getCommitmentById(commitment.getId(), "");
@@ -839,24 +871,23 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				Commitment tempCommitment=new Commitment();
 				BeanUtils.copyProperties(commitment, tempCommitment);
 				tempCommitment.setCmtAmount(diffAmount);
-				objects=getPostingsPreparationUtil().processCmtPostingDetails(tempCommitment, "Y", dateAppDate, event);
+				returnResultList =getPostingsPreparationUtil().processCmtPostingDetails(tempCommitment, "Y", dateAppDate, event);
             }else{
-            	objects=getPostingsPreparationUtil().processCmtPostingDetails(commitment, "Y", dateAppDate, event);
+            	returnResultList = getPostingsPreparationUtil().processCmtPostingDetails(commitment, "Y", dateAppDate, event);
             }
 			
-			
-			if (objects!=null && objects.size()>0 && (Boolean)objects.get(0)) {
-		 return (Long) objects.get(1);
-            }
 		} catch (AccountNotFoundException e) {
 			logger.debug(e);
+			returnResultList =new ArrayList<Object>();
+			returnResultList.add(false);
+			returnResultList.add(0);
+			returnResultList.add(e.getErrorMsg());
 		} catch (IllegalAccessException e) {
 			logger.debug(e);
 		} catch (InvocationTargetException e) {
 			logger.debug(e);
 		}
-		return 0;
-
+		return returnResultList;
 	}
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
@@ -866,5 +897,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
+
+	@Override
+    public List<AvailCommitment> getCommitmentListByCustId(long custId) {
+	    return getCommitmentDAO().getCommitmentListByCustId(custId, "_AView");
+    }
 
 }

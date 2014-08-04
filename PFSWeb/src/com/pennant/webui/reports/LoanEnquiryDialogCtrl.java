@@ -9,9 +9,9 @@
  * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
- */
+ *//*
 
-/**
+*//**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
@@ -39,14 +39,13 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+ *//*
 
 package com.pennant.webui.reports;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +57,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -74,7 +72,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.OverDueRecoveryPostingsUtil;
 import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
@@ -97,6 +94,7 @@ import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.reports.model.LoanEnquiryListModelItemRenderer;
@@ -107,23 +105,23 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
-/**
+*//**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the
  * /WEB-INF/pages/Reports/LoanEnquiryDialog.zul. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- */
+ *//*
 public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implements Serializable {
 
 	private static final long serialVersionUID = -6646226859133636932L;
 	private final static Logger logger = Logger.getLogger(LoanEnquiryDialogCtrl.class);
-	/*
+	
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the ZUL-file are getting autoWired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 */
+	 
 	private   Window     window_LoanEnquiry;   	   // autoWired
 	protected Borderlayout borderlayout_Enquiry;   // autoWired
 
@@ -187,12 +185,12 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 	private OverdueChargeRecoveryService overdueChargeRecoveryService;
 	private PaymentService paymentService;
 	private Map<Date,List<FinanceRepayments>> paymentDetailsMap;
-	private List<ValueLabel> enquiryList = PennantAppUtil.getEnquiryFilters();
+	private List<ValueLabel> enquiryList = PennantStaticListUtil.getEnquiryFilters();
 	int listRows;
 
-	/**
+	*//**
 	 * default constructor.<br>
-	 */
+	 *//*
 	public LoanEnquiryDialogCtrl() {
 		super();
 	}
@@ -201,14 +199,14 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	/**
+	*//**
 	 * Before binding the data and calling the dialog window we check, if the
 	 * ZUL-file is called with a parameter for a selected Academic object in a
 	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onCreate$window_LoanEnquiry(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
@@ -259,10 +257,10 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 	// +++++++++++++++++++++++ Components events +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * When user clicks on  "btnSearchCustCIF" button
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnSearchCustCIF(Event event) throws  SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
 		
@@ -291,11 +289,11 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
+	*//**
 	 * when clicks on button "SearchFinType"
 	 * 
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnSearchFinType(Event event) {
 		logger.debug("Entering " + event.toString());
 		
@@ -324,11 +322,11 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
+	*//**
 	 * when clicks on button "SearchFinProduct"
 	 * 
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnSearchFinProduct(Event event) {
 		logger.debug("Entering " + event.toString());
 
@@ -355,11 +353,11 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
+	*//**
 	 * when clicks on button "SearchFinCurrency"
 	 * 
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnSearchFinCcy(Event event) {
 		logger.debug("Entering " + event.toString());
 
@@ -385,10 +383,10 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
+	*//**
 	 * When user clicks on button "btnSearchWIFFinaceRef" button
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnSearchFinRef(Event event){
 		logger.debug("Entering " + event.toString());
 
@@ -415,11 +413,11 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		logger.debug("Leaving " + event.toString());
 	}
 	
-	/**
+	*//**
 	 * When user clicks on "btnSearchBranchCode" button
 	 * This method displays ExtendedSearchListBox with branch details
 	 * @param event
-	 */
+	 *//*
 	public void onClick$btnSearchBranch(Event event){
 		logger.debug("Entering  "+event.toString());
 
@@ -447,10 +445,10 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		logger.debug("Leaving"+event.toString());
 	}
 
-	/**
+	*//**
 	 * When user clicks on button "button_Search" button
 	 * @param event
-	 */
+	 *//*
 	public void onClick$button_Search(Event event){
 		logger.debug("Entering " + event.toString());
 		doWriteComponentsToBean(this.loanEnquiry);
@@ -461,11 +459,11 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
+	*//**
 	 * When user clicks on button "button_Print" button
 	 * @param event
 	 * @throws InterruptedException 
-	 */
+	 *//*
 	public void onClick$button_Print(Event event) throws InterruptedException{
 		logger.debug("Entering " + event.toString());
 		if(getLoanEnquiry().getFinanceMainList()!=null && getLoanEnquiry().getFinanceMainList().size()>0){
@@ -475,11 +473,11 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		logger.debug("Leaving " + event.toString());
 	}
 	
-	/**
+	*//**
 	 * When user clicks on button "button_Reset" button
 	 * @param event
 	 * @throws InterruptedException 
-	 */
+	 *//*
 	public void onClick$button_Reset(Event event) throws InterruptedException{
 		logger.debug("Entering " + event.toString());
 		this.sortOperator_custCIF.setSelectedIndex(0);
@@ -648,11 +646,11 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
+	*//**
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aAcademic
-	 */
+	 *//*
 	public void doWriteComponentsToBean(LoanEnquiry aLoanEnquiry) {
 		logger.debug("Entering");
 		aLoanEnquiry.setLovDescCustCIF(this.custCIF.getValue());
@@ -662,10 +660,10 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		setLoanEnquiry(aLoanEnquiry);
 	}
 
-	/**
+	*//**
 	 * This method Fetch the records from financemain table by adding filters 
 	 * @return
-	 */
+	 *//*
 	public void doSearch(){
 
 		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class);
@@ -888,23 +886,23 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		}
 	}
 
-	/**
+	*//**
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */
+	 *//*
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_LoanEnquiry);
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
+	*//**
 	 * Methodd for fetching Finance Record
 	 * @param event
 	 * @throws Exception
-	 */
+	 *//*
 	public void onLoanItemDoubleClicked(Event event) throws Exception {
 
 		final Listitem item = this.listBoxEnquiryResult.getSelectedItem();
@@ -952,13 +950,13 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		}
 	}
 
-	/**
+	*//**
 	 * Opens the detail view. <br>
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
 	 * @param FinanceMain (aFinanceMain)
 	 * @throws Exception
-	 */
+	 *//*
 	protected void showDetailView(Object object) throws Exception {
 		logger.debug("Entering");
 
@@ -991,9 +989,9 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * SetVisible for components by checking if there's a right for it.
-	 */
+	 *//*
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("LoanEnquiryDialog");
@@ -1048,3 +1046,4 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		return overdueChargeRecoveryService;
 	}
 }
+*/

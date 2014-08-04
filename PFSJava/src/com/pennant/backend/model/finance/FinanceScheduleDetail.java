@@ -47,6 +47,7 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	private int schSeq;
 	private Date schDate;
 	private Date defSchdDate;
+	private long logKey;
 	private boolean pftOnSchDate = false;
 	private boolean cpzOnSchDate = false;
 	private boolean repayOnSchDate = false;
@@ -57,9 +58,7 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	private boolean downpaymentOnSchDate = false;
 	private BigDecimal balanceForPftCal = BigDecimal.ZERO;
 	private String baseRate = "";
-	private String lovDescBaseRateName;
 	private String splRate = "";
-	private String lovDescSplRateName;
 	private BigDecimal mrgRate = BigDecimal.ZERO;
 	private BigDecimal actRate = BigDecimal.ZERO;
 	private BigDecimal calculatedRate = BigDecimal.ZERO;
@@ -74,6 +73,7 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	private BigDecimal disbAmount = BigDecimal.ZERO;
 	private BigDecimal downPaymentAmount = BigDecimal.ZERO;
 	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
+	private BigDecimal refundOrWaiver = BigDecimal.ZERO;
 	private BigDecimal cpzAmount = BigDecimal.ZERO;
 	private BigDecimal defRepaySchd = BigDecimal.ZERO;
 	private BigDecimal defProfitSchd = BigDecimal.ZERO;
@@ -97,6 +97,9 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	private String specifier;
 	private BigDecimal earlyPaid = BigDecimal.ZERO;
 	private BigDecimal earlyPaidBal = BigDecimal.ZERO;
+	private BigDecimal writeoffPrincipal = BigDecimal.ZERO;
+	private BigDecimal writeoffProfit = BigDecimal.ZERO;
+	
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -234,28 +237,12 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 		this.baseRate = baseRate;
 	}
 
-	public String getLovDescBaseRateName() {
-		return this.lovDescBaseRateName;
-	}
-
-	public void setLovDescBaseRateName(String lovDescBaseRateName) {
-		this.lovDescBaseRateName = lovDescBaseRateName;
-	}
-
 	public String getSplRate() {
 		return splRate;
 	}
 
 	public void setSplRate(String splRate) {
 		this.splRate = splRate;
-	}
-
-	public String getLovDescSplRateName() {
-		return this.lovDescSplRateName;
-	}
-
-	public void setLovDescSplRateName(String lovDescSplRateName) {
-		this.lovDescSplRateName = lovDescSplRateName;
 	}
 
 	public BigDecimal getMrgRate() {
@@ -642,6 +629,20 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	public void setEarlyPaidBal(BigDecimal earlyPaidBal) {
     	this.earlyPaidBal = earlyPaidBal;
     }
+	
+	public BigDecimal getWriteoffPrincipal() {
+    	return writeoffPrincipal;
+    }
+	public void setWriteoffPrincipal(BigDecimal writeoffPrincipal) {
+    	this.writeoffPrincipal = writeoffPrincipal;
+    }
+
+	public BigDecimal getWriteoffProfit() {
+    	return writeoffProfit;
+    }
+	public void setWriteoffProfit(BigDecimal writeoffProfit) {
+    	this.writeoffProfit = writeoffProfit;
+    }
 
 	public int getVersion() {
 		return version;
@@ -799,9 +800,15 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	public void setFeeChargeAmt(BigDecimal feeChargeAmt) {
 	    this.feeChargeAmt = feeChargeAmt;
     }
-
 	public BigDecimal getFeeChargeAmt() {
 	    return feeChargeAmt;
+    }
+	
+	public BigDecimal getRefundOrWaiver() {
+    	return refundOrWaiver;
+    }
+	public void setRefundOrWaiver(BigDecimal refundOrWaiver) {
+    	this.refundOrWaiver = refundOrWaiver;
     }
 
 	public boolean isRepayComplete() {
@@ -810,6 +817,14 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 
 	public void setRepayComplete(boolean repayComplete) {
     	this.repayComplete = repayComplete;
+    }
+
+	public void setLogKey(long logKey) {
+	    this.logKey = logKey;
+    }
+
+	public long getLogKey() {
+	    return logKey;
     }
 
 }

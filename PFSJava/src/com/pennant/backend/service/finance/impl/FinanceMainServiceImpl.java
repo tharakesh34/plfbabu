@@ -329,8 +329,9 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		}
 
 		FinanceMain financeMain = (FinanceMain) auditHeader.getAuditDetail().getModelData();
-
+			
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		financeMainDAO.saveRejectFinanceDetails(financeMain);
 		getFinanceMainDAO().delete(financeMain,"_TEMP",isWIF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -363,7 +364,15 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-
+	
+	/**
+	 * Validation
+	 * @param auditDetail
+	 * @param usrLanguage
+	 * @param method
+	 * @param isWIF
+	 * @return
+	 */
 	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean isWIF){
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
@@ -445,7 +454,6 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	 *            (boolean)
 	 * **/
 	public List<FinanceEnquiry> getFinanceDetailsByCustId(long custId) {
-		logger.debug("Entering");
 		return getFinanceMainDAO().getFinanceDetailsByCustId(custId);
 	}
 	

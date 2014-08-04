@@ -3,6 +3,7 @@ package com.pennant.util;
 import java.util.ArrayList;
 
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.util.PennantStaticListUtil;
 /*
  * 	Class to define the System parameter utilities
  * */
@@ -12,16 +13,9 @@ public class SystemParameterUtil {
 	*   Method to get the Yes or No parameter values. 
 	*/
 	public static ArrayList<ValueLabel> getMOD_YESNO(){
-		return PennantAppUtil.getYesNo();
+		return PennantStaticListUtil.getYesNo();
 	}
-	
-	/*
-	 * 	Method to return Language values
-	 * */
-	public static ArrayList<ValueLabel> getMOD_LANGUAGE(){
-		return PennantAppUtil.getLanguage();
-		
-	}
+
 	/*
 	 * Method to return the CoreBank  customer ID parameter values 
 	 * */

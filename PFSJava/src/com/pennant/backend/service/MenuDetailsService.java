@@ -44,6 +44,7 @@
 package com.pennant.backend.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.MenuDetails;
 
@@ -51,6 +52,8 @@ public interface MenuDetailsService {
 
 	
 	public List<MenuDetails> getMenuDetailsByApp(String appCode);
+
+	public Map<String, Object> getLastLoginInfo(String string, String usrLogin,  Map<String, Object> inputParamMap, Map<String, Object> outputParamMap);
 	
 	
 }

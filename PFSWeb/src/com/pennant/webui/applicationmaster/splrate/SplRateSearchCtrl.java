@@ -87,8 +87,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 public class SplRateSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 	private static final long serialVersionUID = -370748726324674933L;
-	private final static Logger logger = Logger
-			.getLogger(SplRateSearchCtrl.class);
+	private final static Logger logger = Logger.getLogger(SplRateSearchCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -158,27 +157,27 @@ public class SplRateSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_sRType.setModel(new ListModelList(
+		this.sortOperator_sRType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_sRType.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_sREffDate.setModel(new ListModelList(
+		this.sortOperator_sREffDate.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getNumericOperators()));
 		this.sortOperator_sREffDate.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_sRRate.setModel(new ListModelList(
+		this.sortOperator_sRRate.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getNumericOperators()));
 		this.sortOperator_sRRate.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

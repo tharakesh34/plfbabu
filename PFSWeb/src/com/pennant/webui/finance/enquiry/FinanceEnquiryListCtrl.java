@@ -67,13 +67,10 @@ import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ReportGenerationUtil;
-import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -85,15 +82,16 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.reports.LoanEnquiry;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.service.finance.PaymentService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -182,7 +180,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	protected Button     button_Reset;	           // autoWired
 
 	protected Grid      grid_enquiryDetails;       // autoWired
-	protected Tabbox    tabbox;
 
 	// not auto wired variables
 	private   LoanEnquiry loanEnquiry=new LoanEnquiry();
@@ -191,11 +188,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	private FinanceDetailService financeDetailService;
 	private SuspenseService suspenseService;
 	private OverdueChargeRecoveryService overdueChargeRecoveryService;
-	private PaymentService paymentService;
 	
-	private List<ValueLabel> enquiryList = PennantAppUtil.getEnquiryFilters();
+	private List<ValueLabel> enquiryList = PennantStaticListUtil.getEnquiryFilters();
 	int listRows;
-	public boolean isCancelFinance = false;
 
 	/**
 	 * default constructor.<br>
@@ -218,12 +213,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	 */
 	public void onCreate$window_FinanceEnquiry(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
-		tabbox = (Tabbox)event.getTarget().getParent().getParent().getParent().getParent();
-		String reportMenuCode=tabbox.getSelectedTab().getId().trim().replace("tab_", "menu_Item_");
-		if(reportMenuCode.equalsIgnoreCase("menu_Item_CancelFinance")) {
-			isCancelFinance = true;
-		}
 		
 		//Listbox Sorting
 		
@@ -286,7 +275,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		this.sortOperator_FinCcy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
 		this.sortOperator_FinCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
-		doFillFilterList(enquiryList);
+		if(!enquiryType.getValue().equals("CHQPRNT")){
+			doFillFilterList(enquiryList);
+		}
 
 		//Check the rights
 		doCheckRights();
@@ -298,10 +289,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		listBoxEnquiryResult.setHeight(listboxHeight+"px");
 		listRows = Math.round(listboxHeight/ 24);
 		this.pagingEnquiryList.setPageSize(listRows);
-		if (isCancelFinance) {
-			this.menu_filter.setVisible(false);
-			this.label_menu_filter.setVisible(false);
-        }
 
 		logger.debug("Leaving" + event.toString());
 
@@ -317,7 +304,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("FinanceEnquiryList");
-		//this.button_Print.setVisible(getUserWorkspace().isAllowed("button_FinanceEnquiryList_PrintList"));
 		logger.debug("Leaving");
 	}
 	
@@ -532,12 +518,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	 */
 	public void onClick$button_Print(Event event) throws InterruptedException{
 		logger.debug("Entering " + event.toString());
-		
-		if(getLoanEnquiry().getFinanceMainList()!=null && getLoanEnquiry().getFinanceMainList().size()>0){
-			ReportGenerationUtil.generateReport("LoanEnquiry", getLoanEnquiry(),
-					getLoanEnquiry().getFinanceMainList(),true, 1, getUserWorkspace().getUserDetails().getUsername(),null);
+		if(getSearchObj() != null){
+		new PTListReportUtils("LoanEnquiry", getSearchObj(), this.pagingEnquiryList.getTotalSize()+1);
 		}
-		
 		logger.debug("Leaving " + event.toString());
 	}
 	
@@ -724,7 +707,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param aAcademic
+	 * @param aLoanEnquiry
 	 */
 	public void doWriteComponentsToBean(LoanEnquiry aLoanEnquiry) {
 		logger.debug("Entering");
@@ -739,7 +722,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	}
 
 	/**
-	 * This method Fetch the records from financemain table by adding filters 
+	 * This method Fetch the records from finance main table by adding filters 
 	 * @return
 	 */
 	public void doSearch(){
@@ -749,43 +732,30 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		this.searchObj.addTabelName("FinanceEnquiry_View");
 		this.searchObj.addSort("finReference", false);
 		
-		String value = PennantAppUtil.getValueDesc(this.menu_filter.getLabel(), enquiryList);
-		
 		//Condition checking for Filter selection
-		if("ALLFIN".equals(value)){
-			//Nothing to do
-		}else if("ACTFIN".equals(value)){
-			
+		if(this.enquiryType.getValue().equals("CHQPRNT")) {
 			this.searchObj.addFilter(new Filter("FinIsActive", 1, Filter.OP_EQUAL));
-			
-		}else if("MATFIN".equals(value)){
-			
-			this.searchObj.addFilter(new Filter("MaturityDate", SystemParameterDetails.getSystemParameterValue("APP_DATE"), Filter.OP_LESS_THAN));
-			
-		}else if("ODCFIN".equals(value)){
-			
-			List<String> list = getOverdueChargeRecoveryService().getOverDueFinanceList();
-			if(list != null && list.size() > 0){
-				String[] finList = list.toArray(new String[list.size()]);
-				this.searchObj.addFilter(new Filter("FinReference", finList , Filter.OP_IN));
-			}else{
-				this.searchObj.addFilter(new Filter("FinReference", "" , Filter.OP_EQUAL));
+		}else{
+			String value = PennantAppUtil.getValueDesc(this.menu_filter.getLabel(), enquiryList);
+			if("ALLFIN".equals(value)){
+				//Nothing to do
+			}else if("ACTFIN".equals(value)){
+				this.searchObj.addFilter(new Filter("FinIsActive", 1, Filter.OP_EQUAL));
+			}else if("MATFIN".equals(value)){
+				this.searchObj.addFilter(new Filter("FinIsActive", 0, Filter.OP_EQUAL));
+			}else if("ODCFIN".equals(value)){
+				this.searchObj.addWhereClause(" finreference IN (select finreference from FINODDETAILS where FinCurODAmt > 0 )");
+ 			}else if("SUSFIN".equals(value)){
+				List<String> list = getSuspenseService().getSuspFinanceList();
+				if(list != null && list.size() > 0){
+					String[] finList = list.toArray(new String[list.size()]);
+					this.searchObj.addFilter(new Filter("FinReference", finList, Filter.OP_IN));
+				}else{
+					this.searchObj.addFilter(new Filter("FinReference", "" , Filter.OP_EQUAL));
+				}
+			}else if("GPFIN".equals(value)){
+				this.searchObj.addFilter(new Filter("AllowGrcPeriod", 1, Filter.OP_EQUAL));
 			}
-			
-		}else if("SUSFIN".equals(value)){
-			
-			List<String> list = getSuspenseService().getSuspFinanceList();
-			if(list != null && list.size() > 0){
-				String[] finList = list.toArray(new String[list.size()]);
-				this.searchObj.addFilter(new Filter("FinReference", finList, Filter.OP_IN));
-			}else{
-				this.searchObj.addFilter(new Filter("FinReference", "" , Filter.OP_EQUAL));
-			}
-			
-		}else if("GPFIN".equals(value)){
-			
-			this.searchObj.addFilter(new Filter("AllowGrcPeriod", 1, Filter.OP_EQUAL));
-			
 		}
 
 		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
@@ -955,7 +925,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 			}
 		}
 		if (!StringUtils.trimToEmpty(this.finCcy.getValue()).equals("")) {
-
 			// get the search operator
 			final Listitem item_CustID = this.sortOperator_FinCcy.getSelectedItem();
 
@@ -976,6 +945,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 				}
 			}
 		}
+		
+		searchObj.addWhereClause(getUsrFinAuthenticationQry(false));
 		logger.debug("Leaving");
 	}
 
@@ -992,7 +963,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	}
 
 	/**
-	 * Methodd for fetching Finance Record
+	 * Method for fetching Finance Record
 	 * @param event
 	 * @throws Exception
 	 */
@@ -1007,7 +978,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 			map.put("financeEnquiry", aFinanceEnquiry);
 			map.put("financeEnquiryListCtrl", this);
 			map.put("enquiryType", this.enquiryType.getValue());
-			map.put("isCancelFinance", this.isCancelFinance);
 
 			// call the ZUL-file with the parameters packed in a map
 			try {
@@ -1089,13 +1059,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		this.financeDetailService = financeDetailService;
 	}
 
-	public void setPaymentService(PaymentService paymentService) {
-		this.paymentService = paymentService;
-	}
-	public PaymentService getPaymentService() {
-		return paymentService;
-	}
-
 	public void setSuspenseService(SuspenseService suspenseService) {
 		this.suspenseService = suspenseService;
 	}
@@ -1109,5 +1072,13 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	}
 	public OverdueChargeRecoveryService getOverdueChargeRecoveryService() {
 		return overdueChargeRecoveryService;
+	}
+
+	public JdbcSearchObject<FinanceEnquiry> getSearchObj() {
+		return searchObj;
+	}
+
+	public void setSearchObj(JdbcSearchObject<FinanceEnquiry> searchObj) {
+		this.searchObj = searchObj;
 	}
 }

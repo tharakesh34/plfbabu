@@ -78,12 +78,10 @@ public class ProvisionCalculationUtil implements Serializable {
 	private AccountEngineExecution engineExecution ;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	
-	private FinanceMain financeMain = null;
-	private List<FinanceScheduleDetail> schdDetails = null;
-	private FinanceProfitDetail pftDetail = null;
-	private AEAmountCodes amountCodes = null;
-	private DataSet dataSet = null;
-	
+	public ProvisionCalculationUtil() {
+	    super();
+    }
+
 	/**
 	 * Method for Processing Provision Calculations
 	 * @param procProvision
@@ -101,17 +99,24 @@ public class ProvisionCalculationUtil implements Serializable {
 		
 		BigDecimal provCalculated = BigDecimal.ZERO;
 		
-		financeMain = getFinanceMainDAO().getFinanceMainById(procProvision.getFinReference(), "", false);
-		schdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(procProvision.getFinReference(), "", false);
-		pftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(procProvision.getFinReference());
+		FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsByRef(procProvision.getFinReference());
+		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(procProvision.getFinReference());
+		List<FinanceScheduleDetail> schdDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(procProvision.getFinReference());
 		
-		AEAmounts aeAmounts = new AEAmounts();
-		amountCodes = aeAmounts.procAEAmounts(financeMain, schdDetails, pftDetail, dateValueDate);
+		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail, dateValueDate);
 		amountCodes.setPROVDUE(procProvision.getProvisionDue() == null ? BigDecimal.ZERO : procProvision.getProvisionDue());
-		dataSet = aeAmounts.createDataSet(financeMain, "PROVSN", dateValueDate, procProvision.getProvisionCalDate());
+		amountCodes.setProvAmt(procProvision.getProvisionedAmt() == null ? BigDecimal.ZERO : procProvision.getProvisionedAmt());
+
+		DataSet dataSet = AEAmounts.createDataSet(financeMain, "PROVSN", dateValueDate, procProvision.getProvisionCalDate());
 		dataSet.setNewRecord(false);
 		
-		provCalculated = getEngineExecution().getProvisionExecResults(dataSet, amountCodes);
+		
+		if(isScrnLvlProc && procProvision.isUseNFProv()){
+			provCalculated = procProvision.getNonFormulaProv();
+		}else{
+			provCalculated = getEngineExecution().getProvisionExecResults(dataSet, amountCodes);
+		}
+		
 		
 		//Search For Provision Record in case of OverDue
 		Provision provision = null;
@@ -135,10 +140,7 @@ public class ProvisionCalculationUtil implements Serializable {
 			
 			if(isProceedFurthur){
 				provision = procProvision;
-				provision = prepareProvisionData(provision , dateValueDate, provCalculated, amountCodes, 1);
-
-				//Save Provision Record
-				getProvisionDAO().save(provision, "");
+				provision = prepareProvisionData(provision , dateValueDate, provCalculated, isScrnLvlProc, amountCodes, 1);
 			}
 		}else{
 			
@@ -152,28 +154,23 @@ public class ProvisionCalculationUtil implements Serializable {
 			provision = procProvision;
 			
 			if(!provision.isUseNFProv() && prvProvCalAmt.compareTo(provCalculated) != 0){
-				provision = prepareProvisionData(provision , dateValueDate, provCalculated, amountCodes,2);
+				provision = prepareProvisionData(provision , dateValueDate, provCalculated,isScrnLvlProc, amountCodes,2);
 				isProceedFurthur = true;
 			}
 
 			if(provision.isAutoReleaseNFP() && provCalculated.compareTo(BigDecimal.ZERO) == 0){
-				provision = prepareProvisionData(provision , dateValueDate, provCalculated, amountCodes,3);
+				provision = prepareProvisionData(provision , dateValueDate, provCalculated,isScrnLvlProc, amountCodes,3);
 				isProceedFurthur = true;
 			}
 
 			if(provision.getProvisionedAmt().compareTo(provision.getNonFormulaProv()) < 0){
-				provision = prepareProvisionData(provision , dateValueDate, provCalculated, amountCodes,4);
+				provision = prepareProvisionData(provision , dateValueDate, provCalculated, isScrnLvlProc,amountCodes,4);
 				isProceedFurthur = true;
 			}
 			
 			if(isScrnLvlProc && provision.getProvisionedAmt().compareTo(provision.getNonFormulaProv()) > 0){
-				provision = prepareProvisionData(provision , dateValueDate, provCalculated, amountCodes,4);
+				provision = prepareProvisionData(provision , dateValueDate, provCalculated,isScrnLvlProc, amountCodes,4);
 				isProceedFurthur = true;
-			}
-			
-			//Update Provision Details data
-			if(isProceedFurthur){
-				getProvisionDAO().update(provision, "");
 			}
 			
 		}
@@ -189,16 +186,65 @@ public class ProvisionCalculationUtil implements Serializable {
 			}
 			
 			//Provision Posting Process for Screen Level Process
+			List<Object> returnList = null;
+			boolean isPostingsSuccess = true;
 			if(isScrnLvlProc && movement != null){
 				amountCodes.setPROVDUE(movement.getProvisionDue() == null ? BigDecimal.ZERO : movement.getProvisionDue());
 				Date dateAppDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
-				if(!((Boolean)getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, false,
-						isRIAFinance, "Y", dateAppDate, movement, true).get(0))){
-					errorDetails = new ErrorDetails("", "9999", "E", "Provision Posting Details are failed...",
-							null, null);
+				
+				returnList = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, false,
+						isRIAFinance, "Y", dateAppDate,false, Long.MIN_VALUE);
+				
+				isPostingsSuccess = ((Boolean)returnList.get(0));
+				
+				if(!isPostingsSuccess){
+					errorDetails = new ErrorDetails("", "9999", "E", "Provision Posting Details are failed...", null, null);
+				}else{
+
+					movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
+					movement.setProvisionDue(BigDecimal.ZERO);
+					movement.setProvisionPostSts("C");
+					movement.setLinkedTranId((Long)returnList.get(1));
+
+					//Update Provision Movement Details
+					getProvisionDAO().updateProvAmt(movement, "");
+					getProvisionMovementDAO().update(movement, "");
 				}
 			}	
+			
+			//Provision Details Save or Update
+			if(isPostingsSuccess || !isScrnLvlProc){
+				
+				if(isPostingsSuccess && isScrnLvlProc && movement != null){
+					provision.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
+					provision.setProvisionDue(BigDecimal.ZERO);
+				}
+				
+				if(!isRcdFound){
+					getProvisionDAO().save(provision, "");
+				}else{
+					getProvisionDAO().update(provision, "");
+				}
+
+				//Provision Movement Details
+				if(movement != null){
+
+					if(isScrnLvlProc && movement != null){
+						movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
+						movement.setProvisionDue(BigDecimal.ZERO);
+						movement.setProvisionPostSts("C");
+						movement.setLinkedTranId((Long)returnList.get(1));
+					}
+
+					getProvisionMovementDAO().save(movement, "");
+				}
+			}
+			
 		}
+		
+		amountCodes = null;
+		dataSet = null;
+		
 		logger.debug("Leaving");
 		return errorDetails;
 	}
@@ -214,7 +260,7 @@ public class ProvisionCalculationUtil implements Serializable {
 	 * @return
 	 */
 	private Provision prepareProvisionData(Provision provision ,Date valueDate, 
-			BigDecimal provCalculated, AEAmountCodes aeAmountCodes, int scenarioSeq){
+			BigDecimal provCalculated, boolean isScrnLvlProc, AEAmountCodes aeAmountCodes, int scenarioSeq){
 		logger.debug("Entering");
 		
 		// Scenario 1
@@ -223,8 +269,10 @@ public class ProvisionCalculationUtil implements Serializable {
 			provision.setProvisionAmtCal(provCalculated);
 			provision.setProvisionDue(provCalculated);
 			provision.setNonFormulaProv(BigDecimal.ZERO);
-			provision.setUseNFProv(false);
-			provision.setAutoReleaseNFP(false);
+			if(!isScrnLvlProc){
+				provision.setUseNFProv(false);
+				provision.setAutoReleaseNFP(false);
+			}
 		}
 				
 		// Scenario 2
@@ -298,8 +346,6 @@ public class ProvisionCalculationUtil implements Serializable {
 		movement.setLastFullyPaidDate(provision.getLastFullyPaidDate());
 		movement.setLinkedTranId(0);
 		
-		//Added New Provision Movement
-		getProvisionMovementDAO().save(movement, "");
 		logger.debug("Leaving");
 		return movement;
 	}

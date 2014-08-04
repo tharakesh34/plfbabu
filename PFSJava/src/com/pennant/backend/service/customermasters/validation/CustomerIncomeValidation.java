@@ -10,6 +10,7 @@ import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -17,6 +18,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerIncomeValidation {
 
 	private CustomerIncomeDAO customerIncomeDAO;
+	private CustomerDetails customerDetails;
 
 	public CustomerIncomeValidation(CustomerIncomeDAO customerIncomeDAO) {
 		this.customerIncomeDAO = customerIncomeDAO;
@@ -37,13 +39,17 @@ public class CustomerIncomeValidation {
 		return auditHeader;
 	}
 
-	public List<AuditDetail> incomeListValidation(List<AuditDetail> auditDetails, String method,String  usrLanguage){
-
-		if(auditDetails!=null && auditDetails.size()>0){
+	public List<AuditDetail> incomeListValidation(CustomerDetails customerDetails, String method,String  usrLanguage){
+		this.customerDetails = customerDetails;
+		List<AuditDetail> auditDetails = customerDetails.getAuditDetailMap().get("Income");
+		if(auditDetails!=null && !auditDetails.isEmpty()){
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
 				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
 				details.add(auditDetail); 		
+				if(!(auditDetail.getErrorDetails() != null && auditDetail.getErrorDetails().isEmpty())){
+					break;
+				}
 			}
 			return details;
 		}
@@ -56,28 +62,29 @@ public class CustomerIncomeValidation {
 		CustomerIncome customerIncome= (CustomerIncome) auditDetail.getModelData();
 		CustomerIncome tempCustomerIncome= null;
 		if (customerIncome.isWorkflow()){
-			tempCustomerIncome = getCustomerIncomeDAO().getCustomerIncomeById(
-					customerIncome.getId(),customerIncome.getCustIncomeType(),
-					customerIncome.getCustIncomeCountry(),"_Temp");
+			tempCustomerIncome = getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_Temp");
 		}
 
-		CustomerIncome befCustomerIncome= getCustomerIncomeDAO().getCustomerIncomeById(
-				customerIncome.getId(),customerIncome.getCustIncomeType(),
-				customerIncome.getCustIncomeCountry(),"");
+		CustomerIncome befCustomerIncome= getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"");
 		
 		CustomerIncome old_CustomerIncome= customerIncome.getBefImage();
 
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
 
-		valueParm[0] = String.valueOf(customerIncome.getId());
+		valueParm[0] = StringUtils.trimToEmpty(customerIncome.getLovDescCustCIF());
 		valueParm[1] = customerIncome.getCustIncomeType();
-		valueParm[2] = customerIncome.getCustIncomeCountry();
+		valueParm[2] = String.valueOf(customerIncome.isJointCust());
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("IncomeDetails") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_CustIncomeType") + ":"+valueParm[1];
-		errParm[2] = PennantJavaUtil.getLabel("label_CustIncomeCountry") + ":"+valueParm[2];
+		errParm[2] = PennantJavaUtil.getLabel("label_JointCust") + ":"+valueParm[1];
 
+		if(!customerDetails.getCustomer().isJointCust() && customerIncome.isJointCust()){
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,  "41016", errParm, valueParm), usrLanguage));
+			return auditDetail;
+		}
+		
 		if (customerIncome.isNew()){ // for New record or new record into work flow
 
 			if (!customerIncome.isWorkflow()){// With out Work flow only new records  

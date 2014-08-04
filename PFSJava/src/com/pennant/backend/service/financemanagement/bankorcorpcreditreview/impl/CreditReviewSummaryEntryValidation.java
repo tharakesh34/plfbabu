@@ -33,6 +33,7 @@ private CreditReviewSummaryDAO creditReviewSummaryDAO;
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
 				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
+				auditDetail.getErrorDetails();
 				details.add(auditDetail); 		
 			}
 			return details;
@@ -59,6 +60,7 @@ private CreditReviewSummaryDAO creditReviewSummaryDAO;
 		
 		errParm[0] = PennantJavaUtil.getLabel("label_SubCategoryId") + ":"+ valueParm[0];
 		
+		
 		if (creditReviewSummary.isNew()){ // for New record or new record into work flow
 
 			if (!creditReviewSummary.isWorkflow()){// With out Work flow only new records  
@@ -72,7 +74,8 @@ private CreditReviewSummaryDAO creditReviewSummaryDAO;
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",errParm,null));
 					}
 				}else{ // if records not exists in the Main flow table
-					if (befcreditReviewSummary ==null || tempCreditReviewSummary!=null ){
+					if (befcreditReviewSummary ==null || tempCreditReviewSummary!=null &&
+							!befcreditReviewSummary.getLastMntOn().equals(befcreditReviewSummary.getLastMntOn())){
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}
@@ -103,7 +106,6 @@ private CreditReviewSummaryDAO creditReviewSummaryDAO;
 				if (tempCreditReviewSummary!=null  && old_creditReviewSummary!=null && !old_creditReviewSummary.getLastMntOn().equals(tempCreditReviewSummary.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
-
 			}
 		}
 

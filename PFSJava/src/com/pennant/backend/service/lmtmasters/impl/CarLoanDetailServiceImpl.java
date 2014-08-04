@@ -43,19 +43,21 @@
 
 package com.pennant.backend.service.lmtmasters.impl;
 
-
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.lmtmasters.CarLoanDetailDAO;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.CarLoanDetail;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.finance.validation.CarLoanDetailValidation;
 import com.pennant.backend.service.lmtmasters.CarLoanDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 
 /**
  * Service implementation for methods that depends on <b>CarLoanDetail</b>.<br>
@@ -67,9 +69,6 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CarLoanDetailDAO carLoanDetailDAO;
-
-	private CarLoanDetailValidation carLoanDetailValidation;
-
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -97,17 +96,6 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 		return getCarLoanDetailDAO().getNewCarLoanDetail();
 	}
 	
-	/**
-	 * @return the carLoanDetailValidation
-	 */
-	public CarLoanDetailValidation getCarLoanDetailValidation() {
-		
-		if(carLoanDetailValidation==null){
-			this.carLoanDetailValidation = new CarLoanDetailValidation(carLoanDetailDAO);
-		}
-		return this.carLoanDetailValidation;
-	}
-
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
 	 * validation by using businessValidation(auditHeader) method if there is
@@ -253,8 +241,7 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 		}
 
 		CarLoanDetail carLoanDetail = new CarLoanDetail();
-		BeanUtils.copyProperties((CarLoanDetail) auditHeader.getAuditDetail()
-				.getModelData(), carLoanDetail);
+		BeanUtils.copyProperties((CarLoanDetail) auditHeader.getAuditDetail().getModelData(), carLoanDetail);
 
 		if (carLoanDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType=PennantConstants.TRAN_DEL;
@@ -335,9 +322,179 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
 		logger.debug("Entering");
-		auditHeader = getCarLoanDetailValidation().carLoanDetailValidation(auditHeader, method);
+		auditHeader = doValidation(auditHeader, method);
 		auditHeader=nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+	
+	@Override
+	public AuditDetail validate(CarLoanDetail carLoanDetail, String method, String auditTranType, String  usrLanguage){
+		return doValidation(carLoanDetail, auditTranType, method, usrLanguage);
+	}
+
+	@Override
+	public AuditDetail saveOrUpdate(CarLoanDetail carLoanDetail, String tableType, String auditTranType) {
+		logger.debug("Entering");
+		
+		String[] fields = PennantJavaUtil.getFieldDetails(carLoanDetail, carLoanDetail.getExcludeFields());
+
+		carLoanDetail.setWorkflowId(0);
+		if (carLoanDetail.isNewRecord()) {
+			getCarLoanDetailDAO().save(carLoanDetail, tableType);
+		} else {
+			getCarLoanDetailDAO().update(carLoanDetail, tableType);
+		}
+		
+		logger.debug("Leaving");
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], carLoanDetail.getBefImage(), carLoanDetail);
+
+	}
+	
+	@Override
+	public AuditDetail doApprove(CarLoanDetail carLoanDetail, String tableType, String auditTranType) {
+		logger.debug("Entering");
+		
+		String[] fields = PennantJavaUtil.getFieldDetails(carLoanDetail, carLoanDetail.getExcludeFields());
+		
+		carLoanDetail.setRoleCode("");
+		carLoanDetail.setNextRoleCode("");
+		carLoanDetail.setTaskId("");
+		carLoanDetail.setNextTaskId("");
+		carLoanDetail.setWorkflowId(0);
+
+		getCarLoanDetailDAO().save(carLoanDetail, tableType);
+		
+		logger.debug("Leaving");
+		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], carLoanDetail.getBefImage(), carLoanDetail);
+	}
+	
+	@Override
+	public AuditDetail delete(CarLoanDetail carLoanDetail, String tableType, String auditTranType) {
+		logger.debug("Entering");
+		
+		String[] fields = PennantJavaUtil.getFieldDetails(carLoanDetail, carLoanDetail.getExcludeFields());	
+		
+		getCarLoanDetailDAO().delete(carLoanDetail, tableType);
+		
+		logger.debug("Leaving");
+		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], carLoanDetail.getBefImage(), carLoanDetail);
+	}
+	
+	public AuditHeader doValidation(AuditHeader auditHeader, String method){
+		logger.debug("Entering");
+		
+		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+	
+	public AuditDetail doValidation(CarLoanDetail carLoanDetail, String auditTranType, String method,String  usrLanguage){
+		logger.debug("Entering");
+		
+		String[] fields = PennantJavaUtil.getFieldDetails(carLoanDetail, carLoanDetail.getExcludeFields());
+		
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1], carLoanDetail.getBefImage(), carLoanDetail);
+		
+		logger.debug("Leaving");
+		return validate(auditDetail, method, usrLanguage);
+	}
+	
+	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage){
+		logger.debug("Entering");
+		
+		CarLoanDetail carLoanDetail= (CarLoanDetail) auditDetail.getModelData();
+		CarLoanDetail tempCarLoanDetail= null;
+		
+		if (carLoanDetail.isWorkflow()){
+			tempCarLoanDetail = getCarLoanDetailDAO().getCarLoanDetailByID(carLoanDetail.getLoanRefNumber(), "_Temp");
+		}
+		
+		CarLoanDetail befCarLoanDetail= getCarLoanDetailDAO().getCarLoanDetailByID(carLoanDetail.getLoanRefNumber(), "");
+
+		CarLoanDetail old_CarLoanDetail= carLoanDetail.getBefImage();
+		
+		String[] errParm= new String[1];
+		String[] valueParm= new String[1];
+		valueParm[0]=carLoanDetail.getLoanRefNumber();
+		errParm[0]=PennantJavaUtil.getLabel("label_CarLoanRefNumber")+":"+valueParm[0];
+		
+		if (carLoanDetail.isNew()) { // for New record or new record into work flow
+
+			if (!carLoanDetail.isWorkflow()) {// With out Work flow only new
+				// records
+				if (befCarLoanDetail != null) { // Record Already Exists in the
+												// table then error
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (carLoanDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+					// is new
+					if (befCarLoanDetail != null || tempCarLoanDetail != null) { // if
+																// records already
+																// exists in the
+																// main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),usrLanguage));
+					}
+				} else { // if records not exists in the Main flow table
+					if (befCarLoanDetail == null || tempCarLoanDetail != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),usrLanguage));
+					}
+				}
+			}
+		} else {
+			// for work flow process records or (Record to update or Delete with
+			// out work flow)
+			if (!carLoanDetail.isWorkflow()) { // With out Work flow for update
+				// and delete
+
+				if (befCarLoanDetail == null) { // if records not exists in the
+					// main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (old_CarLoanDetail != null
+							&& !old_CarLoanDetail.getLastMntOn().equals(
+									befCarLoanDetail.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+									PennantConstants.KEY_FIELD,"41003", errParm, valueParm),usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+									PennantConstants.KEY_FIELD, "41004", errParm, valueParm),usrLanguage));
+						}
+					}
+				}
+			} else {
+
+				if (tempCarLoanDetail == null) { // if records not exists in the
+					// Work flow table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				}
+
+				if (tempCarLoanDetail != null && old_CarLoanDetail != null
+						&& !old_CarLoanDetail.getLastMntOn().equals(
+								tempCarLoanDetail.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				}
+			}
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		if (StringUtils.trimToEmpty(method).equals("doApprove") || !carLoanDetail.isWorkflow()) {
+			auditDetail.setBefImage(befCarLoanDetail);
+		}
+		return auditDetail;
+	}
+
 }

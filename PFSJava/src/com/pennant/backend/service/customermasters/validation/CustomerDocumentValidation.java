@@ -1,16 +1,21 @@
 package com.pennant.backend.service.customermasters.validation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -56,23 +61,23 @@ public class CustomerDocumentValidation {
 		CustomerDocument tempCustomerDocument= null;
 		if (customerDocument.isWorkflow()){
 			tempCustomerDocument = getCustomerDocumentDAO().getCustomerDocumentById(
-					customerDocument.getId(),customerDocument.getCustDocType(),"_Temp");
+					customerDocument.getId(),customerDocument.getCustDocCategory(),"_Temp");
 		}
 		
 		CustomerDocument befCustomerDocument= getCustomerDocumentDAO().getCustomerDocumentById(
-				customerDocument.getId(),customerDocument.getCustDocType(),"");
+				customerDocument.getId(),customerDocument.getCustDocCategory(),"");
 		
 		CustomerDocument old_CustomerDocument= customerDocument.getBefImage();
 		
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
-		valueParm[0] = String.valueOf(customerDocument.getCustID());
-		valueParm[1] = customerDocument.getCustDocType();
+		valueParm[0] = StringUtils.trimToEmpty(customerDocument.getLovDescCustCIF());
+		valueParm[1] = customerDocument.getCustDocCategory();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CustDocType") + ":" + valueParm[1];
-
+		errParm[0] = PennantJavaUtil.getLabel("DocumentDetails") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
+		errParm[1] = PennantJavaUtil.getLabel("CustDocType_label") + "-" + valueParm[1];
+		
 		if (customerDocument.isNew()) { // for New record or new record into
 										// work flow
 
@@ -141,12 +146,118 @@ public class CustomerDocumentValidation {
 			}
 		}
 
+		auditDetail.setErrorDetail(screenValidations(customerDocument));
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !customerDocument.isWorkflow()) {
 			customerDocument.setBefImage(befCustomerDocument);
 		}
 		return auditDetail;
+	}
+	
+	/**
+	 * Method For Screen Level Validations
+	 * 
+	 * @param auditHeader
+	 * @param usrLanguage
+	 * @return
+	 */
+	public ErrorDetails  screenValidations(CustomerDocument customerDocument ){
+       //Customer Document Details Validation
+
+		/*if(StringUtils.trimToEmpty(customerDocument.getLovDescCustCIF()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038",
+					new String[] {Labels.getLabel("DocumentDetails"),
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocCIF.value"),
+					Labels.getLabel("listheader_CustDocType.label"),
+					customerDocument.getCustDocType()},
+					new String[] {});
+		}
+		
+		if(StringUtils.trimToEmpty(customerDocument.getCustDocCategory()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"S0005", 
+					new String[] {Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value")},
+					new String[] {});	
+		}*/
+		
+		if(StringUtils.trimToEmpty(customerDocument.getCustDocName()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("DocumentDetails"),
+					Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value"),
+					Labels.getLabel("listheader_CustDocType.label"),
+					customerDocument.getCustDocType()},
+					new String[] {});	
+		}
+		
+		if(StringUtils.trimToEmpty(customerDocument.getCustDocTitle()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("DocumentDetails"),
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocTitle.value"),
+					Labels.getLabel("listheader_CustDocType.label"),
+					customerDocument.getCustDocType()},
+					new String[] {});	
+		}
+		
+		/*if(StringUtils.trimToEmpty(customerDocument.getCustDocIssuedCountry()).equals("")){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("DocumentDetails"),
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocIssuedCountry.value"),
+					Labels.getLabel("listheader_CustDocType.label"),
+					customerDocument.getCustDocType()},
+					new String[] {});	
+		}*/
+		//FIXME Need to decide APP_DFT_NATION has to set by default or not
+		if(StringUtils.trimToEmpty(customerDocument.getCustDocIssuedCountry()).equals("")){
+			PFSParameter parameter = SystemParameterDetails.getSystemParameterObject("APP_DFT_COUNTRY");
+			customerDocument.setCustDocIssuedCountry(parameter.getSysParmValue().trim());
+		}
+		
+		/*if(customerDocument.getCustDocIssuedOn() == null){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("DocumentDetails"),
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocIssuedOn.value"),
+					Labels.getLabel("listheader_CustDocType.label"),
+					customerDocument.getCustDocType()},
+					new String[] {});	
+		}*/
+
+		if(customerDocument.getCustDocExpDate() == null){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0038", 
+					new String[] {Labels.getLabel("DocumentDetails")+"  :  ",
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
+					Labels.getLabel("listheader_CustDocType.label"),
+					customerDocument.getCustDocType()},
+					new String[] {});	
+		}
+
+		if(customerDocument.getCustDocIssuedOn() != null && !customerDocument.getCustDocExpDate().after(customerDocument.getCustDocIssuedOn())){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0039", 
+					new String[] {Labels.getLabel("DocumentDetails"),
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
+					Labels.getLabel("listheader_CustDocType.label")}, 
+					new String[] {});	
+		}
+		
+		if(!customerDocument.getCustDocExpDate().after((Date) SystemParameterDetails
+				.getSystemParameterValue("APP_DATE"))){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0039", 
+					new String[] {Labels.getLabel("DocumentDetails"),
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
+					DateUtility.formatUtilDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"), PennantConstants.dateFormat)}, 
+					new String[] {});	
+		}
+
+		if(customerDocument.getCustDocIssuedOn()!= null && !(customerDocument.getCustDocIssuedOn().after((Date) SystemParameterDetails
+				.getSystemParameterValue("APP_DFT_START_DATE")))){
+			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0039", 
+					new String[] {Labels.getLabel("DocumentDetails"),
+					Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
+					DateUtility.formatUtilDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE"), PennantConstants.dateFormat)},   
+					new String[] {}) ;	
+		}
+	
+		return null;
 	}
 	
 }

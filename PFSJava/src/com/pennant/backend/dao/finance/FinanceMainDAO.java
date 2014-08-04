@@ -47,9 +47,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.app.model.CustomerCalData;
+import com.pennant.backend.model.finance.AuditTransaction;
+import com.pennant.backend.model.finance.BulkDefermentChange;
+import com.pennant.backend.model.finance.BulkProcessDetails;
+import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.reports.AvailFinance;
 
 public interface FinanceMainDAO {
 
@@ -62,16 +67,30 @@ public interface FinanceMainDAO {
 	public void initialize(FinanceMain financeMain);
 	public void refresh(FinanceMain entity);
 	public boolean isFinReferenceExists(String id, String type, boolean isWIF);
-	CustomerCalData calculateData(CustomerCalData calData, String type);
 	public void listUpdate(ArrayList<FinanceMain> financeMain, String type);
 	public List<String> getFinanceMainListByBatch(Date curBD, Date nextBD, String type);
 	public  List<BigDecimal> getActualPftBal(String finReference,String type);
-	public void updateFinAccounts(FinanceMain financeMain);
-	public FinanceMain getFinanceMainForDataSet(String finReference);
-	public void updateRepaymentAmount(String finReference, BigDecimal repaymentAmount);
+	public void updateRepaymentAmount(String finReference, BigDecimal finAmount, BigDecimal repaymentAmount, 
+			String finStatus, String finStsReason, boolean isCancelProc);
 	public List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
 	public void updateCustCIF(long custID, String finReference);
 	public void updateFinBlackListStatus(String finReference);
-	public void updateCancelStatus(FinanceMain financeMain, String type);
+	public List<String> getFinanceReferenceList();
+	public FinanceSummary getFinanceProfitDetails(String finRef);
+	public List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
+	public List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
+ 	public CustomerFinanceDetail getCustomerFinanceMainById(String id,String type);
+	public List<AuditTransaction> getFinTransactionsList(String id, boolean approvedFinance);
+ 	public boolean checkFirstTaskOwnerAccess(String productCode, long usrLogin);
+	public Boolean saveRejectFinanceDetails(FinanceMain financeMain);
+	//public void updateInvestmentFinance(FinanceMain financeMain,String type);
+//	public String saveInvestmentFinance1(FinanceMain financeMain, String type);
+	public List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId);
+	public void updateFinanceERR(String finReference, Date lastRepayDate, Date lastRepayPftDate, BigDecimal effectiveRate, String type);
+	public FinanceMain getFinanceMainForBatch(String finReference);
+	public FinanceMain getFinanceMainForPftCalc(String finReference);
+	public FinanceMain getFinanceMainForRpyCancel(String id);
+	void updateFinAccounts(String finReference, String finAccount);
+
 
 }

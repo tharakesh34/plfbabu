@@ -53,19 +53,15 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listItems in the listBox.
- * 
  */
 public class AcademicListModelItemRenderer implements ListitemRenderer<Academic>, Serializable {
 
 	private static final long serialVersionUID = 3736186724610414895L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
 	public void render(Listitem item, Academic academic, int count) throws Exception {
 
-	//	final Academic academic = (Academic) data;
 		Listcell lc;
 		lc = new Listcell(academic.getAcademicLevel());
 		lc.setParent(item);

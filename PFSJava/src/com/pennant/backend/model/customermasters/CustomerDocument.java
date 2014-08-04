@@ -60,7 +60,9 @@ public class CustomerDocument implements java.io.Serializable {
 	private long custID = Long.MIN_VALUE;
 	private String lovDescCustShrtName;
 	private String custDocType;
-	private String lovDescCustDocType;
+	private String custDocName;
+	private String custDocCategory;
+	private String lovDescCustDocCategory;
 	private String custDocTitle;
 	private String custDocSysName;
 	private Timestamp custDocRcvdOn;
@@ -71,6 +73,7 @@ public class CustomerDocument implements java.io.Serializable {
 	private boolean custDocIsVerified;
 	private long custDocVerifiedBy;
 	private boolean custDocIsAcrive;
+	private byte[] custDocImage;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -103,6 +106,14 @@ public class CustomerDocument implements java.io.Serializable {
 		this.setId(id);
 	}
 
+	
+	public CustomerDocument(String docCategory, String doctype, String docName, byte[] docImage) {
+		this.custDocCategory = docCategory;
+		this.custDocType = doctype;
+		this.custDocTitle = docName;
+		this.custDocImage = docImage;
+		this.newRecord  = true;
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -134,13 +145,23 @@ public class CustomerDocument implements java.io.Serializable {
 	public void setCustDocType(String custDocType) {
 		this.custDocType = custDocType;
 	}
-	
-	public String getLovDescCustDocType() {
-		return this.lovDescCustDocType;
-	}
-	public void setLovDescCustDocType(String lovDescCustDocType) {
-		this.lovDescCustDocType = lovDescCustDocType;
-	}
+ 
+	public String getCustDocCategory() {
+    	return custDocCategory;
+    }
+
+	public void setCustDocCategory(String custDocCategory) {
+    	this.custDocCategory = custDocCategory;
+    }
+
+
+	public String getLovDescCustDocCategory() {
+    	return lovDescCustDocCategory;
+    }
+
+	public void setLovDescCustDocCategory(String lovDescCustDocCategory) {
+    	this.lovDescCustDocCategory = lovDescCustDocCategory;
+    }
 
 	public String getCustDocTitle() {
 		return custDocTitle;
@@ -149,6 +170,14 @@ public class CustomerDocument implements java.io.Serializable {
 		this.custDocTitle = custDocTitle;
 	}
 	
+	public String getCustDocName() {
+    	return custDocName;
+    }
+
+	public void setCustDocName(String custDocName) {
+    	this.custDocName = custDocName;
+    }
+
 	public String getCustDocSysName() {
 		return custDocSysName;
 	}
@@ -212,6 +241,14 @@ public class CustomerDocument implements java.io.Serializable {
 		this.custDocIsAcrive = custDocIsAcrive;
 	}
 	
+	public byte[] getCustDocImage() {
+    	return custDocImage;
+    }
+
+	public void setCustDocImage(byte[] custDocImage) {
+    	this.custDocImage = custDocImage;
+    }
+
 	public int getVersion() {
 		return version;
 	}
@@ -377,5 +414,4 @@ public class CustomerDocument implements java.io.Serializable {
 		}
 		return false;
 	}
-	
 }

@@ -45,19 +45,27 @@ package com.pennant.webui.smtmasters.weekendmaster;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +78,14 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.component.Uppercasebox;
+import com.pennant.search.Filter;
 import com.pennant.webui.smtmasters.weekendmaster.model.WeekendMasterListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -101,17 +113,39 @@ implements Serializable {
 	protected Borderlayout borderLayout_WeekendMasterList;  // autowired
 	protected Paging pagingWeekendMasterList; 				// autowired
 	protected Listbox listBoxWeekendMaster; 				// autowired
-
+	protected Row weekendRow;
 	// List headers
-	protected Listheader listheader_WeekendCode; // autowired
-	protected Listheader listheader_WeekendDesc; // autowired
-	protected Listheader listheader_Weekend; 	 // autowired
+	protected Listheader listheader_WeekendCode; 	// autowired
+	protected Listheader listheader_WeekendDesc; 	// autowired
+	protected Listheader listheader_Weekend; 	 	// autowired
 
-	protected Panel weekendMasterSeekPanel; // autowired
-	protected Panel weekendMasterListPanel; // autowired
+	protected Panel weekendMasterSeekPanel; 		// autowired
+	protected Panel weekendMasterListPanel; 		// autowired
 
+	// Searching Fields
+
+	protected Uppercasebox weekendCode; 						// autowired
+	protected Listbox sortOperator_weekendCode; 				// autowired
+	protected Textbox weekendDesc; 								// autowired
+	protected Listbox sortOperator_weekendDesc; 				// autowired
+	protected Combobox weekend; 									// autowired
+	protected Listbox sortOperator_weekend; 					// autowired
+	protected Listbox sortOperator_recordStatus;				// autowired
+	protected Listbox sortOperator_recordType; 					// autowired
+
+	protected Label label_WeekendMasterSearch_RecordStatus; 	// autowired
+	protected Label label_WeekendMasterSearch_RecordType; 		// autowired
+
+
+	private Grid 			searchGrid;							// autowired
+	protected Textbox 		moduleType; 						// autowired
+	protected Radio			fromApproved;
+	protected Radio			fromWorkFlow;
+	protected Row			workFlowFrom;
+
+	private transient boolean  approvedList=false;
 	// checkRights
-	protected Button btnHelp; // autowired
+	protected Button btnHelp; 											 // autowired
 	protected Button button_WeekendMasterList_NewWeekendMaster; 		 // autowired
 	protected Button button_WeekendMasterList_WeekendMasterSearchDialog; // autowired
 	protected Button button_WeekendMasterList_PrintList; 				 // autowired
@@ -164,6 +198,20 @@ implements Serializable {
 		} else {
 			wfAvailable = false;
 		}
+		this.weekendRow.setVisible(false);
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_weekendCode.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getStringOperators()));
+		this.sortOperator_weekendCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_weekendDesc.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getStringOperators()));
+		this.sortOperator_weekendDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_weekend.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getStringOperators()));
+		this.sortOperator_weekend.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -175,6 +223,8 @@ implements Serializable {
 		 */
 
 		this.borderLayout_WeekendMasterList.setHeight(getBorderLayoutHeight());
+		this.listBoxWeekendMaster.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
+
 		// set the paging parameters
 		this.pagingWeekendMasterList.setPageSize(getListRows());
 		this.pagingWeekendMasterList.setDetailed(true);
@@ -192,26 +242,6 @@ implements Serializable {
 		this.listheader_Weekend.setSortDescending(new FieldComparator(
 				"weekend", false));
 
-		/*
-		 * if (isWorkFlowEnabled()){
-		 * this.listheader_RecordStatus.setSortAscending(new
-		 * FieldComparator("recordStatus", true));
-		 * this.listheader_RecordStatus.setSortDescending(new
-		 * FieldComparator("recordStatus", false));
-		 * this.listheader_RecordType.setSortAscending(new
-		 * FieldComparator("recordType", true));
-		 * this.listheader_RecordType.setSortDescending(new
-		 * FieldComparator("recordType", false)); }else{
-		 * this.listheader_RecordStatus.setVisible(false);
-		 * this.listheader_RecordType.setVisible(false); }
-		 */
-		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<WeekendMaster>(
-				WeekendMaster.class, getListRows());
-		this.searchObj.addSort("WeekendCode", false);
-
-		this.searchObj.addTabelName("SMTWeekendMaster_View");
-
 		// Workflow
 		if (isWorkFlowEnabled()) {
 			if (isFirstTask()) {
@@ -219,12 +249,11 @@ implements Serializable {
 			} else {
 				button_WeekendMasterList_NewWeekendMaster.setVisible(false);
 			}
-
-			// this.searchObj.addFilterIn("nextRoleCode",
-			// getUserWorkspace().getUserRoles(),isFirstTask());
 		}
 
-		setSearchObj(this.searchObj);
+		// set the itemRenderer
+		this.listBoxWeekendMaster.setItemRenderer(new WeekendMasterListModelItemRenderer());
+
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_WeekendMasterList_NewWeekendMaster.setVisible(false);
 			this.button_WeekendMasterList_WeekendMasterSearchDialog
@@ -232,14 +261,14 @@ implements Serializable {
 			this.button_WeekendMasterList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil
 					.getLabel("WORKFLOW CONFIG NOT FOUND"));
-		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,
-					this.listBoxWeekendMaster, this.pagingWeekendMasterList);
-			// set the itemRenderer
-			this.listBoxWeekendMaster
-			.setItemRenderer(new WeekendMasterListModelItemRenderer());
+		} else{
+			doSearch();
+			if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -251,10 +280,10 @@ implements Serializable {
 		getUserWorkspace().alocateAuthorities("WeekendMasterList");
 		this.button_WeekendMasterList_NewWeekendMaster
 		.setVisible(getUserWorkspace().isAllowed(
-				"button_WeekendMasterList_NewWeekendMaster"));
+		"button_WeekendMasterList_NewWeekendMaster"));
 		this.button_WeekendMasterList_WeekendMasterSearchDialog
 		.setVisible(getUserWorkspace().isAllowed(
-				"button_WeekendMasterList_WeekendMasterFindDialog"));
+		"button_WeekendMasterList_WeekendMasterFindDialog"));
 		this.button_WeekendMasterList_PrintList.setVisible(getUserWorkspace()
 				.isAllowed("button_WeekendMasterList_PrintList"));
 		logger.debug("Leaving ");
@@ -299,22 +328,7 @@ implements Serializable {
 								.getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			} else {
-				// String whereCond = " AND WeekendCode='"+
-				// weekendMaster.getWeekendCode()+"' AND version=" +
-				// weekendMaster.getVersion()+" ";
 				showDetailView(weekendMaster);
-				/*
-				 * if(isWorkFlowEnabled()){ boolean userAcces =
-				 * validateUserAccess
-				 * (workFlowDetails.getId(),getUserWorkspace().
-				 * getLoginUserDetails().getLoginUsrID(), "WeekendMaster",
-				 * whereCond, weekendMaster.getTaskId(),
-				 * weekendMaster.getNextTaskId()); if (userAcces){
-				 * showDetailView(weekendMaster); }else{
-				 * PTMessageUtils.showErrorMessage
-				 * (Labels.getLabel("RECORD_NOTALLOWED")); } }else{
-				 * showDetailView(weekendMaster); }
-				 */
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -347,11 +361,6 @@ implements Serializable {
 		 * We can call our Dialog zul-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
-		 */
-
-		/*
-		 * if(aWeekendMaster.getWorkflowId()==0 && isWorkFlowEnabled()){
-		 * aWeekendMaster.setWorkflowId(workFlowDetails.getWorkFlowId()); }
 		 */
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -400,9 +409,13 @@ implements Serializable {
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingWeekendMasterList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_WeekendMasterList, event);
-		this.window_WeekendMasterList.invalidate();
+		this.sortOperator_weekendCode.setSelectedIndex(0);
+		this.weekendCode.setValue("");
+		this.sortOperator_weekendDesc.setSelectedIndex(0);
+		this.weekendDesc.setValue("");
+		this.sortOperator_weekend.setSelectedIndex(0);
+		this.weekend.setValue("");
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -412,27 +425,7 @@ implements Serializable {
 	public void onClick$button_WeekendMasterList_WeekendMasterSearchDialog(
 			Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our WeekendMasterDialog zul-file with parameters. So we
-		 * can call them with a object of the selected WeekendMaster. For handed
-		 * over these parameter only a Map is accepted. So we put the
-		 * WeekendMaster object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("weekendMasterCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions
-			.createComponents(
-					"/WEB-INF/pages/SolutionFactory/WeekendMaster/WeekendMasterSearchDialog.zul",
-					null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "
-					+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -442,11 +435,75 @@ implements Serializable {
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_WeekendMasterList_PrintList(Event event)
 	throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("WeekendMaster", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("CustomerRating", getSearchObj(),
+				this.pagingWeekendMasterList.getTotalSize() + 1);
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<WeekendMaster>(WeekendMaster.class,getListRows());
+
+		// Defualt Sort on the table
+		this.searchObj.addSort("WeekendCode", false);
+
+		// Workflow
+		if (isWorkFlowEnabled()) {
+			this.searchObj.addTabelName("SMTWeekendMaster_View");
+
+			if(this.moduleType==null){
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+				approvedList=false;
+
+			}else{
+				if(this.fromApproved.isSelected()){
+					approvedList=true;
+				}else{
+					approvedList=false;
+				}
+			}
+		}else{
+			approvedList=true;
+		}
+		if(approvedList){
+			this.searchObj.addTabelName("SMTWeekendMaster_AView");
+		}else{
+			this.searchObj.addTabelName("SMTWeekendMaster_View");
+		}
+
+		//Weekend Code
+		if (!StringUtils.trimToEmpty(this.weekendCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_weekendCode.getSelectedItem(),this.weekendCode.getValue(), "weekendCode");
+		}
+		//Weekend  Description
+		if (!StringUtils.trimToEmpty(this.weekendDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_weekendDesc.getSelectedItem(),this.weekendDesc.getValue(), "weekendDesc");
+		}
+
+		//Weekend 
+		if (!StringUtils.trimToEmpty(this.weekend.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_weekend.getSelectedItem(), this.weekend.getValue() , "weekend");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxWeekendMaster,this.pagingWeekendMasterList);
+
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

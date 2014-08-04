@@ -45,37 +45,50 @@ package com.pennant.webui.dedup.dedupparm;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.dedup.dedupparm.model.DedupParmListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -108,6 +121,35 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 	protected Listheader listheader_CustCtgCode; 		         // autoWired	
 	protected Listheader listheader_RecordStatus; 		         // autoWired
 	protected Listheader listheader_RecordType;
+	
+	//Search
+	protected Textbox queryCode; 				// autoWired
+	protected Listbox sortOperator_queryCode; 	// autoWired
+	protected Textbox queryDesc; 				// autoWired
+	protected Listbox sortOperator_queryDesc; 	// autoWired
+	protected Textbox queryModules; 			// autoWired
+	protected Listbox sortOperator_queryModule; // autoWired
+	protected Textbox sQLQuery; 				// autoWired
+	protected Combobox querySubCode;				// autoWired
+	protected Listbox sortOperator_querySubCode;// autoWired 
+	protected Listbox sortOperator_sQLQuery; 	// autoWired
+	protected Textbox recordStatus; 			// autoWired
+	protected Listbox recordType;				// autoWired
+	protected Listbox sortOperator_recordStatus;// autoWired
+	protected Listbox sortOperator_recordType; 	// autoWired
+	
+	protected Label label_DedupParmSearch_RecordStatus; // autoWired
+	protected Label label_DedupParmSearch_RecordType; 	// autoWired
+	protected Label label_DedupParmSearchResult; 		// autoWired
+	
+	protected Grid	                       searchGrid;	
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+
+	private transient boolean	           approvedList	    = false;
+	private List<ValueLabel>           listDedupParams = PennantStaticListUtil.getCategoryType();
 
 	// Check Rights
 	protected Button btnHelp; 									 // autoWired
@@ -159,11 +201,40 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 		} else {
 			wfAvailable = false;
 		}
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		
+		this.sortOperator_queryCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_queryCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		this.sortOperator_queryDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_queryDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		this.sortOperator_queryModule.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_queryModule.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		this.sortOperator_querySubCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_querySubCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+	
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+		}else{
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_DedupParmSearch_RecordStatus.setVisible(false);
+			this.label_DedupParmSearch_RecordType.setVisible(false);
+		}
 
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_DedupParmList.setHeight(getBorderLayoutHeight());
+		this.listBoxDedupParm.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingDedupParmList.setPageSize(getListRows());
@@ -188,40 +259,42 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<DedupParm>(DedupParm.class, getListRows());
-		this.searchObj.addSort("QueryCode", false);
-		this.searchObj.addTabelName("DedupParams_View");
-
-		// WorkFlow
-		if (isWorkFlowEnabled()) {
-			if (isFirstTask()) {
-				button_DedupParmList_NewDedupParm.setVisible(getUserWorkspace().
-						isAllowed("button_DedupParmList_New"+this.queryModule.getValue()+"Dedup"));
-			} else {
-				button_DedupParmList_NewDedupParm.setVisible(false);
-			}
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-		}
-		
-		this.searchObj.addFilterEqual("QueryModule", this.queryModule.getValue());
-		setSearchObj(this.searchObj);
-		
+		// set the itemRenderer
+		this.listBoxDedupParm.setItemRenderer(new DedupParmListModelItemRenderer());
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_DedupParmList_NewDedupParm.setVisible(false);
 			this.button_DedupParmList_DedupParmSearchDialog.setVisible(false);
 			this.button_DedupParmList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxDedupParm, this.pagingDedupParmList);
-			// set the itemRenderer
-			this.listBoxDedupParm.setItemRenderer(new DedupParmListModelItemRenderer());
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
+		setListDedupParam();
 		logger.debug("Leaving" + event.toString());
 	}
-
+	/**
+	 * This method sets all rightsTypes as ComboItems for ComboBox
+	 */
+	private void setListDedupParam() {
+		logger.debug("Entering ");
+		Comboitem comboitem =  new Comboitem();
+		comboitem.setValue("");
+		comboitem.setLabel("");
+		this.querySubCode.appendChild(comboitem);
+		this.querySubCode.setSelectedItem(comboitem);
+		for (int i = 0; i < listDedupParams.size(); i++) {
+			comboitem = new Comboitem();
+			comboitem.setLabel(listDedupParams.get(i).getLabel());
+			comboitem.setValue(listDedupParams.get(i).getValue());
+			this.querySubCode.appendChild(comboitem);
+			this.querySubCode.setSelectedIndex(0);
+		}
+		logger.debug("Leaving ");
+	}
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
@@ -266,7 +339,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 				valueParm[0] = aDedupParm.getQueryCode();
 				valueParm[1] = aDedupParm.getQueryModule();
 				if(aDedupParm.getQueryModule().equalsIgnoreCase("Customer")){
-					valueParm[2] = PennantAppUtil.getlabelDesc(aDedupParm.getQuerySubCode(), PennantAppUtil.getCategoryType());
+					valueParm[2] = PennantAppUtil.getlabelDesc(aDedupParm.getQuerySubCode(), PennantStaticListUtil.getCategoryType());
 				}
 				
 				errParm[0] = PennantJavaUtil.getLabel("label_QueryCode") + ":" + valueParm[0];
@@ -380,9 +453,27 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingDedupParmList.setActivePage(0);
+		this.sortOperator_queryCode.setSelectedIndex(0);
+		this.queryCode.setValue("");
+		this.sortOperator_queryDesc.setSelectedIndex(0);
+		this.queryDesc.setValue("");
+		this.sortOperator_queryModule.setSelectedIndex(0);
+		this.queryModules.setValue("");
+		this.sortOperator_querySubCode.setSelectedIndex(0);
+		this.querySubCode.setSelectedIndex(0);
+		
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		doSearch();
+		/*this.pagingDedupParmList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_DedupParmList, event);
-		this.window_DedupParmList.invalidate();
+		this.window_DedupParmList.invalidate();*/
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -393,25 +484,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 	 */
 	public void onClick$button_DedupParmList_DedupParmSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
-		/*
-		 * we can call our DedupParmDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected DedupParm. For handed over
-		 * these parameter only a Map is accepted. So we put the DedupParm
-		 * object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("dedupParmCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SolutionFactory/DedupParm/DedupParmSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -422,11 +495,81 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("unused")
-	public void onClick$button_DedupParmList_PrintList(Event event)
-			throws InterruptedException {
+	public void onClick$button_DedupParmList_PrintList(Event event)throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		PTListReportUtils reportUtils = new PTListReportUtils("DedupParm", getSearchObj(),this.pagingDedupParmList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
+	}
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and initialize sorting ++//
+		this.searchObj = new JdbcSearchObject<DedupParm>(DedupParm.class, getListRows());
+		this.searchObj.addSort("QueryCode", false);
+		this.searchObj.addTabelName("DedupParams_View");
+		this.searchObj.addFilterEqual("QueryModule", this.queryModule.getValue());
+		if (isWorkFlowEnabled()) {
+
+			if (isFirstTask() && this.moduleType == null) {
+				button_DedupParmList_NewDedupParm.setVisible(true);
+			} else {
+				button_DedupParmList_NewDedupParm.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("DedupParams_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("DedupParams_AView");
+		}
+		// De-dup parameter query code
+		if (!StringUtils.trimToEmpty(this.queryCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_queryCode.getSelectedItem(), this.queryCode.getValue(), "queryCode");
+		}
+		
+		// De-dup parameter query module
+		if (!StringUtils.trimToEmpty(this.queryModule.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_queryModule.getSelectedItem(), this.queryModules.getValue(), "queryModule");
+		}
+		// De-dup parameter query desc
+		if (!StringUtils.trimToEmpty(this.queryDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_queryDesc.getSelectedItem(), this.queryDesc.getValue(), "queryDesc");
+		}
+		// De-dup parameter query code
+		if (null !=this.querySubCode.getSelectedItem() && !StringUtils.trimToEmpty(this.querySubCode.getSelectedItem().getValue().toString()).equals("")){
+			searchObj = getSearchFilter(searchObj, this.sortOperator_querySubCode.getSelectedItem(), this.querySubCode.getSelectedItem().getValue().toString(), "querySubCode");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxDedupParm, this.pagingDedupParmList);
+		logger.debug("Leaving" );
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

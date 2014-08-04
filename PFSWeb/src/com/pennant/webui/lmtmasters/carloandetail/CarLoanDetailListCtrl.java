@@ -70,6 +70,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.carloandetail.model.CarLoanDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
@@ -194,6 +195,7 @@ public class CarLoanDetailListCtrl extends GFCBaseListCtrl<CarLoanDetail> implem
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<CarLoanDetail>(CarLoanDetail.class,getListRows());
+		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -221,6 +223,7 @@ public class CarLoanDetailListCtrl extends GFCBaseListCtrl<CarLoanDetail> implem
 			// set the itemRenderer
 			this.listBoxCarLoanDetail.setItemRenderer(new CarLoanDetailListModelItemRenderer());
 		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -288,6 +291,16 @@ public class CarLoanDetailListCtrl extends GFCBaseListCtrl<CarLoanDetail> implem
 			}	
 		}
 		logger.debug("Leaving" + event.toString());
+	}
+	/**
+	 * Call the CarLoanDetail dialog with a new empty entry. <br>
+	 */
+	public void onClick$button_CarLoanDetailList_NewCarLoanDetail(Event event) throws Exception {
+		logger.debug(event.toString());
+		// create a new CarLoanDetail object, We GET it from the backend.
+		final CarLoanDetail aCarLoanDetail = getCarLoanDetailService().getNewCarLoanDetail();
+		showDetailView(aCarLoanDetail);
+		logger.debug("Leaving");
 	}
 
 	/**

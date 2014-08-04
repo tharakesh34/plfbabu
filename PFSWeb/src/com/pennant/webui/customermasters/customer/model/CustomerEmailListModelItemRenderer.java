@@ -50,7 +50,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.customermasters.CustomerEMail;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
@@ -61,20 +60,15 @@ import com.pennant.util.PennantAppUtil;
 public class CustomerEmailListModelItemRenderer implements ListitemRenderer<CustomerEMail>, Serializable {
 
 	private static final long serialVersionUID = 6505867530536507335L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, CustomerEMail customerEMail, int count) throws Exception {
 
-		//final CustomerEMail customerEMail = (CustomerEMail) data;
 		Listcell lc;
-		if(customerEMail.getRecordType().equals(PennantConstants.RCD_ADD) 
-				|| customerEMail.getRecordType().equals(PennantConstants.RCD_UPD)){
-			lc = new Listcell(customerEMail.getLovDescCustEMailTypeCode());
-			lc.setParent(item);
-		}else{
-			lc = new Listcell(customerEMail.getCustEMailTypeCode()+"-"+customerEMail.getLovDescCustEMailTypeCode());
-			lc.setParent(item);
-		}
+		lc = new Listcell(customerEMail.getLovDescCustCIF());
+		lc.setParent(item);
+		lc = new Listcell(customerEMail.getLovDescCustEMailTypeCode());
+		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.formateInt(customerEMail.getCustEMailPriority()));
 		lc.setParent(item);
 		lc = new Listcell(customerEMail.getCustEMail());

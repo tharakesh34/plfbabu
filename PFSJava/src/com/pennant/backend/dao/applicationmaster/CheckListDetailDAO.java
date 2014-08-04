@@ -67,4 +67,5 @@ public interface CheckListDetailDAO {
 	public void refresh(CheckListDetail entity);
 
 	public List<CheckListDetail> getCheckListDetailByChkList(final long checkListId, String type);
+	
 }

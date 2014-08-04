@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.systemmasters;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.pennant.backend.model.LoginUserDetails;
@@ -56,8 +57,12 @@ public class IncomeType implements java.io.Serializable {
 
 	private static final long serialVersionUID = -260562868574383176L;
 	
-	private String incomeTypeCode = null;
+	private String incomeExpense;
+	private String category;
+	private String lovDescCategoryName;
+	private String incomeTypeCode;
 	private String incomeTypeDesc;
+	private BigDecimal margin;
 	private boolean incomeTypeIsActive;
 	private int version;
 	private long lastMntBy;
@@ -254,4 +259,36 @@ public class IncomeType implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public void setIncomeExpense(String incomeExpense) {
+	    this.incomeExpense = incomeExpense;
+    }
+
+	public String getIncomeExpense() {
+	    return incomeExpense;
+    }
+
+	public void setCategory(String category) {
+	    this.category = category;
+    }
+
+	public String getCategory() {
+	    return category;
+    }
+
+	public void setMargin(BigDecimal margin) {
+	    this.margin = margin;
+    }
+
+	public BigDecimal getMargin() {
+	    return margin;
+    }
+
+	public void setLovDescCategoryName(String lovDescCategoryName) {
+	    this.lovDescCategoryName = lovDescCategoryName;
+    }
+
+	public String getLovDescCategoryName() {
+	    return lovDescCategoryName;
+    }
 }

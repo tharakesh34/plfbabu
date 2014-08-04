@@ -91,16 +91,7 @@
 								<label
 									id="label_CustomerIncomeDialog_CustIncomeType"
 									value="${c:l('label_CustomerIncomeDialog_CustIncomeType.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="custIncomeType"
-										width="72px" visible="false" readonly="true" />
-									<textbox
-										id="lovDescCustIncomeTypeName" width="250px" readonly="true" />
-									<button id="btnSearchCustIncomeType"
-										image="/images/icons/LOVSearch.png" height="24px" />
-								</hbox>
+									<extendedcombobox id="custIncomeType"/>
 							</row>
 							<row>
 								<label
@@ -113,7 +104,16 @@
 										width="250px" maxlength="25" />
 								</hbox>
 							</row>
-							<row>
+							<row id = "row_isJoint">
+								<label
+									id="label_CustomerIncomeDialog_IsJoint"
+									value="${c:l('label_CustomerIncomeDialog_IsJoint.value')}" />
+								<hbox>
+									<space spacing="2px"/>
+									<checkbox id="jointCust" />
+								</hbox>
+							</row>
+							<row visible="false">
 								<label
 									id="label_CustomerIncomeDialog_CustIncomeCountry"
 									value="${c:l('label_CustomerIncomeDialog_CustIncomeCountry.value')}" />
@@ -134,7 +134,7 @@
 					</grid>
 				</groupbox>
 			</center>
-			<south sclass="south-dialog">
+			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />
 					<hbox width="75%">

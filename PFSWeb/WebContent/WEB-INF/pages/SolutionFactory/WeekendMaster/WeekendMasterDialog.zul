@@ -81,7 +81,6 @@
 													<textbox
 														id="weekendCode" maxlength="3" width="27px" />
 													<button
-														label="${c:l('btnSearch.label')}"
 														id="btnSearchCurrencyCode"
 														image="/images/icons/LOVSearch.png" height="24px" />
 												</hbox>

@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -122,14 +123,14 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 	@Override
 	public TransactionEntry getTransactionEntryById(final long id, int transOrder,String type) {
 		logger.debug("Entering");
-		TransactionEntry transactionEntry = getTransactionEntry();
+		TransactionEntry transactionEntry = new TransactionEntry();
 		
 		transactionEntry.setId(id);
 		transactionEntry.setTransOrder(transOrder);
 		
 		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc," );
 		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType,AccountBranch ,AccountSubHeadRule,");
-		selectSql.append(" TranscationCode, RvsTransactionCode, AmountRule,RuleDecider,FeeCode,ChargeType,EntryByInvestment,OpenNewFinAc,");
+		selectSql.append(" TranscationCode, RvsTransactionCode, AmountRule,FeeCode,ChargeType,EntryByInvestment,OpenNewFinAc,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescAccountTypeName,lovDescAccountSubHeadRuleName," );
 			selectSql.append(" lovDescTranscationCodeName,lovDescRvsTransactionCodeName, ");
@@ -167,15 +168,15 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 	public List<TransactionEntry> getListTransactionEntryById(final long id, String type, boolean postingsProcess) {
 		logger.debug("Entering");
 		
-		TransactionEntry transactionEntry = getTransactionEntry();
+		TransactionEntry transactionEntry = new TransactionEntry();
 		transactionEntry.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc," );
 		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType,AccountBranch," );
 		selectSql.append(" AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule,ChargeType,");
-		selectSql.append(" RuleDecider,FeeCode , EntryByInvestment ,OpenNewFinAc," );
+		selectSql.append(" FeeCode , EntryByInvestment ,OpenNewFinAc" );
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" lovDescEventCodeName ");
+			selectSql.append(" , lovDescEventCodeName, lovDescEventCodeDesc ");
 			if(!postingsProcess){
 				selectSql.append(" ,lovDescAccountTypeName,lovDescAccountSubHeadRuleName," );
 				selectSql.append(" lovDescTranscationCodeName,lovDescRvsTransactionCodeName ,");
@@ -200,6 +201,51 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 	}
 	
 	/**
+	 * get the list of AccountSetid's
+	 * 
+	 * @return List
+	 */
+	@Override
+	public List<Long> getAccountSetIds() {
+		logger.debug("Entering");
+		
+		StringBuilder selectSql = new StringBuilder("select distinct AccountSetid" );
+		selectSql.append(" From RMTTransactionEntry");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), new BeanPropertySqlParameterSource(""), Long.class);	
+	}
+	
+	/**
+	 * Fetch the Record  Transaction Entry details by key field
+	 * 
+	 * @param id (int)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return TransactionEntry
+	 */
+	@Override
+	public List<TransactionEntry> getListTranEntryForBatch(final long id, String type) {
+		logger.debug("Entering");
+		
+		TransactionEntry transactionEntry = new TransactionEntry();
+		transactionEntry.setId(id);
+		
+		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc, Debitcredit, " );
+		selectSql.append(" ShadowPosting, Account, AccountType,AccountBranch, AccountSubHeadRule, " );
+		selectSql.append(" TranscationCode, RvsTransactionCode, AmountRule,ChargeType, FeeCode , OpenNewFinAc" );
+		selectSql.append(" From RMTTransactionEntry");
+		selectSql.append(" Where AccountSetid =:AccountSetid");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
+		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TransactionEntry.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+	
+	/**
 	 * Fetch the Record  Transaction Entry details by key field and RefType
 	 * 
 	 * @param id (int)
@@ -208,14 +254,14 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 	 * @return TransactionEntry
 	 */
 	@Override
-	public List<TransactionEntry> getListTransactionEntryByRefType(String finType , String refType, String roleCode, 
+	public List<TransactionEntry> getListTransactionEntryByRefType(String finType , int refType, String roleCode, 
 			String type, boolean postingsProcess) {
 		logger.debug("Entering");
 		
 		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc," );
 		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType,AccountBranch," );
 		selectSql.append(" AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule,ChargeType,");
-		selectSql.append(" RuleDecider,FeeCode , EntryByInvestment ,OpenNewFinAc," );
+		selectSql.append(" FeeCode , EntryByInvestment ,OpenNewFinAc," );
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescEventCodeName ");
 			if(!postingsProcess){
@@ -233,10 +279,10 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AccountSetid IN ( SELECT FinRefId from LMTFinRefDetail_ACView  " );
 		selectSql.append(" where Fintype='" +finType );
-		selectSql.append("' and FinRefType ='" + refType +	"' and MandInputInStage like '%" +roleCode + "%')");
+		selectSql.append("' and FinRefType ='" + refType +	"' and MandInputInStage like '%" +roleCode + ",%')");
 		
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(getTransactionEntry());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new TransactionEntry());
 		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				TransactionEntry.class);
 		logger.debug("Leaving");
@@ -252,32 +298,92 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 	 * @return Rules
 	 */
 	@Override
-	public List<Rule> getListFeeChargeRules(long id, String ruleEvent, String type) {
+	public List<Rule> getListFeeChargeRules(long id, String ruleEvent, String type, int seqOrder) {
 		logger.debug("Entering");
 		
-		TransactionEntry transactionEntry = getTransactionEntry();
+		TransactionEntry transactionEntry = new TransactionEntry();
 		transactionEntry.setId(id);
-		transactionEntry.setRuleDecider("FEES");
 		
-		StringBuilder selectSql = new StringBuilder(" SELECT RuleCode, RuleCodeDesc,SQLRule," );
-		selectSql.append(" WaiverDecider , Waiver,WaiverPerc,AddFeeCharges, SeqOrder ");
-		selectSql.append(" From Rules");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" where ruleModule='");
-		selectSql.append(transactionEntry.getRuleDecider());
-		selectSql.append("' AND ruleCode IN (Select feeCode from RMTTransactionEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AccountSetid =:AccountSetid AND ruleDecider=:ruleDecider ) " );
-		selectSql.append(" AND RuleEvent='");
-		selectSql.append(ruleEvent+"' Order BY SeqOrder ");
-		
+		StringBuilder selectSql = new StringBuilder(" Select DISTINCT FeeCode from RMTTransactionEntry_AView");
+		selectSql.append(" Where AccountSetid =:AccountSetid AND  ISNULL(Feecode,'') <> '' " );
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-	}
+		List<String> feeCodeList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+		
+		String feeCodes = "";
+		for (int i = 0; i < feeCodeList.size(); i++) {
+			
+			String[] list = null;
+			if(feeCodeList.get(i).contains(",")){
+				list = feeCodeList.get(i).split(",");
+			}
 
+			if(list != null && list.length > 0){
+				for (int j = 0; j < list.length; j++) {
+					if(!feeCodes.contains("'"+list[j]+"'")){
+						feeCodes = feeCodes + "'"+list[j]+"',";
+					}
+				}
+			}else{
+				if(!feeCodes.contains("'"+feeCodeList.get(i).trim()+"'")){
+					feeCodes = feeCodes + "'"+feeCodeList.get(i).trim()+"',";
+				}
+			}
+        }
+		
+		if(feeCodes.endsWith(",")){
+			feeCodes = feeCodes.substring(0, feeCodes.length()-1);
+		}
+		
+		if(feeCodes.length()>0){
+			selectSql = new StringBuilder(" SELECT RuleCode, RuleCodeDesc,SQLRule," );
+			selectSql.append(" WaiverDecider , Waiver,WaiverPerc,AddFeeCharges, SeqOrder ");
+			selectSql.append(" From Rules");
+			selectSql.append(StringUtils.trimToEmpty(type));
+			selectSql.append(" where ruleModule='FEES' AND ruleCode IN (");
+			selectSql.append(feeCodes);
+			selectSql.append(" ) AND RuleEvent='");
+			selectSql.append(ruleEvent+"' " );
+			if(seqOrder != 0){
+				selectSql.append(" AND SeqOrder > "+seqOrder );
+			}
+			selectSql.append(" Order BY SeqOrder ");
+
+			logger.debug("selectSql: " + selectSql.toString());
+			beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
+			RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+			logger.debug("Leaving");
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+			
+		}else{
+			logger.debug("Leaving");
+			return new ArrayList<Rule>();
+		}
+	}
+	
+	
+	/**
+	 * Fetch the Record  Rule Details by key field
+	 * 
+	 * @param accountSetId (int)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return Rules
+	 */
+	@Override
+	public List<String> getListFeeCodes(long accountSetId) {
+		logger.debug("Entering");
+		
+		TransactionEntry transactionEntry = new TransactionEntry();
+		transactionEntry.setId(accountSetId);
+		
+		StringBuilder selectSql = new StringBuilder(" Select DISTINCT FeeCode from RMTTransactionEntry_AView");
+		selectSql.append(" Where AccountSetid =:AccountSetid AND  ISNULL(Feecode,'') <> '' " );
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
+		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+	}
+		
 	/**
 	 * This method initialize the Record.
 	 * @param TransactionEntry (transactionEntry)
@@ -354,7 +460,7 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 	 */
 	public void deleteByAccountingSetId(final long accountingSetId,String type) {
 		logger.debug("Entering");
-		TransactionEntry transactionEntry = getTransactionEntry();
+		TransactionEntry transactionEntry = new TransactionEntry();
 		transactionEntry.setId(accountingSetId);
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From RMTTransactionEntry");
@@ -390,12 +496,12 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AccountSetid, TransOrder, TransDesc, Debitcredit, ShadowPosting," );
 		insertSql.append(" Account, AccountType, AccountBranch, AccountSubHeadRule, TranscationCode," );
-		insertSql.append(" RvsTransactionCode, AmountRule,RuleDecider,FeeCode,ChargeType, EntryByInvestment ,OpenNewFinAc,");
+		insertSql.append(" RvsTransactionCode, AmountRule,FeeCode,ChargeType, EntryByInvestment ,OpenNewFinAc,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId) ");
 		insertSql.append(" Values(:AccountSetid, :TransOrder, :TransDesc, :Debitcredit, :ShadowPosting," );
 		insertSql.append(" :Account, :AccountType,:AccountBranch, :AccountSubHeadRule, :TranscationCode," );
-		insertSql.append(" :RvsTransactionCode, :AmountRule,:RuleDecider,:FeeCode,:ChargeType, :EntryByInvestment ,:OpenNewFinAc," );
+		insertSql.append(" :RvsTransactionCode, :AmountRule,:FeeCode,:ChargeType, :EntryByInvestment ,:OpenNewFinAc," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -430,7 +536,7 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		updateSql.append(" ShadowPosting = :ShadowPosting, Account = :Account, AccountType = :AccountType," );
 		updateSql.append(" AccountBranch=:AccountBranch,AccountSubHeadRule = :AccountSubHeadRule," );
 		updateSql.append(" TranscationCode = :TranscationCode, RvsTransactionCode = :RvsTransactionCode," );
-		updateSql.append(" AmountRule = :AmountRule,RuleDecider=:RuleDecider,FeeCode=:FeeCode, " );
+		updateSql.append(" AmountRule = :AmountRule,FeeCode=:FeeCode, " );
 		updateSql.append(" ChargeType =:ChargeType, EntryByInvestment =:EntryByInvestment ,OpenNewFinAc=:OpenNewFinAc," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
@@ -465,13 +571,13 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 	public List<TransactionEntry> getListFeeTransEntryById(final long id, String type) {
 		logger.debug("Entering");
 		
-		TransactionEntry transactionEntry = getTransactionEntry();
+		TransactionEntry transactionEntry = new TransactionEntry();
 		transactionEntry.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc," );
 		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType,AccountBranch," );
 		selectSql.append(" AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule,ChargeType,");
-		selectSql.append(" RuleDecider,FeeCode,EntryByInvestment,OpenNewFinAc," );
+		selectSql.append(" FeeCode,EntryByInvestment,OpenNewFinAc," );
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescAccountTypeName,lovDescAccountSubHeadRuleName," );
 			selectSql.append(" lovDescTranscationCodeName,lovDescRvsTransactionCodeName ,");
@@ -482,7 +588,7 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTTransactionEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AccountSetid =:AccountSetid and RuleDecider='FEES'");
+		selectSql.append(" Where AccountSetid =:AccountSetid ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
@@ -508,7 +614,7 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder("Select  TransOrder, TransDesc," );
-		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType, AmountRule, RuleDecider " );
+		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType, AmountRule " );
 		selectSql.append(" From RMTODTransactionEntry");
 
 		logger.debug("selectSql: " + selectSql.toString());

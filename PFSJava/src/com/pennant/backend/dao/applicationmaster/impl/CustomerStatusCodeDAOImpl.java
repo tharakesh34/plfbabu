@@ -61,6 +61,7 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -121,11 +122,11 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 	@Override
 	public CustomerStatusCode getCustomerStatusCodeById(final String id, String type) {
 		logger.debug("Entering");
-		CustomerStatusCode customerStatusCode = getCustomerStatusCode();
+		CustomerStatusCode customerStatusCode = new CustomerStatusCode();
 		customerStatusCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append("SELECT CustStsCode, CustStsDescription, CustStsIsActive,CustStsOrder," );
+		selectSql.append("SELECT CustStsCode, CustStsDescription, DueDays, SuspendProfit,CustStsIsActive," );
 		if(type.contains("View")){
 			selectSql.append("");
 		}
@@ -246,10 +247,10 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		
 		insertSql.append("Insert Into BMTCustStatusCodes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustStsCode, CustStsDescription, CustStsIsActive,CustStsOrder," );
+		insertSql.append(" (CustStsCode, CustStsDescription, DueDays, SuspendProfit, CustStsIsActive," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustStsCode, :CustStsDescription, :CustStsIsActive, :CustStsOrder, " );
+		insertSql.append(" Values(:CustStsCode, :CustStsDescription, :DueDays, :SuspendProfit,:CustStsIsActive, " );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
@@ -285,7 +286,7 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		updateSql.append("Update BMTCustStatusCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set CustStsCode = :CustStsCode, CustStsDescription = :CustStsDescription," );
-		updateSql.append(" CustStsIsActive = :CustStsIsActive,CustStsOrder = :CustStsOrder ," );
+		updateSql.append(" DueDays=:DueDays, SuspendProfit=:SuspendProfit,CustStsIsActive = :CustStsIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
@@ -307,7 +308,93 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		}
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for get Finance Profit Suspend status
+	 */
+	@Override
+    public boolean getFinanceSuspendStatus(int curODDays) {
+		logger.debug("Entering");
+		
+		boolean suspendProfit = false;
+		CustomerStatusCode customerStatusCode = new CustomerStatusCode();
+		customerStatusCode.setDueDays(curODDays);
+		StringBuilder selectSql = new StringBuilder("SELECT Count(CustStsCode) " );
+		selectSql.append(" FROM  BMTCustStatusCodes");
+		selectSql.append(" Where DueDays <=:DueDays AND SuspendProfit = 1") ;
 
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
+
+		int suspendCount = this.namedParameterJdbcTemplate.queryForInt(selectSql.toString(), beanParameters);
+		if(suspendCount > 0){
+			suspendProfit = true;
+		}
+		logger.debug("Leaving");
+		return suspendProfit;
+    }
+	
+	/**
+	 * Method for get Finance Profit Suspend status
+	 */
+	@Override
+	public String getFinanceStatus(String finReference, boolean isCurFinStatus) {
+		logger.debug("Entering");
+		
+		FinODDetails odDetails = new FinODDetails();
+		odDetails.setFinReference(finReference);
+		
+		StringBuilder selectSql = new StringBuilder(" Select TOP 1 CustStsCode from BMTCustStatusCodes " );
+		selectSql.append(" WHERE DueDays <= (Select ISNULL(Max(FinCurODDays),0) from FinODDetails " );
+		selectSql.append(" WHERE FinReference = :FinReference " );
+		if(isCurFinStatus){
+			selectSql.append(" AND FinCurODAmt != 0 " );
+		}
+		selectSql.append("  )  ORDER BY DueDays DESC " );
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(odDetails);
+		
+		String custStsCode = null;
+		try {
+			custStsCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,String.class);
+        } catch (Exception e) {
+        	custStsCode = null;
+        }
+		
+		logger.debug("Leaving");
+		return custStsCode;
+	}
+
+	@Override
+	public CustomerStatusCode getCustStatusByMinDueDays(String type) {
+		logger.debug("Entering");
+		CustomerStatusCode customerStatusCode = new CustomerStatusCode();
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append("SELECT CustStsCode, CustStsDescription, DueDays, SuspendProfit,CustStsIsActive," );
+		if(type.contains("View")){
+			selectSql.append("");
+		}
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" FROM  BMTCustStatusCodes");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where DueDays =( SELECT MIN(DueDays) from BMTCustStatusCodes)") ;
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
+		RowMapper<CustomerStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerStatusCode.class);
+
+		try {
+			customerStatusCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(e);
+			customerStatusCode = null;
+		}
+		logger.debug("Leaving");
+		return customerStatusCode;
+	}
+	
 	/**
 	 * This method for getting the error details
 	 * @param errorId (String)
@@ -322,4 +409,5 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		parms[0][0] = PennantJavaUtil.getLabel("label_CustStsCode")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
+
 }

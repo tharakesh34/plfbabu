@@ -9,7 +9,7 @@
 
 	<window id="window_CreditApplicationReviewDialog" border="normal"
 		apply="${creditApplicationReviewDialogCtrl}" width="100%"
-		height="100%" sizable="false">
+		height="100%" sizable="true">
 		<borderlayout id="borderlayout_CreditApplicationReview">
 			<north>
 				<div sclass="z-toolbar">
@@ -50,6 +50,10 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnPrint" height="24px"
+								label="${c:l('label_Print')}"
+								tooltiptext="${c:l('btnPrint.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							<button id="btnHelp" height="24px"
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
@@ -64,23 +68,19 @@
 			</north>
 			<center border="none" autoscroll="true">
 				<vlayout>
-					<groupbox id="gb_basicDetails" height="100%"
-						sclass="gb-dialog" closable="false">
+					<groupbox id="gb_basicDetails"
+						style="border:none;">
 						<caption
 							label="Credit Application/Review-Bank SpreadSheet" />
 						<grid id="creditApplicationReviewGrid"
 							sclass="GridLayoutNoBorder" fixedLayout="true" width="100%">
 							<columns>
-								<column width="15%" />
-								<column width="35%" />
-								<column width="15%" />
-								<column width="35%" />
+								<column width="18%" />
+								<column width="32%" />
+								<column width="18%" />
+								<column width="32%" />
 							</columns>
 							<rows>
-								<!-- 	<row visible="true">									
-									<label
-									id="label_CreditApplicationReviewDialog_AppHead"/>
-									</row> -->
 								<row>
 									<label
 										id="label_CreditApplicationReviewDialog_CustID"
@@ -91,8 +91,7 @@
 										<longbox id="custID"
 											width="150px" maxlength="26" visible="false" />
 										<textbox id="custCIF"
-											width="150px" maxlength="150" style="overflow: hidden;"
-											readonly="true" />
+											width="150px" maxlength="150" style="overflow: hidden;" />
 										<button id="btnSearchPRCustid"
 											image="/images/icons/LOVSearch.png" height="24px" />
 										<label id="custShrtName"
@@ -103,7 +102,7 @@
 										value="${c:l('label_CreditApplicationReviewDialog_BankName.value')}" />
 									<hbox>
 										<space spacing="2px"
-											sclass="mandatory" />
+											id="space_BankName" sclass="mandatory" />
 										<textbox id="bankName" />
 									</hbox>
 								</row>
@@ -120,8 +119,13 @@
 										id="label_CreditApplicationReviewDialog_ConsolOrUnConsol"
 										value="${c:l('label_CreditApplicationReviewDialog_ConsolOrUnConsol.value')}" />
 									<hbox>
-										<space spacing="2px" />
-										<checkbox id="consolOrUnConsol" />
+										<radiogroup
+											id="conSolOrUnConsol">
+											<radio label="Consolidated"
+												id="conSolidated" selected="true" value="Consolidated" />
+											<radio id="unConsolidated"
+												label="Un Consolidated" value="UnConsolidated" />
+										</radiogroup>
 									</hbox>
 								</row>
 								<row>
@@ -139,18 +143,36 @@
 									<hbox>
 										<space spacing="2px"
 											sclass="mandatory" />
-										<datebox id="auditedDate" />
+										<datebox id="auditedDate" constraint="no future:"/>
 									</hbox>
 								</row>
 								<row>
 									<label
-										id="label_CreditApplicationReviewDialog_ConversionRate"
-										value="${c:l('label_CreditApplicationReviewDialog_ConversionRate.value')}" />
+										id="label_CreditApplicationReviewDialog_AuditType"
+										value="${c:l('label_CreditApplicationReviewDialog_AuditType.value')}" />
 									<hbox>
 										<space spacing="2px"
 											sclass="mandatory" />
-										<decimalbox id="conversionRate" />
+										<combobox id="auditType" />
 									</hbox>
+									<label
+										id="label_CreditRevSelectCategory_QualifiedUnQualified"
+										value="${c:l('label_CreditRevSelectCategory_QualifiedUnQualified.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" visible="false" />
+										<hbox>
+											<radiogroup
+												id="qualifiedUnQualified">
+												<radio label="Qualified"
+													id="qualRadio" selected="true" value="Qual" />
+												<radio id="unQualRadio"
+													label="UnQualified" value="UnQual" />
+											</radiogroup>
+										</hbox>
+									</hbox>
+								</row>
+								<row>
 									<label
 										id="label_CreditApplicationReviewDialog_AuditedYear"
 										value="${c:l('label_CreditApplicationReviewDialog_AuditedYear.value')}" />
@@ -160,32 +182,69 @@
 										<textbox id="auditedYear"
 											maxlength="4" />
 									</hbox>
+									<label
+										id="label_CreditApplicationReviewDialog_auditPeriod"
+										value="${c:l('label_CreditApplicationReviewDialog_auditPeriod.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<combobox id="auditPeriod" />
+									</hbox>
 								</row>
 								<row>
 									<label
 										id="label_CreditApplicationReviewDialog_NoOfShares"
 										value="${c:l('label_CreditApplicationReviewDialog_NoOfShares.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<intbox id="noOfShares" />
+										<space spacing="2px"  />
+										<longbox id="noOfShares" />
 									</hbox>
 									<label
 										id="label_CreditApplicationReviewDialog_MarketPrice"
 										value="${c:l('label_CreditApplicationReviewDialog_MarketPrice.value')}" />
+									<currencyBox id="marketPrice" />
+								</row>
+								<row>
+									<label
+										id="label_CreditApplicationReviewDialog_FinCcy"
+										value="${c:l('labelCreditApplicationReviewDialog_FinCcy.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<decimalbox id="marketPrice" />
+										<extendedcombobox
+											id="currencyType" />
+									</hbox>
+									<label
+										id="label_CreditApplicationReviewDialog_ConversionRate"
+										value="${c:l('label_CreditApplicationReviewDialog_ConversionRate.value')}" />
+									<hbox>
+									<space sclass="mandatory"  />
+										<decimalbox id="conversionRate" />
+									</hbox>
+								</row>
+								<row>
+									<label
+										id="label_CreditApplicationReviewDialog_AssetLiabilitiesDiff"
+										value="${c:l('label_CreditApplicationReviewDialog_AssetLiabilitiesDiff.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="totLibAsstDiff"
+											disabled="true" sclass="decimalToString" tabindex="-1" />
 									</hbox>
 								</row>
 							</rows>
 						</grid>
 					</groupbox>
 					<groupbox id="gb_CreditReviwDetails">
-						<tabbox width="99%" id="tabBoxIndexCenter">
-							<tabs id="tabsIndexCenter" />
-							<tabpanels id="tabpanelsBoxIndexCenter" />
+						<toolbar align="end" sclass="toolbar-end"
+							visible="false">
+							<button id="button_addDetails"
+								label="${c:l('label_addDetails')}" />
+						</toolbar>
+						<tabbox width="99%" id="tabBoxIndexCenter"
+							height="auto" style="overflow:auto;">
+							<tabs id="tabsIndexCenter" height="auto"
+								style="overflow:auto;" />
+							<tabpanels id="tabpanelsBoxIndexCenter"
+								height="auto" style="overflow:auto;" />
 						</tabbox>
 					</groupbox>
 				</vlayout>

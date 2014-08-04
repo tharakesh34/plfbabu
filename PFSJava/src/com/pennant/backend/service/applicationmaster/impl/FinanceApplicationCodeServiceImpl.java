@@ -70,8 +70,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class FinanceApplicationCodeServiceImpl extends
 		GenericService<AddressType> implements FinanceApplicationCodeService {
 
-	private static Logger logger = Logger
-			.getLogger(FinanceApplicationCodeServiceImpl.class);
+	private static Logger logger = Logger.getLogger(FinanceApplicationCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceApplicationCodeDAO financeApplicationCodeDAO;

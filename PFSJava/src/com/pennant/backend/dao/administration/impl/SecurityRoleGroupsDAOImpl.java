@@ -48,6 +48,7 @@
 
  import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
  import org.apache.log4j.Logger;
  import org.springframework.dao.DataAccessException;
  import org.springframework.dao.EmptyResultDataAccessException;
@@ -65,7 +66,7 @@
  import com.pennant.backend.model.administration.SecurityRole;
  import com.pennant.backend.model.administration.SecurityRoleGroups;
  import com.pennant.backend.util.PennantConstants;
- import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantJavaUtil;
 
  public class SecurityRoleGroupsDAOImpl  extends BasisNextidDaoImpl<SecurityRole> implements SecurityRoleGroupsDAO {
 
@@ -310,4 +311,38 @@
 				 errorId, parms[0],parms[1]), userLanguage);
 	 }
 
+	 /**
+	  * This method Selects the SecurityRoleGroups records from SecRoleGroups
+	  * @param secRoles (SecurityRoleGroups)
+	  * @return List<SecurityRoleGroups>
+	  */
+	 @Override
+	 public List<SecurityRoleGroups> getRoleGroupsByRoleID(long roleId,String type){
+		 logger.debug("Entering ");
+		 List< SecurityRoleGroups>  list=new ArrayList< SecurityRoleGroups>();
+		 
+		 SecurityRoleGroups roleGroups = new SecurityRoleGroups();
+		 roleGroups.setRoleID(roleId);
+		 
+		 StringBuilder   selectSql = new StringBuilder  ("SELECT  RoleGrpID,GrpID,RoleID,Version");
+		 selectSql.append(",LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,");
+		 selectSql.append("TaskId,NextTaskId,RecordType,WorkflowId");
+		 if(StringUtils.trimToEmpty(type).contains("View")){
+			 selectSql.append(",LovDescGrpCode,LovDescRoleCode ");	 
+		 }
+		 selectSql.append(" FROM SecRoleGroups");
+		 selectSql.append(type);
+		 selectSql.append(" WHERE RoleID = :RoleID");
+		 logger.debug("selectSql: " + selectSql.toString());
+		 SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(roleGroups);
+		 RowMapper< SecurityRoleGroups> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRoleGroups.class);
+		 try{
+			 list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		 }catch (EmptyResultDataAccessException e) {
+			 list= null;
+		 }
+		 logger.debug("Leaving ");
+		 return list;
+	 }
+	 
  }

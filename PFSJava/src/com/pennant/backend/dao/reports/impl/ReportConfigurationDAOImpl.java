@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.reports.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,8 +61,10 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.reports.ReportConfiguration;
+import com.pennant.backend.model.reports.ReportsMonthEndConfiguration;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -119,7 +123,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 	@Override
 	public ReportConfiguration getReportConfigurationById(final long id, String type) {
 		logger.debug("Entering ");
-		ReportConfiguration reportConfiguration = getReportConfiguration();
+		ReportConfiguration reportConfiguration = new ReportConfiguration();
 		reportConfiguration.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("SELECT ReportID, ReportName, ReportHeading, PromptRequired," );
@@ -301,6 +305,46 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		logger.debug("Leaving ");
 	}
 
+	/**
+	 * Fetch Total Group Codes For Month Reports generation
+	 */
+	@Override
+    public List<ValueLabel> getMonthEndReportGrpCodes() {
+		logger.debug("Entering ");
+
+		StringBuilder selectSql = new StringBuilder("SELECT DISTINCT GroupCode AS Value, GroupDesc AS Label " );
+		selectSql.append(" FROM  ReportsMonthEndConfiguration");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
+
+		logger.debug("Leaving ");
+		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+    }
+	
+	/**
+	 * Fetch Total Group Codes For Month Reports generation
+	 */
+	@Override
+    public List<ValueLabel> getReportListByGrpCode(String groupCode) {
+		logger.debug("Entering ");
+		
+		ReportsMonthEndConfiguration configuration = new ReportsMonthEndConfiguration();
+		configuration.setGroupCode(groupCode);
+		configuration.setActive(true);
+
+		StringBuilder selectSql = new StringBuilder("SELECT ReportName AS Value, ReportDesc AS Label " );
+		selectSql.append(" FROM  ReportsMonthEndConfiguration ");
+		selectSql.append(" WHERE GroupCode=:GroupCode AND Active =:Active ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(configuration);
+		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
+
+		logger.debug("Leaving ");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+    }
+	
 	
 	private ErrorDetails  getError(String errorId, String ReportID, String userLanguage){
 		String[][] parms= new String[2][1]; 
@@ -310,4 +354,5 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 				errorId, parms[0],parms[1]), userLanguage);
 	}
+
 }

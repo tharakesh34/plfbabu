@@ -126,7 +126,7 @@ public class FinBillingHeaderDAOImpl extends BasisCodeDAO<FinBillingHeader> impl
 	@Override
 	public FinBillingHeader getFinBillingHeaderById(final String id, String type) {
 		logger.debug("Entering");
-		FinBillingHeader billingHeader = getFinBillingHeader();
+		FinBillingHeader billingHeader = new FinBillingHeader();
 
 		billingHeader.setId(id);
 
@@ -204,7 +204,7 @@ public class FinBillingHeaderDAOImpl extends BasisCodeDAO<FinBillingHeader> impl
 		logger.debug("Entering");
 		int recordCount = 0;
 		
-		FinBillingHeader billingHeader = getFinBillingHeader();
+		FinBillingHeader billingHeader = new FinBillingHeader();
 		billingHeader.setFinReference(finReference);
 
 		StringBuilder deleteSql = new StringBuilder("Delete From ");

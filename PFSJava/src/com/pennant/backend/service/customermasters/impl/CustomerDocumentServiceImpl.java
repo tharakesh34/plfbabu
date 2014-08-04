@@ -47,9 +47,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.validation.CustomerDocumentValidation;
@@ -65,6 +67,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 	private static Logger logger = Logger.getLogger(CustomerDocumentServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
+	private CustomerDAO customerDAO;
 	private CustomerDocumentDAO customerDocumentDAO;
 	private CustomerDocumentValidation customerDocumentValidation;
 
@@ -79,6 +82,13 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	public CustomerDAO getCustomerDAO() {
+    	return customerDAO;
+    }
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+    	this.customerDAO = customerDAO;
+    }
+	
 	public CustomerDocumentDAO getCustomerDocumentDAO() {
 		return customerDocumentDAO;
 	}
@@ -325,6 +335,15 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	public DocumentDetails getCustDocByCustAndDocType(final long custId, String docType){
+		return getCustomerDocumentDAO().getCustDocByCustAndDocType(custId, docType, "_AView");
+	}
+	
+	@Override
+	public String getCustCRCPRById(long custId, String type){
+		return getCustomerDAO().getCustCRCPRById(custId, type);
 	}
 
 	/**

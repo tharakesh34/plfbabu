@@ -1,13 +1,19 @@
 package com.pennant.equation.process;
 
+import java.math.BigDecimal;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
+import com.pennant.coreinterface.vo.CoreBankAvailCustomer;
 import com.pennant.coreinterface.vo.CoreBankNewCustomer;
 import com.pennant.coreinterface.vo.CoreBankingCustomer;
+import com.pennant.coreinterface.vo.CustomerLimit;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.HostConnection;
 
@@ -22,7 +28,7 @@ public class CustomerProcess extends GenericProcess{
 	 * by calling Equation Program PTKAS13PR.
 	 * 
 	 * @Param Customer
-	 * @Return Customer
+	 * @Return Customer-- unused
 	 */
 	public CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust) throws CustomerNotFoundException{	
 		logger.debug("Entering");
@@ -30,13 +36,8 @@ public class CustomerProcess extends GenericProcess{
 		AS400 as400 = null;
 		ProgramCallDocument pcmlDoc = null;
 		String pcml = "PFFFNC";		
-		boolean newConnection = false;
 		
 		try{	
-			if(this.hostConnection==null){
-				this.hostConnection= new HostConnection();
-				newConnection = true;
-			}
 			
 			as400 = this.hostConnection.getConnection();
 			
@@ -44,7 +45,7 @@ public class CustomerProcess extends GenericProcess{
 			pcmlDoc.setValue(pcml + ".@ERCOD", "0000"); 
 			pcmlDoc.setValue(pcml + ".@ERPRM", "");
 
-			pcmlDoc.setValue(pcml + ".@REQDTA.CustId", coreCust.getCustomerMnemonic()); 		//Customer Number
+			pcmlDoc.setValue(pcml + ".@REQDTA.CustCIF", coreCust.getCustomerMnemonic()); 		//Customer Number
 						
 			logger.debug(" Before PCML Call");
 			this.hostConnection.callAPI(pcmlDoc, pcml);
@@ -52,8 +53,10 @@ public class CustomerProcess extends GenericProcess{
 			
 			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {	
 				
-				coreCust.setCustomerMnemonic(getString(pcmlDoc, pcml, ".@RSPDTA.DSRSPCUS")); 				//Customer mnemonic
-				coreCust.setCustomerFullName(getString(pcmlDoc, pcml, ".@RSPDTA.DSRSPCUN")); 				//Customer full name
+				coreCust.setCustomerMnemonic(getString(pcmlDoc, pcml, ".@RSPDTA.CustMemonic")); 				//Customer mnemonic
+				// TODO  This Has to be Changed Based on The PCML to get The Core Customer Information
+				
+				/*coreCust.setCustomerFullName(getString(pcmlDoc, pcml, ".@RSPDTA.DSRSPCUN")); 				//Customer full name
 				coreCust.setDefaultAccountShortName(getString(pcmlDoc, pcml, ".@RSPDTA.DSRSPDAS")); 		//Default Account Short name
 				coreCust.setCustomerType(getString(pcmlDoc, pcml, ".@RSPDTA.DSRSPCTP")); 					//Customer Type
 				coreCust.setCustomerClosed(getString(pcmlDoc, pcml, ".@RSPDTA.DSRSPCUC")); 					//Customer Closed?
@@ -95,19 +98,149 @@ public class CustomerProcess extends GenericProcess{
 					coreCust.setCustDOB(null);
 				}
 				coreCust.setNationality(getString(pcmlDoc, pcml, ".@RSPDTA.DSRSPNTL")); 					// Nationality
-				
+*/				
 			} else {
 				logger.info("Customer Details Not found");	
 				throw new CustomerNotFoundException(getString(pcmlDoc, pcml, ".@ERPRM").toString());
 			}
 
+		}catch (ConnectionPoolException e){
+			logger.error("Exception " + e);
+			throw new CustomerNotFoundException("Host Connection Failed.. Please contact administrator ");
 		}catch(Exception e)	{			
 			logger.error("Exception " + e);
 			throw new CustomerNotFoundException(e.getMessage());
 		}finally{
-			if(newConnection){
-				this.hostConnection.disConnection();
+				this.hostConnection.closeConnection(as400);
+		}
+		logger.debug("Leaving");
+		return coreCust;
+	}
+	
+	/**
+	 * This method fetches the Customer information for the given CustomerID(CIF) 
+	 * by calling Equation Program PTPFF14R.
+	 * 
+	 * @Param Customer
+	 * @Return Customer-- unused
+	 */
+	public CoreBankAvailCustomer fetchAvailInformation(CoreBankAvailCustomer coreCust) throws CustomerNotFoundException{	
+		logger.debug("Entering");
+		
+		AS400 as400 = null;
+		ProgramCallDocument pcmlDoc = null;
+		String pcml = "PFFFAI";		
+		
+		try{	
+			
+			as400 = this.hostConnection.getConnection();
+			
+			pcmlDoc = new ProgramCallDocument(as400, pcml);
+			pcmlDoc.setValue(pcml + ".@ERCOD", "0000"); 
+			pcmlDoc.setValue(pcml + ".@ERPRM", "");
+
+			pcmlDoc.setValue(pcml + ".@REQDTA.CustMnemonic", coreCust.getCustMnemonic()); 				//Customer Number
+			pcmlDoc.setValue(pcml + ".@REQDTA.OffBSRequired", coreCust.getOffBSRequired()); 			//Off Balance Sheet Required
+			pcmlDoc.setValue(pcml + ".@REQDTA.AcRcvblRequired", coreCust.getAcRcvblRequired()); 		//Account Receivables Required
+			pcmlDoc.setValue(pcml + ".@REQDTA.AcPayblRequired", coreCust.getAcPayblRequired()); 		//Account Payables Required
+			pcmlDoc.setValue(pcml + ".@REQDTA.AcUnclsRequired", coreCust.getAcUnclsRequired()); 		//Accounts Un Classified Required
+			pcmlDoc.setValue(pcml + ".@REQDTA.CollateralRequired", coreCust.getCollateralRequired()); 	//Collaterals Required
+						
+			logger.debug(" Before PCML Call");
+			this.hostConnection.callAPI(pcmlDoc, pcml);
+			logger.debug(" After PCML Call");
+			
+			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {	
+				
+				coreCust.setOffBSCount(Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.OffBSCount").toString())); 		//Off Balance Sheet Count
+				coreCust.setAcRcvblCount(Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.AcRcvblCount").toString())); 	//Account Receivables Count
+				coreCust.setAcPayblCount(Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.AcPayblCount").toString())); 	//Accounts payable Count
+				coreCust.setAcUnclsCount(Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.AcUnclsCount").toString())); 	//Accounts Unclassified Count
+				coreCust.setCollateralCount(Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.CollateralCount").toString())); //Collateral Count
+						
+				BigDecimal amount = BigDecimal.ZERO;
+				//Out Standing balance details
+				amount = new BigDecimal((pcmlDoc.getValue(pcml + ".@RSPDTA.CASABal").toString()));
+				if("-" .equals(pcmlDoc.getValue(pcml + ".@RSPDTA.CASABalSign").toString())) {
+					coreCust.setCustActualBal(amount.negate()); 
+				} else {
+					coreCust.setCustActualBal(amount);
+				}
+				
+				amount = new BigDecimal((pcmlDoc.getValue(pcml + ".@RSPDTA.CASABlkBal").toString()));
+				if("-" .equals(pcmlDoc.getValue(pcml + ".@RSPDTA.CASABlkSign").toString())) {
+					coreCust.setCustBlockedBal(amount.negate()); 
+				} else {
+					coreCust.setCustBlockedBal(amount);
+				}
+				
+				amount = new BigDecimal((pcmlDoc.getValue(pcml + ".@RSPDTA.DepoBal").toString()));
+				if("-" .equals(pcmlDoc.getValue(pcml + ".@RSPDTA.DepoBlkSign").toString())) {
+					coreCust.setCustDeposit(amount.negate()); 
+				} else {
+					coreCust.setCustDeposit(amount);
+				}
+				
+				amount = new BigDecimal((pcmlDoc.getValue(pcml + ".@RSPDTA.DepoBlkBal").toString()));
+				if("-" .equals(pcmlDoc.getValue(pcml + ".@RSPDTA.DepoBlkSign").toString())) {
+					coreCust.setCustBlockedDeposit(amount.negate()); 
+				} else {
+					coreCust.setCustBlockedDeposit(amount);
+				}
+				
+				amount = new BigDecimal((pcmlDoc.getValue(pcml + ".@RSPDTA.TotBal").toString()));
+				if("-" .equals(pcmlDoc.getValue(pcml + ".@RSPDTA.TotBalSign").toString())) {
+					coreCust.setTotalCustBal(amount.negate()); 
+				} else {
+					coreCust.setTotalCustBal(amount);
+				}
+							
+				amount = new BigDecimal((pcmlDoc.getValue(pcml + ".@RSPDTA.TotBlkBal").toString()));
+				if("-" .equals(pcmlDoc.getValue(pcml + ".@RSPDTA.TotBlkSign").toString())) {
+					coreCust.setTotalCustBlockedBal(amount.negate()); 
+				} else {
+					coreCust.setTotalCustBlockedBal(amount);
+				}
+				
+				//Limit Details
+				CustomerLimit custLimit = null;
+				if(!pcmlDoc.getValue(pcml + ".@RSPDTA.LmtCcy").toString().equals("")){
+					custLimit = new CustomerLimit();
+					custLimit.setLimitCurrency(pcmlDoc.getValue(pcml + ".@RSPDTA.LmtCcy").toString());
+					custLimit.setLimitCcyEdit(Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.LmtCcyEdit").toString()));
+					custLimit.setRemarks(pcmlDoc.getValue(pcml + ".@RSPDTA.LmtRemark").toString());
+					String strDate = StringUtils.trimToEmpty(pcmlDoc.getValue(pcml + ".@RSPDTA.LmtExpDt").toString());
+					custLimit.setLimitExpiry(DateUtility.getUtilDate(strDate, "dd-MM-yyyy"));
+
+					if("-" .equals(pcmlDoc.getValue(pcml + ".@RSPDTA.LmtRiskSign").toString())) {
+						custLimit.setRiskAmount(new BigDecimal(pcmlDoc.getValue(pcml +  ".@RSPDTA.LmtRisk").toString()).negate());	
+					} else {
+						custLimit.setRiskAmount(new BigDecimal(pcmlDoc.getValue(pcml +  ".@RSPDTA.LmtRisk").toString()));	
+					}
+					custLimit.setLimitAmount(new BigDecimal(pcmlDoc.getValue(pcml + ".@RSPDTA.LmtSts").toString()));
+					if("-" .equals(pcmlDoc.getValue(pcml + ".@RSPDTA.LmtAvlSign").toString())) {
+						custLimit.setAvailAmount(new BigDecimal(pcmlDoc.getValue(pcml + ".@RSPDTA.LmtAvl").toString()).negate());	
+					} else {
+						custLimit.setAvailAmount(new BigDecimal(pcmlDoc.getValue(pcml + ".@RSPDTA.LmtAvl").toString()));
+					}
+				}
+				coreCust.setCustomerLimit(custLimit);
+				
+				coreCust.setCustRspData(getString(pcmlDoc, pcml, ".@RSPDTA.CustRspData")); 		//Customer Response Data
+						
+			} else {
+				logger.info("Customer Details Not found");	
+				throw new CustomerNotFoundException(getString(pcmlDoc, pcml, ".@ERPRM").toString());
 			}
+
+		}catch(CustomerNotFoundException e)	{			
+			logger.error("Exception " + e);
+			throw new CustomerNotFoundException(e.getErrorMsg());
+		}catch(Exception e)	{			
+			logger.error("Exception " + e);
+			throw new CustomerNotFoundException(e.getMessage());
+		}finally{
+			this.hostConnection.closeConnection(as400);
 		}
 		logger.debug("Leaving");
 		return coreCust;
@@ -119,15 +252,9 @@ public class CustomerProcess extends GenericProcess{
 		AS400 as400 = null;
 		ProgramCallDocument pcmlDoc = null;
 		String pcml = "PFFCIF";		
-		boolean newConnection = false;
 		String custCIF = "";
 		
 		try{	
-			if(this.hostConnection==null){
-				this.hostConnection= new HostConnection();
-				newConnection = true;
-			}
-			
 			as400 = this.hostConnection.getConnection();
 			
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
@@ -172,13 +299,13 @@ public class CustomerProcess extends GenericProcess{
 			logger.error("Connection not Created.");	
 			e.printStackTrace();
 		}finally{
-			if(newConnection){
-				this.hostConnection.disConnection();
-			}
+				this.hostConnection.closeConnection(as400);
 		}
 		logger.debug("Leaving");
 		return custCIF;
 	}
+	
+	
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

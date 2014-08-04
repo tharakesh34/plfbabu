@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -77,7 +76,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.impl.BlackListReasonCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -410,6 +411,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl implements Serial
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -426,7 +428,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl implements Serial
 		this.bLIsActive.setChecked(aBlackListReasonCode.isBLIsActive());
 		this.recordStatus.setValue(aBlackListReasonCode.getRecordStatus());
 		
-		if(aBlackListReasonCode.isNew() || aBlackListReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aBlackListReasonCode.isNew() || (aBlackListReasonCode.getRecordType() != null ? aBlackListReasonCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.bLIsActive.setChecked(true);
 			this.bLIsActive.setDisabled(true);
 		}
@@ -598,15 +600,12 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl implements Serial
 		setValidationOn(true);
 
 		if (!this.bLRsnCode.isReadonly()){
-			this.bLRsnCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_BlackListReasonCodeDialog_BLRsnCode.value")})));
+			this.bLRsnCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BlackListReasonCodeDialog_BLRsnCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 
 		if (!this.bLRsnDesc.isReadonly()){
-			this.bLRsnDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_BlackListReasonCodeDialog_BLRsnDesc.value")})));
+			this.bLRsnDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_BlackListReasonCodeDialog_BLRsnDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -749,7 +748,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl implements Serial
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

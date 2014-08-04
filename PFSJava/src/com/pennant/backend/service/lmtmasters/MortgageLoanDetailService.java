@@ -43,6 +43,7 @@
 
 package com.pennant.backend.service.lmtmasters;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
 
@@ -60,4 +61,9 @@ public interface MortgageLoanDetailService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	
+	public AuditDetail saveOrUpdate(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType);
+	public AuditDetail doApprove(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType);
+	public AuditDetail validate(MortgageLoanDetail mortgageLoanDetail, String method, String auditTranType, String  usrLanguage);
+	public AuditDetail delete(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType);
 }

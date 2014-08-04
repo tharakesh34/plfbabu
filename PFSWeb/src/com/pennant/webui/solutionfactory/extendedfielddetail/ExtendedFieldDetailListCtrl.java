@@ -46,20 +46,27 @@ package com.pennant.webui.solutionfactory.extendedfielddetail;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ModuleMapping;
@@ -67,12 +74,17 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.service.solutionfactory.ExtendedFieldDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.solutionfactory.extendedfielddetail.model.ExtendedFieldDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -103,6 +115,28 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	protected Listheader listheader_FieldType; 		// autowired
 	protected Listheader listheader_RecordStatus; 	// autowired
 	protected Listheader listheader_RecordType;
+	
+	//search
+	protected Textbox moduleName; // autowired
+	protected Listbox sortOperator_moduleName; // autowired
+	protected Textbox subModuleName; // autowired
+	protected Listbox sortOperator_subModuleName; // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType;	// autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+	
+	protected Label label_ExtendedFieldDetailSearch_RecordStatus; // autowired
+	protected Label label_ExtendedFieldDetailSearch_RecordType; // autowired
+	protected Label label_ExtendedFieldDetailSearchResult; // autowired
+	
+	protected Grid	                       searchGrid;	
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+
+	private transient boolean	           approvedList	    = false;
 
 	// checkRights
 	protected Button btnHelp; 														// autowired
@@ -165,11 +199,32 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 			}else{
 				wfAvailable=false;
 			}
+			// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+			this.sortOperator_moduleName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_moduleName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+			this.sortOperator_subModuleName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_subModuleName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			if (isWorkFlowEnabled()){
+				this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+				this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+				this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+				this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+				this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+			}else{
+				this.recordStatus.setVisible(false);
+				this.recordType.setVisible(false);
+				this.sortOperator_recordStatus.setVisible(false);
+				this.sortOperator_recordType.setVisible(false);
+				this.label_ExtendedFieldDetailSearch_RecordStatus.setVisible(false);
+				this.label_ExtendedFieldDetailSearch_RecordType.setVisible(false);
+			}
 
 			/* set components visible dependent on the users rights */
 			doCheckRights();
 
 			this.borderLayout_ExtendedFieldDetailList.setHeight(getBorderLayoutHeight());
+			this.listBoxExtendedFieldDetail.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 			// set the paging parameters
 			this.pagingExtendedFieldDetailList.setPageSize(getListRows());
@@ -190,31 +245,19 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 				this.listheader_RecordStatus.setVisible(false);
 				this.listheader_RecordType.setVisible(false);
 			}
-
-			// ++ create the searchObject and initialize sorting ++//
-			this.searchObj = new JdbcSearchObject<ExtendedFieldHeader>(ExtendedFieldHeader.class,getListRows());
-			this.searchObj.addSort("moduleName", false);
-			this.searchObj.addSort("subModuleName", false);
-
-			// WorkFlow
-			if (isWorkFlowEnabled()) {
-				this.searchObj.addTabelName("ExtendedFieldHeader_View");
-				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-			}else{
-				this.searchObj.addTabelName("ExtendedFieldHeader_AView");
-			}
-
-			setSearchObj(this.searchObj);
+			// set the itemRenderer
+			this.listBoxExtendedFieldDetail.setItemRenderer(new ExtendedFieldDetailListModelItemRenderer());
 			if (!isWorkFlowEnabled() && wfAvailable){
 				//this.button_ExtendedFieldDetailList_NewExtendedFieldDetail.setVisible(false);
 				this.button_ExtendedFieldDetailList_ExtendedFieldDetailSearchDialog.setVisible(false);
 				this.button_ExtendedFieldDetailList_PrintList.setVisible(false);
 				PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 			}else{
-				// Set the ListModel for the articles.
-				getPagedListWrapper().init(this.searchObj,this.listBoxExtendedFieldDetail,this.pagingExtendedFieldDetailList);
-				// set the itemRenderer
-				this.listBoxExtendedFieldDetail.setItemRenderer(new ExtendedFieldDetailListModelItemRenderer());
+				doSearch();
+				if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+					this.workFlowFrom.setVisible(false);
+					this.fromApproved.setSelected(true);
+				}
 			}
 		} catch (Exception e) {
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -325,9 +368,22 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingExtendedFieldDetailList.setActivePage(0);
+		this.sortOperator_moduleName.setSelectedIndex(0);
+		this.moduleName.setValue("");
+		this.sortOperator_subModuleName.setSelectedIndex(0);
+		this.subModuleName.setValue("");
+		
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		doSearch();
+		/*this.pagingExtendedFieldDetailList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_ExtendedFieldDetailList, event);
-		this.window_ExtendedFieldDetailList.invalidate();
+		this.window_ExtendedFieldDetailList.invalidate();*/
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -338,24 +394,7 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	 */
 	public void onClick$button_ExtendedFieldDetailList_ExtendedFieldDetailSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
-		/*
-		 * we can call our ExtendedFieldDetailDialog zul-file with parameters. So we can
-		 * call them with a object of the selected ExtendedFieldDetail. For handed over
-		 * these parameter only a Map is accepted. So we put the ExtendedFieldDetail object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("extendedFieldDetailCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDetailSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -365,12 +404,69 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_ExtendedFieldDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("ExtendedFieldDetail", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("ExtendedFieldDetail", getSearchObj(),this.pagingExtendedFieldDetailList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and initialize sorting ++//
+		this.searchObj = new JdbcSearchObject<ExtendedFieldHeader>(ExtendedFieldHeader.class,getListRows());
+		this.searchObj.addSort("moduleName", false);
+		this.searchObj.addSort("subModuleName", false);
+		this.searchObj.addTabelName("ExtendedFieldHeader_View");
+		if (isWorkFlowEnabled()) {
 
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("ExtendedFieldHeader_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("ExtendedFieldHeader_AView");
+		}
+		//Module
+		if (!StringUtils.trimToEmpty(this.moduleName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_moduleName.getSelectedItem(), this.moduleName.getValue(), "moduleName");
+		}
+		
+		// SubModule Name
+		if (!StringUtils.trimToEmpty(this.subModuleName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_subModuleName.getSelectedItem(), this.subModuleName.getValue(), "subModuleName");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxExtendedFieldDetail,this.pagingExtendedFieldDetailList);
+		logger.debug("Leaving" );
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

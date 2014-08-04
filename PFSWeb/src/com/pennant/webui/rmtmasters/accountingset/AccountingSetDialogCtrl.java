@@ -88,7 +88,9 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.accountingset.model.TransactionEntryListModelItemRenderer;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -479,9 +481,9 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 		if (aAccountingSet.getLovDescEventCodeName()!=null) {
 			this.lovDescEventCodeName.setValue(aAccountingSet.getLovDescEventCodeName());
 		}
-		if(this.eventCode.getValue().equals("LATEPAY")){
+		/*if(this.eventCode.getValue().equals("LATEPAY")){
 			this.button_TransactionEntryList_NewTransactionEntry.setVisible(false);
-		}
+		}*/
 		this.recordStatus.setValue(aAccountingSet.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -710,14 +712,13 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-
-		if (!this.accountSetCode.isReadonly()) {
-			this.accountSetCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value") }));
+		
+		if (!this.accountSetCode.isReadonly()){
+			this.accountSetCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		if (!this.accountSetCodeName.isReadonly()) {
-			this.accountSetCodeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-					new String[] { Labels.getLabel("label_AccountingSetDialog_AccountSetCodeName.value") }));
+		if (!this.accountSetCodeName.isReadonly()){
+			this.accountSetCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_AccountSetCodeName.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -738,8 +739,7 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.eventCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_AccountingSetDialog_EventCode.value") }));
+		this.eventCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_EventCode.value"), null, true));
 		logger.debug("Leaving");
 	}
 
@@ -749,6 +749,7 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
 		this.lovDescEventCodeName.setConstraint("");
+		this.eventCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -867,12 +868,12 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 		}
 		
 		// this.btnSearchEventCode.setDisabled(isReadOnly("AccountingSetDialog_eventCode"));
-		if("LATEPAY".equals(getAccountingSet().getEventCode())){
+		/*if("LATEPAY".equals(getAccountingSet().getEventCode())){
 			this.accountSetCode.setReadonly(true);
 			this.button_TransactionEntryList_NewTransactionEntry.setVisible(false);
-		}else{
+		}else{*/
 			this.accountSetCode.setReadonly(isReadOnly("AccountingSetDialog_accountSetCode"));
-		}
+		//}
 		
 		this.systemDefault.setDisabled(isReadOnly("AccountingSetDialog_systemDefault"));
 		this.entryByInvestment.setDisabled(isReadOnly("AccountingSetDialog_entryByInvestment"));
@@ -1202,16 +1203,16 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 			}
 		}
 		this.accountSetCode.setValue("");
-		if(this.eventCode.getValue().equals("LATEPAY")){
+		/*if(this.eventCode.getValue().equals("LATEPAY")){
 			this.accountSetCode.setReadonly(true);
 			this.btnSearchAccountSetCode.setVisible(true);
 			this.button_TransactionEntryList_NewTransactionEntry.setVisible(false);
-		}else{
+		}else{*/
 			
 			this.accountSetCodeName.setValue("");
 			this.accountSetCode.setReadonly(false);
 			this.btnSearchAccountSetCode.setVisible(false);
-		}
+		//}
 
 		disableNewTransactionEntry();
 		logger.debug("Leaving" + event.toString());

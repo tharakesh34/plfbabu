@@ -62,21 +62,19 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.EducationalExpense;
@@ -85,6 +83,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.lmtmasters.EducationalExpenseService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
@@ -93,7 +92,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -115,8 +113,8 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window          window_EducationalExpenseDialog;                    // autoWired
-	protected Longbox         eduExpDetail;                                       // autoWired
-	protected Decimalbox      eduExpAmount;                                       // autoWired
+	protected ExtendedCombobox     eduExpDetail;                                       // autoWired
+	protected CurrencyBox     eduExpAmount;                                       // autoWired
 	protected Datebox         eduExpDate;                                         // autoWired
 	protected Label           recordStatus;                                       // autoWired                                                   
 	protected Radiogroup      userAction;                                         // autoWired    
@@ -130,8 +128,6 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	protected Button          btnClose;                                           // autoWired
 	protected Button          btnHelp;                                            // autoWired
 	protected Button          btnNotes;                                           // autoWired
-	protected Button          btnSearchEduExpDetail;                              // autoWired
-	protected Textbox         lovDescEduExpDetailName;                            // autoWired
 
 	// not auto wired variables
 	private EducationalExpense educationalExpense = null;                         // over handed per parameters
@@ -183,9 +179,6 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	public void onCreate$window_EducationalExpenseDialog(Event event) throws Exception {
 		logger.debug(event.toString());
 
-		/* set components visible dependent of the users rights */
-		doCheckRights();
-
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew,
 				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose,this.btnNotes);
@@ -219,7 +212,8 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 
 			this.educationalExpense.setWorkflowId(0);
 			if(args.containsKey("roleCode")){
-				getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "EducationalExpenseDialog");
+				setRole((String) args.get("roleCode"));
+				getUserWorkspace().alocateRoleAuthorities(getRole(), "EducationalExpenseDialog");
 			}
 		} 
 
@@ -228,6 +222,10 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 			this.userAction	= setListRecordStatus(this.userAction);
 			getUserWorkspace().alocateRoleAuthorities(getRole(), "EducationalExpenseDialog");
 		}
+		
+		/* set components visible dependent of the users rights */
+		doCheckRights();
+
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(this.educationalExpense);
@@ -333,26 +331,6 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 		}
 		logger.debug("Leaving");
 	}
-	/**
-	 * when "btnSearchEduExpDetail" is clicked
-	 * @param event
-	 */
-	public void onClick$btnSearchEduExpDetail(Event event){
-		logger.debug("Entering " + event.toString());
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_EducationalExpenseDialog,"ExpenseType");
-		if (dataObject instanceof String){
-			this.eduExpDetail.setValue(Long.parseLong(dataObject.toString()));
-			this.lovDescEduExpDetailName.setValue("");
-		}else{
-			ExpenseType details= (ExpenseType) dataObject;
-			if (details != null) {
-				this.eduExpDetail.setValue(details.getExpenceTypeId());
-				this.lovDescEduExpDetailName.setValue(details.getExpenceTypeName());
-			}
-		}
-		logger.debug("Leaving ");
-	}
 
 	/**
 	 * when "Notes" button clicked 
@@ -436,8 +414,17 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	private void doSetFieldProperties() {
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
-		this.eduExpDetail.setMaxlength(50);
+		this.eduExpDetail.setInputAllowed(false);
+		this.eduExpDetail.setDisplayStyle(3);
+        this.eduExpDetail.setMandatoryStyle(true);
+		this.eduExpDetail.setModuleName("ExpenseType");
+		this.eduExpDetail.setValueColumn("ExpenceTypeId");
+		this.eduExpDetail.setDescColumn("ExpenceTypeName");
+		this.eduExpDetail.setValidateColumns(new String[] { "ExpenceTypeId" });
+		Filter[] filter = {new Filter("ExpenseFor", PennantConstants.EXPENSE_FOR_EDUCATION, Filter.OP_EQUAL)};
+		this.eduExpDetail.setFilters(filter);
 		this.eduExpAmount.setMaxlength(18);
+		this.eduExpAmount.setMandatory(true);
 		this.eduExpAmount.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
 		this.eduExpDate.setFormat(PennantConstants.dateFormat);
 
@@ -463,7 +450,7 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	private void doCheckRights() {
 		logger.debug("Entering") ;
 
-		getUserWorkspace().alocateAuthorities("EducationalExpenseDialog");
+		getUserWorkspace().alocateAuthorities("EducationalExpenseDialog", getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_EducationalExpenseDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_EducationalExpenseDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_EducationalExpenseDialog_btnDelete"));
@@ -495,16 +482,15 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	public void doWriteBeanToComponents(EducationalExpense aEducationalExpense) {
 		logger.debug("Entering") ;
-		this.eduExpDetail.setValue(aEducationalExpense.getEduExpDetail());
+		this.eduExpDetail.setValue(String.valueOf(aEducationalExpense.getEduExpDetail()));
 		this.eduExpAmount.setValue(PennantAppUtil.formateAmount(aEducationalExpense.getEduExpAmount(),
 				this.ccyFormatter));
 		this.eduExpDate.setValue(aEducationalExpense.getEduExpDate());
 		
 		if (aEducationalExpense.isNewRecord()){
-			this.lovDescEduExpDetailName.setValue("");
+			this.eduExpDetail.setDescription("");
 		}else{
-			this.lovDescEduExpDetailName.setValue(aEducationalExpense.getEduExpDetail()==0?"":
-				aEducationalExpense.getLovDescEduExpDetailName());
+			this.eduExpDetail.setDescription(aEducationalExpense.getLovDescEduExpDetailName());
 		}
 		this.recordStatus.setValue(aEducationalExpense.getRecordStatus());
 		logger.debug("Leaving");
@@ -522,8 +508,8 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aEducationalExpense.setLovDescEduExpDetailName(this.lovDescEduExpDetailName.getValue());
-			aEducationalExpense.setEduExpDetail(this.eduExpDetail.getValue());	
+			aEducationalExpense.setLovDescEduExpDetailName(this.eduExpDetail.getDescription());
+			aEducationalExpense.setEduExpDetail(Long.valueOf(this.eduExpDetail.getValue()));	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -609,7 +595,7 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 			this.btnCancel.setVisible(true);
 		}
 
-		this.btnSearchEduExpDetail.setDisabled(isReadOnly("EducationalExpenseDialog_eduExpDetail"));
+		this.eduExpDetail.setReadonly(isReadOnly("EducationalExpenseDialog_eduExpDetail"));
 		this.eduExpAmount.setReadonly(isReadOnly("EducationalExpenseDialog_eduExpAmount"));
 		this.eduExpDate.setDisabled(isReadOnly("EducationalExpenseDialog_eduExpDate"));
 
@@ -775,8 +761,8 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	private void doStoreInitValues() {
 		logger.debug("Entering");
 
-		this.oldVar_eduExpDetail = this.eduExpDetail.getValue();
-		this.oldVar_lovDescEduExpDetailName = this.lovDescEduExpDetailName.getValue();
+		this.oldVar_eduExpDetail = Long.valueOf(this.eduExpDetail.getValue());
+		this.oldVar_lovDescEduExpDetailName = this.eduExpDetail.getDescription();
 		this.oldVar_eduExpAmount = this.eduExpAmount.getValue();
 		this.oldVar_eduExpDate = this.eduExpDate.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
@@ -789,8 +775,8 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	private void doResetInitValues() {
 		logger.debug("Entering");
 
-		this.eduExpDetail.setValue(this.oldVar_eduExpDetail);
-		this.lovDescEduExpDetailName.setValue(this.oldVar_lovDescEduExpDetailName);
+		this.eduExpDetail.setValue(String.valueOf(this.oldVar_eduExpDetail));
+		this.eduExpDetail.setDescription(this.oldVar_lovDescEduExpDetailName);
 		this.eduExpAmount.setValue(this.oldVar_eduExpAmount);
 		this.eduExpDate.setValue(this.oldVar_eduExpDate);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
@@ -812,7 +798,7 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 		//To clear the Error Messages
 		doClearMessage();
 
-		if (this.oldVar_eduExpDetail != this.eduExpDetail.getValue()) {
+		if (this.oldVar_eduExpDetail != Long.valueOf(this.eduExpDetail.getValue())) {
 			return true;
 		}
 		if (this.oldVar_eduExpAmount != this.eduExpAmount.getValue()) {
@@ -867,7 +853,7 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchEduExpDetail.setDisabled(true);
+		this.eduExpDetail.setReadonly(true);
 		this.eduExpAmount.setReadonly(true);
 		this.eduExpDate.setDisabled(true);
 
@@ -891,8 +877,8 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Entering");
 		// remove validation, if there are a save before
 
-		this.eduExpDetail.setText("");
-		this.lovDescEduExpDetailName.setValue("");
+		this.eduExpDetail.setValue(String.valueOf(new Long(0)));
+		this.eduExpDetail.setDescription("");
 		this.eduExpAmount.setValue("");
 		this.eduExpDate.setText("");
 		logger.debug("Leaving");
@@ -1043,14 +1029,14 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	 * This method sets validation for LovFields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescEduExpDetailName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
+		this.eduExpDetail.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
 				,new String[]{Labels.getLabel("label_EducationalExpenseDialog_EduExpDetail.value")}));
 	}
 	/**
 	 *  This method removes validation for LovFields
 	 */
 	private void doRemoveLOVValidation() {
-		this.lovDescEduExpDetailName.setConstraint("");
+		this.eduExpDetail.setConstraint("");
 	}
 
 
@@ -1059,7 +1045,7 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	private void doClearMessage() {
 		logger.debug("Entering");
-		this.lovDescEduExpDetailName.setErrorMessage("");
+		this.eduExpDetail.setErrorMessage("");
 		this.eduExpAmount.setErrorMessage("");
 		this.eduExpDate.setErrorMessage("");
 		logger.debug("Leaving");

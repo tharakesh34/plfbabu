@@ -124,7 +124,7 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceSchedul
 	@Override
 	public FinanceScheduleDetail getWIFFinanceScheduleDetailById(final String id, String type) {
 		logger.debug("Entering");
-		FinanceScheduleDetail wIFFinanceScheduleDetail = getWIFFinanceScheduleDetail();
+		FinanceScheduleDetail wIFFinanceScheduleDetail = new FinanceScheduleDetail();
 		
 		wIFFinanceScheduleDetail.setId(id);
 		
@@ -352,7 +352,7 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceSchedul
 	public List<FinanceScheduleDetail> getWIFFinScheduleDetails(String id,
 			String type) {
 		
-		FinanceScheduleDetail wIFFinanceScheduleDetail = getWIFFinanceScheduleDetail();		
+		FinanceScheduleDetail wIFFinanceScheduleDetail = new FinanceScheduleDetail();		
 		wIFFinanceScheduleDetail.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, SchDate, SchSeq, PftOnSchDate,");

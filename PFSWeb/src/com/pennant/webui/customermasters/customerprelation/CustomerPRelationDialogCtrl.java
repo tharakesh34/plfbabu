@@ -76,7 +76,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -91,9 +90,12 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.customermasters.CustomerPRelationService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTPhoneNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -1094,13 +1096,13 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 					new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRCustID.value")}));
 		}	
 		if (!this.pRFName.isReadonly()){
-			this.pRFName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel(
-					"FIELD_CHARACTER",new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRFName.value")})));
+			this.pRFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRFName.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
 		}	
 		if (!this.pRMName.isReadonly()){
 			if(!StringUtils.trimToEmpty(this.pRMName.getValue()).equals("")){
-				this.pRMName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel(
-						"FIELD_CHARACTER",new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRMName.value")})));
+				this.pRMName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRMName.value"), 
+						PennantRegularExpressions.REGEX_NAME, true));
 			}
 		}
 		if(this.pRisGuardian.isChecked()){
@@ -1109,12 +1111,12 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 					"label_CustomerDialog_CustCIF.value"),parms[0], parms[1] })));
 		}
 		if (!this.pRLName.isReadonly()){
-			this.pRLName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel(
-					"FIELD_CHARACTER",new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRLName.value")})));
+			this.pRLName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRLName.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
 		}	
 		if (!this.pRSName.isReadonly()){
-			this.pRSName.setConstraint(new SimpleConstraint(PennantConstants.NAME_REGEX, Labels.getLabel(
-					"FIELD_CHARACTER",new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRSName.value")})));
+			this.pRSName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRSName.value"), 
+					PennantRegularExpressions.REGEX_NAME, true));
 		}	
 		if(!this.pRDOB.isReadonly()){
 			this.pRDOB.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE_TODAY",
@@ -1129,49 +1131,34 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 			addressConstraint = true;
 		}
 		if (addressConstraint) {
-			this.pRAddrHNbr.setConstraint(new SimpleConstraint(PennantConstants.HNO_FNO_REGEX, Labels.getLabel(
-					"FIELD_ADDRESS",new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRAddrHNbr.value")})));
+			this.pRAddrHNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrHNbr.value"),
+					PennantRegularExpressions.REGEX_ADDRESS, true));
 		}	
 		if (addressConstraint) {
-			this.pRAddrFNbr.setConstraint(new SimpleConstraint(PennantConstants.NM_HNO_FNO_REGEX, Labels.getLabel(
-					"ALPHANUMERIC_SPECIALCHAR",new String[]{Labels.getLabel(
-					"label_CustomerPRelationDialog_PRAddrFNbr.value")})));
+			this.pRAddrFNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrFNbr.value"),
+					PennantRegularExpressions.REGEX_ADDRESS, false));
 		}	
 		if (addressConstraint) {
-			this.pRAddrStreet.setConstraint(new SimpleConstraint(PennantConstants.ADDRESS_LINE1_REGEX, 
-					Labels.getLabel("FIELD_ADDRESS",new String[]{Labels.getLabel(
-					"label_CustomerPRelationDialog_PRAddrStreet.value")})));
+			this.pRAddrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrStreet.value"),PennantRegularExpressions.REGEX_ADDRESS, true));
 		}	
 		if (addressConstraint) {
-			this.pRAddrLine1.setConstraint(new SimpleConstraint(PennantConstants.NM_ADDRESS_LINE1_REGEX,
-					Labels.getLabel("FIELD_CHAR_NUMBER",new String[]{Labels.getLabel(
-					"label_CustomerPRelationDialog_PRAddrLine1.value")})));
+			this.pRAddrLine1.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrLine1.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
 		}	
 		if (addressConstraint) {
-			this.pRAddrLine2.setConstraint(new SimpleConstraint(PennantConstants.NM_ADDRESS_LINE1_REGEX, 
-					Labels.getLabel("FIELD_CHAR_NUMBER",new String[]{Labels.getLabel(
-					"label_CustomerPRelationDialog_PRAddrLine2.value")})));
+			this.pRAddrLine2.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrLine2.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 
 		if (!this.pRPhone.isReadonly()){
-			this.pRPhone.setConstraint(new SimpleConstraint(PennantConstants.PH_REGEX, Labels.getLabel(
-					"FIELD_NUMBER",new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRPhone.value")})));
+			this.pRPhone.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CustomerPRelationDialog_PRPhone.value"),true));
 		}	
 		if (!this.pRAddrPOBox.isReadonly()){
-			this.pRAddrPOBox.setConstraint(new SimpleConstraint(PennantConstants.NM_NUM_REGEX, Labels.getLabel(
-					"FIELD_NUMBER",new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRAddrPOBox.value")})));
+			this.pRAddrPOBox.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrPOBox.value"), PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}	
 		if (!this.pRAddrZIP.isReadonly()){
-			if(!StringUtils.trimToEmpty(this.pRAddrZIP.getValue()).equals("")){
-				this.pRAddrZIP.setConstraint(new SimpleConstraint(PennantConstants.ZIP_REGEX, Labels.getLabel(
-						"FIELD_NUMBER",new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRAddrZIP.value")})));
-			}
+				this.pRAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, false));
 		}	
 		if (!this.pRMail.isReadonly()){
-			if(!StringUtils.trimToEmpty(this.pRMail.getValue()).equals("")){
-				this.pRMail.setConstraint(new SimpleConstraint(PennantConstants.MAIL_REGEX, Labels.getLabel(
-						"FIELD_MAIL",new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRMail.value")})));
-			}
+			this.pRMail.setConstraint(new PTEmailValidator(Labels.getLabel("label_CustomerPRelationDialog_PRMail.value"),false));
 		}
 		if(!this.pRRelationCustID.getValue().equals("")){
 			this.pRRelationCustID.setConstraint(new SimpleConstraint(this.CUSTCIF_REGEX,
@@ -1279,7 +1266,9 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 	// Method for refreshing the list after successful updating
 	private void refreshList() {
 		logger.debug("Entering");
-		getCustomerPRelationListCtrl().findSearchObject();
+		final JdbcSearchObject<CustomerPRelation> soCustomerPRelation = getCustomerPRelationListCtrl().getSearchObj();
+		getCustomerPRelationListCtrl().pagingCustomerPRelationList.setActivePage(0);
+		getCustomerPRelationListCtrl().getPagedListWrapper().setSearchObject(soCustomerPRelation);
 		if (getCustomerPRelationListCtrl().listBoxCustomerPRelation != null) {
 			getCustomerPRelationListCtrl().listBoxCustomerPRelation.getListModel();
 		}
@@ -1333,7 +1322,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPRelationDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-						getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
+						//getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
 						// send the data back to customer
 						closeWindow();
 					}	
@@ -1609,7 +1598,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPRelationDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-					getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
+					//getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
 					// send the data back to customer
 					closeWindow();
 				}
@@ -1626,67 +1615,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 	}
 
 	private AuditHeader newCustomerProcess(CustomerPRelation aCustomerPRelation,String tranType){
-		boolean recordAdded=false;
-
-		AuditHeader auditHeader= getAuditHeader(aCustomerPRelation, tranType);
-		customerPRelations = new ArrayList<CustomerPRelation>();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = String.valueOf(aCustomerPRelation.getId());
-		valueParm[1] = String.valueOf(aCustomerPRelation.getPRRelationCode());
-
-		errParm[0] = PennantJavaUtil.getLabel("label_PRCustID")+ ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_PRRelationCode")+ ":"+ valueParm[1];
-
-		if(getCustomerDialogCtrl().getpRelationList()!=null && getCustomerDialogCtrl().getpRelationList().size()>0){
-			for (int i = 0; i < getCustomerDialogCtrl().getpRelationList().size(); i++) {
-				CustomerPRelation customerPRelation = getCustomerDialogCtrl().getpRelationList().get(i);
-
-				if(customerPRelation.getPRRelationCode().equals(aCustomerPRelation.getPRRelationCode())){ // Both Current and Existing list rating same
-
-					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
-						return auditHeader;
-					}
-
-					if(tranType==PennantConstants.TRAN_DEL){
-						if(aCustomerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
-							aCustomerPRelation.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
-							customerPRelations.add(aCustomerPRelation);
-						}else if(aCustomerPRelation.getRecordType().equals(PennantConstants.RCD_ADD)){
-							recordAdded=true;
-						}else if(aCustomerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							aCustomerPRelation.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
-							customerPRelations.add(aCustomerPRelation);
-						}else if(aCustomerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
-							recordAdded=true;
-							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getCustomerPRelationList().size(); j++) {
-								CustomerPRelation pRelation =  getCustomerDialogCtrl().getCustomerDetails().getCustomerPRelationList().get(j);
-								if(pRelation.getPRCustID() == aCustomerPRelation.getPRCustID() && pRelation.getPRCustPRSNo() == aCustomerPRelation.getPRCustPRSNo()){
-									customerPRelations.add(pRelation);
-								}
-							}
-						}
-					}else{
-						if(tranType!=PennantConstants.TRAN_UPD){
-							customerPRelations.add(customerPRelation);
-						}
-					}
-				}else{
-					customerPRelations.add(customerPRelation);
-				}
-			}
-		}
-
-		if(!recordAdded){
-			customerPRelations.add(aCustomerPRelation);
-		}
-		return auditHeader;
-	} 
+		return null;} 
 
 	/**
 	 * Set the workFlow Details List to Object

@@ -123,7 +123,7 @@ public class GroupStatusCodeDAOImpl extends BasisCodeDAO<GroupStatusCode> implem
 	@Override
 	public GroupStatusCode getGroupStatusCodeById(final String id, String type) {
 		logger.debug("Entering");
-		GroupStatusCode groupStatusCode = getGroupStatusCode();
+		GroupStatusCode groupStatusCode = new GroupStatusCode();
 		groupStatusCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

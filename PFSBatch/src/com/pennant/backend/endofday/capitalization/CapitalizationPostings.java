@@ -48,7 +48,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -56,6 +58,7 @@ import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -63,7 +66,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.batch.admin.BatchAdminDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -80,11 +82,12 @@ public class CapitalizationPostings implements Tasklet {
 	private SuspensePostingUtil suspensePostingUtil;
 	
 	private DataSource dataSource;
-	private BatchAdminDAO batchAdminDAO;
 	
-
 	private Date dateValueDate = null;
 	private Date dateAppDate = null;
+	
+	private ExecutionContext jobExecutionContext;
+	private ExecutionContext stepExecutionContext;
 
 	@SuppressWarnings("serial")
 	@Override
@@ -94,38 +97,36 @@ public class CapitalizationPostings implements Tasklet {
 		dateAppDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
 
 		logger.debug("START: Capitalization Postings for Value Date: "+ dateValueDate);
-		
-		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
-		
 
+		jobExecutionContext = context.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
+		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();	
+
+		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
+		
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
-		StringBuffer selQuery = new StringBuffer();
-		selQuery = prepareSelectQuery(selQuery);
-
 		FinanceProfitDetail pftDetail = null;
 
 		try {
 			
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(selQuery.toString());
+			sqlStatement = connection.prepareStatement(prepareSelectQuery());
 			resultSet = sqlStatement.executeQuery();
 			
+			List<FinanceProfitDetail> pftDetailsList = new ArrayList<FinanceProfitDetail>();
+			
 			while (resultSet.next()) {
-
-				pftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(resultSet.getString("FinReference"));
 
 				//Amount Codes preparation using FinProfitDetails
 				AEAmountCodes amountCodes = new AEAmountCodes();
 				amountCodes.setFinReference(resultSet.getString("FinReference"));
 				amountCodes.setCpzCur(resultSet.getBigDecimal("CpzAmount"));
 				amountCodes.setCpzPrv(resultSet.getBigDecimal("PrvCpzAmt") == null ? 
-						new BigDecimal(0) : resultSet.getBigDecimal("PrvCpzAmt"));
+						BigDecimal.ZERO : resultSet.getBigDecimal("PrvCpzAmt"));
 				amountCodes.setCpzTot(resultSet.getBigDecimal("TotalCpz"));
-				amountCodes.setCpzNxt(amountCodes.getCpzTot().subtract(amountCodes.getCpzPrv())
-						.subtract(amountCodes.getCpzCur()));
+				amountCodes.setCpzNxt(amountCodes.getCpzTot().subtract(amountCodes.getCpzPrv()).subtract(amountCodes.getCpzCur()));
 
 				// +++++Accounting Set Execution for Amortization+++++++//
 
@@ -147,27 +148,36 @@ public class CapitalizationPostings implements Tasklet {
 				dataSet.setFinAmount(resultSet.getBigDecimal("FinAmount"));
 				dataSet.setDisburseAmount(resultSet.getBigDecimal("DisburseAmount"));
 				dataSet.setDownPayment(resultSet.getBigDecimal("DownPayment"));
-				dataSet.setNoOfTerms(resultSet.getInt("NumberOfTerms"));
+				dataSet.setNoOfTerms(resultSet.getInt("NumberOfTerms") + resultSet.getInt("GraceTerms"));
 				dataSet.setNewRecord(false);
 
 				//Postings Process
 				getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, true,
-						resultSet.getBoolean("AllowRIAInvestment"),"Y", dateAppDate, null,false);
+						resultSet.getBoolean("AllowRIAInvestment"),"Y", dateAppDate,false, Long.MIN_VALUE);
 				
 				//Update Finance Profit Details
+				pftDetail = new FinanceProfitDetail();
 				pftDetail.setTdPftCpz(resultSet.getBigDecimal("CpzAmount").add(resultSet.getBigDecimal("PrvCpzAmt")));
 				pftDetail.setLastMdfDate(dateValueDate);
-				getFinanceProfitDetailDAO().update(pftDetail);
 				
-				//Capitalization Relase from Suspense
+				pftDetailsList.add(pftDetail);
+				if(pftDetailsList.size() == 500) {
+					getFinanceProfitDetailDAO().updateCpzDetail(pftDetailsList,"");
+					pftDetailsList.clear();
+				}
+				
+				//Capitalization Release from Suspense
 				amountCodes.setSUSPRLS(resultSet.getBigDecimal("CpzAmount"));
 				dataSet.setFinEvent("M_AMZ");
-				getSuspensePostingUtil().capitalizationSuspRelease(dataSet, amountCodes, true,
-						resultSet.getBoolean("AllowRIAInvestment"));
+				getSuspensePostingUtil().capitalizationSuspRelease(dataSet, amountCodes, true, resultSet.getBoolean("AllowRIAInvestment"));
 				
-				getBatchAdminDAO().saveStepDetails(dataSet.getFinReference(), getCapitalization(dataSet), context.getStepContext().getStepExecution().getId());
-				context.getStepContext().getStepExecution().getExecutionContext().putInt("FIELD_COUNT", resultSet.getRow());
+				jobExecutionContext.putInt(context.getStepContext().getStepExecution().getStepName()+ "_FIELD_COUNT", resultSet.getRow());
 				
+			}
+			
+			if(pftDetailsList.size() > 0) {
+				getFinanceProfitDetailDAO().updateCpzDetail(pftDetailsList,"");
+				pftDetailsList = null;
 			}
 			
 		} catch (AccountNotFoundException e) {
@@ -198,10 +208,10 @@ public class CapitalizationPostings implements Tasklet {
 	 * @param selQuery
 	 * @return
 	 */
-	private StringBuffer prepareSelectQuery(StringBuffer selQuery) {
+	private String prepareSelectQuery() {
 		
-		selQuery.append(" SELECT T1.FinReference, T1.FinBranch, T1.FinType, T1.FinAccount, T1.FinCustPftAccount," );
-		selQuery.append(" T1.FinCcy ,T1.NextRepayDate ,T1.CustID , T1.DisbAccountId , T1.RepayAccountId ,");
+		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinReference, T1.FinBranch, T1.FinType, T1.FinAccount, T1.FinCustPftAccount," );
+		selQuery.append(" T1.FinCcy ,T1.NextRepayDate ,T1.CustID , T1.DisbAccountId , T1.RepayAccountId , T1.GraceTerms, ");
 		selQuery.append(" T2.CpzAmount, T1.FinAmount AS DisburseAmount , (T1.FinAmount - T1.FinRepaymentAmount) AS FinAmount ," );
 		selQuery.append(" T1.DownPayment , T1.NumberOfTerms ,T1.TotalCpz ," );
 		selQuery.append(" (SELECT SUM(CpzAmount) AS TotCurCpzAmt FROM  FinScheduleDetails " );
@@ -211,96 +221,16 @@ public class CapitalizationPostings implements Tasklet {
 		selQuery.append(" WHERE T1.FinReference = T2.FinReference " );
 		selQuery.append(" AND T2.DefSchdDate = '" + dateValueDate + "'" );
 		selQuery.append(" AND T2.CpzOnSchDate= '1' AND T2.CpzAmount > '0' ");
-		selQuery.append(" AND T1.FinIsActive = '1' ");
-		return selQuery;
+		selQuery.append(" AND T1.FinIsActive = '1' AND T3.FinCategory !='"+PennantConstants.FINANCE_PRODUCT_SUKUK+"'");
+		return selQuery.toString();
 		
 	}
+	
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	private String getCapitalization(DataSet dataSet) {
-		StringBuffer strprovsn = new StringBuffer();
-
-		if (dataSet != null) {
-			strprovsn.append("FinBranch");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getFinBranch());
-			strprovsn.append(";");
-
-			strprovsn.append("PostDate");
-			strprovsn.append("-");
-			strprovsn.append(DateUtility.formatUtilDate(dataSet.getPostDate(), PennantConstants.dateFormat));
-			strprovsn.append(";");
-
-			strprovsn.append("ValueDate");
-			strprovsn.append("-");
-			strprovsn.append(DateUtility.formatUtilDate(dataSet.getValueDate(), PennantConstants.dateFormat));
-			strprovsn.append(";");
-
-			strprovsn.append("SchdDate");
-			strprovsn.append("-");
-			strprovsn.append(DateUtility.formatUtilDate(dataSet.getSchdDate(), PennantConstants.dateFormat));
-			strprovsn.append(";");
-
-			strprovsn.append("FinType");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getFinType());
-			strprovsn.append(";");
-			
-			strprovsn.append("FinCcy");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getFinCcy());
-			strprovsn.append(";");
-
-			strprovsn.append("DisburseAccount");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getDisburseAccount());
-			strprovsn.append(";");
-
-			strprovsn.append("RepayAccount");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getRepayAccount());
-			strprovsn.append(";");
-
-			strprovsn.append("FinAccount");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getFinAccount());
-			strprovsn.append(";");
-
-			strprovsn.append("FinAmount");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getFinAmount());
-			strprovsn.append(";");
-
-			strprovsn.append("FinCustPftAccount");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getFinCustPftAccount());
-			strprovsn.append(";");
-
-			strprovsn.append("NewRecord");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.isNewRecord());
-			strprovsn.append(";");
-
-			strprovsn.append("DownPayment");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getDownPayment()); //TODO AMTFORMART
-			strprovsn.append(";");
-
-			strprovsn.append("NoOfTerms");
-			strprovsn.append("-");
-			strprovsn.append(dataSet.getNoOfTerms());
-			strprovsn.append(";");
-
-
-
-		}
-
-		return strprovsn.toString();
-	}
-
 	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
 		return financeProfitDetailDAO;
 	}
@@ -328,14 +258,6 @@ public class CapitalizationPostings implements Tasklet {
 	}
 	public DataSource getDataSource() {
 		return dataSource;
-	}
-
-	public BatchAdminDAO getBatchAdminDAO() {
-		return batchAdminDAO;
-	}
-
-	public void setBatchAdminDAO(BatchAdminDAO batchAdminDAO) {
-		this.batchAdminDAO = batchAdminDAO;
 	}
 
 }

@@ -121,7 +121,7 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 	@Override
 	public PhoneType getPhoneTypeById(final String id, String type) {
 		logger.debug("Entering");
-		PhoneType phoneType = getPhoneType();
+		PhoneType phoneType = new PhoneType();
 		phoneType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 

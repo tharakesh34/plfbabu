@@ -60,8 +60,9 @@ public class DefermentHeader implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private String finReference = null;
 	private Date deferedSchdDate;
-	private BigDecimal defSchdProfit = new BigDecimal(0);
-	private BigDecimal defSchdPrincipal = new BigDecimal(0);
+	private long logKey;
+	private BigDecimal defSchdProfit = BigDecimal.ZERO;
+	private BigDecimal defSchdPrincipal = BigDecimal.ZERO;
 	private String defRecalType = "";
 	private Date defTillDate = null;
 	private int version;
@@ -305,4 +306,12 @@ public class DefermentHeader implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public void setLogKey(long logKey) {
+	    this.logKey = logKey;
+    }
+
+	public long getLogKey() {
+	    return logKey;
+    }
 }

@@ -53,6 +53,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
 
@@ -63,11 +64,10 @@ import com.pennant.util.PennantAppUtil;
 public class ProvisionListModelItemRenderer implements ListitemRenderer<Provision>, Serializable {
 
 	private static final long serialVersionUID = -4554647022945989420L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, Provision provision, int count) throws Exception {
 
-	//	final Provision provision = (Provision) data;
 		Listcell lc;
 		lc = new Listcell(provision.getFinReference());
 		lc.setParent(item);
@@ -75,7 +75,11 @@ public class ProvisionListModelItemRenderer implements ListitemRenderer<Provisio
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.formateDate(provision.getProvisionCalDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(provision.getProvisionDue(), provision.getLovDescFinFormatter()));
+		lc = new Listcell(PennantAppUtil.amountFormate(provision.getProvisionAmtCal(), provision.getLovDescFinFormatter()));
+		lc.setStyle("text-align:right");
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.amountFormate(provision.getProvisionedAmt(), provision.getLovDescFinFormatter()));
+		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbUseNFProv = new Checkbox();
@@ -86,6 +90,10 @@ public class ProvisionListModelItemRenderer implements ListitemRenderer<Provisio
 		lc = new Listcell(PennantAppUtil.formateDate(provision.getDueFromDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.formateDate(provision.getLastFullyPaidDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+		lc = new Listcell(provision.getRecordStatus());
+		lc.setParent(item);
+		lc = new Listcell(PennantJavaUtil.getLabel(provision.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("data", provision);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onProvisionItemDoubleClicked");

@@ -151,27 +151,27 @@ public class ProvinceSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_cPCountry.setModel(new ListModelList(
+		this.sortOperator_cPCountry.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_cPCountry
 				.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_cPProvince.setModel(new ListModelList(
+		this.sortOperator_cPProvince.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_cPProvince
 				.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_cPProvinceName.setModel(new ListModelList(
+		this.sortOperator_cPProvinceName.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_cPProvinceName
 				.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus
 					.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType
 					.setItemRenderer(new SearchOperatorListModelItemRenderer());

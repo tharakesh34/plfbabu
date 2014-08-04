@@ -51,11 +51,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.GroupsModelArray;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -65,11 +65,10 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.customermasters.customerrating.model.CustomerRatingComparator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -157,27 +156,27 @@ public class CustomerRatingSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_custCIF.setModel(new ListModelList(
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custRatingType.setModel(new ListModelList(
+		this.sortOperator_custRatingType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_custRatingType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custRatingCode.setModel(new ListModelList(
+		this.sortOperator_custRatingCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_custRatingCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custRating.setModel(new ListModelList(
+		this.sortOperator_custRating.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_custRating.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
@@ -298,6 +297,7 @@ public class CustomerRatingSearchCtrl extends GFCBaseCtrl implements Serializabl
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */ 
+	@SuppressWarnings("unchecked")
 	public void doSearch() {
 		logger.debug("Entering");
 		
@@ -442,11 +442,14 @@ public class CustomerRatingSearchCtrl extends GFCBaseCtrl implements Serializabl
 		this.customerRatingCtrl.setSearchObj(so);
 
 		// set the model to the listBox with the initial resultSet get by the DAO method.
-		final SearchResult<CustomerRating> searchResult =this.customerRatingCtrl.getPagedListService().getSRBySearchObject(so);
-		this.customerRatingCtrl.listBoxCustomerRating.setModel(new GroupsModelArray(searchResult.getResult().toArray(),new CustomerRatingComparator()));
+		 final Listbox listBox = this.customerRatingCtrl.listBoxCustomerRating;
+			final Paging paging = this.customerRatingCtrl.pagingCustomerRatingList;
+			
+			((PagedListWrapper<CustomerRating>) listBox.getModel()).init(so, listBox, paging);
+			
 
 		this.label_CustomerRatingSearchResult.setValue(Labels.getLabel("label_CustomerRatingSearchResult.value") + " "
-				+ String.valueOf(searchResult.getTotalCount()));
+				+ String.valueOf(paging.getTotalSize()));
 		logger.debug("Leaving");
 	}
 

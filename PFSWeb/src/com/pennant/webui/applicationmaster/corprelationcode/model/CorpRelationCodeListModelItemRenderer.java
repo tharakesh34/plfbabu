@@ -62,11 +62,10 @@ public class CorpRelationCodeListModelItemRenderer implements ListitemRenderer<C
 		Serializable {
 
 	private static final long serialVersionUID = -4992245602767405546L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, CorpRelationCode corpRelationCode, int count) throws Exception {
 		
-		//final CorpRelationCode corpRelationCode = (CorpRelationCode) data;
 		Listcell lc;
 		lc = new Listcell(corpRelationCode.getCorpRelationCode());
 		lc.setParent(item);

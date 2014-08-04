@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.ComponentNotFoundException;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
@@ -58,6 +59,8 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.Tab;
@@ -68,6 +71,7 @@ import org.zkoss.zul.Treecell;
 
 import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.endofday.main.BatchMonitor;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.common.menu.util.ILabelElement;
 import com.pennant.policy.model.UserImpl;
@@ -79,7 +83,7 @@ import com.pennant.webui.util.PTMessageUtils;
 /**
  * 
  */
-class DefaultTreecell extends Treecell implements EventListener, Serializable, ILabelElement {
+class DefaultTreecell extends Treecell implements EventListener<Event>, Serializable, ILabelElement {
 
 	private static final long serialVersionUID = 5221385297281381652L;
 	private static final Logger logger = Logger.getLogger(DefaultTreecell.class);
@@ -94,6 +98,10 @@ class DefaultTreecell extends Treecell implements EventListener, Serializable, I
 		this.securityUser = userDetails.getSecurityUser();
 		/* This condition checks  whether current system time is between user signOnFrom to signOnTo time 
 		 * .if not show message box to prevent operations */
+ 		Component comp = event.getTarget();
+		if(BatchMonitor.isEodRunning() && !comp.getId().contains("menu_Item_BatchAdmin")){
+			Clients.showNotification(Labels.getLabel("EOD_RUNNING"),  "info", null, null, -1);
+		}else{
 		if(((securityUser.getUsrCanSignonFrom()!=null) && (securityUser.getUsrCanSignonTo()!=null))){
 
 			if((DateUtility.compareTime(new Date(System.currentTimeMillis()),securityUser.getUsrCanSignonFrom(), false)==-1)
@@ -110,6 +118,7 @@ class DefaultTreecell extends Treecell implements EventListener, Serializable, I
 		}else{
 			openPage();
 		}
+	}
 	}
 
 	private void openPage() throws InterruptedException{
@@ -143,7 +152,7 @@ class DefaultTreecell extends Treecell implements EventListener, Serializable, I
 				tab.setId(this.getId().trim().replace("menu_Item_", "tab_"));
 				tab.setLabel(Labels.getLabel(this.getId().trim()));
 				tab.setClosable(true);
-				tab.addEventListener(Events.ON_CLOSE, new EventListener() {
+				tab.addEventListener(Events.ON_CLOSE, new EventListener<Event>() {
 					@SuppressWarnings("deprecation")
 					public void onEvent(Event event) throws UiException {
 						String pageName = event.getTarget().getId().replace("tab_", "");

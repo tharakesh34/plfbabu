@@ -33,7 +33,7 @@
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 					<button id="btnClose" height="24px"
-						image="/images/icons/btn_exitdoor2_16x16.gif"
+						label = "${c:l('label_Close')}"
 						tooltiptext="${c:l('btnClose.tooltiptext')}" />
 				</toolbar>
 			</hbox>
@@ -160,25 +160,25 @@
 					</toolbar>
 					<listbox id="listBoxCustomer" vflex="true"
 						tooltiptext="${c:l('listbox.tooltiptext1')}" width="99.7%"
-						height="100%" multiple="false">
+						height="100%" multiple="false" span="true" sizedByContent="true">
 						<listhead sizable="true">
 							<listheader id="listheader_CustCIF"
 								label="${c:l('listheader_CustCIF.label')}" sort="false"
-								width="20%" />
+								hflex="min" />
 							<listheader id="listheader_CustCoreBank"
 								label="${c:l('listheader_CustCoreBank.label')}" sort="false"
-								width="20%" />
+								hflex="min" />
 							<listheader id="listheader_CustCtgCode"
 								label="${c:l('listheader_CustCtgCode.label')}" sort="false"
-								width="20%" />
+								hflex="min" />
 							<listheader
 								id="listheader_CustomerSearch_CustFName"
 								label="${c:l('label_CustomerSearch_CustFName.value')}"
-								sort="false" width="20%" />
+								sort="false" hflex="min" />
 							<listheader
 								id="listheader_CustomerSearch_CustLName"
 								label="${c:l('label_CustomerSearch_CustLName.value')}"
-								sort="false" width="20%" />
+								sort="false" hflex="min" />
 						</listhead>
 					</listbox>
 				</vlayout>

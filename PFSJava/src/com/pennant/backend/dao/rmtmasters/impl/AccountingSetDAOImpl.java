@@ -104,7 +104,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 	@Override
 	public AccountingSet getAccountingSetById(final long id, String type) {
 		logger.debug("Entering");
-		AccountingSet accountingSet = getAccountingSet();
+		AccountingSet accountingSet = new AccountingSet();
 
 		accountingSet.setId(id);
 
@@ -307,13 +307,11 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 	@Override
 	public List<AccountingSet> getListAERuleBySysDflt(String type) {
 		logger.debug("Entering");
-		StringBuilder selectSql = new StringBuilder(
-		        "Select AccountSetid, EventCode, AccountSetCode, ");
-		selectSql.append(" AccountSetCodeName  ");
+		StringBuilder selectSql = new StringBuilder("Select AccountSetid, EventCode, AccountSetCode,  AccountSetCodeName  ");
 		selectSql.append(" From RMTAccountingSet" + StringUtils.trim(type));
-		selectSql.append(" Where EventCode in ('ADDDBSP','ADDDBSF','ADDDBSN','AMZ','AMZSUSP',");
-		selectSql.append("'M_NONAMZ','M_AMZ','RATCHG','REPAY', 'EARLYPAY','EARLYSTL','LATEPAY',");
-		selectSql.append("'WRITEOFF','DEFFRQ','DEFRPY','PROVSN','SCDCHG','COMPOUND','DPRCIATE')");
+		selectSql.append(" Where EventCode IN ('ADDDBSP','ADDDBSF','ADDDBSN','AMZ','AMZSUSP',");
+		selectSql.append(" 'M_NONAMZ','M_AMZ','RATCHG','REPAY', 'EARLYPAY','EARLYSTL','LATEPAY',");
+		selectSql.append(" 'WRITEOFF','WRITEBK','GRACEEND','DEFFRQ','DEFRPY','PROVSN','SCDCHG','COMPOUND','DPRCIATE')");
 		selectSql.append("  AND SystemDefault=1");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new AccountingSet());
@@ -334,7 +332,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 	@Override
 	public Long getAccountingSetId(final String eventCode, final String accSetCode) {
 		logger.debug("Entering");
-		AccountingSet accountingSet = getAccountingSet();
+		AccountingSet accountingSet = new AccountingSet();
 
 		accountingSet.setEventCode(eventCode);
 		accountingSet.setAccountSetCode(accSetCode);
@@ -362,7 +360,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 	@Override
 	public AccountingSet getAccSetSysDflByEvent(String event, String type) {
 		logger.debug("Entering");
-		AccountingSet accountingSet = getAccountingSet();
+		AccountingSet accountingSet = new AccountingSet();
 		accountingSet.setEventCode(event);
 
 		StringBuilder selectSql = new StringBuilder(

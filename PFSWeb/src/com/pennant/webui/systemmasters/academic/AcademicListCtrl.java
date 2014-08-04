@@ -45,12 +45,15 @@ package com.pennant.webui.systemmasters.academic;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
@@ -62,15 +65,18 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SessionUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.service.systemmasters.AcademicService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.policy.model.UserImpl;
 import com.pennant.webui.systemmasters.academic.model.AcademicListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
@@ -130,7 +136,25 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
-
+	
+	private String getLoggedInUsers() {
+		StringBuilder builder = new StringBuilder();
+		List<UserImpl> users = SessionUtil.getLoggedInUsers();
+		SecurityUser secUser = null;
+		if(!users.isEmpty()) {			
+			for (UserImpl user : users) {
+				if(user.getUserId() != getUserWorkspace().getLoginUserDetails().getLoginUsrID()){
+					if(builder.length() > 0){
+						builder.append("</br>");
+					}
+					secUser = user.getSecurityUser(); 
+					builder.append("&bull;").append("&nbsp;").append(user.getUserId()).append("&ndash;").append(secUser.getUsrFName() + " " + StringUtils.trimToEmpty(secUser.getUsrMName()) + " " + secUser.getUsrLName()  );
+				}
+			}
+		}
+		return builder.toString();
+	}
+	
 	/**
 	 * Before binding the data and calling the List window we check, if the
 	 * ZUL-file is called with a parameter for a selected AcademicCode object in
@@ -141,10 +165,18 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 	 */
 	public void onCreate$window_AcademicList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
+		String loggedInUsers = getLoggedInUsers();		
+		if(!loggedInUsers.equals("")) {
+			loggedInUsers = "\n"+loggedInUsers;
+			//PTMessageUtils.showErrorMessage(Labels.getLabel("label_current_logged_users", new String[]{loggedInUsers}));
+			Clients.showNotification(Labels.getLabel("label_current_logged_users", new String[]{loggedInUsers}),  "info", null, null, -1);
+
+			//return;
+		}
 
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("Academic");
 		boolean wfAvailable = true;
-
+	    
 		if (moduleMapping.getWorkflowType() != null) {
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Academic");
 

@@ -67,7 +67,6 @@ import com.pennant.backend.model.rmtmasters.ScoringGroup;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.model.rulefactory.NFScoreRuleDetail;
-import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.ScoringGroupService;
 import com.pennant.backend.util.PennantConstants;
@@ -242,13 +241,13 @@ GenericService<ScoringGroup> implements ScoringGroupService {
 	public ScoringGroup getScoringGroupById(long id) {
 		ScoringGroup scoringGroup=getScoringGroupDAO().getScoringGroupById(id,"_View");
 		scoringGroup.setScoringSlabList(getScoringSlabDAO().getScoringSlabsByScoreGrpId(id,"_View"));
-		if("C".equals(scoringGroup.getCategoryType())){
+		if("C".equals(scoringGroup.getCategoryType()) || "B".equals(scoringGroup.getCategoryType())){
 			
 			//Financial Scoring Metric Details
 			scoringGroup.setFinScoringMetricsList(getScoringMetricsDAO().getScoringMetricsByScoreGrpId(id, "F" ,"_View"));
 			if(scoringGroup.getFinScoringMetricsList() != null && scoringGroup.getFinScoringMetricsList().size() > 0){
 
-				List<Rule> ruleList = getRuleDAO().getRulesByGroupIdList(id, "F", "");
+				/*List<Rule> ruleList = getRuleDAO().getRulesByGroupIdList(id, "F", "");
 				ScoringMetrics metric = null;
 
 				for (Rule rule : ruleList) {
@@ -256,6 +255,23 @@ GenericService<ScoringGroup> implements ScoringGroupService {
 					metric.setLovDescScoringCode(rule.getRuleCode());
 					metric.setLovDescScoringCodeDesc(rule.getRuleCodeDesc());
 					metric.setLovDescSQLRule(rule.getSQLRule());
+					List<ScoringMetrics> subMetricList = null;
+					if(scoringGroup.getLovDescFinScoreMap().containsKey(rule.getGroupId())){
+						subMetricList = scoringGroup.getLovDescFinScoreMap().get(rule.getGroupId());
+					}else{
+						subMetricList = new ArrayList<ScoringMetrics>();
+					}
+					subMetricList.add(metric);
+					scoringGroup.getLovDescFinScoreMap().put(rule.getGroupId(),subMetricList);
+				}*/
+				
+				List<NFScoreRuleDetail> ruleList = getRuleDAO().getNFRulesByGroupId(id, "F", "");
+				ScoringMetrics metric = null;
+				for (NFScoreRuleDetail rule : ruleList) {
+					metric = new ScoringMetrics();
+					metric.setLovDescScoringCode(String.valueOf(rule.getNFRuleId()));
+					metric.setLovDescScoringCodeDesc(rule.getNFRuleDesc());
+					metric.setLovDescMetricMaxPoints(rule.getMaxScore());
 					List<ScoringMetrics> subMetricList = null;
 					if(scoringGroup.getLovDescFinScoreMap().containsKey(rule.getGroupId())){
 						subMetricList = scoringGroup.getLovDescFinScoreMap().get(rule.getGroupId());
@@ -615,7 +631,7 @@ GenericService<ScoringGroup> implements ScoringGroupService {
 				isRcdType=true;
 			}else if (scoringSlab.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				scoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType=true;
+				//isRcdType=true;
 			}
 
 			if(method.equals("saveOrUpdate") && (isRcdType==true)){
@@ -668,7 +684,7 @@ GenericService<ScoringGroup> implements ScoringGroupService {
 				isRcdType=true;
 			}else if (scoringMetrics.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				scoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType=true;
+				//isRcdType=true;
 			}
 
 			if(method.equals("saveOrUpdate") && (isRcdType==true)){

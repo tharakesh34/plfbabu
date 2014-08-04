@@ -59,16 +59,17 @@
 		</div>
 
 		<borderlayout id="borderlayoutEducationalLoan">
-			<center border="none" >
-
-				<vlayout>
-					<groupbox id="gb_basicDetails" >
+			<center border="none">
+				<div >
+					<groupbox id="gb_basicDetails">
 						<caption id="caption_eduLoan"
 							label="${c:l('EducationalLoan')}" visible="false" />
 						<grid id="grid_eduLoanDetails"
 							sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="border:0px">
 							<columns>
+								<column width="150px" />
+								<column />
 								<column width="150px" />
 								<column />
 							</columns>
@@ -83,8 +84,6 @@
 										<textbox id="loanRefNumber"
 											width="171px" maxlength="26" />
 									</hbox>
-								</row>
-								<row visible="false">
 									<label
 										id="label_EducationalLoanDialog_LoanRefType"
 										value="${c:l('label_EducationalLoanDialog_LoanRefType.value')}" />
@@ -99,18 +98,7 @@
 									<label
 										id="label_EducationalLoanDialog_EduCourse"
 										value="${c:l('label_EducationalLoanDialog_EduCourse.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<textbox id="eduCourse"
-											width="250px" visible="false" />
-										<textbox
-											id="lovDescEduCourseName" width="250px" readonly="true" />
-										<button id="btnSearchEduCourse"
-											image="/images/icons/LOVSearch.png" height="24px" />
-									</hbox>
-								</row>
-								<row visible="true">
+									<extendedcombobox id="eduCourse"/>
 									<label
 										id="label_EducationalLoanDialog_EduSpecialization"
 										value="${c:l('label_EducationalLoanDialog_EduSpecialization.value')}" />
@@ -125,19 +113,7 @@
 									<label
 										id="label_EducationalLoanDialog_EduCourseType"
 										value="${c:l('label_EducationalLoanDialog_EduCourseType.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<textbox id="eduCourseType"
-											width="250px" visible="false" />
-										<textbox
-											id="lovDescEduCourseTypeName" width="250px" readonly="true" />
-										<button
-											id="btnSearchEduCourseType"
-											image="/images/icons/LOVSearch.png" height="24px" />
-									</hbox>
-								</row>
-								<row visible="true">
+									<extendedcombobox id="eduCourseType"/>
 									<label
 										id="label_EducationalLoanDialog_EduCourseFrom"
 										value="${c:l('label_EducationalLoanDialog_EduCourseFrom.value')}" />
@@ -158,8 +134,6 @@
 										<textbox
 											id="eduCourseFromBranch" maxlength="100" width="250px" />
 									</hbox>
-								</row>
-								<row visible="true">
 									<label
 										id="label_EducationalLoanDialog_EduAffiliatedTo"
 										value="${c:l('label_EducationalLoanDialog_EduAffiliatedTo.value')}" />
@@ -180,8 +154,6 @@
 										<datebox id="eduCommenceDate"
 											format="dd/MM/yyyy" width="100px" />
 									</hbox>
-								</row>
-								<row visible="true">
 									<label
 										id="label_EducationalLoanDialog_EduCompletionDate"
 										value="${c:l('label_EducationalLoanDialog_EduCompletionDate.value')}" />
@@ -197,28 +169,12 @@
 										id="label_EducationalLoanDialog_EduExpectedIncome"
 										value="${c:l('label_EducationalLoanDialog_EduExpectedIncome.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<decimalbox
-											id="eduExpectedIncome" width="162px" maxlength="25" style="text-align:right"/>
+										<currencyBox id="eduExpectedIncome" />
 									</hbox>
-								</row>
-								<row visible="true">
 									<label
 										id="label_EducationalLoanDialog_EduLoanFromBranch"
-										value="${c:l('label_EducationalLoanDialog_EduLoanFromBranch.value')}" />
-									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<textbox id="eduLoanFromBranch"
-											width="250px" visible="false" />
-										<textbox
-											id="lovDescEduLoanFromBranchName" width="250px"
-											readonly="true" />
-										<button
-											id="btnSearchEduLoanFromBranch"
-											image="/images/icons/LOVSearch.png" height="24px" />
-									</hbox>
+										value="${c:l('label_EducationalLoanDialog_EduLoanFromBranch.value')}" visible = "false"/>
+									<extendedcombobox id="eduLoanFromBranch" visible = "false"/>
 								</row>
 								<row id="statusRow">
 									<label
@@ -234,9 +190,8 @@
 						</grid>
 					</groupbox>
 
-					<groupbox id="gb_EducationalExpense" mold="3d">
-						<div sclass="z-toolbar" style="padding:0"
-							height="auto">
+					<groupbox id="gb_EducationalExpense" mold="3d" width="100%" >
+						<div sclass="z-toolbar" style="padding:0">
 							<hbox pack="stretch"
 								sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
 								style=" padding:0px;">
@@ -274,8 +229,7 @@
 						</div>
 
 						<listbox id="listbox_EduExpenseDetails"
-							multiple="true" style="border:none" width="100%"
-							height="120px">
+							multiple="true" style="border:none" width="100%">
 							<listhead sizable="true">
 								<listheader id="listheader_EduExpDetail"
 									label="${c:l('listheader_EducationLoanDialog_EduExpenseDetail.label')}" />
@@ -301,7 +255,7 @@
 							<radiogroup id="userAction" name="action" />
 						</hbox>
 					</groupbox>
-				</vlayout>
+				</div>
 
 			</center>
 		</borderlayout>

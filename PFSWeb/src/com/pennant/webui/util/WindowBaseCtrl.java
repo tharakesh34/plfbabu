@@ -100,7 +100,7 @@ public abstract class WindowBaseCtrl extends Window implements AfterCompose, Ser
 	 * @param main
 	 * @param child
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("deprecation")
 	private void processRecursive(Window main, Window child) {
 		Components.wireVariables(main, child);
 		Components.addForwards(main, this);

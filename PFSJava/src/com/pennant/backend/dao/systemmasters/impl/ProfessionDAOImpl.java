@@ -121,11 +121,11 @@ public class ProfessionDAOImpl extends BasisCodeDAO<Profession> implements Profe
 	@Override
 	public Profession getProfessionById(final String id, String type) {
 		logger.debug("Entering");
-		Profession profession = getProfession();
+		Profession profession = new Profession();
 		profession.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append("Select ProfessionCode, ProfessionDesc, ProfessionIsActive, ");
+		selectSql.append("Select ProfessionCode, ProfessionDesc, ProfessionIsActive,  SelfEmployee, ");
 		/*if(type.contains("View")){
 			selectSql.append("");
 		}*/
@@ -244,10 +244,10 @@ public class ProfessionDAOImpl extends BasisCodeDAO<Profession> implements Profe
 		
 		insertSql.append("Insert Into BMTProfessions");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ProfessionCode, ProfessionDesc, ProfessionIsActive,");
+		insertSql.append(" (ProfessionCode, ProfessionDesc, ProfessionIsActive, SelfEmployee, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:ProfessionCode, :ProfessionDesc, :ProfessionIsActive,");
+		insertSql.append(" Values(:ProfessionCode, :ProfessionDesc, :ProfessionIsActive, :SelfEmployee, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
 		
@@ -281,7 +281,7 @@ public class ProfessionDAOImpl extends BasisCodeDAO<Profession> implements Profe
 		
 		updateSql.append("Update BMTProfessions");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ProfessionCode = :ProfessionCode, ProfessionDesc = :ProfessionDesc, ProfessionIsActive = :ProfessionIsActive,");
+		updateSql.append(" Set ProfessionCode = :ProfessionCode, ProfessionDesc = :ProfessionDesc, ProfessionIsActive = :ProfessionIsActive,  SelfEmployee = :SelfEmployee, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

@@ -64,8 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.SimpleConstraint;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -79,7 +77,9 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.SubSectorService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -113,7 +113,6 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Label 	recordStatus; 				// autoWired
 	protected Radiogroup userAction;
 	protected Groupbox 	groupboxWf;
-	protected Row 		statusRow;
 
 	// not auto wired variables
 	private SubSector subSector; 							// overHanded per parameter
@@ -230,10 +229,8 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			this.statusRow.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
-			this.statusRow.setVisible(false);
 		}
 		logger.debug("Leaving");
 	}
@@ -415,6 +412,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doResetInitValues();
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
+		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -439,7 +437,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		this.recordStatus.setValue(aSubSector.getRecordStatus());
 		
-		if(aSubSector.isNew() || aSubSector.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aSubSector.isNew() || (aSubSector.getRecordType() != null ? aSubSector.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.subSectorIsActive.setChecked(true);
 			this.subSectorIsActive.setDisabled(true);
 		}
@@ -625,15 +623,12 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.subSectorCode.isReadonly()){
-			this.subSectorCode.setConstraint(new SimpleConstraint(PennantConstants.ALPHANUM_CAPS_REGEX, Labels.getLabel(
-					"FIELD_ALNUM_CAPS",new String[]{Labels.getLabel(
-					"label_SubSectorDialog_SubSectorCode.value")})));
+			this.subSectorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SubSectorCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
 
 		if (!this.subSectorDesc.isReadonly()){
-			this.subSectorDesc.setConstraint(new SimpleConstraint(PennantConstants.DESC_REGEX, Labels.getLabel(
-					"MAND_FIELD_DESC",new String[]{Labels.getLabel(
-					"label_SubSectorDialog_SubSectorDesc.value")})));
+			this.subSectorDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SubSectorDesc.value"), 
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -654,8 +649,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescSectorCodeName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_SubSectorDialog_SectorCode.value") }));
+		this.lovDescSectorCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SectorCode.value"), null, true));
 	}
 
 	/**
@@ -784,7 +778,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}

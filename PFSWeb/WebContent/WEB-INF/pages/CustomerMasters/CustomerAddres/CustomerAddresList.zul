@@ -20,13 +20,13 @@
 				<!-- SEARCH AREA -->
 				<toolbar align="center" style=" border-style: none;">
 					<button
-						id="button_CustomerAddresList_CustomerAddresSearchDialog"
-						height="24px" label = "${c:l('label_Filter')}"
-						autodisable="button_CustomerAddresList_CustomerAddresSearchDialog,button_CustomerAddresList_PrintList,
+							id="button_CustomerAddresList_CustomerAddresSearchDialog"
+							height="24px" label = "${c:l('label_Filter')}"
+							autodisable="button_CustomerAddresList_CustomerAddresSearchDialog,button_CustomerAddresList_PrintList,
 										button_CustomerAddresList_NewCustomerAddres,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_CustomerAddresList_CustomerAddresSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_CustomerAddresList_CustomerAddresSearchDialog.tooltiptext')}" />
 					<button id="button_CustomerAddresList_PrintList"
-						height="24px" label = "${c:l('label_Print')}"
+						height="24px" label="${c:l('label_Print')}"
 						autodisable="button_CustomerAddresList_CustomerAddresSearchDialog,button_CustomerAddresList_PrintList,
 										button_CustomerAddresList_NewCustomerAddres,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_CustomerAddresList_PrintList.tooltiptext')}" />
@@ -37,18 +37,18 @@
 				<toolbar align="end" style=" border-style: none;">
 					<button
 						id="button_CustomerAddresList_NewCustomerAddres" height="24px"
-						label = "${c:l('label_New')}"
+						label="${c:l('label_New')}"
 						autodisable="button_CustomerAddresList_CustomerAddresSearchDialog,button_CustomerAddresList_PrintList,
 										button_CustomerAddresList_NewCustomerAddres,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_CustomerAddresList_NewCustomerAddres.tooltiptext')}" />
 
 					<button id="btnRefresh" height="24px"
-						label = "${c:l('label_Refresh')}"
+						label="${c:l('label_Refresh')}"
 						autodisable="button_CustomerAddresList_CustomerAddresSearchDialog,button_CustomerAddresList_PrintList,
 										button_CustomerAddresList_NewCustomerAddres,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 					<button id="btnHelp" height="24px"
-						label = "${c:l('label_Help')}"
+						label="${c:l('label_Help')}"
 						autodisable="button_CustomerAddresList_CustomerAddresSearchDialog,button_CustomerAddresList_PrintList,
 										button_CustomerAddresList_NewCustomerAddres,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
@@ -60,32 +60,113 @@
 			<north border="none" />
 
 			<center border="none">
+				<div>
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" id="searchGrid"
+						style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+							<column width="17%" />
+							<column width="5%" />
+							<column width="28%" />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_CustomerAddresSearch_CustCIF"
+									value="${c:l('label_CustomerAddresSearch_CustAddrCIF.value')}" />
+								<listbox id="sortOperator_custCIF"
+									width="43px" mold="select" rows="1" />
+								<textbox id="custCIF" width="150px"
+									maxlength="19" />
+							
+								<label
+									id="label_CustomerAddresSearch_CustAddrType"
+									value="${c:l('label_CustomerAddresSearch_CustAddrType.value')}" />
+								<listbox id="sortOperator_custAddrType"
+									width="43px" mold="select" rows="1" />
+								<textbox id="custAddrType" width="150px"
+									maxlength="8" />
+							</row>
+							<row>
+								<label
+									id="label_CustomerAddresSearch_CustAddrHNbr"
+									value="${c:l('label_CustomerAddresSearch_CustAddrHNbr.value')}" />
+								<listbox id="sortOperator_custAddrHNbr"
+									width="43px" mold="select" rows="1" />
+								<textbox id="custAddrHNbr" width="150px"
+									maxlength="50" />
+								<label
+									id="label_CustomerAddresSearch_CustFlatNbr"
+									value="${c:l('label_CustomerAddresSearch_CustFlatNbr.value')}" />
+								<listbox id="sortOperator_custFlatNbr"
+									width="43px" mold="select" rows="1" />
+								<textbox id="custFlatNbr" width="150px"
+									maxlength="50" />
+							</row>
+							<row>
+								<label
+									id="label_CustomerAddresSearch_CustAddrStreet"
+									value="${c:l('label_CustomerAddresSearch_CustAddrStreet.value')}" />
+								<listbox
+									id="sortOperator_custAddrStreet" width="43px" mold="select"
+									rows="1" />
+								<textbox id="custAddrStreet"
+									width="150px" maxlength="50" />
+                                <label/>
+							</row>
+							<row>
+								<label
+									id="label_CustomerAddresSearch_RecordStatus"
+									value="${c:l('label_CustomerAddresSearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_recordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="150px"
+									maxlength="50" />
+							
+								<label
+									id="label_CustomerAddresSearch_RecordType"
+									value="${c:l('label_CustomerAddresSearch_RecordType.value')}" />
+								<listbox id="sortOperator_recordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="150px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
 
-				<listbox id="listBoxCustomerAddres" vflex="true"
-					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
-					<listhead sizable="true">
-						<listheader id="listheader_CustAddrType"
-							label="${c:l('listheader_CustAddrType.label')}" sort="auto"
-							width="30%" />
-						<listheader id="listheader_CustAddrHNbr"
-							label="${c:l('listheader_CustAddrHNbr.label')}" sort="auto"
-							width="15%" />
-						<listheader id="listheader_CustFlatNbr"
-							label="${c:l('listheader_CustFlatNbr.label')}" sort="auto"
-							width="15%" />
-						<listheader id="listheader_CustAddrStreet"
-							label="${c:l('listheader_CustAddrStreet.label')}" sort="auto"
-							width="20%" />
-						<listheader id="listheader_RecordStatus"
-							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="10%" />
-						<listheader id="listheader_RecordType"
-							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="10%" />
-					</listhead>
-				</listbox>
 
+					<listbox id="listBoxCustomerAddres"
+						fixedLayout="true" vflex="true" style="white-space:nowrap;"
+						emptyMessage="${c:l('listbox.emptyMessage')}"
+						span="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+						width="100%" height="100%" multiple="false">
+						<listhead sizable="true">
+							<listheader id="listheader_CustCIF"
+								label="${c:l('listheader_CustCIF.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_CustAddrType"
+								label="${c:l('listheader_CustAddrType.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_CustAddrHNbr"
+								label="${c:l('listheader_CustAddrHNbr.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_CustFlatNbr"
+								label="${c:l('listheader_CustFlatNbr.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_CustAddrStreet"
+								label="${c:l('listheader_CustAddrStreet.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingCustomerAddresList" />

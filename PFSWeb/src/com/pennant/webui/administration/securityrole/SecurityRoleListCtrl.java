@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.administration.securityrole.model.SecurityRoleListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -400,7 +400,7 @@ public class SecurityRoleListCtrl extends GFCBaseListCtrl<SecurityRole> implemen
 	 */
 	public void onClick$button_SecurityRoleList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		PTReportUtils.getReport("SecurityRole", getSearchObj());
+		new PTListReportUtils("SecRoles", getSearchObj(),this.pagingSecurityRoleList.getTotalSize()+1);
 		logger.debug("Leaving " + event.toString());
 	}
 

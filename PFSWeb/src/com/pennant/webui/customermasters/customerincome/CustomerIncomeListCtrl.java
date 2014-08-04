@@ -45,7 +45,9 @@ package com.pennant.webui.customermasters.customerincome;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -53,12 +55,19 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
-import org.zkoss.zul.GroupsModelArray;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -73,12 +82,13 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.search.SearchResult;
-import com.pennant.webui.customermasters.customerincome.model.CustomerIncomeComparator;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customerincome.model.CustomerIncomeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -105,12 +115,41 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 	protected Paging pagingCustomerIncomeList; 				// autoWired
 	protected Listbox listBoxCustomerIncome; 				// autoWired
 
-	// List headers
+	// List headers 
+	protected Listheader listheader_CustCIF;                // autoWired
 	protected Listheader listheader_CustIncomeType; 		// autoWired
+	protected Listheader listheader_JointCust; 				// autoWired
 	protected Listheader listheader_CustIncome; 			// autoWired
 	protected Listheader listheader_CustIncomeCountry; 		// autoWired
 	protected Listheader listheader_RecordStatus; 			// autoWired
 	protected Listheader listheader_RecordType;
+	
+	//Search
+	protected Textbox 		custCIF; 							// autoWired
+	protected Listbox 		sortOperator_custCIF; 				// autoWired
+	protected Textbox 		custIncomeType; 					// autoWired
+	protected Listbox 		sortOperator_custIncomeType; 		// autoWired
+	protected Checkbox 		jointCust; 					// autoWired
+	protected Listbox 		sortOperator_jointCust; 		// autoWired
+	protected Decimalbox 	custIncome; 						// autoWired
+	protected Listbox 		sortOperator_custIncome; 			// autoWired
+	protected Textbox 		custIncomeCountry; 					// autoWired
+	protected Listbox 		sortOperator_custIncomeCountry; 	// autoWired
+	protected Textbox 		recordStatus; 						// autoWired
+	protected Listbox 		recordType;							// autoWired
+	protected Listbox 		sortOperator_recordStatus; 			// autoWired
+	protected Listbox 		sortOperator_recordType; 			// autoWired
+	
+	protected Label label_CustomerIncomeSearch_RecordStatus; 	// autoWired
+	protected Label label_CustomerIncomeSearch_RecordType; 		// autoWired
+	protected Label label_CustomerIncomeSearchResult; 			// autoWired
+	
+	protected Grid	                       searchGrid;	                                                  // autowired
+	protected Textbox	                   moduleType;	                                                  // autowired
+	protected Radio	                       fromApproved;
+	protected Radio	                       fromWorkFlow;
+	protected Row	                       workFlowFrom;
+	private transient boolean 			   approvedList =false;
 
 	// checkRights
 	protected Button btnHelp; 													// autoWired
@@ -154,6 +193,43 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 		} else {
 			wfAvailable = false;
 		}
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+
+		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getStringOperators()));
+		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custIncomeType.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getStringOperators()));
+		this.sortOperator_custIncomeType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_jointCust.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getBooleanOperators()));
+		this.sortOperator_jointCust.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		this.sortOperator_custIncome.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_custIncome.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_custIncomeCountry.setModel(new ListModelList<SearchOperators>(
+				new SearchOperators().getStringOperators()));
+		this.sortOperator_custIncomeCountry.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
+					new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
+					new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = PennantAppUtil.setRecordType(this.recordType);
+		} else {
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CustomerIncomeSearch_RecordStatus.setVisible(false);
+			this.label_CustomerIncomeSearch_RecordType.setVisible(false);
+		}
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -164,13 +240,18 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CustomerIncomeList.setHeight(getBorderLayoutHeight());
+		this.listBoxCustomerIncome.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCustomerIncomeList.setPageSize(getListRows());
 		this.pagingCustomerIncomeList.setDetailed(true);
 
+		this.listheader_CustCIF.setSortAscending(new FieldComparator("custID", true));
+		this.listheader_CustCIF.setSortDescending(new FieldComparator("custID", false));
 		this.listheader_CustIncomeType.setSortAscending(new FieldComparator("custIncomeType", true));
 		this.listheader_CustIncomeType.setSortDescending(new FieldComparator("custIncomeType", false));
+		this.listheader_JointCust.setSortAscending(new FieldComparator("jointCust", true));
+		this.listheader_JointCust.setSortDescending(new FieldComparator("jointCust", false));
 		this.listheader_CustIncome.setSortAscending(new FieldComparator("custIncome", true));
 		this.listheader_CustIncome.setSortDescending(new FieldComparator("custIncome", false));
 		this.listheader_CustIncomeCountry.setSortAscending(new FieldComparator("custIncomeCountry", true));
@@ -185,49 +266,23 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<CustomerIncome>(CustomerIncome.class, getListRows());
-		this.searchObj.addSort("CustID", false);
-		this.searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
-		this.searchObj.addTabelName("CustomerIncomes_View");
 		
-		// WorkFlow
-		if (isWorkFlowEnabled()) {
-			if (isFirstTask()) {
-				button_CustomerIncomeList_NewCustomerIncome.setVisible(true);
-			} else {
-				button_CustomerIncomeList_NewCustomerIncome.setVisible(false);
-			}
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-		}
-
-		setSearchObj(this.searchObj);
+		this.listBoxCustomerIncome.setItemRenderer(new CustomerIncomeListModelItemRenderer());
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_CustomerIncomeList_NewCustomerIncome.setVisible(false);
 			this.button_CustomerIncomeList_CustomerIncomeSearchDialog.setVisible(false);
 			this.button_CustomerIncomeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			findSearchObject();
-			// set the itemRenderer
-			this.listBoxCustomerIncome.setItemRenderer(new CustomerIncomeListModelItemRenderer());
+			doSearch();
+			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
+				this.workFlowFrom.setVisible(false);
+				this.fromApproved.setSelected(true);
+			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	/**
-	 * Method for rendering list of Objects
-	 */
-	public void findSearchObject() {
-		logger.debug("Entering");
-		final SearchResult<CustomerIncome> searchResult = getPagedListService()
-				.getSRBySearchObject(this.searchObj);
-		listBoxCustomerIncome.setModel(new GroupsModelArray(
-				searchResult.getResult().toArray(),new CustomerIncomeComparator()));
-		logger.debug("Leaving");
-	}
-
+	
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
@@ -262,8 +317,7 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerIncome aCustomerIncome = (CustomerIncome) item.getAttribute("data");
 			final CustomerIncome customerIncome = getCustomerIncomeService()
-						.getCustomerIncomeById(aCustomerIncome.getId(),
-					aCustomerIncome.getCustIncomeType(),aCustomerIncome.getCustIncomeCountry());
+						.getCustomerIncomeById(aCustomerIncome);
 
 			if (customerIncome == null) {
 
@@ -272,11 +326,9 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 
 				valueParm[0] = String.valueOf(aCustomerIncome.getCustID());
 				valueParm[1] = aCustomerIncome.getCustIncomeType();
-				valueParm[2] = aCustomerIncome.getCustIncomeCountry();
 
 				errParm[0] = PennantJavaUtil.getLabel("label_CustID")+ ":"+ valueParm[0];
 				errParm[1] = PennantJavaUtil.getLabel("label_CustIncomeType")+ ":" + valueParm[1];
-				errParm[2] = PennantJavaUtil.getLabel("label_CustIncomeCountry") + ":"+valueParm[2];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
@@ -319,12 +371,11 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 	 * Opens the detail view. <br>
 	 * OverHanded some parameters in a map if needed. <br>
 	 * 
-	 * @param CustomerIncome
+	 * @param CustomerIncomeDetails
 	 *            (aCustomerIncome)
 	 * @throws Exception
 	 */
-	private void showDetailView(CustomerIncome aCustomerIncome)
-	throws Exception {
+	private void showDetailView(CustomerIncome aCustomerIncome) throws Exception {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them
@@ -372,6 +423,16 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
+		this.sortOperator_custCIF.setSelectedIndex(0);
+		this.custCIF.setValue("");
+		this.sortOperator_custIncome.setSelectedIndex(0);
+		this.custIncome.setText("");
+		this.sortOperator_custIncomeCountry.setSelectedIndex(0);
+		this.custIncomeCountry.setValue("");
+		this.sortOperator_custIncomeType.setSelectedIndex(0);
+		this.custIncomeType.setValue("");
+		this.sortOperator_recordStatus.setSelectedIndex(0);
+		this.recordStatus.setValue("");
 		this.pagingCustomerIncomeList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_CustomerIncomeList, event);
 		this.window_CustomerIncomeList.invalidate();
@@ -383,25 +444,8 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 	 */
 	public void onClick$button_CustomerIncomeList_CustomerIncomeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our CustomerIncomeDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected CustomerIncome. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * CustomerIncome object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerIncomeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeSearchDialog.zul",
-							null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -410,10 +454,90 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> impl
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_CustomerIncomeList_PrintList(Event event)throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("CustomerIncome", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("CustomerIncome", getSearchObj(),this.pagingCustomerIncomeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void doSearch() {
+		logger.debug("Entering");
+		// ++ create the searchObject and initialize sorting ++//
+		this.searchObj = new JdbcSearchObject<CustomerIncome>(CustomerIncome.class, getListRows());
+		this.searchObj.addSort("CustID", false);
+		this.searchObj.addFilter(new Filter("lovDescCustRecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		this.searchObj.addTabelName("CustomerIncomes_View");
+		
+		// WorkFlow
+		if (isWorkFlowEnabled()) {
+
+			if (isFirstTask() && this.moduleType == null) {
+				button_CustomerIncomeList_NewCustomerIncome.setVisible(true);
+			} else {
+				button_CustomerIncomeList_NewCustomerIncome.setVisible(false);
+			}
+
+			if (this.moduleType == null) {
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+				approvedList = false;
+			} else {
+				if (this.fromApproved.isSelected()) {
+					approvedList = true;
+				} else {
+					this.searchObj.addTabelName("CustomerIncomes_TView");
+					approvedList = false;
+				}
+			}
+		} else {
+			approvedList = true;
+		}
+		if (approvedList) {
+			this.searchObj.addTabelName("CustomerIncomes_AView");
+		}
+		
+		
+		// Customer CIF
+		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custCIF.getSelectedItem(), this.custCIF.getValue(), "lovDescCustCIF");
+		}
+		
+		// Customer IncomeType
+		if (!StringUtils.trimToEmpty(this.custIncomeType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custIncomeType.getSelectedItem(), this.custIncomeType.getValue(), "custIncomeType");
+		}
+		
+		// Customer Income
+		if (null != this.custIncome.getValue()) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custIncome.getSelectedItem(), this.custIncome.getValue(), "custIncome");
+		}
+		
+		// Customer IncomeCountry
+		if (!StringUtils.trimToEmpty(this.custIncomeCountry.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custIncomeCountry.getSelectedItem(), this.custIncomeCountry.getValue(), "custIncomeCountry");
+		}
+		
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		}
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		getPagedListWrapper().init(this.searchObj, this.listBoxCustomerIncome, this.pagingCustomerIncomeList);
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

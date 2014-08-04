@@ -14,35 +14,42 @@
 		font-size: 11px; font-weight: bold; }
 	</style>
 
-	<window id="window_ManualPaymentDialog"
-		title="${c:l('window_ManualPaymentDialog.title')}" border="normal"
-		width="100%" height="100%" sizable="false"
-		apply="${manualPaymentDialogCtrl}">
+	<window id="window_ManualPaymentDialog" border="normal" width="100%"
+		height="100%" sizable="false" apply="${manualPaymentDialogCtrl}">
 
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
 					style="float:left; border-style: none;">
 					<button id="btnPay" label="${c:l('btnPay.label')}"
 						tooltiptext="${c:l('btnPay.tooltiptext')}" height="24px"
-						disabled="true" />
-					<button id="btnChangeRepay"
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" />
+					<button id="btnChangeRepay" height="24px"
 						label="${c:l('btnChangeRepayment.label')}"
 						tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
-						height="24px" disabled="true" />
-					<button id="btnCalcRepayments"
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" />
+					<button id="btnCalcRepayments" height="24px"
 						label="${c:l('btnCalcRepayments.label')}"
 						tooltiptext="${c:l('btnCalcRepayments.tooltiptext')}"
-						height="24px" disabled="true" />
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" />
+					<button id="btnNotes" height="24px"
+						label="${c:l('btnNotes.label')}"
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" />
+					<button id="btnPrint" 
+						height="24px" label="${c:l('label_Print')}"
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes"
+						tooltiptext="${c:l('btnPrint.tooltiptext')}"  visible="false"/>	
 				</toolbar>
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none;">
-					<hbox align="center" />
+				<toolbar align="center" sclass="toolbar-center">
+					<label
+						value="${c:l('window_ManualPaymentDialog.title')}"
+						sclass="label-heading" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
@@ -53,7 +60,7 @@
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
 						autodisable="btnHelp,btnClose" />
 					<button id="btnClose" height="24px"
-						image="/images/icons/btn_exitdoor2_16x16.gif"
+						label="${c:l('btnClose.label')}"
 						tooltiptext="${c:l('btnClose.tooltiptext')}"
 						autodisable="btnHelp,btnClose" />
 				</toolbar>
@@ -71,8 +78,6 @@
 							label="${c:l('label_RepaymentDetails')}" />
 						<tab id="effectiveScheduleTab"
 							label="${c:l('label_EffectiveSchedule')}" visible="false" />
-						<tab id="dashboardTab"
-							label="${c:l('label_DashboardSummary')}" visible="false" />
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
 						<tabpanel style="overflow:auto">
@@ -419,28 +424,44 @@
 												id="lovDescCustCIF1" width="120px" readonly="true" />
 											<label id="custShrtName1" />
 										</hbox>
+										<label
+											id="label_PaymentDialog_InsRefundAmt"
+											value="${c:l('label_PaymentDialog_InsRefundAmt.value')}"
+											visible="false" />
+										<hbox id="hbox_insRefundAmt"
+											visible="false">
+											<space spacing="2px" />
+											<decimalbox
+												id="insRefundAmt" width="150px" disabled="true" />
+											<decimalbox
+												id="actInsRefundAmt" width="150px" disabled="true" visible="false" style="font-weight:bold;" />
+										</hbox>
 									</row>
 									<row>
 										<label
 											id="label_PaymentDialog_RpyAmount"
 											value="${c:l('label_PaymentDialog_RpyAmount.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<decimalbox id="rpyAmount"
-												width="150px" />
-										</hbox>
+										<currencyBox id="rpyAmount"/>
 										<label
 											id="label_PaymentDialog_RepayAccount"
 											value="${c:l('label_PaymentDialog_RepayAccount.value')}" />
 										<hbox>
-											<space spacing="2px" />
-											<textbox id="repayAccount"
-												width="150px" readonly="true" />
-											<button
+											<accountSelectionBox
+												id="repayAccount" />
+											<!-- <hbox
+												id="hbox_repayAccount">
+												<space spacing="2px" />
+												<textbox
+												id="repayAccount" width="150px" readonly="true" />
+												<button
 												id="btnSearchRepayAcctId"
 												image="/images/icons/LOVSearch.png" height="24px" />
-											<label id="repayAccountBal" />
+												<label
+												id="repayAccountBal" />
+												</hbox> -->
+											<decimalbox
+												id="earlySettlementBal" tabindex="-1" disabled="true"
+												sclass="decimalToString" />
 										</hbox>
 									</row>
 									<row>
@@ -463,6 +484,25 @@
 									</row>
 									<row>
 										<label
+											id="label_PaymentDialog_TotRefundAmt"
+											value="${c:l('label_PaymentDialog_TotRefundAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="totRefundAmt" width="150px" disabled="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_TotPenaltyAmt"
+											value="${c:l('label_PaymentDialog_TotPenaltyAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="totPenaltyAmt" width="150px" disabled="true" />
+										</hbox>
+									</row>
+									<row
+										id="row_EarlyRepayEffectOnSchd">
+										<label
 											id="label_PaymentDialog_EarlyRepayEffectOnSchd"
 											value="${c:l('label_PaymentDialog_EarlyRepayEffectOnSchd.value')}" />
 										<hbox>
@@ -471,12 +511,44 @@
 												id="earlyRpyEffectOnSchd" width="180px" disabled="true" />
 										</hbox>
 										<label
-											id="label_PaymentDialog_TotRefundAmt"
-											value="${c:l('label_PaymentDialog_TotRefundAmt.value')}" />
+											id="label_PaymentDialog_TotWaivedAmt"
+											value="${c:l('label_PaymentDialog_TotWaivedAmt.value')}" visible="false" />
+										<hbox visible="false" >
+											<space spacing="2px" />
+											<decimalbox
+												id="totWaivedAmt" width="150px" disabled="true" />
+										</hbox>
+									</row>
+									<row id="row_EarlySettleDate"
+										visible="false">
+										<label
+											id="label_PaymentDialog_EarlySettlementDate"
+											value="${c:l('label_PaymentDialog_EarlySettlementDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox
+												id="earlySettlementDate" width="120px" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_EarlySettlementTillDate"
+											value="${c:l('label_PaymentDialog_EarlySettlementTillDate.value')}"
+											visible="false" />
+										<hbox id="hbox_esTilllDate"
+											visible="false">
+											<space spacing="2px" />
+											<combobox
+												id="earlySettlementTillDate" width="180px" readonly="true" />
+										</hbox>
+									</row>
+									<row id="row_paidByCustomer"
+										visible="false">
+										<label
+											id="label_PaymentDialog_PaidByCustomer"
+											value="${c:l('label_PaymentDialog_PaidByCustomer.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<decimalbox
-												id="totRefundAmt" width="150px" disabled="true" />
+												id="paidByCustomer" width="150px" disabled="true" style="font-weight:bold;" />
 										</hbox>
 									</row>
 									<row height="15px" />
@@ -505,7 +577,10 @@
 										label="${c:l('listheader_PriPayNow.label')}" sort="false"
 										hflex="min" />
 									<listheader
-										label="${c:l('listheader_MaxAlwRefund.label')}" sort="false"
+										label="${c:l('listheader_OverDue.label')}" sort="false" visible="false"
+										hflex="min" />
+									<listheader
+										label="${c:l('listheader_MaxAlwRefund.label')}" sort="false" visible="false"
 										hflex="min" />
 									<listheader
 										label="${c:l('listheader_RefundPft.label')}" sort="false"
@@ -636,6 +711,19 @@
 					</tabpanels>
 				</tabbox>
 			</center>
+			<south id="south" height="48px" border="none"
+				style="padding:5px;">
+				<groupbox id="groupboxWf" width="98%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_PaymentDialog_RecordStatus"
+							value="${c:l('label_PaymentDialog_RecordStatus.value')} :"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
 		</borderlayout>
 	</window>
 </zk>

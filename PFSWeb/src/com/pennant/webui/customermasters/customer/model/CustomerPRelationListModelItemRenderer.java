@@ -61,12 +61,13 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerPRelationListModelItemRenderer implements ListitemRenderer<CustomerPRelation>, Serializable {
 
 	private static final long serialVersionUID = 1537997798690146761L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 	@Override
 	public void render(Listitem item, CustomerPRelation customerPRelation, int count) throws Exception {
 
-		//final CustomerPRelation customerPRelation = (CustomerPRelation) data;
 		Listcell lc;
+		lc = new Listcell(customerPRelation.getLovDescCustCIF());
+		lc.setParent(item);
 		lc = new Listcell(customerPRelation.getPRRelationCode());
 		lc.setParent(item);
 	  	lc = new Listcell(customerPRelation.getPRRelationCustID());

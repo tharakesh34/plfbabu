@@ -46,52 +46,67 @@ package com.pennant.webui.financemanagement.overduechargerecovery;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.event.CreateEvent;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.GroupsModelArray;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.search.SearchResult;
 import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
 import com.pennant.webui.financemanagement.overduechargerecovery.model.OverdueChargeRecoveryComparator;
 import com.pennant.webui.financemanagement.overduechargerecovery.model.OverdueChargeRecoveryListModelItemRenderer;
+import com.pennant.webui.financemanagement.overduechargerecovery.model.OverdueDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryList.zul
+ * This is the controller class for the 
+ * /WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryList.zul
  * file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
@@ -127,6 +142,34 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	protected Listheader listheader_FinODCCPenalty; 	// autowired
 	protected Listheader listheader_FinODCRecoverySts; 	// autowired
 
+
+	// Filtering Fields 
+
+	protected Datebox finSchdDate;                   // autowired
+	protected Listbox sortOperator_finSchdDate;      // autowired
+	protected Datebox finODDate;                     // autowired
+	protected Listbox sortOperator_finODDate;        // autowired
+	protected Decimalbox finODPrinciple;                // autowired
+	protected Listbox sortOperator_finODPrincpl;     // autowired
+	protected Decimalbox finODProfit;                   // autowired
+	protected Listbox sortOperator_finODProfit;      // autowired
+	protected Decimalbox finODTotal;                    // autowired
+	protected Listbox sortOperator_finODTotal;       // autowired
+	protected Decimalbox finODTotalCharge;          	 // autowired
+	protected Listbox sortOperator_finODTotalCharge; // autowired
+	protected Decimalbox finODWaived;                   // autowired
+	protected Listbox sortOperator_finODWaived;      // autowired
+	protected Combobox finODSts;                     // autowired
+	protected Listbox sortOperator_finODSts;         // autowired
+
+	private Grid 			searchGrid;							// autowired
+	protected Textbox 		moduleType; 						// autowired
+	protected Radio			fromApproved;
+	protected Radio			fromWorkFlow;
+	protected Row			workFlowFrom;
+
+	private transient boolean  approvedList=false; 
+
 	// checkRights
 	protected Button button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog; // autowired
 	protected Button button_OverdueChargeRecoveryList_PrintList; // autowired
@@ -136,12 +179,16 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	// NEEDED for the ReUse in the SearchWindow
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	protected JdbcSearchObject<OverdueChargeRecovery> searchObj;
+	protected JdbcSearchObject<OverdueChargeRecovery> detailSearchObject;
 	private transient PagedListService pagedListService;
 	private transient OverdueChargeRecoveryService overdueChargeRecoveryService;
 	private transient WorkFlowDetails workFlowDetails=null;
 
+	private List<ValueLabel>           listODRecoveryStatus=PennantStaticListUtil.getODCRecoveryStatus();
+
 	private Textbox recoveryCode;
 	private String finReference = "";
+	private int ccyFormatter = 0;
 
 	/**
 	 * default constructor.<br>
@@ -185,7 +232,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		}else{
 			wfAvailable=false;
 		}
-		
+
 		// get the parameters map that are over handed by creation.
 		final Map<String, Object> args = getCreationArgsMap(event);
 
@@ -193,69 +240,105 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		if (args.containsKey("finReference")) {
 			this.finReference = (String) args.get("finReference");
 		} 
+		if (args.containsKey("ccyFormatter")) {
+			this.ccyFormatter = (Integer) args.get("ccyFormatter");
+		} 
 		if (args.containsKey("financeEnquiryHeaderDialogCtrl")) {
 			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) args.get("financeEnquiryHeaderDialogCtrl");
 		} 
 
+		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
+		if("N".equals(this.recoveryCode.getValue())){
+			this.sortOperator_finSchdDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finSchdDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_finODDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_finODPrincpl.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODPrincpl.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_finODProfit.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODProfit.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_finODTotal.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODTotal.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_finODTotalCharge.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODTotalCharge.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_finODWaived.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+			this.sortOperator_finODWaived.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_finODSts.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+			this.sortOperator_finODSts.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		}
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
+		/**
+		 * Calculate how many rows have been place in the listBox. Get the currentDesktopHeight from a hidden IntBox
+		 * from the index.zul that are filled by onClientInfo() in the indexCtroller
+		 */
 		// set the paging parameters
+		this.borderLayout_OverdueChargeRecoveryList.setHeight(getBorderLayoutHeight());
 		if(this.recoveryCode.getValue().equals("N")) {
-			this.borderLayout_OverdueChargeRecoveryList.setHeight(getBorderLayoutHeight());
+			this.listBoxOverdueChargeRecovery.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 			this.pagingOverdueChargeRecoveryList.setPageSize(getListRows());
 			this.pagingOverdueChargeRecoveryList.setDetailed(true);
-		}
-
-		this.listheader_FinSchdDate.setSortAscending(new FieldComparator("finSchdDate", true));
-		this.listheader_FinSchdDate.setSortDescending(new FieldComparator("finSchdDate", false));
-		this.listheader_FinODDate.setSortAscending(new FieldComparator("finODDate", true));
-		this.listheader_FinODDate.setSortDescending(new FieldComparator("finODDate", false));
-		this.listheader_FinODPri.setSortAscending(new FieldComparator("finODPri", true));
-		this.listheader_FinODPri.setSortDescending(new FieldComparator("finODPri", false));
-		this.listheader_FinODPft.setSortAscending(new FieldComparator("finODPft", true));
-		this.listheader_FinODPft.setSortDescending(new FieldComparator("finODPft", false));
-		this.listheader_FinODTot.setSortAscending(new FieldComparator("finODTot", true));
-		this.listheader_FinODTot.setSortDescending(new FieldComparator("finODTot", false));
-		this.listheader_FinODCPenalty.setSortAscending(new FieldComparator("finODCPenalty", true));
-		this.listheader_FinODCPenalty.setSortDescending(new FieldComparator("finODCPenalty", false));
-		this.listheader_FinODCWaived.setSortAscending(new FieldComparator("finODCWaived", true));
-		this.listheader_FinODCWaived.setSortDescending(new FieldComparator("finODCWaived", false));
-		this.listheader_FinODCPLPenalty.setSortAscending(new FieldComparator("finODCPLPenalty", true));
-		this.listheader_FinODCPLPenalty.setSortDescending(new FieldComparator("finODCPLPenalty", false));
-		this.listheader_FinODCCPenalty.setSortAscending(new FieldComparator("finODCCPenalty", true));
-		this.listheader_FinODCCPenalty.setSortDescending(new FieldComparator("finODCCPenalty", false));
-		this.listheader_FinODCRecoverySts.setSortAscending(new FieldComparator("finODCRecoverySts", true));
-		this.listheader_FinODCRecoverySts.setSortDescending(new FieldComparator("finODCRecoverySts", false));
-
-		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<OverdueChargeRecovery>(OverdueChargeRecovery.class,getListRows());
-		this.searchObj.addSort("FinReference", false);
-		if(!"".equals(finReference)){
-			this.searchObj.addFilter(new Filter("FinReference", this.finReference,Filter.OP_EQUAL));
-		}
-		// Workflow
-		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("FinODCRecovery_View");
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+			
+			this.listheader_FinSchdDate.setSortAscending(new FieldComparator("finSchdDate", true));
+			this.listheader_FinSchdDate.setSortDescending(new FieldComparator("finSchdDate", false));
+			this.listheader_FinODDate.setSortAscending(new FieldComparator("finODDate", true));
+			this.listheader_FinODDate.setSortDescending(new FieldComparator("finODDate", false));
+			this.listheader_FinODPri.setSortAscending(new FieldComparator("finODPri", true));
+			this.listheader_FinODPri.setSortDescending(new FieldComparator("finODPri", false));
+			this.listheader_FinODPft.setSortAscending(new FieldComparator("finODPft", true));
+			this.listheader_FinODPft.setSortDescending(new FieldComparator("finODPft", false));
+			this.listheader_FinODTot.setSortAscending(new FieldComparator("finODTot", true));
+			this.listheader_FinODTot.setSortDescending(new FieldComparator("finODTot", false));
+			this.listheader_FinODCPenalty.setSortAscending(new FieldComparator("finODCPenalty", true));
+			this.listheader_FinODCPenalty.setSortDescending(new FieldComparator("finODCPenalty", false));
+			this.listheader_FinODCWaived.setSortAscending(new FieldComparator("finODCWaived", true));
+			this.listheader_FinODCWaived.setSortDescending(new FieldComparator("finODCWaived", false));
+			this.listheader_FinODCPLPenalty.setSortAscending(new FieldComparator("finODCPLPenalty", true));
+			this.listheader_FinODCPLPenalty.setSortDescending(new FieldComparator("finODCPLPenalty", false));
+			this.listheader_FinODCCPenalty.setSortAscending(new FieldComparator("finODCCPenalty", true));
+			this.listheader_FinODCCPenalty.setSortDescending(new FieldComparator("finODCCPenalty", false));
+			this.listheader_FinODCRecoverySts.setSortAscending(new FieldComparator("finODCRecoverySts", true));
+			this.listheader_FinODCRecoverySts.setSortDescending(new FieldComparator("finODCRecoverySts", false));
+			
+			// set the itemRenderer
+			this.listBoxOverdueChargeRecovery.setItemRenderer(new OverdueChargeRecoveryListModelItemRenderer());
+			
 		}else{
-			this.searchObj.addTabelName("FinODCRecovery_AView");
+			this.listBoxOverdueChargeRecovery.setHeight(getListBoxHeight(4));
+			
+			// set the itemRenderer
+			this.listBoxOverdueChargeRecovery.setItemRenderer(new OverdueChargeRecoveryListModelItemRenderer());
 		}
 
-		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog.setVisible(false);
 			this.button_OverdueChargeRecoveryList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			findSearchObject();
-			// set the itemRenderer
-			this.listBoxOverdueChargeRecovery.setItemRenderer(new OverdueChargeRecoveryListModelItemRenderer());
+
+			if(this.recoveryCode.getValue().equals("Y")) {
+				// Set the ListModel for the articles.
+				findSearchObject();
+			}else{
+				doSearch();
+				if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
+					this.workFlowFrom.setVisible(false);
+					this.fromApproved.setSelected(true);
+				}
+			}
 		}
 
 		if(this.recoveryCode.getValue().equals("Y")) {
-			
+
 			this.div_OverdueChargeRecoveryList.setVisible(false);
 			if(tabPanel_dialogWindow != null){
 				getBorderLayoutHeight();
@@ -264,6 +347,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				this.window_OverdueChargeRecoveryList.setHeight(this.borderLayoutHeight-rowsHeight-55+"px");
 				tabPanel_dialogWindow.appendChild(this.window_OverdueChargeRecoveryList);
 			}
+			
 		}
 		logger.debug("Leaving");
 	}
@@ -271,16 +355,38 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	/**
 	 * Internal Method for Grouping List items
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void findSearchObject() {
 		logger.debug("Entering");
-		if(this.recoveryCode.getValue().equals("N")) {
-			this.searchObj.addFilter(new Filter("finODCRecoverySts", "R"));
-		}
-		final SearchResult<OverdueChargeRecovery> searchResult = getPagedListService().getSRBySearchObject(this.searchObj);
-		listBoxOverdueChargeRecovery.setModel(new GroupsModelArray(
-				searchResult.getResult().toArray(),new OverdueChargeRecoveryComparator()));
+		
+		// ++ create the searchObject and init sorting ++//
+		this.detailSearchObject = new JdbcSearchObject<OverdueChargeRecovery>(OverdueChargeRecovery.class);
+		this.detailSearchObject.addTabelName("FinODCRecovery_View");
+		this.detailSearchObject.addFilter(new Filter("FinReference", this.finReference, Filter.OP_EQUAL));
+
+		// Defualt Sort on the table
+		this.detailSearchObject.addSort("FinReference", false);
+		
+		this.listBoxOverdueChargeRecovery.setModel(new GroupsModelArray(
+				getPagedListService().getBySearchObject(detailSearchObject).toArray(),new OverdueChargeRecoveryComparator()));
 		logger.debug("Leaving");
 	}
+
+	/**
+	 * This method sets all rightsTypes as ComboItems for ComboBox
+	 */
+	private void setODrecoveryStatus() {
+		logger.debug("Entering ");
+		Comboitem comboitem;
+		for (int i = 0; i < listODRecoveryStatus.size(); i++) {
+			comboitem = new Comboitem();
+			comboitem.setLabel(listODRecoveryStatus.get(i).getLabel());
+			comboitem.setValue(listODRecoveryStatus.get(i).getValue());
+			this.finODSts.appendChild(comboitem);
+		}
+		logger.debug("Leaving ");
+	}
+
 
 	/**
 	 * SetVisible for components by checking if there's a right for it.
@@ -312,7 +418,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			// CAST AND STORE THE SELECTED OBJECT
 			final OverdueChargeRecovery aOverdueChargeRecovery = (OverdueChargeRecovery) item.getAttribute("data");
 			final OverdueChargeRecovery overdueChargeRecovery = getOverdueChargeRecoveryService().
-			getOverdueChargeRecoveryById(aOverdueChargeRecovery.getId(),aOverdueChargeRecovery.getFinSchdDate(),
+			getOverdueChargeRecoveryById(aOverdueChargeRecovery.getId(),aOverdueChargeRecovery.getFinODSchdDate(),
 					aOverdueChargeRecovery.getFinODFor());
 
 			if(overdueChargeRecovery==null){
@@ -417,9 +523,23 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingOverdueChargeRecoveryList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_OverdueChargeRecoveryList, event);
-		this.window_OverdueChargeRecoveryList.invalidate();
+		this.sortOperator_finODDate.setSelectedIndex(0);
+		this.finODDate.setValue(null);
+		this.sortOperator_finODPrincpl.setSelectedIndex(0);
+		this.finODPrinciple.setText("");
+		this.sortOperator_finODProfit.setSelectedIndex(0);
+		this.finODProfit.setText("");
+		this.sortOperator_finODSts.setSelectedIndex(0);
+		this.finODSts.setValue("");
+		this.sortOperator_finODTotal.setSelectedIndex(0);
+		this.finODTotal.setText("");
+		this.sortOperator_finODTotalCharge.setSelectedIndex(0);
+		this.finODTotalCharge.setText("");
+		this.sortOperator_finODWaived.setSelectedIndex(0);
+		this.finODWaived.setText("");
+		this.sortOperator_finSchdDate.setSelectedIndex(0);
+		this.finSchdDate.setValue(null);
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -444,23 +564,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 */
 	public void onClick$button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our OverdueChargeRecoveryDialog zul-file with parameters. So we can
-		 * call them with a object of the selected OverdueChargeRecovery. For handed over
-		 * these parameter only a Map is accepted. So we put the OverdueChargeRecovery object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("overdueChargeRecoveryCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoverySearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -470,11 +574,104 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * @param event
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unused")
 	public void onClick$button_OverdueChargeRecoveryList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("OverdueChargeRecovery", getSearchObj());
+		PTListReportUtils reportUtils = new PTListReportUtils("OverdueChargeRecovery", getSearchObj(),this.pagingOverdueChargeRecoveryList.getTotalSize()+1);
 		logger.debug("Leaving");
+	}
+
+	public void doSearch(){
+		logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<OverdueChargeRecovery>(OverdueChargeRecovery.class,getListRows());
+
+		// Defualt Sort on the table
+		this.searchObj.addSort("FinReference", false);
+
+		// Workflow
+		if (isWorkFlowEnabled()) {
+			this.searchObj.addTabelName("FinODCRecovery_View");
+
+			if(this.moduleType==null){
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+				approvedList=false;
+
+			}else{
+				if(this.fromApproved.isSelected()){
+					approvedList=true;
+				}else{
+					approvedList=false;
+				}
+			}
+		}else{
+			approvedList=true;
+		}
+		if(approvedList){
+			this.searchObj.addTabelName("FinODCRecovery_AView");
+		}else{
+			this.searchObj.addTabelName("FinODCRecovery_View");
+		}
+
+		if("N".equals(this.recoveryCode.getValue())){
+			
+			setODrecoveryStatus();
+
+			// Scheduled Date
+			if (this.finSchdDate.getValue()!=null) {
+				//searchObj = getSearchFilter(searchObj,this.sortOperator_finSchdDate.getSelectedItem(), this.finSchdDate.getValue() , "finSchdDate");
+
+				searchObj.addFilter(new Filter("finSchdDate",DateUtility.formatUtilDate(
+						this.finSchdDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));
+			}
+			// Overdue Date
+			if (this.finODDate.getValue()!=null) {
+				//searchObj = getSearchFilter(searchObj,this.sortOperator_finODDate.getSelectedItem(), this.finODDate.getValue() , "finODDate");
+
+				searchObj.addFilter(new Filter("finODDate",DateUtility.formatUtilDate(
+						this.finODDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));	
+			}
+			// Overdue Principle 
+			if (this.finODPrinciple.getValue()!=null) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_finODPrincpl.getSelectedItem(), this.finODPrinciple.getValue() , "finODPri");
+			}
+			// Overdue Profit 
+			if (this.finODProfit.getValue()!=null) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_finODProfit.getSelectedItem(), this.finODProfit.getValue() , "finODPft");
+			}
+			// Overdue Total 
+			if (this.finODTotal.getValue()!=null) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_finODTotal.getSelectedItem(), this.finODTotal.getValue() , "finODTot");
+			}
+			// Overdue Waived 
+			if (this.finODWaived.getValue()!=null) {
+				searchObj = getSearchFilter(searchObj,this.sortOperator_finODWaived.getSelectedItem(), this.finODWaived.getValue() , "finODCWaiverPaid");
+			}
+
+			// Overdue recovery Status
+			if (null !=this.finODSts.getSelectedItem() && !StringUtils.trimToEmpty(this.finODSts.getSelectedItem().getValue().toString()).equals("")){
+				searchObj = getSearchFilter(searchObj, this.sortOperator_finODSts.getSelectedItem(), this.finODSts.getSelectedItem().getValue().toString(), "finODCRecoverySts");
+			}
+
+			if (logger.isDebugEnabled()) {
+				final List<Filter> lf = this.searchObj.getFilters();
+				for (final Filter filter : lf) {
+					logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+					if (Filter.OP_ILIKE == filter.getOperator()) {
+						logger.debug(filter.getOperator());
+					}
+				}
+			}
+
+			// Set the ListModel for the articles.
+			getPagedListWrapper().init(this.searchObj, this.listBoxOverdueChargeRecovery,this.pagingOverdueChargeRecoveryList);
+		}else{
+			this.searchObj.addFilter(new Filter("FinReference", this.finReference, Filter.OP_EQUAL));
+		}
+		logger.debug("Leaving");
+
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

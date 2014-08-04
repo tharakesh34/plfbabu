@@ -45,6 +45,7 @@ package com.pennant.webui.finance.wiffinancemain.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -70,6 +71,12 @@ public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<Fin
 		//final FinanceMain wIFFinanceMain = (FinanceMain) data;
 		Listcell lc;
 	  	lc = new Listcell(wIFFinanceMain.getFinReference());
+		lc.setParent(item);
+		if(wIFFinanceMain.getLovDescCustCIF()!=null){
+			lc = new Listcell(wIFFinanceMain.getLovDescCustCIF());
+		}else{
+			lc = new Listcell();
+		}
 		lc.setParent(item);
 	  	lc = new Listcell(wIFFinanceMain.getFinType());
 		lc.setParent(item);
@@ -100,6 +107,13 @@ public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<Fin
 			lc = new Listcell();
 		}
 		lc.setParent(item);
+		if(!StringUtils.trimToEmpty(wIFFinanceMain.getRecordStatus()).equals("")){
+			lc = new Listcell(wIFFinanceMain.getRecordStatus());
+		}else{
+			lc = new Listcell();
+		}
+		lc.setParent(item);
+		
 		item.setAttribute("data", wIFFinanceMain);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onWIFFinanceMainItemDoubleClicked");
 	}

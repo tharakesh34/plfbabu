@@ -48,6 +48,7 @@ public class RepayEnquiryDialogCtrl  extends GFCBaseListCtrl<FinanceRepayments> 
 	private List<FinanceRepayments> finRepayments;
 	private Tabpanel 		tabPanel_dialogWindow;
 	
+	private int formatter;
 	/**
 	 * default constructor.<br>
 	 */
@@ -87,6 +88,9 @@ public class RepayEnquiryDialogCtrl  extends GFCBaseListCtrl<FinanceRepayments> 
 		if (args.containsKey("financeEnquiryHeaderDialogCtrl")) {
 			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) args.get("financeEnquiryHeaderDialogCtrl");
 		}
+		if (args.containsKey("finAmountformatter")) {
+			this.formatter =  (Integer) args.get("finAmountformatter");
+		}
 		
 		//Render List in Listbox
 		doShowDialog();
@@ -101,6 +105,7 @@ public class RepayEnquiryDialogCtrl  extends GFCBaseListCtrl<FinanceRepayments> 
 	 * @param afinanceMain
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
 		
@@ -110,7 +115,7 @@ public class RepayEnquiryDialogCtrl  extends GFCBaseListCtrl<FinanceRepayments> 
 			if(finRepayments != null){
 				this.listBox_RepayEnquiry.setModel(new GroupsModelArray(
 						finRepayments.toArray(),new RepayEnquiryComparator()));		
-				this.listBox_RepayEnquiry.setItemRenderer(new RepayEnquiryListModelItemRenderer(3));//TODO
+				this.listBox_RepayEnquiry.setItemRenderer(new RepayEnquiryListModelItemRenderer(formatter));
 			}
 			if(tabPanel_dialogWindow != null){
 

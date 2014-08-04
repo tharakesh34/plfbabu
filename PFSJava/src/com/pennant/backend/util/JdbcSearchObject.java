@@ -53,6 +53,11 @@ public class JdbcSearchObject<E> extends Search implements Serializable {
 	public JdbcSearchObject(Class<E> entityClass) {
 		super(entityClass);
 	}
+	
+	//TODO to be discussed with Vasu  Start 
+	public JdbcSearchObject() {
+		super();
+	}
 
 	public JdbcSearchObject(Class<E> entityClass, int pageSize) {
 		super(entityClass);
