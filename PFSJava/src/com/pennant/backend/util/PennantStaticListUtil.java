@@ -1161,8 +1161,8 @@ public class PennantStaticListUtil {
 		importTablesList.add(new ValueLabel("CustomerType", Labels.getLabel("label_ImportData_CustomerType.value")));
 		importTablesList.add(new ValueLabel("Deparment", Labels.getLabel("label_ImportData_Department.value")));
 		importTablesList.add(new ValueLabel("CustomerGroup", Labels.getLabel("label_ImportData_CustomerGroup.value")));
-		importTablesList.add(new ValueLabel("AccountType", Labels.getLabel("label_ImportData_AccountType.value")));
-		importTablesList.add(new ValueLabel("CustomerRating", Labels.getLabel("label_ImportData_CustomerRating.value")));
+		//importTablesList.add(new ValueLabel("AccountType", Labels.getLabel("label_ImportData_AccountType.value")));
+		//importTablesList.add(new ValueLabel("CustomerRating", Labels.getLabel("label_ImportData_CustomerRating.value")));
 		return importTablesList;
 	}
 	

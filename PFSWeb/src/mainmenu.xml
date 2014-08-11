@@ -277,8 +277,8 @@
 	   <menuItem id="menu_Item_CancelFinance" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_Enquiry_CancelFinance"/>
 	   <menuItem id="menu_Item_CancelRepay" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_RepayCancel"/>
 <!--  <menuItem id="menu_Item_JVPosting" zulNavigation="/WEB-INF/pages/Others/JVPosting/JVPostingList.zul" rightName="menuItem_others_JVPosting"/>
-	   <menuItem id="menu_Item_IjaraBulkRate" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeList.zul" rightName="menuItem_FinanceManagement_IjaraBulkRateChange"/>  -->
-	   <menuItem id="menu_Item_BulkDeferment" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkDiffermentList.zul" rightName="menuItem_FinanceManagement_BulkDefermentChange"/>
+	   <menuItem id="menu_Item_IjaraBulkRate" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeList.zul" rightName="menuItem_FinanceManagement_IjaraBulkRateChange"/>  
+	   <menuItem id="menu_Item_BulkDeferment" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkDiffermentList.zul" rightName="menuItem_FinanceManagement_BulkDefermentChange"/> -->
 		<menuItem id="menu_Item_ChequePrinting" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ChequePrintingList.zul" />
  	 </menu>
 
@@ -343,6 +343,13 @@
 		<menuItem id="menu_Item_UserDeletion" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Reports_UserDeletionReports" />
 		<menuItem id="menu_Item_ReportConfiguration" zulNavigation="/WEB-INF/pages/Reports/ReportConfiguration/ReportConfigurationList.zul"  rightName="menuItem_Reports_ReportsConfig"/>
 		<menuItem id="menu_Item_DailyDownload" zulNavigation="/WEB-INF/pages/Reports/DailyDownloadReport.zul" rightName="menuItem_Reports_DailyDownLoads"/>
+		
+		<menu id="menu_Category_AdminReports" rightName="menuCat_AdminReports">
+			<menuItem id="menu_Item_RoleGroups" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_AdminReports_RoleGroups" />
+			<menuItem id="menu_Item_GroupRights" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_AdminReports_GroupRights" />	
+			<menuItem id="menu_Item_UserRoles" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_AdminReports_UserRoles"/>	
+			<menuItem id="menu_Item_UserBranches" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_AdminReports_UserBranches"/>	
+		</menu>
 		
 		<menu id="menu_Category_CustomerTemplates" rightName="menuCat_CustomerTemplates">
 			<menuItem id="menu_Item_ReleaseLetter" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CustomerTemplates_ReleaseLetter" />

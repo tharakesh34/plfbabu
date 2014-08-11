@@ -1688,7 +1688,8 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 								penalty = this.totPenaltyAmt.getValue();
 							}
 
-							if(PennantAppUtil.unFormateAmount(this.rpyAmount.getValue().subtract(this.totRefundAmt.getValue()).add(penalty),
+							if(PennantAppUtil.unFormateAmount(this.rpyAmount.getValue().subtract(this.totRefundAmt.getValue()).
+															subtract(insRefundAmt.getValue() == null ? BigDecimal.ZERO :insRefundAmt.getValue()).add(penalty),
 									getRepayData().getRepayMain().getLovDescFinFormatter()).compareTo(iAccount.getAcAvailableBal()) > 0){
 								PTMessageUtils.showErrorMessage(Labels.getLabel("label_InsufficientBalance"));
 								this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_ManualPaymentDialog_btnChangeRepay"));
@@ -2636,7 +2637,8 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 							penalty = this.totPenaltyAmt.getValue();
 						}
 
-						if(PennantAppUtil.unFormateAmount(this.rpyAmount.getValue().subtract(this.totRefundAmt.getValue()).add(penalty),
+						if(PennantAppUtil.unFormateAmount(this.rpyAmount.getValue().subtract(this.totRefundAmt.getValue()).
+								subtract(insRefundAmt.getValue() == null ? BigDecimal.ZERO :insRefundAmt.getValue()).add(penalty),
 								getRepayData().getRepayMain().getLovDescFinFormatter()).compareTo(iAccount.getAcAvailableBal()) > 0){
 							PTMessageUtils.showErrorMessage(Labels.getLabel("label_InsufficientBalance"));
 							return false;

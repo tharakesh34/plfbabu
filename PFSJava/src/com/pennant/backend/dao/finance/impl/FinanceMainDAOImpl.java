@@ -1013,7 +1013,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" ClosingStatus , CustTypeCtg , GraceTerms , lovDescFinDivision , lovDescProductCodeName , lovDescFinIsAlwMD , " );
 		selectSql.append(" lovDescFinAlwDeferment , Defferments ");
 		selectSql.append(" FROM FinanceEnquiry_View ");
-		selectSql.append(" Where CustID=:CustID ");
+		selectSql.append(" Where CustID=:CustID and IsNull(ClosingStatus,'') != 'C'");
 		selectSql.append(" ORDER BY FinType, FinCcy ");
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finEnquiry);

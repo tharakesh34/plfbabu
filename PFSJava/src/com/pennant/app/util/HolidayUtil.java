@@ -329,9 +329,9 @@ public class HolidayUtil implements Serializable {
 			for (int i = 0; i < holidayList.size(); i++) {
 				BigDecimal holidayYear =  holidayList.get(i).getHolidayYear();
 				List<HolidayDetail> holidayDetails = holidayList.get(i).getHolidayList(holidayYear);
-                if(holidayDetails == null){
-                    continue;
-                }
+				if(holidayDetails == null){
+					continue;
+				}
 				for (int j = 0; j < holidayDetails.size(); j++) {
 					String curDate = DateUtility.formatDate(holidayDetails.get(j).getHoliday().getTime(), PennantConstants.DBDateFormat);
 					if(!holidayMap.containsKey(curDate)){

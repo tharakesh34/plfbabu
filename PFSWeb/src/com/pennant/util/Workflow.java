@@ -754,7 +754,7 @@ public class Workflow {
 	}
 
 	// PBPM Designer
-	private static final String pbpmUrl = "http://localhost:8081/designer/editor?profile=pbpm";
+	private static final String pbpmUrl = "http://localhost:8080/designer/editor?profile=pbpm";
 	private static final String pbpmRepository = "C:/pbpm/designer/repository";
 	private static final String pbpmPackage = "PFS";
 
@@ -766,7 +766,7 @@ public class Workflow {
 			e.printStackTrace();
 			return pbpmUrl;
 		}
-	     return "http://"+ipAddress[1]+":8081/designer/editor?profile=pbpm";
+	     return "http://"+ipAddress[1]+":8080/designer/editor?profile=pbpm";
 	}
 
 	public static String getPbpmRepository() {
