@@ -255,6 +255,8 @@ import com.pennant.backend.model.systemmasters.Segment;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.model.rulefactory.Notifications;
+import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
+import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 
 public class PennantJavaUtil {
 
@@ -615,6 +617,11 @@ public class PennantJavaUtil {
 					new String[] { "SicCode", "SicDesc" }, null, "MSTGRP1", 300));
 			put("EntityCodes", new ModuleMapping(new EntityCodes(""), new String[] { "EntityCodes","EntityCodes"}, 
 					new String[] { "EntityCode", "EntityDesc" }, null, "MSTGRP1", 300));
+			
+			put("StepPolicyHeader", new ModuleMapping(new StepPolicyHeader(""), new String[] { "StepPolicyHeader", "StepPolicyHeader_AView" }, 
+ 					new String[] { "PolicyCode", "PolicyDesc" }, null, "MSTGRP1", 600));
+			
+			put("StepPolicyDetail",new ModuleMapping(new StepPolicyDetail(""), new String[]{ "StepPolicyDetail", "StepPolicyDetail_AView" },new String[] {"StepNumber","TenorSplitPerc"} ,null , null,300));
 			
 			/*---------- Finance ---------*/
 			
