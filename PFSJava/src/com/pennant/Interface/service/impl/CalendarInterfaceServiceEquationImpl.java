@@ -16,7 +16,7 @@ import com.pennant.backend.dao.smtmasters.WeekendMasterDAO;
 import com.pennant.backend.model.smtmasters.HolidayMaster;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
-import com.pennant.equation.process.DateRollOverProcess;
+import com.pennant.coreinterface.service.DateRollOverProcess;
 
 public class CalendarInterfaceServiceEquationImpl implements CalendarInterfaceService {
 

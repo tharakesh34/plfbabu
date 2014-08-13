@@ -101,7 +101,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.coreinterface.vo.CustomerCollateral;
+import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.TemplateEngine;
 import com.pennant.webui.util.GFCBaseListCtrl;

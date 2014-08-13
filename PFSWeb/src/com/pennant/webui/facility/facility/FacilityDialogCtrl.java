@@ -121,9 +121,9 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.PTCKeditor;
-import com.pennant.corebanking.interfaces.CustomerInterfaceCall;
-import com.pennant.coreinterface.vo.CustomerCollateral;
-import com.pennant.coreinterface.vo.CustomerLimit;
+import com.pennant.coreinterface.model.CustomerCollateral;
+import com.pennant.coreinterface.model.CustomerLimit;
+import com.pennant.coreinterface.service.CustomerDataProcess;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -345,7 +345,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// ServiceDAOs / Domain Classes
 	private transient FacilityService facilityService;
 	private transient PagedListService pagedListService;
-	private CustomerInterfaceCall customerInterfaceCall;
+	private CustomerDataProcess customerDataProcess;
 	private CustomerLimitIntefaceService customerLimitIntefaceService;
 	private FacilityDocumentDetailDialogCtrl facilityDocumentDetailDialogCtrl;
 	private FacilityCheckListReferenceDialogCtrl facilityCheckListReferenceDialogCtrl;
@@ -2322,7 +2322,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doFillCustomerCollateral(String custCIF) {
 		logger.debug("Entering");
 		try {
-			collateralsFromEquation = getCustomerInterfaceCall().getCustomerCollateral(custCIF);
+			collateralsFromEquation = getCustomerDataProcess().getCustomerCollateral(custCIF);
 			doFillCustomerEquationCollateral();
 		} catch (Exception e) {
 			logger.debug(e);
@@ -2808,12 +2808,11 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return customerLimitIntefaceService;
 	}
 
-	public void setCustomerInterfaceCall(CustomerInterfaceCall customerInterfaceCall) {
-		this.customerInterfaceCall = customerInterfaceCall;
+	public CustomerDataProcess getCustomerDataProcess() {
+		return customerDataProcess;
 	}
-
-	public CustomerInterfaceCall getCustomerInterfaceCall() {
-		return customerInterfaceCall;
+	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
+		this.customerDataProcess = customerDataProcess;
 	}
 
 	public void setFacilityDocumentDetailDialogCtrl(FacilityDocumentDetailDialogCtrl facilityDocumentDetailDialogCtrl) {

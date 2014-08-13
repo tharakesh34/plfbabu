@@ -46,7 +46,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.Interface.service.AccrualPostingService;
 import com.pennant.Interface.service.PostingsInterfaceService;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
@@ -68,9 +67,9 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
-import com.pennant.coreinterface.vo.FinanceCancellation;
+import com.pennant.coreinterface.model.FinanceCancellation;
+import com.pennant.coreinterface.service.FinanceCancellationProcess;
 import com.pennant.eod.util.EODProperties;
-import com.pennant.equation.process.FinanceCancellationProcess;
 
 public class PostingsPreparationUtil implements Serializable {
 
@@ -86,7 +85,6 @@ public class PostingsPreparationUtil implements Serializable {
 	private static CommitmentDAO commitmentDAO;
 	private static CommitmentMovementDAO commitmentMovementDAO;
 	private static FinanceCancellationProcess financeCancellationProcess;
-	private static AccrualPostingService accrualPostingService;
 	private static FinanceTypeDAO financeTypeDAO;
 	private static FinancePremiumDetailDAO premiumDetailDAO;
 	
@@ -598,7 +596,7 @@ public class PostingsPreparationUtil implements Serializable {
 				linkedTranId = list.get(0).getLinkedTranId();
 			}
 			
-			list = getAccrualPostingService().doAccrualPosting(list, valueDate, postBranch, linkedTranId, createNow, isDummy);
+			list = getPostingsInterfaceService().doAccrualPosting(list, valueDate, postBranch, linkedTranId, createNow, isDummy);
 
 			for (int k = 0; k < list.size(); k++) {
 				ReturnDataSet set = list.get(k);
@@ -928,13 +926,6 @@ public class PostingsPreparationUtil implements Serializable {
 	public static FinanceCancellationProcess getFinanceCancellationProcess() {
 		return financeCancellationProcess;
 	}
-
-	public void setAccrualPostingService(AccrualPostingService accrualPostingService) {
-	    PostingsPreparationUtil.accrualPostingService = accrualPostingService;
-    }
-	public static AccrualPostingService getAccrualPostingService() {
-	    return accrualPostingService;
-    }
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		PostingsPreparationUtil.financeTypeDAO = financeTypeDAO;

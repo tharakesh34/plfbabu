@@ -5961,7 +5961,6 @@
 		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="financeCancellationProcess" ref="financeCancellationProcess" />
-		<property name="accrualPostingService" ref="accrualPostingService" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="premiumDetailDAO" ref="financePremiumDetailDAO" />
 	</bean>
@@ -6118,12 +6117,12 @@
 
 	<bean id="accountInterfaceService"
 		class="com.pennant.Interface.service.impl.AccountInterfaceServiceEquationImpl">
-		<property name="accountProcess" ref="accountProcess" />
+		<property name="accountDetailProcess" ref="accountDetailProcess" />
 	</bean>
 
 	<bean id="customerInterfaceService"
 		class="com.pennant.Interface.service.impl.CustomerInterfaceServiceEquationImpl">
-		<property name="customerProcess" ref="customerProcess" />
+		<property name="customerDataProcess" ref="customerDataProcess" />
 	</bean>
 
 	<bean id="postingsInterfaceService"
@@ -6133,22 +6132,18 @@
 
 	<bean id="custLimitIntefaceService"
 		class="com.pennant.Interface.service.impl.CustomerLimitIntefaceServiceEquationImpl">
-		<property name="custLimitProcess" ref="custLimitProcess" />
+		<property name="customerLimitProcess" ref="customerLimitProcess" />
 	</bean>
 	
 	<bean id="pffCustomerPreparation" 
 		class="com.pennant.Interface.service.impl.PFFCustomerPreparation">
-		<property name="customerInterfaceCall" ref="customerInterfaceCall" />
+		<property name="customerDataProcess" ref="customerDataProcess" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-	</bean>
-	
-	<bean id="accrualPostingService" class="com.pennant.Interface.service.impl.AccrualPostinServiceEquationImpl">
-		<property name="uploadAccrualDetailsProcess" ref="uploadAccrualDetailsProcess" />
 	</bean>
 	
 	<bean name="dailyDownloadInterfaceService" class="com.pennant.Interface.service.impl.DailyDownloadInterfaceServiceImpl">
 		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
-		<property name="coreInterfaceCall" ref="coreInterfaceCall" />
+		<property name="dailyDownloadProcess" ref="dailyDownloadProcess" />
 	</bean>
 	
   	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl" >
@@ -6158,13 +6153,13 @@
 	<!-- CoreBanking Interface Services -->
 	<!-- DB Service -->
 	<!-- <bean id="accountInterfaceService" class="com.pennant.Interface.service.impl.AccountInterfaceServiceCoreDBImpl" 
-		> <property name="accountProcess" ref="accountProcess" /> </bean> <bean id="customerInterfaceService" 
+		> <property name="accountDetailProcess" ref="accountDetailProcess" /> </bean> <bean id="customerInterfaceService" 
 		class="com.pennant.Interface.service.impl.CustomerInterfaceServiceCoreDBImpl" 
-		> <property name="customerProcess" ref="customerProcess" /> </bean> <bean 
+		> <property name="customerDataProcess" ref="customerDataProcess" /> </bean> <bean 
 		id="postingsInterfaceService" class="com.pennant.Interface.service.impl.PostingsInterfaceServiceCoreDBImpl" 
 		> <property name="accountPostingProcess" ref="accountPostingProcess" /> </bean> 
 		<bean id="custLimitIntefaceService" class="com.pennant.Interface.service.impl.CustomerLimitIntefaceServiceCoreDBImpl" 
-		> <property name="custLimitProcess" ref="custLimitProcess" /> </bean> -->
+		> <property name="customerLimitProcess" ref="customerLimitProcess" /> </bean> -->
 
 	<!-- ===================================================================== -->
 	<!-- Messages Service -->
@@ -6434,7 +6429,7 @@
 	
 	<bean id="uploadFinPftDetailServiceTarget" class="com.pennant.app.eod.service.impl.UploadFinPftDetailServiceImpl">
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="uploadFinProfitDetailsProcess" ref="uploadFinProfitDetailsProcess" />
+		<property name="uploadProfitDetailProcess" ref="uploadProfitDetailProcess" />
 	</bean>
 	
 	

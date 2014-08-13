@@ -1,6 +1,5 @@
 package com.pennant.app.eod.service.impl;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -20,13 +19,14 @@ import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.coreinterface.vo.EodFinProfitDetail;
-import com.pennant.equation.process.UploadFinProfitDetailsProcess;
+import com.pennant.coreinterface.model.EodFinProfitDetail;
+import com.pennant.coreinterface.service.UploadProfitDetailProcess;
 
 public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService {
+	
 	private Logger logger = Logger.getLogger(UploadFinPftDetailServiceImpl.class);
 	private DataSource dataSource;	
-	private UploadFinProfitDetailsProcess uploadFinProfitDetailsProcess;
+	private UploadProfitDetailProcess uploadProfitDetailProcess;
 
 	@Override
 	public void doUploadPftDetails(Object object) throws Exception{
@@ -173,7 +173,7 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 				
 				finPftDetails.add(finPftDetail);
 				if(finPftDetails.size() == Integer.parseInt(SystemParameterDetails.getSystemParameterValue("UPLOAD_PFT_DTL_COUNT").toString())) { 
-					getUploadFinProfitDetailsProcess().doUploadPftDetails(finPftDetails, isFirstCall);
+					getUploadProfitDetailProcess().doUploadPftDetails(finPftDetails, isFirstCall);
 
 					isFirstCall = false;
 					finPftDetails.clear();
@@ -181,7 +181,7 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 			}
 
 			if(!finPftDetails.isEmpty()) { 
-				getUploadFinProfitDetailsProcess().doUploadPftDetails(finPftDetails, isFirstCall);
+				getUploadProfitDetailProcess().doUploadPftDetails(finPftDetails, isFirstCall);
 				finPftDetails.clear();
 			}
 
@@ -242,10 +242,6 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 		return selectSql.toString();
 	}
 
-	public UploadFinProfitDetailsProcess getUploadFinProfitDetailsProcess() {
-		return uploadFinProfitDetailsProcess;
-	}
-
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
@@ -254,27 +250,11 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 		return dataSource;
 	}
 
-	public void setUploadFinProfitDetailsProcess(
-			UploadFinProfitDetailsProcess uploadFinProfitDetailsProcess) {
-		this.uploadFinProfitDetailsProcess = uploadFinProfitDetailsProcess;
+	public UploadProfitDetailProcess getUploadProfitDetailProcess() {
+		return uploadProfitDetailProcess;
 	}
-
-	public static BigDecimal getAS400Date(String currentDate) {
-		BigDecimal as400Date = null;
-		BigDecimal dateInt = null;
-
-		if (currentDate == null)
-			return null;
-
-		if (!currentDate.trim().equals("")) {
-			dateInt = new BigDecimal(currentDate.substring(6, 10)+ currentDate.substring(3, 5) + currentDate.substring(0, 2));
-			as400Date = new BigDecimal(19000000).subtract(dateInt);
-			as400Date = new BigDecimal(-1).multiply(as400Date);
-		} else
-			as400Date = null;
-
-		return as400Date;
-
+	public void setUploadProfitDetailProcess(UploadProfitDetailProcess uploadProfitDetailProcess) {
+		this.uploadProfitDetailProcess = uploadProfitDetailProcess;
 	}
 
 }

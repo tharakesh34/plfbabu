@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.coreinterface.exception.CustomerLimitProcessException;
-import com.pennant.coreinterface.vo.CustomerLimit;
+import com.pennant.coreinterface.model.CustomerLimit;
 
 public interface CustomerLimitIntefaceService {
 	

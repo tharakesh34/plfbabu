@@ -119,7 +119,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
-import com.pennant.coreinterface.vo.CustomerLimit;
+import com.pennant.coreinterface.model.CustomerLimit;
 import com.rits.cloning.Cloner;
 
 /**

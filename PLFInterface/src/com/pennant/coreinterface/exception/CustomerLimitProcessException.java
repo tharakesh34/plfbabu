@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-import com.pennant.equation.util.Util;
+import com.pennant.equation.util.DateUtility;
 
 public class CustomerLimitProcessException extends Exception {
 
@@ -54,7 +54,7 @@ public class CustomerLimitProcessException extends Exception {
 				printStream = new PrintStream(outputStream);
 			}
 
-			printStream.println(Util.getTodayDateTime());
+			printStream.println(DateUtility.getTodayDateTime());
 			e.printStackTrace();
 			System.setErr(printStream);
 			printStream.flush();

@@ -2,13 +2,13 @@ package com.pennant.equation.dao;
 
 import java.util.List;
 
-import com.pennant.equation.process.EquationAccountType;
-import com.pennant.equation.process.EquationCurrency;
-import com.pennant.equation.process.EquationCustomerGroup;
-import com.pennant.equation.process.EquationCustomerRating;
-import com.pennant.equation.process.EquationCustomerType;
-import com.pennant.equation.process.EquationDepartment;
-import com.pennant.equation.process.EquationRelationshipOfficer;
+import com.pennant.coreinterface.model.EquationAccountType;
+import com.pennant.coreinterface.model.EquationCurrency;
+import com.pennant.coreinterface.model.EquationCustomerGroup;
+import com.pennant.coreinterface.model.EquationCustomerRating;
+import com.pennant.coreinterface.model.EquationCustomerType;
+import com.pennant.coreinterface.model.EquationDepartment;
+import com.pennant.coreinterface.model.EquationRelationshipOfficer;
 
 public interface CoreInterfaceDAO {
 

@@ -46,6 +46,7 @@ package com.pennant.equation.util;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Used to specify Date type selection in <b>DateUtility</b> class.
@@ -107,5 +108,13 @@ public final class DateUtility {
 		
 		return null;
 	}
-
+	
+	public static String getTodayDateTime(){
+	   String dateFormat = "MM/dd/yyyy hh:mm:ss";
+	   java.text.SimpleDateFormat df = new java.text.SimpleDateFormat(dateFormat);
+	   Calendar objCalendar = Calendar.getInstance();	
+	   String strValue = df.format(objCalendar.getTime());
+	   return strValue;
+	}
+	
 }

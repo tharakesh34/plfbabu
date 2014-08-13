@@ -24,9 +24,9 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.corebanking.interfaces.CustomerInterfaceCall;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
-import com.pennant.coreinterface.vo.CustomerInterfaceData;
+import com.pennant.coreinterface.model.CustomerInterfaceData;
+import com.pennant.coreinterface.service.CustomerDataProcess;
 
 public class PFFCustomerPreparation {
 	private static final String DEFAULT_CCY 		 = "BHD";
@@ -39,7 +39,7 @@ public class PFFCustomerPreparation {
 	private static final String GENDER_FEMALE 	 	 = "FEMALE";
 	private static final String GENDER_OTHER 	 	 = "OTH";
 
-	private CustomerInterfaceCall customerInterfaceCall;
+	private CustomerDataProcess customerDataProcess;
 	private CustomerDetailsService customerDetailsService;
 	private final static Logger logger = Logger.getLogger(PFFCustomerPreparation.class);
 
@@ -47,9 +47,9 @@ public class PFFCustomerPreparation {
 		try{
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setNewRecord(true);
-		logger.debug("Before Customer Interface Call ");
-		CustomerInterfaceData customerInterfaceData = customerInterfaceCall.getCustomerFullDetails(custCIF, custLoc);
-		logger.debug("After Customer Interface Call ");
+		logger.debug("Before Customer Data Process Call ");
+		CustomerInterfaceData customerInterfaceData = getCustomerDataProcess().getCustomerFullDetails(custCIF, custLoc);
+		logger.debug("After Customer Data Process Call ");
 		if (customerInterfaceData != null) {
 
 			//+++++++++++++++ Customer ++++++++++++++++
@@ -250,7 +250,7 @@ public class PFFCustomerPreparation {
 			
 			customerDetails.setRatingsList(new ArrayList<CustomerRating>());
 			List<CustomerRating> customerRatings = new ArrayList<CustomerRating>();
-			for (com.pennant.coreinterface.vo.CustomerInterfaceData.CustomerRating custRating : customerInterfaceData.getCustomerRatinglist()) {
+			for (com.pennant.coreinterface.model.CustomerInterfaceData.CustomerRating custRating : customerInterfaceData.getCustomerRatinglist()) {
 				CustomerRating customerRating = new CustomerRating();
 				customerRating.setRecordType(PennantConstants.RCD_ADD);
 				customerRating.setCustID(custid);
@@ -269,7 +269,7 @@ public class PFFCustomerPreparation {
 			
 			customerDetails.setCustomerDocumentsList(new ArrayList<CustomerDocument>());
 			List<CustomerDocument> customerDocuments = new ArrayList<CustomerDocument>();
-			for (com.pennant.coreinterface.vo.CustomerInterfaceData.CustomerIdentity custRating : customerInterfaceData.getCustomerIdentitylist()) {
+			for (com.pennant.coreinterface.model.CustomerInterfaceData.CustomerIdentity custRating : customerInterfaceData.getCustomerIdentitylist()) {
 				CustomerDocument document = new CustomerDocument();
 				document.setRecordType(PennantConstants.RCD_ADD);
 				document.setCustID(custid);
@@ -295,7 +295,7 @@ public class PFFCustomerPreparation {
 			
 			customerDetails.setCustomerDirectorList(new ArrayList<DirectorDetail>());
 			List<DirectorDetail> directorDetailList = new ArrayList<DirectorDetail>();
-			for (com.pennant.coreinterface.vo.CustomerInterfaceData.ShareHolder shareHolder : customerInterfaceData.getShareHolderlist()) {
+			for (com.pennant.coreinterface.model.CustomerInterfaceData.ShareHolder shareHolder : customerInterfaceData.getShareHolderlist()) {
 				DirectorDetail directorDetail = getCustomerDetailsService().getNewDirectorDetail();
 				directorDetail.setRecordType(PennantConstants.RCD_ADD);
 				directorDetail.setCustID(custid);
@@ -357,14 +357,6 @@ public class PFFCustomerPreparation {
 			throw new CustomerNotFoundException(e.getMessage());
 		}
 		return null;
-	}
-
-	public void setCustomerInterfaceCall(CustomerInterfaceCall customerInterfaceCall) {
-		this.customerInterfaceCall = customerInterfaceCall;
-	}
-
-	public CustomerInterfaceCall getCustomerInterfaceCall() {
-		return customerInterfaceCall;
 	}
 
 	private boolean getBoolean(String string) {
@@ -543,5 +535,12 @@ public class PFFCustomerPreparation {
 	public CustomerDetailsService getCustomerDetailsService() {
 	    return customerDetailsService;
     }
+
+	public CustomerDataProcess getCustomerDataProcess() {
+		return customerDataProcess;
+	}
+	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
+		this.customerDataProcess = customerDataProcess;
+	}
 
 }

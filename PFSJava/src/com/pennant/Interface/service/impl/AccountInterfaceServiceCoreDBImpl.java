@@ -12,15 +12,15 @@ import org.apache.log4j.Logger;
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.backend.model.finance.AccountHoldStatus;
-import com.pennant.coredb.process.AccountProcess;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
-import com.pennant.coreinterface.vo.CoreBankAccountDetail;
+import com.pennant.coreinterface.model.CoreBankAccountDetail;
+import com.pennant.coreinterface.service.AccountDetailProcess;
 
 public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceService {
 	private static Logger logger = Logger.getLogger(AccountInterfaceServiceCoreDBImpl.class);
 
-	protected AccountProcess accountProcess;
+	protected AccountDetailProcess accountDetailProcess;
 
 	/**
 	 * Method for Fetch Account detail depends on Parameter key fields
@@ -57,7 +57,7 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 		}
 		
 		//Connecting to CoreBanking Interface
-		coreBankAccountDetails = accountProcess.fetchAccount(coreBankAccountDetails, createNow);
+		coreBankAccountDetails = getAccountDetailProcess().fetchAccount(coreBankAccountDetails, createNow);
 		
 		//Fill the Account data using Core Banking Object
 		List<IAccounts> accountResList = new ArrayList<IAccounts>(coreBankAccountDetails.size());
@@ -152,7 +152,7 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetail = getAccountProcess().fetchAccountAvailableBal(coreBankAccountDetail);
+			coreBankAccountDetail = getAccountDetailProcess().fetchAccountAvailableBal(coreBankAccountDetail);
 		} catch (AccountNotFoundException e) {
 			//TODO ADD ERROR TO ERROR DETAILS
 		}
@@ -179,7 +179,7 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetail = getAccountProcess().fetchAccountAvailableBal(coreBankAccountDetail);
+			coreBankAccountDetail = getAccountDetailProcess().fetchAccountAvailableBal(coreBankAccountDetail);
 		} catch (AccountNotFoundException e) {
 			//TODO ADD ERROR TO ERROR DETAILS
 		}
@@ -194,18 +194,6 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 		return acBalance;
 	
     }
-	
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
-	public AccountProcess getAccountProcess() {
-    	return accountProcess;
-    }
-	public void setAccountProcess(AccountProcess accountProcess) {
-    	this.accountProcess = accountProcess;
-    }
-
 	@Override
     public List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList)
             throws AccountNotFoundException {
@@ -250,4 +238,17 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 	    return null;
     }
 	
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	public AccountDetailProcess getAccountDetailProcess() {
+    	return accountDetailProcess;
+    }
+	public void setAccountDetailProcess(AccountDetailProcess accountDetailProcess) {
+    	this.accountDetailProcess = accountDetailProcess;
+    }
+
+
 }

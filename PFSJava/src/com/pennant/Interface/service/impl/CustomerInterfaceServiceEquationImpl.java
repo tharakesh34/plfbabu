@@ -18,17 +18,17 @@ import com.pennant.backend.model.reports.AvailLimit;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
-import com.pennant.coreinterface.vo.CoreBankAvailCustomer;
-import com.pennant.coreinterface.vo.CoreBankNewCustomer;
-import com.pennant.coreinterface.vo.CoreBankingCustomer;
-import com.pennant.coreinterface.vo.CustomerLimit;
-import com.pennant.equation.process.CustomerProcess;
+import com.pennant.coreinterface.model.CoreBankAvailCustomer;
+import com.pennant.coreinterface.model.CoreBankNewCustomer;
+import com.pennant.coreinterface.model.CoreBankingCustomer;
+import com.pennant.coreinterface.model.CustomerLimit;
+import com.pennant.coreinterface.service.CustomerDataProcess;
 
 public class CustomerInterfaceServiceEquationImpl implements CustomerInterfaceService{
 	
 	private static Logger logger = Logger.getLogger(CustomerInterfaceServiceEquationImpl.class);
 	
-	private CustomerProcess customerProcess;
+	private CustomerDataProcess customerDataProcess;
 	
 	public Customer fetchCustomerDetails(Customer customer) throws CustomerNotFoundException {
 		logger.debug("Entering");
@@ -37,7 +37,7 @@ public class CustomerInterfaceServiceEquationImpl implements CustomerInterfaceSe
 		coreCust.setCustomerMnemonic(customer.getCustCIF());
 
 		try {
-			coreCust = getCustomerProcess().fetchInformation(coreCust);
+			coreCust = getCustomerDataProcess().fetchInformation(coreCust);
 			
 			//Fill the customer data using Core Customer Banking Object
 			customer.setCustCoreBank(coreCust.getCustomerMnemonic());
@@ -117,7 +117,7 @@ public class CustomerInterfaceServiceEquationImpl implements CustomerInterfaceSe
 		}
 		
 		try {
-			custCIF = getCustomerProcess().generateNewCIF(coreCust);
+			custCIF = getCustomerDataProcess().generateNewCIF(coreCust);
 		} catch (CustomerNotFoundException e) {
 			logger.error("Exception " + e.getMessage());
 			throw e;
@@ -147,7 +147,7 @@ public class CustomerInterfaceServiceEquationImpl implements CustomerInterfaceSe
 		
 		try {
 			
-			coreCust = getCustomerProcess().fetchAvailInformation(coreCust);
+			coreCust = getCustomerDataProcess().fetchAvailInformation(coreCust);
 			
 			String custRspData = coreCust.getCustRspData();
 			String limitCcy = "BHD";
@@ -332,11 +332,11 @@ public class CustomerInterfaceServiceEquationImpl implements CustomerInterfaceSe
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public void setCustomerProcess(CustomerProcess customerProcess) {
-	    this.customerProcess = customerProcess;
+	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
+	    this.customerDataProcess = customerDataProcess;
     }
-	public CustomerProcess getCustomerProcess() {
-	    return customerProcess;
+	public CustomerDataProcess getCustomerDataProcess() {
+	    return customerDataProcess;
     }
 
 }

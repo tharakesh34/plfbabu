@@ -14,9 +14,9 @@ import com.pennant.Interface.service.PostingsInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.coredb.process.AccountPostingProcess;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
-import com.pennant.coreinterface.vo.CoreBankAccountPosting;
+import com.pennant.coreinterface.model.CoreBankAccountPosting;
+import com.pennant.coreinterface.service.AccountPostingProcess;
 
 public class PostingsInterfaceServiceCoreDBImpl implements PostingsInterfaceService{
 	
@@ -126,6 +126,14 @@ public class PostingsInterfaceServiceCoreDBImpl implements PostingsInterfaceServ
 		logger.debug("Leaving");
 		return dataSetList;
 	}
+
+	@Override
+    public List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> list, Date valueDate,
+            String postBranch, long linkedTranId, String createNow, String isDummy)
+            throws Exception {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

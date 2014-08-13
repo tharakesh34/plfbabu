@@ -54,7 +54,7 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.coreinterface.vo.CustomerCollateral;
+import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 

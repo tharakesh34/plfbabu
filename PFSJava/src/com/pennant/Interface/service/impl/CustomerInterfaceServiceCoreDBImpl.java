@@ -8,14 +8,14 @@ import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.reports.AvailCustomerDetail;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
-import com.pennant.coreinterface.vo.CoreBankingCustomer;
-import com.pennant.coredb.process.CustomerProcess;
+import com.pennant.coreinterface.model.CoreBankingCustomer;
+import com.pennant.coreinterface.service.CustomerDataProcess;
 
 public class CustomerInterfaceServiceCoreDBImpl implements CustomerInterfaceService{
 	
 	private static Logger logger = Logger.getLogger(CustomerInterfaceServiceCoreDBImpl.class);
 	
-	private CustomerProcess customerProcess;
+	private CustomerDataProcess customerDataProcess;
 	
 	public Customer fetchCustomerDetails(Customer customer) throws CustomerNotFoundException {
 		logger.debug("Entering");
@@ -24,7 +24,7 @@ public class CustomerInterfaceServiceCoreDBImpl implements CustomerInterfaceServ
 		coreCust.setCustomerMnemonic(customer.getCustCIF());
 
 		try {
-			coreCust = getCustomerProcess().fetchInformation(coreCust);
+			coreCust = getCustomerDataProcess().fetchInformation(coreCust);
 			
 			//Fill the customer data using Core Customer Banking Object
 			customer.setCustCoreBank(coreCust.getCustomerMnemonic());
@@ -72,9 +72,9 @@ public class CustomerInterfaceServiceCoreDBImpl implements CustomerInterfaceServ
 			
 			customer.setNewRecord(true);
 			
-		} catch (CustomerNotFoundException e) {
+		/*} catch (CustomerNotFoundException e) {
 			logger.error("Exception " + e.getMessage());
-			throw e;
+			throw e;*/
 		} catch (Exception e) {
 			logger.error("Exception " + e.getMessage());
 			throw new CustomerNotFoundException(e);
@@ -112,11 +112,11 @@ public class CustomerInterfaceServiceCoreDBImpl implements CustomerInterfaceServ
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public void setCustomerProcess(CustomerProcess customerProcess) {
-	    this.customerProcess = customerProcess;
+	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
+	    this.customerDataProcess = customerDataProcess;
     }
-	public CustomerProcess getCustomerProcess() {
-	    return customerProcess;
+	public CustomerDataProcess getCustomerDataProcess() {
+	    return customerDataProcess;
     }
 
 

@@ -295,10 +295,10 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseListCtrl<CustomerLimitCateg
 	public void doFilllistbox(String custMnemonic) throws CustomerLimitProcessException, InterruptedException {
 		logger.debug("Entering");
 		
-		com.pennant.coreinterface.vo.CustomerLimit limit = new com.pennant.coreinterface.vo.CustomerLimit();
+		com.pennant.coreinterface.model.CustomerLimit limit = new com.pennant.coreinterface.model.CustomerLimit();
 		limit.setCustMnemonic(custMnemonic);
 		limit.setCustLocation("");
-		List<com.pennant.coreinterface.vo.CustomerLimit> list = null;
+		List<com.pennant.coreinterface.model.CustomerLimit> list = null;
 		int formatter = 0;
 		try {
 			
@@ -320,7 +320,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseListCtrl<CustomerLimitCateg
 
 			Listitem item = null;
 			Listcell lc = null;
-			for (com.pennant.coreinterface.vo.CustomerLimit category : list) {
+			for (com.pennant.coreinterface.model.CustomerLimit category : list) {
 
 				boolean limitExceed = false;
 				if(category.getRiskAmount().longValue() > category.getLimitAmount().longValue()){

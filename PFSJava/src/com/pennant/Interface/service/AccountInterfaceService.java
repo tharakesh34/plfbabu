@@ -10,7 +10,7 @@ import com.pennant.Interface.model.IAccounts;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
-import com.pennant.coreinterface.vo.CoreBankAccountDetail;
+import com.pennant.coreinterface.model.CoreBankAccountDetail;
 
 public interface AccountInterfaceService {
 	

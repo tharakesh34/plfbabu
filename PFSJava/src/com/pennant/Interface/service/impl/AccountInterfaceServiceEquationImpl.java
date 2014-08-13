@@ -15,14 +15,14 @@ import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
-import com.pennant.coreinterface.vo.AccountBalance;
-import com.pennant.coreinterface.vo.CoreBankAccountDetail;
-import com.pennant.equation.process.AccountProcess;
+import com.pennant.coreinterface.model.AccountBalance;
+import com.pennant.coreinterface.model.CoreBankAccountDetail;
+import com.pennant.coreinterface.service.AccountDetailProcess;
 
 public class AccountInterfaceServiceEquationImpl implements AccountInterfaceService{
 	private static Logger logger = Logger.getLogger(AccountInterfaceServiceEquationImpl.class);
 
-	protected AccountProcess accountProcess;
+	protected AccountDetailProcess accountDetailProcess;
 
 	/**
 	 * Method for Fetch Account detail depends on Parameter key fields
@@ -53,7 +53,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 		}
 		
 		//Connecting to CoreBanking Interface
-		coreBankAccountDetails = accountProcess.fetchAccount(coreBankAccountDetails,createNow);
+		coreBankAccountDetails = getAccountDetailProcess().fetchAccount(coreBankAccountDetails,createNow);
 		
 		//Fill the Account data using Core Banking Object
 		List<IAccounts> accountResList = new ArrayList<IAccounts>(coreBankAccountDetails.size());
@@ -98,7 +98,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 		coreAccount.setDivision(processAccount.getDivision());
 		
 		//Connecting to CoreBanking Interface
-		List<CoreBankAccountDetail> coreBankingAccountList = getAccountProcess().fetchAccountDetails(coreAccount);
+		List<CoreBankAccountDetail> coreBankingAccountList = getAccountDetailProcess().fetchAccountDetails(coreAccount);
 		CoreBankAccountDetail coreBankAccountDetail = null;
 		//Fill the Account data using Core Banking Object
 		for (int i = 0; i < coreBankingAccountList.size(); i++) {
@@ -137,7 +137,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 			coreBankAccountDetail.setAccountNumber(processAccount);
 
 			//Connecting to CoreBanking Interface
-			coreBankAccountDetail = getAccountProcess().fetchAccountAvailableBal(coreBankAccountDetail);
+			coreBankAccountDetail = getAccountDetailProcess().fetchAccountAvailableBal(coreBankAccountDetail);
 			account = new IAccounts();
 			account.setAccountId(coreBankAccountDetail.getAccountNumber());
  			account.setAcAvailableBal(coreBankAccountDetail.getAcBal());
@@ -172,7 +172,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetail = getAccountProcess().fetchAccountAvailableBal(coreBankAccountDetail);
+			coreBankAccountDetail = getAccountDetailProcess().fetchAccountAvailableBal(coreBankAccountDetail);
 		} catch (AccountNotFoundException e) {
 			//TODO ADD ERROR TO ERROR DETAILS
 		}
@@ -196,7 +196,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 	 */
 	@Override
 	public List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList) throws AccountNotFoundException {
-		return getAccountProcess().fetchAccountsListAvailableBal(coreAcctList, false);
+		return getAccountDetailProcess().fetchAccountsListAvailableBal(coreAcctList, false);
 
 	}
 	
@@ -220,7 +220,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetailList = getAccountProcess().fetchAccountsListAvailableBal(coreBankAccountDetailList , false);
+			coreBankAccountDetailList = getAccountDetailProcess().fetchAccountsListAvailableBal(coreBankAccountDetailList , false);
 		} catch (AccountNotFoundException e) {
 			//TODO ADD ERROR TO ERROR DETAILS
 		}
@@ -262,7 +262,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 		
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetailList = getAccountProcess().fetchAccountsListAvailableBal(coreBankAccountDetailList, false);
+			coreBankAccountDetailList = getAccountDetailProcess().fetchAccountsListAvailableBal(coreBankAccountDetailList, false);
 		} catch (AccountNotFoundException e) {
 			throw e;
  		}
@@ -312,7 +312,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 		
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetailList = getAccountProcess().fetchAccountsListAvailableBal(coreBankAccountDetailList, true);
+			coreBankAccountDetailList = getAccountDetailProcess().fetchAccountsListAvailableBal(coreBankAccountDetailList, true);
 		} catch (AccountNotFoundException e) {
 			throw e;
  		}
@@ -335,7 +335,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 	 */
 	@Override
     public int removeAccountHolds() throws Exception {
-	    return getAccountProcess().removeAccountHolds();
+	    return getAccountDetailProcess().removeAccountHolds();
     }
 	
 	/**
@@ -359,7 +359,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
         }
 		
 		if(!acBalList.isEmpty()){
-			List<AccountBalance> returnAcBalList = getAccountProcess().addAccountHolds(acBalList);
+			List<AccountBalance> returnAcBalList = getAccountDetailProcess().addAccountHolds(acBalList);
 			AccountHoldStatus holdStatus = null;
 			for (AccountBalance accountBalance : returnAcBalList) {
 	            holdStatus = new AccountHoldStatus();
@@ -375,16 +375,16 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 		logger.debug("Leaving");
 		return acBalStatusList;
     }
-	
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public AccountProcess getAccountProcess() {
-    	return accountProcess;
-    }
-	public void setAccountProcess(AccountProcess accountProcess) {
-    	this.accountProcess = accountProcess;
-    }
-
+	public AccountDetailProcess getAccountDetailProcess() {
+		return accountDetailProcess;
+	}
+	public void setAccountDetailProcess(AccountDetailProcess accountDetailProcess) {
+		this.accountDetailProcess = accountDetailProcess;
+	}
+	
 }

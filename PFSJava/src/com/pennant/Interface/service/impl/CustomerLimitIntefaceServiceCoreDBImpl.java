@@ -6,9 +6,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
-import com.pennant.coredb.process.CustomerLimitProcess;
 import com.pennant.coreinterface.exception.CustomerLimitProcessException;
-import com.pennant.coreinterface.vo.CustomerLimit;
+import com.pennant.coreinterface.model.CustomerLimit;
+import com.pennant.coreinterface.service.CustomerLimitProcess;
 
 public class CustomerLimitIntefaceServiceCoreDBImpl implements CustomerLimitIntefaceService{
 	private static Logger logger = Logger.getLogger(CustomerLimitIntefaceServiceCoreDBImpl.class);

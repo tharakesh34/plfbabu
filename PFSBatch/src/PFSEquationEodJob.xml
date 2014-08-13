@@ -193,7 +193,6 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
-		<property name="financeCancellationProcess" ref="financeCancellationProcess" />
 		<property name="accrualPostingService" ref="accrualPostingService" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="premiumDetailDAO" ref="financePremiumDetailDAO" />
@@ -228,22 +227,14 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
-	<bean id="accrualPostingService" class="com.pennant.Interface.service.impl.AccrualPostinServiceEquationImpl">
-		<property name="uploadAccrualDetailsProcess" ref="uploadAccrualDetailsProcess" />
-	</bean>
-	
 	<bean id="accountInterfaceService" class="com.pennant.Interface.service.impl.AccountInterfaceServiceEquationImpl" >
-   		<property name="accountProcess" ref="accountProcess" />
+   		<property name="accountDetailProcess" ref="accountDetailProcess" />
    	</bean> 
    	
 	<bean id="dailyDownloadInterfaceService" class="com.pennant.Interface.service.impl.DailyDownloadInterfaceServiceImpl" >
-   		<property name="coreInterfaceCall" ref="coreInterfaceCall" />
+   		<property name="dailyDownloadProcess" ref="dailyDownloadProcess" />
    		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
    	</bean> 
-   	
-   	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
    	
    	<bean id="postingsInterfaceService" class="com.pennant.Interface.service.impl.PostingsInterfaceServiceEquationImpl" >
    		<property name="accountPostingProcess" ref="accountPostingProcess" />
@@ -255,28 +246,29 @@
 		<property name="holidayMasterDAO" ref="holidayMasterDAO" />
 	</bean>
 	
-	 <bean id="accountProcess" class="com.pennant.equation.process.AccountProcess">
+	<bean id="uploadFinPftDetailService" class="com.pennant.app.eod.service.impl.UploadFinPftDetailServiceImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="uploadProfitDetailProcess" ref="uploadProfitDetailProcess" />
+	</bean> 
+	
+	<bean id="accountDetailProcess" class="com.pennant.equation.service.impl.AccountDetailProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
 
-	<bean id="accountPostingProcess" class="com.pennant.equation.process.AccountPostingProcess">
+	<bean id="accountPostingProcess" class="com.pennant.equation.service.impl.AccountPostingProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean> 
 	
-	<bean id="dateRollOverProcess" class="com.pennant.equation.process.DateRollOverProcess">
+	<bean id="dateRollOverProcess" class="com.pennant.equation.service.impl.DateRollOverProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
-	
-	<bean id="uploadAccrualDetailsProcess" class="com.pennant.equation.process.UploadAccrualDetailsProcess">
+
+	<bean id="dailyDownloadProcess" class="com.pennant.equation.service.impl.DailyDownloadProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
-	
-	<bean id="financeCancellationProcess" class="com.pennant.equation.process.FinanceCancellationProcess" >
+		
+	<bean id="uploadProfitDetailProcess" class="com.pennant.equation.service.impl.UploadProfitDetailProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
-	</bean>
-	
-	<bean id="coreInterfaceCall" class="com.pennant.equation.process.CoreInterfaceCallImpl">
-	    <property name="hostConnection" ref="hostConnection" />
 	</bean>
 	
 	<bean id="hostConnection" class="com.pennant.equation.util.HostConnection" >
@@ -284,6 +276,10 @@
 		<property name="unitName" value="${pffEquation.UnitName}"/>
 		<property name="userName" value="${pffEquation.username}"/>
 		<property name="password" value="${pffEquation.password}"/>
+	</bean>
+	
+   	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 		
 	<!-- Account Details -->
@@ -1017,15 +1013,6 @@
 
 	<bean id="uploadPftDetailTarget" class="com.pennant.backend.endofday.uploadprofitdetails.UploadFinProfitDetails">
 		<property name="uploadFinPftDetailService" ref="uploadFinPftDetailService" />
-	</bean>
-	
-	<bean id="uploadFinPftDetailService" class="com.pennant.app.eod.service.impl.UploadFinPftDetailServiceImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="uploadFinProfitDetailsProcess" ref="uploadFinProfitDetailsProcess" />
-	</bean> 
-	
-	<bean id="uploadFinProfitDetailsProcess" class="com.pennant.equation.process.UploadFinProfitDetailsProcess">
-		<property name="hostConnection" ref="hostConnection" />
 	</bean>
 	
 	<bean id="amortizationService" class="com.pennant.app.eod.service.impl.AmortizationServiceImpl">

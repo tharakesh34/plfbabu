@@ -92,7 +92,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.coreinterface.vo.CoreBankAccountDetail;
+import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.ButtonStatusCtrl;

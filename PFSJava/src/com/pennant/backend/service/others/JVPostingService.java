@@ -50,7 +50,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
-import com.pennant.coreinterface.vo.CoreBankAccountDetail;
+import com.pennant.coreinterface.model.CoreBankAccountDetail;
 
 public interface JVPostingService {
 

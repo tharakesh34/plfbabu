@@ -1,5 +1,6 @@
 package com.pennant.Interface.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -13,6 +14,9 @@ public interface PostingsInterfaceService {
 	 * @throws AccountNotFoundException
 	 */
 	public List<ReturnDataSet> doFillPostingDetails(List<ReturnDataSet> setDetails,String finBranch,
-			long linkTransId, String createNow) throws AccountNotFoundException; 
+			long linkTransId, String createNow) throws AccountNotFoundException;
+
+	public List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> list, Date valueDate,
+            String postBranch, long linkedTranId, String createNow, String isDummy) throws Exception; 
 	
 }

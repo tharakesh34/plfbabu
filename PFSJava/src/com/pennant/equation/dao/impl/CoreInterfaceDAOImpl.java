@@ -13,14 +13,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.coreinterface.model.EquationAccountType;
+import com.pennant.coreinterface.model.EquationCurrency;
+import com.pennant.coreinterface.model.EquationCustomerGroup;
+import com.pennant.coreinterface.model.EquationCustomerRating;
+import com.pennant.coreinterface.model.EquationCustomerType;
+import com.pennant.coreinterface.model.EquationDepartment;
+import com.pennant.coreinterface.model.EquationRelationshipOfficer;
 import com.pennant.equation.dao.CoreInterfaceDAO;
-import com.pennant.equation.process.EquationAccountType;
-import com.pennant.equation.process.EquationCurrency;
-import com.pennant.equation.process.EquationCustomerGroup;
-import com.pennant.equation.process.EquationCustomerRating;
-import com.pennant.equation.process.EquationCustomerType;
-import com.pennant.equation.process.EquationDepartment;
-import com.pennant.equation.process.EquationRelationshipOfficer;
 
 public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 	private static Logger logger = Logger.getLogger(CoreInterfaceDAOImpl.class);

@@ -75,10 +75,10 @@ import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.corebanking.interfaces.CustomerInterfaceCall;
 import com.pennant.coreinterface.exception.CustomerLimitProcessException;
-import com.pennant.coreinterface.vo.CustomerCollateral;
-import com.pennant.coreinterface.vo.CustomerLimit;
+import com.pennant.coreinterface.model.CustomerCollateral;
+import com.pennant.coreinterface.model.CustomerLimit;
+import com.pennant.coreinterface.service.CustomerDataProcess;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
@@ -113,7 +113,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl implements Serializ
 	protected Listbox listBoxCustomerLimit;
 	protected Listbox listBoxCustCollateral;
 	private CurrencyService currencyService;
-	private CustomerInterfaceCall customerInterfaceCall;
+	private CustomerDataProcess customerDataProcess;
 	private CustomerLimitIntefaceService customerLimitIntefaceService;
 	protected JdbcSearchObject<Customer> searchObj;
 	// NEEDED for the ReUse in the SearchWindow
@@ -277,7 +277,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl implements Serializ
 				cmtSearchObj.addFilterEqual("CustID", custid);
 				fillCommitmentListBox(getPagedListWrapper().getPagedListService().getBySearchObject(cmtSearchObj), this.listBoxCommitment);
 				fillLimitListBox(this.custCIF.getValue());
-				doFillCustomerCollateral(getCustomerInterfaceCall().getCustomerCollateral(this.custCIF.getValue()));
+				doFillCustomerCollateral(getCustomerDataProcess().getCustomerCollateral(this.custCIF.getValue()));
 			}
 		} catch (Exception e) {
 			logger.debug(e);
@@ -405,7 +405,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl implements Serializ
 		CustomerLimit limit = new CustomerLimit();
 		limit.setCustMnemonic(custMnemonic);
 		limit.setCustLocation("");
-		List<com.pennant.coreinterface.vo.CustomerLimit> list = null;
+		List<com.pennant.coreinterface.model.CustomerLimit> list = null;
 		int formatter = 3;
 		try {
 			list = getCustomerLimitIntefaceService().fetchLimitEnquiryDetails(limit);
@@ -495,11 +495,12 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl implements Serializ
 		return currencyService;
 	}
 
-	public void setCustomerInterfaceCall(CustomerInterfaceCall customerInterfaceCall) {
-		this.customerInterfaceCall = customerInterfaceCall;
+	public CustomerDataProcess getCustomerDataProcess() {
+		return customerDataProcess;
+	}
+	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
+		this.customerDataProcess = customerDataProcess;
 	}
 
-	public CustomerInterfaceCall getCustomerInterfaceCall() {
-		return customerInterfaceCall;
-	}
+	
 }

@@ -83,7 +83,6 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.QueryService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -93,7 +92,6 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennant.equation.process.CoreInterfaceCall;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -202,7 +200,6 @@ public class QueryDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// ServiceDAOs / Domain Classes
 	private transient QueryService queryService;
 	private transient PagedListService pagedListService;
-	private CoreInterfaceCall coreInterfaceCall;
 	private static  List<QueryModule> listQueryModule= null;
 
 	/**
@@ -648,7 +645,6 @@ public class QueryDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteBeanToComponents(Query aQuery) {
 		logger.debug("Entering") ;
-		QueryModule querymodule = null;
 		this.queryCode.setValue(aQuery.getQueryCode());
 		//  TO-DO
 		//  fillComboBox(this.queryModule, aQuery.getQueryModule(), listQueryModule,"");

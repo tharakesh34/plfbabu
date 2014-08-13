@@ -8,13 +8,13 @@ import org.apache.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.coreinterface.exception.CustomerLimitProcessException;
-import com.pennant.coreinterface.vo.CustomerLimit;
-import com.pennant.equation.process.CustomerLimitProcess;
+import com.pennant.coreinterface.model.CustomerLimit;
+import com.pennant.coreinterface.service.CustomerLimitProcess;
 
 public class CustomerLimitIntefaceServiceEquationImpl implements CustomerLimitIntefaceService{
 	private static Logger logger = Logger.getLogger(CustomerLimitIntefaceServiceEquationImpl.class);
 
-	protected CustomerLimitProcess custLimitProcess;
+	protected CustomerLimitProcess customerLimitProcess;
 	
 	@Override
     public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize)
@@ -22,7 +22,7 @@ public class CustomerLimitIntefaceServiceEquationImpl implements CustomerLimitIn
 		logger.debug("Entering");
 		Map<String, Object> customerLimitMap = null;
 		try{
-			customerLimitMap =  getCustLimitProcess().fetchCustLimitEnqList(pageNo, pageSize);
+			customerLimitMap =  getCustomerLimitProcess().fetchCustLimitEnqList(pageNo, pageSize);
 			
 			if(customerLimitMap.containsKey("CustLimitList")){
 				@SuppressWarnings("unchecked")
@@ -63,7 +63,7 @@ public class CustomerLimitIntefaceServiceEquationImpl implements CustomerLimitIn
 		logger.debug("Entering");
 		List<CustomerLimit> customerLimits = null;
 		try{
-			customerLimits =  getCustLimitProcess().fetchLimitDetails(custLimit);
+			customerLimits =  getCustomerLimitProcess().fetchLimitDetails(custLimit);
 		}catch (CustomerLimitProcessException e) {
 			throw e;
 		}
@@ -77,7 +77,7 @@ public class CustomerLimitIntefaceServiceEquationImpl implements CustomerLimitIn
 		logger.debug("Entering");
 		List<CustomerLimit> customerLimits = null;
 		try{
-			customerLimits =  getCustLimitProcess().fetchLimitEnqDetails(customerLimit);
+			customerLimits =  getCustomerLimitProcess().fetchLimitEnqDetails(customerLimit);
 		}catch (CustomerLimitProcessException e) {
 			throw e;
 		}
@@ -92,7 +92,7 @@ public class CustomerLimitIntefaceServiceEquationImpl implements CustomerLimitIn
 		List<CustomerLimit> customerLimits = null;
 		try{
 			
-			customerLimits =  getCustLimitProcess().fetchGroupLimitDetails(customerLimit);
+			customerLimits =  getCustomerLimitProcess().fetchGroupLimitDetails(customerLimit);
 			
 		}catch (CustomerLimitProcessException e) {
 			throw e;
@@ -102,12 +102,11 @@ public class CustomerLimitIntefaceServiceEquationImpl implements CustomerLimitIn
     }
 
 
-	public CustomerLimitProcess getCustLimitProcess() {
-    	return custLimitProcess;
-    }
-	public void setCustLimitProcess(CustomerLimitProcess custLimitProcess) {
-    	this.custLimitProcess = custLimitProcess;
-    }
-
+	public CustomerLimitProcess getCustomerLimitProcess() {
+		return customerLimitProcess;
+	}
+	public void setCustomerLimitProcess(CustomerLimitProcess customerLimitProcess) {
+		this.customerLimitProcess = customerLimitProcess;
+	}
 
 }

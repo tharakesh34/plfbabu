@@ -9,21 +9,21 @@ import org.apache.log4j.Logger;
 
 import com.pennant.Interface.service.DailyDownloadInterfaceService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.corebanking.interfaces.CoreInterfaceCall;
+import com.pennant.coreinterface.model.EquationAccountType;
+import com.pennant.coreinterface.model.EquationCurrency;
+import com.pennant.coreinterface.model.EquationCustomerGroup;
+import com.pennant.coreinterface.model.EquationCustomerRating;
+import com.pennant.coreinterface.model.EquationCustomerType;
+import com.pennant.coreinterface.model.EquationDepartment;
+import com.pennant.coreinterface.model.EquationRelationshipOfficer;
+import com.pennant.coreinterface.service.DailyDownloadProcess;
 import com.pennant.equation.dao.CoreInterfaceDAO;
-import com.pennant.equation.process.EquationAccountType;
-import com.pennant.equation.process.EquationCurrency;
-import com.pennant.equation.process.EquationCustomerGroup;
-import com.pennant.equation.process.EquationCustomerRating;
-import com.pennant.equation.process.EquationCustomerType;
-import com.pennant.equation.process.EquationDepartment;
-import com.pennant.equation.process.EquationRelationshipOfficer;
 
 public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterfaceService {
 	
 	private final static Logger logger = Logger.getLogger(DailyDownloadInterfaceServiceImpl.class);
 	
-	private CoreInterfaceCall coreInterfaceCall;
+	private DailyDownloadProcess dailyDownloadProcess;
 	private CoreInterfaceDAO coreInterfaceDAO;
 	
 	/**
@@ -41,7 +41,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 			List<EquationCurrency> existingCurrencies = getCoreInterfaceDAO().fetchCurrecnyDetails();
 			
 			//Import Currency Details
-			List<EquationCurrency> currienciesList = getCoreInterfaceCall().importCurrencyDetails();
+			List<EquationCurrency> currienciesList = getDailyDownloadProcess().importCurrencyDetails();
 
 			List<EquationCurrency> saveCurrienciesList = new ArrayList<EquationCurrency>();
 			List<EquationCurrency> updateCurrienciesList = new ArrayList<EquationCurrency>();
@@ -117,7 +117,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		try{
 			
 			existingRelationshipOfficers = getCoreInterfaceDAO().fetchRelationshipOfficerDetails();
-			relationshipOfficerList =  getCoreInterfaceCall().importRelationShipOfficersDetails();
+			relationshipOfficerList =  getDailyDownloadProcess().importRelationShipOfficersDetails();
 
 			List<EquationRelationshipOfficer> saveRelationshipOfficerList = new ArrayList<EquationRelationshipOfficer>();
 			List<EquationRelationshipOfficer> updateRelationshipOfficerList = new ArrayList<EquationRelationshipOfficer>();
@@ -189,7 +189,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		List<EquationCustomerType> customerTypeList;
 		try{
 			existingCustomerTypes = getCoreInterfaceDAO().fetchCustomerTypeDetails();
-			customerTypeList =   getCoreInterfaceCall().importCustomerTypeDetails();
+			customerTypeList =   getDailyDownloadProcess().importCustomerTypeDetails();
 
 			List<EquationCustomerType> saveCustomerTypeList = new ArrayList<EquationCustomerType>();
 			List<EquationCustomerType> updateCustomerTypeList = new ArrayList<EquationCustomerType>();
@@ -259,7 +259,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		List<EquationDepartment> departmentList;
 		try{
 			existingDepartments = getCoreInterfaceDAO().fetchDepartmentDetails();
-			departmentList = getCoreInterfaceCall().importDepartmentDetails();
+			departmentList = getDailyDownloadProcess().importDepartmentDetails();
 
 			List<EquationDepartment> saveDepartmentList = new ArrayList<EquationDepartment>();
 			List<EquationDepartment> updateDepartmentList = new ArrayList<EquationDepartment>();
@@ -317,7 +317,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		List<EquationCustomerGroup> customerGroupList;		
 		try{
 			existingCustomerGroups = getCoreInterfaceDAO().fetchCustomerGroupDetails();
-			customerGroupList = getCoreInterfaceCall().importCustomerGroupDetails();
+			customerGroupList = getDailyDownloadProcess().importCustomerGroupDetails();
 
 			List<EquationCustomerGroup> saveCustomerGroupList = new ArrayList<EquationCustomerGroup>();
 			List<EquationCustomerGroup> updateCustomerGroupList = new ArrayList<EquationCustomerGroup>();
@@ -389,7 +389,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		List<EquationAccountType> accountTypeList;		
 		try{
 			existingAccountTypes = getCoreInterfaceDAO().fetchAccountTypeDetails();
-			accountTypeList = getCoreInterfaceCall().importAccountTypeDetails();
+			accountTypeList = getDailyDownloadProcess().importAccountTypeDetails();
 			
 			List<EquationAccountType> saveAccountTypeList = new ArrayList<EquationAccountType>();
 			List<EquationAccountType> updateAccountTypeList = new ArrayList<EquationAccountType>();
@@ -462,7 +462,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		List<EquationCustomerRating> customerRatingsList;		
 		try{
 			existingcuCustomerRatings = getCoreInterfaceDAO().fetchCustomerRatingDetails();
-			customerRatingsList = getCoreInterfaceCall().importCustomerRatingDetails();
+			customerRatingsList = getDailyDownloadProcess().importCustomerRatingDetails();
 			
 			List<EquationCustomerRating> saveCustomerRatingsList = new ArrayList<EquationCustomerRating>();
 			List<EquationCustomerRating> updateCustomerRatingsList = new ArrayList<EquationCustomerRating>();
@@ -588,13 +588,13 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public CoreInterfaceCall getCoreInterfaceCall() {
-    	return coreInterfaceCall;
-    }
-	public void setCoreInterfaceCall(CoreInterfaceCall coreInterfaceCall) {
-    	this.coreInterfaceCall = coreInterfaceCall;
-    }
-
+	public DailyDownloadProcess getDailyDownloadProcess() {
+		return dailyDownloadProcess;
+	}
+	public void setDailyDownloadProcess(DailyDownloadProcess dailyDownloadProcess) {
+		this.dailyDownloadProcess = dailyDownloadProcess;
+	}
+	
 	public CoreInterfaceDAO getCoreInterfaceDAO() {
     	return coreInterfaceDAO;
     }

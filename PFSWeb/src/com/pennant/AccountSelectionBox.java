@@ -73,7 +73,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
-import com.pennant.coreinterface.vo.CoreBankAccountDetail;
+import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
