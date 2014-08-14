@@ -2026,6 +2026,25 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 	</bean>
 
+<!--============ Step Policy  Details ============== -->
+
+	 <bean id="stepPolicyListCtrl"
+		class="com.pennant.webui.solutionfactory.steppolicy.StepPolicyListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="stepPolicyService" ref="stepPolicyService" />
+	</bean>
+
+	<bean id="stepPolicyDialogCtrl"
+		class="com.pennant.webui.solutionfactory.steppolicy.StepPolicyDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="stepPolicyService" ref="stepPolicyService" />
+	</bean>
+
+	<bean id="stepPolicyDetailDialogCtrl"
+		class="com.pennant.webui.solutionfactory.steppolicy.StepPolicyDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
+ 
+
 	<!--============ Finance Campaign Detail ============== -->
 
 	<bean id="financeCampaignListCtrl"

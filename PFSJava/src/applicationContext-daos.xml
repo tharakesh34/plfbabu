@@ -3358,6 +3358,49 @@
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<!--============ Step Policy Details ============== -->
+
+	<bean id="stepPolicyHeaderDAO"
+		class="com.pennant.backend.dao.solutionfactory.impl.StepPolicyHeaderDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="stepPolicyService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="stepPolicyServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="stepPolicyServiceTarget"
+		class="com.pennant.backend.service.solutionfactory.impl.StepPolicyServiceImpl">
+		<property name="stepPolicyHeaderDAO" ref="stepPolicyHeaderDAO" />
+		<property name="stepPolicyDetailDAO" ref="stepPolicyDetailDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<!-- Transaction Entry -->
+
+	<bean id="stepPolicyDetailDAO"
+		class="com.pennant.backend.dao.solutionfactory.impl.StepPolicyDetailDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
 	<!--============ Finance Campaign Details ============== -->
 
 	<bean id="financeCampaignDAO"

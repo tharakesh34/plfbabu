@@ -150,6 +150,7 @@
 		<menuItem id="menu_Item_PFSParameter" zulNavigation="/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul"  rightName="menuItem_SolutionFactory_PFSParameter"/>
 		<menuItem id="menu_Item_WeekendMaster" zulNavigation="/WEB-INF/pages/SolutionFactory/WeekendMaster/WeekendMasterList.zul"  rightName="menuItem_SolutionFactory_WeekendMaster" />
 		<menuItem id="menu_Item_WorkFlowDetails" zulNavigation="/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul"  rightName="menuItem_SolutionFactory_WorkFlowDetail"/>
+		<menuItem id="menu_Item_StepPolicy" zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"  rightName="menuItem_SolutionFactory_StepPolicy"/>
 	</menu>
 	
 	<!--Finance Menu Tree -->
