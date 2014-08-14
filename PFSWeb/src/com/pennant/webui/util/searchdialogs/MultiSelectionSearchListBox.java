@@ -158,7 +158,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	 */
 	@SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
 	private void createBox() {
-		logger.debug("Entering Method createBox()"); 
+		logger.debug("Entering"); 
 		
 		if(getModuleMapping().getLovListWidth()!=0){
 			this._width=getModuleMapping().getLovListWidth();
@@ -271,6 +271,13 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		btnOK.setLabel("OK");
 		btnOK.addEventListener("onClick", new OnCloseListener());
 		btnOK.setParent(divSouth);
+		
+		// Button
+		final Button btnClear= new Button();
+		btnClear.setStyle("padding-left: 5px");
+		btnClear.setLabel("Clear");
+		btnClear.addEventListener("onClick", new OnClearListener());
+		btnClear.setParent(divSouth);
 
 		/**
 		 * init the model.<br>
@@ -294,17 +301,17 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		} catch (final SuspendNotAllowedException e) {
 			logger.fatal("", e);
 			this.detach();
-		} 	//Upgraded to ZK-6.5.1.1 Removed interrupted exception 	
+		} 	
 
 		
-		logger.debug("Leaving Method createBox()");
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class SearchBoxItemRenderer implements ListitemRenderer<Object> {
-		//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
+
 		@Override
 		public void render(Listitem item, Object data, int count) throws Exception {
 				
@@ -379,7 +386,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void refreshModel(String searchText, int start) {
-		logger.debug("Entering Method refreshModel");
+		logger.debug("Entering");
 		
 		// clear old data
 		getListModelList().clear();
@@ -402,7 +409,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		setListModelList(new ListModelList(searchResult.getResult()));
 		this.listbox.setModel(getListModelList());
 
-		logger.debug("Leaving Method refreshModel");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -439,6 +446,17 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 			onClose();
 		}
 	}
+	
+	/**
+	 * Method for Clearing Items from Search Box
+	 */
+	final class OnClearListener implements EventListener<Event> {
+		@Override
+		public void onEvent(Event event) throws Exception {
+			setObject(String.valueOf(""));
+			onClose();
+		}
+	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// ++++++++++++++++ Setter/Getter ++++++++++++++++++ //
@@ -447,16 +465,13 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	public Object getObject() {
 		return this.objClass;
 	}
-
 	private void setObject(Object objClass) {
 		this.objClass = objClass;
 	}
 
-
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
-
 	public int getPageSize() {
 		return this.pageSize;
 	}
@@ -482,12 +497,9 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	public String[] getFieldString() {
 		return fieldString;
 	}
-
-
 	public void setFieldString(String[] fieldString) {
 		this.fieldString = fieldString;
 	}
-
 	
 	public void setCheckMap() {
 	
