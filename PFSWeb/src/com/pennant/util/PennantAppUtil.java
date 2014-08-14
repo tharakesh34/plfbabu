@@ -77,6 +77,7 @@ import com.pennant.backend.model.applicationmaster.RejectDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
+import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.Language;
 import com.pennant.backend.model.staticparms.RepaymentMethod;
@@ -1187,6 +1188,19 @@ public class PennantAppUtil {
 		return number;
 	}
 	
-	
+	public static ArrayList<ValueLabel> getStepPoliciesList() {
+		ArrayList<ValueLabel> stepPolicyHeaderList = new ArrayList<ValueLabel>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		
+		JdbcSearchObject<StepPolicyHeader> searchObject = new JdbcSearchObject<StepPolicyHeader>(StepPolicyHeader.class);
+		searchObject.addTabelName("StepPolicyHeader");
+		
+		List<StepPolicyHeader> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel pftRateLabel = new ValueLabel(String.valueOf(appList.get(i).getPolicyCode()),String.valueOf(appList.get(i).getPolicyCode())+"-"+ appList.get(i).getPolicyDesc());
+			stepPolicyHeaderList.add(pftRateLabel);
+		}
+		return stepPolicyHeaderList;
+	}
 	
 }
