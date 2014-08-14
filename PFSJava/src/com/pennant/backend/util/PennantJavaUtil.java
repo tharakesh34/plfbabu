@@ -619,7 +619,7 @@ public class PennantJavaUtil {
 					new String[] { "EntityCode", "EntityDesc" }, null, "MSTGRP1", 300));
 			
 			put("StepPolicyHeader", new ModuleMapping(new StepPolicyHeader(""), new String[] { "StepPolicyHeader", "StepPolicyHeader_AView" }, 
- 					new String[] { "PolicyCode", "PolicyDesc" }, null, "MSTGRP1", 600));
+ 					new String[] { "PolicyCode", "PolicyDesc" }, null, "MSTGRP1", 300));
 			
 			put("StepPolicyDetail",new ModuleMapping(new StepPolicyDetail(""), new String[]{ "StepPolicyDetail", "StepPolicyDetail_AView" },new String[] {"StepNumber","TenorSplitPerc"} ,null , null,300));
 			

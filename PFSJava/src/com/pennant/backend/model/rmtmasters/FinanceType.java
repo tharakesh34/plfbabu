@@ -173,6 +173,13 @@ public class FinanceType implements java.io.Serializable {
 	private boolean oDAllowWaiver;
 	private BigDecimal oDMaxWaiverPerc;
 	
+	// Step In Finance Details
+	private boolean stepFinance;
+	private boolean steppingMandatory;
+	private boolean alwManualSteps;
+	private String  alwdStepPolicies;
+	private String  dftStepPolicy;
+	
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -2219,5 +2226,40 @@ public class FinanceType implements java.io.Serializable {
 	public void setFinTypeAccounts(List<FinTypeAccount> finTypeAccounts) {
     	this.finTypeAccounts = finTypeAccounts;
     }
-	
+
+	public boolean isStepFinance() {
+		return stepFinance;
+	}
+	public void setStepFinance(boolean stepFinance) {
+		this.stepFinance = stepFinance;
+	}
+
+	public boolean isSteppingMandatory() {
+		return steppingMandatory;
+	}
+	public void setSteppingMandatory(boolean steppingMandatory) {
+		this.steppingMandatory = steppingMandatory;
+	}
+
+	public boolean isAlwManualSteps() {
+		return alwManualSteps;
+	}
+	public void setAlwManualSteps(boolean alwManualSteps) {
+		this.alwManualSteps = alwManualSteps;
+	}
+
+	public String getAlwdStepPolicies() {
+		return alwdStepPolicies;
+	}
+	public void setAlwdStepPolicies(String alwdStepPolicies) {
+		this.alwdStepPolicies = alwdStepPolicies;
+	}
+
+	public String getDftStepPolicy() {
+		return dftStepPolicy;
+	}
+	public void setDftStepPolicy(String dftStepPolicy) {
+		this.dftStepPolicy = dftStepPolicy;
+	}
+
 }

@@ -169,6 +169,8 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		selectSql.append("  AllowRIAInvestment , AllowParllelFinance , OverrideLimit , LimitRequired , " );
 		selectSql.append(" FinCommitmentOvrride , FinCollateralOvrride ,FinInstDate ,FinRepayPftOnFrq, FinAEProgClaim , FinAEMaturity, FinPftUnChanged, ");
 		selectSql.append(" ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc,FinDivision, ");
+		selectSql.append(" StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, ");
+
 		if (type.contains("View")) {
 			selectSql.append(" lovDescFinCcyName,lovDescFinDaysCalTypeName, lovDescFinContingentAcTypeName,");
 			selectSql.append(" lovDescFinBankContingentAcTypeName, lovDescFinProvisionAcTypeName,lovDescFinSuspAcTypeName, lovDescFinAcTypeName,");
@@ -386,7 +388,8 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append(" FinMargin,FinGrcMargin,FinProvision,FinSchdChange,FinScheduleOn,FinGrcScheduleOn, ");
 		insertSql.append(" FinAlwIndRate,FinIndBaseRate,FinGrcAlwIndRate,FinGrcIndBaseRate,FinAECapitalize, FinAEProgClaim , FinAEMaturity , FinPftUnChanged ,");
 		insertSql.append("  AllowRIAInvestment , AllowParllelFinance , OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinInstDate , FinRepayPftOnFrq, ");
-		insertSql.append("  ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc, FinDivision) ");
+		insertSql.append("  ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc, FinDivision, ");
+		insertSql.append("  StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy) ");
 
 		insertSql.append(" Values(:FinType, :FinCategory, :FinTypeDesc, :FinCcy, :FinDaysCalType, :FinAcType, ");
 		insertSql.append(" :FinContingentAcType, :FinBankContingentAcType, :FinProvisionAcType, :FinSuspAcType,");
@@ -410,7 +413,8 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append(" :FinMargin,:FinGrcMargin,:FinProvision,:FinSchdChange,:FinScheduleOn,:FinGrcScheduleOn,");
 		insertSql.append(" :FinAlwIndRate,:FinIndBaseRate,:FinGrcAlwIndRate,:FinGrcIndBaseRate, :FinAECapitalize , :FinAEProgClaim ,:FinAEMaturity , :FinPftUnChanged,");
 		insertSql.append(" :AllowRIAInvestment , :AllowParllelFinance , :OverrideLimit, :LimitRequired, :FinCommitmentOvrride, :FinCollateralOvrride, :FinInstDate, :FinRepayPftOnFrq , ");
-		insertSql.append(" :ApplyODPenalty , :ODIncGrcDays , :ODChargeType , :ODGraceDays , :ODChargeCalOn , :ODChargeAmtOrPerc , :ODAllowWaiver , :ODMaxWaiverPerc, :FinDivision ) ");
+		insertSql.append(" :ApplyODPenalty , :ODIncGrcDays , :ODChargeType , :ODGraceDays , :ODChargeCalOn , :ODChargeAmtOrPerc , :ODAllowWaiver , :ODMaxWaiverPerc, :FinDivision , ");
+		insertSql.append(" :StepFinance , :SteppingMandatory , :AlwManualSteps , :AlwdStepPolicies , :DftStepPolicy) ");
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
@@ -481,8 +485,9 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		updateSql.append(" AllowRIAInvestment =:AllowRIAInvestment , AllowParllelFinance =:AllowParllelFinance ,OverrideLimit=:OverrideLimit, ");
 		updateSql.append(" LimitRequired=:LimitRequired ,FinCommitmentOvrride=:FinCommitmentOvrride ,FinCollateralOvrride=:FinCollateralOvrride ,FinInstDate=:FinInstDate, FinRepayPftOnFrq =:FinRepayPftOnFrq, ");
 		updateSql.append(" ApplyODPenalty =:ApplyODPenalty , ODIncGrcDays =:ODIncGrcDays, ODChargeType=:ODChargeType , ODGraceDays=:ODGraceDays , " );
-		updateSql.append(" ODChargeCalOn=:ODChargeCalOn , ODChargeAmtOrPerc=:ODChargeAmtOrPerc , ODAllowWaiver=:ODAllowWaiver , ODMaxWaiverPerc=:ODMaxWaiverPerc, FinDivision=:FinDivision ");
-		
+		updateSql.append(" ODChargeCalOn=:ODChargeCalOn , ODChargeAmtOrPerc=:ODChargeAmtOrPerc , ODAllowWaiver=:ODAllowWaiver , ODMaxWaiverPerc=:ODMaxWaiverPerc, FinDivision=:FinDivision, ");
+		updateSql.append(" StepFinance=:StepFinance , SteppingMandatory=:SteppingMandatory , AlwManualSteps=:AlwManualSteps , AlwdStepPolicies=:AlwdStepPolicies , DftStepPolicy=:DftStepPolicy");
+
 		updateSql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_TEMP")) {
