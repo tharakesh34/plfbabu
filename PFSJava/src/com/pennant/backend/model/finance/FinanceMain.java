@@ -56,6 +56,7 @@ public class FinanceMain implements java.io.Serializable {
 	private String lovDescFinCcyName;
 	private String scheduleMethod;
 	private String lovDescScheduleMethodName;
+	private String grcProfitDaysBasis;
 	private String profitDaysBasis;
 	private String lovDescProfitDaysBasisName;
 	private Date finStartDate;
@@ -240,6 +241,11 @@ public class FinanceMain implements java.io.Serializable {
 	private String  lovDescFinPurposeName;
 	private BigDecimal availCommitAmount;
 	private BigDecimal securityDeposit;
+	
+	private boolean stepFinance = false;
+	private String stepPolicy;
+	private boolean alwManualSteps = false;
+	private int noOfSteps = 0;
 	
 	/*private BigDecimal disbCcyFinAmount;
 	private BigDecimal ccyConversionRate;
@@ -2368,6 +2374,41 @@ public class FinanceMain implements java.io.Serializable {
 	    this.lovDescFinRepayMethod = lovDescFinRepayMethod;
     }
 	
+	public String getGrcProfitDaysBasis() {
+	    return grcProfitDaysBasis;
+    }
+	public void setGrcProfitDaysBasis(String grcProfitDaysBasis) {
+	    this.grcProfitDaysBasis = grcProfitDaysBasis;
+    }
+	
+	public boolean isStepFinance() {
+		return stepFinance;
+	}
+	public void setStepFinance(boolean stepFinance) {
+		this.stepFinance = stepFinance;
+	}
+
+	public String getStepPolicy() {
+		return stepPolicy;
+	}
+	public void setStepPolicy(String stepPolicy) {
+		this.stepPolicy = stepPolicy;
+	}
+
+	public boolean isAlwManualSteps() {
+		return alwManualSteps;
+	}
+	public void setAlwManualSteps(boolean alwManualSteps) {
+		this.alwManualSteps = alwManualSteps;
+	}
+
+	public int getNoOfSteps() {
+		return noOfSteps;
+	}
+	public void setNoOfSteps(int noOfSteps) {
+		this.noOfSteps = noOfSteps;
+	}
+
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> customerScoringMap = new HashMap<String, Object>();	
 		try {
@@ -2422,5 +2463,5 @@ public class FinanceMain implements java.io.Serializable {
 	public void setLovDescDisbCcyFormatter(int lovDescDisbCcyFormatter) {
 	    this.lovDescDisbCcyFormatter = lovDescDisbCcyFormatter;
     }*/
-	
+
 }

@@ -70,6 +70,7 @@ public class FinScheduleData {
 	private FinanceType financeType;
 	private FinanceMain financeMain = null;
 	private HashMap<Date, FinanceScheduleDetail> scheduleMap;
+	private List<FinanceStepPolicyDetail> stepPolicyDetails = new ArrayList<FinanceStepPolicyDetail>();
 	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<FinanceScheduleDetail>();
 	private List<FinanceDisbursement> disbursementDetails = new ArrayList<FinanceDisbursement>();
 	private List<RepayInstruction> repayInstructions = new ArrayList<RepayInstruction>();
@@ -88,15 +89,20 @@ public class FinScheduleData {
 	public String getFinReference() {
 		return finReference;
 	}
-
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
 
+	public List<FinanceStepPolicyDetail> getStepPolicyDetails() {
+	    return stepPolicyDetails;
+    }
+	public void setStepPolicyDetails(List<FinanceStepPolicyDetail> stepPolicyDetails) {
+	    this.stepPolicyDetails = stepPolicyDetails;
+    }
+
 	public List<FinanceScheduleDetail> getFinanceScheduleDetails() {
 		return financeScheduleDetails;
 	}
-
 	public void setFinanceScheduleDetails(List<FinanceScheduleDetail> financeScheduleDetails) {
 		this.financeScheduleDetails = financeScheduleDetails;
 	}
@@ -104,7 +110,6 @@ public class FinScheduleData {
 	public List<FinanceDisbursement> getDisbursementDetails() {
 		return disbursementDetails;
 	}
-
 	public void setDisbursementDetails(List<FinanceDisbursement> disbursementDetails) {
 		if (disbursementDetails != null && disbursementDetails.size() > 0) {
 			Collections.sort(disbursementDetails, new Comparator<FinanceDisbursement>() {
@@ -123,7 +128,6 @@ public class FinScheduleData {
 	public List<RepayInstruction> getRepayInstructions() {
 		return repayInstructions;
 	}
-
 	public void setRepayInstructions(List<RepayInstruction> repayInstructions) {
 		this.repayInstructions = repayInstructions;
 	}
@@ -131,7 +135,6 @@ public class FinScheduleData {
 	public List<DefermentHeader> getDefermentHeaders() {
 		return defermentHeaders;
 	}
-
 	public void setDefermentHeaders(List<DefermentHeader> defermentHeaders) {
 		this.defermentHeaders = defermentHeaders;
 	}
@@ -139,7 +142,6 @@ public class FinScheduleData {
 	public List<DefermentDetail> getDefermentDetails() {
 		return defermentDetails;
 	}
-
 	public void setDefermentDetails(List<DefermentDetail> defermentDetails) {
 		this.defermentDetails = defermentDetails;
 	}
@@ -147,7 +149,6 @@ public class FinScheduleData {
 	public List<ErrorDetails> getErrorDetails() {
 		return errorDetails;
 	}
-
 	public void setErrorDetails(ArrayList<ErrorDetails> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
@@ -165,7 +166,6 @@ public class FinScheduleData {
 	public HashMap<Date, FinanceScheduleDetail> getScheduleMap() {
 		return scheduleMap;
 	}
-
 	public void setScheduleMap(HashMap<Date, FinanceScheduleDetail> scheduleMap) {
 		this.scheduleMap = scheduleMap;
 	}
@@ -419,7 +419,6 @@ public class FinScheduleData {
 	public void setFinPftSuspended(boolean finPftSuspended) {
 	    this.finPftSuspended = finPftSuspended;
     }
-
 	public boolean isFinPftSuspended() {
 	    return finPftSuspended;
     }
@@ -427,11 +426,8 @@ public class FinScheduleData {
 	public void setFinSuspDate(Date finSuspDate) {
 	    this.finSuspDate = finSuspDate;
     }
-
 	public Date getFinSuspDate() {
 	    return finSuspDate;
     }
-
-
 
 }

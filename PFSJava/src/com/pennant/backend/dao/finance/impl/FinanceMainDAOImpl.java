@@ -176,7 +176,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
 		selectSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
 		selectSql.append(" AlwIndRate, IndBaseRate, GrcAlwIndRate, GrcIndBaseRate, ClosingStatus, FinApprovedDate, ");
-		selectSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , ");
+		selectSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis, StepFinance , ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescFinCcyName,lovDescScheduleMethodName, lovDescProfitDaysBasisName,");
@@ -559,7 +559,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" GrcMargin, RepayMargin, FinCommitmentRef, DepreciationFrq, FinCurrAssetValue,");
 		insertSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount, ClosingStatus, FinApprovedDate, ");
 		insertSql.append(" AlwIndRate, IndBaseRate, GrcAlwIndRate, GrcIndBaseRate,DedupFound,SkipDedup,Blacklisted,");
-		insertSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq ,");
+		insertSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis, StepFinance, ");
 		if (!isWIF) {
 			insertSql.append(" InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,Authorization1,Authorization2,");
 			insertSql.append(" FeeChargeAmt,LimitValid, OverrideLimit,FinPurpose,FinStatus, FinStsReason,");
@@ -585,7 +585,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" :GrcMargin, :RepayMargin, :FinCommitmentRef, :DepreciationFrq, :FinCurrAssetValue,");
 		insertSql.append(" :NextDepDate, :LastDepDate, :FinAccount, :FinCustPftAccount, :ClosingStatus , :FinApprovedDate, ");
 		insertSql.append(" :AlwIndRate, :IndBaseRate, :GrcAlwIndRate, :GrcIndBaseRate, :DedupFound,:SkipDedup,:Blacklisted,");
-		insertSql.append(" :AnualizedPercRate , :EffectiveRateOfReturn , :FinRepayPftOnFrq ,");
+		insertSql.append(" :AnualizedPercRate , :EffectiveRateOfReturn , :FinRepayPftOnFrq , :GrcProfitDaysBasis, :StepFinance,");
 		if (!isWIF) {
 			insertSql.append("  :InvestmentRef, :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :CustDSR, :Authorization1, :Authorization2, ");
 			insertSql.append(" :FeeChargeAmt, :LimitValid, :OverrideLimit,:FinPurpose,:FinStatus, :FinStsReason,");
@@ -776,6 +776,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" GrcIndBaseRate = :GrcIndBaseRate, FinCustPftAccount=:FinCustPftAccount,ClosingStatus= :ClosingStatus, ");
 		updateSql.append(" FinApprovedDate= :FinApprovedDate,"); 
 		updateSql.append(" AnualizedPercRate =:AnualizedPercRate , EffectiveRateOfReturn =:EffectiveRateOfReturn , FinRepayPftOnFrq =:FinRepayPftOnFrq ,");
+		updateSql.append(" GrcProfitDaysBasis = :GrcProfitDaysBasis, StepFinance = :StepFinance,");
 		
 		if (!isWIF) {
 			updateSql.append(" MigratedFinance = :MigratedFinance,ScheduleMaintained = :ScheduleMaintained, ScheduleRegenerated = :ScheduleRegenerated,");

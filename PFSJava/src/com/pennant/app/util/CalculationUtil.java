@@ -405,7 +405,7 @@ public class CalculationUtil implements Serializable {
 		
 		//Base Currency 
 		String localCcy = SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY).toString();
-		int format = Integer.parseInt(SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY_FORMAT).toString());
+		//int format = Integer.parseInt(SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY_FORMAT).toString());
 		if(fromCcy == null ){
 			fromCcy = localCcy;
 		}

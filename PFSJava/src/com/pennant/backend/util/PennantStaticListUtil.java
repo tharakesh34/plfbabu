@@ -547,6 +547,7 @@ public class PennantStaticListUtil {
 			schCalCodesList.add(new ValueLabel("ADJMDT", Labels.getLabel("label_Adj_To_Maturity")));
 			schCalCodesList.add(new ValueLabel("TILLDATE", Labels.getLabel("label_Till_Date")));
 			schCalCodesList.add(new ValueLabel("ADDTERM", Labels.getLabel("label_Add_Terms")));
+			schCalCodesList.add(new ValueLabel("ADDRECAL", Labels.getLabel("label_Add_Recal")));
 			/*schCalCodesList.add(new ValueLabel("ADDLAST", Labels.getLabel("label_Add_Last")));
 			schCalCodesList.add(new ValueLabel("ADJTERMS", Labels.getLabel("label_Adj_Terms")));*/
 		}

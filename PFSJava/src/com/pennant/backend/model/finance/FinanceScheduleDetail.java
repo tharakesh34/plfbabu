@@ -100,6 +100,10 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	private BigDecimal writeoffPrincipal = BigDecimal.ZERO;
 	private BigDecimal writeoffProfit = BigDecimal.ZERO;
 	
+	private BigDecimal orgPft = BigDecimal.ZERO;
+	private BigDecimal orgPri = BigDecimal.ZERO;
+	private BigDecimal orgEndBal = BigDecimal.ZERO;
+	
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -814,7 +818,6 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	public boolean isRepayComplete() {
     	return repayComplete;
     }
-
 	public void setRepayComplete(boolean repayComplete) {
     	this.repayComplete = repayComplete;
     }
@@ -822,9 +825,30 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	public void setLogKey(long logKey) {
 	    this.logKey = logKey;
     }
-
 	public long getLogKey() {
 	    return logKey;
     }
+
+	public BigDecimal getOrgPft() {
+		return orgPft;
+	}
+	public void setOrgPft(BigDecimal orgPft) {
+		this.orgPft = orgPft;
+	}
+
+	public BigDecimal getOrgPri() {
+		return orgPri;
+	}
+	public void setOrgPri(BigDecimal orgPri) {
+		this.orgPri = orgPri;
+	}
+
+	public BigDecimal getOrgEndBal() {
+		return orgEndBal;
+	}
+	public void setOrgEndBal(BigDecimal orgEndBal) {
+		this.orgEndBal = orgEndBal;
+	}
+	
 
 }

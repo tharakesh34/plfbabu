@@ -313,7 +313,7 @@ public class JdbcSearchProcessor  {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SearchResult searchAndCount(DataSource dataSource, Class<?> searchClass, ISearch search) {
 	
-		if (search == null)
+		if (searchClass == null || search == null)
 			return null;
 
 		SearchResult result = new SearchResult();
