@@ -68,39 +68,40 @@ public class StepPolicyListModelItemRenderer implements ListitemRenderer<StepPol
 			Listcell lc;
 			lc = new Listcell(stepPolicyHeader.getPolicyCode());
 			lc.setParent(item);
+			
 			lc = new Listcell(stepPolicyHeader.getPolicyDesc());
 			lc.setParent(item);
+			
 			lc = new Listcell(stepPolicyHeader.getStepNumber());
 			lc.setParent(item);
-			lc.setParent(item);
-			String tenorSplitPerc = "";
-			if(StringUtils.trimToEmpty(stepPolicyHeader.getTenorSplitPerc()).contains("||")){
-				tenorSplitPerc = stepPolicyHeader.getTenorSplitPerc().substring(0, stepPolicyHeader.getTenorSplitPerc().length()-3);
-				lc = new Listcell(tenorSplitPerc);		
+			
+			if(StringUtils.trimToEmpty(stepPolicyHeader.getTenorSplitPerc()).endsWith("||")){
+				lc = new Listcell(stepPolicyHeader.getTenorSplitPerc().substring(0, stepPolicyHeader.getTenorSplitPerc().length()-3));		
 			}else{
 				lc = new Listcell(stepPolicyHeader.getTenorSplitPerc());	
 			}
 			lc.setParent(item);
-			String rateMargin = "";
-			if(StringUtils.trimToEmpty(stepPolicyHeader.getRateMargin()).contains("||")){
-				 rateMargin = stepPolicyHeader.getRateMargin().substring(0, stepPolicyHeader.getRateMargin().length()-3);
-				 lc = new Listcell(rateMargin);
+			
+			if(StringUtils.trimToEmpty(stepPolicyHeader.getRateMargin()).endsWith("||")){
+				 lc = new Listcell(stepPolicyHeader.getRateMargin().substring(0, stepPolicyHeader.getRateMargin().length()-3));
 			}else{
 				lc = new Listcell(stepPolicyHeader.getRateMargin());
 			}
 			lc.setParent(item);
-			String emiSplitPerc = "";
-			if(StringUtils.trimToEmpty(stepPolicyHeader.getEmiSplitPerc()).contains("||")){
-				emiSplitPerc = stepPolicyHeader.getEmiSplitPerc().substring(0, stepPolicyHeader.getEmiSplitPerc().length()-3);
-				lc = new Listcell(emiSplitPerc);
+			
+			if(StringUtils.trimToEmpty(stepPolicyHeader.getEmiSplitPerc()).endsWith("||")){
+				lc = new Listcell(stepPolicyHeader.getEmiSplitPerc().substring(0, stepPolicyHeader.getEmiSplitPerc().length()-3));
 			}else{
 				lc = new Listcell(stepPolicyHeader.getEmiSplitPerc());
 			}
 			lc.setParent(item);
+			
 			lc = new Listcell(stepPolicyHeader.getRecordStatus());
 			lc.setParent(item);
+			
 			lc = new Listcell(PennantJavaUtil.getLabel(stepPolicyHeader.getRecordType()));
 			lc.setParent(item);
+			
 			item.setAttribute("data", stepPolicyHeader);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onStepPolicyHeaderItemDoubleClicked");
 	}
