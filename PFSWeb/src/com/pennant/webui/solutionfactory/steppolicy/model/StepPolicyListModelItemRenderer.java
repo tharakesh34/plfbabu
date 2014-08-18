@@ -45,6 +45,7 @@ package com.pennant.webui.solutionfactory.steppolicy.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -69,13 +70,32 @@ public class StepPolicyListModelItemRenderer implements ListitemRenderer<StepPol
 			lc.setParent(item);
 			lc = new Listcell(stepPolicyHeader.getPolicyDesc());
 			lc.setParent(item);
-			lc = new Listcell("");
+			lc = new Listcell(stepPolicyHeader.getStepNumber());
 			lc.setParent(item);
-			lc = new Listcell("");		
 			lc.setParent(item);
-			lc = new Listcell("");
+			String tenorSplitPerc = "";
+			if(StringUtils.trimToEmpty(stepPolicyHeader.getTenorSplitPerc()).contains("||")){
+				tenorSplitPerc = stepPolicyHeader.getTenorSplitPerc().substring(0, stepPolicyHeader.getTenorSplitPerc().length()-3);
+				lc = new Listcell(tenorSplitPerc);		
+			}else{
+				lc = new Listcell(stepPolicyHeader.getTenorSplitPerc());	
+			}
 			lc.setParent(item);
-			lc = new Listcell("");
+			String rateMargin = "";
+			if(StringUtils.trimToEmpty(stepPolicyHeader.getRateMargin()).contains("||")){
+				 rateMargin = stepPolicyHeader.getRateMargin().substring(0, stepPolicyHeader.getRateMargin().length()-3);
+				 lc = new Listcell(rateMargin);
+			}else{
+				lc = new Listcell(stepPolicyHeader.getRateMargin());
+			}
+			lc.setParent(item);
+			String emiSplitPerc = "";
+			if(StringUtils.trimToEmpty(stepPolicyHeader.getEmiSplitPerc()).contains("||")){
+				emiSplitPerc = stepPolicyHeader.getEmiSplitPerc().substring(0, stepPolicyHeader.getEmiSplitPerc().length()-3);
+				lc = new Listcell(emiSplitPerc);
+			}else{
+				lc = new Listcell(stepPolicyHeader.getEmiSplitPerc());
+			}
 			lc.setParent(item);
 			lc = new Listcell(stepPolicyHeader.getRecordStatus());
 			lc.setParent(item);

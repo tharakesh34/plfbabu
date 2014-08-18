@@ -65,6 +65,11 @@ public class StepPolicyHeader implements java.io.Serializable {
 	private String policyCode;
 	private String policyDesc;
 	
+	private String stepNumber;
+	private String tenorSplitPerc;
+	private String rateMargin;
+	private String emiSplitPerc;
+	
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -101,6 +106,10 @@ public class StepPolicyHeader implements java.io.Serializable {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("stepPolicyDetails");
+		excludeFields.add("stepNumber");
+		excludeFields.add("tenorSplitPerc");
+		excludeFields.add("rateMargin");
+		excludeFields.add("emiSplitPerc");
 		return excludeFields;
 	}
 	
@@ -278,6 +287,38 @@ public class StepPolicyHeader implements java.io.Serializable {
 	}
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+
+	public String getStepNumber() {
+		return stepNumber;
+	}
+
+	public void setStepNumber(String stepNumber) {
+		this.stepNumber = stepNumber;
+	}
+
+	public String getTenorSplitPerc() {
+		return tenorSplitPerc;
+	}
+
+	public void setTenorSplitPerc(String tenorSplitPerc) {
+		this.tenorSplitPerc = tenorSplitPerc;
+	}
+
+	public String getRateMargin() {
+		return rateMargin;
+	}
+
+	public void setRateMargin(String rateMargin) {
+		this.rateMargin = rateMargin;
+	}
+
+	public String getEmiSplitPerc() {
+		return emiSplitPerc;
+	}
+
+	public void setEmiSplitPerc(String emiSplitPerc) {
+		this.emiSplitPerc = emiSplitPerc;
 	}
 
 	

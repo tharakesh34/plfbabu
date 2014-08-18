@@ -223,18 +223,18 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> implem
 
 		// set the paging parameters
 
-		this.listheader_PolicyCode.setSortAscending(new FieldComparator("finType", true));
-		this.listheader_PolicyCode.setSortDescending(new FieldComparator("finType", false));
-		this.listheader_PolicyDesc.setSortAscending(new FieldComparator("finTypeDesc", true));
-		this.listheader_PolicyDesc.setSortDescending(new FieldComparator("finTypeDesc", false));
-		this.listheader_Steps.setSortAscending(new FieldComparator("finCcy", true));
-		this.listheader_Steps.setSortDescending(new FieldComparator("finCcy", false));
-		this.listheader_TenorSplit.setSortAscending(new FieldComparator("finDaysCalType", true));
-		this.listheader_TenorSplit.setSortDescending(new FieldComparator("finDaysCalType", false));
-		this.listheader_RateStepMargin.setSortAscending(new FieldComparator("finAcType", true));
-		this.listheader_RateStepMargin.setSortDescending(new FieldComparator("finAcType", false));
-		this.listheader_EMISteps.setSortAscending(new FieldComparator("finAcType", true));
-		this.listheader_EMISteps.setSortDescending(new FieldComparator("finAcType", false));
+		this.listheader_PolicyCode.setSortAscending(new FieldComparator("policyCode", true));
+		this.listheader_PolicyCode.setSortDescending(new FieldComparator("policyCode", false));
+		this.listheader_PolicyDesc.setSortAscending(new FieldComparator("policyDesc", true));
+		this.listheader_PolicyDesc.setSortDescending(new FieldComparator("policyDesc", false));
+		this.listheader_Steps.setSortAscending(new FieldComparator("stepNumber", true));
+		this.listheader_Steps.setSortDescending(new FieldComparator("stepNumber", false));
+		this.listheader_TenorSplit.setSortAscending(new FieldComparator("tenorSplitPerc", true));
+		this.listheader_TenorSplit.setSortDescending(new FieldComparator("tenorSplitPerc", false));
+		this.listheader_RateStepMargin.setSortAscending(new FieldComparator("rateMargin", true));
+		this.listheader_RateStepMargin.setSortDescending(new FieldComparator("rateMargin", false));
+		this.listheader_EMISteps.setSortAscending(new FieldComparator("emiSplitPerc", true));
+		this.listheader_EMISteps.setSortDescending(new FieldComparator("emiSplitPerc", false));
 
 		if (isWorkFlowEnabled()) {
 			if (isFirstTask()) {
@@ -454,11 +454,15 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> implem
 
 		this.searchObj.addField("PolicyCode");
 		this.searchObj.addField("PolicyDesc");
+		this.searchObj.addField("StepNumber");
+		this.searchObj.addField("TenorSplitPerc");
+		this.searchObj.addField("RateMargin");
+		this.searchObj.addField("EMISplitPerc");
 		this.searchObj.addField("RecordStatus");
 		this.searchObj.addField("RecordType");
 		
 		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("StepPolicyHeader_View");
+			this.searchObj.addTabelName("StepPolicyHeaderDetails_View");
 
 			if(this.moduleType==null){
 				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
@@ -475,9 +479,9 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> implem
 			approvedList=true;
 		}
 		if(approvedList){
-			this.searchObj.addTabelName("StepPolicyHeader_AView");
+			this.searchObj.addTabelName("StepPolicyHeaderDetails_AView");
 		}else{
-			this.searchObj.addTabelName("StepPolicyHeader_View");
+			this.searchObj.addTabelName("StepPolicyHeaderDetails_View");
 		}
 
 		//Policy Code
