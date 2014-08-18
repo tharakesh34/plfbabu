@@ -8,7 +8,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zkplus.spring.SpringUtil;
@@ -17,8 +16,6 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.service.PagedListService;
-import com.pennant.search.Field;
-import com.pennant.search.Filter;
  
 
 public class PennantApplicationUtil {
@@ -168,6 +165,8 @@ public class PennantApplicationUtil {
 				returnResult = returnResult.replaceAll("[0]*$", "");
 				if(returnResult.endsWith(".")){
 					returnResult = returnResult + "00";
+				}else if(returnResult.contains(".") && returnResult.substring(returnResult.indexOf('.')+1).length() == 1){
+					returnResult = returnResult + "0";
 				}
 				return returnResult;
 			} else {
