@@ -51,7 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -1349,10 +1348,10 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		String old_StartDate = "";
 		String new_StartDate = "";
 		if (this.oldVar_StartDate != null) {
-			old_StartDate = DateUtil.formatDate(this.oldVar_StartDate, PennantConstants.dateFormat);
+			old_StartDate = DateUtility.formatDate(this.oldVar_StartDate, PennantConstants.dateFormat);
 		}
 		if (this.startDate.getValue() != null) {
-			new_StartDate = DateUtil.formatDate(this.startDate.getValue(), PennantConstants.dateFormat);
+			new_StartDate = DateUtility.formatDate(this.startDate.getValue(), PennantConstants.dateFormat);
 		}
 		if (!StringUtils.trimToEmpty(old_StartDate).equals(StringUtils.trimToEmpty(new_StartDate))) {
 			return true;
@@ -1366,10 +1365,10 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		String old_DeadLine = "";
 		String new_DeadLine = "";
 		if (this.oldVar_DeadLine != null) {
-			old_DeadLine = DateUtil.formatDate(this.oldVar_DeadLine, PennantConstants.dateFormat);
+			old_DeadLine = DateUtility.formatDate(this.oldVar_DeadLine, PennantConstants.dateFormat);
 		}
 		if (this.deadLine.getValue() != null) {
-			new_DeadLine = DateUtil.formatDate(this.deadLine.getValue(), PennantConstants.dateFormat);
+			new_DeadLine = DateUtility.formatDate(this.deadLine.getValue(), PennantConstants.dateFormat);
 		}
 		if (!StringUtils.trimToEmpty(old_DeadLine).equals(StringUtils.trimToEmpty(new_DeadLine))) {
 			return true;
@@ -1380,10 +1379,10 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		String old_EstablishedDate = "";
 		String new_EstablishedDate = "";
 		if (this.oldVar_EstablishedDate != null) {
-			old_EstablishedDate = DateUtil.formatDate(this.oldVar_EstablishedDate, PennantConstants.dateFormat);
+			old_EstablishedDate = DateUtility.formatDate(this.oldVar_EstablishedDate, PennantConstants.dateFormat);
 		}
 		if (this.establishedDate.getValue() != null) {
-			new_EstablishedDate = DateUtil.formatDate(this.establishedDate.getValue(), PennantConstants.dateFormat);
+			new_EstablishedDate = DateUtility.formatDate(this.establishedDate.getValue(), PennantConstants.dateFormat);
 		}
 		if (!StringUtils.trimToEmpty(old_EstablishedDate).equals(StringUtils.trimToEmpty(new_EstablishedDate))) {
 			return true;
@@ -1409,10 +1408,10 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		String old_NextReviewDate = "";
 		String new_NextReviewDate = "";
 		if (this.oldVar_NextReviewDate != null) {
-			old_NextReviewDate = DateUtil.formatDate(this.oldVar_NextReviewDate, PennantConstants.dateFormat);
+			old_NextReviewDate = DateUtility.formatDate(this.oldVar_NextReviewDate, PennantConstants.dateFormat);
 		}
 		if (this.nextReviewDate.getValue() != null) {
-			new_NextReviewDate = DateUtil.formatDate(this.nextReviewDate.getValue(), PennantConstants.dateFormat);
+			new_NextReviewDate = DateUtility.formatDate(this.nextReviewDate.getValue(), PennantConstants.dateFormat);
 		}
 		if (!StringUtils.trimToEmpty(old_NextReviewDate).equals(StringUtils.trimToEmpty(new_NextReviewDate))) {
 			return true;

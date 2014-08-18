@@ -50,7 +50,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -73,6 +72,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
@@ -1081,10 +1081,10 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		String old_EstablishDate = "";
 		String new_EstablishDate ="";
 		if (this.oldVar_EstablishDate!=null){
-			old_EstablishDate=DateUtil.formatDate(this.oldVar_EstablishDate,PennantConstants.dateFormat);
+			old_EstablishDate=DateUtility.formatDate(this.oldVar_EstablishDate,PennantConstants.dateFormat);
 		}
 		if (this.establishDate.getValue()!=null){
-			new_EstablishDate=DateUtil.formatDate(this.establishDate.getValue(),PennantConstants.dateFormat);
+			new_EstablishDate=DateUtility.formatDate(this.establishDate.getValue(),PennantConstants.dateFormat);
 		}
 		if (!StringUtils.trimToEmpty(old_EstablishDate).equals(StringUtils.trimToEmpty(new_EstablishDate))) {
 			return true;

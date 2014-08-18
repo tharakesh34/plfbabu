@@ -53,7 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -1023,10 +1022,10 @@ Serializable {
 		String old_startDate = "";
 		String new_startDate = "";
 		if (this.oldVar_startDate != null) {
-			old_startDate = DateUtil.formatDate(this.oldVar_startDate,PennantConstants.dateFormat);
+			old_startDate = DateUtility.formatDate(this.oldVar_startDate,PennantConstants.dateFormat);
 		}
 		if (this.startDate.getValue() != null) {
-			new_startDate = DateUtil.formatDate(this.startDate.getValue(),PennantConstants.dateFormat);
+			new_startDate = DateUtility.formatDate(this.startDate.getValue(),PennantConstants.dateFormat);
 		}
 		if (!StringUtils.trimToEmpty(old_startDate).equals(StringUtils.trimToEmpty(new_startDate))) {
 			return true;
@@ -1034,10 +1033,10 @@ Serializable {
 		String old_maturityDate = "";
 		String new_maturityDate = "";
 		if (this.oldVar_maturityDate != null) {
-			old_maturityDate = DateUtil.formatDate(this.oldVar_maturityDate,PennantConstants.dateFormat);
+			old_maturityDate = DateUtility.formatDate(this.oldVar_maturityDate,PennantConstants.dateFormat);
 		}
 		if (this.maturityDate.getValue() != null) {
-			new_maturityDate = DateUtil.formatDate(this.maturityDate.getValue(), PennantConstants.dateFormat);
+			new_maturityDate = DateUtility.formatDate(this.maturityDate.getValue(), PennantConstants.dateFormat);
 		}
 		if (!StringUtils.trimToEmpty(old_maturityDate).equals(StringUtils.trimToEmpty(new_maturityDate))) {
 			return true;

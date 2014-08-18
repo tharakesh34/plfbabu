@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -75,6 +74,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -848,10 +848,10 @@ public class GoodsLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		String old_Addtional5 = "";
 		String new_Addtional5 ="";
 		if (this.oldVar_Addtional5!=null){
-			old_Addtional5=DateUtil.formatDate(this.oldVar_Addtional5,PennantConstants.dateFormat);
+			old_Addtional5=DateUtility.formatDate(this.oldVar_Addtional5,PennantConstants.dateFormat);
 		}
 		if (this.addtional5.getValue()!=null){
-			new_Addtional5=DateUtil.formatDate(this.addtional5.getValue(),PennantConstants.dateFormat);
+			new_Addtional5=DateUtility.formatDate(this.addtional5.getValue(),PennantConstants.dateFormat);
 		}
 		if (!StringUtils.trimToEmpty(old_Addtional5).equals(StringUtils.trimToEmpty(new_Addtional5))) {
 			return true;
@@ -859,10 +859,10 @@ public class GoodsLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		String old_Addtional6 = "";
 		String new_Addtional6 ="";
 		if (this.oldVar_Addtional6!=null){
-			old_Addtional6=DateUtil.formatDate(this.oldVar_Addtional6,PennantConstants.dateFormat);
+			old_Addtional6=DateUtility.formatDate(this.oldVar_Addtional6,PennantConstants.dateFormat);
 		}
 		if (this.addtional6.getValue()!=null){
-			new_Addtional6=DateUtil.formatDate(this.addtional6.getValue(),PennantConstants.dateFormat);
+			new_Addtional6=DateUtility.formatDate(this.addtional6.getValue(),PennantConstants.dateFormat);
 		}
 		if (!StringUtils.trimToEmpty(old_Addtional6).equals(StringUtils.trimToEmpty(new_Addtional6))) {
 			return true;
