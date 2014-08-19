@@ -5768,9 +5768,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		} else {
 			this.gb_SteppingDetails.setVisible(false);
 		}
-		
+		setStepFinanceDetails();
 		logger.debug("Leaving" + event.toString());
 	}
+	
 
 	/** To Enable or Disable GracePeriod Tab Profit Capitalize Frequency. */
 	private void doCheckGrcPftCpzFrq() {
@@ -5856,7 +5857,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.btnSearchFinIndBaseRate.setDisabled(true);
 		}
 	}
-
+/*
+ * Method for setting default values for Step Finance Details
+ */
+	public void setStepFinanceDetails(){
+		logger.debug("Entering ");
+		this.stepFinance.setChecked(getFinanceType().isStepFinance());
+		this.steppingMandatory.setChecked(getFinanceType().isSteppingMandatory());
+		this.allowManualSteps.setChecked(getFinanceType().isAlwManualSteps());
+		fillComboBox(this.dftStepPolicy, StringUtils.trimToEmpty(getFinanceType().getDftStepPolicy()), this.stepPolicies, "");
+		this.lovDescStepPolicyCodename.setValue(getFinanceType().getAlwdStepPolicies());
+		logger.debug("Leaving ");
+	}
+	
 	/** To Enable or Disable Schedule Tab Profit Capitalize Frequency. */
 	private void doCheckPftCpzFrq() {
 		logger.debug("Entering");
