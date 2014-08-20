@@ -126,10 +126,7 @@
 												id="label_FinanceTypeDialog_FinCcy"
 												value="${c:l('label_FinanceTypeDialog_FinCcy.value')}" />
 											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="finCcy" width="27px" visible="false" />											
-												<textbox id="lovDescFinCcyName" width="240px"/>
-												<button id="btnSearchFinCcy" image="/images/icons/LOVSearch.png" height="24px" />											
+												<extendedcombobox id="finCcy" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinDaysCalType"
@@ -142,10 +139,7 @@
 										<row visible="true">
 											<label id="label_FinanceTypeDialog_FinAcType" value="${c:l('label_FinanceTypeDialog_FinAcType.value')}" />
 											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="finAcType" width="24px" visible="false" />											
-												<textbox id="lovDescFinAcTypeName" width="240px" readonly="true" disabled="true"/>
-												<button id="btnSearchFinAcType" image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAcType" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinIsOpenNewFinAc"
@@ -161,30 +155,13 @@
 												id="label_FinanceTypeDialog_PftPayAcType"
 												value="${c:l('label_FinanceTypeDialog_PftPayAcType.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="pftPayAcType" width="24px" visible="false" />
-												<textbox
-													id="lovDescPftPayAcTypeName" width="250px" readonly="true" />
-												<button
-													id="btnSearchPftPayAcType"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="pftPayAcType" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinProvisionAcType"
 												value="${c:l('label_FinanceTypeDialog_FinProvisionAcType.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finProvisionAcType" width="10px" visible="false" />
-												<textbox
-													id="lovDescFinProvisionAcTypeName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinProvisionAcType"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finProvisionAcType" />
 											</hbox>
 										</row>
 										<row>
@@ -192,16 +169,7 @@
 												id="label_FinanceTypeDialog_FinSuspAcType"
 												value="${c:l('label_FinanceTypeDialog_FinSuspAcType.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finSuspAcType" width="10px" visible="false" />
-												<textbox
-													id="lovDescFinSuspAcTypeName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinSuspAcType"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finSuspAcType" />
 											</hbox>
 										</row>
 										<row visible="false">
@@ -380,15 +348,7 @@
 												id="label_FinanceTypeDialog_FinDivision"
 												value="${c:l('label_FinanceTypeDialog_FinDivision.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finDivision" width="10px" visible="false" />
-												<textbox
-													id="lovDescFinDivisionName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinDivision"
-													image="/images/icons/LOVSearch.png" height="24px" />
+											<extendedcombobox id="finDivision" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinIsActive"
@@ -443,29 +403,13 @@
 												id="label_FinanceTypeDialog_FinGrcBaseRate"
 												value="${c:l('label_FinanceTypeDialog_FinGrcBaseRate.value')}" />
 											<hbox>
-												<space spacing="2px" />
-												<textbox
-													id="finGrcBaseRate" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinGrcBaseRateName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinGrcBaseRate"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finGrcBaseRate" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinGrcSplRate"
 												value="${c:l('label_FinanceTypeDialog_FinGrcSplRate.value')}" />
 											<hbox>
-												<space spacing="2px" />
-												<textbox
-													id="finGrcSplRate" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinGrcSplRateName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinGrcSplRate"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finGrcSplRate" />
 											</hbox>
 										</row>
 										<row>
@@ -667,29 +611,13 @@
 													id="label_FinanceTypeDialog_FinBaseRate"
 													value="${c:l('label_FinanceTypeDialog_FinBaseRate.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<textbox
-														id="finBaseRate" width="200px" visible="false" />
-													<textbox
-														id="lovDescFinBaseRateName" width="250px" readonly="true" />
-													<button
-														id="btnSearchFinBaseRate"
-														image="/images/icons/LOVSearch.png" height="24px" />
+													<extendedcombobox id="finBaseRate" />
 												</hbox>
 												<label
 													id="label_FinanceTypeDialog_FinSplRate"
 													value="${c:l('label_FinanceTypeDialog_FinSplRate.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<textbox
-														id="finSplRate" width="200px" visible="false" />
-													<textbox
-														id="lovDescFinSplRateName" width="250px" readonly="true" />
-													<button
-														id="btnSearchFinSplRate"
-														image="/images/icons/LOVSearch.png" height="24px" />
+													<extendedcombobox id="finSplRate" />
 												</hbox>
 											</row>
 											<row>
@@ -856,16 +784,7 @@
 													id="label_FinanceTypeDialog_FinIndBaseRate"
 													value="${c:l('label_FinanceTypeDialog_FinIndBaseRate.value')}" />
 												<hbox>
-													<space spacing="2px"
-														id="space_finIndBaseRate" />
-													<textbox
-														id="finIndBaseRate" width="72px" visible="false" />
-													<textbox
-														id="lovDescFinIndBaseRateName" width="250px"
-														readonly="true" />
-													<button
-														id="btnSearchFinIndBaseRate"
-														image="/images/icons/LOVSearch.png" height="24px" />
+													<extendedcombobox id="finIndBaseRate" />
 												</hbox>
 											</row>
 
@@ -1039,31 +958,13 @@
 												id="label_FinanceTypeDialog_FinAEAddDsbOD"
 												value="${c:l('label_FinanceTypeDialog_FinAEAddDsbOD.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finAEAddDsbOD" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEAddDsbODName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAEAddDsbOD"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEAddDsbOD" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinAEAddDsbFD"
 												value="${c:l('label_FinanceTypeDialog_FinAEAddDsbFD.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finAEAddDsbFD" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEAddDsbFDName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAEAddDsbFD"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEAddDsbFD" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1071,30 +972,13 @@
 												id="label_FinanceTypeDialog_FinAEAddDsbFDA"
 												value="${c:l('label_FinanceTypeDialog_FinAEAddDsbFDA.value')}" />
 											<hbox>
-												<space spacing="2px"
-													id="space_finAEAddDsbFDA" sclass="mandatory" />
-												<textbox
-													id="finAEAddDsbFDA" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEAddDsbFDAName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAEAddDsbFDA"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEAddDsbFDA" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinMAmz"
 												value="${c:l('label_FinanceTypeDialog_FinMAmz.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="" />
-												<textbox id="finMAmz"
-													width="72px" visible="false" />
-												<textbox
-													id="lovDescFinMAmzName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinMAmz" image="/images/icons/LOVSearch.png"
-													height="24px" />
+												<extendedcombobox id="finMAmz" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1102,29 +986,13 @@
 												id="label_FinanceTypeDialog_FinAEAmzNorm"
 												value="${c:l('label_FinanceTypeDialog_FinAEAmzNorm.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finAEAmzNorm" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEAmzNormName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinAEAmzNorm"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEAmzNorm" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinAEAmzSusp"
 												value="${c:l('label_FinanceTypeDialog_FinAEAmzSusp.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finAEAmzSusp" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEAmzSuspName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinAEAmzSusp"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEAmzSusp" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1132,27 +1000,13 @@
 												id="label_FinanceTypeDialog_FinAEToNoAmz"
 												value="${c:l('label_FinanceTypeDialog_FinAEToNoAmz.value')}" />
 											<hbox>
-												<space spacing="2px" />
-												<textbox
-													id="finAEToNoAmz" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEToNoAmzName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinAEToNoAmz"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEToNoAmz" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinToAmz"
 												value="${c:l('label_FinanceTypeDialog_FinToAmz.value')}" />
 											<hbox>
-												<space spacing="2px" />
-												<textbox id="finToAmz"
-													width="72px" visible="false" />
-												<textbox
-													id="lovDescFinToAmzName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinToAmz" image="/images/icons/LOVSearch.png"
-													height="24px" />
+												<extendedcombobox id="finToAmz" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1160,29 +1014,13 @@
 												id="label_FinanceTypeDialog_FinAERateChg"
 												value="${c:l('label_FinanceTypeDialog_FinAERateChg.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finAERateChg" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAERateChgName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinAERateChg"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAERateChg" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinAERepay"
 												value="${c:l('label_FinanceTypeDialog_FinAERepay.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox id="finAERepay"
-													width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAERepayName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinAERepay"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAERepay" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1190,29 +1028,13 @@
 												id="label_FinanceTypeSearch_FinLatePayRule"
 												value="${c:l('label_FinanceTypeDialog_FinLatePayRule.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finLatePayRule" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinLatePayRuleName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinLatePayRule"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finLatePayRule" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinInstDate"
 												value="${c:l('label_FinanceTypeDialog_FinInstDate.value')}" />
 											<hbox>
-												<space spacing="2px" />
-												<textbox
-													id="finInstDate" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinInstDateName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinInstDate"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finInstDate" />
 											</hbox>
 										</row>
 										<row>
@@ -1220,30 +1042,13 @@
 												id="label_FinanceTypeDialog_FinAEGraceEnd"
 												value="${c:l('label_FinanceTypeDialog_FinAEGraceEnd.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="" />
-												<textbox
-													id="finAEGraceEnd" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEGraceEndName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAEGraceEnd"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEGraceEnd" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinProvision"
 												value="${c:l('label_FinanceTypeDialog_FinProvision.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finProvision" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinProvisionName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinProvision"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finProvision" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1251,31 +1056,13 @@
 												id="label_FinanceTypeDialog_FinSchdChange"
 												value="${c:l('label_FinanceTypeDialog_FinSchdChange.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finSchdChange" width="72px" visible="false" />
-												<textbox
-													id="lovDescfinSchdChangeName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinSchdChange"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finSchdChange" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinDepreciationRule"
 												value="${c:l('label_FinanceTypeDialog_FinDepreciationRule.value')}" />
 											<hbox>
-												<space spacing="2px"
-													id="space_finDepreciationRule" sclass="mandatory" />
-												<textbox
-													id="finDepreciationRule" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinDepreciationName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinDepreciation"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finDepreciationRule" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1283,29 +1070,13 @@
 												id="label_FinanceTypeDialog_FinDeffreq"
 												value="${c:l('label_FinanceTypeDialog_FinDeffreq.value')}" />
 											<hbox>
-												<space spacing="2px"
-													id="space_finDeffreq" />
-												<textbox id="finDeffreq"
-													width="72px" visible="false" />
-												<textbox
-													id="lovDescFinDeffreqName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinDeffreq"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finDeffreq" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinDefRepay"
 												value="${c:l('label_FinanceTypeDialog_FinDefRepay.value')}" />
 											<hbox>
-												<space spacing="2px"
-													id="space_finDefRepay" />
-												<textbox
-													id="finDefRepay" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinDefRepayName" width="250px" readonly="true" />
-												<button
-													id="btnSearchFinDefRepay"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finDefRepay" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1313,15 +1084,7 @@
 												id="label_FinanceTypeSearch_FinCapitalize"
 												value="${c:l('label_FinanceTypeSearch_FinCapitalize.value')}" />
 											<hbox>
-												<space spacing="2px" />
-												<textbox
-													id="finAECapitalize" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAECapitalizeName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAECapitalize"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAECapitalize" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1329,31 +1092,13 @@
 												id="label_FinanceTypeDialog_FinAEWriteOff"
 												value="${c:l('label_FinanceTypeDialog_FinAEWriteOff.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="" />
-												<textbox
-													id="finAEWriteOff" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEWriteOffName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAEWriteOff"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEWriteOff" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinAEWriteOffBK"
 												value="${c:l('label_FinanceTypeDialog_FinAEWriteOffBK.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="" />
-												<textbox
-													id="finAEWriteOffBK" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEWriteOffBKName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAEWriteOffBK"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEWriteOffBK" />
 											</hbox>
 										</row>
 										<row id="row_ProgCliamEvent"
@@ -1362,30 +1107,13 @@
 												id="label_FinanceTypeSearch_FinAEMaturity"
 												value="${c:l('label_FinanceTypeDialog_FinAEMaturity.value')}" />
 											<hbox>
-												<space spacing="2px" />
-												<textbox
-													id="finAEMaturity" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEMaturityName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAEMaturity"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEMaturity" />
 											</hbox>
 											<label
 												id="label_FinanceTypeSearch_FinAEProgClaim"
 												value="${c:l('label_FinanceTypeDialog_FinAEProgClaim.value')}" visible="false"/>
 											<hbox visible="false">
-												<space spacing="2px"
-													id="space_finAEProgClaim" />
-												<textbox
-													id="finAEProgClaim" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEProgClaimName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAEProgClaim"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEProgClaim" />
 											</hbox>
 										</row>
 										<row visible="true">
@@ -1393,16 +1121,7 @@
 												id="label_FinanceTypeDialog_FinAEEarlySettle"
 												value="${c:l('label_FinanceTypeDialog_FinAEEarlySettle.value')}" />
 											<hbox>
-												<space spacing="2px"
-													sclass="mandatory" />
-												<textbox
-													id="finAEEarlySettle" width="72px" visible="false" />
-												<textbox
-													id="lovDescFinAEEarlySettleName" width="250px"
-													readonly="true" />
-												<button
-													id="btnSearchFinAEEarlySettle"
-													image="/images/icons/LOVSearch.png" height="24px" />
+												<extendedcombobox id="finAEEarlySettle" />
 											</hbox>
 										</row>
                                        <!-- Un visible fileds -->
