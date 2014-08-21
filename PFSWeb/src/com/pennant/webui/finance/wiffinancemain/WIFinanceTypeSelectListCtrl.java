@@ -78,10 +78,12 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.smtmasters.PFSParameter;
+import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ScoringDetailService;
+import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
@@ -120,10 +122,13 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 	private transient WIFFinanceMainDialogCtrl wifFinanceMainDialogCtrl;
 	private transient WIFFinanceMainListCtrl wIFFinanceMainListCtrl;
 	private transient FinanceDetail financeDetail;
+	
 	private transient FinanceDetailService financeDetailService;
 	private transient CustomerIncomeService customerIncomeService;
 	private transient EligibilityDetailService eligibilityDetailService;
 	private transient ScoringDetailService scoringDetailService;
+	private transient StepPolicyService stepPolicyService;
+	
 	private FinanceType financeType;
 	private WIFCustomer wifcustomer = new WIFCustomer();
 	private String loanType = "";
@@ -415,6 +420,12 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 			this.financeDetail.setNewRecord(true);
 			this.financeDetail.getFinScheduleData().getFinanceMain().setAllowGrcPeriod(false);
 			
+			//Step Policy Details
+			if(financeType.isStepFinance()){
+				List<StepPolicyDetail> stepPolicyList = getStepPolicyService().getStepPolicyDetailsById(financeType.getDftStepPolicy());
+				this.financeDetail.getFinScheduleData().resetStepPolicyDetails(stepPolicyList);
+			}
+			
 			//Fetch Fee Charge Details List
 			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 			this.financeDetail.setFeeCharges(getFinanceDetailService().getFeeRuleDetails(this.financeDetail.getFinScheduleData().getFinanceType(), 
@@ -534,6 +545,14 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 	}
 	public void setScoringDetailService(ScoringDetailService scoringDetailService) {
 		this.scoringDetailService = scoringDetailService;
+	}
+
+	public StepPolicyService getStepPolicyService() {
+		return stepPolicyService;
+	}
+
+	public void setStepPolicyService(StepPolicyService stepPolicyService) {
+		this.stepPolicyService = stepPolicyService;
 	}
 	
 }
