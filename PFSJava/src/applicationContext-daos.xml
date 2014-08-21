@@ -3729,6 +3729,7 @@
 		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
 		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
+		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		
 		<!-- Services -->	
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />		
@@ -4182,6 +4183,14 @@
 
 	<bean id="finFeeChargesDAO"
 		class="com.pennant.backend.dao.rulefactory.impl.FinFeeChargesDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!--============ Step Finance Details ============== -->
+
+	<bean id="financeStepDetailDAO"
+		class="com.pennant.backend.dao.financemanagement.impl.FinanceStepDetailDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
