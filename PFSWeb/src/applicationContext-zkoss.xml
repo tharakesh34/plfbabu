@@ -2026,7 +2026,7 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 	</bean>
 
-<!--============ Step Policy  Details ============== -->
+	<!--============ Step Policy  Details ============== -->
 
 	 <bean id="stepPolicyListCtrl"
 		class="com.pennant.webui.solutionfactory.steppolicy.StepPolicyListCtrl"
@@ -2422,7 +2422,17 @@
 		<property name="accountsService" ref="accountsService" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 	</bean>
-
+	
+	<!--============ Step Detail Detail ============== -->
+	
+	<bean id="stepDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl"
+		parent="basisListCtrl" scope="prototype" />
+	
+	<bean id="finStepPolicyDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.stepfinance.FinStepPolicyDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
+		
  	<!--============ Finance Fee Detail ============== -->
 
 	<bean id="feeDetailsCtrl"
@@ -3634,6 +3644,7 @@
 		class="com.pennant.webui.finance.wiffinancemain.WIFFinanceMainDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="stepPolicyService" ref="stepPolicyService" />
 	</bean>
 
 	<bean id="wIFFinanceMainSearchCtrl"
@@ -3647,6 +3658,7 @@
 		<property name="customerIncomeService" ref="customerIncomeService" />
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="scoringDetailService" ref="finScoringDetailService" />
+		<property name="stepPolicyService" ref="stepPolicyService" />
 	</bean>
 	
 	<!--============ WhatIf Murabaha Finance Main Details ============== -->
