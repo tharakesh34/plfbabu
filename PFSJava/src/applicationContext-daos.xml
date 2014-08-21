@@ -6198,6 +6198,14 @@
 		<property name="dailyDownloadProcess" ref="dailyDownloadProcess" />
 	</bean>
 	
+	<bean name="hostStatusEnquiryService" class="com.pennant.Interface.service.impl.HostStatusEnquiryServiceImpl">
+		<property name="hostStatusEnquiryProcess" ref="hostStatusEnquiryProcess" />
+	</bean>
+	
+	<bean id="hostStatusUtil"  class="com.pennant.app.util.HostStatusUtil" >
+		<property name="hostStatusEnquiryService" ref="hostStatusEnquiryService" />
+	</bean> 
+	
   	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl" >
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>

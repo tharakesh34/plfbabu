@@ -55,5 +55,9 @@
 	<bean id="uploadProfitDetailProcess" class="com.pennant.equation.service.impl.UploadProfitDetailProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
+	
+	<bean id="hostStatusEnquiryProcess" class="com.pennant.equation.service.impl.HostStatusEnquiryProcessImpl">
+			<property name="hostConnection" ref="hostConnection" />
+	</bean>
 
 </beans>

@@ -19,116 +19,84 @@
 		<checkbox id="CBtreeMenu" checked="true" visible="false" />
 
 		<borderlayout id="borderlayoutMain" height="100%">
-			<north id="borderlayoutMainNorth" border="none"
-				height="50px" splittable="false"
-				style="background-color:#FCFCFC;">
-
+			<north id="borderlayoutMainNorth" border="none" height="54px" style="background-color:#FCFCFC;">
 				<div id="div1">
-					<hbox pack="stretch" width="100%">
-						<div id="divNo" align="left"
-							style="padding: 1px; ">
-							<image
-								src="/images/Pennant/PLFSmallLogo.png" />
+					<hbox pack="stretch" width="100%" widths="200px,*,200px" style="horizental-align:middle;">
+						<div id="divNo" align="left" style="padding: 1px; ">
+							<image src="/images/Pennant/PLFSmallLogo.png" width="150px" height="53px" align="left" style="margin-left:2px; margin-top:0px margin-bottom:2px"/>
 						</div>
-
 						<div align="left" style="margin-top:8px;">
-							<label id="label_AppName"
-								style="font-size:22px; color: #FF4500;font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;">
-							</label>
+							<label id="label_AppName" style="font-size:22px; color: #FF4500;font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;"/>
 						</div>
-						<window id="winUserBar" apply="${userBarCtrl}"
-							border="none" width="100%" height="100%">
-							<div align="right" style="padding: 3px; ">
+						<window id="winUserBar" apply="${userBarCtrl}" border="none" width="100%" height="100%">
+							<div align="right" style="padding: 3px;">
 								<hbox>
 									<vbox align="center" sclass="vbox_Userbar">
-										<label id="label_currentDate"
-											value="Date" sclass = "label_UserBar">
-										</label>
-										<label id="label_currentTime"
-											value="Time" sclass = "label_UserBar">
-										</label>
+										<label id="label_currentDate" value="Date" sclass = "label_UserBar"/>
+										<label id="label_currentTime" value="Time" sclass = "label_UserBar"/>							
 									</vbox>
-
 									<vbox align="center" sclass ="vbox_Userbar">
-										<label
-											value=" Branch/Department"
-											sclass = "label_UserBar">
-										</label>
-										<label id="label_branch"
-											value="0005/ STD"
-											sclass = "label_UserBar">
-										</label>
+										<label value=" Branch/Department" sclass = "label_UserBar"/>
+										<label id="label_branch" value="0005/ STD" sclass = "label_UserBar"/>
 									</vbox>
-									<menubar vflex="2" sclass="menubar_userbar" autodrop="false" >
-										<menu id = "menu_user"  sclass="menu_Userbar" 
-											  label="Maker">
-											<menupopup >
-												<menuitem  id= "menuitem_changePasssword"
-													label="Change Password"   />
-												<menuitem id="menuitem_logout"
-													label="Log Out" image="/images/icons/logoff.png" />
+									<menubar vflex="2" sclass="menubar_userbar" autodrop="false">
+										<menu id = "menu_user"  sclass="menu_Userbar"  label="Maker" >
+											<menupopup>
+												<menuitem  id= "menuitem_changePasssword" label="Change Password"/>
+												<menuitem id="menuitem_logout" label="Log Out" image="/images/icons/logoff.png"/>
 											</menupopup>
 										</menu>
 									</menubar>
 								</hbox>
 							</div>
 							<timer id="timer" delay="1000"
-								repeats="true">
-								<attribute name="onTimer">
-								    Date date = new Date();
-									Date appDate = com.pennant.app.util.DateUtility.getDBDate(com.pennant.app.util.SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
-									java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("dd/MMM/yyyy");
-									label_currentDate.setValue(dateFormat.format(appDate));
-									dateFormat = new java.text.SimpleDateFormat("HH:mm:ss");
-									label_currentTime.setValue(dateFormat.format(date));
-								</attribute>
-							</timer>
-						</window>
+									repeats="true">
+									<attribute name="onTimer">
+										Date date = new Date();
+										java.text.DateFormat dateFormat = new java.text.SimpleDateFormat(
+												"dd/MMM/yyyy");
+										label_currentDate.setValue(dateFormat.format(date));
+										dateFormat = new java.text.SimpleDateFormat("HH:mm:ss");
+										label_currentTime.setValue(dateFormat.format(date));
+										
+										if (com.pennant.app.util.HostStatusUtil.getHostStatus("PFF")) {
+											  if(winMessageBar.getChildren().contains("hostStatus")){
+											  Image image = (Image)winMessageBar.getFellowIfAny("hostStatus");
+											  image.setSrc("//images//Pennant//HostUp.jpg");
+											  }
+										} else {
+										  image.setSrc("//images//Pennant//HostDown.jpg");
+										}
+									</attribute>
+						</timer>
+					</window>
 					</hbox>
 				</div>
 			</north>
 
 			<!-- MAIN MENU AREA -->
-			<west id="west" border="0" margins="2,0,0,1" size="240px"
-				collapsible="true" style="padding:5px" flex="false" minsize="110"
-				splittable="true" autoscroll="true">
-				<div id="divWest"
-					style="align:center;margin-left:70px;">
-					<image src="/images/Pennant/Loading.gif"
-						height="38px" />
+			<west id="west" border="none" margins="2,0,0,1" size="240px" style="align:left;overflow:auto;" vflex="1" hflex="1">
+				<div id="divWest" style="align:center;margin-left:70px;">
+					<image src="/images/Pennant/Loading.gif" height="38px" />
 				</div>
 			</west>
 
 			<!-- MODULE CONTENT AREA -->
-			<center id="center" border="none" margins="2,0,0,1"
-				flex="true" autoscroll="false" style="padding: 5px">
+			<center id="center" border="none" margins="2,0,0,1" flex="true" autoscroll="false">
 				<div id="divCenter">
-
-					<groupbox id="groupbox_menu" mold="3d" height="100%"
-						contentSclass="groupbox-cnt-noborder" >
-
-
-						<tabbox id="tabBoxIndexCenter" width="100%"
-							height="100%">
-							<tabs id="tabsIndexCenter"></tabs>
-						 
-							<tabpanels id="tabpanelsBoxIndexCenter">
-							</tabpanels>
+					<groupbox id="groupbox_menu" mold="3d" height="100%">
+						<tabbox id="tabBoxIndexCenter" width="100%" height="100%">
+							<tabs id="tabsIndexCenter"/>						 
+								<tabpanels id="tabpanelsBoxIndexCenter"/>
 						</tabbox>
 					</groupbox>
 
 				</div>
 			</center>
 
-			<east border="none" margins="0,0,0,0" size="0%">
-				<div id="divEast">EAST</div>
-			</east>
-
 			<!-- STATUS BAR AREA -->
-					<south id="south" border="none" height="30px"
-				style="float: left; padding: 0px" splittable="false">
-				<div id="divSouth" style="float: left; padding: 0px"
-					width="100%">
+			<south id="south" border="none">
+				<div id="divSouth" 	width="100%">
 					<!-- The MessageBar. Comps are created in the Controller -->
 					<window id="winMessageBar" apply="${messageBarCtrl}"
 						border="none" width="100%" height="30px" />

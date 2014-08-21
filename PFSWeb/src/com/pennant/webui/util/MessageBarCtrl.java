@@ -16,6 +16,7 @@ import org.zkoss.zul.Column;
 import org.zkoss.zul.Columns;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
@@ -26,60 +27,13 @@ import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
 import com.pennant.backend.service.messages.MessagesService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.policy.model.UserImpl;
-/**
- * =======================================================================<br>
- * MessageBarController. <br>
- * =======================================================================<br>
- * Works with the EventQueues mechanism of zk 5.x. ALl needed components are
- * created in this class. In the zul-template declare only this controller with
- * 'apply' to a winMessageBar window component.<br>
- * This MessageBarController is for sending and receiving messages from other
- * users.<br>
- *
- * The message text we do input with a special helper window that is called
- * InputMessageTextBox.java
- *
- * <pre>
- * < borderlayout >
- *   . . .
- *    < !-- STATUS BAR AREA -- >
- *    < south id="south" border="none" margins="1,0,0,0"
- * 		height="20px" splittable="false" flex="true" >
- * 	      < div id="divSouth" >
- *
- *          < !-- The MessageBar. Comps are created in the Controller -- >
- *          < window id="winMessageBar" apply="${messageBarCtrl}"
- *                   border="none" width="100%" height="100%" />
- *          < !-- The StatusBar. Comps are created in the Controller -- >
- *          < window id="winStatusBar" apply="${statusBarCtrl}"
- *                   border="none" width="100%" height="100%" />
- *        < /div >
- *    < /south >
- *  < /borderlayout >
- * </pre>
- *
- * call for the message system:
- *
- * <pre>
- * EventQueues.lookup(&quot;userNameEventQueue&quot;, EventQueues.APPLICATION, true).publish(new Event(&quot;onChangeSelectedObject&quot;, null, &quot;new Value&quot;));
- * </pre>
- *
- *
- * Spring bean declaration:
- *
- * <pre>
- * < !-- MessageBarCtrl -->
- * < bean id="messageBarCtrl" class="de.forsthaus.webui.util.MessageBarCtrl"
- *    scope="prototype">
- * < /bean>
- * </pre>
- *
+
  /**
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  LoginLoggingPolicyService.java										*                           
+ * FileName    		:  MessageBarCtrl.java													*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -105,11 +59,9 @@ import com.pennant.policy.model.UserImpl;
  */
 public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5633232048842356789L;
 	private final static Logger logger = Logger.getLogger(SendMessageDialogCtrl.class);
+	
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
@@ -124,12 +76,11 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 	private String              userName;
 	List<SecurityRole>          listSecRoles =null;
 	private MessagesService     messagesService;
-	/**
-	 * Default constructor.
-	 */
+
 	public MessageBarCtrl() {
 		super();
 	}
+	
 	/**
 	 * This method Automatically calls by ZK 	 */
 	@SuppressWarnings("unchecked")
@@ -190,9 +141,7 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 	}
 
 	/**
-	 * Automatically called method from ZK.
-	 *
-	 * @param event
+	 * On Create Window Method for Loading Message bar
 	 */
 	public void onCreate$winMessageBar(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -213,7 +162,7 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 		statusBarMessageIndicator.setParent(columns);
 		// Column for the Middle Space 
 		Column statusBarMiddleSpace = new Column();
-		statusBarMiddleSpace.setWidth("60%");
+		statusBarMiddleSpace.setWidth("57%");
 		statusBarMiddleSpace.setStyle("background-color: #D6DCDE; padding: 0px");
 		statusBarMiddleSpace.setParent(columns);
 		// Column for the Version Details 
@@ -224,6 +173,13 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 		statusBarVersionIndicator.setStyle("background-color: #D6DCDE; padding: 0px");
 		statusBarVersionIndicator.setParent(columns);
 
+		// Column for the Host Details 
+	    Column hostEnq = new Column();
+	    Image hostStatus =  new Image("/images/Pennant/HostUp.jpg");
+	    hostStatus.setTooltiptext(Labels.getLabel("label_HostStatus"));
+	    hostStatus.setParent(hostEnq);
+	    hostEnq.setParent(columns);
+	    
 		Div div = new Div();
 		div.setStyle("padding: 1px;");
 		div.setParent(statusBarMessageIndicator);
@@ -263,8 +219,8 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 		}
 		//Clear Off line messages from OfflineMessagesBackup table
 		getMessagesService().deleteOfflineUsersMessages(userName);
+	
 		logger.debug("Leaving" + event.toString());
-
 	}
 
 
@@ -311,7 +267,6 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 	public void setMsg(String msg) {
 		this.msg = this.msg + "\n" + msg;
 	}
-
 	public String getMsg() {
 		return msg;
 	}
@@ -319,6 +274,7 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 	public void setMsgWindow(Window msgWindow) {
 		this.msgWindow = msgWindow;
 	}
+	
 	public void setMessagesService(MessagesService messagesService) {
 		this.messagesService = messagesService;
 	}
