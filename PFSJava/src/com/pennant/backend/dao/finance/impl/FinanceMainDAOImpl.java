@@ -176,7 +176,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
 		selectSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
 		selectSql.append(" AlwIndRate, IndBaseRate, GrcAlwIndRate, GrcIndBaseRate, ClosingStatus, FinApprovedDate, ");
-		selectSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis, StepFinance , ");
+		selectSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis, StepFinance , StepPolicy, AlwManualSteps, NoOfSteps, ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescFinCcyName,lovDescScheduleMethodName, lovDescProfitDaysBasisName,");
@@ -508,6 +508,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" AlwIndRate, GrcAlwIndRate, FinRepayPftOnFrq , SecurityCollateral ,");
 		insertSql.append(" CustomerAcceptance, CbbApprovalRequired, CbbApproved , LimitApproved ,");
 		insertSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated , Blacklisted ,");		
+		insertSql.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, AlwManualSteps, NoOfSteps, ");		
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
 		
@@ -522,6 +523,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" :AlwIndRate, :GrcAlwIndRate, :FinRepayPftOnFrq , :SecurityCollateral,");
 		insertSql.append(" :CustomerAcceptance, :CbbApprovalRequired, :CbbApproved, :LimitApproved,");
 		insertSql.append(" :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :Blacklisted,");
+		insertSql.append(" :GrcProfitDaysBasis, :StepFinance, :StepPolicy, :AlwManualSteps, :NoOfSteps, ");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -559,7 +561,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" GrcMargin, RepayMargin, FinCommitmentRef, DepreciationFrq, FinCurrAssetValue,");
 		insertSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount, ClosingStatus, FinApprovedDate, ");
 		insertSql.append(" AlwIndRate, IndBaseRate, GrcAlwIndRate, GrcIndBaseRate,DedupFound,SkipDedup,Blacklisted,");
-		insertSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis, StepFinance, ");
+		insertSql.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, AlwManualSteps, NoOfSteps, ");
+		insertSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq, ");
 		if (!isWIF) {
 			insertSql.append(" InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,Authorization1,Authorization2,");
 			insertSql.append(" FeeChargeAmt,LimitValid, OverrideLimit,FinPurpose,FinStatus, FinStsReason,");
@@ -585,7 +588,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" :GrcMargin, :RepayMargin, :FinCommitmentRef, :DepreciationFrq, :FinCurrAssetValue,");
 		insertSql.append(" :NextDepDate, :LastDepDate, :FinAccount, :FinCustPftAccount, :ClosingStatus , :FinApprovedDate, ");
 		insertSql.append(" :AlwIndRate, :IndBaseRate, :GrcAlwIndRate, :GrcIndBaseRate, :DedupFound,:SkipDedup,:Blacklisted,");
-		insertSql.append(" :AnualizedPercRate , :EffectiveRateOfReturn , :FinRepayPftOnFrq , :GrcProfitDaysBasis, :StepFinance,");
+		insertSql.append(" :GrcProfitDaysBasis, :StepFinance , :StepPolicy, :AlwManualSteps, :NoOfSteps, ");
+		insertSql.append(" :AnualizedPercRate , :EffectiveRateOfReturn , :FinRepayPftOnFrq, ");
 		if (!isWIF) {
 			insertSql.append("  :InvestmentRef, :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :CustDSR, :Authorization1, :Authorization2, ");
 			insertSql.append(" :FeeChargeAmt, :LimitValid, :OverrideLimit,:FinPurpose,:FinStatus, :FinStsReason,");
@@ -646,7 +650,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" CustomerAcceptance = :CustomerAcceptance, CbbApprovalRequired = :CbbApprovalRequired, ");
 		updateSql.append(" CbbApproved = :CbbApproved, LimitApproved = :LimitApproved, ");
 		updateSql.append(" MigratedFinance = :MigratedFinance, ScheduleMaintained = :ScheduleMaintained, ");
-		updateSql.append(" ScheduleRegenerated = :ScheduleRegenerated, Blacklisted = :Blacklisted, ");
+		updateSql.append(" ScheduleRegenerated = :ScheduleRegenerated, Blacklisted = :Blacklisted, GrcProfitDaysBasis = :GrcProfitDaysBasis,");
+		updateSql.append(" StepFinance = :StepFinance, StepPolicy = :StepPolicy, AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, ");
 		
 		/*updateSql.append(" NextGrcPftDate = :NextGrcPftDate, AllowGrcPftRvw = :AllowGrcPftRvw,");
 		updateSql.append(" GrcPftRvwFrq = :GrcPftRvwFrq, NextGrcPftRvwDate = :NextGrcPftRvwDate,");
@@ -776,7 +781,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" GrcIndBaseRate = :GrcIndBaseRate, FinCustPftAccount=:FinCustPftAccount,ClosingStatus= :ClosingStatus, ");
 		updateSql.append(" FinApprovedDate= :FinApprovedDate,"); 
 		updateSql.append(" AnualizedPercRate =:AnualizedPercRate , EffectiveRateOfReturn =:EffectiveRateOfReturn , FinRepayPftOnFrq =:FinRepayPftOnFrq ,");
-		updateSql.append(" GrcProfitDaysBasis = :GrcProfitDaysBasis, StepFinance = :StepFinance,");
+		updateSql.append(" GrcProfitDaysBasis = :GrcProfitDaysBasis, StepFinance = :StepFinance, StepPolicy = :StepPolicy,");
+		updateSql.append(" AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, ");
 		
 		if (!isWIF) {
 			updateSql.append(" MigratedFinance = :MigratedFinance,ScheduleMaintained = :ScheduleMaintained, ScheduleRegenerated = :ScheduleRegenerated,");
@@ -891,6 +897,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" CbbApprovalRequired=:CbbApprovalRequired , CbbApproved=:CbbApproved , Discrepancy=:Discrepancy , LimitApproved=:LimitApproved, ");
 		updateSql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(" GrcProfitDaysBasis = :GrcProfitDaysBasis, StepFinance = :StepFinance, StepPolicy = :StepPolicy,");
+		updateSql.append(" AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, ");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
 		logger.debug("updateSql: " + updateSql.toString());
@@ -1313,6 +1321,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,Authorization1,Authorization2,");
 		insertSql.append(" FeeChargeAmt,LimitValid, OverrideLimit,FinPurpose,FinStatus, FinStsReason,");
 		insertSql.append(" JointAccount,JointCustId,DownPayAccount, SecurityDeposit,  ");
+		insertSql.append(" GrcProfitDaysBasis, StepFinance, StepPolicy, AlwManualSteps, NoOfSteps, ");
 		
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
@@ -1335,7 +1344,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" :AnualizedPercRate , :EffectiveRateOfReturn , :FinRepayPftOnFrq ,");
 		insertSql.append(" :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :CustDSR, :Authorization1, :Authorization2, ");
 		insertSql.append(" :FeeChargeAmt, :LimitValid, :OverrideLimit,:FinPurpose,:FinStatus, :FinStsReason,");
-		insertSql.append("  :JointAccount,:JointCustId , :DownPayAccount,  :SecurityDeposit,");
+		insertSql.append(" :JointAccount,:JointCustId , :DownPayAccount,  :SecurityDeposit,");
+		insertSql.append(" :GrcProfitDaysBasis, :StepFinance, :StepPolicy, :AlwManualSteps, :NoOfSteps, ");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
