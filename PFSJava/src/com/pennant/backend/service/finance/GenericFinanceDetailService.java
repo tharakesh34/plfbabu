@@ -70,6 +70,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -386,6 +387,68 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			if (!contributorDetail.getRecordType().equals("")) {
 				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						contributorDetail.getBefImage(), contributorDetail));
+			}
+		}
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param contributorHeader
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	public List<AuditDetail> setFinStepPolicyDetailAuditData(List<FinanceStepPolicyDetail> finStepPolicyDetails, FinScheduleData finScheduleData,
+			String auditTranType, String method) {
+		logger.debug("Entering");
+		
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceStepPolicyDetail());
+		
+		for (int i = 0; i < finStepPolicyDetails.size(); i++) {
+			
+			FinanceStepPolicyDetail financeStepPolicyDetail = finStepPolicyDetails.get(i);
+			financeStepPolicyDetail.setWorkflowId(finScheduleData.getFinanceMain().getWorkflowId());
+			financeStepPolicyDetail.setFinReference(finScheduleData.getFinReference());
+			
+			boolean isRcdType = false;
+			
+			if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				isRcdType = true;
+			} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				isRcdType = true;
+			}
+			
+			if (method.equals("saveOrUpdate") && (isRcdType == true)) {
+				financeStepPolicyDetail.setNewRecord(true);
+			}
+			
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+			
+			financeStepPolicyDetail.setRecordStatus(finScheduleData.getFinanceMain().getRecordStatus());
+			financeStepPolicyDetail.setUserDetails(finScheduleData.getFinanceMain().getUserDetails());
+			financeStepPolicyDetail.setLastMntOn(finScheduleData.getFinanceMain().getLastMntOn());
+			
+			if (!financeStepPolicyDetail.getRecordType().equals("")) {
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						financeStepPolicyDetail.getBefImage(), financeStepPolicyDetail));
 			}
 		}
 		logger.debug("Leaving");
