@@ -61,11 +61,36 @@
 								</row>
 							</rows>
 						</grid>
-						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew_FinStepPolicy"
+						
+						<div sclass="z-toolbar" height="28px">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" width="100%"
+								widths="30%,40%,30%">
+
+								<!-- COMMON BUTTONS -->
+								<toolbar align="start"
+									sclass="toolbar-start" width="300px">
+									<hbox align="center"
+										style="padding: 0px">
+										<label
+											value="${c:l('window_FinStepPolicyDialog.title')}"
+											style="font-weight:bold; font-size: 11px;" />
+									</hbox>
+								</toolbar>
+								<!-- SEARCH AREA -->
+								<toolbar align="center"
+									sclass="toolbar-center" />
+
+								<!-- CRUD BUTTONS -->
+								<toolbar align="end"
+									sclass="toolbar-end">
+									<button id="btnNew_FinStepPolicy"
 								visible="false" height="24px" label="${c:l('label_New')}"
 								tooltiptext="${c:l('button_StepDetailDialog_NewStepPolicy.tooltiptext')}" />
-						</toolbar>
+								</toolbar>
+							</hbox>
+						</div>
+						
 						<listbox id="listBoxStepdetails"
 							fixedLayout="true" span="true"
 							emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"

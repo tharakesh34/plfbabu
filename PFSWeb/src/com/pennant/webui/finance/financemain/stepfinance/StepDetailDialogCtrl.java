@@ -1,13 +1,20 @@
 package com.pennant.webui.finance.financemain.stepfinance;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -19,12 +26,14 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -62,10 +71,11 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 	
 	private Object financeMainDialogCtrl = null;
 	private boolean isWIF = false;
-	public List<FinanceStepPolicyDetail> financeStepPolicyDetailsList = null;
+	public List<FinanceStepPolicyDetail> finStepPolicyList = null;
 
 	private List<ValueLabel> profitDaysBasisList = null;
 	private List<ValueLabel> schMethodList = null;
+	private boolean allowedManualSteps = false;
 
 	/**
 	 * default constructor.<br>
@@ -105,6 +115,11 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 		if (args.containsKey("isWIF")) {
 			isWIF = (Boolean) args.get("isWIF");
 		}
+		
+		if (args.containsKey("alwManualSteps")) {
+			setAllowedManualSteps((Boolean) args.get("alwManualSteps"));
+		}
+		
 		if (args.containsKey("profitDaysBasisList")) {
 			profitDaysBasisList = (List<ValueLabel>) args.get("profitDaysBasisList");
 		}
@@ -134,9 +149,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 
 		this.stepDetail_finType.setValue(StringUtils.trimToEmpty(getFinanceMain().getLovDescFinTypeName()));
 		this.stepDetail_finCcy.setValue(StringUtils.trimToEmpty(getFinanceMain().getLovDescFinCcyName()));
-		if(schMethodList != null){
-			this.stepDetail_scheduleMethod.setValue(PennantAppUtil.getlabelDesc(getFinanceMain().getScheduleMethod(), schMethodList));
-		}
+		this.stepDetail_scheduleMethod.setValue(PennantAppUtil.getlabelDesc(getFinanceMain().getScheduleMethod(), schMethodList));
 		this.stepDetail_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(getFinanceMain().getProfitDaysBasis(), profitDaysBasisList));
 		this.stepDetail_finReference.setValue(StringUtils.trimToEmpty(getFinanceMain().getFinReference()));
 		this.stepDetail_grcEndDate.setValue(DateUtility.formatDate(getFinanceMain().getGrcPeriodEndDate(), PennantConstants.dateFormate)) ;
@@ -163,6 +176,11 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 		} catch (Exception e) {
 			logger.error(e);
 		}
+		
+		//Stooping to Enter New Step policies and Allowed only for Maintenance
+		if(!isAllowedManualSteps()){
+			this.btnNew_FinStepPolicy.setDisabled(true);
+		}
 
 		// fill the components with the data
 		doWriteBeanToComponents();
@@ -184,21 +202,108 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 		}		
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Validate Finance Step Policy Details either Entered manually or fetching from Existing Step Policies
+	 * @param totalTerms
+	 * @param isAlwManualSteps
+	 * @return
+	 */
+	public List<ErrorDetails> doValidateStepDetails(int totalTerms, boolean isAlwManualSteps, int noOfSteps){
+		logger.debug("Entering");
+		
+		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+		if(this.finStepPolicyList != null && !finStepPolicyList.isEmpty()){
+			
+			if(isAlwManualSteps && noOfSteps != finStepPolicyList.size()){
+				errorList.add(new ErrorDetails("E0045",PennantConstants.KEY_SEPERATOR, new String[] {}));
+			}else{
+				
+				int sumInstallments = 0;
+				BigDecimal sumTenurePerc = BigDecimal.ZERO;
+				
+				BigDecimal calTotTenorSplit = BigDecimal.ZERO;
+				BigDecimal calTotEmiStepPercent = BigDecimal.ZERO;
+				int calTotTerms = 0;
+
+				for (int i = 0; i < finStepPolicyList.size(); i++) {
+					FinanceStepPolicyDetail stepPolicy = finStepPolicyList.get(i);
+					
+					if(stepPolicy.getInstallments() > 0){
+						
+						BigDecimal tenurePerc = (new BigDecimal(stepPolicy.getInstallments()).multiply(new BigDecimal(100))).divide(new BigDecimal(totalTerms), 2, RoundingMode.HALF_DOWN);
+						stepPolicy.setTenorSplitPerc(tenurePerc);
+						sumTenurePerc = sumTenurePerc.add(tenurePerc);
+						if(i == (finStepPolicyList.size()-1)){
+							if(sumTenurePerc.compareTo(new BigDecimal(100)) != 0){
+								stepPolicy.setTenorSplitPerc(stepPolicy.getTenorSplitPerc().add(new BigDecimal(100)).subtract(sumTenurePerc));
+							}
+						}
+						sumInstallments = sumInstallments + stepPolicy.getInstallments();
+						
+					}else if(stepPolicy.getInstallments() == 0 && stepPolicy.getTenorSplitPerc().compareTo(BigDecimal.ZERO) > 0){
+						
+						BigDecimal terms =stepPolicy.getTenorSplitPerc().multiply( new BigDecimal(totalTerms)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+						sumInstallments = sumInstallments + new Integer(terms.toString());
+						stepPolicy.setInstallments(new Integer(terms.toString()));
+						if(i == (finStepPolicyList.size()-1)){
+							if(sumInstallments != totalTerms){
+								stepPolicy.setInstallments(stepPolicy.getInstallments() + totalTerms - sumInstallments);
+							}
+						}
+						sumTenurePerc = sumTenurePerc.add(stepPolicy.getTenorSplitPerc());
+					}
+
+					calTotTerms = calTotTerms + stepPolicy.getInstallments();
+					calTotTenorSplit = calTotTenorSplit.add(stepPolicy.getTenorSplitPerc());
+					calTotEmiStepPercent = calTotEmiStepPercent.add(stepPolicy.getEmiSplitPerc());
+				}
+				
+				doFillStepDetais(finStepPolicyList);
+
+				//Tenor Percentage Validation for Step Policy Details
+				if(calTotTerms != totalTerms){
+					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, new String[] {Labels.getLabel("label_TotInstallments")}));
+				}
+				
+				//Tenor Percentage Validation for Step Policy Details
+				if(calTotTenorSplit.compareTo(new BigDecimal(100)) != 0){
+					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, new String[] {Labels.getLabel("label_TenorSplitPerc")}));
+				}
+
+				//Average EMI Percentage Validation for Step Policy Details
+				BigDecimal emiStepPercAvg = calTotEmiStepPercent.divide(new BigDecimal(finStepPolicyList.size()), 0 , RoundingMode.HALF_DOWN);
+				if(emiStepPercAvg.compareTo(new BigDecimal(100)) != 0){
+					errorList.add(new ErrorDetails("E0043",PennantConstants.KEY_SEPERATOR, new String[] { Labels.getLabel("label_AvgEMISplitPerc")}));
+				}
+			}
+		}else{
+			if(isAlwManualSteps){
+				errorList.add(new ErrorDetails("E0044",PennantConstants.KEY_SEPERATOR, new String[] {}));
+			}
+		}
+		logger.debug("Leaving");
+		return errorList;
+	}
 
 	/**
 	 * Method for Filling Step Policy Details
 	 * @param finStepPolicyDetails
 	 */
+	@SuppressWarnings("unchecked")
 	public void doFillStepDetais(List<FinanceStepPolicyDetail> finStepPolicyDetails){
 		logger.debug("Entering ");
 
 		Listitem listItem = null;
 		Listcell lc = null;
-
+		
+		Comparator<Object> comp = new BeanComparator("stepNo");
+		Collections.sort(finStepPolicyDetails,comp);
+		
+		setFinStepPoliciesList(finStepPolicyDetails);
 		this.listBoxStepdetails.getItems().clear();
-		this.financeStepPolicyDetailsList = finStepPolicyDetails;
-		if(financeStepPolicyDetailsList != null){
-			for(FinanceStepPolicyDetail financeStepPolicyDetail : this.financeStepPolicyDetailsList){
+		if(finStepPolicyDetails != null){
+			for(FinanceStepPolicyDetail financeStepPolicyDetail : finStepPolicyDetails){
 
 				listItem = new Listitem();
 
@@ -207,7 +312,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				lc.setParent(listItem);
 
 				lc = new Listcell();
-				lc.setLabel(financeStepPolicyDetail.getTenorSplitPerc()+"%");
+				lc.setLabel(PennantApplicationUtil.formatRate(financeStepPolicyDetail.getTenorSplitPerc().doubleValue(), 2)+"%");
 				lc.setParent(listItem);
 				lc.setStyle("text-align:right;");
 
@@ -217,12 +322,12 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				lc.setStyle("text-align:right;");
 
 				lc = new Listcell();
-				lc.setLabel(String.valueOf(financeStepPolicyDetail.getRateMargin()));
+				lc.setLabel(PennantApplicationUtil.formatRate(financeStepPolicyDetail.getRateMargin().doubleValue(), 9));
 				lc.setParent(listItem);
 				lc.setStyle("text-align:right;");
 
 				lc = new Listcell();
-				lc.setLabel(financeStepPolicyDetail.getEmiSplitPerc()+"%");
+				lc.setLabel(PennantApplicationUtil.formatRate(financeStepPolicyDetail.getEmiSplitPerc().doubleValue(), 2)+"%");
 				lc.setParent(listItem);
 				lc.setStyle("text-align:right;");
 
@@ -254,7 +359,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 			
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceStepPolicyDetail aFinStepPolicy = (FinanceStepPolicyDetail) item.getAttribute("data");
-			openFinStepPolicyDetailDialog(aFinStepPolicy);
+			openFinStepPolicyDetailDialog(aFinStepPolicy, false);
 			
 		}
 		logger.debug("Leaving" + event.toString());
@@ -269,19 +374,20 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 		FinanceStepPolicyDetail financeStepPolicyDetail = new FinanceStepPolicyDetail();
 		financeStepPolicyDetail.setNewRecord(true);
 
-		openFinStepPolicyDetailDialog(financeStepPolicyDetail);
+		openFinStepPolicyDetailDialog(financeStepPolicyDetail, true);
 		logger.debug("Leaving");
 	}
 
-	public void openFinStepPolicyDetailDialog(FinanceStepPolicyDetail finStepPolicy) throws InterruptedException{
+	public void openFinStepPolicyDetailDialog(FinanceStepPolicyDetail finStepPolicy, boolean isNewRecord) throws InterruptedException{
 		try {
 			
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("financeStepPolicyDetail", finStepPolicy);
 			map.put("stepDetailDialogCtrl", this);
-			map.put("newRecord", finStepPolicy.isNewRecord() == true ?"true" : "false");
+			map.put("newRecord", isNewRecord);
 			map.put("roleCode", getRole());
 			map.put("finStepPoliciesList", getFinStepPoliciesList());
+			map.put("alwDeletion", this.allowedManualSteps);
 			
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinStepPolicyDetailDialog.zul", window_StepDetailDialog, map);
 		} catch (final Exception e) {
@@ -325,10 +431,22 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 	}
 
 	public List<FinanceStepPolicyDetail> getFinStepPoliciesList() {
-		return this.financeStepPolicyDetailsList;
+		return this.finStepPolicyList;
 	}
 	public void setFinStepPoliciesList(List<FinanceStepPolicyDetail> finStepPoliciesList) {
-		this.financeStepPolicyDetailsList = finStepPoliciesList;
+		this.finStepPolicyList = finStepPoliciesList;
+	}
+	
+	public boolean isAllowedManualSteps() {
+		return allowedManualSteps;
+	}
+	public void setAllowedManualSteps(boolean allowedManualSteps) {
+		this.allowedManualSteps = allowedManualSteps;
+		if(this.allowedManualSteps){
+			this.btnNew_FinStepPolicy.setDisabled(false);//TODO-- apply right
+		}else{
+			this.btnNew_FinStepPolicy.setDisabled(true);
+		}
 	}
 
 }

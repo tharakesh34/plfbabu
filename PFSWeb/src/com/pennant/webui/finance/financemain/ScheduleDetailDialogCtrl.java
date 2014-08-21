@@ -437,11 +437,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		FinanceMain financeMain = aFinSchData.getFinanceMain();
 		int ccyFormatter = financeMain.getLovDescFinFormatter();
 		
-		this.schdl_purchasePrice.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
-		this.schdl_otherExp.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
-		this.schdl_totalCost.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
-		this.schdl_totalPft.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
-		this.schdl_contractPrice.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
+		this.schdl_purchasePrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.schdl_otherExp.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.schdl_totalCost.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.schdl_totalPft.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.schdl_contractPrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.schdl_finReference.setValue(financeMain.getFinReference());
 		this.schdl_noOfTerms.setValue(String.valueOf(financeMain.getNumberOfTerms() + financeMain.getGraceTerms()));
 		this.schdl_grcEndDate.setValue(DateUtility.formatDate(financeMain.getGrcPeriodEndDate(), PennantConstants.dateFormate));
@@ -491,11 +491,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 									.add(aFinSchData.getFinanceMain().getTotalProfit());
 			this.schdl_contractPrice.setValue(PennantAppUtil.formateAmount(projectValue, ccyFormatter));
 
-			this.schdl_Repayprofit.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
+			this.schdl_Repayprofit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.schdl_Repayprofit.setValue(PennantAppUtil.formateAmount(financeMain.getTotalProfit().subtract(financeMain.getTotalGracePft()),
 					ccyFormatter));
 			
-			this.schdl_Graceprofit.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
+			this.schdl_Graceprofit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.schdl_Graceprofit.setValue(PennantAppUtil.formateAmount(financeMain.getTotalGracePft(), ccyFormatter));
 		}
 		

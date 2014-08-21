@@ -46,7 +46,6 @@ package com.pennant.webui.finance.wiffinancemain;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -118,7 +117,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -572,15 +570,15 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.finStartDate.setFormat(PennantConstants.dateFormat);
 		this.finAmount.setMandatory(true);
 		this.finAmount.setMaxlength(18);
-		this.finAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.defferments.setMaxlength(3);
 		this.frqDefferments.setMaxlength(3);
 		this.downPayBank.setMaxlength(18);
-		this.downPayBank.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.downPaySupl.setMaxlength(18);
-		this.downPaySupl.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		
 		// Step Finance Field Properties       		
@@ -622,7 +620,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		// Finance Basic Details Tab ---> 3. Repayment Period Details
 		this.numberOfTerms.setMaxlength(4);
 		this.finRepaymentAmount.setMaxlength(18);
-		this.finRepaymentAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.rpyIndBaseRate.setMaxlength(8);
         this.rpyIndBaseRate.setMandatoryStyle(true);
@@ -933,10 +931,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		
 	    // Step Finance
+		if(aFinanceMain.isNewRecord() && !aFinanceDetail.getFinScheduleData().getFinanceType().isStepFinance()){
+			this.row_stepFinance.setVisible(false);
+		}
 		this.stepFinance.setChecked(aFinanceMain.isStepFinance());
-		steStepPolicyCheck(false);
+		doStepPolicyCheck(false);
 		this.stepPolicy.setValue(aFinanceMain.getStepPolicy());
 		this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
+		doAlwManualStepsCheck(false);
 		this.noOfSteps.setValue(aFinanceMain.getNoOfSteps());
 		
 		// Finance MainDetails Tab ---> 2. Grace Period Details
@@ -2393,11 +2395,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			map.put("roleCode", getRole());
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
-			map.put("moduleDefiner", "");
-			map.put("amountCodes", amountCodes);
+			map.put("ccyFormatter", getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
 			map.put("isWIF", true);
 			map.put("profitDaysBasisList", profitDaysBasisList);
-			map.put("isEnquiry", isEnquiry);	
+			map.put("schMethodList", schMethodList);
+			map.put("alwManualSteps", this.alwManualSteps.isChecked());
 
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StepDetailDialog.zul", tabpanel, map);
 
@@ -3180,8 +3182,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value") }));
 		}
         
-		if(!this.noOfSteps.isReadonly()){
-			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfSteps.value"), false, false));
+		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
+			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfSteps.value"), true, false));
 		}
 		
 		//FinanceMain Details Tab ---> 2. Grace Period Details
@@ -3292,6 +3294,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.defferments.setConstraint("");
 		this.frqDefferments.setConstraint("");
 		this.depreciationFrq.setConstraint("");
+		
+		this.stepPolicy.setConstraint("");
+		this.noOfSteps.setConstraint("");
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -3438,6 +3443,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.defferments.setErrorMessage("");
 		this.frqDefferments.setErrorMessage("");
 		this.depreciationFrq.setErrorMessage("");	
+		
+		this.stepPolicy.setErrorMessage("");
+		this.noOfSteps.setErrorMessage("");
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -4323,10 +4331,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				// To Format Amount based on the currency
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescFinFormatter(details.getCcyEditField());
 
-				this.finAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.finRepaymentAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPayBank.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPaySupl.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+				this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 
 			}
 		}
@@ -4343,10 +4351,16 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering " + event.toString()); 
 
 		this.stepPolicy.setConstraint("");
+		this.noOfSteps.setConstraint("");
+		this.stepPolicy.clearErrorMessage();
+		this.noOfSteps.setErrorMessage("");
+		
 		Object dataObject = stepPolicy.getObject();
-		if (dataObject instanceof String) {
-			this.stepPolicy.setValue(dataObject.toString());
-			this.stepPolicy.setDescription("");
+		if (dataObject == null || dataObject instanceof String) {
+			if(dataObject != null){
+				this.stepPolicy.setValue(dataObject.toString());
+				this.stepPolicy.setDescription("");
+			}
 			getFinanceDetail().getFinScheduleData().getStepPolicyDetails().clear();
 
 		} else {
@@ -4356,6 +4370,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				
 				// Fetch Step Policy Details List
 				List<StepPolicyDetail> policyList = getStepPolicyService().getStepPolicyDetailsById(this.stepPolicy.getValue());
+				this.noOfSteps.setValue(policyList.size());
 				getFinanceDetail().getFinScheduleData().resetStepPolicyDetails(policyList);
 			}
 		}
@@ -4366,23 +4381,28 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving " + event.toString());
 	}
 	
-	
 	/*
 	 * onCheck Event For Step Finance Check Box
 	 */
 	public void onCheck$stepFinance(Event event){
 		logger.debug("Entering : "+event.toString());
-		steStepPolicyCheck(true);
+		doStepPolicyCheck(true);
 		logger.debug("Leaving : "+event.toString());
 	}
 	
-	private void steStepPolicyCheck(boolean isAction){
+	private void doStepPolicyCheck(boolean isAction){
+		
 		this.stepPolicy.setMandatoryStyle(false); 
 		this.stepPolicy.setConstraint("");
+		this.stepPolicy.setErrorMessage("");
 		this.stepPolicy.setValue("", "");
+		
 		this.alwManualSteps.setChecked(false);
+		this.noOfSteps.setConstraint("");
+		this.noOfSteps.setErrorMessage("");
 		this.noOfSteps.setValue(0);
 		this.row_manualSteps.setVisible(false);
+		
 		this.stepPolicy.setVisible(false);
 		this.label_MurabahaFinanceMainDialog_StepPolicy.setVisible(false);
 		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(false);
@@ -4434,25 +4454,45 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	public void onCheck$alwManualSteps(Event event){
 		logger.debug("Entering : "+event.toString());
-		if(this.alwManualSteps.isChecked()){
-			 if(!this.stepPolicy.isReadonly()){
-	     			this.stepPolicy.setConstraint("");
-	     	 }
-     		 if(!this.noOfSteps.isDisabled()){
-     			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfSteps.value"), false, false));
-     		}
-     		this.stepPolicy.setMandatoryStyle(false); 
-		} else {
-		   if(!this.stepPolicy.isReadonly()){
-	     			this.stepPolicy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-	     					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value") }));
-	     	}
-    		this.stepPolicy.setMandatoryStyle(true); 
-		}
+		doAlwManualStepsCheck(true);		
 		logger.debug("Leaving : "+event.toString());
 	}
+	
+	private void doAlwManualStepsCheck(boolean isAction){
 		
-
+		this.stepPolicy.setConstraint("");
+		this.stepPolicy.setErrorMessage("");
+		
+		this.noOfSteps.setConstraint("");
+		this.noOfSteps.setErrorMessage("");
+		this.noOfSteps.setValue(0);
+		
+		if(this.alwManualSteps.isChecked()){
+     		this.stepPolicy.setMandatoryStyle(false); 
+    		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(true);
+    		this.hbox_numberOfSteps.setVisible(true);
+		} else {
+    		this.stepPolicy.setMandatoryStyle(true); 
+    		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(false);
+    		this.hbox_numberOfSteps.setVisible(false);
+		}
+		
+		if(getStepDetailDialogCtrl() != null){
+			getStepDetailDialogCtrl().setAllowedManualSteps(this.alwManualSteps.isChecked());
+		}
+		
+		//Filling Step Policy Details List
+		if(isAction && !this.stepPolicy.getValue().equals("")){
+			List<StepPolicyDetail> policyList = getStepPolicyService().getStepPolicyDetailsById(this.stepPolicy.getValue());
+			getFinanceDetail().getFinScheduleData().resetStepPolicyDetails(policyList);
+			if(getStepDetailDialogCtrl() != null){
+				getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
+			}else{
+				appendStepDetailTab(false);
+			}
+		}
+	}
+		
 	//FinanceMain Details Tab ---> 2. Grace Period Details
 
 	/**
@@ -5385,6 +5425,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (validate() != null) {
  			this.buildEvent = false;
  			isFinValidated = false;
+ 			
+ 			//Setting Finance Step Policy Details to Finance Schedule Data Object
+ 			if(getStepDetailDialogCtrl() != null){
+ 				validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
+ 			}
 
 			//Prepare Finance Schedule Generator Details List
 			getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));
@@ -6315,40 +6360,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			
 			//Setting Step Policy Details Installments & Validations
 			if(this.stepFinance.isChecked()){
-				List<FinanceStepPolicyDetail> policyDetails = getFinanceDetail().getFinScheduleData().getStepPolicyDetails();
-				if(getStepDetailDialogCtrl() != null && !policyDetails.isEmpty()){
-					
-					int totalTerms = this.numberOfTerms_two.intValue();
-					int sunInstallments = 0;
-					BigDecimal totTenorSplit = BigDecimal.ZERO;
-					BigDecimal totEmiStepPercent = BigDecimal.ZERO;
-					
-					for (int i = 0; i < policyDetails.size(); i++) {
-						FinanceStepPolicyDetail stepPolicy = policyDetails.get(i);
-						BigDecimal terms =stepPolicy.getTenorSplitPerc().multiply( new BigDecimal(totalTerms)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-						sunInstallments = sunInstallments + new Integer(terms.toString());
-						stepPolicy.setInstallments(new Integer(terms.toString()));
-						if(i == (policyDetails.size()-1)){
-							if(sunInstallments != totalTerms){
-								stepPolicy.setInstallments(stepPolicy.getInstallments() + totalTerms - sunInstallments);
-							}
-						}
-						
-						totTenorSplit = totTenorSplit.add(stepPolicy.getTenorSplitPerc());
-						totEmiStepPercent = totEmiStepPercent.add(stepPolicy.getEmiSplitPerc());
-					}
-					getStepDetailDialogCtrl().doFillStepDetais(policyDetails);
-					
-					//Tenor Percentage Validation for Step Policy Details
-					if(totTenorSplit.compareTo(new BigDecimal(100)) != 0){
-						errorList.add(new ErrorDetails("E0043", Labels.getLabel("label_TenorSplitPerc"), new String[] {}));
-					}
-					
-					//Average EMI Percentage Validation for Step Policy Details
-					BigDecimal emiStepPercAvg = totEmiStepPercent.divide(new BigDecimal(policyDetails.size()), 0 , RoundingMode.HALF_DOWN);
-					if(emiStepPercAvg.compareTo(new BigDecimal(100)) != 0){
-						errorList.add(new ErrorDetails("E0043", Labels.getLabel("label_AvgEMISplitPerc"), new String[] {}));
-					}
+				if(getStepDetailDialogCtrl() != null){
+					errorList.addAll(getStepDetailDialogCtrl().doValidateStepDetails(this.numberOfTerms_two.intValue(), 
+							this.alwManualSteps.isChecked(), this.noOfSteps.intValue()));
 				}
 			}
 			
