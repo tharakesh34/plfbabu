@@ -52,6 +52,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
@@ -60,6 +62,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 
@@ -211,6 +214,11 @@ public class FinScheduleData {
 		//this.financeMain.setLovDescDisbCcyFormatter(financeType.getLovDescFinFormetter());
 		this.financeMain.setFinStartDate((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		this.financeMain.setDepreciationFrq(financeType.getFinDepreciationFrq());
+		
+		//Step Policy Details 
+		this.financeMain.setStepFinance(financeType.isStepFinance());
+		this.financeMain.setAlwManualSteps(financeType.isAlwManualSteps());
+		this.financeMain.setStepPolicy(StringUtils.trimToEmpty(financeType.getDftStepPolicy()).equals(PennantConstants.List_Select) ? "" : financeType.getDftStepPolicy());
 
 		//Grace period details
 
@@ -317,6 +325,27 @@ public class FinScheduleData {
 		this.finODPenaltyRate.setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
 		this.finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
 		this.finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
+	}
+	
+	/**
+	 * Method for Setting Finance Step Policies Using Step Policy Detail List
+	 * @param stepPolicyList
+	 */
+	public void resetStepPolicyDetails(List<StepPolicyDetail> stepPolicyList) {
+		stepPolicyDetails = new ArrayList<FinanceStepPolicyDetail>();
+		if(stepPolicyList != null && !stepPolicyList.isEmpty()){
+			for (StepPolicyDetail stepPolicyDetail : stepPolicyList) {
+				
+				FinanceStepPolicyDetail detail = new FinanceStepPolicyDetail();
+				detail.setStepNo(stepPolicyDetail.getStepNumber());
+				detail.setTenorSplitPerc(stepPolicyDetail.getTenorSplitPerc());
+				detail.setRateMargin(stepPolicyDetail.getRateMargin());
+				detail.setEmiSplitPerc(stepPolicyDetail.getEmiSplitPerc());
+				
+				stepPolicyDetails.add(detail);				
+			}
+		}
+		setStepPolicyDetails(stepPolicyDetails);
 	}
 
 	public FinanceMain getFinanceMain() {
