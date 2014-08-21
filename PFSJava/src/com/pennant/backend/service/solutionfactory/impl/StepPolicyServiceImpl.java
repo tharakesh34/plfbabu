@@ -220,7 +220,23 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		stepPolicyHeader.setStepPolicyDetails(getStepPolicyDetailDAO().getStepPolicyDetailListByID(id, "_View"));
 		return stepPolicyHeader;
 	}
+	
+	/**
+	 * getStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's
+	 * getStepPolicyHeaderById method.
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return StepPolicyHeader
+	 */
+	@Override
+	public List<StepPolicyDetail> getStepPolicyDetailsById(String id) {
+		return getStepPolicyDetailDAO().getStepPolicyDetailListByID(id, "_AView");
+	}
 
+	
 	/**
 	 * getApprovedStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's
 	 * getStepPolicyHeaderById method . with parameter id and type as blank. it

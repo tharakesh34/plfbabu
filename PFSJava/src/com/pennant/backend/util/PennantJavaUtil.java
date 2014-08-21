@@ -712,6 +712,9 @@ public class PennantJavaUtil {
 			
 			put("FinContributorDetail", new ModuleMapping(new FinContributorDetail(""), new String[] { "FinContributorDetail", "FinContributorDetail_AView" }, 
 					new String[] { "FinReference", "ContributorInvest" }, null,"MSTGRP1", 300));
+			
+			put("FinanceStepPolicyDetail", new ModuleMapping(new FinContributorDetail(""), new String[] { "FinanceStepPolicyDetail", "FinanceStepPolicyDetail_Temp" }, 
+					new String[] { "FinReference", "StepNo" }, null,"MSTGRP1", 300));
 
 			put("FinBillingHeader", new ModuleMapping(new FinBillingHeader(""), new String[] { "FinBillingHeader", "FinBillingHeader_AView" }, 
 					new String[] { "FinReference"}, null,"MSTGRP1", 300));

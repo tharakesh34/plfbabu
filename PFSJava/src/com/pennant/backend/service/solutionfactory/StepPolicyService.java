@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.solutionfactory;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
@@ -74,5 +76,6 @@ public interface StepPolicyService {
 	StepPolicyDetail getStepPolicyDetail();
 	
 	StepPolicyDetail getNewStepPolicyDetail();
-
+	
+	List<StepPolicyDetail> getStepPolicyDetailsById(String id);
 }
