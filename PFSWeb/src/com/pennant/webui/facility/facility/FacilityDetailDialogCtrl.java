@@ -358,11 +358,11 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.otherDetails.setMaxlength(200);
 		
 		this.totalFacility.setMaxlength(18);
-		this.totalFacility.setFormat(PennantAppUtil.getAmountFormate(getFacilityDetail().getTotalFacilityFormatter()));
+		this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(getFacilityDetail().getTotalFacilityFormatter()));
 		this.underWriting.setMaxlength(18);
-		this.underWriting.setFormat(PennantAppUtil.getAmountFormate(getFacilityDetail().getUnderWritingFormatter()));
+		this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(getFacilityDetail().getUnderWritingFormatter()));
 		this.propFinalTake.setMaxlength(18);
-		this.propFinalTake.setFormat(PennantAppUtil.getAmountFormate(getFacilityDetail().getPropFinalTakeFormatter()));
+		this.propFinalTake.setFormat(PennantApplicationUtil.getAmountFormate(getFacilityDetail().getPropFinalTakeFormatter()));
 
 		this.totalFacilityCcy.setMaxlength(3);
 		this.totalFacilityCcy.setMandatoryStyle(true);
@@ -1680,7 +1680,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 				if (details != null) {
 					// To Format Amount based on the currency
 					getFacilityDetail().setTotalFacilityFormatter(details.getCcyEditField());
-					this.totalFacility.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+					this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 				}
 			}
 			logger.debug("Leaving " + event.toString());
@@ -1697,7 +1697,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 				if (details != null) {
 					// To Format Amount based on the currency
 					getFacilityDetail().setUnderWritingFormatter(details.getCcyEditField());
-					this.underWriting.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+					this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 				}
 			}
 			logger.debug("Leaving " + event.toString());
@@ -1714,7 +1714,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 				if (details != null) {
 					// To Format Amount based on the currency
 					getFacilityDetail().setPropFinalTakeFormatter(details.getCcyEditField());
-					this.propFinalTake.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+					this.propFinalTake.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 				}
 			}
 			logger.debug("Leaving " + event.toString());
@@ -1974,17 +1974,17 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if (currency!=null) {
 				if(StringUtils.trimToEmpty(totalFacilityCcy.getValue()).equals("")){
 					this.totalFacilityCcy.setValue(currency.getCcyCode(),currency.getCcyDesc());
-					this.totalFacility.setFormat(PennantAppUtil.getAmountFormate(currency.getCcyEditField()));
+					this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(currency.getCcyEditField()));
 					getFacilityDetail().setTotalFacilityFormatter(currency.getCcyEditField());
 				}
 				if(StringUtils.trimToEmpty(underWritingCcy.getValue()).equals("")){
 					this.underWritingCcy.setValue(currency.getCcyCode(),currency.getCcyDesc());
-					this.underWriting.setFormat(PennantAppUtil.getAmountFormate(currency.getCcyEditField()));
+					this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(currency.getCcyEditField()));
 					getFacilityDetail().setUnderWritingFormatter(currency.getCcyEditField());
 				}
 				if(StringUtils.trimToEmpty(propFinalTakeCcy.getValue()).equals("")){
 					this.propFinalTakeCcy.setValue(currency.getCcyCode(),currency.getCcyDesc());
-					this.propFinalTake.setFormat(PennantAppUtil.getAmountFormate(currency.getCcyEditField()));
+					this.propFinalTake.setFormat(PennantApplicationUtil.getAmountFormate(currency.getCcyEditField()));
 					getFacilityDetail().setPropFinalTakeFormatter(currency.getCcyEditField());
 				}
 			}

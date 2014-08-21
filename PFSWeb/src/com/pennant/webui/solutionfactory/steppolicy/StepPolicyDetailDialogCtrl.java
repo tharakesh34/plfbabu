@@ -593,7 +593,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl implements Serializa
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.rateMargin.isReadonly() && !this.rateMargin.isDisabled()) {
+		if (!this.rateMargin.isDisabled()) {
 			this.rateMargin.setConstraint(new PTDecimalValidator(Labels.getLabel("label_StepPolicyDetailDialog_RateMargin.value"),9,false,true,-9999,9999));
 		}
 

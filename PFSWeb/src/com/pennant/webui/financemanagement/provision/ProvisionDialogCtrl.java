@@ -273,15 +273,15 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finType.setMaxlength(8);
 		this.custID.setMaxlength(19);
 		this.principalDue.setMaxlength(18);
-		this.principalDue.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
+		this.principalDue.setFormat(PennantApplicationUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
 		this.profitDue.setMaxlength(18);
-		this.profitDue.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
+		this.profitDue.setFormat(PennantApplicationUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
 		this.dueTotal.setMaxlength(18);
-		this.dueTotal.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
+		this.dueTotal.setFormat(PennantApplicationUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
 		this.nonFormulaProv.setMaxlength(18);
-		this.nonFormulaProv.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
-		this.calProvisionedAmt.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
-		this.provisionedAmt.setFormat(PennantAppUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
+		this.nonFormulaProv.setFormat(PennantApplicationUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
+		this.calProvisionedAmt.setFormat(PennantApplicationUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
+		this.provisionedAmt.setFormat(PennantApplicationUtil.getAmountFormate(getProvision().getLovDescFinFormatter()));
 		
 		this.dueFromDate.setFormat(PennantConstants.dateFormat);
 

@@ -77,6 +77,7 @@ import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.CountryService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
@@ -232,15 +233,15 @@ public class CountryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.countryCode.setMaxlength(2);
 		this.countryDesc.setMaxlength(50);
 		this.countryParentLimit.setMaxlength(21);
-		this.countryParentLimit.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.countryParentLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.countryParentLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.countryParentLimit.setScale(0);
 		this.countryResidenceLimit.setMaxlength(21);
-		this.countryResidenceLimit.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.countryResidenceLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.countryResidenceLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.countryResidenceLimit.setScale(0);
 		this.countryRiskLimit.setMaxlength(21);
-		this.countryRiskLimit.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.countryRiskLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.countryRiskLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.countryRiskLimit.setScale(0);
 

@@ -74,7 +74,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -85,8 +84,8 @@ import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerBalanceSheetService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
@@ -287,31 +286,31 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl implements Seria
 
 		//Empty sent any required attributes
 		this.totalAssets.setMaxlength(18);
-		this.totalAssets.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.totalAssets.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.totalAssets.setScale(0);
 		this.totalLiabilities.setMaxlength(18);
-		this.totalLiabilities.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.totalLiabilities.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.totalLiabilities.setScale(0);
 		this.netProfit.setMaxlength(18);
-		this.netProfit.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.netProfit.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.netProfit.setScale(0);
 		this.netSales.setMaxlength(18);
-		this.netSales.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.netSales.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.netSales.setScale(0);
 		this.netIncome.setMaxlength(18);
-		this.netIncome.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.netIncome.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.netIncome.setScale(0);
 		this.operatingProfit.setMaxlength(18);
-		this.operatingProfit.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.operatingProfit.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.operatingProfit.setScale(0);
 		this.cashFlow.setMaxlength(18);
-		this.cashFlow.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.cashFlow.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.cashFlow.setScale(0);
 		this.bookValue.setMaxlength(18);
-		this.bookValue.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.bookValue.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.bookValue.setScale(0);
 		this.marketValue.setMaxlength(18);
-		this.marketValue.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.marketValue.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.marketValue.setScale(0);
 
 		if (isWorkFlowEnabled()){

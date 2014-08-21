@@ -102,6 +102,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.ErrorControl;
@@ -436,12 +437,12 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.finReference.setMaxlength(20);
 		this.numberOfTerms.setMaxlength(10);
 		this.downPayment.setMaxlength(18);
-		this.downPayment.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
+		this.downPayment.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 		this.finType.setMaxlength(8);
 		this.finCcy.setMaxlength(3);
 		this.finStartDate.setFormat(PennantConstants.dateFormat);
 		this.finAmount.setMaxlength(18);
-		this.finAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
+		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);

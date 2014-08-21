@@ -93,6 +93,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rulefactory.OverdueChargeService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
@@ -279,7 +280,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 		this.oDCPLSubHead.setMaxlength(8);
 		this.oDCCharitySubHead.setMaxlength(8);
 		this.oDCPLShare.setMaxlength(5);
-		this.oDCPLShare.setFormat(PennantAppUtil.getAmountFormate(2));
+		this.oDCPLShare.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.oDCPLShare.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.oDCRuleDescription.setMaxlength(250);
 
@@ -1555,7 +1556,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 		} else {
 			calOnCombo.setDisabled(false);
 			CalAmtDecimal.setMaxlength(5);
-			CalAmtDecimal.setFormat(PennantAppUtil.getAmountFormate(2));
+			CalAmtDecimal.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
 		
 		graceDaysBox.setDisabled(isReadOnly("OverdueChargeDialog_listBoxOverdue"));
@@ -1584,7 +1585,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 			decimalbox.setValue(new BigDecimal(0));
 		} else {
 			decimalbox.setDisabled(isReadOnly("OverdueChargeDialog_listBoxOverdue"));
-			decimalbox.setFormat(PennantAppUtil.getAmountFormate(2));
+			decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			decimalbox.setMaxlength(5);
 		}
 		
@@ -1607,10 +1608,10 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 		decimalbox.setDisabled(readOnly);
 
 		if (component!= null && component.equals("P")){
-			decimalbox.setFormat(PennantAppUtil.getAmountFormate(2));
+			decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
 		if (component!= null && component.equals("maxWaiver")){
-			decimalbox.setFormat(PennantAppUtil.getAmountFormate(2));
+			decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
 		decimalbox.setDisabled(isReadOnly("OverdueChargeDialog_listBoxOverdue"));
 		logger.debug("Leaving ");

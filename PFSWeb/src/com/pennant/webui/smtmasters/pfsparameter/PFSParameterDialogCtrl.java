@@ -87,6 +87,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.staticparms.Language;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -954,13 +955,13 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 			this.doubleParamValue.setVisible(true);
 			this.doubleParamValue.setMaxlength(this.sysParmLength);
 			if (this.sysParmDec == 0) {
-				this.doubleParamValue.setFormat(PennantAppUtil.getAmountFormate(0));
+				this.doubleParamValue.setFormat(PennantApplicationUtil.getAmountFormate(0));
 			} else if (this.sysParmDec == 1) {
-				this.doubleParamValue.setFormat(PennantAppUtil.getAmountFormate(1));
+				this.doubleParamValue.setFormat(PennantApplicationUtil.getAmountFormate(1));
 			} else if (this.sysParmDec == 2) {
-				this.doubleParamValue.setFormat(PennantAppUtil.getAmountFormate(2));
+				this.doubleParamValue.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			} else if (this.sysParmDec == 3) {
-				this.doubleParamValue.setFormat(PennantAppUtil.getAmountFormate(3));
+				this.doubleParamValue.setFormat(PennantApplicationUtil.getAmountFormate(3));
 			}
 			this.doubleParamValue.setValue(this.sysParmValue.getValue());
 			this.comboParmValue.setDisabled(true);

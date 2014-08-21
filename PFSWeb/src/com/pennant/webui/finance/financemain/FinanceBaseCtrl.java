@@ -612,7 +612,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.finContractDate.setFormat(PennantConstants.dateFormat);
 		this.finAmount.setMandatory(true);
 		this.finAmount.setMaxlength(18);
-		this.finAmount.setFormat(PennantAppUtil.getAmountFormate(finFormatter));
+		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.defferments.setMaxlength(3);
 		this.frqDefferments.setMaxlength(3);
 		this.finPurpose.setMaxlength(8);
@@ -654,7 +654,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		
 		this.commitmentRef.setMaxlength(20);
 		this.downPayBank.setMaxlength(18);
-		this.downPayBank.setFormat(PennantAppUtil.getAmountFormate(finFormatter));
+		this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		
 		/*this.ccyConversionRate.setMaxlength(13);
 		this.ccyConversionRate.setFormat(PennantConstants.rateFormate9);
@@ -700,7 +700,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		// Finance Basic Details Tab ---> 3. Repayment Period Details
 		this.numberOfTerms.setMaxlength(4);
 		this.finRepaymentAmount.setMaxlength(18);
-		this.finRepaymentAmount.setFormat(PennantAppUtil.getAmountFormate(finFormatter));
+		this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.repayBaseRate.setMaxlength(8);
 		this.repaySpecialRate.setMaxlength(8);
 		this.repayProfitRate.setMaxlength(13);

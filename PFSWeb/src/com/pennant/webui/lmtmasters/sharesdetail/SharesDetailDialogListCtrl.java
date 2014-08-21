@@ -552,11 +552,11 @@ public class SharesDetailDialogListCtrl extends GFCBaseCtrl implements Serializa
 		quantity.setStyle("text-align:left");
 		
 		this.faceValue.setMaxlength(25);
-		this.faceValue.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		this.faceValue.setFormat(PennantApplicationUtil.getAmountFormate(this.ccyFormatter));
 		//this.faceValue.setScale(ccyFormatter);
 		
 		this.marketValue.setMaxlength(25);
-		this.marketValue.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		this.marketValue.setFormat(PennantApplicationUtil.getAmountFormate(this.ccyFormatter));
 		//this.marketValue.setScale(ccyFormatter);
 		
 		this.totalFaceValue.setMaxlength(25);

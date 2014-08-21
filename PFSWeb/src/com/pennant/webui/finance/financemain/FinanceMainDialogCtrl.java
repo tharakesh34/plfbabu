@@ -1034,7 +1034,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finContractDate.setFormat(PennantConstants.dateFormat);
 		this.finAmount.setMandatory(true);
 		this.finAmount.setMaxlength(18);
-		this.finAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.defferments.setMaxlength(3);
 		this.frqDefferments.setMaxlength(3);
@@ -1044,7 +1044,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.commitmentRef.setMaxlength(20);
 		this.finAssetValue.setMandatory(false);
 		this.finAssetValue.setMaxlength(18);
-		this.finAssetValue.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.finPurpose.setMaxlength(8);
 
@@ -1071,7 +1071,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// Finance Basic Details Tab ---> 3. Reapyment Period Details
 		this.numberOfTerms.setMaxlength(10);
 		this.finRepaymentAmount.setMaxlength(18);
-		this.finRepaymentAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.repayBaseRate.setMaxlength(8);
 		this.repaySpecialRate.setMaxlength(8);
@@ -1093,7 +1093,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.nextRepayCpzDate.setFormat(PennantConstants.dateFormat);
 		this.maturityDate.setFormat(PennantConstants.dateFormat);
 		this.downPayment.setMaxlength(18);
-		this.downPayment.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.downPayment.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 
 		//Contributor Header Details
@@ -1101,17 +1101,17 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.minContributors.setMaxlength(4);
 			this.maxContributors.setMaxlength(4);
 			this.minContributionAmt.setMaxlength(18);
-			this.minContributionAmt.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+			this.minContributionAmt.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 					.getFinanceMain().getLovDescFinFormatter()));
 			this.maxContributionAmt.setMaxlength(18);
-			this.maxContributionAmt.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+			this.maxContributionAmt.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 					.getFinanceMain().getLovDescFinFormatter()));
 			this.curContributors.setMaxlength(4);
 			this.curContributionAmt.setMaxlength(18);
-			this.curContributionAmt.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+			this.curContributionAmt.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 					.getFinanceMain().getLovDescFinFormatter()));
 			this.curBankInvest.setMaxlength(18);
-			this.curBankInvest.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+			this.curBankInvest.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 					.getFinanceMain().getLovDescFinFormatter()));
 			this.avgMudaribRate.setMaxlength(13);
 			this.avgMudaribRate.setScale(9);
@@ -1122,10 +1122,10 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if(getFinanceDetail().getFinScheduleData().getFinanceType() != null &
 				PennantConstants.FINANCE_PRODUCT_ISTISNA.equals(getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName())){
 			if(isParllelFinance){
-				this.contrBillRetain.setFormat(PennantAppUtil.getAmountFormate(2));
+				this.contrBillRetain.setFormat(PennantApplicationUtil.getAmountFormate(2));
 				this.contrBillRetain.setMaxlength(6);
 			}else{
-				this.preContrOrDeffCost.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+				this.preContrOrDeffCost.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 						.getFinanceMain().getLovDescFinFormatter()));
 				this.preContrOrDeffCost.setMaxlength(18);
 			}
@@ -6270,10 +6270,10 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 				// To Format Amount based on the currency
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescFinFormatter(details.getCcyEditField());
 
-				this.finAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.finRepaymentAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPayment.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.finAssetValue.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+				this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPayment.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 
 				try {
 					if (getChildWindowDialogCtrl().getClass().getField("ccyFormatter") != null) {
@@ -7472,12 +7472,12 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}else if (getComboboxValue(this.oDChargeType).equals(PennantConstants.FLAT)) {
 			this.oDChargeAmtOrPerc.setDisabled(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"));
 			this.oDChargeAmtOrPerc.setMaxlength(15);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(
 					getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 		} else {
 			this.oDChargeAmtOrPerc.setDisabled(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"));
 			this.oDChargeAmtOrPerc.setMaxlength(6);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(2));
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
 	}
 	
@@ -11047,13 +11047,13 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 						Decimalbox oldwaiverBox = new Decimalbox();
 						oldwaiverBox.setVisible(false);
 						oldwaiverBox.setId("oldwaiver_"+feeRule.getFeeCode());
-						oldwaiverBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+						oldwaiverBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 						oldwaiverBox.setValue(PennantAppUtil.formateAmount(waiverAmt,formatter));
 
 						Decimalbox waiverBox = new Decimalbox();
 						waiverBox.setWidth("95%");
 						waiverBox.setMaxlength(18);
-						waiverBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+						waiverBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 						waiverBox.setStyle("border:1px;font-weight:bold;color:green;background-color:#FFDCDC;float:left;");
 						waiverBox.setDisabled(false);
 						waiverBox.setId("waiver_"+feeRule.getFeeCode());
@@ -11069,13 +11069,13 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 						Decimalbox oldPaidBox = new Decimalbox();
 						oldPaidBox.setVisible(false);
 						oldPaidBox.setId("oldpaid_"+feeRule.getFeeCode());
-						oldPaidBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+						oldPaidBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 						oldPaidBox.setValue(PennantAppUtil.formateAmount(paidAmt,formatter));
 
 						Decimalbox paidBox = new Decimalbox();
 						paidBox.setWidth("95%");
 						paidBox.setMaxlength(18);
-						paidBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+						paidBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 						paidBox.setStyle("border:1px;font-weight:bold;color:green;background-color:#FFDCDC;float:left;");
 						paidBox.setDisabled(false);
 						paidBox.setId("paid_"+feeRule.getFeeCode());

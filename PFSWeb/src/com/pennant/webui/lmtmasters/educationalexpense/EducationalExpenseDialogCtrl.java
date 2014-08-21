@@ -81,6 +81,7 @@ import com.pennant.backend.model.lmtmasters.EducationalExpense;
 import com.pennant.backend.model.lmtmasters.EducationalLoan;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.lmtmasters.EducationalExpenseService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
@@ -425,7 +426,7 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.eduExpDetail.setFilters(filter);
 		this.eduExpAmount.setMaxlength(18);
 		this.eduExpAmount.setMandatory(true);
-		this.eduExpAmount.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		this.eduExpAmount.setFormat(PennantApplicationUtil.getAmountFormate(this.ccyFormatter));
 		this.eduExpDate.setFormat(PennantConstants.dateFormat);
 
 		if (isWorkFlowEnabled()){

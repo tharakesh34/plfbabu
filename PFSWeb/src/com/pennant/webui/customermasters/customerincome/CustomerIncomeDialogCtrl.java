@@ -85,6 +85,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
@@ -301,7 +302,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custIncomeType.setValidateColumns(new String[] { "IncomeExpense" });
 		
 		this.custIncome.setMaxlength(18);
-		this.custIncome.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
+		this.custIncome.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);

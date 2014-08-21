@@ -64,6 +64,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
@@ -224,7 +225,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.wIAmount.setMaxlength(18);
-		this.wIAmount.setFormat(PennantAppUtil
+		this.wIAmount.setFormat(PennantApplicationUtil
 				.getAmountFormate(getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 		logger.debug("Leaving");
 

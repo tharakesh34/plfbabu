@@ -753,7 +753,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cmtCcy.setDescription(details.getCcyDesc());
 		// To Format Amount based on the currency
 		defaultCCYDecPos = details.getCcyEditField();
-		this.cmtAmount.setFormat(PennantAppUtil.getAmountFormate(defaultCCYDecPos));
+		this.cmtAmount.setFormat(PennantApplicationUtil.getAmountFormate(defaultCCYDecPos));
 		this.cmtAmount.setScale(defaultCCYDecPos);
 		setFormatByCCy(this.cmtUtilizedAmount, defaultCCYDecPos);
 		setFormatByCCy(this.cmtAvailable, defaultCCYDecPos);
@@ -2545,7 +2545,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	private void calculateCharges() {
 		logger.debug("Entering calculateCharges()");
-		this.calCmtCharges.setFormat(PennantAppUtil.getAmountFormate(defaultCCYDecPos));
+		this.calCmtCharges.setFormat(PennantApplicationUtil.getAmountFormate(defaultCCYDecPos));
 		if (this.cmtAmount.getValue() != null && this.cmtCharges.getValue() == null) {
 			if (this.cmtAmount.getValue().compareTo(BigDecimal.ZERO) != 0) {
 				String result = null;
@@ -2824,7 +2824,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	}
 
 	private void setFormatByCCy(Decimalbox decimalbox, int decPos) {
-		decimalbox.setFormat(PennantAppUtil.getAmountFormate(decPos));
+		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(decPos));
 		decimalbox.setScale(decPos);
 	}
 

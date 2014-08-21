@@ -89,6 +89,7 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.lmtmasters.MortgageLoanDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -645,13 +646,13 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		
 		this.mortgCurrentValue.setMandatory(true);
 		this.mortgCurrentValue.setMaxlength(18);
-		this.mortgCurrentValue.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		this.mortgCurrentValue.setFormat(PennantApplicationUtil.getAmountFormate(this.ccyFormatter));
 		
 		this.mortFinRatio.setMaxlength(18);
-		this.mortFinRatio.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		this.mortFinRatio.setFormat(PennantApplicationUtil.getAmountFormate(this.ccyFormatter));
 		
 		this.mortPricePF.setMaxlength(18);
-		this.mortPricePF.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		this.mortPricePF.setFormat(PennantApplicationUtil.getAmountFormate(this.ccyFormatter));
 		
 		this.mortgPurposeOfLoan.setMaxlength(100);
 		

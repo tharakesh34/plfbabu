@@ -276,7 +276,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		logger.debug("Entering");
 		super.doSetFieldProperties();
 		this.downPaySupl.setMaxlength(18);
-		this.downPaySupl.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		logger.debug("Leaving");
 	}
@@ -2749,10 +2749,10 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescFinFormatter(details.getCcyEditField());
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setFinCcy(details.getCcyCode());
 				
-				this.finAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.finRepaymentAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPayBank.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPaySupl.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+				this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 
 				try {
 					if (getChildWindowDialogCtrl().getClass().getField("ccyFormatter") != null) {
@@ -3354,12 +3354,12 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}else if (getComboboxValue(this.oDChargeType).equals(PennantConstants.FLAT)) {
 			this.oDChargeAmtOrPerc.setDisabled(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"));
 			this.oDChargeAmtOrPerc.setMaxlength(15);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(
 					getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 		} else {
 			this.oDChargeAmtOrPerc.setDisabled(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"));
 			this.oDChargeAmtOrPerc.setMaxlength(6);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(2));
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
 	}
 	

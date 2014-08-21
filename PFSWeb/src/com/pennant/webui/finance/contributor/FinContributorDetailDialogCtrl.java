@@ -80,7 +80,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -323,14 +322,14 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		this.contributorCIF.setMaxlength(6);
 		this.contributorInvestment.setMaxlength(18);
 		this.mudaribPerc.setScale(formatter);
-		this.contributorInvestment.setFormat(PennantAppUtil
+		this.contributorInvestment.setFormat(PennantApplicationUtil
 				.getAmountFormate(formatter));
 		this.investmentAcc.setMaxlength(50);
 		//this.totalInvestmentPerc.setMaxlength(13);
 		//this.totalInvestmentPerc.setFormat(PennantAppUtil.getAmountFormate(9));
 		this.mudaribPerc.setMaxlength(6);
 		this.mudaribPerc.setScale(2);
-		this.mudaribPerc.setFormat(PennantAppUtil.getAmountFormate(2));
+		this.mudaribPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.investmentDate.setFormat(PennantConstants.dateFormat);
 		this.recordDate.setFormat(PennantConstants.dateFormat);
 		readOnlyComponent(true,this.recordDate);

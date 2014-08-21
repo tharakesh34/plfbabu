@@ -82,6 +82,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinanceMarginSlab;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.FinanceMarginSlabService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
@@ -256,11 +257,11 @@ public class FinanceMarginSlabDialogCtrl extends GFCBaseCtrl implements Serializ
 		//Empty sent any required attributes
 		this.finType.setMaxlength(8);
 	  	this.slabAmount.setMaxlength(18);
-	  	this.slabAmount.setFormat(PennantAppUtil.getAmountFormate(0));
+	  	this.slabAmount.setFormat(PennantApplicationUtil.getAmountFormate(0));
 	  	this.slabAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 	  	this.slabAmount.setScale(0);
 	  	this.slabMargin.setMaxlength(18);
-	  	this.slabMargin.setFormat(PennantAppUtil.getAmountFormate(0));
+	  	this.slabMargin.setFormat(PennantApplicationUtil.getAmountFormate(0));
 	  	this.slabMargin.setRoundingMode(BigDecimal.ROUND_DOWN);
 	  	this.slabMargin.setScale(0);
 		

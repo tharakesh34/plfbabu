@@ -811,13 +811,13 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//this.customerGroup.setMandatoryStyle(true);
 		
 		this.nextReviewDate.setFormat(PennantConstants.dateFormat);
-		this.countryExposure.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
+		this.countryExposure.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.countryExposure.setScale(ccyFormat);
-		this.countryLimit.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
+		this.countryLimit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.countryLimit.setScale(ccyFormat);
-		this.custGroupExposure.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
+		this.custGroupExposure.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.custGroupExposure.setScale(ccyFormat);
-		this.custGroupLimit.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
+		this.custGroupLimit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.custGroupLimit.setScale(ccyFormat);
 		
 		this.reviewCenter.setMaxlength(50);

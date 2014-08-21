@@ -86,6 +86,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.PennantAppUtil;
@@ -397,7 +398,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 						Decimalbox calBox = new Decimalbox();
 						calBox.setWidth("95%");
 						calBox.setMaxlength(18);
-						calBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+						calBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 						calBox.setSclass("feeWaiver");
 						calBox.setDisabled(false);
 						calBox.setId("cal_"+code);
@@ -416,7 +417,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 							maxWaiverBox = new Decimalbox();
 							maxWaiverBox.setVisible(false);
 							maxWaiverBox.setId("maxwaiver_"+code);
-							maxWaiverBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+							maxWaiverBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 							BigDecimal maxWaiver = PennantAppUtil.getPercentageValue(feeRule.getFeeAmount(), feeRule.getWaiverPerc());
 							maxWaiverBox.setValue(PennantAppUtil.formateAmount(maxWaiver,formatter));
 							
@@ -424,13 +425,13 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 							oldwaiverBox = new Decimalbox();
 							oldwaiverBox.setVisible(false);
 							oldwaiverBox.setId("oldwaiver_"+code);
-							oldwaiverBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+							oldwaiverBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 							oldwaiverBox.setValue(PennantAppUtil.formateAmount(waiverAmt,formatter));
 
 							waiverBox = new Decimalbox();
 							waiverBox.setWidth("95%");
 							waiverBox.setMaxlength(18);
-							waiverBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+							waiverBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 							waiverBox.setSclass("feeWaiver");
 							waiverBox.setDisabled(false);
 							waiverBox.setId("waiver_"+code);
@@ -452,13 +453,13 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 						Decimalbox oldPaidBox = new Decimalbox();
 						oldPaidBox.setVisible(false);
 						oldPaidBox.setId("oldpaid_"+code);
-						oldPaidBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+						oldPaidBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 						oldPaidBox.setValue(PennantAppUtil.formateAmount(paidAmt,formatter));
 
 						Decimalbox paidBox = new Decimalbox();
 						paidBox.setWidth("95%");
 						paidBox.setMaxlength(18);
-						paidBox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+						paidBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 						paidBox.setSclass("feeWaiver");
 						paidBox.setDisabled(false);
 						paidBox.setId("paid_"+code);

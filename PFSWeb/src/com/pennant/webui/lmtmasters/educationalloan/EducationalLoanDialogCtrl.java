@@ -97,6 +97,7 @@ import com.pennant.backend.model.lmtmasters.EducationalExpense;
 import com.pennant.backend.model.lmtmasters.EducationalLoan;
 import com.pennant.backend.service.lmtmasters.EducationalLoanService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
@@ -344,7 +345,7 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 				
 		this.eduExpectedIncome.setMandatory(true);
 		this.eduExpectedIncome.setMaxlength(18);
-		this.eduExpectedIncome.setFormat(PennantAppUtil.getAmountFormate(this.ccyFormatter));
+		this.eduExpectedIncome.setFormat(PennantApplicationUtil.getAmountFormate(this.ccyFormatter));
 		
 		
 		this.eduCourseFromBranch.setMaxlength(50);

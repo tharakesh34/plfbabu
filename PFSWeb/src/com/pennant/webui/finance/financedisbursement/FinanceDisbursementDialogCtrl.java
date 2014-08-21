@@ -81,6 +81,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.finance.FinanceDisbursementService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -244,7 +245,7 @@ public class FinanceDisbursementDialogCtrl extends GFCBaseCtrl implements Serial
 		this.disbSeq.setMaxlength(10);
 		this.disbDesc.setMaxlength(50);
 	  	this.disbAmount.setMaxlength(18);
-	  	this.disbAmount.setFormat(PennantAppUtil.getAmountFormate(0));
+	  	this.disbAmount.setFormat(PennantApplicationUtil.getAmountFormate(0));
 	  	this.disbAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 	  	this.disbAmount.setScale(0);
 	  	this.disbActDate.setFormat(PennantConstants.dateFormat);

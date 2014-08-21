@@ -88,6 +88,7 @@ import com.pennant.backend.service.customermasters.FinCreditRevSubCategoryServic
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditReviewSummaryData;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -242,7 +243,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	// create a JavaScript engine
 	ScriptEngine engine = factory.getEngineByName("JavaScript");
 	int currFormatter;
-	String amtFormat=PennantAppUtil.getAmountFormate(currFormatter);
+	String amtFormat=PennantApplicationUtil.getAmountFormate(currFormatter);
 	List<Filter> filterList = null;
 	
 	private String AUDITUNAUDIT_LISTHEADER="auditUnaudit";	
@@ -352,7 +353,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 		this.auditedYear.setMaxlength(4);
 		this.noOfShares.setMaxlength(18);
 		this.location.setMaxlength(50);
-	    this.marketPrice.setFormat(PennantAppUtil.getAmountFormate(this.currFormatter));
+	    this.marketPrice.setFormat(PennantApplicationUtil.getAmountFormate(this.currFormatter));
 	    this.marketPrice.setMaxlength(18);
 	    this.marketPrice.setMandatory(false);
 	    this.auditedDate.setFormat(PennantConstants.dateFormat);
@@ -1835,7 +1836,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 				this.currencyType.setValue(details.getCcyCode());
 				this.currencyType.setDescription(details.getCcyDesc());
 				currFormatter = details.getCcyEditField();
-				amtFormat=PennantAppUtil.getAmountFormate(currFormatter);
+				amtFormat=PennantApplicationUtil.getAmountFormate(currFormatter);
 
 				BigDecimal convrtnRate = PennantAppUtil.formateAmount(CalculationUtil.getConvertedAmount(PennantConstants.CURRENCY_USD, this.currencyType.getValue(), 
 						new BigDecimal(100)), currFormatter);
@@ -3090,7 +3091,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 		Decimalbox db_Amount = null;
 		Image lcImage = null;		
 		String mainCategory = "";
-		String amtFormat=PennantAppUtil.getAmountFormate(currFormatter);
+		String amtFormat=PennantApplicationUtil.getAmountFormate(currFormatter);
 		BigDecimal prvAmt, curAmt, convrsnPrice;
 		boolean isRatio = false;
 		if(finCreditRevSubCategory.getRemarks().equals(PennantConstants.CREDITREVIEW_REMARKS)){

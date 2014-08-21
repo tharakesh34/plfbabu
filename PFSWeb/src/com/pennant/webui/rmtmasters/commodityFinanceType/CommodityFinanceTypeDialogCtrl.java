@@ -73,6 +73,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.FinanceMarginSlabService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
@@ -312,9 +313,9 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finAcType.setMaxlength(8);
 		this.finContingentAcType.setMaxlength(8);
 		this.finMaxAmount.setMaxlength(18);
-		this.finMaxAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+		this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
 		this.finMinAmount.setMaxlength(18);	
-		this.finMinAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+		this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
 		this.finHistRetension.setMaxlength(3);
 		this.finAEBuyOrInception.setMaxlength(8);
 		this.finAEAmzNorm.setMaxlength(8);
@@ -1493,8 +1494,8 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 				// To Format Amount based on the currency
 
 				getFinanceType().setLovDescFinFormetter(details.getCcyEditField());
-				this.finMaxAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
-				this.finMinAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+				this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+				this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
 
 			}
 		}
@@ -1523,8 +1524,8 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 				// To Format Amount based on the currency
 
 				getFinanceType().setLovDescFinFormetter(details.getCcyEditField());
-				this.finMaxAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
-				this.finMinAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+				this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+				this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
 
 			}
 		}

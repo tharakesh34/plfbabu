@@ -245,14 +245,14 @@ public class ContributorDetailsDialogCtrl extends GFCBaseListCtrl<FinContributor
 		this.minContributors.setMaxlength(4);
 		this.maxContributors.setMaxlength(4);
 		this.minContributionAmt.setMaxlength(18);
-		this.minContributionAmt.setFormat(PennantAppUtil.getAmountFormate(formatter));
+		this.minContributionAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.maxContributionAmt.setMaxlength(18);
-		this.maxContributionAmt.setFormat(PennantAppUtil.getAmountFormate(formatter));
+		this.maxContributionAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.curContributors.setMaxlength(4);
 		this.curContributionAmt.setMaxlength(18);
-		this.curContributionAmt.setFormat(PennantAppUtil.getAmountFormate(formatter));
+		this.curContributionAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.curBankInvest.setMaxlength(18);
-		this.curBankInvest.setFormat(PennantAppUtil.getAmountFormate(formatter));
+		this.curBankInvest.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.avgMudaribRate.setMaxlength(13);
 		this.avgMudaribRate.setScale(9);
 		this.avgMudaribRate.setFormat(PennantConstants.rateFormate9);

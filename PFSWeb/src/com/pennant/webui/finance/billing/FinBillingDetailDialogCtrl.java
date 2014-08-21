@@ -80,6 +80,7 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinBillingDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
@@ -260,7 +261,7 @@ public class FinBillingDetailDialogCtrl extends GFCBaseCtrl implements Serializa
 		//Empty sent any required attributes
 		
 		this.progClaimDate.setFormat(PennantConstants.dateFormat);
-		this.progClaimAmount.setFormat(PennantAppUtil.getAmountFormate(formatter));
+		this.progClaimAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.totalPercWork.setFormat(PennantConstants.percentageFormate2);
 		
 		if (isWorkFlowEnabled()){

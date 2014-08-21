@@ -254,7 +254,7 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 		ccyformatt = Integer.parseInt(SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY_FORMAT).toString());
 		this.custAmount.setMandatory(false);
 		this.custAmount.setMaxlength(18);
-		this.custAmount.setFormat(PennantAppUtil.getAmountFormate(ccyformatt));
+		this.custAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
 		
 		this.custDftCcy.setMaxlength(3);
 		this.custDftCcy.setModuleName("Currency");
@@ -279,8 +279,8 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 		}else{
 			ccyformatt=	Integer.parseInt(SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY_FORMAT).toString());
 		}
-		this.custAmount.setFormat(PennantAppUtil.getAmountFormate(ccyformatt));
-		this.toleranceVal.setFormat(PennantAppUtil.getAmountFormate(ccyformatt));
+		this.custAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
+		this.toleranceVal.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
 		logger.debug("Leaving");
 	}
 	
@@ -841,8 +841,8 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 		
 		//this.custDftCcy.setValue(StringUtils.trimToEmpty(customer.getLovDescCustBaseCcyName()).equals("") ? "" : customer.getCustBaseCcy() + "-" + customer.getLovDescCustBaseCcyName());
 		ccyformatt=customer.getLovDescCcyFormatter();
-		this.toleranceVal.setFormat(PennantAppUtil.getAmountFormate(ccyformatt));
-		this.custAmount.setFormat(PennantAppUtil.getAmountFormate(ccyformatt));
+		this.toleranceVal.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
+		this.custAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
 		
 		//Fetching Customer Rating Details
 		List<CustomerRating> ratingList = getCustomerDetailsService().getCustomerRatingByCustId(customer.getCustID(), "_AView");

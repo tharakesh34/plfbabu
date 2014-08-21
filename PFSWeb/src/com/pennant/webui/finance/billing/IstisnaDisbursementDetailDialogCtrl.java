@@ -274,11 +274,11 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl implements 
 
 		this.disbDate.setFormat(PennantConstants.dateFormat);
 		this.disbAmount.setMandatory(true);
-		this.disbAmount.setFormat(PennantAppUtil.getAmountFormate(formatter));
+		this.disbAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.disbAmount.setMaxlength(18);
 		this.disbRetPerc.setFormat(PennantConstants.percentageFormate2);
 		this.disbRetPerc.setMaxlength(6);
-		this.disbRetAmount.setFormat(PennantAppUtil.getAmountFormate(formatter));
+		this.disbRetAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.disbRetAmount.setMaxlength(18);
 		this.disbRemarks.setMaxlength(100);
 		

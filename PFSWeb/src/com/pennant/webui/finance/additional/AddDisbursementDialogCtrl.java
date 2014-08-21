@@ -205,7 +205,7 @@ public class AddDisbursementDialogCtrl  extends GFCBaseCtrl implements Serializa
 		// Empty sent any required attributes
 		this.disbAmount.setMaxlength(18);
 		this.disbAmount.setMandatory(true);
-		this.disbAmount.setFormat(PennantAppUtil.getAmountFormate(getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
+		this.disbAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 		this.disbAcctId.setMaxlength(20);
 		this.fromDate.setFormat(PennantConstants.dateFormat);
 		logger.debug("Leaving");

@@ -114,6 +114,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -586,7 +587,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.custCR2.setMaxlength(2);
 		//++++++++++++++++++++++++++
 		this.custTotalIncome.setMaxlength(18);
-		this.custTotalIncome.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
+		this.custTotalIncome.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		
 		this.custJointCustName.setMaxlength(50);
 		this.custJointCustDob.setFormat(PennantConstants.dateFormat);
@@ -2507,7 +2508,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 				ccyFormatter = details.getCcyEditField();
 			}
 		}
-		this.custTotalIncome.setFormat(PennantAppUtil.getAmountFormate(ccyFormatter));
+		this.custTotalIncome.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		doFillCustomerIncome(getIncomeList());
 		logger.debug("Leaving");
 	}

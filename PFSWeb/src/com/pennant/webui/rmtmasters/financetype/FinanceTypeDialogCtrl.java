@@ -117,6 +117,7 @@ import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -944,9 +945,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finContingentAcType.setMaxlength(8);
 		this.finBankContingentAcType.setMaxlength(8);
 		this.finMaxAmount.setMaxlength(18);
-		this.finMaxAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+		this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
 		this.finMinAmount.setMaxlength(18);
-		this.finMinAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+		this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
 		this.finHistRetension.setMaxlength(3);
 
 		this.finIntRate.setMaxlength(13);
@@ -983,9 +984,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//overdue Penalty Details
 		this.oDGraceDays.setMaxlength(3);
 		this.oDChargeAmtOrPerc.setMaxlength(15);
-		this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+		this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
 		this.oDMaxWaiverPerc.setMaxlength(6);
-		this.oDMaxWaiverPerc.setFormat(PennantAppUtil.getAmountFormate(2));
+		this.oDMaxWaiverPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -4638,8 +4639,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				fillComboBox(this.cbfinDaysCalType, details.getCcyDrRateBasisCode(), pftDays, "");
 				// To Format Amount based on the currency
 				getFinanceType().setLovDescFinFormetter(details.getCcyEditField());
-				this.finMaxAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
-				this.finMinAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+				this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+				this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -6185,11 +6186,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}else if (getComboboxValue(this.oDChargeType).equals(PennantConstants.FLAT)) {
 			this.oDChargeAmtOrPerc.setDisabled(isReadOnly("FinanceTypeDialog_oDChargeAmtOrPerc"));
 			this.oDChargeAmtOrPerc.setMaxlength(15);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
 		} else {
 			this.oDChargeAmtOrPerc.setDisabled(isReadOnly("FinanceTypeDialog_oDChargeAmtOrPerc"));
 			this.oDChargeAmtOrPerc.setMaxlength(6);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(2));
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
 	}
 	

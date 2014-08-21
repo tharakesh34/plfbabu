@@ -230,8 +230,8 @@ public class FinGoodsLoanDetailListCtrl extends GFCBaseCtrl implements Serializa
 		this.quotationNo.setMaxlength(100);
         this.purchaseDate.setFormat(PennantConstants.dateFormat);
         this.quotationDate.setFormat(PennantConstants.dateFormat);
-		this.salePrice.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
-        this.downPayment.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
+		this.salePrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
+        this.downPayment.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		logger.debug("Leaving");
 	}
 
@@ -240,8 +240,8 @@ public class FinGoodsLoanDetailListCtrl extends GFCBaseCtrl implements Serializa
 	private void dowriteBeanToComponents(boolean isEdit) {
 		if (main != null) {
 			
-			this.salePrice.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
-			this.downPayment.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
+			this.salePrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
+			this.downPayment.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 			
 			this.salePrice.setValue(PennantAppUtil.formateAmount(main.getFinAmount(), ccyFormat));
 			this.downPayment.setValue(PennantAppUtil.formateAmount(main.getDownPayment(), ccyFormat));

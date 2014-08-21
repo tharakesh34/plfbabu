@@ -254,7 +254,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		logger.debug("Entering");
 		super.doSetFieldProperties();
  		this.downPaySupl.setMaxlength(18);
-		this.downPaySupl.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		logger.debug("Leaving");
 	}
@@ -3178,12 +3178,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		}else if (getComboboxValue(this.oDChargeType).equals(PennantConstants.FLAT)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			this.oDChargeAmtOrPerc.setMaxlength(15);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(
 					getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 		} else {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			this.oDChargeAmtOrPerc.setMaxlength(6);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(2));
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
 	}
 

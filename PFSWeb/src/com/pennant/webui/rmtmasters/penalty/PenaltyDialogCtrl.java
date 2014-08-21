@@ -83,6 +83,7 @@ import com.pennant.backend.model.rmtmasters.PenaltyCode;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.PenaltyService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
@@ -264,18 +265,18 @@ public class PenaltyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.oDueGraceDays.setMaxlength(3);
 		this.penaltyPriRateBasis.setMaxlength(8);
 		this.penaltyPriBaseRate.setMaxlength(13);
-		this.penaltyPriBaseRate.setFormat(PennantAppUtil.getAmountFormate(9));
+		this.penaltyPriBaseRate.setFormat(PennantApplicationUtil.getAmountFormate(9));
 		this.penaltyPriSplRate.setMaxlength(13);
-		this.penaltyPriSplRate.setFormat(PennantAppUtil.getAmountFormate(9));
+		this.penaltyPriSplRate.setFormat(PennantApplicationUtil.getAmountFormate(9));
 		this.penaltyPriNetRate.setMaxlength(13);
-		this.penaltyPriNetRate.setFormat(PennantAppUtil.getAmountFormate(7));
+		this.penaltyPriNetRate.setFormat(PennantApplicationUtil.getAmountFormate(7));
 		this.penaltyIntRateBasis.setMaxlength(8);
 		this.penaltyIntBaseRate.setMaxlength(13);
-		this.penaltyIntBaseRate.setFormat(PennantAppUtil.getAmountFormate(9));
+		this.penaltyIntBaseRate.setFormat(PennantApplicationUtil.getAmountFormate(9));
 		this.penaltyIntSplRate.setMaxlength(13);
-		this.penaltyIntSplRate.setFormat(PennantAppUtil.getAmountFormate(9));
+		this.penaltyIntSplRate.setFormat(PennantApplicationUtil.getAmountFormate(9));
 		this.penaltyIntNetRate.setMaxlength(13);
-		this.penaltyIntNetRate.setFormat(PennantAppUtil.getAmountFormate(7));
+		this.penaltyIntNetRate.setFormat(PennantApplicationUtil.getAmountFormate(7));
 
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);

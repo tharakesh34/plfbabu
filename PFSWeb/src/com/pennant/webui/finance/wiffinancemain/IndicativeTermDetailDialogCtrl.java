@@ -352,7 +352,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		this.otherDetails.setMaxlength(200);
 		this.totalFacility.setMaxlength(18);
 		this.totalFacility.setMandatory(true);
-		this.totalFacility.setFormat(PennantAppUtil.getAmountFormate(getIndicativeTermDetail().getLovDescTotalFacilityFormatter()));
+		this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(getIndicativeTermDetail().getLovDescTotalFacilityFormatter()));
 		this.totalFacilityCCY.setMaxlength(3);
 		this.totalFacilityCCY.setMandatoryStyle(true);
 		this.totalFacilityCCY.setModuleName("Currency");
@@ -361,7 +361,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		this.totalFacilityCCY.setValidateColumns(new String[] { "CcyCode" });
 		this.underWriting.setMaxlength(18);
 		this.underWriting.setMandatory(true);
-		this.underWriting.setFormat(PennantAppUtil.getAmountFormate(getIndicativeTermDetail().getLovDescUnderWritingFormatter()));
+		this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(getIndicativeTermDetail().getLovDescUnderWritingFormatter()));
 		this.underWritingCCY.setMaxlength(3);
 		this.underWritingCCY.setMandatoryStyle(true);
 		this.underWritingCCY.setModuleName("Currency");
@@ -370,7 +370,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		this.underWritingCCY.setValidateColumns(new String[] { "CcyCode" });
 		this.propFinalTake.setMaxlength(18);
 		this.propFinalTake.setMandatory(true);
-		this.propFinalTake.setFormat(PennantAppUtil.getAmountFormate(getIndicativeTermDetail().getLovDescPropFinalTakeFormatter()));
+		this.propFinalTake.setFormat(PennantApplicationUtil.getAmountFormate(getIndicativeTermDetail().getLovDescPropFinalTakeFormatter()));
 		this.propFinalTakeCCY.setMaxlength(3);
 		this.propFinalTakeCCY.setMandatoryStyle(true);
 		this.propFinalTakeCCY.setModuleName("Currency");
@@ -397,7 +397,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl implements Seria
 			if (details != null) {
 				// To Format Amount based on the currency
 				getIndicativeTermDetail().setLovDescTotalFacilityFormatter(details.getCcyEditField());
-				this.totalFacility.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+				this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 			}
 		}
 		logger.debug("Leaving " + event.toString());
@@ -414,7 +414,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl implements Seria
 			if (details != null) {
 				// To Format Amount based on the currency
 				getIndicativeTermDetail().setLovDescUnderWritingFormatter(details.getCcyEditField());
-				this.underWriting.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+				this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 			}
 		}
 		logger.debug("Leaving " + event.toString());
@@ -431,7 +431,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl implements Seria
 			if (details != null) {
 				// To Format Amount based on the currency
 				getIndicativeTermDetail().setLovDescPropFinalTakeFormatter(details.getCcyEditField());
-				this.propFinalTake.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+				this.propFinalTake.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 			}
 		}
 		logger.debug("Leaving " + event.toString());

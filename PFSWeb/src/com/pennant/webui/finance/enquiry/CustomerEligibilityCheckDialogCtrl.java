@@ -91,6 +91,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -368,7 +369,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseListCtrl<Customer
 					decimalbox = new Decimalbox();
 					decimalbox.setId(details.getRbFldName());
 					decimalbox.setWidth((details.getRbFldLen()*12)+"px");
-					decimalbox.setFormat(PennantAppUtil.getAmountFormate(formatter));
+					decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 					decimalbox.setMaxlength(details.getRbFldLen() +2);
 
 					try {

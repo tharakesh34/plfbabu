@@ -273,7 +273,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.wIAmount.setMaxlength(18);
-		this.wIAmount.setFormat(PennantAppUtil
+		this.wIAmount.setFormat(PennantApplicationUtil
 				.getAmountFormate(getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 		logger.debug("Leaving");
 

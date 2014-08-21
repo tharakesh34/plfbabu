@@ -77,6 +77,7 @@ import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.SectorService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
@@ -223,7 +224,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.sectorCode.setMaxlength(8);
 		this.sectorDesc.setMaxlength(50);
 		this.sectorLimit.setMaxlength(21);
-		this.sectorLimit.setFormat(PennantAppUtil.getAmountFormate(0));
+		this.sectorLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.sectorLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.sectorLimit.setScale(0);
 

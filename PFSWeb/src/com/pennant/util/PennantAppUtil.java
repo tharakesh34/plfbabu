@@ -250,30 +250,6 @@ public class PennantAppUtil {
 		return moduleName;
 	}
 	
-
-	public static String getAmountFormate(int dec) {
-		String formateString = PennantConstants.defaultAmountFormate;
-
-		switch (dec) {
-			case 0:
-				formateString = PennantConstants.amountFormate0;
-				break;
-			case 1:
-				formateString = PennantConstants.amountFormate1;
-				break;
-			case 2:
-				formateString = PennantConstants.amountFormate2;
-				break;
-			case 3:
-				formateString = PennantConstants.amountFormate3;
-				break;
-			case 4:
-				formateString = PennantConstants.amountFormate4;
-				break;
-		}
-		return formateString;
-	}
-
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).getValue().equalsIgnoreCase(value)) {

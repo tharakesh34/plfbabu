@@ -309,31 +309,31 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		logger.debug("Entering");
 		super.doSetFieldProperties();
  		this.downPaySupl.setMaxlength(18);
-		this.downPaySupl.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		
 		//Finance Premium/ Discount Details
 		this.issueNumber.setMaxlength(20);
 		this.noOfUnits.setMaxlength(9);
 		this.faceValue.setMaxlength(18);
-		this.faceValue.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.faceValue.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.premiumValue.setMaxlength(18);
-		this.premiumValue.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.premiumValue.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.pricePerUnit.setMaxlength(18);
-		this.pricePerUnit.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.pricePerUnit.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.yieldValue.setMaxlength(18);
 		this.yieldValue.setFormat(PennantConstants.rateFormate9);
 		this.accruedProfit.setMaxlength(18);
-		this.accruedProfit.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.accruedProfit.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.fairValuePerUnit.setMaxlength(18);
-		this.fairValuePerUnit.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.fairValuePerUnit.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.fairValueAmount.setMaxlength(18);
-		this.fairValueAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.fairValueAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.lastCouponDate.setFormat(PennantConstants.dateFormat);
 		this.purchaseDate.setFormat(PennantConstants.dateFormat);
@@ -3106,10 +3106,10 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescFinFormatter(details.getCcyEditField());
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setFinCcy(details.getCcyCode());
 
-				this.finAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.finRepaymentAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPayBank.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPaySupl.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+				this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 
 				try {
 					if (getChildWindowDialogCtrl().getClass().getField("ccyFormatter") != null) {
@@ -3737,12 +3737,12 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		}else if (getComboboxValue(this.oDChargeType).equals(PennantConstants.FLAT)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			this.oDChargeAmtOrPerc.setMaxlength(15);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(
 					getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 		} else {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			this.oDChargeAmtOrPerc.setMaxlength(6);
-			this.oDChargeAmtOrPerc.setFormat(PennantAppUtil.getAmountFormate(2));
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
 	}
 

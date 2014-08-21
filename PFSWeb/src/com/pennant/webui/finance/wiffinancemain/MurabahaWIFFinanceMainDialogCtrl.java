@@ -523,15 +523,15 @@ public class MurabahaWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 		this.finStartDate.setFormat(PennantConstants.dateFormat);
 		this.finAmount.setMandatory(true);
 		this.finAmount.setMaxlength(18);
-		this.finAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.defferments.setMaxlength(3);
 		this.frqDefferments.setMaxlength(3);
 		this.downPayBank.setMaxlength(18);
-		this.downPayBank.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.downPaySupl.setMaxlength(18);
-		this.downPaySupl.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 
 		// Finance Basic Details Tab ---> 2. Grace Period Details
@@ -557,7 +557,7 @@ public class MurabahaWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 		// Finance Basic Details Tab ---> 3. Repayment Period Details
 		this.numberOfTerms.setMaxlength(10);
 		this.finRepaymentAmount.setMaxlength(18);
-		this.finRepaymentAmount.setFormat(PennantAppUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
+		this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.repayBaseRate.setMaxlength(8);
 		this.repaySpecialRate.setMaxlength(8);
@@ -4010,10 +4010,10 @@ public class MurabahaWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 				// To Format Amount based on the currency
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescFinFormatter(details.getCcyEditField());
 
-				this.finAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.finRepaymentAmount.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPayBank.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPaySupl.setFormat(PennantAppUtil.getAmountFormate(details.getCcyEditField()));
+				this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 
 			}
 		}

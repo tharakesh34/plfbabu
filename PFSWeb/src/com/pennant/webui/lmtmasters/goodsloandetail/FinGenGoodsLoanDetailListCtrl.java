@@ -197,8 +197,8 @@ public class FinGenGoodsLoanDetailListCtrl extends GFCBaseCtrl implements Serial
 	private void dowriteBeanToComponents() {
 		if (main != null) {
 			
-			this.salePrice.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
-			this.downPayment.setFormat(PennantAppUtil.getAmountFormate(ccyFormat));
+			this.salePrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
+			this.downPayment.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 			
 			this.salePrice.setValue(PennantAppUtil.formateAmount(main.getFinAmount(), ccyFormat));
 			this.downPayment.setValue(PennantAppUtil.formateAmount(main.getDownPayment(), ccyFormat));

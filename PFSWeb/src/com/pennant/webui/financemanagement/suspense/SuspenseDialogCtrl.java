@@ -250,9 +250,9 @@ public class SuspenseDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finType.setMaxlength(8);
 		this.custID.setMaxlength(19);
 		this.finSuspAmt.setMaxlength(18);
-		this.finSuspAmt.setFormat(PennantAppUtil.getAmountFormate(getSuspHead().getLovDescFinFormatter()));
+		this.finSuspAmt.setFormat(PennantApplicationUtil.getAmountFormate(getSuspHead().getLovDescFinFormatter()));
 		this.finCurSuspAmt.setMaxlength(18);
-		this.finCurSuspAmt.setFormat(PennantAppUtil.getAmountFormate(getSuspHead().getLovDescFinFormatter()));
+		this.finCurSuspAmt.setFormat(PennantApplicationUtil.getAmountFormate(getSuspHead().getLovDescFinFormatter()));
 		this.finSuspDate.setFormat(PennantConstants.dateFormat);
 		this.finSuspTrfDate.setFormat(PennantConstants.dateFormat);
 
