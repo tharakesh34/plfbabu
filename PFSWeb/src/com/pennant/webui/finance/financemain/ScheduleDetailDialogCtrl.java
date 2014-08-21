@@ -164,7 +164,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	protected Button 		btnReCalcualte; 						// autoWired
 	protected Button 		btnSubSchedule; 						// autoWired
 	protected Button 		btnChangeProfit; 						// autoWired
-	protected Button 		btnChangeFrq; 						// autoWired
+	protected Button 		btnChangeFrq; 						    // autoWired
 	protected Button 		btnPrintSchedule; 						// autoWired
 	
 	protected Listheader    listheader_ScheduleDetailDialog_Date;
@@ -174,6 +174,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	protected Listheader    listheader_ScheduleDetailDialog_Principal;
 	protected Listheader    listheader_ScheduleDetailDialog_Total;
 	protected Listheader    listheader_ScheduleDetailDialog_ScheduleEndBal;
+	// Newly Added Headers
+	protected Listheader    listHeader_cashFlowEffect;
+	protected Listheader    listHeader_vSProfit;
+	protected Listheader    listHeader_orgPrincipalDue;
 	
 	private Object financeMainDialogCtrl = null;
 	private FeeDetailDialogCtrl feeDetailDialogCtrl = null;
@@ -268,6 +272,18 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		}
 		doSetLabels();
 		doShowDialog();
+		
+		if(getFinScheduleData().getFinanceMain().isStepFinance()){
+			if(getFinScheduleData().getFinanceMain().isAlwManualSteps()){ // TODO
+				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
+				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
+			}
+		} else {
+			this.listHeader_cashFlowEffect.setVisible(false);
+			this.listHeader_vSProfit.setVisible(false);
+			this.listHeader_orgPrincipalDue.setVisible(false);
+		}  
+		
 		logger.debug("Leaving " + event.toString());
 	}
 	

@@ -686,7 +686,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 			boolean isGrcBaseRate, boolean isRpyBaseRate, String bgColor, String lcColor, int fillType, Date progClaimDate, boolean isFee) {
 		logger.debug("Entering");
 		listitem = new Listitem();
-		
 		Listcell lc = null;
 		String strDate = "";
 		String rate = "";
@@ -729,19 +728,27 @@ public class FinScheduleListItemRenderer implements Serializable{
 		}
 		
 		if(fillType == 2){
-			lc.setSpan(6);
+		  if (getFinScheduleData().getFinanceMain().isStepFinance()) {
+				lc.setSpan(9);
+		   } else {
+				lc.setSpan(6);
+		   }
 		}
 		listitem.appendChild(lc);
 
 		// Amounts array
 		BigDecimal amountlist[] = { pftAmount, schdlPft, cpzAmount, totalAmount, endBal };
-
 		if(fillType == 1){
 			lc = new Listcell(String.valueOf(amountlist[0].intValue()));
 			lc.setStyle("text-align:right;");
 			listitem.appendChild(lc);
 			lc = new Listcell("");
-			lc.setSpan(4);
+			if(getFinScheduleData().getFinanceMain().isStepFinance()) {
+				lc.setSpan(7);
+			}  else {
+				lc.setSpan(4);
+			}
+			
 			listitem.appendChild(lc);
 		}else if(fillType == 2){
 			//Nothing todo
@@ -843,9 +850,43 @@ public class FinScheduleListItemRenderer implements Serializable{
 					if(!isEditable) {
 						lc.setStyle("text-align:right;cursor:default;");
 					}
+					
 				}
 				listitem.appendChild(lc);
 			}
+			
+			// for Cash Flow Effect value
+			if (getFinScheduleData().getFinanceMain().isStepFinance()) {
+				if (!isRate && !lastRec) {
+					lc = new Listcell(PennantAppUtil.amountFormate(data.getOrgPft(), 
+							getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
+				} else {
+					lc = new Listcell("");
+				}
+				lc.setStyle("text-align:right;cursor:default;");
+				listitem.appendChild(lc);
+
+				// for Vs Profit value
+				if (!isRate && !lastRec) {
+					lc = new Listcell(PennantAppUtil.amountFormate(data.getOrgPri(), 
+							getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
+				} else {
+					lc = new Listcell("");
+				}
+				lc.setStyle("text-align:right;cursor:default;");
+				listitem.appendChild(lc);
+
+				// for Original Principal Due value
+				if (!isRate && !lastRec) {
+					lc = new Listcell(PennantAppUtil.amountFormate(data.getOrgEndBal(),
+							getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
+				} else {
+					lc = new Listcell("");
+				}
+				lc.setStyle("text-align:right;cursor:default;");
+				listitem.appendChild(lc);
+			}
+
 			// if the schedule specifier is grace end then don't display the toottip text
 			if (isEditable && !lastRec) {
 				if (isRate && this.btnAddReviewRate != null && !this.btnAddReviewRate.isDisabled()) { 

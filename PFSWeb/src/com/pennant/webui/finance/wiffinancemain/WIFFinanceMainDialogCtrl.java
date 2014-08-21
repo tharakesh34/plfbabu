@@ -251,7 +251,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Space 		space_GrcSchdMthd;						// autoWired
 	protected Row			grcBaseRateRow;							// autoWired
 	protected Intbox        graceTerms;                             // autoWired
-	protected Intbox        graceTerms_Two;                             // autoWired
+	protected Intbox        graceTerms_Two;                         // autoWired
 
 	//Finance Main Details Tab---> 3. Repayment Period Details
 
@@ -3607,11 +3607,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.cbDepreciationFrqMth.setDisabled(isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
 		this.cbDepreciationFrqDay.setDisabled(isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
 		
-		/*this.stepFinance.setDisabled(isReadOnly("WIFFinanceMainDialog_stepFinance"));
+		this.stepFinance.setDisabled(isReadOnly("WIFFinanceMainDialog_stepFinance"));
 		this.stepPolicy.setReadonly(isReadOnly("WIFFinanceMainDialog_stepPolicy"));
 		this.alwManualSteps.setDisabled(isReadOnly("WIFFinanceMainDialog_alwManualSteps"));
 		this.noOfSteps.setDisabled(isReadOnly("WIFFinanceMainDialog_noOfSteps"));
-		*/
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 

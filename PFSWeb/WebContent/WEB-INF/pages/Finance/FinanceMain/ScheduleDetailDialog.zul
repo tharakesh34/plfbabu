@@ -176,6 +176,9 @@
 								<listheader id = "listheader_ScheduleDetailDialog_Principal" width="15%"  />
 								<listheader id = "listheader_ScheduleDetailDialog_Total"  width="15%"/>
 								<listheader id = "listheader_ScheduleDetailDialog_ScheduleEndBal"  width="14%"  />
+								<listheader id="listHeader_cashFlowEffect" label="${c:l('listheader_CashFlowEffect.label')}" hflex="min" />
+                                <listheader id="listHeader_vSProfit" label="${c:l('listheader_VsProfit.label')}" hflex="min" />
+                                <listheader id="listHeader_orgPrincipalDue" label="${c:l('listheader_OrgPrincipalDue.label')}" hflex="min" />
 							</listhead>
 						</listbox>
 						
