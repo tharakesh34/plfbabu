@@ -193,7 +193,6 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
-		<property name="accrualPostingService" ref="accrualPostingService" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="premiumDetailDAO" ref="financePremiumDetailDAO" />
 	</bean>

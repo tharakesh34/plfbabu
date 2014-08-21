@@ -21,8 +21,7 @@
 					<div align="left" style="margin-top:300px;">
 						<h:form action="j_spring_security_check"
 							method="post">
-							<grid width="400px"
-								sclass="GridLayoutNoBorder" >
+							<grid width="400px" style="border:none;background:white;">
 								<columns>
 									<column width="200px" />
 									<column width="200px" align="right" />
@@ -45,7 +44,7 @@
 											id="label_LoginDialog_user"
 											value="${c:l('label_LoginDialog_user.value')}"
 											style="margin-left:65px;font-weight:bold;" />
-										<textbox id="txtbox_Username" sclass = "loginUser"
+										<textbox id="txtbox_Username" sclass="z-textbox-loginUser"
 											name="j_username" width="150px" height="16px"
 											style="margin-right:60px" />
 									</row>
@@ -59,18 +58,19 @@
 											id="label_LoginDialog_pwd"
 											value=" ${c:l('label_LoginDialog_pwd.value')}" 
 											style="margin-left:65px;font-weight:bold;" />
-										<textbox type="password" sclass = "loginPassword"
+										<textbox type="password" sclass="z-textbox-loginPassword" 
 											id="txtbox_Password" name="j_password" width="150px"
 											height="16px" style="margin-right:60px" />
 									</row>
 									<row spans="2" height="12px" />
-									<row spans="2" align="right" style="padding-right:22px;">
-										<hbox>
-											<button type="submit"
-												id="btnLogin" label="Login" sclass="z-button-login" zclass="null"/>
-											<button type="reset"
-												id="btnReset" label="Reset"  sclass="z-button-login" zclass="null"/>
-										</hbox>
+									<row spans="2">
+										<div align="center">
+											<hbox align = "center">
+												<space width="150px"></space>
+												<button type="submit" id="btnLogin" label="Login" />
+												<button type="reset" id="btnReset" label="Reset" />
+											</hbox>
+										</div>
 									</row>
 								</rows>
 							</grid>

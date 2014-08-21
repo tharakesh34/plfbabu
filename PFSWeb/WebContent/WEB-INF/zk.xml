@@ -111,6 +111,15 @@
 		<click-filter-delay>390</click-filter-delay>
 	</client-config>
 
+	<!-- ====================================================== -->
+	<!-- 		ZK7 Atlantic THEME a New Flat Design			-->
+	<!-- ====================================================== -->
+
+	<library-property>
+		<name>org.zkoss.theme.preferred</name>
+		<value>atlantic</value>
+	</library-property>
+
 	<!-- ========================================================== -->
 	<!--                       since 5.0.3                          -->
 	<!--  The default font size is changed to "arial, sans-serif"   -->

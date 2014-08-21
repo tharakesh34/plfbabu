@@ -990,25 +990,31 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 	}
 	
 	public int calculateBorderLayoutHeight() {
-		if (this.borderLayoutHeight == 0) {
-			this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
-			this.gridRows = Math.round(this.borderLayoutHeight / 31) - 1;
-			this.listRows = Math.round(this.borderLayoutHeight / 24) - 1;
+		if(this.borderLayoutHeight == 0){
+			int northHeight = 55;
+			int southHeight = 26;
+			int tabHeight = 27;
+			int rowheight = 24;
+			
+			this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - (northHeight + tabHeight + southHeight);
+			this.listRows = Math.round(this.borderLayoutHeight/ rowheight) - 1;
 		}
 		return borderLayoutHeight;
 	}
 
 	public String getListBoxHeight(int gridRowCount) {
-		int rowheight = 31;
-		if (this.borderLayoutHeight == 0) {
+		int rowheight = 24;  
+		int listBoxHScroll = 16;
+		if(this.borderLayoutHeight == 0){
 			getBorderLayoutHeight();
 		}
-		int listboxheight = this.borderLayoutHeight;
-		listboxheight = listboxheight - (gridRowCount * rowheight) - 35;
-		this.listRows = Math.round(listboxheight / 24) - 1;
+		
+		int listboxheight = this.borderLayoutHeight - listBoxHScroll;		
+		listboxheight = listboxheight-(gridRowCount * 24);			
+		this.listRows = Math.round(listboxheight / rowheight) - 1; // - 1  For cross browser; 
+		
 		return listboxheight + "px";
 	}
-
 
 	/*
 	 * Method For Getting UsrFinAuthentication By Branch and Division

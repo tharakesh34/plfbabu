@@ -81,5 +81,4 @@
 		<component-class>com.pennant.QueryBuilder</component-class>
 		<extends>groupbox</extends>
 	</component>
-	<stylesheet href="/css/zul/pennant.css.dsp" type="text/css" />
 </language-addon>
