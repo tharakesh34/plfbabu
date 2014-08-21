@@ -179,6 +179,7 @@ public class FinanceType implements java.io.Serializable {
 	private boolean alwManualSteps;
 	private String  alwdStepPolicies;
 	private String  dftStepPolicy;
+	private String  lovDescDftStepPolicyName;
 	
 	private int version;
 	private long lastMntBy;
@@ -2261,5 +2262,13 @@ public class FinanceType implements java.io.Serializable {
 	public void setDftStepPolicy(String dftStepPolicy) {
 		this.dftStepPolicy = dftStepPolicy;
 	}
+
+	public String getLovDescDftStepPolicyName() {
+	    return lovDescDftStepPolicyName;
+    }
+
+	public void setLovDescDftStepPolicyName(String lovDescDftStepPolicyName) {
+	    this.lovDescDftStepPolicyName = lovDescDftStepPolicyName;
+    }
 
 }
