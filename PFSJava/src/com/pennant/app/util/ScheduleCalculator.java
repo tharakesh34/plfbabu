@@ -275,7 +275,7 @@ public class ScheduleCalculator {
 							
 							finScheduleData = setRpyInstructDetails(finScheduleData, finScheduleData
 									.getFinanceScheduleDetails().get(iRepayStart).getSchDate(), finScheduleData
-									.getFinanceScheduleDetails().get(iRepayEnd).getSchDate(), 
+									.getFinanceScheduleDetails().get(iRepayEnd-1).getSchDate(), 
 									stepAmount, finScheduleData.getFinanceScheduleDetails().get(iRepayStart).getSchdMethod());
 							
 							iRepayStart = iRepayEnd;
