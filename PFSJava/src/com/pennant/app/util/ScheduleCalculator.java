@@ -4652,7 +4652,7 @@ public class ScheduleCalculator {
 		if (CalculationConstants.GRACE.equals(scheduleType)) {
 			returnCalProfit = totalGrossGraceProfit;
 
-			if (totalDesiredProfit.compareTo(returnCalProfit) > 0) {
+			if (totalDesiredProfit.compareTo(returnCalProfit) >= 0) {
 				lowAssumptionRate = finScheduleData.getFinanceMain().getGrcPftRate();
 				highAssumptionRate = lowAssumptionRate.multiply(new BigDecimal(10));
 			} else {
@@ -4663,7 +4663,7 @@ public class ScheduleCalculator {
 		} else if (CalculationConstants.REPAY.equals(scheduleType)) {
 			returnCalProfit = totalGrossRepayProfit;
 
-			if (totalDesiredProfit.compareTo(returnCalProfit) > 0) {
+			if (totalDesiredProfit.compareTo(returnCalProfit) >= 0) {
 				lowAssumptionRate = finScheduleData.getFinanceMain().getRepayProfitRate();
 				highAssumptionRate = lowAssumptionRate.multiply(new BigDecimal(10));
 			} else {
