@@ -941,7 +941,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		
 	    // Step Finance
-		if(aFinanceMain.isNewRecord() && !aFinanceDetail.getFinScheduleData().getFinanceType().isStepFinance()){
+		if(((aFinanceMain.isNewRecord() || !aFinanceMain.isStepFinance()) && 
+				!aFinanceDetail.getFinScheduleData().getFinanceType().isStepFinance())){
 			this.row_stepFinance.setVisible(false);
 		}
 		this.stepFinance.setChecked(aFinanceMain.isStepFinance());
@@ -1366,9 +1367,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		
 		//Step Policy Details
-		if(aFinanceDetail.getFinScheduleData().getFinanceType().isStepFinance()){
-			appendStepDetailTab(true);
-		}
+		appendStepDetailTab(true);
 		
 		//Fee Details Tab Addition
 		appendFeeDetailsTab(true);
@@ -2423,6 +2422,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if(tabsIndexCenter.getFellowIfAny("stepDetailsTab") != null){
 				tab = (Tab) tabsIndexCenter.getFellowIfAny("stepDetailsTab");
 				tab.setDisabled(false);
+				tab.setVisible(true);
+			}
+		}else{
+			Tab tab = null;
+			if(tabsIndexCenter.getFellowIfAny("stepDetailsTab") != null){
+				tab = (Tab) tabsIndexCenter.getFellowIfAny("stepDetailsTab");
+				tab.setDisabled(true);
+				tab.setVisible(false);
 			}
 		}
 		logger.debug("Leaving");
@@ -2785,7 +2792,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		// Step Finance Details List Validation
-		if (getStepDetailDialogCtrl().getFinStepPoliciesList() != this.oldVar_finStepPolicyList) {
+		
+		if (getStepDetailDialogCtrl() != null && 
+				getStepDetailDialogCtrl().getFinStepPoliciesList() != this.oldVar_finStepPolicyList) {
 			return true;
 		}
 
@@ -3039,7 +3048,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		// Step Finance Details List Validation
-		if(getStepDetailDialogCtrl().getFinStepPoliciesList() != this.oldVar_finStepPolicyList){
+		if(getStepDetailDialogCtrl() != null && 
+				getStepDetailDialogCtrl().getFinStepPoliciesList() != this.oldVar_finStepPolicyList){
 			return true;
 		}
 		
@@ -4031,7 +4041,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				}
 				
 				String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),aFinanceMain.getNextRoleCode(), 
-						aFinanceMain.getFinReference(), " Finance ", aFinanceMain.getRecordStatus());
+						aFinanceMain.getFinReference(), " Finance ", StringUtils.trimToEmpty(aFinanceMain.getRecordStatus()).equals("") ? 
+								PennantConstants.RCD_STATUS_SAVED : aFinanceMain.getRecordStatus());
 				Clients.showNotification(msg,  "info", null, null, -1);
 				
 				closeWindow();
@@ -5553,6 +5564,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			
 			if(getIndicativeTermDetailDialogCtrl() != null){
 				getIndicativeTermDetailDialogCtrl().doFillScheduleData(getFinanceDetail());
+			}
+			
+			if(getStepDetailDialogCtrl() != null){
+				getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
 			}
 			
 		}

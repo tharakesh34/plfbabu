@@ -230,7 +230,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				for (int i = 0; i < finStepPolicyList.size(); i++) {
 					FinanceStepPolicyDetail stepPolicy = finStepPolicyList.get(i);
 					
-					if(stepPolicy.getInstallments() > 0){
+					if(stepPolicy.getInstallments() > 0 && isAlwManualSteps){
 						
 						BigDecimal tenurePerc = (new BigDecimal(stepPolicy.getInstallments()).multiply(new BigDecimal(100))).divide(new BigDecimal(totalTerms), 2, RoundingMode.HALF_DOWN);
 						stepPolicy.setTenorSplitPerc(tenurePerc);
@@ -242,7 +242,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 						}
 						sumInstallments = sumInstallments + stepPolicy.getInstallments();
 						
-					}else if(stepPolicy.getInstallments() == 0 && stepPolicy.getTenorSplitPerc().compareTo(BigDecimal.ZERO) > 0){
+					}else if(stepPolicy.getTenorSplitPerc().compareTo(BigDecimal.ZERO) > 0){
 						
 						BigDecimal terms =stepPolicy.getTenorSplitPerc().multiply( new BigDecimal(totalTerms)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
 						sumInstallments = sumInstallments + new Integer(terms.toString());
@@ -311,6 +311,12 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 		Comparator<Object> comp = new BeanComparator("stepNo");
 		Collections.sort(finStepPolicyDetails,comp);
 		
+		BigDecimal tenorPerc = BigDecimal.ZERO;
+		int totInstallments = 0;
+		BigDecimal avgRateMargin = BigDecimal.ZERO;
+		BigDecimal avgAplliedRate = BigDecimal.ZERO;
+		BigDecimal avgEmiPerc = BigDecimal.ZERO;
+		
 		setFinStepPoliciesList(finStepPolicyDetails);
 		this.listBoxStepdetails.getItems().clear();
 		if(finStepPolicyDetails != null){
@@ -323,7 +329,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				lc.setParent(listItem);
 
 				lc = new Listcell();
-				lc.setLabel(PennantApplicationUtil.formatRate(financeStepPolicyDetail.getTenorSplitPerc().doubleValue(), 2)+"%");
+				lc.setLabel(PennantApplicationUtil.formatRate(financeStepPolicyDetail.getTenorSplitPerc().doubleValue(), 2));
 				lc.setParent(listItem);
 				lc.setStyle("text-align:right;");
 
@@ -338,14 +344,14 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				lc.setStyle("text-align:right;");
 				
 				lc = new Listcell();
-				double appliedRate= getFinanceDetail().getFinScheduleData().getFinanceMain()
-						.getRepayProfitRate().add(financeStepPolicyDetail.getRateMargin()).doubleValue();
-				lc.setLabel(PennantApplicationUtil.formatRate(appliedRate, 9));
+				BigDecimal appliedRate= getFinanceDetail().getFinScheduleData().getFinanceMain()
+						.getRepayProfitRate().add(financeStepPolicyDetail.getRateMargin());
+				lc.setLabel(PennantApplicationUtil.formatRate(appliedRate.doubleValue(), 9));
 				lc.setParent(listItem);
 				lc.setStyle("text-align:right;");
 
 				lc = new Listcell();
-				lc.setLabel(PennantApplicationUtil.formatRate(financeStepPolicyDetail.getEmiSplitPerc().doubleValue(), 2)+"%");
+				lc.setLabel(PennantApplicationUtil.formatRate(financeStepPolicyDetail.getEmiSplitPerc().doubleValue(), 2));
 				lc.setParent(listItem);
 				lc.setStyle("text-align:right;");
 
@@ -353,13 +359,63 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				lc.setLabel(PennantAppUtil.amountFormate(financeStepPolicyDetail.getSteppedEMI(), getFinanceMain().getLovDescFinFormatter()));
 				lc.setParent(listItem);
 				lc.setStyle("text-align:right;");
+				
+				tenorPerc = tenorPerc.add(financeStepPolicyDetail.getTenorSplitPerc());
+				totInstallments = totInstallments + financeStepPolicyDetail.getInstallments();
+				avgRateMargin = avgRateMargin.add(financeStepPolicyDetail.getRateMargin());
+				avgAplliedRate = avgAplliedRate.add(appliedRate);
+				avgEmiPerc = avgEmiPerc.add(financeStepPolicyDetail.getEmiSplitPerc());
 
 				listItem.setParent(this.listBoxStepdetails);
 				listItem.setAttribute("data", financeStepPolicyDetail);
 				ComponentsCtrl.applyForward(listItem, "onDoubleClick=onFinStepPolicyItemDoubleClicked");
 			}
+			
+			if(!finStepPolicyDetails.isEmpty()){
+				addFoolter(finStepPolicyDetails.size() , tenorPerc, totInstallments, avgRateMargin, avgAplliedRate, avgEmiPerc);
+			}
+			
 		}
 		logger.debug("Leaving ");
+	}
+	
+	private void addFoolter(int size, BigDecimal tenorPerc ,int totInstallments, BigDecimal avgRateMargin ,BigDecimal avgAplliedRate ,BigDecimal avgEmiPerc){
+		
+		Listitem listItem = new Listitem();
+		listItem.setStyle("background-color: #C0EBDF;");
+
+		Listcell lc = new Listcell(Labels.getLabel("label_StepDetailsFooter"));
+		lc.setStyle("text-align:left;font-weight:bold;");
+		lc.setParent(listItem);
+
+		lc = new Listcell(PennantApplicationUtil.formatRate(tenorPerc.doubleValue(), 2)+"%");
+		lc.setStyle("text-align:right;font-weight:bold;");
+		lc.setParent(listItem);
+
+		lc = new Listcell(String.valueOf(totInstallments));
+		lc.setStyle("text-align:right;font-weight:bold;");
+		lc.setParent(listItem);
+
+		avgRateMargin = avgRateMargin.divide(new BigDecimal(size), 9, RoundingMode.HALF_DOWN);
+		lc = new Listcell(PennantApplicationUtil.formatRate(avgRateMargin.doubleValue(), 9));
+		lc.setStyle("text-align:right;font-weight:bold;");
+		lc.setParent(listItem);
+		
+		avgAplliedRate = avgAplliedRate.divide(new BigDecimal(size), 9, RoundingMode.HALF_DOWN);
+		lc = new Listcell(PennantApplicationUtil.formatRate(avgAplliedRate.doubleValue(), 9));
+		lc.setParent(listItem);
+		lc.setStyle("text-align:right;font-weight:bold;");
+
+		avgEmiPerc = avgEmiPerc.divide(new BigDecimal(size), 2, RoundingMode.HALF_DOWN);
+		lc = new Listcell(PennantApplicationUtil.formatRate(avgEmiPerc.doubleValue(), 2)+"%");
+		lc.setParent(listItem);
+		lc.setStyle("text-align:right;font-weight:bold;");
+
+		lc = new Listcell("");
+		lc.setStyle("text-align:right;");
+		lc.setParent(listItem);
+		
+		this.listBoxStepdetails.appendChild(listItem);
 	}
 
 	/**
