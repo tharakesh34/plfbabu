@@ -59,6 +59,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -68,26 +69,50 @@ public class ScheduleGenerator {
 	
 	private FinScheduleData finScheduleData;
 
-	public static FinScheduleData getNewSchd(FinScheduleData financeDetail) {
+	public static FinScheduleData getNewSchd(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
-		FinanceMain financeMain = financeDetail.getFinanceMain();
-		financeDetail.setErrorDetail(validateFinanceMain(financeMain, financeDetail.getDisbursementDetails()));
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		finScheduleData.setErrorDetail(validateFinanceMain(financeMain, finScheduleData.getDisbursementDetails()));
 
-		if (financeDetail.getErrorDetails() == null || financeDetail.getErrorDetails().size() == 0) {
-			financeDetail = newSchdProcess(financeDetail);
-			List<Date> schdDateKeyList = new ArrayList<Date>(financeDetail.getScheduleMap().keySet());
-			financeDetail.getFinanceScheduleDetails().clear();
+		if (finScheduleData.getErrorDetails() == null || finScheduleData.getErrorDetails().size() == 0) {
+			finScheduleData = newSchdProcess(finScheduleData);
+			List<Date> schdDateKeyList = new ArrayList<Date>(finScheduleData.getScheduleMap().keySet());
+			finScheduleData.getFinanceScheduleDetails().clear();
 			
 			Collections.sort(schdDateKeyList);
 			for (int j = 0; j < schdDateKeyList.size(); j++) {
-				financeDetail.getFinanceScheduleDetails().add(financeDetail.getScheduleMap().get(schdDateKeyList.get(j)));
+				finScheduleData.getFinanceScheduleDetails().add(finScheduleData.getScheduleMap().get(schdDateKeyList.get(j)));
 			}
-			financeDetail.getScheduleMap().clear();
+			
+			//Applying Rate Margin from Step Policy Details
+			if(financeMain.isStepFinance()){
+				int repayStart = 0;
+				int repayEnd = 0;
+				int stepCount = -1;
+				FinanceStepPolicyDetail policyDetail = null;
+				
+				for (int i = (1+financeMain.getGraceTerms()); i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+					
+					FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+					if(repayStart == repayEnd){
+						stepCount = stepCount + 1;
+						policyDetail = finScheduleData.getStepPolicyDetails().get(stepCount);
+						repayEnd = repayEnd + policyDetail.getInstallments();
+					}
+
+					if(policyDetail != null){
+						curSchd.setCalculatedRate(curSchd.getCalculatedRate().add(policyDetail.getRateMargin()));
+						repayStart++;
+					}
+				}
+			}
+			
+			finScheduleData.getScheduleMap().clear();
 		}
 		
 		logger.debug("Leaving");
-		return financeDetail;
+		return finScheduleData;
 	}
 	
 	/**
@@ -281,7 +306,7 @@ public class ScheduleGenerator {
 					financeMain.getRepayCpzFrq(), financeMain.getNextRepayCpzDate(),
 					financeMain.getMaturityDate(), true, CalculationConstants.SCHDFLAG_CPZ);
 		}
-
+		
 		finScheduleData.setFinanceMain(financeMain);
 		
 		logger.debug("Leaving");

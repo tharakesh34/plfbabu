@@ -272,6 +272,7 @@ public class ScheduleCalculator {
 							FinanceStepPolicyDetail policyDetail = finScheduleData.getStepPolicyDetails().get(i);
 							iRepayEnd = iRepayStart + policyDetail.getInstallments();
 							stepAmount = repayAmount.multiply(policyDetail.getEmiSplitPerc()).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+							policyDetail.setSteppedEMI(stepAmount);
 							
 							finScheduleData = setRpyInstructDetails(finScheduleData, finScheduleData
 									.getFinanceScheduleDetails().get(iRepayStart).getSchDate(), finScheduleData
@@ -357,7 +358,7 @@ public class ScheduleCalculator {
 		if (method.equals("procChangeRate")) {
 
 			finScheduleData = procChangeRate(finScheduleData, baseRate, splRate, mrgRate,
-			        calculatedRate, isCalSchedule);
+			        calculatedRate, isCalSchedule, false);
 
 			//Effective Rate Of Return Calculations
 			Cloner cloner = new Cloner();
@@ -1287,7 +1288,7 @@ public class ScheduleCalculator {
 	 */
 
 	private FinScheduleData procChangeRate(FinScheduleData finScheduleData, String baseRate,
-	        String splRate, BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule) {
+	        String splRate, BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule, boolean newSchdGeneratedNow) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -1369,7 +1370,11 @@ public class ScheduleCalculator {
 				curSchd.setBaseRate(baseRate);
 				curSchd.setSplRate(splRate);
 				curSchd.setMrgRate(mrgRate);
-				curSchd.setCalculatedRate(recalculateRate);
+				
+				//Applying same Profit Rate with Rate Margin on Step Policy Details, If finance is Step Finance
+				if(!newSchdGeneratedNow || !financeMain.isStepFinance()){
+					curSchd.setCalculatedRate(recalculateRate);
+				}
 
 				if (!isFirstAdjSet) {
 					isFirstAdjSet = true;
@@ -2181,7 +2186,7 @@ public class ScheduleCalculator {
 
 		finScheduleData = procChangeRate(finScheduleData, financeMain.getGraceBaseRate(),
 		        financeMain.getGraceSpecialRate(), financeMain.getGrcMargin(),
-		        financeMain.getGrcPftRate(), false);
+		        financeMain.getGrcPftRate(), false , true);
 
 		// Reset to original isCalRepayFlag
 		financeMain.setCalculateRepay(tmpIsCalRepay);
@@ -2224,7 +2229,7 @@ public class ScheduleCalculator {
 
 		finScheduleData = procChangeRate(finScheduleData, financeMain.getRepayBaseRate(),
 		        financeMain.getRepaySpecialRate(), financeMain.getRepayMargin(),
-		        financeMain.getRepayProfitRate(), false);
+		        financeMain.getRepayProfitRate(), false , true);
 
 		// Reset to original isCalRepayFlag
 		financeMain.setCalculateRepay(tmpIsCalRepay);
@@ -4608,7 +4613,7 @@ public class ScheduleCalculator {
 
 			effRateofReturn = finScheduleData.getFinanceScheduleDetails().get(0).getCalculatedRate();
 			finScheduleData = procChangeRate(finScheduleData, "", "", new BigDecimal(0),
-					effRateofReturn, false);
+					effRateofReturn, false , false);
 			finScheduleData = graceSchdCal(finScheduleData);
 			finScheduleData = repaySchdCal(finScheduleData, false);
 
@@ -4688,7 +4693,7 @@ public class ScheduleCalculator {
 					RoundingMode.HALF_DOWN);
 
 			finScheduleData = procChangeRate(finScheduleData, "", "", new BigDecimal(0),
-					effRateofReturn, false);
+					effRateofReturn, false , false);
 
 			finScheduleData = getRpyInstructDetails(finScheduleData);
 
@@ -4732,7 +4737,7 @@ public class ScheduleCalculator {
 
 			//Calculate Schedule Building process with Effective Rate
 			finScheduleData = procChangeRate(finScheduleData, "", "", new BigDecimal(0),
-					effRateofReturn, false);
+					effRateofReturn, false,  false);
 			finScheduleData = graceSchdCal(finScheduleData);
 			finScheduleData = repaySchdCal(finScheduleData, false);
 
@@ -4750,7 +4755,7 @@ public class ScheduleCalculator {
 		}
 
 		finScheduleData = procChangeRate(finScheduleData, "", "", new BigDecimal(0),
-				effRateofReturn, false);
+				effRateofReturn, false , false);
 
 		finScheduleData = graceSchdCal(finScheduleData);
 		finScheduleData = repaySchdCal(finScheduleData, false);
