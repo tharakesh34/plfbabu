@@ -261,7 +261,7 @@
 													<hbox
 														id="hbox_numberOfSteps">
 														<space id="space_noOfSteps"
-															spacing="2px" />
+															spacing="2px" sclass="mandatory" />
 														<intbox
 															id="noOfSteps" width="90px" />
 													</hbox>
