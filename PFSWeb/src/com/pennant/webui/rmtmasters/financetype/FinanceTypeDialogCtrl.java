@@ -2645,7 +2645,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 
 			try {
-				if (this.dftStepPolicy.getSelectedItem() != null) {
+				if (this.dftStepPolicy.getSelectedItem().getValue().toString().equals("#")) {
 					aFinanceType.setDftStepPolicy(this.dftStepPolicy.getSelectedItem().getValue().toString());
 				} else {
 					if (!this.allowManualSteps.isChecked()) {

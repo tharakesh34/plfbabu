@@ -26,27 +26,40 @@
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel id="tabpanel_basicDetails"
 								style="overflow:auto">
-								<listbox id="listBoxSchedule" emptyMessage="${c:l('listbox.emptyMessage')}"
-									vflex="true" width="99%" multiple="false">
+								<listbox id="listBoxSchedule"
+									emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+									width="99%" multiple="false">
 									<listhead sizable="false"
 										style="padding:0px;position:relative;">
-										<listheader visible="true"
-											width="1%" />
-										<listheader visible="true"
-											label="${c:l('listheader_ScheduleDate.label')}" width="12%" />
+										<listheader width="1%" />
 										<listheader
-											label="${c:l('listheader_ScheduleEvent.label')}" width="15%" />
+											id="listheader_ScheduleDetailDialog_Date" hflex="min"
+											value="" />
 										<listheader
-											label="${c:l('listheader_CalProfit.label')}" width="14%" />
+											id="listheader_ScheduleDetailDialog_ScheduleEvent"
+											hflex="min" />
 										<listheader
-											label="${c:l('listheader_SchProfit.label')}" width="14%" />
+											id="listheader_ScheduleDetailDialog_CalProfit" hflex="min" />
 										<listheader
-											label="${c:l('listheader_Principal.label')}" width="15%" />
+											id="listheader_ScheduleDetailDialog_SchProfit" hflex="min" />
 										<listheader
-											label="${c:l('listheader_Total.label')}" width="15%" />
+											id="listheader_ScheduleDetailDialog_Principal" hflex="min" />
 										<listheader
-											label="${c:l('listheader_ScheduleEndBal.label')}"
-											width="14%" />
+											id="listheader_ScheduleDetailDialog_Total" hflex="min" />
+										<listheader
+											id="listheader_ScheduleDetailDialog_ScheduleEndBal"
+											hflex="min" />
+										<listheader
+											id="listHeader_cashFlowEffect"
+											label="${c:l('listheader_CashFlowEffect.label')}"
+											hflex="min" />
+										<listheader
+											id="listHeader_vSProfit"
+											label="${c:l('listheader_VsProfit.label')}" hflex="min" />
+										<listheader
+											id="listHeader_orgPrincipalDue"
+											label="${c:l('listheader_OrgPrincipalDue.label')}"
+											hflex="min" />
 									</listhead>
 								</listbox>
 							</tabpanel>

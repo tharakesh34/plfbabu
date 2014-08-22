@@ -113,6 +113,10 @@
 									label="${c:l('listheader_StepFinance_RateMargin.label')}"
 									sort="false" hflex="min" />
 								<listheader
+									id="listheader_StepFinance_AppliedRate"
+									label="${c:l('listheader_StepFinance_AppliedRate.label')}"
+									sort="false" hflex="min" />
+								<listheader
 									id="listheader_StepFinance_EMIStepPercent"
 									label="${c:l('listheader_StepFinance_EMIStepPercent.label')}"
 									sort="false" hflex="min" />

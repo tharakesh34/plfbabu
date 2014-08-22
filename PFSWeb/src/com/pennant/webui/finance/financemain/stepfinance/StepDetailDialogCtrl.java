@@ -336,6 +336,13 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				lc.setLabel(PennantApplicationUtil.formatRate(financeStepPolicyDetail.getRateMargin().doubleValue(), 9));
 				lc.setParent(listItem);
 				lc.setStyle("text-align:right;");
+				
+				lc = new Listcell();
+				double appliedRate= getFinanceDetail().getFinScheduleData().getFinanceMain()
+						.getRepayProfitRate().add(financeStepPolicyDetail.getRateMargin()).doubleValue();
+				lc.setLabel(PennantApplicationUtil.formatRate(appliedRate, 9));
+				lc.setParent(listItem);
+				lc.setStyle("text-align:right;");
 
 				lc = new Listcell();
 				lc.setLabel(PennantApplicationUtil.formatRate(financeStepPolicyDetail.getEmiSplitPerc().doubleValue(), 2)+"%");

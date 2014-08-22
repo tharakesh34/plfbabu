@@ -274,7 +274,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		doShowDialog();
 		
 		if(getFinScheduleData().getFinanceMain().isStepFinance()){
-			if(getFinScheduleData().getFinanceMain().isAlwManualSteps()){ // TODO
+			if(getFinScheduleData().getFinanceMain().isAlwManualSteps()){  // TODO  Based on Fin type we need to change list header label name
 				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
 				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
 			}

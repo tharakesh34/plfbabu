@@ -58,6 +58,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
@@ -103,7 +104,12 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 	protected Tab 			repayGraphTab;
 	private Tabpanel 		tabpanel_graph;
 	protected Div           graphDivTabDiv;
-
+	
+	// Step Finance Fields
+	protected Listheader    listHeader_cashFlowEffect;
+	protected Listheader    listHeader_vSProfit;
+	protected Listheader    listHeader_orgPrincipalDue;
+	
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private FinScheduleData finScheduleData;
 	private FinScheduleListItemRenderer finRender;
@@ -152,6 +158,17 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 		}
 
 		doShowDialog();
+
+		if(getFinScheduleData().getFinanceMain().isStepFinance()){
+			if(getFinScheduleData().getFinanceMain().isAlwManualSteps()){  // TODO  Based on Fin type we need to change list header label name
+				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
+				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
+			}
+		} else {
+			this.listHeader_cashFlowEffect.setVisible(false);
+			this.listHeader_vSProfit.setVisible(false);
+			this.listHeader_orgPrincipalDue.setVisible(false);
+		}  
 
 		logger.debug("Leaving " + event.toString());
 	}
