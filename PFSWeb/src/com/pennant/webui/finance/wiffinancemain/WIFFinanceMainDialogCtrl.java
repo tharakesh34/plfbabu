@@ -69,6 +69,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -2553,16 +2554,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.oldVar_finIsActive = this.finIsActive.isChecked();
 
 		// Step Finance Details
-		if(getFinanceDetail().getFinScheduleData().getFinanceType().isStepFinance()){
-			this.oldVar_stepFinance = this.stepFinance.isChecked();
-			this.oldVar_stepPolicy = this.stepPolicy.getValue();
-			this.oldVar_alwManualSteps = this.alwManualSteps.isChecked();
-			this.oldVar_noOfSteps = this.noOfSteps.intValue();
-			if(getStepDetailDialogCtrl() != null && getStepDetailDialogCtrl().getFinStepPoliciesList() != null && !getStepDetailDialogCtrl().getFinStepPoliciesList().isEmpty()){
-				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
-			}
-		}
-		
+		this.oldVar_stepFinance = this.stepFinance.isChecked();
+		this.oldVar_stepPolicy = this.stepPolicy.getValue();
+		this.oldVar_alwManualSteps = this.alwManualSteps.isChecked();
+		this.oldVar_noOfSteps = this.noOfSteps.intValue();
+
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
 		this.oldVar_gracePeriodEndDate = this.gracePeriodEndDate_two.getValue();
@@ -2655,15 +2651,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.finIsActive.setChecked(this.oldVar_finIsActive);
 		
 		// Step Finance Details
-		if(getFinanceDetail().getFinScheduleData().getFinanceType().isStepFinance()){
-			this.stepFinance.setChecked(this.oldVar_stepFinance);
-			this.stepPolicy.setValue(this.oldVar_stepPolicy);
-			this.alwManualSteps.setChecked(this.oldVar_alwManualSteps);
-			this.noOfSteps.setValue(this.oldVar_noOfSteps);
-			/*if(getStepDetailDialogCtrl().getFinStepPoliciesList() != null && !getStepDetailDialogCtrl().getFinStepPoliciesList().isEmpty()){
-						this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
-			}*/
-		}
+		this.stepFinance.setChecked(this.oldVar_stepFinance);
+		this.stepPolicy.setValue(this.oldVar_stepPolicy);
+		this.alwManualSteps.setChecked(this.oldVar_alwManualSteps);
+		this.noOfSteps.setValue(this.oldVar_noOfSteps);
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -2780,41 +2771,22 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		// Step Finance Details
-		if (getFinanceDetail().getFinScheduleData().getFinanceType()
-				.isStepFinance()) {
-			if (this.row_stepFinance.isVisible()) {
-				if (this.oldVar_stepFinance != this.stepFinance.isChecked()) {
-					return true;
-				}
-				if (!this.oldVar_stepPolicy.equals(this.stepPolicy.getValue())) {
-					return true;
-				}
-			}
+		if (this.oldVar_stepFinance != this.stepFinance.isChecked()) {
+			return true;
+		}
+		if (!this.oldVar_stepPolicy.equals(this.stepPolicy.getValue())) {
+			return true;
+		}
+		if (this.oldVar_alwManualSteps != this.alwManualSteps.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
+			return true;
+		}
 
-			if (this.row_manualSteps.isVisible()) {
-				if (this.oldVar_alwManualSteps != this.alwManualSteps
-						.isChecked()) {
-					return true;
-				}
-				if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
-					return true;
-				}
-			}
-
-			// Step Finance Details List Validation
-			if (getStepDetailDialogCtrl().getFinStepPoliciesList() != null
-					&& this.oldVar_finStepPolicyList != null) {
-				if (this.oldVar_finStepPolicyList.size() == getStepDetailDialogCtrl()
-						.getFinStepPoliciesList().size()) {
-					for (int i = 0; i < this.oldVar_finStepPolicyList.size(); i++) {
-						if (!oldVar_finStepPolicyList.get(i).equals(getStepDetailDialogCtrl().getFinStepPoliciesList().get(i))) {
-							return true;
-						}
-					}
-				} else {
-					return true;
-				}
-			}
+		// Step Finance Details List Validation
+		if (getStepDetailDialogCtrl().getFinStepPoliciesList() != this.oldVar_finStepPolicyList) {
+			return true;
 		}
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
@@ -3053,37 +3025,22 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		// Step Finance Details
-		if(getFinanceDetail().getFinScheduleData().getFinanceType().isStepFinance()){
-			if (this.row_stepFinance.isVisible()) {
-				if (this.oldVar_stepFinance != this.stepFinance.isChecked()) {
-					return true;
-				}
-				if (!this.oldVar_stepPolicy.equals(this.stepPolicy.getValue())) {
-					return true;
-				}
-			}
-			
-			if (this.row_manualSteps.isVisible()) {
-				if (this.oldVar_alwManualSteps != this.alwManualSteps.isChecked()) {
-					return true;
-				}
-				if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
-					return true;
-				}
-			}	
-			
-			// Step Finance Details List Validation
-			if(getStepDetailDialogCtrl().getFinStepPoliciesList() != null && this.oldVar_finStepPolicyList != null){
-				if(this.oldVar_finStepPolicyList.size() == getStepDetailDialogCtrl().getFinStepPoliciesList().size()){
-					for(int i=0; i<this.oldVar_finStepPolicyList.size(); i++){
-						if(!oldVar_finStepPolicyList.get(i).equals(getStepDetailDialogCtrl().getFinStepPoliciesList().get(i)) ){
-							return true;
-						} 
-					}
-				} else {
-					return true;
-				}
-			}
+		if (this.oldVar_stepFinance != this.stepFinance.isChecked()) {
+			return true;
+		}
+		if (!this.oldVar_stepPolicy.equals(this.stepPolicy.getValue())) {
+			return true;
+		}
+		if (this.oldVar_alwManualSteps != this.alwManualSteps.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
+			return true;
+		}
+
+		// Step Finance Details List Validation
+		if(getStepDetailDialogCtrl().getFinStepPoliciesList() != this.oldVar_finStepPolicyList){
+			return true;
 		}
 		
 		//FinanceMain Details Tab ---> 2. Grace Period Details
@@ -4072,6 +4029,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				if (getWIFFinanceMainListCtrl() != null) {
 					refreshList();
 				}
+				
+				String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),aFinanceMain.getNextRoleCode(), 
+						aFinanceMain.getFinReference(), " Finance ", aFinanceMain.getRecordStatus());
+				Clients.showNotification(msg,  "info", null, null, -1);
+				
 				closeWindow();
 			} 
 
@@ -4501,10 +4463,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,");
 			this.cbScheduleMethod.setDisabled(true);
 		} else {
-			fillComboBox(this.repayRateBasis,"", PennantStaticListUtil.getInterestRateType(true), "");
-			this.repayRateBasis.setDisabled(false);
-			fillComboBox(this.cbScheduleMethod, "", schMethodList, ",NO_PAY,");
-			this.cbScheduleMethod.setDisabled(false);
+			fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
+			this.repayRateBasis.setDisabled(false);//--TODO : Apply right
+			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,");
+			this.cbScheduleMethod.setDisabled(false);//--TODO : Apply right
 		}
 		logger.debug("Leaving : "+event.toString());
 	}
@@ -5548,6 +5510,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
  			//Setting Finance Step Policy Details to Finance Schedule Data Object
  			if(getStepDetailDialogCtrl() != null){
  				validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
+ 				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
  			}
 
 			//Prepare Finance Schedule Generator Details List

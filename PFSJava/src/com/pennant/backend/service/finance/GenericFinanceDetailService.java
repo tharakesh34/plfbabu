@@ -44,6 +44,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
+import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -70,7 +71,6 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -131,6 +131,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinanceSuspHeadDAO financeSuspHeadDAO;
 	private TransactionEntryDAO transactionEntryDAO;
 	private FinFeeChargesDAO finFeeChargesDAO;
+	private FinanceStepDetailDAO  financeStepDetailDAO;
 
 	private AccountEngineExecution engineExecution;
 	private AccountEngineExecutionRIA engineExecutionRIA;
@@ -393,69 +394,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return auditDetails;
 	}
 	
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * 
-	 * @param contributorHeader
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	public List<AuditDetail> setFinStepPolicyDetailAuditData(List<FinanceStepPolicyDetail> finStepPolicyDetails, FinScheduleData finScheduleData,
-			String auditTranType, String method) {
-		logger.debug("Entering");
-		
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceStepPolicyDetail());
-		
-		for (int i = 0; i < finStepPolicyDetails.size(); i++) {
-			
-			FinanceStepPolicyDetail financeStepPolicyDetail = finStepPolicyDetails.get(i);
-			financeStepPolicyDetail.setWorkflowId(finScheduleData.getFinanceMain().getWorkflowId());
-			financeStepPolicyDetail.setFinReference(finScheduleData.getFinReference());
-			
-			boolean isRcdType = false;
-			
-			if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
-			}
-			
-			if (method.equals("saveOrUpdate") && (isRcdType == true)) {
-				financeStepPolicyDetail.setNewRecord(true);
-			}
-			
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-			
-			financeStepPolicyDetail.setRecordStatus(finScheduleData.getFinanceMain().getRecordStatus());
-			financeStepPolicyDetail.setUserDetails(finScheduleData.getFinanceMain().getUserDetails());
-			financeStepPolicyDetail.setLastMntOn(finScheduleData.getFinanceMain().getLastMntOn());
-			
-			if (!financeStepPolicyDetail.getRecordType().equals("")) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-						financeStepPolicyDetail.getBefImage(), financeStepPolicyDetail));
-			}
-		}
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-
-
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
@@ -1602,26 +1540,25 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	/**
 	 * Method to delete schedule, disbursement, deferementheader, defermentdetail,repayinstruction, ratechanges lists.
 	 * 
-	 * @param finDetail
+	 * @param scheduleData
 	 * @param tableType
 	 * @param isWIF
 	 */
-	public void listDeletion(FinScheduleData finDetail, String tableType, boolean isWIF) {
+	public void listDeletion(FinScheduleData scheduleData, String tableType, boolean isWIF) {
 		logger.debug("Entering ");
 
-		getFinanceScheduleDetailDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
-		getFinanceDisbursementDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
-		getDefermentHeaderDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
-		getDefermentDetailDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
-		getRepayInstructionDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
+		getFinanceScheduleDetailDAO().deleteByFinReference(scheduleData.getFinReference(), tableType, isWIF, 0);
+		getFinanceDisbursementDAO().deleteByFinReference(scheduleData.getFinReference(), tableType, isWIF, 0);
+		getDefermentHeaderDAO().deleteByFinReference(scheduleData.getFinReference(), tableType, isWIF, 0);
+		getDefermentDetailDAO().deleteByFinReference(scheduleData.getFinReference(), tableType, isWIF, 0);
+		getRepayInstructionDAO().deleteByFinReference(scheduleData.getFinReference(), tableType, isWIF, 0);
 
 		//Fee Charge Details & Finance Overdue PenaltyRate Details
 		if (!StringUtils.trimToEmpty(tableType).equals("") || isWIF) {
-			getPostingsDAO().deleteChargesBatch(finDetail.getFinReference(), isWIF, tableType);
+			getPostingsDAO().deleteChargesBatch(scheduleData.getFinReference(), isWIF, tableType);
 		}
-
 		if (!isWIF) {
-			getFinODPenaltyRateDAO().delete(finDetail.getFinReference(), tableType);
+			getFinODPenaltyRateDAO().delete(scheduleData.getFinReference(), tableType);
 		}
 
 		logger.debug("Leaving ");
@@ -1735,6 +1672,26 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			getPostingsDAO().saveChargesBatch(finScheduleData.getFeeRules(),isWIF, tableType);
 		}
 
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for saving List of Fee Charge details
+	 * 
+	 * @param finDetail
+	 * @param tableType
+	 */
+	public void saveStepDetailList(FinScheduleData finScheduleData, boolean isWIF, String tableType) {
+		logger.debug("Entering");
+		
+		if (finScheduleData.getStepPolicyDetails() != null && finScheduleData.getStepPolicyDetails().size() > 0) {
+			//Finance Fee Charge Details
+			for (int i = 0; i < finScheduleData.getStepPolicyDetails().size(); i++) {
+				finScheduleData.getStepPolicyDetails().get(i).setFinReference(finScheduleData.getFinReference());
+			}
+			getFinanceStepDetailDAO().saveList(finScheduleData.getStepPolicyDetails(),isWIF, tableType);
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -2147,6 +2104,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {
 	    this.recoveryPostingsUtil = recoveryPostingsUtil;
     }
-
+	
+	public FinanceStepDetailDAO getFinanceStepDetailDAO() {
+		return financeStepDetailDAO;
+	}
+	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
+		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+	
 
 }

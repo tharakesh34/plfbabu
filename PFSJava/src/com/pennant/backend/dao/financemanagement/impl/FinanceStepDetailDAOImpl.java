@@ -7,24 +7,19 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 
 public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> implements FinanceStepDetailDAO {
-
 
 	private static Logger logger = Logger.getLogger(FinanceStepDetailDAOImpl.class);
 
@@ -69,7 +64,7 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 	 * @return StepPolicyDetail
 	 */
 	@Override
-	public List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(final String finReference, String type) {
+	public List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(final String finReference, String type, boolean isWIF) {
 		logger.debug("Entering");
 		
 		FinanceStepPolicyDetail finStepPolicy = new FinanceStepPolicyDetail();
@@ -77,7 +72,11 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 		
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc, SteppedEMI, ");
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM FinanceStepPolicyDetail");
+		if(isWIF){
+			selectSql.append(" FROM WIFFinanceStepPolicyDetail");
+		}else{
+			selectSql.append(" FROM FinanceStepPolicyDetail");
+		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :finReference");
 
@@ -87,35 +86,6 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 		
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-	
-	/**
-	 * Method for Fetching Step Details based on Step Number & Reference
-	 */
-	public FinanceStepPolicyDetail getFinStepPolicy(String finReference, int stepNumber, String type){
-
-		logger.debug("Entering");
-		FinanceStepPolicyDetail finStepPolicy = new FinanceStepPolicyDetail();
-		finStepPolicy.setFinReference(finReference);
-		finStepPolicy.setStepNo(stepNumber);
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc, SteppedEMI, ");
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM FinanceStepPolicyDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference AND  StepNo = :StepNo");
-
-		logger.debug("selectListSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStepPolicy);
-		RowMapper<FinanceStepPolicyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceStepPolicyDetail.class);
-
-		try {
-			finStepPolicy = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			finStepPolicy = null;
-		}
-		logger.debug("Leaving");
-		return finStepPolicy;
 	}
 	
 	@Override
@@ -144,10 +114,15 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 	 * 
 	 */
 	@Override
-	public String save(FinanceStepPolicyDetail finStepDetail, String type) {
+	public void saveList(List<FinanceStepPolicyDetail> finStepDetailList, boolean isWIF, String type) {
 		logger.debug("Entering ");
 		
-		StringBuilder insertSql = new StringBuilder("Insert Into FinanceStepPolicyDetail" );
+		StringBuilder insertSql = new StringBuilder("Insert Into " );
+		if(isWIF){
+			insertSql.append(" WIFFinanceStepPolicyDetail");
+		}else{
+			insertSql.append(" FinanceStepPolicyDetail");
+		}
 		insertSql.append(StringUtils.trimToEmpty(type) );
 		insertSql.append(" (FinReference, StepNo, TenorSplitPerc, Installments,  RateMargin, EmiSplitPerc, SteppedEMI, " );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
@@ -157,56 +132,11 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStepDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finStepDetailList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
-		return String.valueOf(finStepDetail.getStepNo());
 	}
 
-	/**
-	 * This method updates the Record StepPolicyDetails or StepPolicyDetails_Temp. if Record not updated
-	 * then throws DataAccessException with error 41004. update Finance Types by key FinType and
-	 * Version
-	 * 
-	 * @param FinanceStepPolicyDetail (StepPolicyDetail)
-	 * @param type
-	 *         (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	@Override
-	public void update(FinanceStepPolicyDetail finStepDetail, String type) {
-		int recordCount = 0;
-		logger.debug("Entering ");
-		
-		StringBuilder updateSql = new StringBuilder("Update FinanceStepPolicyDetail" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set FinReference = :FinReference, StepNo = :StepNo, TenorSplitPerc = :TenorSplitPerc, Installments = :Installments, ");
-		updateSql.append(" RateMargin = :RateMargin, EmiSplitPerc = :EmiSplitPerc, SteppedEMI = :SteppedEMI, ");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where FinReference = :FinReference AND StepNumber=:StepNumber ");
-		
-		if (!type.endsWith("_TEMP")){
-			updateSql.append(" AND Version= :Version-1");
-		}
-		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStepDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004", String.valueOf(finStepDetail.getStepNo()),
-					String.valueOf(finStepDetail.getStepNo()),  finStepDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
-		}
-		logger.debug("Leaving ");
-	}
-		
 	/**
 	 * This method Deletes the Record from the StepPolicyDetails or StepPolicyDetails_Temp. if Record not
 	 * deleted then throws DataAccessException with error 41003. delete Finance Types by key FinType
@@ -219,41 +149,26 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
-	public void delete(FinanceStepPolicyDetail finStepPolicy,String type) {
+	@Override
+	public void deleteList(String finReference, boolean isWIF,String type) {
 		logger.debug("Entering");
-		int recordCount = 0;
 		
-		StringBuilder deleteSql = new StringBuilder("Delete From FinanceStepPolicyDetail");
+		FinanceStepPolicyDetail finStepPolicy = new FinanceStepPolicyDetail();
+		finStepPolicy.setFinReference(finReference);
+		
+		StringBuilder deleteSql = new StringBuilder("Delete From ");
+		if(isWIF){
+			deleteSql.append(" WIFFinanceStepPolicyDetail");
+		}else{
+			deleteSql.append(" FinanceStepPolicyDetail");
+		}
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append("  Where  FinReference = :FinReference AND StepNo =:StepNo ");
+		deleteSql.append("  Where  FinReference = :FinReference ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStepPolicy);
-		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",finStepPolicy.getFinReference(),String.valueOf(finStepPolicy.getStepNo()),finStepPolicy.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
-			}
-		}catch(DataAccessException e){
-			logger.error(e);
-			ErrorDetails errorDetails= getError("41006",finStepPolicy.getFinReference(),String.valueOf(finStepPolicy.getStepNo()),finStepPolicy.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
-		}
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	}
-		
-	private ErrorDetails  getError(String errorId, String policyCode,String stepNumber, String userLanguage){
-		String[][] parms= new String[2][2]; 
-
-		parms[1][0] = policyCode;
-		parms[1][1] = stepNumber;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_PolicyCode")+ ":" + parms[1][0]
-		                +" "+ PennantJavaUtil.getLabel("label_StepNumber")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
 	}
 
 }

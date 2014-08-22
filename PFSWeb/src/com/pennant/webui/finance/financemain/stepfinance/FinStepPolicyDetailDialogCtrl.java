@@ -936,7 +936,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl implements Serial
 					}
 
 					if(tranType==PennantConstants.TRAN_DEL){
-						if(aFinanceStepPolicyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+						/*if(aFinanceStepPolicyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
 							aFinanceStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded=true;
 							finStepPolicyDetails.add(aFinanceStepPolicyDetail);
@@ -955,7 +955,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl implements Serial
 									finStepPolicyDetails.add(policyDetail);
 								}
 							}
-						}
+						}*/
 					}else{
 						if(tranType!=PennantConstants.TRAN_UPD){
 							finStepPolicyDetails.add(financeStepPolicyDetail);

@@ -274,18 +274,18 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 
 				//Tenor Percentage Validation for Step Policy Details
 				if(calTotTerms != totalTerms){
-					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, new String[] {Labels.getLabel("label_TotInstallments")}));
+					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, new String[] {Labels.getLabel("label_TotInstallments"),Labels.getLabel("label_TotalTerms") }));
 				}
 				
 				//Tenor Percentage Validation for Step Policy Details
 				if(calTotTenorSplit.compareTo(new BigDecimal(100)) != 0){
-					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, new String[] {Labels.getLabel("label_TenorSplitPerc")}));
+					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, new String[] {Labels.getLabel("label_TenorSplitPerc"), "100.00 %"}));
 				}
 
 				//Average EMI Percentage Validation for Step Policy Details
 				BigDecimal emiStepPercAvg = calTotEmiStepPercent.divide(new BigDecimal(finStepPolicyList.size()), 0 , RoundingMode.HALF_DOWN);
 				if(emiStepPercAvg.compareTo(new BigDecimal(100)) != 0){
-					errorList.add(new ErrorDetails("E0043",PennantConstants.KEY_SEPERATOR, new String[] { Labels.getLabel("label_AvgEMISplitPerc")}));
+					errorList.add(new ErrorDetails("E0043",PennantConstants.KEY_SEPERATOR, new String[] { Labels.getLabel("label_AvgEMISplitPerc"), "100.00 %"}));
 				}
 			}
 		}else{
