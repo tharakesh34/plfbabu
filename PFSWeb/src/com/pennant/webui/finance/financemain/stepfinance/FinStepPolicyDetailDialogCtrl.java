@@ -693,7 +693,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl implements Serial
 		
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + 
-									"\n\n --> " + aFinStepPolicy.getFinReference()+" with "+aFinStepPolicy.getStepNo();
+									"\n\n --> " + aFinStepPolicy.getStepNo();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 		
@@ -936,6 +936,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl implements Serial
 					}
 
 					if(tranType==PennantConstants.TRAN_DEL){
+						recordAdded=true;
 						/*if(aFinanceStepPolicyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
 							aFinanceStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded=true;
