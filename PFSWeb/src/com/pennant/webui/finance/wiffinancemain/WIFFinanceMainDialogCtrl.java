@@ -6360,8 +6360,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			//Setting Step Policy Details Installments & Validations
 			if(this.stepFinance.isChecked()){
 				if(getStepDetailDialogCtrl() != null){
-					errorList.addAll(getStepDetailDialogCtrl().doValidateStepDetails(this.numberOfTerms_two.intValue(), 
-							this.alwManualSteps.isChecked(), this.noOfSteps.intValue()));
+					errorList.addAll(getStepDetailDialogCtrl().doValidateStepDetails(getFinanceDetail().getFinScheduleData().getFinanceMain(),
+							this.numberOfTerms_two.intValue(), this.alwManualSteps.isChecked(), this.noOfSteps.intValue()));
 				}
 			}
 			

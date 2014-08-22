@@ -3,6 +3,7 @@ package com.pennant.webui.finance.financemain.stepfinance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -209,7 +210,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 	 * @param isAlwManualSteps
 	 * @return
 	 */
-	public List<ErrorDetails> doValidateStepDetails(int totalTerms, boolean isAlwManualSteps, int noOfSteps){
+	public List<ErrorDetails> doValidateStepDetails(FinanceMain financeMain, int totalTerms, boolean isAlwManualSteps, int noOfSteps){
 		logger.debug("Entering");
 		
 		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
@@ -257,6 +258,16 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 					calTotTerms = calTotTerms + stepPolicy.getInstallments();
 					calTotTenorSplit = calTotTenorSplit.add(stepPolicy.getTenorSplitPerc());
 					calTotEmiStepPercent = calTotEmiStepPercent.add(stepPolicy.getEmiSplitPerc());
+					
+					//Setting Bean Property Field Details
+					if(StringUtils.trimToEmpty(stepPolicy.getRecordType()).equals("")){
+						stepPolicy.setVersion(stepPolicy.getVersion()+1);
+						stepPolicy.setRecordType(PennantConstants.RCD_ADD);
+						stepPolicy.setNewRecord(true);
+					}
+					stepPolicy.setLastMntBy(getUserWorkspace().getLoginUserDetails().getLoginUsrID());
+					stepPolicy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					stepPolicy.setUserDetails(getUserWorkspace().getLoginUserDetails());
 				}
 				
 				doFillStepDetais(finStepPolicyList);

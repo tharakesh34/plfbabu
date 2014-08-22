@@ -362,7 +362,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		insertSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,Defered,DeferedPay,");
 		insertSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
 		insertSql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
-		insertSql.append(" DisbAmount, DownPaymentAmount, CpzAmount,");
+		insertSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, OrgPft , OrgPri, OrgEndBal, ");
 		insertSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, DefPrincipalBal,");
 		insertSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid, Specifier,");
 		insertSql.append(" DefProfit, DefPrincipal, DefProfitBal, DefPrincipalSchd,CalculatedRate,FeeChargeAmt,");
@@ -376,7 +376,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		insertSql.append(" :CpzOnSchDate, :RepayOnSchDate, :RvwOnSchDate, :DisbOnSchDate, :Defered, :DeferedPay,");
 		insertSql.append(" :DownpaymentOnSchDate, :BalanceForPftCal, :BaseRate, :SplRate,:MrgRate, :ActRate, :NoOfDays,");
 		insertSql.append(" :CalOnIndRate,:DayFactor, :ProfitCalc, :ProfitSchd, :PrincipalSchd, :RepayAmount, :ProfitBalance,");
-		insertSql.append(" :DisbAmount, :DownPaymentAmount, :CpzAmount,");
+		insertSql.append(" :DisbAmount, :DownPaymentAmount, :CpzAmount, :OrgPft , :OrgPri, :OrgEndBal, ");
 		insertSql.append(" :ClosingBalance, :ProfitFraction, :PrvRepayAmount, :DefPrincipalBal,");
 		insertSql.append(" :SchdPriPaid, :SchdPftPaid, :SchPriPaid, :SchPftPaid, :Specifier,");
 		insertSql.append(" :DefProfit, :DefPrincipal, :DefProfitBal, :DefPrincipalSchd,:CalculatedRate,:FeeChargeAmt,");
@@ -413,7 +413,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		insertSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,Defered,DeferedPay,");
 		insertSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
 		insertSql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
-		insertSql.append(" DisbAmount, DownPaymentAmount, CpzAmount,");
+		insertSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, OrgPft , OrgPri, OrgEndBal, ");
 		insertSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, DefPrincipalBal,CalculatedRate,FeeChargeAmt,");
 		if(!isWIF){
 			insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal,WriteoffPrincipal, WriteoffProfit, ");	
@@ -430,7 +430,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		insertSql.append(" :CpzOnSchDate, :RepayOnSchDate, :RvwOnSchDate, :DisbOnSchDate, :Defered, :DeferedPay,");
 		insertSql.append(" :DownpaymentOnSchDate, :BalanceForPftCal, :BaseRate, :SplRate,:MrgRate, :ActRate, :NoOfDays,");
 		insertSql.append(" :CalOnIndRate,:DayFactor, :ProfitCalc, :ProfitSchd, :PrincipalSchd, :RepayAmount, :ProfitBalance,");
-		insertSql.append(" :DisbAmount, :DownPaymentAmount, :CpzAmount,");
+		insertSql.append(" :DisbAmount, :DownPaymentAmount, :CpzAmount, :OrgPft , :OrgPri, :OrgEndBal, ");
 		insertSql.append(" :ClosingBalance, :ProfitFraction, :PrvRepayAmount, :DefPrincipalBal, :CalculatedRate,:FeeChargeAmt,");
 		if(!isWIF){
 			insertSql.append(" :RefundOrWaiver, :EarlyPaid, :EarlyPaidBal, :WriteoffPrincipal, :WriteoffProfit,");
@@ -488,6 +488,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		updateSql.append(" ProfitSchd= :ProfitSchd, PrincipalSchd= :PrincipalSchd, RepayAmount= :RepayAmount,");
 		updateSql.append(" ProfitBalance=:ProfitBalance, DisbAmount= :DisbAmount, DownPaymentAmount= :DownPaymentAmount,");
 		updateSql.append(" CpzAmount= :CpzAmount, ClosingBalance= :ClosingBalance,");
+		updateSql.append(" OrgPft =:OrgPft , OrgPri=:OrgPri, OrgEndBal=:OrgEndBal, ");
 		updateSql.append(" ProfitFraction= :ProfitFraction, PrvRepayAmount= :PrvRepayAmount, DefPrincipalBal=:DefPrincipalBal,");
 		updateSql.append(" SchdPriPaid= :SchdPriPaid, SchdPftPaid= :SchdPftPaid, SchPriPaid= :SchPriPaid,");
 		updateSql.append(" SchPftPaid= :SchPftPaid,Specifier= :Specifier,DefProfit = :DefProfit,");
@@ -572,7 +573,8 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		updateSql.append(" SchPftPaid= :SchPftPaid,Specifier= :Specifier,DefProfit = :DefProfit,");
 		updateSql.append(" DefPrincipal= :DefPrincipal, DefProfitBal =:DefProfitBal,");
 		updateSql.append(" DefPrincipalSchd = :DefPrincipalSchd, DefProfitSchd =:DefProfitSchd,");
-		updateSql.append(" DefRepaySchd= :DefRepaySchd, DefSchdDate= :DefSchdDate, SchdMethod = :SchdMethod ");
+		updateSql.append(" DefRepaySchd= :DefRepaySchd, DefSchdDate= :DefSchdDate, SchdMethod = :SchdMethod, ");
+		updateSql.append(" OrgPft =:OrgPft , OrgPri=:OrgPri, OrgEndBal=:OrgEndBal ");
 		updateSql.append(" Where FinReference =:FinReference AND SchDate = :SchDate AND SchSeq = :SchSeq ");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -602,7 +604,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,Defered,DeferedPay,");
 		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
 		selectSql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
-		selectSql.append(" DisbAmount, DownPaymentAmount, CpzAmount,");
+		selectSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, OrgPft , OrgPri, OrgEndBal,");
 		selectSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, DefPrincipalBal,CalculatedRate,FeeChargeAmt, ");
 		if(!isWIF){
 			selectSql.append(" RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit,");
@@ -648,7 +650,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,Defered,DeferedPay,");
 		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
 		selectSql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
-		selectSql.append(" DisbAmount, DownPaymentAmount, CpzAmount,");
+		selectSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, OrgPft , OrgPri, OrgEndBal,");
 		selectSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, DefPrincipalBal,CalculatedRate,FeeChargeAmt, ");
 		if(!isWIF){
 			selectSql.append(" RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit,");
