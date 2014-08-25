@@ -382,6 +382,16 @@
 														<decimalbox
 															id="grcMargin" width="120px" maxlength="15" readonly="true" />
 													</hbox>
+													<label
+														id="label_MurabahaFinanceMainDialog_GraceProfitDaysBasis"
+														value="${c:l('label_MurabahaFinanceMainDialog_GraceProfitDaysBasis.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<combobox
+															id="grcPftDaysBasis" width="275px"
+															readonly="true" disabled="true" />
+													</hbox>
 												</row>
 												<row id="alwGrcIndRow"
 													visible="false">
