@@ -198,6 +198,26 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Checkbox custIsJointCust;					// autowired
 	protected Textbox custJointCustName;				// autowired
 	protected Datebox custJointCustDob;					// autowired
+	//New Fields For demo
+	protected Textbox custAddlVar81;				// autowired
+	protected Combobox custAddlVar82;				// autowired
+	protected Checkbox custAddlVar83;				// autowired
+	protected Checkbox custAddlVar84;				// autowired
+	protected Checkbox custAddlVar85;				// autowired
+	
+	protected Combobox custAddlVar86;				// autowired
+	protected Textbox custAddlVar87;				// autowired
+	protected ExtendedCombobox custAddlVar88;				// autowired
+	
+	protected Textbox custAddlVar1;				// autowired
+	protected Textbox custAddlVar2;				// autowired
+	protected Textbox custAddlVar3;				// autowired
+	protected Textbox custAddlVar4;				// autowired
+	protected ExtendedCombobox custParentCountry;				// autowired
+	protected ExtendedCombobox custLng;				// autowired
+	protected Row rowDualNationUSPerson;
+	protected Row rowShrNameMotherName;
+	protected Row rowGivenFullName;
 	
 	protected Listheader listheader_JointCust;
 	
@@ -380,6 +400,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private boolean isCountryBehrain = false;
 	private transient DirectorDetailService directorDetailService;
 	protected List<ValueLabel> custRelationList = PennantStaticListUtil.getCustRelationList();
+	protected List<ValueLabel> targetList = PennantStaticListUtil.getCustTargetValues();
+	protected List<ValueLabel> purposeRelation = PennantStaticListUtil.getPurposeOfRelation();
 	private boolean isCustRelated = false;
 	/**
 	 * default constructor.<br>
@@ -595,6 +617,34 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.contactPersonName.setMaxlength(50);
 		this.phoneNumber.setMaxlength(11);
 		this.emailID.setMaxlength(100);
+		
+		this.custAddlVar81.setMaxlength(10);
+		this.custAddlVar87.setMaxlength(30);	
+		this.custAddlVar1.setMaxlength(30);	
+		this.custAddlVar2.setMaxlength(30);	
+		this.custAddlVar3.setMaxlength(50);	
+		this.custAddlVar4.setMaxlength(50);	
+		
+		this.custAddlVar88.setMaxlength(2);
+		this.custAddlVar88.setMandatoryStyle(false);
+		this.custAddlVar88.setModuleName("Country");
+		this.custAddlVar88.setValueColumn("CountryCode");
+		this.custAddlVar88.setDescColumn("CountryDesc");
+		this.custAddlVar88.setValidateColumns(new String[] { "CountryCode" });
+		
+		this.custParentCountry.setMaxlength(2);
+		this.custParentCountry.setMandatoryStyle(true);
+		this.custParentCountry.setModuleName("Country");
+		this.custParentCountry.setValueColumn("CountryCode");
+		this.custParentCountry.setDescColumn("CountryDesc");
+		this.custParentCountry.setValidateColumns(new String[] { "CountryCode" });
+	
+		this.custLng.setMaxlength(2);
+		this.custLng.setMandatoryStyle(false);
+		this.custLng.setModuleName("Language");
+		this.custLng.setValueColumn("LngCode");
+		this.custLng.setDescColumn("LngDesc");
+		this.custLng.setValidateColumns(new String[] { "LngCode" });
 
 		if (isWorkFlowEnabled()) {
 			this.gb_Action.setVisible(true);
@@ -931,6 +981,35 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++
 		this.custTotalIncome.setReadonly(true);
 		sCustSector = this.custSector.getValue();
+		
+		
+		this.custAddlVar81.setValue(aCustomer.getCustAddlVar81());
+		fillComboBox(this.custAddlVar82, aCustomer.getCustAddlVar82(), targetList, "");
+		if (StringUtils.trimToEmpty(aCustomer.getCustAddlVar83()).equals("1")) {
+			this.custAddlVar83.setChecked(true);
+		}else{
+			this.custAddlVar83.setChecked(false);
+		}
+		if (StringUtils.trimToEmpty(aCustomer.getCustAddlVar84()).equals("1")) {
+			this.custAddlVar84.setChecked(true);
+		}else{
+			this.custAddlVar84.setChecked(false);
+		}
+		if (StringUtils.trimToEmpty(aCustomer.getCustAddlVar85()).equals("1")) {
+			this.custAddlVar85.setChecked(true);
+		}else{
+			this.custAddlVar85.setChecked(false);
+		}
+		fillComboBox(this.custAddlVar86, aCustomer.getCustAddlVar86(), purposeRelation, "");
+		this.custAddlVar87.setValue(aCustomer.getCustAddlVar87());	
+		this.custAddlVar88.setValue(aCustomer.getCustAddlVar88());	
+		this.custAddlVar1.setValue(aCustomer.getCustAddlVar1());	
+		this.custAddlVar2.setValue(aCustomer.getCustAddlVar2());	
+		this.custAddlVar3.setValue(aCustomer.getCustAddlVar3());	
+		this.custAddlVar4.setValue(aCustomer.getCustAddlVar4());	
+		this.custParentCountry.setValue(StringUtils.trimToEmpty(aCustomer.getCustParentCountry()), StringUtils.trimToEmpty(aCustomer.getLovDescCustParentCountryName()));
+		this.custLng.setValue(StringUtils.trimToEmpty(aCustomer.getCustLng()), StringUtils.trimToEmpty(aCustomer.getLovDescCustLngName()));
+		
 		doSetSubSectorProp();
 		doFillCustRelation(aCustomer.getCustRelation());
 		this.recordStatus.setValue(aCustomer.getRecordStatus());
@@ -1203,6 +1282,48 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aCustomer.setCustAddlVar81(this.custAddlVar81.getValue());
+			
+			if (this.custAddlVar82.getSelectedItem()!=null && !this.custAddlVar82.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
+				aCustomer.setCustAddlVar82(this.custAddlVar82.getSelectedItem().getValue().toString());
+			}
+			
+			if (this.custAddlVar83.isChecked()) {
+				aCustomer.setCustAddlVar83("1");
+			}else{
+				aCustomer.setCustAddlVar83("0");
+			}
+	
+			if (this.custAddlVar84.isChecked()) {
+				aCustomer.setCustAddlVar84("1");
+			}else{
+				aCustomer.setCustAddlVar84("0");
+			}
+			
+			if (this.custAddlVar85.isChecked()) {
+				aCustomer.setCustAddlVar85("1");
+			}else{
+				aCustomer.setCustAddlVar85("0");
+			}
+			
+			
+			if (this.custAddlVar86.getSelectedItem()!=null && !this.custAddlVar86.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
+				aCustomer.setCustAddlVar86(this.custAddlVar86.getSelectedItem().getValue().toString());
+			}
+			
+			
+			aCustomer.setCustAddlVar87(this.custAddlVar87.getValue());	
+			aCustomer.setCustAddlVar88(this.custAddlVar88.getValidatedValue());	
+			aCustomer.setCustAddlVar1(this.custAddlVar1.getValue());	
+			aCustomer.setCustAddlVar2(this.custAddlVar2.getValue());	
+			aCustomer.setCustAddlVar3(this.custAddlVar3.getValue());	
+			aCustomer.setCustAddlVar4(this.custAddlVar4.getValue());
+			aCustomer.setCustParentCountry(StringUtils.trimToNull(this.custParentCountry.getValidatedValue()));
+			aCustomer.setCustLng(this.custLng.getValidatedValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		
 		showErrorDetails(wve, basicDetails);
 		aCustomerDetails.setCustomer(aCustomer);
@@ -1283,6 +1404,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 			doCheckSubSector();
 			doSetJoinCustomer();
 			doStoreInitValues();
+			doCheckCustomerType();
 			doCheckEnquiry();
 			
 			if (this.custIsJointCust.isChecked()) {
@@ -1363,8 +1485,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 			if(StringUtils.trimToEmpty(this.custCPR.getValue()).equals("")){
 				this.custCPR.setReadonly(isReadOnly("CustomerDialog_custCRCPR"));
 			}
-			this.row_ContactPersonDetails.setVisible(false);
-			this.row_PhoneNumber.setVisible(false);
+			this.row_ContactPersonDetails.setVisible(true);
+			this.row_PhoneNumber.setVisible(true);
 		}
 	}
 	
@@ -1727,6 +1849,25 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if(isCustRelated && (!this.custGroupID.isButtonDisabled() && this.custGroupID.isButtonVisible())){
 			this.custGroupID.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerDialog_CustGroupID.value") }));
 		}
+		
+		if (!this.custAddlVar81.isReadonly()) {
+			this.custAddlVar81.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustAddlVar81.value"),PennantRegularExpressions.REGEX_CUST_NAME, false));
+		}
+		if (!this.custAddlVar1.isReadonly()) {
+			this.custAddlVar1.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustAddlVar1.value"),PennantRegularExpressions.REGEX_CUST_NAME, false));
+		}
+		if (!this.custAddlVar2.isReadonly()) {
+			this.custAddlVar2.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustAddlVar2.value"),PennantRegularExpressions.REGEX_CUST_NAME, false));
+		}
+		if (!this.custAddlVar3.isReadonly()) {
+			this.custAddlVar3.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustAddlVar3.value"),PennantRegularExpressions.REGEX_CUST_NAME, false));
+		}
+		if (!this.custAddlVar4.isReadonly()) {
+			this.custAddlVar4.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustAddlVar4.value"),PennantRegularExpressions.REGEX_CUST_NAME, false));
+		}
+		
+		this.custParentCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustParentCountry.value"), null, true));
+		
 	}
 
 	/**
@@ -3625,7 +3766,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.custTypeCode.setFilters(filter);				
 		}
 	}
-
+	private void doCheckCustomerType(){
+		if (corpCustomer) {
+			this.rowDualNationUSPerson.setVisible(false);
+			this.rowShrNameMotherName.setVisible(false);
+			this.rowGivenFullName.setVisible(false);
+		}else{
+			this.rowDualNationUSPerson.setVisible(true);
+			this.rowShrNameMotherName.setVisible(true);
+			this.rowGivenFullName.setVisible(true);
+		}
+	}
+	
+	
 	public DirectorDetailService getDirectorDetailService() {
 		return directorDetailService;
 	}

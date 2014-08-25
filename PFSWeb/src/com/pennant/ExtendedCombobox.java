@@ -587,7 +587,7 @@ public class ExtendedCombobox extends Hbox {
 		if (inputAllowed) {
 			this.textbox.setMaxlength(length);
 			if(getDisplayStyle() == 1){
-				this.textbox.setWidth(length*10+"px");
+				this.textbox.setWidth(length*15+"px");
 			}else{
 				this.textbox.setWidth("180px");
 			}

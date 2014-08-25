@@ -233,6 +233,7 @@ public class FinScheduleData {
 			this.financeMain.setLovDescGraceSpecialRateName(financeType.getLovDescFinGrcSplRateName());
 			this.financeMain.setGrcPftRate(financeType.getFinGrcIntRate());
 			this.financeMain.setGrcPftFrq(financeType.getFinGrcDftIntFrq());
+			this.financeMain.setGrcProfitDaysBasis(financeType.getFinDaysCalType());
 			if (FrequencyUtil.validateFrequency(financeType.getFinGrcDftIntFrq()) == null) {
 				this.financeMain.setNextGrcPftDate(FrequencyUtil.getNextDate(financeType.getFinGrcDftIntFrq(), 1, 
 						this.financeMain.getFinStartDate(), "A", false).getNextFrequencyDate());

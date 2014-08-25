@@ -1167,4 +1167,27 @@ public class PennantStaticListUtil {
 		return importTablesList;
 	}
 	
+	public static List<ValueLabel> getCustTargetValues(){
+		custRelationList = new ArrayList<ValueLabel>();
+		custRelationList.add(new ValueLabel("20", "Excell"));
+		custRelationList.add(new ValueLabel("60", "Corporate"));
+		custRelationList.add(new ValueLabel("80", "Financial Institution"));
+		custRelationList.add(new ValueLabel("30", "HNW"));
+		custRelationList.add(new ValueLabel("50", "SME"));
+		custRelationList.add(new ValueLabel("70", "Government"));
+		custRelationList.add(new ValueLabel("90", "OTHERS"));
+		custRelationList.add(new ValueLabel("10", "Core"));
+		custRelationList.add(new ValueLabel("40", "UHNW"));
+		custRelationList.add(new ValueLabel("15", "Direct Sales Agent"));
+		return custRelationList;
+	}
+	public static List<ValueLabel> getPurposeOfRelation(){
+		custRelationList = new ArrayList<ValueLabel>();
+		custRelationList.add(new ValueLabel("01", "Loans"));
+		custRelationList.add(new ValueLabel("02", "Deposits"));
+		custRelationList.add(new ValueLabel("03", "Others"));
+		return custRelationList;
+	}
+	
+	
 }

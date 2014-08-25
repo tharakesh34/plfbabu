@@ -112,6 +112,57 @@
 													id="custShrtName" maxlength="50" width="250px"
 													style="overflow: hidden;" />
 											</hbox>
+													<label
+												value="${c:l('label_CustomerDialog_CustAddlVar81.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="custAddlVar81" width="250px" />
+											</hbox>
+										</row>
+										<row id="rowShrNameMotherName" >
+						
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar1.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="custAddlVar1" width="250px" />
+											</hbox>
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar2.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="custAddlVar2" width="250px" />
+											</hbox>
+
+										</row>
+										<row id="rowGivenFullName">
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar3.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="custAddlVar3" width="250px" />
+											</hbox>
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar4.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="custAddlVar4" width="250px" />
+											</hbox>
+
+										</row>
+										<row>
+												<label
+												value="${c:l('label_CustomerDialog_CustAddlVar82.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<combobox
+													id="custAddlVar82" width="250px" readonly="true"/>
+											</hbox>
 											<label
 												id="label_CustomerDialog_CustCtgCode"
 												value="${c:l('label_CustomerDialog_CustCtgCode.value')}" />
@@ -210,6 +261,15 @@
 												id="label_CustomerDialog_CustSts"
 												value="${c:l('label_CustomerDialog_CustSts.value')}" />
 											<extendedcombobox id="custSts"/>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_CustomerDialog_CustParentCountry.value')}" />
+											<extendedcombobox id="custParentCountry"/>
+											<label
+												
+												value="${c:l('label_CustomerDialog_CustLng.value')}" />
+											<extendedcombobox id="custLng"/>
 										</row>
 										<row
 											id="row_GenderSalutation">
@@ -330,6 +390,60 @@
 												<textbox id="phoneNumber" width="250px"/>
 											</hbox>
 										</row>
+										
+										<row id="rowDualNationUSPerson">
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar83.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox
+													id="custAddlVar83" />
+											</hbox>
+
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar84.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox
+													id="custAddlVar84"  />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar85.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox
+													id="custAddlVar85" />
+											</hbox>
+
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar86.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<combobox
+													id="custAddlVar86" width="150px" />
+											</hbox>
+										</row>
+										<row>
+						
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar87.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="custAddlVar87" width="150px" />
+											</hbox>
+
+											<label
+												value="${c:l('label_CustomerDialog_CustAddlVar88.value')}" />
+											<hbox>
+												<extendedcombobox
+													id="custAddlVar88" width="75px" />
+											</hbox>
+										</row>
+									
+										
 									</rows>
 								</grid>
 							</groupbox>

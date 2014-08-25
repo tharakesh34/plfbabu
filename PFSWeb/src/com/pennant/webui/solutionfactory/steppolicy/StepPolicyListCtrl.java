@@ -45,6 +45,7 @@ package com.pennant.webui.solutionfactory.steppolicy;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -70,7 +71,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -143,7 +143,6 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> implem
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<StepPolicyHeader> searchObj;
-	private transient PagedListService pagedListService;
 	private transient StepPolicyService stepPolicyService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -535,13 +534,6 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> implem
 
 	public void setSearchObj(JdbcSearchObject<StepPolicyHeader> searchObj) {
 		this.searchObj = searchObj;
-	}
-
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
-	public PagedListService getPagedListService() {
-		return pagedListService;
 	}
 
 }
