@@ -97,8 +97,10 @@ public class ScheduleGenerator {
 					FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 					if(repayStart == repayEnd){
 						stepCount = stepCount + 1;
-						policyDetail = finScheduleData.getStepPolicyDetails().get(stepCount);
-						repayEnd = repayEnd + policyDetail.getInstallments();
+						if(finScheduleData.getStepPolicyDetails() != null && finScheduleData.getStepPolicyDetails().size() > stepCount){
+							policyDetail = finScheduleData.getStepPolicyDetails().get(stepCount);
+							repayEnd = repayEnd + policyDetail.getInstallments();
+						}
 					}
 
 					if(policyDetail != null){

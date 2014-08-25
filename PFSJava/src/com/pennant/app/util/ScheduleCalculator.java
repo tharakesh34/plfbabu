@@ -1453,7 +1453,7 @@ public class ScheduleCalculator {
 		if (recaltype.equals(CalculationConstants.RPYCHG_ADDTERM) || recaltype.equals(CalculationConstants.RPYCHG_ADDRECAL)) {
 			Date oldMatDate = financeMain.getMaturityDate();
 			
-	        finScheduleData = procAddTerm(finScheduleData, financeMain.getAddTerms(), schdMethod);
+	        finScheduleData = procAddTerm(finScheduleData, financeMain.getAdjTerms(), schdMethod);
 	        financeMain = finScheduleData.getFinanceMain();
 	        
 	        int sdSize = finScheduleData.getFinanceScheduleDetails().size();
@@ -1497,7 +1497,7 @@ public class ScheduleCalculator {
 
 		//Set new calculated repayments amount for the newly added terms
 		if (recaltype.equals(CalculationConstants.RPYCHG_ADDTERM) || recaltype.equals(CalculationConstants.RPYCHG_ADDRECAL)) {
-			termTobeAdjusted = financeMain.getAddTerms();
+			termTobeAdjusted = financeMain.getAdjTerms();
 			
 			BigDecimal newTermsRpyAmount = totAmountPostponed.divide(
 			        BigDecimal.valueOf(termTobeAdjusted), 0, RoundingMode.HALF_DOWN);

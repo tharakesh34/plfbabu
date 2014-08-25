@@ -97,6 +97,8 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	protected Combobox cbReCalType; 					// autowired
 	protected Combobox cbAddTermAfter; 					// autowired
 	protected Checkbox exDefDate; 						// autowired
+	protected Row pftIntactRow;						// autowired
+	protected Checkbox pftIntact; 						// autowired
 	protected Row recalTypeRow; 						// autowired
 	protected Row recallFromDateRow;					// autowired
 	protected Row recallToDateRow;						// autowired
@@ -115,6 +117,7 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 	private transient int oldVar_tillDateFrom;
 	private transient int oldVar_tillDateTo;
 	private transient boolean oldVar_exDefDate;	
+	private transient boolean oldVar_pftIntact;	
 	private transient String oldVar_reCalType;
 	private transient int  	oldVar_addTermAfter;
 	private transient boolean validationOn;
@@ -328,6 +331,9 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 		if(this.oldVar_exDefDate != this.exDefDate.isChecked()){
 			return true;
 		}
+		if(this.oldVar_pftIntact != this.pftIntact.isChecked()){
+			return true;
+		}
 		if (this.oldVar_addTermAfter != this.cbAddTermAfter.getSelectedIndex()) {
 			return true;
 		}
@@ -537,6 +543,13 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 		if(this.excDefDateRow.isVisible()) {
 			try {
 				getFinScheduleData().getFinanceMain().setExcludeDeferedDates(this.exDefDate.isChecked());
+			}catch(WrongValueException we) {
+				wve.add(we);
+			}
+		}
+		if(this.pftIntactRow.isVisible()) {
+			try {
+				getFinScheduleData().getFinanceMain().setPftIntact(this.pftIntact.isChecked());
 			}catch(WrongValueException we) {
 				wve.add(we);
 			}

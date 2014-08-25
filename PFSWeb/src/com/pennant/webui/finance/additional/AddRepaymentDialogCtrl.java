@@ -56,9 +56,11 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
@@ -70,7 +72,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -106,6 +107,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	protected Combobox cbSchdMthd; 					// autowired
 	protected Decimalbox wIAmount; 					// autowired
 	protected Row tillDateRow;
+	protected Row pftIntactRow;						// autowired
+	protected Checkbox pftIntact; 					// autowired
+	protected Row numOfTermsRow;
+	protected Intbox adjTerms; 						// autowired
 
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 				// overhanded per param
@@ -120,10 +125,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	private transient BigDecimal oldVar_wIAmount;
 	private transient int oldVar_wISchdMethd;
 	private transient int oldVar_wIReCalType;
+	private transient boolean oldVar_pftIntact;	
+	private transient int oldVar_adjTerms;	
 
 	private transient int overrideCount = 0;
 	private transient boolean validationOn;
-	private transient PagedListService pagedListService;
 	Calendar calender = Calendar.getInstance();
 	static final List<ValueLabel>	      schMthds	              	  = PennantAppUtil.getScheduleMethod();
 	static final List<ValueLabel>	      recalTypes	              = PennantStaticListUtil.getSchCalCodes();
@@ -190,14 +196,6 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Leaving");
 	}
 
-	public FinScheduleData getFinScheduleData() {
-		return finScheduleData;
-	}
-
-	public void setFinScheduleData(FinScheduleData finScheduleData) {
-		this.finScheduleData = finScheduleData;
-	}
-
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -249,6 +247,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.oldVar_wIAmount = this.wIAmount.getValue();
 		this.oldVar_wISchdMethd = this.cbSchdMthd.getSelectedIndex();
 		this.oldVar_wIReCalType = this.cbReCalType.getSelectedIndex();
+		this.oldVar_pftIntact = this.pftIntact.isChecked();
+		this.oldVar_adjTerms = this.adjTerms.intValue();
 		logger.debug("Leaving");
 	}
 
@@ -257,12 +257,14 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.cbRepayFromDate.setReadonly(true);
-		this.cbRepayToDate.setReadonly(true);
-		this.wIAmount.setReadonly(true);
-		this.cbReCalType.setReadonly(true);
-		this.cbTillDate.setReadonly(true);
-		this.cbSchdMthd.setReadonly(true);
+		this.cbRepayFromDate.setDisabled(true);
+		this.cbRepayToDate.setDisabled(true);
+		this.wIAmount.setDisabled(true);
+		this.cbReCalType.setDisabled(true);
+		this.cbTillDate.setDisabled(true);
+		this.cbSchdMthd.setDisabled(true);
+		this.adjTerms.setReadonly(true);
+		this.pftIntact.setDisabled(true);
 		logger.debug("Leaving");
 	}
 
@@ -275,6 +277,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.wIAmount.setMaxlength(18);
 		this.wIAmount.setFormat(PennantApplicationUtil
 				.getAmountFormate(getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
+		this.adjTerms.setMaxlength(2);
 		logger.debug("Leaving");
 
 	}
@@ -338,20 +341,20 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 */
 	private void doClose() throws InterruptedException {
 		logger.debug("Entering");
+		
 		boolean close = true;
 		doClearMessage();
+		
 		if (isDataChanged()) {
 			logger.debug("isDataChanged : true");
 
 			// Show a confirm box
-			final String msg = Labels
-			.getLabel("message_Data_Modified_Save_Data_YesNo");
+			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
 			final String title = Labels.getLabel("message.Information");
 
 			MultiLineMessageBox.doSetTemplate();
 			int conf = MultiLineMessageBox.show(msg, title,
-					MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					MultiLineMessageBox.QUESTION, true);
+					MultiLineMessageBox.YES | MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
 
 			if (conf == MultiLineMessageBox.YES) {
 				logger.debug("doClose: Yes");
@@ -391,20 +394,18 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 * @return true, if data are changed, otherwise false
 	 */
 	private boolean isDataChanged() {
-		logger.debug("Entering");
+		logger.debug("Entering"); 
+		
 		if(this.oldVar_wIAmount != this.wIAmount.getValue()) {
 			return true;
 		}
-		if (this.oldVar_wIRateChangeFromDate != this.cbRepayFromDate
-				.getSelectedIndex()) {
+		if (this.oldVar_wIRateChangeFromDate != this.cbRepayFromDate.getSelectedIndex()) {
 			return true;
 		}
-		if (this.oldVar_wIRateChangeToDate != this.cbRepayToDate
-				.getSelectedIndex()) {
+		if (this.oldVar_wIRateChangeToDate != this.cbRepayToDate.getSelectedIndex()) {
 			return true;
 		}
-		if (this.oldVar_wIRateChangeTillDate != this.cbTillDate
-				.getSelectedIndex()) {
+		if (this.oldVar_wIRateChangeTillDate != this.cbTillDate.getSelectedIndex()) {
 			return true;
 		}
 		if (this.oldVar_wISchdMethd != this.cbSchdMthd.getSelectedIndex()) {
@@ -413,6 +414,13 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		if (this.oldVar_wIReCalType != this.cbReCalType.getSelectedIndex()) {
 			return true;
 		}
+		if(this.oldVar_pftIntact != this.pftIntact.isChecked()){
+			return true;
+		}
+		if(this.oldVar_adjTerms != this.adjTerms.intValue()){
+			return true;
+		}
+		
 		logger.debug("Leaving");
 		return false;
 	}
@@ -435,7 +443,6 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		fillSchToDates(this.cbTillDate, aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate(),false);
 	
-		
 		// check the values and set in respective fields.
 		// If schedule detail is not null i.e. existing one
 		if (getFinanceScheduleDetail() != null) {
@@ -475,8 +482,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	}
 
 	/** To fill schedule dates */
-	public void fillSchFromDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails) {
+	public void fillSchFromDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails) {
 		logger.debug("Entering");
 		this.cbRepayFromDate.getItems().clear();
 		Comboitem comboitem = new Comboitem();
@@ -698,7 +704,14 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				wve.add(we);
 			}
 		}
-
+		
+		getFinScheduleData().getFinanceMain().setPftIntact(false);
+		try {
+			getFinScheduleData().getFinanceMain().setPftIntact(this.pftIntact.isChecked());
+		}catch(WrongValueException we) {
+			wve.add(we);
+		}
+		
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -720,6 +733,16 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				}
 			}
 		}
+		
+		getFinScheduleData().getFinanceMain().setAdjTerms(0);
+		if(this.numOfTermsRow.isVisible()) {
+			try {
+				getFinScheduleData().getFinanceMain().setAdjTerms(this.adjTerms.getValue());
+			}catch(WrongValueException we) {
+				wve.add(we);
+			}
+		}
+		
 		if(this.tillDateRow.isVisible()){
 			getFinScheduleData().getFinanceMain().setRecalToDate((Date)this.cbTillDate.getSelectedItem().getValue());
 			setFinScheduleData(ScheduleCalculator.changeRepay(
@@ -732,7 +755,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 							this.wIAmount.getValue(),getFinScheduleData().getFinanceMain().getLovDescFinFormatter()),recalScheduleMethod));
 		}
 		
-		//Show Error Details in Schedule Maintainance
+		//Show Error Details in Schedule Maintenance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
 		}else{
@@ -753,8 +776,6 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -774,16 +795,26 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	//Enable till date field if the selected recalculation type is TIIDATE
 	public void onChange$cbReCalType(Event event) {
 		logger.debug("Entering" + event.toString());
-		if(this.cbReCalType.getSelectedItem().getValue().toString()
-				.equals(CalculationConstants.RPYCHG_TILLDATE)){
+		String selectedRecalType = this.cbReCalType.getSelectedItem().getValue().toString();
+		
+		if (selectedRecalType.equals(CalculationConstants.RPYCHG_TILLDATE)) {
 			this.tillDateRow.setVisible(true);
 			if (isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))) {
 				fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
 						(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
 			}
-		}else {
+			this.numOfTermsRow.setVisible(false);
+		} else if (selectedRecalType
+				.equals(CalculationConstants.RPYCHG_ADDRECAL)
+				|| selectedRecalType
+						.equals(CalculationConstants.RPYCHG_ADDTERM)) {
 			this.cbTillDate.setSelectedIndex(0);
 			this.tillDateRow.setVisible(false);
+			this.numOfTermsRow.setVisible(true);
+		} else {
+			this.cbTillDate.setSelectedIndex(0);
+			this.tillDateRow.setVisible(false);
+			this.numOfTermsRow.setVisible(false);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -919,12 +950,13 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	public boolean isValidationOn() {
 		return validationOn;
 	}
+	
+	public FinScheduleData getFinScheduleData() {
+		return finScheduleData;
+	}
+	public void setFinScheduleData(FinScheduleData finScheduleData) {
+		this.finScheduleData = finScheduleData;
+	}
 
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
 	
 }

@@ -73,6 +73,17 @@
                             		</combobox>
                             	</hbox>
                             </row>
+                            <row id="pftIntactRow" visible="false">
+                                <label
+                                    id="label_AddDeffermentDialog_PftIntact"
+                                    value="${c:l('label_AddDeffermentDialog_PftIntact.value')}" />
+                                <hbox>
+                                    <space spacing="2px"
+                                        sclass="mandatory" id="space_PftIntact" />
+                                    <checkbox id="pftIntact" checked = "false" />
+                                </hbox>
+                            </row>
+                            
                             <row id="excDefDateRow" visible="false">
                             	<label
                             		id="label_AddDeffermentDialog_ExDefDate"

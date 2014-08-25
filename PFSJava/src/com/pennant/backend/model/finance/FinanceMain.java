@@ -246,6 +246,8 @@ public class FinanceMain implements java.io.Serializable {
 	private String stepPolicy;
 	private boolean alwManualSteps = false;
 	private int noOfSteps = 0;
+	private boolean pftIntact = false;
+	private int adjTerms = 0;
 	
 	/*private BigDecimal disbCcyFinAmount;
 	private BigDecimal ccyConversionRate;
@@ -272,9 +274,7 @@ public class FinanceMain implements java.io.Serializable {
 	private String limitStatus;
 	
 	private boolean fundsAvailConfirmed;
-	
 	private boolean limitApproved;
-
 
 	private String lovDescTenorName;
 	private int lovDescNotes;
@@ -2408,6 +2408,20 @@ public class FinanceMain implements java.io.Serializable {
 	public void setNoOfSteps(int noOfSteps) {
 		this.noOfSteps = noOfSteps;
 	}
+	
+	public boolean isPftIntact() {
+	    return pftIntact;
+    }
+	public void setPftIntact(boolean pftIntact) {
+	    this.pftIntact = pftIntact;
+    }
+
+	public int getAdjTerms() {
+	    return adjTerms;
+    }
+	public void setAdjTerms(int adjTerms) {
+	    this.adjTerms = adjTerms;
+    }
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> customerScoringMap = new HashMap<String, Object>();	
