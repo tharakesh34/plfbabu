@@ -2017,6 +2017,7 @@
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeTypeService" ref="financeTypeService" />
+		<property name="stepPolicyService" ref="stepPolicyService" />
 	</bean>
 
     <bean id="finTypeAccountDialogCtrl"
@@ -2263,6 +2264,7 @@
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="mailUtil" ref="mailUtil" />
 		<property name="additionalDetailValidation" ref="additionalDetailValidation" />
+		<property name="stepPolicyService" ref="stepPolicyService" />
 	</bean>
 	
 	<bean id="murabahaFinanceMainDialogCtrl"
