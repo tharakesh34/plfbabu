@@ -1217,9 +1217,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 				// Save Finance Step Policy Details
 				//=======================================
-				if (isWIF || financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-					saveStepDetailList(financeDetail.getFinScheduleData(), isWIF, "");
-				}
+				saveStepDetailList(financeDetail.getFinScheduleData(), isWIF, "");
 
 				//Fee Charge Details
 				//=======================================
