@@ -211,8 +211,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	// Step Finance Details
 	protected Checkbox      stepFinance;                            // autoWired
 	protected ExtendedCombobox      stepPolicy;         		    // autoWired
-	protected Label      	label_MurabahaFinanceMainDialog_StepPolicy;// autoWired
-	protected Label      	label_MurabahaFinanceMainDialog_numberOfSteps;// autoWired
+	protected Label      	label_FinanceMainDialog_StepPolicy;		// autoWired
+	protected Label      	label_FinanceMainDialog_numberOfSteps;	// autoWired
 	protected Checkbox      alwManualSteps;							// autoWired
 	protected Intbox        noOfSteps;							    // autoWired
 	protected Row           row_stepFinance;					    // autoWired
@@ -3267,8 +3267,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.row_manualSteps.setVisible(false);
 		
 		this.stepPolicy.setVisible(false);
-		this.label_MurabahaFinanceMainDialog_StepPolicy.setVisible(false);
-		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(false);
+		this.label_FinanceMainDialog_StepPolicy.setVisible(false);
+		this.label_FinanceMainDialog_numberOfSteps.setVisible(false);
 		this.hbox_numberOfSteps.setVisible(false);
 		
 		if(this.tabsIndexCenter.getFellowIfAny("stepDetailsTab") != null){
@@ -3292,7 +3292,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			if(type.isSteppingMandatory()){
 				this.stepFinance.setDisabled(true);
 			}
-			this.label_MurabahaFinanceMainDialog_StepPolicy.setVisible(true);
+			this.label_FinanceMainDialog_StepPolicy.setVisible(true);
 			this.stepPolicy.setVisible(true);
 			if(!StringUtils.trimToEmpty(type.getDftStepPolicy()).equals(PennantConstants.List_Select)){
 				this.stepPolicy.setValue(type.getDftStepPolicy(),type.getLovDescDftStepPolicyName());
@@ -3310,7 +3310,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				}
 			}
 		} else{
-			this.row_stepFinance.setVisible(!isReadOnly("FinanceMainDialog_stepFinance"));
+			if(isReadOnly("FinanceMainDialog_stepFinance")){
+				this.row_stepFinance.setVisible(false);
+			}
 		}
 	}
 	
@@ -3334,11 +3336,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		
 		if(this.alwManualSteps.isChecked()){
      		this.stepPolicy.setMandatoryStyle(false); 
-    		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(true);
+    		this.label_FinanceMainDialog_numberOfSteps.setVisible(true);
     		this.hbox_numberOfSteps.setVisible(true);
 		} else {
     		this.stepPolicy.setMandatoryStyle(true); 
-    		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(false);
+    		this.label_FinanceMainDialog_numberOfSteps.setVisible(false);
     		this.hbox_numberOfSteps.setVisible(false);
     		if(isReadOnly("FinanceMainDialog_alwManualSteps")){
     			this.row_manualSteps.setVisible(false);
@@ -7097,6 +7099,22 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	public void setLabel_FinanceMainDialog_AlwGrace(
 			Label label_FinanceMainDialog_AlwGrace) {
 		this.label_FinanceMainDialog_AlwGrace = label_FinanceMainDialog_AlwGrace;
+	}
+	
+	public Label getLabel_FinanceMainDialog_StepPolicy() {
+		return label_FinanceMainDialog_StepPolicy;
+	}
+	public void setLabel_FinanceMainDialog_StepPolicy(
+			Label label_FinanceMainDialog_StepPolicy) {
+		this.label_FinanceMainDialog_StepPolicy = label_FinanceMainDialog_StepPolicy;
+	}
+
+	public Label getLabel_FinanceMainDialog_numberOfSteps() {
+		return label_FinanceMainDialog_numberOfSteps;
+	}
+	public void setLabel_FinanceMainDialog_numberOfSteps(
+			Label label_FinanceMainDialog_numberOfSteps) {
+		this.label_FinanceMainDialog_numberOfSteps = label_FinanceMainDialog_numberOfSteps;
 	}
 	
 	public Label getLabel_FinanceMainDialog_GraceMargin() {

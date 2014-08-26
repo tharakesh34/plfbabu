@@ -411,8 +411,8 @@
 												</row>
 												<row id="row_stepFinance" visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_StepFinance"
-														value="${c:l('label_MurabahaFinanceMainDialog_StepFinance.value')}" />
+														id="label_IjarahFinanceMainDialog_StepFinance"
+														value="${c:l('label_IjarahFinanceMainDialog_StepFinance.value')}" />
 													<hbox>
 														<space id="space_StepFinance"
 															spacing="2px" />
@@ -420,15 +420,15 @@
 															id="stepFinance" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_StepPolicy"
-														value="${c:l('label_MurabahaFinanceMainDialog_StepPolicy.value')}" />
+														id="label_IjarahFinanceMainDialog_StepPolicy"
+														value="${c:l('label_IjarahFinanceMainDialog_StepPolicy.value')}" />
 													<extendedcombobox id="stepPolicy"/>
 												</row>
 												<row
 													id="row_manualSteps" visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_ManualSteps"
-														value="${c:l('label_MurabahaFinanceMainDialog_ManualSteps.value')}" />
+														id="label_IjarahFinanceMainDialog_ManualSteps"
+														value="${c:l('label_IjarahFinanceMainDialog_ManualSteps.value')}" />
 													<hbox>
 														<space id="space_alwManualSteps"
 															spacing="2px" />
@@ -436,8 +436,8 @@
 															id="alwManualSteps" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_numberOfSteps"
-														value="${c:l('label_MurabahaFinanceMainDialog_NumberOfSteps.value')}" />
+														id="label_IjarahFinanceMainDialog_numberOfSteps"
+														value="${c:l('label_IjarahFinanceMainDialog_NumberOfSteps.value')}" />
 													<hbox
 														id="hbox_numberOfSteps">
 														<space id="space_noOfSteps"

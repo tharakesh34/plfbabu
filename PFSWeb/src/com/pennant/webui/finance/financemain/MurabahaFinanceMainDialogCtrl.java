@@ -159,6 +159,8 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	protected Label 		label_MurabahaFinanceMainDialog_AlwGrace; 			// autoWired
 	protected Label 		label_MurabahaFinanceMainDialog_GraceMargin; 		// autoWired
 	//protected Label 		label_MurabahaFinanceMainDialog_CcyConversionRate; 	// autoWired
+	protected Label 		label_MurabahaFinanceMainDialog_StepPolicy; 		// autoWired
+	protected Label 		label_MurabahaFinanceMainDialog_numberOfSteps; 		// autoWired
 
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
@@ -255,6 +257,8 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_AlwGrace(label_MurabahaFinanceMainDialog_AlwGrace);
 		setLabel_FinanceMainDialog_GraceMargin(label_MurabahaFinanceMainDialog_GraceMargin);
 		//setLabel_FinanceMainDialog_CcyConversionRate(label_MurabahaFinanceMainDialog_CcyConversionRate);
+		setLabel_FinanceMainDialog_StepPolicy(label_MurabahaFinanceMainDialog_StepPolicy);
+		setLabel_FinanceMainDialog_numberOfSteps(label_MurabahaFinanceMainDialog_numberOfSteps);
 		setProductCode("Murabaha");
 
 		/* set components visible dependent of the users rights */
@@ -1218,7 +1222,6 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 		
 		super.oldVar_finStepPolicyList = getFinanceDetail().getFinScheduleData().getStepPolicyDetails();
-		
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 
 		logger.debug("Leaving");
@@ -1801,6 +1804,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		
 		this.stepPolicy.setConstraint("");
 		this.noOfSteps.setConstraint("");
+		
 		/*this.ccyConversionRate.setConstraint("");
 		this.disbCcyFinAmount.setConstraint("");*/
 

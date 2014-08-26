@@ -144,18 +144,20 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window 		window_MudarabaFinanceMainDialog; 				// autoWired
-	protected CurrencyBox 	downPaySupl; 									// autoWired
-	protected Row			row_downPaySupl;								// autoWired
+	protected Window 		window_MudarabaFinanceMainDialog; 					// autoWired
+	protected CurrencyBox 	downPaySupl; 										// autoWired
+	protected Row			row_downPaySupl;									// autoWired
 
 	//Finance Main Details Tab---> 1. Key Details
-	protected Label 		label_MudarabaFinanceMainDialog_ScheduleMethod;	// autoWired
-	protected Label 		label_MudarabaFinanceMainDialog_CommitRef;	// autoWired
-	protected Label 		label_MudarabaFinanceMainDialog_DepriFrq;	// autoWired
-	protected Label 		label_MudarabaFinanceMainDialog_FrqDef;		// autoWired
-	protected Label 		label_MudarabaFinanceMainDialog_FinRepayPftOnFrq;// autoWired
-	protected Label 		label_MudarabaFinanceMainDialog_CbbApproved;// autoWired
-	protected Label 		label_MudarabaFinanceMainDialog_AlwGrace;// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_ScheduleMethod;		// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_CommitRef;			// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_DepriFrq;			// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_FrqDef;				// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_FinRepayPftOnFrq;	// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_CbbApproved;		// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_AlwGrace;			// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_StepPolicy; 		// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_numberOfSteps; 		// autoWired
 
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
@@ -251,6 +253,8 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_MudarabaFinanceMainDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_FrqDef(label_MudarabaFinanceMainDialog_FrqDef);
 		setLabel_FinanceMainDialog_AlwGrace(label_MudarabaFinanceMainDialog_AlwGrace);
+		setLabel_FinanceMainDialog_StepPolicy(label_MudarabaFinanceMainDialog_StepPolicy);
+		setLabel_FinanceMainDialog_numberOfSteps(label_MudarabaFinanceMainDialog_numberOfSteps);
 		setProductCode("Mudaraba");
 
 		/* set components visible dependent of the users rights */
@@ -549,6 +553,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		logger.debug("Entering");
 
 		if(isReadOnly("FinanceMainDialog_NoScheduleGeneration")){
+			
 			//Step Policy Details
 			appendStepDetailTab(true);
 			
@@ -575,6 +580,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 		    //Fee Details Tab Addition
 		    appendFeeDetailsTab(true);
+		    
 		    //Asset Details Tab Addition
 		    if(moduleDefiner.equals("")){
 			  appendAssetDetailTab();
@@ -1627,11 +1633,11 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
-			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value"), null, true));
+			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MudarabaFinanceMainDialog_StepPolicy.value"), null, true));
 		}
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
-			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfSteps.value"), true, false));
+			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_MudarabaFinanceMainDialog_NumberOfSteps.value"), true, false));
 		}
 		
 		/*if (!this.downPayBank.isDisabled()) {

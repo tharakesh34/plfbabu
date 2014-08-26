@@ -123,6 +123,8 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -162,6 +164,8 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	protected Label 		label_IstisnaFinanceMainDialog_DepriFrq;		// autoWired
 	protected Label 		label_IstisnaFinanceMainDialog_FrqDef;			// autoWired
 	protected Label 		label_IstisnaFinanceMainDialog_AlwGrace;		// autoWired
+	protected Label 		label_IstisnaFinanceMainDialog_StepPolicy; 		// autoWired
+	protected Label 		label_IstisnaFinanceMainDialog_numberOfSteps; 	// autoWired
 
 
 	// old value variables for edit mode. that we can check if something 
@@ -262,6 +266,8 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		//setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_IstisnaFinanceMainDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_FrqDef(label_IstisnaFinanceMainDialog_FrqDef);
 		setLabel_FinanceMainDialog_AlwGrace(label_IstisnaFinanceMainDialog_AlwGrace);
+		setLabel_FinanceMainDialog_StepPolicy(label_IstisnaFinanceMainDialog_StepPolicy);
+		setLabel_FinanceMainDialog_numberOfSteps(label_IstisnaFinanceMainDialog_numberOfSteps);
 		this.downPayBank = downPayment;
 		setProductCode("Istisna");
 
@@ -587,6 +593,10 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		logger.debug("Entering");
 
 		if(isReadOnly("FinanceMainDialog_NoScheduleGeneration")){
+			
+			//Step Policy Details
+			appendStepDetailTab(true);
+			
 			//Contributor details Tab Addition
 			if(aFinanceDetail.getFinScheduleData().getFinanceMain().isNewRecord()){
 				if(aFinanceDetail.getFinScheduleData().getFinanceType() != null && aFinanceDetail.getFinScheduleData().getFinanceType().isAllowRIAInvestment()){
@@ -610,7 +620,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 
 			//Disbursement Detail Tab
 			appendDisbursementDetailTab();
-
+			
 			//Schedule Details Tab Adding
 			appendScheduleDetailTab(true, false);
 		}
@@ -874,6 +884,8 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 				if(this.numberOfTerms_two.intValue() == 0){
 					this.numberOfTerms_two.setValue(1);
 				}
+				this.row_stepFinance.setVisible(false);
+				this.row_manualSteps.setVisible(false);
 			}
 
 			// stores the initial data for comparing if they are changed
@@ -1263,6 +1275,12 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.oldVar_finRemarks = this.finRemarks.getValue();
 		this.oldVar_depreciationFrq = this.depreciationFrq.getValue();
 
+		// Step Finance Details
+		this.oldVar_stepFinance = this.stepFinance.isChecked();
+		this.oldVar_stepPolicy = this.stepPolicy.getValue();
+		this.oldVar_alwManualSteps = this.alwManualSteps.isChecked();
+		this.oldVar_noOfSteps = this.noOfSteps.intValue();
+
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
 		this.oldVar_gracePeriodEndDate = this.gracePeriodEndDate_two.getValue();
@@ -1338,6 +1356,8 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		    this.oldVar_oDAllowWaiver = oDAllowWaiver.isChecked();
 		    this.oldVar_oDMaxWaiverPerc = this.oDMaxWaiverPerc.getValue();
 		}
+		
+		super.oldVar_finStepPolicyList = getFinanceDetail().getFinScheduleData().getStepPolicyDetails();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 
 		logger.debug("Leaving");
@@ -1370,6 +1390,12 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.downPayAccount.setValue(this.oldVar_downPayAccount);
 		this.commitmentRef.setValue(this.oldVar_commitmentRef);
 		this.finPurpose.setValue(this.oldVar_finPurpose);
+
+		// Step Finance Details
+		this.stepFinance.setChecked(this.oldVar_stepFinance);
+		this.stepPolicy.setValue(this.oldVar_stepPolicy);
+		this.alwManualSteps.setChecked(this.oldVar_alwManualSteps);
+		this.noOfSteps.setValue(this.oldVar_noOfSteps);
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -1512,6 +1538,26 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 				return true;
 			}
 		} else if (DateUtility.compare(this.oldVar_gracePeriodEndDate, this.gracePeriodEndDate_two.getValue()) != 0) {
+			return true;
+		}
+		
+		// Step Finance Details
+		if (this.oldVar_stepFinance != this.stepFinance.isChecked()) {
+			return true;
+		}
+		if (!this.oldVar_stepPolicy.equals(this.stepPolicy.getValue())) {
+			return true;
+		}
+		if (this.oldVar_alwManualSteps != this.alwManualSteps.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
+			return true;
+		}
+
+		// Step Finance Details List Validation
+		if(getStepDetailDialogCtrl() != null && 
+				getStepDetailDialogCtrl().getFinStepPoliciesList() != this.oldVar_finStepPolicyList){
 			return true;
 		}
 
@@ -1711,6 +1757,14 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			this.securityDeposit.setConstraint(new AmountValidator(18,0,
 					Labels.getLabel("label_IstisnaFinanceMainDialog_SecurityDeposit.value"), false));
 		}*/
+		
+		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
+			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_IstisnaFinanceMainDialog_StepPolicy.value"), null, true));
+		}
+        
+		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
+			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_NumberOfSteps.value"), true, false));
+		}
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -1815,6 +1869,9 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.repayAcctId.setConstraint("");
 		this.downPayAccount.setConstraint("");
 		this.commitmentRef.setConstraint("");
+		
+		this.stepPolicy.setConstraint("");
+		this.noOfSteps.setConstraint("");
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -3543,6 +3600,12 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
  			this.buildEvent = false;
  			isFinValidated = false;
 
+ 			//Setting Finance Step Policy Details to Finance Schedule Data Object
+ 			if(getStepDetailDialogCtrl() != null){
+ 				validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
+ 				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
+ 			}
+ 			
 			//Prepare Finance Schedule Generator Details List
  			getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
 			getFinanceDetail().getFinScheduleData().setDefermentHeaders(new ArrayList<DefermentHeader>());
@@ -3604,6 +3667,10 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			if(tabsIndexCenter.getFellowIfAny("scheduleDetailsTab") != null){
 				tab = (Tab) tabsIndexCenter.getFellowIfAny("scheduleDetailsTab");
 				tab.setSelected(true);
+			}
+			
+			if(getStepDetailDialogCtrl() != null){
+				getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
 			}
 		}
 		logger.debug("Leaving" + event.toString());

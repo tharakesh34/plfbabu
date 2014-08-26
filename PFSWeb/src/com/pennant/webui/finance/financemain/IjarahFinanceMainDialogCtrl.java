@@ -149,19 +149,21 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 
 	//Finance Main Details Tab---> 1. Key Details
 
-	protected Groupbox 		gb_basicDetails; 						// autoWired
-	protected CurrencyBox   securityDeposit;							// autoWired
+	protected Groupbox 		gb_basicDetails; 									// autoWired
+	protected CurrencyBox   securityDeposit;									// autoWired
 	protected CurrencyBox 	downPaySupl; 										// autoWired
 	protected Row			row_downPaySupl;									// autoWired
 
-	protected Label 		label_IjarahFinanceMainDialog_SecurityDeposit;	// autoWired
- 	protected Label 		label_IjarahFinanceMainDialog_ScheduleMethod;	// autoWired
- 	protected Label 		label_IjarahFinanceMainDialog_FrqDef;	// autoWired
-	protected Label 		label_IjarahFinanceMainDialog_DepriFrq; 	// autoWired
-	protected Label 		label_IjarahFinanceMainDialog_CommitRef; 	// autoWired
-	protected Label 		label_IjarahFinanceMainDialog_CbbApproved;	// autoWired
-	protected Label 		label_IjarahFinanceMainDialog_FinRepayPftOnFrq;
-	protected Label 		label_IjarahFinanceMainDialog_AlwGrace;
+	protected Label 		label_IjarahFinanceMainDialog_SecurityDeposit;		// autoWired
+ 	protected Label 		label_IjarahFinanceMainDialog_ScheduleMethod;		// autoWired
+ 	protected Label 		label_IjarahFinanceMainDialog_FrqDef;				// autoWired
+	protected Label 		label_IjarahFinanceMainDialog_DepriFrq; 			// autoWired
+	protected Label 		label_IjarahFinanceMainDialog_CommitRef; 			// autoWired
+	protected Label 		label_IjarahFinanceMainDialog_CbbApproved;			// autoWired
+	protected Label 		label_IjarahFinanceMainDialog_FinRepayPftOnFrq;		// autoWired
+	protected Label 		label_IjarahFinanceMainDialog_AlwGrace;				// autoWired
+	protected Label 		label_IjarahFinanceMainDialog_StepPolicy; 		// autoWired
+	protected Label 		label_IjarahFinanceMainDialog_numberOfSteps; 		// autoWired
  
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
@@ -257,6 +259,8 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_IjarahFinanceMainDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_FrqDef(label_IjarahFinanceMainDialog_FrqDef);
 		setLabel_FinanceMainDialog_AlwGrace(label_IjarahFinanceMainDialog_AlwGrace);
+		setLabel_FinanceMainDialog_StepPolicy(label_IjarahFinanceMainDialog_StepPolicy);
+		setLabel_FinanceMainDialog_numberOfSteps(label_IjarahFinanceMainDialog_numberOfSteps);
 		setProductCode("Ijarah");
 
 		
@@ -573,6 +577,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		logger.debug("Entering");
 
 		if(isReadOnly("FinanceMainDialog_NoScheduleGeneration")){
+			
 			//Step Policy Details
 			appendStepDetailTab(true);
 			
@@ -597,13 +602,13 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 				appendContributorDetailsTab(true);
 			}
 
-		//Fee Details Tab Addition
-		appendFeeDetailsTab(true);
+			//Fee Details Tab Addition
+			appendFeeDetailsTab(true);
 		
-		//Asset Details Tab Addition
-		if(moduleDefiner.equals("")){
-			appendAssetDetailTab();
-		}
+			//Asset Details Tab Addition
+			if(moduleDefiner.equals("")){
+				appendAssetDetailTab();
+			}
 		
 			//Schedule Details Tab Adding
 			appendScheduleDetailTab(true, false);
@@ -1689,11 +1694,11 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		}
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
-			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value"), null, true));
+			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_IjarahFinanceMainDialog_StepPolicy.value"), null, true));
 		}
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
-			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfSteps.value"), true, false));
+			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_IjarahFinanceMainDialog_NumberOfSteps.value"), true, false));
 		}
 		
 		/*if (!this.securityDeposit.isDisabled()) {
@@ -1821,6 +1826,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 
 		this.stepPolicy.setConstraint("");
 		this.noOfSteps.setConstraint("");
+		
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
 		this.graceTerms.setConstraint("");
