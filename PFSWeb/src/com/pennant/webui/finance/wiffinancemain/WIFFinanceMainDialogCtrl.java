@@ -2988,7 +2988,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			return true;
 		}
 
-		if (close && getFinanceDetail().getFinScheduleData().isSchduleGenerated()) {
+		if (close && getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
 			return true;
 		}
 		

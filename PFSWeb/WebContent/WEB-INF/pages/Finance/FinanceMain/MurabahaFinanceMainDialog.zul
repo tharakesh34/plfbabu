@@ -451,6 +451,43 @@
 														id="labelDiscrepancy2" value=""
 														style="color:red;font-weight:bold" />
 												</row>
+												<row id="row_stepFinance" visible="true">
+													<label
+														id="label_MurabahaFinanceMainDialog_StepFinance"
+														value="${c:l('label_MurabahaFinanceMainDialog_StepFinance.value')}" />
+													<hbox>
+														<space id="space_StepFinance"
+															spacing="2px" />
+														<checkbox
+															id="stepFinance" />
+													</hbox>
+													<label
+														id="label_MurabahaFinanceMainDialog_StepPolicy"
+														value="${c:l('label_MurabahaFinanceMainDialog_StepPolicy.value')}" />
+													<extendedcombobox id="stepPolicy"/>
+												</row>
+												<row
+													id="row_manualSteps" visible="true">
+													<label
+														id="label_MurabahaFinanceMainDialog_ManualSteps"
+														value="${c:l('label_MurabahaFinanceMainDialog_ManualSteps.value')}" />
+													<hbox>
+														<space id="space_alwManualSteps"
+															spacing="2px" />
+														<checkbox
+															id="alwManualSteps" />
+													</hbox>
+													<label
+														id="label_MurabahaFinanceMainDialog_numberOfSteps"
+														value="${c:l('label_MurabahaFinanceMainDialog_NumberOfSteps.value')}" />
+													<hbox
+														id="hbox_numberOfSteps">
+														<space id="space_noOfSteps"
+															spacing="2px" sclass="mandatory" />
+														<intbox
+															id="noOfSteps" width="90px" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

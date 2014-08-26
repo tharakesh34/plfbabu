@@ -77,6 +77,8 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 	private List<ValueLabel> profitDaysBasisList = null;
 	private List<ValueLabel> schMethodList = null;
 	private boolean allowedManualSteps = false;
+	private String roleCode = "";
+	private boolean isAlwNewStep = false;
 
 	/**
 	 * default constructor.<br>
@@ -117,6 +119,10 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 			isWIF = (Boolean) args.get("isWIF");
 		}
 		
+		if (args.containsKey("roleCode")) {
+			roleCode = (String) args.get("roleCode");
+		}
+		
 		if (args.containsKey("alwManualSteps")) {
 			setAllowedManualSteps((Boolean) args.get("alwManualSteps"));
 		}
@@ -127,6 +133,10 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 
 		if (args.containsKey("schMethodList")) {
 			schMethodList = (List<ValueLabel>) args.get("schMethodList");
+		}
+		
+		if (args.containsKey("isAlwNewStep")) {
+			isAlwNewStep = (Boolean) args.get("isAlwNewStep");
 		}
 
 		doShowDialog(this.financeDetail);
@@ -181,6 +191,8 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 		//Stooping to Enter New Step policies and Allowed only for Maintenance
 		if(!isAllowedManualSteps()){
 			this.btnNew_FinStepPolicy.setDisabled(true);
+		}else{
+			this.btnNew_FinStepPolicy.setDisabled(isAlwNewStep);
 		}
 
 		// fill the components with the data
@@ -226,6 +238,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				BigDecimal calTotTenorSplit = BigDecimal.ZERO;
 				BigDecimal calTotEmiStepPercent = BigDecimal.ZERO;
 				int calTotTerms = 0;
+				boolean hadZeroInstStep = false;
 
 				for (int i = 0; i < finStepPolicyList.size(); i++) {
 					FinanceStepPolicyDetail stepPolicy = finStepPolicyList.get(i);
@@ -254,6 +267,10 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 						}
 						sumTenurePerc = sumTenurePerc.add(stepPolicy.getTenorSplitPerc());
 					}
+					
+					if(stepPolicy.getInstallments() == 0){
+						hadZeroInstStep = true;
+					}
 
 					calTotTerms = calTotTerms + stepPolicy.getInstallments();
 					calTotTenorSplit = calTotTenorSplit.add(stepPolicy.getTenorSplitPerc());
@@ -272,14 +289,22 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				
 				doFillStepDetais(finStepPolicyList);
 
+				//If Any Step Policy have Zero installments while on Calculation
+				if(hadZeroInstStep){
+					errorList.add(new ErrorDetails("S0013", PennantConstants.KEY_SEPERATOR, 
+							new String[] {Labels.getLabel("listheader_StepFinance_Installments.label")," 1 " }));
+				}
+				
 				//Tenor Percentage Validation for Step Policy Details
 				if(calTotTerms != totalTerms){
-					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, new String[] {Labels.getLabel("label_TotInstallments"),Labels.getLabel("label_TotalTerms") }));
+					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, 
+							new String[] {Labels.getLabel("label_TotInstallments"),Labels.getLabel("label_TotalTerms") }));
 				}
 				
 				//Tenor Percentage Validation for Step Policy Details
 				if(calTotTenorSplit.compareTo(new BigDecimal(100)) != 0){
-					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, new String[] {Labels.getLabel("label_TenorSplitPerc"), "100.00 %"}));
+					errorList.add(new ErrorDetails("E0043", PennantConstants.KEY_SEPERATOR, 
+							new String[] {Labels.getLabel("label_TenorSplitPerc"), "100.00 %"}));
 				}
 
 				//Average EMI Percentage Validation for Step Policy Details
@@ -459,7 +484,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 			map.put("financeStepPolicyDetail", finStepPolicy);
 			map.put("stepDetailDialogCtrl", this);
 			map.put("newRecord", isNewRecord);
-			map.put("roleCode", getRole());
+			map.put("roleCode",roleCode);
 			map.put("finStepPoliciesList", getFinStepPoliciesList());
 			map.put("alwDeletion", this.allowedManualSteps);
 			
