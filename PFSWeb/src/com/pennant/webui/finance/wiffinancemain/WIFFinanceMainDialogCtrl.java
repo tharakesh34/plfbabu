@@ -138,6 +138,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
@@ -3276,8 +3277,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
-			this.stepPolicy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value") }));
+			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value"), null, true));
 		}
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
