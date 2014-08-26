@@ -244,6 +244,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Textbox 		graceBaseRate; 							// autoWired
 	protected Textbox 		graceSpecialRate; 						// autoWired
 	protected Decimalbox 	grcMargin; 								// autoWired
+	protected Hbox			hbox_grcMargin;      					// autoWired
+	protected Combobox      grcPftDaysBasis;						// autoWired
 	protected Row 			alwGrcIndRow; 							// autoWired
 	protected Checkbox 		allowGrcInd; 							// autoWired
 	protected Textbox 		grcIndBaseRate; 						// autoWired
@@ -273,7 +275,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Combobox 		cbGrcSchdMthd; 							// autoWired
 	protected Space 		space_GrcSchdMthd;						// autoWired
 	protected Row			grcBaseRateRow;							// autoWired
-	protected Row 			grcMarginRow;
 
 	//Finance Main Details Tab---> 3. Repayment Period Details
 
@@ -373,6 +374,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	private Label 		label_FinanceMainDialog_CbbApproved;	
 	private Label 		label_FinanceMainDialog_AlwGrace;	
 	//private Label 		label_FinanceMainDialog_CcyConversionRate;	
+	private Label 		label_FinanceMainDialog_GraceMargin;
 	
 	//DIV Components for Showing Finance basic Details in Each tab
 	protected Div 			basicDetailTabDiv;
@@ -469,6 +471,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected transient String 			oldVar_graceSpecialRate;
 	protected transient String 			oldVar_lovDescGraceSpecialRateName;
 	protected transient BigDecimal 		oldVar_grcMargin;
+	protected transient int 			oldVar_grcPftDaysBasis;
 	protected transient boolean 		oldVar_allowGrcInd;
 	protected transient String  		oldVar_grcIndBaseRate;
 	protected transient String 			oldVar_lovDescGrcIndBaseRateName;
@@ -1969,9 +1972,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			}*/
 
 			this.grcMargin.setValue(aFinanceMain.getGrcMargin());
+			fillComboBox(this.grcPftDaysBasis, aFinanceMain.getGrcProfitDaysBasis(), profitDaysBasisList, "");
 			if (!StringUtils.trimToEmpty(aFinanceMain.getGraceBaseRate()).equals("")) {
 				this.grcBaseRateRow.setVisible(true);
-				this.grcMarginRow.setVisible(true);
+				this.hbox_grcMargin.setVisible(false);
+				getLabel_FinanceMainDialog_GraceMargin().setVisible(false);
 				
 				this.graceBaseRate.setValue(aFinanceMain.getGraceBaseRate());
 				this.lovDescGraceBaseRateName.setValue(aFinanceMain.getGraceBaseRate() == null ? "" : 
@@ -1990,8 +1995,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			} else {
 
 				this.grcBaseRateRow.setVisible(false);
-				this.grcMarginRow.setVisible(false);
-				this.grcMargin.setDisabled(true);
+				this.hbox_grcMargin.setVisible(true);
+				getLabel_FinanceMainDialog_GraceMargin().setVisible(true);
 				this.graceBaseRate.setValue("");
 				this.lovDescGraceBaseRateName.setValue("");
 				this.btnSearchGraceBaseRate.setDisabled(true);
@@ -2478,6 +2483,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			this.btnSearchGraceBaseRate.setDisabled(isReadOnly("FinanceMainDialog_graceBaseRate"));
 			this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("FinanceMainDialog_graceSpecialRate"));
 			readOnlyComponent(isReadOnly("FinanceMainDialog_grcMargin"), this.grcMargin);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_grcPftDaysBasis"),this.grcPftDaysBasis);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrcInd"), this.allowGrcInd);
 			this.btnSearchGrcIndBaseRate.setDisabled(isReadOnly("FinanceMainDialog_grcIndRate"));
 
@@ -2520,6 +2526,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			this.btnSearchGraceSpecialRate.setDisabled(true);
 			readOnlyComponent(true, this.grcMargin);
 			readOnlyComponent(true, this.allowGrcInd);
+			readOnlyComponent(true, this.grcPftDaysBasis);
 			this.btnSearchGrcIndBaseRate.setDisabled(true);
 
 			setDisableCbFrqs(true, this.cbGracePftFrqCode, this.cbGracePftFrqMth, this.cbGracePftFrqDay);
@@ -2538,6 +2545,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		if(onCheckProc){
 
 			fillComboBox(grcRateBasis, finType.getFinGrcRateType(), PennantStaticListUtil.getInterestRateType(!getFinanceDetail().getFinScheduleData().getFinanceMain().isMigratedFinance()), ",C,");
+			fillComboBox(this.grcPftDaysBasis, finType.getFinDaysCalType(), profitDaysBasisList, "");
 			this.grcMargin.setValue(finType.getFinGrcMargin());
 
 			if("R".equals(getComboboxValue(this.grcRateBasis))){
@@ -3738,6 +3746,17 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				}
 			}
 			
+			// validate finance grace profit days basis
+			if (!this.grcPftDaysBasis.isDisabled()) {
+				if (getComboboxValue(this.grcPftDaysBasis).equals("#")) {
+					errorList.add(new ErrorDetails("grcPftDaysBasis", "E0005", new String[] {}, new String[] {}));
+				} else if (!getComboboxValue(this.grcPftDaysBasis).equals(getFinanceDetail().getFinScheduleData().getFinanceType().getFinDaysCalType())) {
+
+					errorList.add(new ErrorDetails("grcPftDaysBasis","W0003",new String[] {getComboboxValue(this.grcPftDaysBasis),
+							getFinanceDetail().getFinScheduleData().getFinanceMain().getGrcProfitDaysBasis() }, new String[] { getComboboxValue(this.grcPftDaysBasis) }));
+				}
+			}
+			
 			// Setting error list to audit header
 			auditHeader.setErrorList(ErrorUtil.getErrorDetails(errorList, getUserWorkspace().getUserLanguage()));
 			auditHeader = ErrorControl.showErrorDetails(mainWindow, auditHeader);
@@ -4253,6 +4272,17 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 			try {
 				aFinanceMain.setGrcMargin(this.grcMargin.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
+			try {
+				if (getComboboxValue(this.grcPftDaysBasis).equals("#")) {
+					throw new WrongValueException(this.grcPftDaysBasis, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_GraceProfitDaysBasis.value") }));
+				}
+
+				aFinanceMain.setGrcProfitDaysBasis(getComboboxValue(this.grcPftDaysBasis));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -5245,6 +5275,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			if (this.oldVar_grcMargin != this.grcMargin.getValue()) {
 				return true;
 			}
+			if (this.oldVar_grcPftDaysBasis != this.grcPftDaysBasis.getSelectedIndex()) {
+				return true;
+			}
 			if(this.oldVar_allowGrcInd != this.allowGrcInd.isChecked()){
 				return true;
 			}
@@ -6053,6 +6086,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("FinanceMainDialog_graceSpecialRate"));
 		readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_grcMargin"), this.grcMargin);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_grcPftDaysBasis"), this.grcPftDaysBasis);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrcInd"), this.allowGrcInd);
 		this.btnSearchGrcIndBaseRate.setDisabled(isReadOnly("FinanceMainDialog_GrcIndBaseRate"));
 
@@ -6160,6 +6194,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.gracePftRate.setErrorMessage("");
 		this.grcEffectiveRate.setErrorMessage("");
 		this.grcMargin.setErrorMessage("");
+		this.grcPftDaysBasis.setErrorMessage("");
 		this.gracePftFrq.setErrorMessage("");
 		this.nextGrcPftDate.setErrorMessage("");
 		this.gracePftRvwFrq.setErrorMessage("");
@@ -6251,6 +6286,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.btnSearchGraceSpecialRate.setDisabled(true);
 		this.gracePftRate.setReadonly(true);
 		this.grcMargin.setReadonly(true);
+		this.grcPftDaysBasis.setDisabled(true);
 		this.gracePftFrq.setReadonly(true);
 		readOnlyComponent(true, this.nextGrcPftDate);
 		this.gracePftRvwFrq.setReadonly(true);
@@ -6373,6 +6409,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.lovDescGraceSpecialRateName.setValue("");
 		this.gracePftRate.setValue("");
 		this.grcMargin.setValue("");
+		this.grcPftDaysBasis.setValue("");
 		this.gracePftFrq.setValue("");
 		this.nextGrcPftDate.setText("");
 		this.gracePftRvwFrq.setValue("");
@@ -7060,6 +7097,14 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	public void setLabel_FinanceMainDialog_AlwGrace(
 			Label label_FinanceMainDialog_AlwGrace) {
 		this.label_FinanceMainDialog_AlwGrace = label_FinanceMainDialog_AlwGrace;
+	}
+	
+	public Label getLabel_FinanceMainDialog_GraceMargin() {
+		return label_FinanceMainDialog_GraceMargin;
+	}
+	public void setLabel_FinanceMainDialog_GraceMargin(
+			Label label_FinanceMainDialog_GraceMargin) {
+		this.label_FinanceMainDialog_GraceMargin = label_FinanceMainDialog_GraceMargin;
 	}
 
 	public boolean isRecommendEntered() {

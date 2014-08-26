@@ -157,6 +157,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	protected Label 		label_MurabahaFinanceMainDialog_FrqDef;				// autoWired
 	protected Label 		label_MurabahaFinanceMainDialog_CbbApproved;		// autoWired
 	protected Label 		label_MurabahaFinanceMainDialog_AlwGrace; 			// autoWired
+	protected Label 		label_MurabahaFinanceMainDialog_GraceMargin; 		// autoWired
 	//protected Label 		label_MurabahaFinanceMainDialog_CcyConversionRate; 	// autoWired
 
 	// old value variables for edit mode. that we can check if something 
@@ -252,6 +253,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_MurabahaFinanceMainDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_FrqDef(label_MurabahaFinanceMainDialog_FrqDef);
 		setLabel_FinanceMainDialog_AlwGrace(label_MurabahaFinanceMainDialog_AlwGrace);
+		setLabel_FinanceMainDialog_GraceMargin(label_MurabahaFinanceMainDialog_GraceMargin);
 		//setLabel_FinanceMainDialog_CcyConversionRate(label_MurabahaFinanceMainDialog_CcyConversionRate);
 		setProductCode("Murabaha");
 
@@ -1160,6 +1162,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			this.oldVar_graceCpzFrq = this.graceCpzFrq.getValue();
 			this.oldVar_nextGrcCpzDate = this.nextGrcCpzDate_two.getValue();
 			this.oldVar_grcMargin = this.grcMargin.getValue();
+			this.oldVar_grcPftDaysBasis = this.grcPftDaysBasis.getSelectedIndex();
 			this.oldVar_allowGrcInd = this.allowGrcInd.isChecked();
 			this.oldVar_grcIndBaseRate = this.grcIndBaseRate.getValue();
 			this.oldVar_lovDescGrcIndBaseRateName = this.lovDescGrcIndBaseRateName.getValue();
@@ -1289,6 +1292,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			this.graceCpzFrq.setValue(this.oldVar_graceCpzFrq);
 			this.nextGrcCpzDate_two.setValue(this.oldVar_nextGrcCpzDate);
 			this.grcMargin.setValue(this.oldVar_grcMargin);
+			this.grcPftDaysBasis.setSelectedIndex(this.oldVar_grcPftDaysBasis);
 			this.allowGrcInd.setChecked(this.oldVar_allowGrcInd);
 			this.lovDescGrcIndBaseRateName.setValue(this.oldVar_lovDescGrcIndBaseRateName);
 		}
@@ -1467,6 +1471,9 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				return true;
 			}
 			if (this.oldVar_grcMargin != this.grcMargin.getValue()) {
+				return true;
+			}
+			if(this.oldVar_grcPftDaysBasis != this.grcPftDaysBasis.getSelectedIndex()){
 				return true;
 			}
 			if(this.oldVar_allowGrcInd != this.allowGrcInd.isChecked()){
@@ -1806,6 +1813,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		this.gracePftRate.setConstraint("");
 		this.grcEffectiveRate.setConstraint("");
 		this.grcMargin.setConstraint("");
+		this.grcPftDaysBasis.setConstraint("");
 		this.cbGracePftFrqCode.setConstraint("");
 		this.cbGracePftFrqMth.setConstraint("");
 		this.cbGracePftFrqDay.setConstraint("");
