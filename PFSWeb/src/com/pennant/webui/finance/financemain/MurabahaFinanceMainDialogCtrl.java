@@ -566,6 +566,9 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		
 		if(isReadOnly("FinanceMainDialog_NoScheduleGeneration")){
 
+			//Step Policy Details
+			appendStepDetailTab(true);
+
 			//Contributor details Tab Addition
 			if(aFinanceDetail.getFinScheduleData().getFinanceMain().isNewRecord()){
 				if(aFinanceDetail.getFinScheduleData().getFinanceType() != null && aFinanceDetail.getFinScheduleData().getFinanceType().isAllowRIAInvestment()){
@@ -589,17 +592,16 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 			//Fee Details Tab Addition
 			appendFeeDetailsTab(true);
-		}
 
-		if(isReadOnly("FinanceMainDialog_NoScheduleGeneration")){
-		//Asset Details Tab Addition
-		if(moduleDefiner.equals("")){
-			appendAssetDetailTab();
-		}
+			//Asset Details Tab Addition
+			if(moduleDefiner.equals("")){
+				appendAssetDetailTab();
+			}
 
 			//Schedule Details Tab Adding
 			appendScheduleDetailTab(true , false);
 		}
+		
 		//Joint Account and Guaranteer  Tab Addition
 		if (!finDivision.equals(PennantConstants.FIN_DIVISION_COMMERCIAL) && !finDivision.equals(PennantConstants.FIN_DIVISION_CORPORATE)) {
 			if(moduleDefiner.equals("")){
@@ -1122,6 +1124,12 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		this.oldVar_finPurpose = this.finPurpose.getValue();
 		this.oldVar_lovDescFinPurpose = this.finPurpose.getDescription();
 		
+		// Step Finance Details
+		this.oldVar_stepFinance = this.stepFinance.isChecked();
+		this.oldVar_stepPolicy = this.stepPolicy.getValue();
+		this.oldVar_alwManualSteps = this.alwManualSteps.isChecked();
+		this.oldVar_noOfSteps = this.noOfSteps.intValue();
+		
 		/*this.oldVar_diffDisbCcy = this.diffDisbCcy.isChecked();
 		this.oldVar_disbCcy = this.disbCcy.getValue();
 		this.oldVar_lovDescDisbCcy = this.disbCcy.getDescription();
@@ -1203,6 +1211,8 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		    this.oldVar_oDMaxWaiverPerc = this.oDMaxWaiverPerc.getValue();
 		}
 		
+		super.oldVar_finStepPolicyList = getFinanceDetail().getFinScheduleData().getStepPolicyDetails();
+		
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 
 		logger.debug("Leaving");
@@ -1243,6 +1253,12 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		this.finPurpose.setValue(this.oldVar_finPurpose);
 		this.finPurpose.setDescription(this.oldVar_lovDescFinPurpose);
 		
+		// Step Finance Details
+		this.stepFinance.setChecked(this.oldVar_stepFinance);
+		this.stepPolicy.setValue(this.oldVar_stepPolicy);
+		this.alwManualSteps.setChecked(this.oldVar_alwManualSteps);
+		this.noOfSteps.setValue(this.oldVar_noOfSteps);
+	
 		/*this.diffDisbCcy.setChecked(this.oldVar_diffDisbCcy);
 		this.disbCcy.setValue(this.oldVar_disbCcy);
 		this.disbCcy.setDescription(this.oldVar_lovDescDisbCcy);
@@ -1378,6 +1394,26 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		BigDecimal old_finAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
 		BigDecimal new_finAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
 		if (old_finAmount.compareTo(new_finAmount) != 0) {
+			return true;
+		}
+		
+		// Step Finance Details
+		if (this.oldVar_stepFinance != this.stepFinance.isChecked()) {
+			return true;
+		}
+		if (!this.oldVar_stepPolicy.equals(this.stepPolicy.getValue())) {
+			return true;
+		}
+		if (this.oldVar_alwManualSteps != this.alwManualSteps.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
+			return true;
+		}
+
+		// Step Finance Details List Validation
+		if(getStepDetailDialogCtrl() != null && 
+				getStepDetailDialogCtrl().getFinStepPoliciesList() != this.oldVar_finStepPolicyList){
 			return true;
 		}
 		
@@ -1624,6 +1660,16 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			this.frqDefferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FrqDefferments.value"), false, false));
 		}
 		
+		
+		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
+			this.stepPolicy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value") }));
+		}
+        
+		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
+			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfSteps.value"), true, false));
+		}
+		
 		/*if(this.diffDisbCcy.isChecked()){
 			if (!this.ccyConversionRate.isReadonly()) {
 				this.ccyConversionRate.setConstraint(new AmountValidator(18,0,
@@ -1744,6 +1790,8 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		this.commitmentRef.setConstraint("");
 		this.depreciationFrq.setConstraint("");
 		
+		this.stepPolicy.setConstraint("");
+		this.noOfSteps.setConstraint("");
 		/*this.ccyConversionRate.setConstraint("");
 		this.disbCcyFinAmount.setConstraint("");*/
 
@@ -3298,6 +3346,13 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			this.buildEvent = false;
 			isFinValidated = false;
 
+ 			
+ 			//Setting Finance Step Policy Details to Finance Schedule Data Object
+ 			if(getStepDetailDialogCtrl() != null){
+ 				validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
+ 				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
+ 			}
+			
 			//Prepare Finance Schedule Generator Details List
 			getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
 			getFinanceDetail().getFinScheduleData().setDefermentHeaders(new ArrayList<DefermentHeader>());
@@ -3359,6 +3414,10 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			if(tabsIndexCenter.getFellowIfAny("scheduleDetailsTab") != null){
 				tab = (Tab) tabsIndexCenter.getFellowIfAny("scheduleDetailsTab");
 				tab.setSelected(true);
+			}
+			
+			if(getStepDetailDialogCtrl() != null){
+				getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
 			}
 		}
 		logger.debug("Leaving" + event.toString());

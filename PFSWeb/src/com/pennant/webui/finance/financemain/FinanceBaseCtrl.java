@@ -51,6 +51,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -125,6 +126,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.lmtmasters.CarLoanDetail;
 import com.pennant.backend.model.lmtmasters.CommidityLoanDetail;
 import com.pennant.backend.model.lmtmasters.CommidityLoanHeader;
@@ -138,10 +140,13 @@ import com.pennant.backend.model.lmtmasters.SharesDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
+import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -150,6 +155,7 @@ import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -201,6 +207,19 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Textbox 		finRemarks; 							// autoWired
 	protected Checkbox 		finIsActive; 							// autoWired
 	protected ExtendedCombobox 		finPurpose; 					// autoWired	
+	
+	// Step Finance Details
+	protected Checkbox      stepFinance;                            // autoWired
+	protected ExtendedCombobox      stepPolicy;         		    // autoWired
+	protected Label      	label_MurabahaFinanceMainDialog_StepPolicy;// autoWired
+	protected Label      	label_MurabahaFinanceMainDialog_numberOfSteps;// autoWired
+	protected Checkbox      alwManualSteps;							// autoWired
+	protected Intbox        noOfSteps;							    // autoWired
+	protected Row           row_stepFinance;					    // autoWired
+	protected Row           row_manualSteps;						// autoWired
+	protected Space         space_StepPolicy;                       // autoWired  
+	protected Space         space_noOfSteps;                        // autoWired 
+	protected Hbox			hbox_numberOfSteps;						// autoWired 
 	
 	/*protected Row			row_isDiffDisbCcy;						// autoWired	
 	protected Checkbox		diffDisbCcy;							// autoWired	
@@ -424,6 +443,14 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected transient String 			oldVar_finPurpose;
 	protected transient String 			oldVar_lovDescFinPurpose;
 	
+	// Step Finance Details
+	protected transient boolean 		    oldVar_stepFinance;
+	protected transient String 		        oldVar_stepPolicy;
+	protected transient boolean 		    oldVar_alwManualSteps;
+	protected transient int 		        oldVar_noOfSteps;
+	protected  transient List<FinanceStepPolicyDetail> oldVar_finStepPolicyList;
+	
+	
 	/*protected transient boolean 		oldVar_diffDisbCcy;
 	protected transient BigDecimal 		oldVar_ccyConversionRate;
 	protected transient String 			oldVar_disbCcy;
@@ -540,6 +567,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	private transient ScoringDetailDialogCtrl  scoringDetailDialogCtrl = null; 
 	private transient FinanceCheckListReferenceDialogCtrl  financeCheckListReferenceDialogCtrl = null; 
 	private transient Object childWindowDialogCtrl = null;
+ 	private transient StepDetailDialogCtrl stepDetailDialogCtrl = null;
+
 
 	//Bean Setters  by application Context
 	private AccountInterfaceService accountInterfaceService;
@@ -551,6 +580,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	private CommitmentService commitmentService;
 	private MailUtil mailUtil;
 	private AdditionalDetailValidation additionalDetailValidation;
+ 	private StepPolicyService stepPolicyService;
 
 	protected String moduleDefiner = "";
 	protected String eventCode = "";
@@ -655,6 +685,20 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.commitmentRef.setMaxlength(20);
 		this.downPayBank.setMaxlength(18);
 		this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		
+		// Step Finance Field Properties       		
+		this.noOfSteps.setMaxlength(2);		
+		this.stepPolicy.setMaxlength(8);
+		this.stepPolicy.setMandatoryStyle(true);
+		this.stepPolicy.setModuleName("StepPolicyHeader");
+		this.stepPolicy.setValueColumn("PolicyCode");
+		this.stepPolicy.setDescColumn("PolicyDesc");
+		this.stepPolicy.setValidateColumns(new String[] { "PolicyCode" });
+		
+		String[] alwdStepPolices = StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceType().getAlwdStepPolicies()).split(",");
+		Filter filter[] = new Filter[1];
+		filter[0]=new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
+		this.stepPolicy.setFilters(filter);	
 		
 		/*this.ccyConversionRate.setMaxlength(13);
 		this.ccyConversionRate.setFormat(PennantConstants.rateFormate9);
@@ -1068,6 +1112,67 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 	}
+	
+	/**
+	 * Method for Rendering Schedule Details Data in finance
+	 */
+	public void appendStepDetailTab(Boolean onLoadProcess){
+		logger.debug("Entering");
+		
+		Tabpanel tabpanel = null;
+		if(onLoadProcess){
+
+			Tab tab = new Tab("Step Details");
+			tab.setId("stepDetailsTab");
+			tabsIndexCenter.appendChild(tab);
+			tabpanel = new Tabpanel();
+			tabpanel.setId("stepDetailsTabPanel");
+			tabpanel.setStyle("overflow:auto;");
+			tabpanel.setParent(tabpanelsBoxIndexCenter);
+			tabpanel.setHeight(this.borderLayoutHeight - 100 + "px");
+		}else{
+			
+			if(tabpanelsBoxIndexCenter.getFellowIfAny("stepDetailsTabPanel") != null){
+				tabpanel = (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny("stepDetailsTabPanel");
+				tabpanel.setStyle("overflow:auto;");
+				tabpanel.getChildren().clear();
+			}
+		}
+		
+		if(!onLoadProcess || (getFinanceDetail().getFinScheduleData().getFinanceMain().isStepFinance()
+			&& (!getFinanceDetail().getFinScheduleData().getStepPolicyDetails().isEmpty() ||
+				getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()))){
+			
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("roleCode", getRole());
+			map.put("financeMainDialogCtrl", this);
+			map.put("financeDetail", getFinanceDetail());
+			map.put("ccyFormatter", getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
+			map.put("isWIF", true);
+			map.put("profitDaysBasisList", profitDaysBasisList);
+			map.put("schMethodList", schMethodList);
+			map.put("alwManualSteps", this.alwManualSteps.isChecked());
+			map.put("isAlwNewStep", isReadOnly("FinanceMainDialog_btnFinStepPolicy"));
+
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StepDetailDialog.zul", tabpanel, map);
+
+			Tab tab = null;
+			if(tabsIndexCenter.getFellowIfAny("stepDetailsTab") != null){
+				tab = (Tab) tabsIndexCenter.getFellowIfAny("stepDetailsTab");
+				tab.setDisabled(false);
+				tab.setVisible(true);
+			}
+		}else{
+			Tab tab = null;
+			if(tabsIndexCenter.getFellowIfAny("stepDetailsTab") != null){
+				tab = (Tab) tabsIndexCenter.getFellowIfAny("stepDetailsTab");
+				tab.setDisabled(true);
+				tab.setVisible(false);
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
 	
 	/**
 	 * Method for Rendering Schedule Details Data in finance
@@ -1803,6 +1908,18 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		if(!StringUtils.trimToEmpty(aFinanceMain.getFinPurpose()).equals("")){
 			this.finPurpose.setDescription(aFinanceMain.getLovDescFinPurposeName());
 		}
+		
+		 // Step Finance
+		if(((aFinanceMain.isNewRecord() || !aFinanceMain.isStepFinance()) && 
+				!aFinanceDetail.getFinScheduleData().getFinanceType().isStepFinance())){
+			this.row_stepFinance.setVisible(false);
+		}
+		this.stepFinance.setChecked(aFinanceMain.isStepFinance());
+		doStepPolicyCheck(false);
+		this.stepPolicy.setValue(aFinanceMain.getStepPolicy());
+		this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
+		doAlwManualStepsCheck(false);
+		this.noOfSteps.setValue(aFinanceMain.getNoOfSteps());
 		
 		/*this.diffDisbCcy.setChecked(aFinanceMain.isDiffDisbCcy());
 		this.disbCcy.setValue(aFinanceMain.getDisbCcy(), aFinanceMain.getLovDescDisbCcyName());
@@ -3067,6 +3184,173 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving");
 	}
 	
+	/**********************************/
+	/*** 	Step Policy Details		***/
+	/**********************************/
+	
+	/**
+	 * when clicks on button "Step Policy Detail"
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$stepPolicy(Event event) {
+		logger.debug("Entering " + event.toString()); 
+
+		this.stepPolicy.setConstraint("");
+		this.noOfSteps.setConstraint("");
+		this.stepPolicy.clearErrorMessage();
+		this.noOfSteps.setErrorMessage("");
+		
+		Object dataObject = stepPolicy.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			if(dataObject != null){
+				this.stepPolicy.setValue(dataObject.toString());
+				this.stepPolicy.setDescription("");
+			}
+			getFinanceDetail().getFinScheduleData().getStepPolicyDetails().clear();
+
+		} else {
+			StepPolicyHeader detail = (StepPolicyHeader) dataObject;
+			if (detail != null) {
+				this.stepPolicy.setValue(detail.getPolicyCode(), detail.getPolicyDesc());
+				
+				// Fetch Step Policy Details List
+				List<StepPolicyDetail> policyList = getStepPolicyService().getStepPolicyDetailsById(this.stepPolicy.getValue());
+				this.noOfSteps.setValue(policyList.size());
+				getFinanceDetail().getFinScheduleData().resetStepPolicyDetails(policyList);
+			}
+		}
+		
+		if(getStepDetailDialogCtrl() != null){
+			getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
+		}
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	/*
+	 * onCheck Event For Step Finance Check Box
+	 */
+	public void onCheck$stepFinance(Event event){
+		logger.debug("Entering : "+event.toString());
+		doStepPolicyCheck(true);
+		logger.debug("Leaving : "+event.toString());
+	}
+	
+	private void doStepPolicyCheck(boolean isAction){
+		
+		this.stepPolicy.setMandatoryStyle(false); 
+		this.stepPolicy.setConstraint("");
+		this.stepPolicy.setErrorMessage("");
+		this.stepPolicy.setValue("", "");
+		
+		this.alwManualSteps.setChecked(false);
+		this.noOfSteps.setConstraint("");
+		this.noOfSteps.setErrorMessage("");
+		this.noOfSteps.setValue(0);
+		this.row_manualSteps.setVisible(false);
+		
+		this.stepPolicy.setVisible(false);
+		this.label_MurabahaFinanceMainDialog_StepPolicy.setVisible(false);
+		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(false);
+		this.hbox_numberOfSteps.setVisible(false);
+		
+		if(this.tabsIndexCenter.getFellowIfAny("stepDetailsTab") != null){
+			Tab tabStepDetailsTab = (Tab) this.tabsIndexCenter.getFellowIfAny("stepDetailsTab");
+			tabStepDetailsTab.setVisible(this.stepFinance.isChecked());
+		}
+		
+		//Clear Step Details Tab Data on User Action
+		if(isAction){
+			getFinanceDetail().getFinScheduleData().getStepPolicyDetails().clear();
+			if(getStepDetailDialogCtrl() != null){
+				getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
+			}
+		}
+		
+		if(this.stepFinance.isChecked()){
+			FinanceType type = getFinanceDetail().getFinScheduleData().getFinanceType();
+			if(type.isAlwManualSteps()){
+				this.row_manualSteps.setVisible(true);
+			}
+			if(type.isSteppingMandatory()){
+				this.stepFinance.setDisabled(true);
+			}
+			this.label_MurabahaFinanceMainDialog_StepPolicy.setVisible(true);
+			this.stepPolicy.setVisible(true);
+			if(!StringUtils.trimToEmpty(type.getDftStepPolicy()).equals(PennantConstants.List_Select)){
+				this.stepPolicy.setValue(type.getDftStepPolicy(),type.getLovDescDftStepPolicyName());
+			}
+			this.stepPolicy.setMandatoryStyle(true); 
+			
+			//Filling Step Policy Details List
+			if(isAction){
+				List<StepPolicyDetail> policyList = getStepPolicyService().getStepPolicyDetailsById(this.stepPolicy.getValue());
+				getFinanceDetail().getFinScheduleData().resetStepPolicyDetails(policyList);
+				if(getStepDetailDialogCtrl() != null){
+					getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
+				}else{
+					appendStepDetailTab(false);
+				}
+			}
+		} 
+		
+		if(this.stepFinance.isChecked()){
+			fillComboBox(this.repayRateBasis,CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
+			this.repayRateBasis.setDisabled(true);
+			fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,");
+			this.cbScheduleMethod.setDisabled(true);
+		} else {
+			fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
+			this.repayRateBasis.setDisabled(isReadOnly("FinanceMainDialog_repayRateBasis"));
+			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,");
+			this.cbScheduleMethod.setDisabled(isReadOnly("FinanceMainDialog_scheduleMethod"));
+		}
+	}
+	
+	/*
+	 * onCheck Event For Manual Steps Check Box
+	 */
+	public void onCheck$alwManualSteps(Event event){
+		logger.debug("Entering : "+event.toString());
+		doAlwManualStepsCheck(true);		
+		logger.debug("Leaving : "+event.toString());
+	}
+	
+	private void doAlwManualStepsCheck(boolean isAction){
+		
+		this.stepPolicy.setConstraint("");
+		this.stepPolicy.setErrorMessage("");
+		
+		this.noOfSteps.setConstraint("");
+		this.noOfSteps.setErrorMessage("");
+		this.noOfSteps.setValue(0);
+		
+		if(this.alwManualSteps.isChecked()){
+     		this.stepPolicy.setMandatoryStyle(false); 
+    		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(true);
+    		this.hbox_numberOfSteps.setVisible(true);
+		} else {
+    		this.stepPolicy.setMandatoryStyle(true); 
+    		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(false);
+    		this.hbox_numberOfSteps.setVisible(false);
+		}
+		
+		if(getStepDetailDialogCtrl() != null){
+			getStepDetailDialogCtrl().setAllowedManualSteps(this.alwManualSteps.isChecked());
+		}
+		
+		//Filling Step Policy Details List
+		if(isAction && !this.stepPolicy.getValue().equals("")){
+			List<StepPolicyDetail> policyList = getStepPolicyService().getStepPolicyDetailsById(this.stepPolicy.getValue());
+			getFinanceDetail().getFinScheduleData().resetStepPolicyDetails(policyList);
+			if(getStepDetailDialogCtrl() != null){
+				getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
+			}else{
+				appendStepDetailTab(false);
+			}
+		}
+	}
+	
 	/**
 	 * Method to execute fee & charges,eligibility rules, scoring and accounting
 	 * set.
@@ -3443,7 +3727,15 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 					}
 				}
 			}
-
+			
+			//Setting Step Policy Details Installments & Validations
+			if(this.stepFinance.isChecked()){
+				if(getStepDetailDialogCtrl() != null){
+					errorList.addAll(getStepDetailDialogCtrl().doValidateStepDetails(getFinanceDetail().getFinScheduleData().getFinanceMain(),
+							this.numberOfTerms_two.intValue(), this.alwManualSteps.isChecked(), this.noOfSteps.intValue()));
+				}
+			}
+			
 			// Setting error list to audit header
 			auditHeader.setErrorList(ErrorUtil.getErrorDetails(errorList, getUserWorkspace().getUserLanguage()));
 			auditHeader = ErrorControl.showErrorDetails(mainWindow, auditHeader);
@@ -3769,6 +4061,24 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		
+		// Step Finance Details
+		if (this.row_stepFinance.isVisible()) {
+			aFinanceMain.setStepFinance(this.stepFinance.isChecked());
+			if (this.stepFinance.isChecked()) {
+				try {
+					aFinanceMain.setStepPolicy(this.stepPolicy.getValue());
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+			}
+			aFinanceMain.setAlwManualSteps(this.alwManualSteps.isChecked());
+			try {
+				aFinanceMain.setNoOfSteps(this.noOfSteps.intValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+
 		/*aFinanceMain.setDiffDisbCcy(this.diffDisbCcy.isChecked());
 		if(this.diffDisbCcy.isChecked()){
 			
@@ -4861,6 +5171,27 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 		
+		// Step Finance Details
+		if (this.oldVar_stepFinance != this.stepFinance.isChecked()) {
+			return true;
+		}
+		if (!this.oldVar_stepPolicy.equals(this.stepPolicy.getValue())) {
+			return true;
+		}
+		if (this.oldVar_alwManualSteps != this.alwManualSteps.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
+			return true;
+		}
+
+		// Step Finance Details List Validation
+
+		if (getStepDetailDialogCtrl() != null && 
+				getStepDetailDialogCtrl().getFinStepPoliciesList() != this.oldVar_finStepPolicyList) {
+			return true;
+		}
+		
 		/*if(this.oldVar_diffDisbCcy != this.diffDisbCcy.isChecked()){
 			return true;
 		}
@@ -5688,6 +6019,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.finPurpose.setReadonly(isReadOnly("FinanceMainDialog_finPurpose"));
 		this.finPurpose.setMandatoryStyle(!isReadOnly("FinanceMainDialog_finPurpose"));
 		
+		this.stepFinance.setDisabled(isReadOnly("FinanceMainDialog_stepFinance"));
+		this.stepPolicy.setReadonly(isReadOnly("FinanceMainDialog_stepPolicy"));
+		this.alwManualSteps.setDisabled(isReadOnly("FinanceMainDialog_alwManualSteps"));
+		this.noOfSteps.setDisabled(isReadOnly("FinanceMainDialog_noOfSteps"));
+
 		/*this.diffDisbCcy.setDisabled(isReadOnly("FinanceMainDialog_diffDisbCcy"));
 		this.disbCcy.setReadonly(isReadOnly("FinanceMainDialog_disbCcy"));
 		this.disbCcy.setMandatoryStyle(!isReadOnly("FinanceMainDialog_disbCcy"));
@@ -5807,6 +6143,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.lovDescCommitmentRefName.setErrorMessage("");
 		this.finPurpose.setErrorMessage("");
 
+		this.stepPolicy.setErrorMessage("");
+		this.noOfSteps.setErrorMessage("");
 		/*this.disbCcy.setErrorMessage("");
 		this.ccyConversionRate.setErrorMessage("");
 		this.disbCcyFinAmount.setErrorMessage("");*/
@@ -6720,4 +7058,16 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.recommendEntered = recommendEntered;
 	}
 	
+	public StepDetailDialogCtrl getStepDetailDialogCtrl() {
+		return stepDetailDialogCtrl;
+	}
+	public void setStepDetailDialogCtrl(StepDetailDialogCtrl stepDetailDialogCtrl) {
+		this.stepDetailDialogCtrl = stepDetailDialogCtrl;
+	}
+	public StepPolicyService getStepPolicyService() {
+		return stepPolicyService;
+	}
+	public void setStepPolicyService(StepPolicyService stepPolicyService) {
+		this.stepPolicyService = stepPolicyService;
+	}
  }	

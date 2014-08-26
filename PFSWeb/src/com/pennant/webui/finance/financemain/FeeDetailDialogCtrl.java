@@ -445,7 +445,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 							lc.setParent(item);
 						}else{
 							lc = new Listcell(PennantAppUtil.amountFormate(waiverAmt,formatter));
-							lc.setSclass("amtDisplayFormat");
+							lc.setSclass("text-align:right;");
 							lc.setParent(item);
 						}
 
@@ -502,13 +502,13 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 					
 					}else{
 						lc = new Listcell(PennantAppUtil.amountFormate(feeRule.getFeeAmount(),formatter));
-						lc.setSclass("amtDisplayFormat");
+						lc.setSclass("text-align:right;cursor:default;");
 						lc.setParent(item);
 						lc = new Listcell(PennantAppUtil.amountFormate(feeRule.getWaiverAmount(),formatter));
-						lc.setSclass("amtDisplayFormat");
+						lc.setSclass("text-align:right;cursor:default;");
 						lc.setParent(item);
 						lc = new Listcell(PennantAppUtil.amountFormate(feeRule.getPaidAmount(),formatter));
-						lc.setSclass("amtDisplayFormat");
+						lc.setSclass("text-align:right;cursor:default;");
 						lc.setParent(item);
 					}
 					

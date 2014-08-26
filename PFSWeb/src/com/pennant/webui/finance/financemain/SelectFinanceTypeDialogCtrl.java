@@ -66,9 +66,11 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
@@ -111,6 +113,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	private transient FinanceTypeService      financeTypeService;
 	private transient   FinanceWorkFlowService  financeWorkFlowService;
 	private transient   FinanceDetailService    financeDetailService;   
+	private transient StepPolicyService stepPolicyService;
 
     private String tempFinType="";	
     private String menuItemRightName= null;	
@@ -329,6 +332,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 			financeType = getFinanceTypeService().getApprovedFinanceTypeById(this.finType.getValue().trim());
 			financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain(), financeType);
 			financeDetail.getFinScheduleData().setFinanceType(financeType);
+			
+			//Step Policy Details
+			if(financeType.isStepFinance()){
+				List<StepPolicyDetail> stepPolicyList = getStepPolicyService().getStepPolicyDetailsById(financeType.getDftStepPolicy());
+				this.financeDetail.getFinScheduleData().resetStepPolicyDetails(stepPolicyList);
+			}
 		}
 		
 		try {
@@ -502,5 +511,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
-	
+
+	public StepPolicyService getStepPolicyService() {
+		return stepPolicyService;
+	}
+	public void setStepPolicyService(StepPolicyService stepPolicyService) {
+		this.stepPolicyService = stepPolicyService;
+	}
 }
