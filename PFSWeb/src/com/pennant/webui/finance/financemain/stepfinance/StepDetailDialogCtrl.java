@@ -292,7 +292,7 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 				//If Any Step Policy have Zero installments while on Calculation
 				if(hadZeroInstStep){
 					errorList.add(new ErrorDetails("S0013", PennantConstants.KEY_SEPERATOR, 
-							new String[] {Labels.getLabel("listheader_StepFinance_Installments.label")," 1 " }));
+							new String[] {Labels.getLabel("label_MinInstallment")," 1 " }));
 				}
 				
 				//Tenor Percentage Validation for Step Policy Details

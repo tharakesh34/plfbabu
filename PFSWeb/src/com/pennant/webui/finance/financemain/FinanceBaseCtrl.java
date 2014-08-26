@@ -2486,6 +2486,14 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_grcPftDaysBasis"),this.grcPftDaysBasis);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrcInd"), this.allowGrcInd);
 			this.btnSearchGrcIndBaseRate.setDisabled(isReadOnly("FinanceMainDialog_grcIndRate"));
+			
+			if (StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getGraceBaseRate()).equals("")) {
+				this.hbox_grcMargin.setVisible(false);
+				getLabel_FinanceMainDialog_GraceMargin().setVisible(false);
+			}else{
+				this.hbox_grcMargin.setVisible(true);
+				getLabel_FinanceMainDialog_GraceMargin().setVisible(true);
+			}
 
 			if(finType.isFInIsAlwGrace()){
 				if(isReadOnly("FinanceMainDialog_gracePftFrq")){
