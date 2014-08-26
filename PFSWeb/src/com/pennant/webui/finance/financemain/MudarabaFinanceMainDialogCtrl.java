@@ -156,6 +156,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	protected Label 		label_MudarabaFinanceMainDialog_FinRepayPftOnFrq;	// autoWired
 	protected Label 		label_MudarabaFinanceMainDialog_CbbApproved;		// autoWired
 	protected Label 		label_MudarabaFinanceMainDialog_AlwGrace;			// autoWired
+	protected Label 		label_MudarabaFinanceMainDialog_GraceMargin; 		// autoWired
 	protected Label 		label_MudarabaFinanceMainDialog_StepPolicy; 		// autoWired
 	protected Label 		label_MudarabaFinanceMainDialog_numberOfSteps; 		// autoWired
 
@@ -253,6 +254,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_MudarabaFinanceMainDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_FrqDef(label_MudarabaFinanceMainDialog_FrqDef);
 		setLabel_FinanceMainDialog_AlwGrace(label_MudarabaFinanceMainDialog_AlwGrace);
+		setLabel_FinanceMainDialog_GraceMargin(label_MudarabaFinanceMainDialog_GraceMargin);
 		setLabel_FinanceMainDialog_StepPolicy(label_MudarabaFinanceMainDialog_StepPolicy);
 		setLabel_FinanceMainDialog_numberOfSteps(label_MudarabaFinanceMainDialog_numberOfSteps);
 		setProductCode("Mudaraba");
@@ -1166,6 +1168,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			this.oldVar_graceCpzFrq = this.graceCpzFrq.getValue();
 			this.oldVar_nextGrcCpzDate = this.nextGrcCpzDate_two.getValue();
 			this.oldVar_grcMargin = this.grcMargin.getValue();
+			this.oldVar_grcPftDaysBasis = this.grcPftDaysBasis.getSelectedIndex();
 			this.oldVar_allowGrcInd = this.allowGrcInd.isChecked();
 			this.oldVar_grcIndBaseRate = this.grcIndBaseRate.getValue();
 			this.oldVar_lovDescGrcIndBaseRateName = this.lovDescGrcIndBaseRateName.getValue();
@@ -1287,6 +1290,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			this.graceCpzFrq.setValue(this.oldVar_graceCpzFrq);
 			this.nextGrcCpzDate_two.setValue(this.oldVar_nextGrcCpzDate);
 			this.grcMargin.setValue(this.oldVar_grcMargin);
+			this.grcPftDaysBasis.setSelectedIndex(this.oldVar_grcPftDaysBasis);
 			this.allowGrcInd.setChecked(this.oldVar_allowGrcInd);
 			this.lovDescGrcIndBaseRateName.setValue(this.oldVar_lovDescGrcIndBaseRateName);
 			this.graceTerms.setValue(this.oldVar_graceTerms);
@@ -1453,6 +1457,9 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				return true;
 			}
 			if (this.oldVar_grcMargin != this.grcMargin.getValue()) {
+				return true;
+			}
+			if(this.oldVar_grcPftDaysBasis != this.grcPftDaysBasis.getSelectedIndex()){
 				return true;
 			}
 			if(this.oldVar_allowGrcInd != this.allowGrcInd.isChecked()){
@@ -1768,6 +1775,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		this.gracePftRate.setConstraint("");
 		this.grcEffectiveRate.setConstraint("");
 		this.grcMargin.setConstraint("");
+		this.grcPftDaysBasis.setConstraint("");
 		this.cbGracePftFrqCode.setConstraint("");
 		this.cbGracePftFrqMth.setConstraint("");
 		this.cbGracePftFrqDay.setConstraint("");

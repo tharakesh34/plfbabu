@@ -156,6 +156,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	protected Label 		label_IstnormFinanceMainDialog_FrqDef;	// autoWired
 	protected Label 		label_IstnormFinanceMainDialog_CbbApproved;
 	protected Label 		label_IstnormFinanceMainDialog_AlwGrace;
+	protected Label 		label_IstnormFinanceMainDialog_GraceMargin; 		// autoWired
 	protected Label 		label_IstnormFinanceMainDialog_StepPolicy; 		// autoWired
 	protected Label 		label_IstnormFinanceMainDialog_numberOfSteps; 		// autoWired
 
@@ -252,6 +253,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_IstnormFinanceMainDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_FrqDef(label_IstnormFinanceMainDialog_FrqDef);
 		setLabel_FinanceMainDialog_AlwGrace(label_IstnormFinanceMainDialog_AlwGrace);
+		setLabel_FinanceMainDialog_GraceMargin(label_IstnormFinanceMainDialog_GraceMargin);
 		setLabel_FinanceMainDialog_StepPolicy(label_IstnormFinanceMainDialog_StepPolicy);
 		setLabel_FinanceMainDialog_numberOfSteps(label_IstnormFinanceMainDialog_numberOfSteps);
 		setProductCode("Istnorm");
@@ -1156,6 +1158,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			this.oldVar_graceCpzFrq = this.graceCpzFrq.getValue();
 			this.oldVar_nextGrcCpzDate = this.nextGrcCpzDate_two.getValue();
 			this.oldVar_grcMargin = this.grcMargin.getValue();
+			this.oldVar_grcPftDaysBasis = this.grcPftDaysBasis.getSelectedIndex();
 			this.oldVar_allowGrcInd = this.allowGrcInd.isChecked();
 			this.oldVar_grcIndBaseRate = this.grcIndBaseRate.getValue();
 			this.oldVar_lovDescGrcIndBaseRateName = this.lovDescGrcIndBaseRateName.getValue();
@@ -1278,6 +1281,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			this.graceCpzFrq.setValue(this.oldVar_graceCpzFrq);
 			this.nextGrcCpzDate_two.setValue(this.oldVar_nextGrcCpzDate);
 			this.grcMargin.setValue(this.oldVar_grcMargin);
+			this.grcPftDaysBasis.setSelectedIndex(this.oldVar_grcPftDaysBasis);
 			this.allowGrcInd.setChecked(this.oldVar_allowGrcInd);
 			this.lovDescGrcIndBaseRateName.setValue(this.oldVar_lovDescGrcIndBaseRateName);
 		}
@@ -1443,6 +1447,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 				return true;
 			}
 			if (this.oldVar_grcMargin != this.grcMargin.getValue()) {
+				return true;
+			}
+			if(this.oldVar_grcPftDaysBasis != this.grcPftDaysBasis.getSelectedIndex()){
 				return true;
 			}
 			if(this.oldVar_allowGrcInd != this.allowGrcInd.isChecked()){
@@ -1768,6 +1775,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.gracePftRate.setConstraint("");
 		this.grcEffectiveRate.setConstraint("");
 		this.grcMargin.setConstraint("");
+		this.grcPftDaysBasis.setConstraint("");
 		this.cbGracePftFrqCode.setConstraint("");
 		this.cbGracePftFrqMth.setConstraint("");
 		this.cbGracePftFrqDay.setConstraint("");

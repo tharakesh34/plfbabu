@@ -151,8 +151,9 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	protected Label 		label_MusharakFinanceMainDialog_DepriFrq; 	// autoWired
 	protected Label 		label_MusharakFinanceMainDialog_CommitRef; 	// autoWired
 	protected Label 		label_MusharakFinanceMainDialog_CbbApproved;	// autoWired
-	protected Label 		label_MusharakFinanceMainDialog_FinRepayPftOnFrq;
-	protected Label         label_MusharakFinanceMainDialog_AlwGrace; 
+	protected Label 		label_MusharakFinanceMainDialog_FinRepayPftOnFrq;  // autoWired
+	protected Label         label_MusharakFinanceMainDialog_AlwGrace;           // autoWired
+	protected Label 		label_MusharakFinanceMainDialog_GraceMargin; 		// autoWired
 	protected Label 		label_MusharakFinanceMainDialog_StepPolicy; 		// autoWired
 	protected Label 		label_MusharakFinanceMainDialog_numberOfSteps; 		// autoWired
 
@@ -245,6 +246,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_MusharakFinanceMainDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_FrqDef(label_MusharakFinanceMainDialog_FrqDef);
 		setLabel_FinanceMainDialog_AlwGrace(label_MusharakFinanceMainDialog_AlwGrace);
+		setLabel_FinanceMainDialog_GraceMargin(label_MusharakFinanceMainDialog_GraceMargin);
 		setLabel_FinanceMainDialog_StepPolicy(label_MusharakFinanceMainDialog_StepPolicy);
 		setLabel_FinanceMainDialog_numberOfSteps(label_MusharakFinanceMainDialog_numberOfSteps);
 		setProductCode("Musharak");
@@ -1103,6 +1105,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			this.oldVar_graceCpzFrq = this.graceCpzFrq.getValue();
 			this.oldVar_nextGrcCpzDate = this.nextGrcCpzDate_two.getValue();
 			this.oldVar_grcMargin = this.grcMargin.getValue();
+			this.oldVar_grcPftDaysBasis = this.grcPftDaysBasis.getSelectedIndex();
 			this.oldVar_allowGrcInd = this.allowGrcInd.isChecked();
 			this.oldVar_grcIndBaseRate = this.grcIndBaseRate.getValue();
 			this.oldVar_lovDescGrcIndBaseRateName = this.lovDescGrcIndBaseRateName.getValue();
@@ -1224,6 +1227,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			this.graceCpzFrq.setValue(this.oldVar_graceCpzFrq);
 			this.nextGrcCpzDate_two.setValue(this.oldVar_nextGrcCpzDate);
 			this.grcMargin.setValue(this.oldVar_grcMargin);
+			this.grcPftDaysBasis.setSelectedIndex(this.oldVar_grcPftDaysBasis);
 			this.allowGrcInd.setChecked(this.oldVar_allowGrcInd);
 			this.lovDescGrcIndBaseRateName.setValue(this.oldVar_lovDescGrcIndBaseRateName);
 			this.graceTerms.setValue(this.oldVar_graceTerms);
@@ -1385,6 +1389,9 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				return true;
 			}
 			if (this.oldVar_grcMargin != this.grcMargin.getValue()) {
+				return true;
+			}
+			if(this.oldVar_grcPftDaysBasis != this.grcPftDaysBasis.getSelectedIndex()){
 				return true;
 			}
 			if(this.oldVar_allowGrcInd != this.allowGrcInd.isChecked()){
@@ -1686,6 +1693,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		this.gracePftRate.setConstraint("");
 		this.grcEffectiveRate.setConstraint("");
 		this.grcMargin.setConstraint("");
+		this.grcPftDaysBasis.setConstraint("");
 		this.cbGracePftFrqCode.setConstraint("");
 		this.cbGracePftFrqMth.setConstraint("");
 		this.cbGracePftFrqDay.setConstraint("");

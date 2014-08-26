@@ -553,8 +553,17 @@
 															image="/images/icons/LOVSearch.png" height="24px" />
 													</hbox>
 												</row>
-												<row
-													id="grcMarginRow">
+												<row id="grcMarginRow">
+												    <label
+														id="label_SukuknrmFinanceMainDialog_GraceProfitDaysBasis"
+														value="${c:l('label_SukuknrmFinanceMainDialog_GraceProfitDaysBasis.value')}" />
+													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
+														<combobox
+															id="grcPftDaysBasis" width="275px"
+															readonly="true" disabled="true" />
+													</hbox>
 													<label
 														id="label_SukuknrmFinanceMainDialog_GraceMargin"
 														value="${c:l('label_SukuknrmFinanceMainDialog_GraceMargin.value')}" />
