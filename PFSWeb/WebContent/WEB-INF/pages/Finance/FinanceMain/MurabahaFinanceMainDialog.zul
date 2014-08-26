@@ -433,24 +433,6 @@
 															id="cbbApproved" />
 													</hbox>
 												</row>
-												<row
-													id="row_discrepancy1" spans="1,3" visible="false">
-													<label
-														value="${c:l('lable_Discrepancy1_status')}"
-														style="font-weight:bold" />
-													<label
-														id="labelDiscrepancy1" value=""
-														style="color:red;font-weight:bold" />
-												</row>
-												<row
-													id="row_discrepancy2" spans="1,3" visible="false">
-													<label
-														value="${c:l('lable_Discrepancy2_status')}"
-														style="font-weight:bold" />
-													<label
-														id="labelDiscrepancy2" value=""
-														style="color:red;font-weight:bold" />
-												</row>
 												<row id="row_stepFinance" visible="true">
 													<label
 														id="label_MurabahaFinanceMainDialog_StepFinance"
@@ -487,6 +469,24 @@
 														<intbox
 															id="noOfSteps" width="90px" />
 													</hbox>
+												</row>
+												<row
+													id="row_discrepancy1" spans="1,3" visible="false">
+													<label
+														value="${c:l('lable_Discrepancy1_status')}"
+														style="font-weight:bold" />
+													<label
+														id="labelDiscrepancy1" value=""
+														style="color:red;font-weight:bold" />
+												</row>
+												<row
+													id="row_discrepancy2" spans="1,3" visible="false">
+													<label
+														value="${c:l('lable_Discrepancy2_status')}"
+														style="font-weight:bold" />
+													<label
+														id="labelDiscrepancy2" value=""
+														style="color:red;font-weight:bold" />
 												</row>
 											</rows>
 										</grid>

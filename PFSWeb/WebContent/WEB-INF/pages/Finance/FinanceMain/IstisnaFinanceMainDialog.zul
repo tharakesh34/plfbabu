@@ -272,7 +272,7 @@
 												<row>
 													<label
 														id="label_IstisnaFinanceMainDialog_DepriFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_DepriFrq.value')}"
+														value="${c:l('label_IstisnaFinanceMainDialog_DepriFrq.value')}"
 														visible="false" />
 													<hbox
 														id="hbox_depFrq" visible="false">
@@ -294,8 +294,8 @@
 												<row
 													id="row_secCollateral" visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_SecCollateral"
-														value="${c:l('label_MurabahaFinanceMainDialog_SecCollateral.value')}" />
+														id="label_IstisnaFinanceMainDialog_SecCollateral"
+														value="${c:l('label_IstisnaFinanceMainDialog_SecCollateral.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -306,8 +306,8 @@
 												<row id="row_Approved"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_Approved"
-														value="${c:l('label_MurabahaFinanceMainDialog_Approved.value')}" />
+														id="label_IstisnaFinanceMainDialog_Approved"
+														value="${c:l('label_IstisnaFinanceMainDialog_Approved.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -318,8 +318,8 @@
 												<row
 													id="row_custAcceptance" visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_CustAcceptance"
-														value="${c:l('label_MurabahaFinanceMainDialog_CustAcceptance.value')}" />
+														id="label_IstisnaFinanceMainDialog_CustAcceptance"
+														value="${c:l('label_IstisnaFinanceMainDialog_CustAcceptance.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -329,8 +329,8 @@
 												</row>
 												<row visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_DisbAcctId"
-														value="${c:l('label_MurabahaFinanceMainDialog_DisbAcctId.value')}" />
+														id="label_IstisnaFinanceMainDialog_DisbAcctId"
+														value="${c:l('label_IstisnaFinanceMainDialog_DisbAcctId.value')}" />
 													<accountSelectionBox
 														id="disbAcctId" />
 
@@ -338,7 +338,7 @@
 												<row visible="false">
 													<label
 														id="label_IstisnaFinanceMainDialog_FinIsActive"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinIsActive.value')}"
+														value="${c:l('label_IstisnaFinanceMainDialog_FinIsActive.value')}"
 														visible="false" />
 													<hbox
 														visible="false">
@@ -350,7 +350,7 @@
 
 													<label
 														id="label_IstisnaFinanceMainDialog_FinRemarks"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinRemarks.value')}"
+														value="${c:l('label_IstisnaFinanceMainDialog_FinRemarks.value')}"
 														visible="false" />
 													<hbox>
 														<space
@@ -1059,8 +1059,8 @@
 												<row id="defermentsRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_Defferments"
-														value="${c:l('label_MurabahaFinanceMainDialog_Defferments.value')}" />
+														id="label_IstisnaFinanceMainDialog_Defferments"
+														value="${c:l('label_IstisnaFinanceMainDialog_Defferments.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -1069,13 +1069,50 @@
 													</hbox>
 													<label
 														id="label_IstisnaFinanceMainDialog_FrqDef"
-														value="${c:l('label_MurabahaFinanceMainDialog_FrqDefferments.value')}" />
+														value="${c:l('label_IstisnaFinanceMainDialog_FrqDefferments.value')}" />
 													<hbox
 														id="hbox_FrqDef">
 														<space
 															spacing="2px" sclass="mandatory" />
 														<intbox
 															id="frqDefferments" width="90px" maxlength="14" />
+													</hbox>
+												</row>
+												<row id="row_stepFinance" visible="true">
+													<label
+														id="label_IstisnaFinanceMainDialog_StepFinance"
+														value="${c:l('label_IstisnaFinanceMainDialog_StepFinance.value')}" />
+													<hbox>
+														<space id="space_StepFinance"
+															spacing="2px" />
+														<checkbox
+															id="stepFinance" />
+													</hbox>
+													<label
+														id="label_IstisnaFinanceMainDialog_StepPolicy"
+														value="${c:l('label_IstisnaFinanceMainDialog_StepPolicy.value')}" />
+													<extendedcombobox id="stepPolicy"/>
+												</row>
+												<row
+													id="row_manualSteps" visible="true">
+													<label
+														id="label_IstisnaFinanceMainDialog_ManualSteps"
+														value="${c:l('label_IstisnaFinanceMainDialog_ManualSteps.value')}" />
+													<hbox>
+														<space id="space_alwManualSteps"
+															spacing="2px" />
+														<checkbox
+															id="alwManualSteps" />
+													</hbox>
+													<label
+														id="label_IstisnaFinanceMainDialog_numberOfSteps"
+														value="${c:l('label_IstisnaFinanceMainDialog_NumberOfSteps.value')}" />
+													<hbox
+														id="hbox_numberOfSteps">
+														<space id="space_noOfSteps"
+															spacing="2px" sclass="mandatory" />
+														<intbox
+															id="noOfSteps" width="90px" />
 													</hbox>
 												</row>
 											</rows>
