@@ -2359,6 +2359,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		setReadOnlyForCombobox();
 		//onCheckDiffDisbCcy(false);
 		setRepayAccMandatory();
+		setStepCheckDetails();
 		logger.debug("Leaving");
 	}	
 	
@@ -3233,6 +3234,14 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	public void onCheck$stepFinance(Event event){
 		logger.debug("Entering : "+event.toString());
 		doStepPolicyCheck(true);
+		if(this.stepFinance.isChecked()){
+			setStepCheckDetails();
+		} else {
+			fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
+			this.repayRateBasis.setDisabled(isReadOnly("FinanceMainDialog_repayRateBasis"));
+			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,");
+			this.cbScheduleMethod.setDisabled(isReadOnly("FinanceMainDialog_scheduleMethod"));
+		}
 		logger.debug("Leaving : "+event.toString());
 	}
 	
@@ -3293,18 +3302,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				}
 			}
 		} 
-		
-		if(this.stepFinance.isChecked()){
-			fillComboBox(this.repayRateBasis,CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
-			this.repayRateBasis.setDisabled(true);
-			fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,");
-			this.cbScheduleMethod.setDisabled(true);
-		} else {
-			fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
-			this.repayRateBasis.setDisabled(isReadOnly("FinanceMainDialog_repayRateBasis"));
-			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,");
-			this.cbScheduleMethod.setDisabled(isReadOnly("FinanceMainDialog_scheduleMethod"));
-		}
 	}
 	
 	/*
@@ -6628,6 +6625,15 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				this.repayAcctId.setMandatoryStyle(false);
 			}
 		}
+	}
+	
+	protected void setStepCheckDetails(){
+		if(this.stepFinance.isChecked()){
+			fillComboBox(this.repayRateBasis,CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
+			this.repayRateBasis.setDisabled(true);
+			fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,");
+			this.cbScheduleMethod.setDisabled(true);
+		} 
 	}
 	
 	protected void refreshList() {
