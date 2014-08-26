@@ -3301,7 +3301,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 					appendStepDetailTab(false);
 				}
 			}
-		} 
+		} else{
+			this.row_stepFinance.setVisible(!isReadOnly("FinanceMainDialog_stepFinance"));
+		}
 	}
 	
 	/*
@@ -3330,6 +3332,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
     		this.stepPolicy.setMandatoryStyle(true); 
     		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(false);
     		this.hbox_numberOfSteps.setVisible(false);
+    		if(isReadOnly("FinanceMainDialog_alwManualSteps")){
+    			this.row_manualSteps.setVisible(false);
+    		}
 		}
 		
 		if(getStepDetailDialogCtrl() != null){
