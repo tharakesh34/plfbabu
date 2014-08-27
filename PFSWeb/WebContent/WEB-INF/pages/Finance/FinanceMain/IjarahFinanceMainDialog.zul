@@ -409,7 +409,7 @@
 															id="cbbApproved" />
 													</hbox>
 												</row>
-												<row id="row_stepFinance" visible="false">
+												<row id="row_stepFinance" visible="true">
 													<label
 														id="label_IjarahFinanceMainDialog_StepFinance"
 														value="${c:l('label_IjarahFinanceMainDialog_StepFinance.value')}" />
@@ -425,7 +425,7 @@
 													<extendedcombobox id="stepPolicy"/>
 												</row>
 												<row
-													id="row_manualSteps" visible="false">
+													id="row_manualSteps" visible="true">
 													<label
 														id="label_IjarahFinanceMainDialog_ManualSteps"
 														value="${c:l('label_IjarahFinanceMainDialog_ManualSteps.value')}" />
@@ -570,7 +570,7 @@
 															image="/images/icons/LOVSearch.png" height="24px" />
 													</hbox>
 												</row>
-												<row id="grcMarginRow">
+												<row>
 													<label
 														id="label_IjarahFinanceMainDialog_GraceProfitDaysBasis"
 														value="${c:l('label_IjarahFinanceMainDialog_GraceProfitDaysBasis.value')}" />
@@ -584,7 +584,7 @@
 													<label
 														id="label_IjarahFinanceMainDialog_GraceMargin"
 														value="${c:l('label_IjarahFinanceMainDialog_GraceMargin.value')}" />
-													<hbox>
+													<hbox id="hbox_grcMargin">
 														<space
 															spacing="2px" />
 														<decimalbox

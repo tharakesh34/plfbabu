@@ -466,7 +466,7 @@
 															image="/images/icons/LOVSearch.png" height="24px" />
 													</hbox>
 												</row>
-												<row id="grcMarginRow">
+												<row>
 												   <label
 														id="label_IstisnaFinanceMainDialog_GraceProfitDaysBasis"
 														value="${c:l('label_IstisnaFinanceMainDialog_GraceProfitDaysBasis.value')}" />
@@ -480,7 +480,7 @@
 													<label
 														id="label_IstisnaFinanceMainDialog_GraceMargin"
 														value="${c:l('label_IstisnaFinanceMainDialog_GraceMargin.value')}" />
-													<hbox>
+													<hbox id="hbox_grcMargin">
 														<space
 															spacing="2px" />
 														<decimalbox

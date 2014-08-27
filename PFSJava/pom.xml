@@ -578,7 +578,7 @@
 		<dependency>
 			<groupId>com.pennant.css.theme</groupId>
 			<artifactId>atlantic-ipsm</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 		
 		<!-- External Jars -->
