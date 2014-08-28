@@ -65,7 +65,10 @@
 											  image.setSrc("//images//Pennant//HostUp.jpg");
 											  }
 										} else {
-										  image.setSrc("//images//Pennant//HostDown.jpg");
+											if(winMessageBar.getChildren().contains("hostStatus")){
+												Image image = (Image)winMessageBar.getFellowIfAny("hostStatus");
+										 		image.setSrc("//images//Pennant//HostDown.jpg");
+										 	}
 										}
 									</attribute>
 						</timer>

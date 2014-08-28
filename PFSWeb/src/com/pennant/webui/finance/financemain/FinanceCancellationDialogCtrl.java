@@ -74,6 +74,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 	protected Label 		label_FinanceCancellationDialog_FrqDef;	// autoWired
 	protected Label 		label_FinanceCancellationDialog_CbbApproved;
 	protected Label 		label_FinanceCancellationDialog_AlwGrace;
+	protected Label         label_FinanceCancellationDialog_StepPolicy;
+	protected Label         label_FinanceCancellationDialog_numberOfSteps;
 
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
@@ -166,6 +168,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_FinanceCancellationDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_FrqDef(label_FinanceCancellationDialog_FrqDef);
 		setLabel_FinanceMainDialog_AlwGrace(label_FinanceCancellationDialog_AlwGrace);
+		setLabel_FinanceMainDialog_numberOfSteps(label_FinanceCancellationDialog_numberOfSteps);
+		setLabel_FinanceMainDialog_StepPolicy(label_FinanceCancellationDialog_StepPolicy);
 		setProductCode("Murabaha");
 
 
@@ -514,6 +518,12 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		this.oldVar_finIsActive = this.finIsActive.isChecked();
 		this.oldVar_finPurpose = this.finPurpose.getValue();
 		this.oldVar_lovDescFinPurpose = this.finPurpose.getDescription();
+		
+		// Step Finance Details
+		this.oldVar_stepFinance = this.stepFinance.isChecked();
+		this.oldVar_stepPolicy = this.stepPolicy.getValue();
+		this.oldVar_alwManualSteps = this.alwManualSteps.isChecked();
+		this.oldVar_noOfSteps = this.noOfSteps.intValue();
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -536,6 +546,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 			this.oldVar_graceCpzFrq = this.graceCpzFrq.getValue();
 			this.oldVar_nextGrcCpzDate = this.nextGrcCpzDate_two.getValue();
 			this.oldVar_grcMargin = this.grcMargin.getValue();
+			this.oldVar_grcPftDaysBasis = this.grcPftDaysBasis.getSelectedIndex();
 			this.oldVar_allowGrcInd = this.allowGrcInd.isChecked();
 			this.oldVar_grcIndBaseRate = this.grcIndBaseRate.getValue();
 			this.oldVar_lovDescGrcIndBaseRateName = this.lovDescGrcIndBaseRateName.getValue();
@@ -1127,12 +1138,15 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 
 	private void doFillPostingdetails(String finReference) {
 		logger.debug("Entering");
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		
 		JdbcSearchObject<ReturnDataSet> jdbcSearchObject = new JdbcSearchObject<ReturnDataSet>(ReturnDataSet.class);
 		jdbcSearchObject.addTabelName("Postings");
 		jdbcSearchObject.addFilterEqual("finReference",finReference);
 		jdbcSearchObject.addFilterIn("FinEvent", new String[]{"ADDDBSP","ADDDBSF","ADDDBSN"});
+		
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		List<ReturnDataSet> postingList = pagedListService.getBySearchObject(jdbcSearchObject);
+		
 		if(postingList != null && !postingList.isEmpty()){
 			Listitem item;
 			for (ReturnDataSet returnDataSet : postingList) {
@@ -1173,7 +1187,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 	public FinanceCancellationService getFinanceCancellationService() {
 		return financeCancellationService;
 	}
-
 	public void setFinanceCancellationService(FinanceCancellationService financeCancellationService) {
 		this.financeCancellationService = financeCancellationService;
 	}

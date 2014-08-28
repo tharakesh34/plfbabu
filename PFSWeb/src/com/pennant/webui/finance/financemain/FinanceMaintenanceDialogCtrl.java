@@ -143,7 +143,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 	protected Label 		label_FinanceMaintenanceDialog_FrqDef;	// autoWired
 	protected Label 		label_FinanceMaintenanceDialog_CbbApproved;
 	protected Label 		label_FinanceMaintenanceDialog_AlwGrace;
-
+	protected Label         label_FinanceMaintenanceDialog_StepPolicy;
+	protected Label         label_FinanceMaintenanceDialog_numberOfSteps;
 
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
@@ -228,6 +229,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		setLabel_FinanceMainDialog_DepriFrq(label_FinanceMaintenanceDialog_DepriFrq);
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_FinanceMaintenanceDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_FrqDef(label_FinanceMaintenanceDialog_FrqDef);
+		setLabel_FinanceMainDialog_numberOfSteps(label_FinanceMaintenanceDialog_numberOfSteps);
+		setLabel_FinanceMainDialog_StepPolicy(label_FinanceMaintenanceDialog_StepPolicy);
 		setLabel_FinanceMainDialog_AlwGrace(label_FinanceMaintenanceDialog_AlwGrace);
 		setProductCode("Murabaha");
 
@@ -1080,6 +1083,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.oldVar_finPurpose = this.finPurpose.getValue();
 		this.oldVar_lovDescFinPurpose = this.finPurpose.getDescription();
 
+		// Step Finance Details
+		this.oldVar_stepFinance = this.stepFinance.isChecked();
+		this.oldVar_stepPolicy = this.stepPolicy.getValue();
+		this.oldVar_alwManualSteps = this.alwManualSteps.isChecked();
+		this.oldVar_noOfSteps = this.noOfSteps.intValue();
+
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
 		this.oldVar_gracePeriodEndDate = this.gracePeriodEndDate_two.getValue();
@@ -1101,6 +1110,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 			this.oldVar_graceCpzFrq = this.graceCpzFrq.getValue();
 			this.oldVar_nextGrcCpzDate = this.nextGrcCpzDate_two.getValue();
 			this.oldVar_grcMargin = this.grcMargin.getValue();
+			this.oldVar_grcPftDaysBasis = this.grcPftDaysBasis.getSelectedIndex();
 			this.oldVar_allowGrcInd = this.allowGrcInd.isChecked();
 			this.oldVar_grcIndBaseRate = this.grcIndBaseRate.getValue();
 			this.oldVar_lovDescGrcIndBaseRateName = this.lovDescGrcIndBaseRateName.getValue();
@@ -1184,6 +1194,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.finIsActive.setChecked(this.oldVar_finIsActive);
 		this.finPurpose.setValue(this.oldVar_finPurpose);
 		this.finPurpose.setDescription(this.oldVar_lovDescFinPurpose);
+		
+		// Step Finance Details
+		this.stepFinance.setChecked(this.oldVar_stepFinance);
+		this.stepPolicy.setValue(this.oldVar_stepPolicy);
+		this.alwManualSteps.setChecked(this.oldVar_alwManualSteps);
+		this.noOfSteps.setValue(this.oldVar_noOfSteps);
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -1206,6 +1222,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 			this.graceCpzFrq.setValue(this.oldVar_graceCpzFrq);
 			this.nextGrcCpzDate_two.setValue(this.oldVar_nextGrcCpzDate);
 			this.grcMargin.setValue(this.oldVar_grcMargin);
+			this.grcPftDaysBasis.setSelectedIndex(this.oldVar_grcPftDaysBasis);
 			this.allowGrcInd.setChecked(this.oldVar_allowGrcInd);
 			this.lovDescGrcIndBaseRateName.setValue(this.oldVar_lovDescGrcIndBaseRateName);
 		}
