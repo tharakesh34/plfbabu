@@ -52,9 +52,7 @@ import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 
 import com.pennant.backend.service.dashboard.DetailStatisticsService;
-import com.sun.xml.internal.ws.developer.Stateful;
 
-@Stateful
 public class StatisticsSheduler implements Job,Serializable {
 
 	private static final long serialVersionUID = 4716466545490087546L;

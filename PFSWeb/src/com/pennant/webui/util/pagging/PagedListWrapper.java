@@ -51,6 +51,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.lang.Strings;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.FieldComparator;
@@ -209,7 +210,7 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 		getPaging().addEventListener("onPaging", new OnPagingEventListener());
 
 		final Listhead listhead = listBox.getListhead();
-		final List<?> list = listhead.getChildren();
+		final List<Component> list = listhead.getChildren();
 
 		final OnSortEventListener onSortEventListener = new OnSortEventListener();
 		for (final Object object : list) {

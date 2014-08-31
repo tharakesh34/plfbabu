@@ -483,7 +483,7 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 			final Treeitem treeitem = (Treeitem) component;
 			treeitem.setOpen(aufklappen);
 		}
-		final Collection<?> com = component.getChildren();
+		final Collection<Component> com = component.getChildren();
 		if (com != null) {
 			for (final Iterator<?> iterator = com.iterator(); iterator.hasNext();) {
 				doCollapseExpandAll((Component) iterator.next(), aufklappen);
