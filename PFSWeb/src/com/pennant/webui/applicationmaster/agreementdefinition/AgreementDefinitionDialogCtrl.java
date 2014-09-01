@@ -224,7 +224,6 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		}
 		
 		this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
-		this.orgDetailTabDiv.setHeight(this.borderLayoutHeight - 70  + "px");// 425px
 	//	this.signCopyPdf.setHeight(this.borderLayoutHeight - 80 + "px"); 
 
 		// READ OVERHANDED parameters !

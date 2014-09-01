@@ -200,7 +200,7 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 				reportConfiguration=(ReportConfiguration) args.get("ReportConfiguration");
 			}else{
 				// get the parameters map that are overHanded by creation.
-				tabbox = (Tabbox)event.getTarget().getParent().getParent().getParent();
+				tabbox = (Tabbox)event.getTarget().getParent().getParent().getParent().getParent();
 				reportMenuCode=tabbox.getSelectedTab().getId().trim().replace("tab_", "menu_Item_");
 				selectTab=tabbox.getSelectedTab();
 				reportConfiguration = getReportConfiguration(reportMenuCode);
@@ -2316,6 +2316,7 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 	private void setSpaceStyle(Space space,boolean  isManditory) {
 		if(isManditory){
 			space.setSclass("mandatory");
+			space.setWidth("2px");
 		}
 		else {
 			space.setWidth("0px");
