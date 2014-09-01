@@ -36,7 +36,7 @@
 								<row>
 									<label id="label_VehicleManufacturerSearch_ManufacturerName" value="${c:l('label_VehicleManufacturerSearch_ManufacturerName.value')}" />
 									<listbox id="sortOperator_manufacturerName" width="43px" mold="select" rows="1" />
-									 <textbox id="manufacturerName" width="330px" maxlength="50" />
+									 <textbox id="manufacturerName" width="250px" maxlength="50" />
 								  
 										
 								</row>

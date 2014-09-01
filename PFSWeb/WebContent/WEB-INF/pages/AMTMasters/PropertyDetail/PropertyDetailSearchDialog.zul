@@ -36,7 +36,7 @@
 								<row>
 									<label id="label_PropertyDetailSearch_PropertyDetailDesc" value="${c:l('label_PropertyDetailSearch_PropertyDetailDesc.value')}" />
 									<listbox id="sortOperator_propertyDetailDesc" width="43px" mold="select" rows="1" />
-									 <textbox id="propertyDetailDesc" width="330px" maxlength="50" />
+									 <textbox id="propertyDetailDesc" width="250px" maxlength="50" />
 								  
 										
 								</row>

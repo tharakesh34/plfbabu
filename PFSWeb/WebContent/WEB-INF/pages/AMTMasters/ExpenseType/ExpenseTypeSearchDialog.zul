@@ -36,7 +36,7 @@
 								<row>
 									<label id="label_ExpenseTypeSearch_ExpenceTypeName" value="${c:l('label_ExpenseTypeSearch_ExpenceTypeName.value')}" />
 									<listbox id="sortOperator_expenceTypeName" width="43px" mold="select" rows="1" />
-									 <textbox id="expenceTypeName" width="330px" maxlength="100" />
+									 <textbox id="expenceTypeName" width="250px" maxlength="100" />
 								  
 										
 								</row>

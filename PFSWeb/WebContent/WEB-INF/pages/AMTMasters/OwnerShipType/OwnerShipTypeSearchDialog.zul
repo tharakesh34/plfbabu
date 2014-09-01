@@ -36,7 +36,7 @@
 								<row>
 									<label id="label_OwnerShipTypeSearch_OwnerShipTypeName" value="${c:l('label_OwnerShipTypeSearch_OwnerShipTypeName.value')}" />
 									<listbox id="sortOperator_ownerShipTypeName" width="43px" mold="select" rows="1" />
-									 <textbox id="ownerShipTypeName" width="330px" maxlength="50" />
+									 <textbox id="ownerShipTypeName" width="250px" maxlength="50" />
 								  
 										
 								</row>
