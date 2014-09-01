@@ -720,7 +720,6 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 			if(moduleDefiner.equals(PennantConstants.SCH_EARLYPAY)){
 
-				this.earlySettlementBal.setVisible(false);
 				if(getRepaySchdList() == null || getRepaySchdList().isEmpty()){
 
 					if(!isChgRpy || !StringUtils.trimToEmpty(this.repayAccount.getValue()).equals("")){
@@ -751,6 +750,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if(moduleDefiner.equals(PennantConstants.SCH_EARLYPAYENQ)){
 				Events.sendEvent("onClick$btnCalcRepayments", this.window_ManualPaymentDialog, isChgRpy);
 
+				this.earlySettlementBal.setVisible(true);
 				this.label_PaymentDialog_RepayAccount.setValue(Labels.getLabel("label_PaymentDialog_EarlySettleAmount.value"));
 				this.repayAccount.setVisible(false);
 				this.label_PaymentDialog_EarlySettlementTillDate.setVisible(true);

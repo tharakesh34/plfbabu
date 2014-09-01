@@ -460,7 +460,7 @@
 												id="repayAccountBal" />
 												</hbox> -->
 											<decimalbox
-												id="earlySettlementBal" tabindex="-1" disabled="true"
+												id="earlySettlementBal" tabindex="-1" visible="false" disabled="true"
 												sclass="decimalToString" />
 										</hbox>
 									</row>
