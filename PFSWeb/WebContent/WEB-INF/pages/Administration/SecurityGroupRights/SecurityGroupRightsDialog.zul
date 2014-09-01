@@ -7,7 +7,7 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window title="Security Group Rights" id="win_SecGroupRightsDialog"
+	<window id="win_SecGroupRightsDialog"
 		border="normal" width="100%" height="100%"
 		apply="${securityGroupRightsDialogCtrl}">
 
@@ -50,8 +50,10 @@
 				</toolbar>
 				<!-- SEARCH AREA -->
 				<toolbar align="center"
-					style="float:left; border-style: none;">
-					<hbox align="center" style="padding: 2px"></hbox>
+					sclass="toolbar-center">
+					<label 
+					        value="${c:l('win_SecGroupRightsDialog.title')}"
+							sclass="label-heading" />
 				</toolbar>
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
