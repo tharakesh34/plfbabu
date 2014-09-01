@@ -555,7 +555,7 @@
 													<label
 														id="label_FinanceCancellationDialog_GraceMargin"
 														value="${c:l('label_FinanceCancellationDialog_GraceMargin.value')}" />
-													<hbox>
+													<hbox id="hbox_grcMargin">
 														<space
 															spacing="2px" />
 														<decimalbox

@@ -8,7 +8,7 @@
 				<center border="none">
 					<tabbox width="99%" height="100%" id="tabBoxIndexCenter">
 						<tabs id="tabsIndexCenter">
-							<tab id="financeTypeDetailsTab" label="Finance Type Details" />
+							<tab id="financeTypeDetailsTab" label="Finance Main Details" />
 							<tab id="riaDetailsTab" label="RIA Details" />
 							<tab id="disburseDetailsTab" label="Advance and Billings" />
 							<tab id="repayGraphTab" visible="false" label="GraphReport" />
@@ -190,6 +190,43 @@
 												<hbox>
 													<space spacing="2px" />
 													<combobox buttonVisible="false" id="finRepayMethod" width="150px" disabled="true" />
+												</hbox>
+											</row>
+											<row id="row_stepFinance" visible="true">
+												<label
+													id="label_FinanceMainDialog_StepFinance"
+													value="${c:l('label_FinanceMainDialog_StepFinance.value')}" />
+												<hbox>
+													<space
+														id="space_StepFinance" spacing="2px" />
+													<checkbox
+														id="stepFinance" disabled="true"/>
+												</hbox>
+												<label
+													id="label_FinanceMainDialog_StepPolicy"
+													value="${c:l('label_FinanceMainDialog_StepPolicy.value')}" />
+												<extendedcombobox
+													id="stepPolicy" readonly="true"/>
+											</row>
+											<row id="row_manualSteps" visible="true">
+												<label
+													id="label_FinanceMainDialog_ManualSteps"
+													value="${c:l('label_FinanceMainDialog_ManualSteps.value')}" />
+												<hbox>
+													<space
+														id="space_alwManualSteps" spacing="2px" />
+													<checkbox
+														id="alwManualSteps" disabled="true"/>
+												</hbox>
+												<label
+													id="label_FinanceMainDialog_numberOfSteps"
+													value="${c:l('label_FinanceMainDialog_NumberOfSteps.value')}" />
+												<hbox
+													id="hbox_numberOfSteps">
+													<space
+														id="space_noOfSteps" spacing="2px" />
+													<intbox
+														id="noOfSteps" width="90px" readonly="true"/>
 												</hbox>
 											</row>
 											<row visible="false">

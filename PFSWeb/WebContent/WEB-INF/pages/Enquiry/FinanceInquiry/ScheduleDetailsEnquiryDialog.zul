@@ -33,31 +33,27 @@
 										style="padding:0px;position:relative;">
 										<listheader width="1%" />
 										<listheader
-											id="listheader_ScheduleDetailDialog_Date" hflex="min"
-											value="" />
+											label="${c:l('listheader_ScheduleDate.label')}" hflex="min" />
 										<listheader
-											id="listheader_ScheduleDetailDialog_ScheduleEvent"
+											label="${c:l('listheader_ScheduleEvent.label')}"
 											hflex="min" />
 										<listheader
-											id="listheader_ScheduleDetailDialog_CalProfit" hflex="min" />
+											label="${c:l('listheader_CalProfit.label')}" hflex="min" />
 										<listheader
-											id="listheader_ScheduleDetailDialog_SchProfit" hflex="min" />
+											label="${c:l('listheader_SchProfit.label')}" hflex="min" />
 										<listheader
-											id="listheader_ScheduleDetailDialog_Principal" hflex="min" />
+											label="${c:l('listheader_Principal.label')}" hflex="min" />
 										<listheader
-											id="listheader_ScheduleDetailDialog_Total" hflex="min" />
+											label="${c:l('listheader_Total.label')}" hflex="min" />
 										<listheader
-											id="listheader_ScheduleDetailDialog_ScheduleEndBal"
+											label="${c:l('listheader_ScheduleEndBal.label')}"
 											hflex="min" />
-										<listheader
-											id="listHeader_cashFlowEffect"
+										<listheader id="listHeader_cashFlowEffect"
 											label="${c:l('listheader_CashFlowEffect.label')}"
 											hflex="min" />
-										<listheader
-											id="listHeader_vSProfit"
+										<listheader id="listHeader_vSProfit"
 											label="${c:l('listheader_VsProfit.label')}" hflex="min" />
-										<listheader
-											id="listHeader_orgPrincipalDue"
+										<listheader id="listHeader_orgPrincipalDue"
 											label="${c:l('listheader_OrgPrincipalDue.label')}"
 											hflex="min" />
 									</listhead>
