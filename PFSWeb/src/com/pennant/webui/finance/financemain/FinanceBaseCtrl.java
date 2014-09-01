@@ -1920,6 +1920,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.stepFinance.setChecked(aFinanceMain.isStepFinance());
 		doStepPolicyCheck(false);
 		this.stepPolicy.setValue(aFinanceMain.getStepPolicy());
+		this.stepPolicy.setDescription(aFinanceMain.getLovDescStepPolicyName());
 		this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
 		doAlwManualStepsCheck(false);
 		this.noOfSteps.setValue(aFinanceMain.getNoOfSteps());
@@ -3294,7 +3295,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		
 		if(this.stepFinance.isChecked()){
 			FinanceType type = getFinanceDetail().getFinScheduleData().getFinanceType();
-			if(type.isAlwManualSteps()){
+			if(type.isAlwManualSteps() || getFinanceDetail().getFinScheduleData().getFinanceMain().isAlwManualSteps()){
 				this.row_manualSteps.setVisible(true);
 			}
 			if(type.isSteppingMandatory()){
@@ -3757,7 +3758,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			}
 			
 			// validate finance grace profit days basis
-			if (!this.grcPftDaysBasis.isDisabled()) {
+			if (!this.grcPftDaysBasis.isDisabled() && this.gb_gracePeriodDetails.isVisible()) {
 				if (getComboboxValue(this.grcPftDaysBasis).equals("#")) {
 					errorList.add(new ErrorDetails("grcPftDaysBasis", "E0005", new String[] {}, new String[] {}));
 				} else if (!getComboboxValue(this.grcPftDaysBasis).equals(getFinanceDetail().getFinScheduleData().getFinanceType().getFinDaysCalType())) {

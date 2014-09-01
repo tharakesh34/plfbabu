@@ -76,6 +76,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 	protected Label 		label_FinanceCancellationDialog_AlwGrace;
 	protected Label         label_FinanceCancellationDialog_StepPolicy;
 	protected Label         label_FinanceCancellationDialog_numberOfSteps;
+	protected Label         label_FinanceCancellationDialog_GraceMargin;
+
 
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
@@ -170,6 +172,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_AlwGrace(label_FinanceCancellationDialog_AlwGrace);
 		setLabel_FinanceMainDialog_numberOfSteps(label_FinanceCancellationDialog_numberOfSteps);
 		setLabel_FinanceMainDialog_StepPolicy(label_FinanceCancellationDialog_StepPolicy);
+		setLabel_FinanceMainDialog_GraceMargin(label_FinanceCancellationDialog_GraceMargin);
 		setProductCode("Murabaha");
 
 

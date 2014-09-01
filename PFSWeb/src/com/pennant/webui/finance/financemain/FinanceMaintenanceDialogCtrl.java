@@ -145,6 +145,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 	protected Label 		label_FinanceMaintenanceDialog_AlwGrace;
 	protected Label         label_FinanceMaintenanceDialog_StepPolicy;
 	protected Label         label_FinanceMaintenanceDialog_numberOfSteps;
+	protected Label         label_FinanceMaintenanceDialog_GraceMargin;
+
 
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
@@ -232,6 +234,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		setLabel_FinanceMainDialog_numberOfSteps(label_FinanceMaintenanceDialog_numberOfSteps);
 		setLabel_FinanceMainDialog_StepPolicy(label_FinanceMaintenanceDialog_StepPolicy);
 		setLabel_FinanceMainDialog_AlwGrace(label_FinanceMaintenanceDialog_AlwGrace);
+		setLabel_FinanceMainDialog_GraceMargin(label_FinanceMaintenanceDialog_GraceMargin);
+		
 		setProductCode("Murabaha");
 
 
@@ -809,7 +813,17 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 					this.rpyPftFrqRow.setVisible(true);
 					this.hbox_finRepayPftOnFrq.setVisible(true);
 				}
-
+            
+			if(afinanceDetail.getFinScheduleData().getFinanceMain().isStepFinance()){
+            	 this.row_stepFinance.setVisible(true);
+            	if(afinanceDetail.getFinScheduleData().getFinanceMain().isAlwManualSteps()){
+            		this.row_manualSteps.setVisible(true);
+            	 }
+               } else {
+                   this.row_stepFinance.setVisible(false);
+            	   this.row_manualSteps.setVisible(false);
+               }
+				
 				this.rpyFrqRow.setVisible(false);
 				this.hbox_ScheduleMethod.setVisible(false);
 				this.label_FinanceMaintenanceDialog_ScheduleMethod.setVisible(false);

@@ -81,6 +81,7 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.DateUtility;
@@ -190,6 +191,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 	protected Datebox finSuspDate; // autoWired
 	protected Textbox finOverDueStatus; // autoWired
 	protected Intbox finOverDueDays; // autoWired
+	
+	// Step Finance Fields
+	protected Checkbox          stepFinance;
+	protected ExtendedCombobox  stepPolicy;
+	protected Checkbox          alwManualSteps;
+	protected Intbox            noOfSteps;
+	protected Row               row_stepFinance;
+	protected Row               row_manualSteps;
 	
 	protected Textbox finRemarks; // autoWired
 	// Grace period Details
@@ -688,6 +697,19 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 			//	this.repayAcctBal.setValue(getAcBalance(aFinanceMain.getRepayAccountId()));
 			//	this.finAcctBal.setValue(getAcBalance(aFinanceMain.getFinAccount()));
 			fillComboBox(this.finRepayMethod,aFinanceMain.getFinRepayMethod(), PennantAppUtil.getRepayMethods(), "");
+			
+			// Step Finance Details
+			if(aFinanceMain.isStepFinance()){
+				this.row_stepFinance.setVisible(true);
+				this.row_manualSteps.setVisible(true);
+				this.stepFinance.setChecked(aFinanceMain.isStepFinance());
+				this.stepPolicy.setValue(aFinanceMain.getLovDescStepPolicyName());
+				this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
+				this.noOfSteps.setValue(aFinanceMain.getNoOfSteps());
+			} else {
+				this.row_stepFinance.setVisible(false);
+				this.row_manualSteps.setVisible(false);
+			}
 			
 			this.graceTerms.setValue(aFinanceMain.getGraceTerms());
 			if (aFinanceMain.isAllowGrcPeriod() && aFinanceMain.getFinStartDate().compareTo(aFinanceMain.getGrcPeriodEndDate())!=0) {
