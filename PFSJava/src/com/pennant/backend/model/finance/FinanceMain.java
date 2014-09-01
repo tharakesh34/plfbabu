@@ -244,6 +244,7 @@ public class FinanceMain implements java.io.Serializable {
 	
 	private boolean stepFinance = false;
 	private String stepPolicy;
+	private String lovDescStepPolicyName;
 	private boolean alwManualSteps = false;
 	private int noOfSteps = 0;
 	private boolean pftIntact = false;
@@ -2394,6 +2395,13 @@ public class FinanceMain implements java.io.Serializable {
 	public void setStepPolicy(String stepPolicy) {
 		this.stepPolicy = stepPolicy;
 	}
+	
+	public String getLovDescStepPolicyName() {
+	    return lovDescStepPolicyName;
+    }
+	public void setLovDescStepPolicyName(String lovDescStepPolicyName) {
+	    this.lovDescStepPolicyName = lovDescStepPolicyName;
+    }
 
 	public boolean isAlwManualSteps() {
 		return alwManualSteps;

@@ -219,6 +219,7 @@ public class FinScheduleData {
 		this.financeMain.setStepFinance(financeType.isStepFinance());
 		this.financeMain.setAlwManualSteps(financeType.isAlwManualSteps());
 		this.financeMain.setStepPolicy(StringUtils.trimToEmpty(financeType.getDftStepPolicy()).equals(PennantConstants.List_Select) ? "" : financeType.getDftStepPolicy());
+		this.financeMain.setLovDescStepPolicyName(StringUtils.trimToEmpty(financeType.getLovDescDftStepPolicyName()));
 
 		//Grace period details
 
