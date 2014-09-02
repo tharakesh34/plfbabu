@@ -1052,7 +1052,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (this.oldVar_carChasisNo != this.carChasisNo.getValue()) {
 			return true;
 		}
-		if (this.oldVar_carColor != this.cbCarColor.getValue()) {
+		if (!this.oldVar_carColor.equals(this.cbCarColor.getValue())) {
 			return true;
 		}
 		if (this.oldVar_dealerPhone != this.dealerPhone.getValue()) {
