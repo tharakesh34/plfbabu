@@ -120,17 +120,7 @@
 													<label
 														id="label_IjarahFinanceMainDialog_FinCcy"
 														value="${c:l('label_IjarahFinanceMainDialog_FinCcy.value')}" />
-													<hbox>
-														<space
-															spacing="2px" sclass="mandatory" />
-														<textbox
-															id="finCcy" width="27px" visible="false" />
-														<textbox
-															id="lovDescFinCcyName" width="250px" tabindex="-1" />
-														<button
-															id="btnSearchFinCcy" image="/images/icons/LOVSearch.png"
-															height="24px" />
-													</hbox>
+													<extendedcombobox id="finCcy"/>
 													<label
 														id="label_IjarahFinanceMainDialog_ProfitDaysBasis"
 														value="${c:l('label_IjarahFinanceMainDialog_ProfitDaysBasis.value')}" />
