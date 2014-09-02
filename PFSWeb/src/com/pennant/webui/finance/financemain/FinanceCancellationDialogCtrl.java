@@ -501,7 +501,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		this.oldVar_lovDescFinTypeName = this.lovDescFinTypeName.getValue();
 		this.oldVar_finRemarks = this.finRemarks.getValue();
 		this.oldVar_finCcy = this.finCcy.getValue();
-		this.oldVar_lovDescFinCcyName = this.lovDescFinCcyName.getValue();
 		this.oldVar_profitDaysBasis = this.cbProfitDaysBasis.getSelectedIndex();
 		this.oldVar_finStartDate = this.finStartDate.getValue();
 		this.oldVar_finContractDate = this.finContractDate.getValue();

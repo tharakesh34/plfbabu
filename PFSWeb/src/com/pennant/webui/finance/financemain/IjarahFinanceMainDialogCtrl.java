@@ -450,8 +450,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 			doClose();
 		} catch (final WrongValuesException e) {
 			logger.error(e.getMessage());
-			closeWindow();
-		}
+			throw e;		}
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -1177,7 +1176,6 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		this.oldVar_lovDescFinTypeName = this.lovDescFinTypeName.getValue();
 		this.oldVar_finRemarks = this.finRemarks.getValue();
 		this.oldVar_finCcy = this.finCcy.getValue();
-		this.oldVar_lovDescFinCcyName = this.lovDescFinCcyName.getValue();
 		this.oldVar_profitDaysBasis = this.cbProfitDaysBasis.getSelectedIndex();
 		this.oldVar_finStartDate = this.finStartDate.getValue();
 		this.oldVar_finContractDate = this.finContractDate.getValue();
@@ -1299,7 +1297,6 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		this.lovDescFinTypeName.setValue(this.oldVar_lovDescFinTypeName);
 		this.finRemarks.setValue(this.oldVar_finRemarks);
 		this.finCcy.setValue(this.oldVar_finCcy);
-		this.lovDescFinCcyName.setValue(this.oldVar_lovDescFinCcyName);
 		this.cbProfitDaysBasis.setSelectedIndex(this.oldVar_profitDaysBasis);
 		this.finStartDate.setValue(this.oldVar_finStartDate);
 		this.finContractDate.setValue(this.oldVar_finContractDate);
@@ -1913,7 +1910,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_FinType.value") }));
 
-		this.lovDescFinCcyName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
+		this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_FinCcy.value") }));
 
 		if (!this.finBranch.isReadonly()) {
@@ -1988,7 +1985,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		this.lovDescFinTypeName.setConstraint("");
-		this.lovDescFinCcyName.setConstraint("");
+		this.finCcy.setConstraint("");
 		this.finBranch.setConstraint("");
 		this.lovDescCustCIF.setConstraint("");
 		this.lovDescCommitmentRefName.setConstraint("");
@@ -2798,42 +2795,19 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		logger.debug("Leaving " + event.toString());
 	}
 	
-	/**
-	 * To set the customer id from Customer filter
-	 * 
-	 * @param nCustomer
-	 * @throws InterruptedException
-	 */
-	public void onChange$lovDescFinCcyName(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-
-		this.lovDescFinCcyName.clearErrorMessage();
-		
-		Currency customer = (Currency)PennantAppUtil.getCurrencyBycode(this.lovDescFinCcyName.getValue());
-		if (customer != null) {
-			
-		} else {
-			finCcy.setValue("");
-			throw new WrongValueException(this.lovDescFinCcyName, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_FinCcy.value") }));
-		}
-
-		logger.debug("Leaving" + event.toString());
-	}
 	
 	/**
 	 * when clicks on button "SearchFinCcy"
 	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchFinCcy(Event event) {
+	public void onFulfill$finCcy(Event event) {
 		logger.debug("Entering " + event.toString()); 
 
-		this.lovDescFinCcyName.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_IjarahFinanceMainDialog, "Currency");
+		this.finCcy.setConstraint("");
+		Object dataObject = finCcy.getObject();
 		if (dataObject instanceof String) {
 			this.finCcy.setValue(dataObject.toString());
-			this.lovDescFinCcyName.setValue("");
-
 		} else {
 			Currency details = (Currency) dataObject;
 			if (details != null) {
@@ -2841,9 +2815,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 				this.disbAcctId.setValue("");
 				this.repayAcctId.setValue("");
 
-				this.finCcy.setValue(details.getCcyCode());
-				this.lovDescFinCcyName.setValue(details.getCcyCode() + "-" + details.getCcyDesc());
-
+				this.finCcy.setValue(details.getCcyCode(), details.getCcyDesc());
 				// To Format Amount based on the currency
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescFinFormatter(details.getCcyEditField());
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setFinCcy(details.getCcyCode());
@@ -2870,6 +2842,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		//doFillCommonDetails();
 		logger.debug("Leaving " + event.toString());
 	}
+	
 	
 	/**
 	 * When user clicks on button "customerId Search" button

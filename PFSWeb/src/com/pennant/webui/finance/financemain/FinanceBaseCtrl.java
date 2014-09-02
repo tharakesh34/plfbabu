@@ -178,7 +178,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Datebox 		finStartDate; 							// autoWireda
 	protected Textbox 		finType; 								// autoWired
 	protected Textbox 		finReference; 							// autoWired
-	protected Textbox 		finCcy; 								// autoWired
+	protected ExtendedCombobox finCcy;                              // autoWired
 	protected Combobox 		cbProfitDaysBasis; 						// autoWired
 	protected Longbox 		custID; 								// autoWired
 	protected Space 		space_custCIF;							// autoWired
@@ -383,9 +383,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button 		btnSearchFinType; 						// autoWired
 	protected Textbox 		lovDescFinTypeName; 					// autoWired
 
-	protected Button 		btnSearchFinCcy; 						// autoWired
-	protected Textbox 		lovDescFinCcyName; 						// autoWired
-
 	protected Button 		btnSearchCustCIF; 						// autoWired
 	protected Textbox 		lovDescCustCIF; 						// autoWired
 	protected Label 		custShrtName; 							// autoWired
@@ -424,7 +421,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected transient String 			oldVar_lovDescFinTypeName;
 	protected transient String 			oldVar_finReference;
 	protected transient String 			oldVar_finCcy;
-	protected transient String 			oldVar_lovDescFinCcyName;
 	protected transient int 			oldVar_profitDaysBasis;
 	protected transient long 			oldVar_custID;
 	protected transient String 			oldVar_finBranch;
@@ -640,7 +636,14 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		// Finance Basic Details Tab ---> 1. Basic Details
 		this.finReference.setMaxlength(20);
 		this.finType.setMaxlength(8);
+		
 		this.finCcy.setMaxlength(3);
+		this.finCcy.setMandatoryStyle(true);
+		this.finCcy.setModuleName("Currency");
+		this.finCcy.setValueColumn("CcyCode");
+		this.finCcy.setDescColumn("CcyDesc");
+		this.finCcy.setValidateColumns(new String[] { "CcyCode" });
+
 		this.finStartDate.setFormat(PennantConstants.dateFormat);
 		this.finContractDate.setFormat(PennantConstants.dateFormat);
 		this.finAmount.setMandatory(true);
@@ -1872,7 +1875,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
-		this.lovDescFinCcyName.setValue(aFinanceMain.getFinCcy() + "-" + aFinanceMain.getLovDescFinCcyName());
+		this.finCcy.setValue(aFinanceMain.getFinCcy(), aFinanceMain.getLovDescFinCcyName());
 		if(!StringUtils.trimToEmpty(aFinanceMain.getFinBranch()).equals("")){
 			this.finBranch.setDescription(aFinanceMain.getLovDescFinBranchName());
 		}
@@ -3428,7 +3431,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			//FinanceMain Details Tab ---> 1. Basic Details
 
 			// validate finance currency
-			if (!this.btnSearchFinCcy.isDisabled()) {
+			if (!this.finCcy.isReadonly()) {
 
 				if (this.finCcy.getValue().equals("")) {
 					errorList.add(new ErrorDetails("finCcy", "E0003", new String[] {}, new String[] {}));
@@ -3919,9 +3922,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		try {
-			aFinanceMain.setLovDescFinCcyName(this.lovDescFinCcyName.getValue());
+			aFinanceMain.setLovDescFinCcyName(this.finCcy.getValue());
 			if(this.finCcy.getValue().equals("")) {
-				wve.add(new WrongValueException(this.lovDescFinCcyName, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_FinCcy.value") })));
+				wve.add(new WrongValueException(this.finCcy, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_FinCcy.value") })));
 			} else {
 				aFinanceMain.setFinCcy(this.finCcy.getValue());
 			}
@@ -5144,7 +5147,12 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		//FinanceMain Details Tab ---> 1. Basic Details
-
+		if(this.oldVar_finReference != null && this.finReference.getValue() != null ){
+			if (this.oldVar_finReference.equals(this.finReference.getValue())) {
+				return true;
+			}
+		}
+		
 		if (this.oldVar_finType != this.finType.getValue()) {
 			return true;
 		}
@@ -5637,9 +5645,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			this.finContractDate.setValue(this.finStartDate.getValue());
 		}
 
-		if (this.lovDescFinCcyName.getValue().equals("")) {
-			this.finCcy.setValue(financeType.getFinCcy());
-			this.lovDescFinCcyName.setValue(financeType.getFinCcy()+ "-" + financeType.getLovDescFinCcyName());
+		if (this.finCcy.getValue().equals("")) {
+			this.finCcy.setValue(financeType.getFinCcy(), financeType.getLovDescFinCcyName());
 		}
 
 		if (getComboboxValue(this.cbScheduleMethod).equals("#")) {
@@ -6034,8 +6041,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		this.btnSearchFinType.setDisabled(true);
-		this.btnSearchFinCcy.setDisabled(isReadOnly("FinanceMainDialog_finCcy"));
-		this.lovDescFinCcyName.setReadonly(isReadOnly("FinanceMainDialog_finCcy"));
+		this.finCcy.setReadonly(isReadOnly("FinanceMainDialog_finCcy"));
 		readOnlyComponent(isReadOnly("FinanceMainDialog_profitDaysBasis"), this.cbProfitDaysBasis);
 		this.finBranch.setReadonly(isReadOnly("FinanceMainDialog_finBranch"));
 		this.finBranch.setMandatoryStyle(!isReadOnly("FinanceMainDialog_finBranch"));
@@ -6173,7 +6179,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.finReference.setErrorMessage("");
 		this.lovDescFinTypeName.setErrorMessage("");
 		this.finRemarks.setErrorMessage("");
-		this.lovDescFinCcyName.setErrorMessage("");
+		this.finCcy.setErrorMessage("");
 		this.finStartDate.setErrorMessage("");
 		this.finContractDate.setErrorMessage("");
 		this.finAmount.setErrorMessage("");
@@ -6258,8 +6264,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.finReference.setReadonly(true);
 		this.btnSearchFinType.setDisabled(true);
 		this.finRemarks.setReadonly(true);
-		this.btnSearchFinCcy.setDisabled(true);
-		this.lovDescFinCcyName.setReadonly(true);
+		this.finCcy.setReadonly(true);
 		readOnlyComponent(true, this.cbProfitDaysBasis);
 		readOnlyComponent(true, this.finStartDate);
 		readOnlyComponent(true, this.finContractDate);
@@ -6387,7 +6392,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.lovDescFinTypeName.setValue("");
 		this.finRemarks.setValue("");
 		this.finCcy.setValue("");
-		this.lovDescFinCcyName.setValue("");
+		this.finCcy.setValue("");
 		this.cbProfitDaysBasis.setSelectedIndex(0);
 		this.finStartDate.setText("");
 		this.finContractDate.setText("");

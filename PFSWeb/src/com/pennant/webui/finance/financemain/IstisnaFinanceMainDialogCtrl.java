@@ -459,7 +459,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			doClose();
 		} catch (final WrongValuesException e) {
 			logger.error(e.getMessage());
-			closeDialog(this.window_IstisnaFinanceMainDialog,"FinanceMainDialog");
+			throw e;
 		}
 		logger.debug("Leaving " + event.toString());
 	}
@@ -733,13 +733,11 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		if(contractAdv.compareTo(BigDecimal.ZERO) > 0){
 			this.finStartDate.setDisabled(true);
 			this.gracePeriodEndDate.setDisabled(true);
-			this.btnSearchFinCcy.setDisabled(true);
-			this.lovDescFinCcyName.setReadonly(true);
+			this.finCcy.setReadonly(true);
 		}else{
 			this.finStartDate.setDisabled(false);
 			this.gracePeriodEndDate.setDisabled(false);
-			this.btnSearchFinCcy.setDisabled(false);
-			this.lovDescFinCcyName.setReadonly(false);
+			this.finCcy.setReadonly(false);
 		}
 	}
 	
@@ -749,7 +747,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 			if(StringUtils.trimToEmpty(this.finCcy.getValue()).equals("")){
-				throw new WrongValueException(this.lovDescFinCcyName, "Currency must not be Empty");
+				throw new WrongValueException(this.finCcy, "Currency must not be Empty");
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1259,7 +1257,6 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.oldVar_finType = this.finType.getValue();
 		this.oldVar_lovDescFinTypeName = this.lovDescFinTypeName.getValue();
 		this.oldVar_finCcy = this.finCcy.getValue();
-		this.oldVar_lovDescFinCcyName = this.lovDescFinCcyName.getValue();
 		this.oldVar_profitDaysBasis = this.cbProfitDaysBasis.getSelectedIndex();
 		this.oldVar_finStartDate = this.finStartDate.getValue();
 		this.oldVar_finContractDate = this.finContractDate.getValue();
@@ -1378,7 +1375,6 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.finType.setValue(this.oldVar_finType);
 		this.lovDescFinTypeName.setValue(this.oldVar_lovDescFinTypeName);
 		this.finCcy.setValue(this.oldVar_finCcy);
-		this.lovDescFinCcyName.setValue(this.oldVar_lovDescFinCcyName);
 		this.cbProfitDaysBasis.setSelectedIndex(this.oldVar_profitDaysBasis);
 		this.finStartDate.setValue(this.oldVar_finStartDate);
 		this.finContractDate.setValue(this.oldVar_finContractDate);
@@ -1960,7 +1956,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_FinType.value") }));
 
-		this.lovDescFinCcyName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
+		this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_FinCcy.value") }));
 
 		if (!this.finBranch.isReadonly()) {
@@ -2030,7 +2026,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		this.lovDescFinTypeName.setConstraint("");
-		this.lovDescFinCcyName.setConstraint("");
+		this.finCcy.setConstraint("");
 		this.finBranch.setConstraint("");
 		this.lovDescCustCIF.setConstraint("");
 		this.lovDescCommitmentRefName.setConstraint("");
@@ -2061,7 +2057,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 
 		this.finReference.setErrorMessage("");
 		this.lovDescFinTypeName.setErrorMessage("");
-		this.lovDescFinCcyName.setErrorMessage("");
+		this.finCcy.setErrorMessage("");
 		this.finStartDate.setErrorMessage("");
 		this.finContractDate.setErrorMessage("");
 		this.finAmount.setErrorMessage("");
@@ -2922,51 +2918,24 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
-	/**
-	 * To set the customer id from Customer filter
-	 * 
-	 * @param nCustomer
-	 * @throws InterruptedException
-	 */
-	public void onChange$lovDescFinCcyName(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-
-		this.lovDescFinCcyName.clearErrorMessage();
-		
-		Currency customer = (Currency)PennantAppUtil.getCurrencyBycode(this.lovDescFinCcyName.getValue());
-		if (customer != null) {
-			
-		} else {
-			finCcy.setValue("");
-			throw new WrongValueException(this.lovDescFinCcyName, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_FinCcy.value") }));
-		}
-
-		logger.debug("Leaving" + event.toString());
-	}
-	
 	/**
 	 * when clicks on button "SearchFinCcy"
 	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchFinCcy(Event event) {
+	public void onFulfill$finCcy(Event event) {
 		logger.debug("Entering " + event.toString()); 
 
-		this.lovDescFinCcyName.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_IstisnaFinanceMainDialog, "Currency");
+		this.finCcy.setConstraint("");
+		Object dataObject = finCcy.getObject();
 		if (dataObject instanceof String) {
 			this.finCcy.setValue(dataObject.toString());
-			this.lovDescFinCcyName.setValue("");
-
 		} else {
 			Currency details = (Currency) dataObject;
 			if (details != null) {
 
 				this.repayAcctId.setValue("");
-
-				this.finCcy.setValue(details.getCcyCode());
-				this.lovDescFinCcyName.setValue(details.getCcyCode() + "-" + details.getCcyDesc());
+				this.finCcy.setValue(details.getCcyCode(), details.getCcyDesc());
 
 				// To Format Amount based on the currency
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescFinFormatter(details.getCcyEditField());
