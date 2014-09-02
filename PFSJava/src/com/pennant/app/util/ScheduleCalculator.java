@@ -221,7 +221,7 @@ public class ScheduleCalculator {
 				FinanceMain financeMain = finScheduleData.getFinanceMain();
 				
 				totalDesiredProfit = financeMain.getTotalGrossPft();
-				if (financeMain.getGrcRateBasis().equals(CalculationConstants.RATE_BASIS_R)
+				if (financeMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(financeMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
 				        && financeMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)) {
 					
 					calStart = financeMain.getFinStartDate();
