@@ -2989,7 +2989,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			return true;
 		}
 
-		if (close && getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
+		if (close && getFinanceDetail().getFinScheduleData().isSchduleGenerated()) {
 			return true;
 		}
 		
@@ -5563,6 +5563,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
 						getFinanceDetail().getFinScheduleData()));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
+				getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
 				
 				//Fill Finance Schedule details List data into ListBox
 				if(getScheduleDetailDialogCtrl() != null){
@@ -5678,6 +5679,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 
 		recSave = false;
+		
+		if(isSchdlRegenerate()){
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(false);
+		}
 
 		doStoreDefaultValues();
 		doCheckFeeReExecution();
