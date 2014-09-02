@@ -444,7 +444,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 	private transient String 		oldVar_lovDescFinTypeName;
 	private transient String 		oldVar_finReference;
 	private transient String 		oldVar_finCcy;
-	private transient String 		oldVar_lovDescFinCcyName;
 	private transient int 			oldVar_profitDaysBasis;
 	private transient Date 			oldVar_finStartDate;
 	private transient BigDecimal 	oldVar_finAmount;
