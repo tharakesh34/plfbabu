@@ -216,7 +216,7 @@
 										id="label_CreditApplicationReviewDialog_ConversionRate"
 										value="${c:l('label_CreditApplicationReviewDialog_ConversionRate.value')}" />
 									<hbox>
-									<space sclass="mandatory"  />
+									<space spacing="2px" sclass="mandatory"  />
 										<decimalbox id="conversionRate" />
 									</hbox>
 								</row>

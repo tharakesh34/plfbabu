@@ -92,7 +92,7 @@
 										id="sortOperator_holidayType" width="43px" mold="select"
 										rows="1" />
 									<textbox id="holidayType"
-										width="9px" maxlength="1" />
+										width="25px" maxlength="1" />
 								</row>
 								<!-- <row>
 									<label

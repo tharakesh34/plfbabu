@@ -6,14 +6,14 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-		<window id="window_PropertyTypeDialog" title="${c:l('window_PropertyTypeDialog.title')}" border="normal"
+		<window id="window_PropertyTypeDialog"  border="normal"
 			apply="${propertyTypeDialogCtrl}" width="100%" height="100%" sizable="false">
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 				
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start" style="float:left; border-style: none;">
+				<toolbar align="start" sclass="toolbar-start">
 
 					<button id="btnNew" height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
 					<button id="btnEdit" height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
@@ -23,12 +23,12 @@
 					<button id="btnNotes" height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
 				</toolbar>
 				<!-- SEARCH AREA -->
-				<toolbar align="center" style="float:left; border-style: none;">
-					<hbox align="center" style="padding: 2px"></hbox>
+				<toolbar align="center" sclass="toolbar-center">
+					<label value="${c:l('window_PropertyTypeDialog.title')}" sclass="sub-heading" ></label>
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end" style="float:right; border-style: none;">
+				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnHelp" height="24px" label = "${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
 					<button id="btnClose" height="24px" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"/>
 				</toolbar>

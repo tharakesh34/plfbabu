@@ -8,16 +8,15 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_SqlViewResult" apply="${sqlViewResultCtrl}"
-		title="SQL Result View" border="none" width="98%" height="98%">
+		 border="none" width="98%" height="98%">
 
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					style="float:left; border-style: none;" width="150px">
-					<hbox align="center">
+				<toolbar align="start" sclass="toolbar-start">
+					<hbox>
 						<button id="btnSimulation" height="24px"
 							image="/images/icons/gear_16.png"
 							tooltiptext="${c:l('btnDedupGen.tooltiptext')}" />
@@ -25,14 +24,14 @@
 				</toolbar>
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none;">
-					<hbox align="center" style="padding: 2px"></hbox>
+				<toolbar align="center" sclass="toolbar-center">
+					<label
+						value="SQL Result View"
+						sclass="label-heading" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
+				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnClose" height="24px"
 						image="/images/icons/btn_exitdoor2_16x16.gif"
 						tooltiptext="${c:l('btnClose.tooltiptext')}" />

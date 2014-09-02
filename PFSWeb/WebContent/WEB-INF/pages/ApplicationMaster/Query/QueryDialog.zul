@@ -17,8 +17,7 @@
 					width="100%" widths="35%,30%,35%">
 
 					<!-- COMMON BUTTONS -->
-					<toolbar align="start"
-						style="float:left; border-style: none;">
+					<toolbar align="start" sclass="toolbar-start">
 
 						<button id="btnNew" visible="false"
 							height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}"
@@ -52,8 +51,7 @@
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end"
-						style="float:right; border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnHelp" height="24px"
 							label = "HELP"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"

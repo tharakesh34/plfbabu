@@ -130,7 +130,7 @@
 											autodisable="btnNew,btnEdit,btnDelete,btnSave
 											,btnCancel,btnNotes,btnHelp,btnClose,btnRefresh,btn_SearchGroups,btnSelectGroups
 											,btnUnSelectGroups,btnUnSelectAllGroups" />
-										<space width="200px" />
+										<space width="150px" />
 										<button id="btnRefresh"
 											height="24px" label="${c:l('label_Refresh')}"
 											tooltiptext="${c:l('btnRefresh.tooltiptext')}"

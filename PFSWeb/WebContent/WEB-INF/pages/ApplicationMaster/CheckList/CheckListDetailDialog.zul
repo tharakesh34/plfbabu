@@ -8,17 +8,16 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_CheckListDetailDialog"
-		title="${c:l('window_CheckListDetailDialog.title')}" border="normal"
+		 border="normal"
 		apply="${checkListDetailDialogCtrl}" width="60%" height="40%"
 		sizable="false">
 
 		<div sclass="z-toolbar" style="padding:0px">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					style="float:left; border-style: none;">
+				<toolbar align="start" sclass="toolbar-start" >
 
 					<button id="btnNew" height="24px"
 						tooltiptext="${c:l('btnNew.tooltiptext')}"
@@ -40,14 +39,13 @@
 				</toolbar>
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none;">
-					<hbox align="center" style="padding: 2px"></hbox>
+				<toolbar align="center" sclass="toolbar-center" >
+					<label value="${c:l('window_CheckListDetailDialog.title')}" 
+					sclass="label-heading" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
+				<toolbar align="end" sclass="toolbar-end" >
 					<button id="btnHelp" height="24px"
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"

@@ -71,7 +71,7 @@
 									value="${c:l('label_WeekendMasterSearch_WeekendCode.value')}" />
 								<listbox id="sortOperator_weekendCode"
 									width="75" mold="select" rows="1" />
-								<uppercasebox id="weekendCode" width="27px"
+								<uppercasebox id="weekendCode" width="45px"
 									maxlength="3" />
 								<label
 									id="label_WeekendMasterSearch_WeekendDesc"

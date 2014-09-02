@@ -8,21 +8,22 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_TemplatePreview" title="Template Preview Window"
+	<window id="window_TemplatePreview" 
 		border="none" width="80%" sizable="true"
 		apply="${templatePreviewCtrl}">
 
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 				
-				<toolbar align="start"
-					style="float:left; border-style: none;">
+				<toolbar align="start" sclass="toolbar-start">
 					<button id="btnPreview" label="Preview"
 						tooltiptext="Click to preview" />
 				</toolbar>
-				<toolbar align="end"
-					style="float:right; border-style: none;">
+				<toolbar align="center" sclass="toolbar-center">
+					<label value="${c:l('window_templatePreview.title')}" sclass="label-heading" />
+				</toolbar>
+				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnClose" height="24px"
 						tooltiptext="Close" image="/images/icons/btn_close_16x16.gif" />
 				</toolbar>

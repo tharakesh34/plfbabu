@@ -1172,11 +1172,10 @@
 						</tabpanels>
 					</tabbox>
 				</center>
-				<south id="south" height="48px" border="none"
-					style="padding:5px;">
-					<groupbox id="groupboxWf" width="98%">
+				<south id="south" sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%">
 						<caption label="${c:l('Action')}" />
-						<hbox width="75%">
+						<hbox width="95%">
 							<radiogroup id="userAction" name="action" />
 							<label
 								id="label_MudarabaFinanceMainDialog_RecordStatus"

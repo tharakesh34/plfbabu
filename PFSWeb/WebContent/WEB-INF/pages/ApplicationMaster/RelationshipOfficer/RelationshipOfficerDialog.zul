@@ -47,8 +47,7 @@
 						</toolbar>
 
 						<!-- CRUD BUTTONS -->
-						<toolbar align="end"
-							style="float:right; border-style: none;">
+						<toolbar align="end" sclass="toolbar-end">
 							<button id="btnHelp" height="24px"
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"

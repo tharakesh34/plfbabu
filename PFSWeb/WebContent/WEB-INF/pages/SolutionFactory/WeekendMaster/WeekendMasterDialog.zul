@@ -79,7 +79,7 @@
 													<space spacing="2px"
 														sclass="mandatory" />
 													<textbox
-														id="weekendCode" maxlength="3" width="27px" />
+														id="weekendCode" maxlength="3" width="45px" />
 													<button
 														id="btnSearchCurrencyCode"
 														image="/images/icons/LOVSearch.png" height="24px" />

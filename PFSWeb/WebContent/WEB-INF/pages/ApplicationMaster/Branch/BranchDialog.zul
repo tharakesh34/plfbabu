@@ -228,7 +228,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<uppercasebox
-										id="branchSwiftLocCode" maxlength="2" width="18px" />
+										id="branchSwiftLocCode" maxlength="2" width="40px" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -239,7 +239,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<uppercasebox id="branchSwiftBrnCde"
-										maxlength="3" width="27px" />
+										maxlength="3" width="50px" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -250,7 +250,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<uppercasebox id="branchSortCode"
-										maxlength="4" width="36px" />
+										maxlength="4" width="60px" />
 								</hbox>
 							</row>
 							<row visible="true">

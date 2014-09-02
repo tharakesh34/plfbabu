@@ -8,16 +8,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 <window>
-	<window id="window_RuleResultSimulation" title="Script Simulation Window" border="none" 
+	<window id="window_RuleResultSimulation" border="none" 
 		width="1096px" sizable="true" apply="${javasscriptBuilderSimulationCtrl}">
 
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 
+				<toolbar align="start" sclass="toolbar-start" />
+				<toolbar align="center" sclass="toolbar-center" >
+					<label value="${c:l('window_RuleResultSimulation.title')}"  sclass="label-Heading"></label>
+				</toolbar>
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
+				<toolbar align="end" sclass="toolbar-end" >
 
 					<button id="btnClose" height="24px"
 						tooltiptext="Close" label = "CLOSE" />

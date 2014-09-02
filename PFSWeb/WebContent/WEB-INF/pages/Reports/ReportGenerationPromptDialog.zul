@@ -17,18 +17,20 @@
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 						width="100%">
 
-						<toolbar align="start" height="22px"
-							style=" border-style: none;">
-							<hbox align="center">
+						<toolbar align="start" 
+							sclass="toolbar-start">
+							<hbox>
 								<label
 									value="${c:l('label_Search_Template.label')}" />
 								<space></space>
 								<combobox id="cbSelectTemplate" readonly="true"
 									width="200px"
 									tooltiptext="${c:l('label_Select_Template.label')}" />
-								<button id="btnSaveTemplate" height="20"
+								<space spacing="10px"/>
+								 <button id="btnSaveTemplate" height="20"
 									label="${c:l('btnSave.label')}"
 									tooltiptext="${c:l('label_Add_Template.tooltipText')}" />
+								<space spacing="10px"/>
 								<button id="btnDeleteTemplate"
 									height="20" disabled="true" label="${c:l('btnDelete.label')}"
 									tooltiptext="${c:l('label_Delete_Template.tooltipText')}" />

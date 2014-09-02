@@ -132,7 +132,7 @@
 											<button id="btn_SearchRoles"
 												label="${c:l('label_Filter')}"
 												tooltiptext="${c:l('button_SecurityUserRoleSearchRole.tooltiptext')}" />
-											<space width="200px" />
+											<space width="150px" />
 											<button id="btnRefresh"
 												label="${c:l('label_Refresh')}"
 												tooltiptext="${c:l('button_SecurityUserRoleRefresh.tooltiptext')}" />

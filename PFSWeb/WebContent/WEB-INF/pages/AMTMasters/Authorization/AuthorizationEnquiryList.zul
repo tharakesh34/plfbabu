@@ -7,7 +7,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-		<window id="window_AuthorizationList"  apply="${authorizationListCtrl}" border="none" width="100%" title="${c:l('panel_authorizationEnquiryList.title')}">
+		<window id="window_AuthorizationList"  apply="${authorizationListCtrl}" border="none" width="100%">
 			<div sclass="z-toolbar" style="padding:0px" height="28px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 	

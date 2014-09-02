@@ -79,7 +79,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<uppercasebox id="pRelationCode"
-										maxlength="8" width="72px" />
+										maxlength="8" width="120px" />
 								</hbox>
 							</row>
 							<row visible="true">
