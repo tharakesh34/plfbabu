@@ -231,7 +231,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 
 	protected Textbox 		finType; 								// autoWired
 	protected Textbox 		finReference; 							// autoWired
-	protected Textbox 		finCcy; 								// autoWired
+	protected ExtendedCombobox 		finCcy; 						// autoWired
 	protected Combobox 		cbProfitDaysBasis; 						// autoWired
 	protected Datebox 		finStartDate; 							// autoWired
 	protected CurrencyBox 	finAmount; 								// autoWired
@@ -385,9 +385,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 
 	protected Button 		btnSearchFinType; 						// autoWired
 	protected Textbox 		lovDescFinTypeName; 					// autoWired
-
-	protected Button 		btnSearchFinCcy; 						// autoWired
-	protected Textbox 		lovDescFinCcyName; 						// autoWired
 
 	protected Button 		btnSearchGraceBaseRate; 				// autoWired
 	protected Textbox 		lovDescGraceBaseRateName; 				// autoWired
@@ -697,6 +694,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finReference.setMaxlength(20);
 		this.finType.setMaxlength(8);
 		this.finCcy.setMaxlength(3);
+		this.finCcy.setMandatoryStyle(true);
+		this.finCcy.setModuleName("Currency");
+		this.finCcy.setValueColumn("CcyCode");
+		this.finCcy.setDescColumn("CcyDesc");
+		this.finCcy.setValidateColumns(new String[] { "CcyCode" });
 		this.finStartDate.setFormat(PennantConstants.dateFormat);
 		this.finAmount.setMandatory(true);
 		this.finAmount.setMaxlength(18);
@@ -1104,7 +1106,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
-		this.lovDescFinCcyName.setValue(aFinanceMain.getFinCcy() + "-" + aFinanceMain.getLovDescFinCcyName());
+		this.finCcy.setValue(aFinanceMain.getFinCcy(), aFinanceMain.getLovDescFinCcyName());
 
 		if (aFinanceMain.getFinStartDate() != null) {
 			this.finStartDate.setValue(aFinanceMain.getFinStartDate());
@@ -1772,9 +1774,9 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		}
 
 		try {
-			aFinanceMain.setLovDescFinCcyName(this.lovDescFinCcyName.getValue());
+			aFinanceMain.setLovDescFinCcyName(this.finCcy.getValue());
 			if(this.finCcy.getValue().equals("")) {
-				wve.add(new WrongValueException(this.lovDescFinCcyName, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value") })));
+				wve.add(new WrongValueException(this.finCcy, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value") })));
 			} else {
 				aFinanceMain.setFinCcy(this.finCcy.getValue());
 			}
@@ -2945,7 +2947,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.oldVar_finType = this.finType.getValue();
 		this.oldVar_lovDescFinTypeName = this.lovDescFinTypeName.getValue();
 		this.oldVar_finCcy = this.finCcy.getValue();
-		this.oldVar_lovDescFinCcyName = this.lovDescFinCcyName.getValue();
 		this.oldVar_profitDaysBasis = this.cbProfitDaysBasis.getSelectedIndex();
 		this.oldVar_finStartDate = this.finStartDate.getValue();
 		this.oldVar_finAmount = this.finAmount.getValue();
@@ -3062,7 +3063,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finType.setValue(this.oldVar_finType);
 		this.lovDescFinTypeName.setValue(this.oldVar_lovDescFinTypeName);
 		this.finCcy.setValue(this.oldVar_finCcy);
-		this.lovDescFinCcyName.setValue(this.oldVar_lovDescFinCcyName);
 		this.cbProfitDaysBasis.setSelectedIndex(this.oldVar_profitDaysBasis);
 		this.finStartDate.setValue(this.oldVar_finStartDate);
 		this.finAmount.setValue(this.oldVar_finAmount);
@@ -3915,7 +3915,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinType.value") }));
 
-		this.lovDescFinCcyName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
+		this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value") }));
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
@@ -3966,7 +3966,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		this.lovDescFinTypeName.setConstraint("");
-		this.lovDescFinCcyName.setConstraint("");
+		this.finCcy.setConstraint("");
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -4008,7 +4008,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 
 		this.finReference.setErrorMessage("");
 		this.lovDescFinTypeName.setErrorMessage("");
-		this.lovDescFinCcyName.setErrorMessage("");
+		this.finCcy.setErrorMessage("");
 		this.finStartDate.setErrorMessage("");
 		this.finAmount.setErrorMessage("");
 		this.downPayBank.setErrorMessage("");
@@ -4186,8 +4186,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		}
 
 		this.btnSearchFinType.setDisabled(true);
-		this.btnSearchFinCcy.setDisabled(isReadOnly("WIFFinanceMainDialog_finCcy"));
-		this.lovDescFinCcyName.setReadonly(isReadOnly("WIFFinanceMainDialog_finCcy"));
+		this.finCcy.setReadonly(isReadOnly("WIFFinanceMainDialog_finCcy"));
 		this.cbProfitDaysBasis.setDisabled(isReadOnly("WIFFinanceMainDialog_profitDaysBasis"));
 		this.finStartDate.setDisabled(isReadOnly("WIFFinanceMainDialog_finStartDate"));
 		this.finAmount.setReadonly(isReadOnly("WIFFinanceMainDialog_finAmount"));
@@ -4331,8 +4330,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 
 		this.finReference.setReadonly(true);
 		this.btnSearchFinType.setDisabled(true);
-		this.btnSearchFinCcy.setDisabled(true);
-		this.lovDescFinCcyName.setReadonly(true);
+		this.finCcy.setReadonly(true);
 		this.cbProfitDaysBasis.setDisabled(true);
 		this.finStartDate.setDisabled(true);
 		this.finAmount.setReadonly(true);
@@ -4460,7 +4458,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finType.setValue("");
 		this.lovDescFinTypeName.setValue("");
 		this.finCcy.setValue("");
-		this.lovDescFinCcyName.setValue("");
+		this.finCcy.setValue("");
 		this.cbProfitDaysBasis.setValue("");
 		this.finStartDate.setText("");
 		this.finAmount.setValue("");
@@ -5078,49 +5076,23 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		logger.debug("Leaving " + event.toString());
 	}
 	
-	/**
-	 * To set the customer id from Customer filter
-	 * 
-	 * @param nCustomer
-	 * @throws InterruptedException
-	 */
-	public void onChange$lovDescFinCcyName(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-
-		this.lovDescFinCcyName.clearErrorMessage();
-		
-		Currency currency = (Currency)PennantAppUtil.getCurrencyBycode(this.lovDescFinCcyName.getValue());
-		if (currency != null) {
-			
-		} else {
-			finCcy.setValue("");
-			throw new WrongValueException(this.lovDescFinCcyName, Labels.getLabel("FIELD_NO_INVALID", 
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value") }));
-		}
-
-		logger.debug("Leaving" + event.toString());
-	}
 	
 	/**
 	 * when clicks on button "SearchFinCcy"
 	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchFinCcy(Event event) {
+	public void onFulfill$finCcy(Event event) {
 		logger.debug("Entering " + event.toString()); 
 
-		this.lovDescFinCcyName.setConstraint("");
+		this.finCcy.setConstraint("");
 		Object dataObject = ExtendedSearchListBox.show(this.window_RetailWIFFinanceMainDialog, "Currency");
 		if (dataObject instanceof String) {
 			this.finCcy.setValue(dataObject.toString());
-			this.lovDescFinCcyName.setValue("");
-
 		} else {
 			Currency details = (Currency) dataObject;
 			if (details != null) {
-
-				this.finCcy.setValue(details.getCcyCode());
-				this.lovDescFinCcyName.setValue(details.getCcyCode() + "-" + details.getCcyDesc());
+				this.finCcy.setValue(details.getCcyCode(), details.getCcyDesc());
 
 				// To Format Amount based on the currency
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescFinFormatter(details.getCcyEditField());
@@ -6371,10 +6343,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			this.finStartDate.setValue((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
 		}
 
-		if (this.lovDescFinCcyName.getValue().equals("")) {
-			this.finCcy.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy());
-			this.lovDescFinCcyName.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy()
-					+ "-" + getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinCcyName());
+		if (this.finCcy.getValue().equals("")) {
+			this.finCcy.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy(), getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinCcyName());
 		}
 
 		if (getComboboxValue(this.cbScheduleMethod).equals("#")) {
@@ -6818,12 +6788,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			//FinanceMain Details Tab ---> 1. Basic Details
 
 			// validate finance currency
-			if (!this.btnSearchFinCcy.isDisabled()) {
+			if (!this.finCcy.isReadonly()) {
 
 				if (this.finCcy.getValue().equals("")) {
 					errorList.add(new ErrorDetails("finCcy", "E0003", new String[] {}, new String[] {}));
 				} else if (!this.finCcy.getValue().equals(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy())) {
-
 					errorList.add(new ErrorDetails("finCcy", "W0001", new String[] { this.finCcy.getValue(),
 							getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy() }, new String[] { this.finCcy.getValue() }));
 				}
