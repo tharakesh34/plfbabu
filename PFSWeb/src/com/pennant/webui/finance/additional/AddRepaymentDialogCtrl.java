@@ -744,7 +744,13 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		
 		if(this.tillDateRow.isVisible()){
-			getFinScheduleData().getFinanceMain().setRecalToDate((Date)this.cbTillDate.getSelectedItem().getValue());
+			if(this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLMDT)){
+				Date fromDate = (Date) this.cbTillDate.getSelectedItem().getValue();
+				getFinScheduleData().getFinanceMain().setRecalFromDate(fromDate);
+				getFinScheduleData().getFinanceMain().setRecalToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
+			}  else {
+				getFinScheduleData().getFinanceMain().setRecalToDate((Date)this.cbTillDate.getSelectedItem().getValue());
+			}
 			setFinScheduleData(ScheduleCalculator.changeRepay(
 					getFinScheduleData(), PennantAppUtil.unFormateAmount(
 							this.wIAmount.getValue(),getFinScheduleData().getFinanceMain().getLovDescFinFormatter()),recalScheduleMethod));
@@ -797,7 +803,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering" + event.toString());
 		String selectedRecalType = this.cbReCalType.getSelectedItem().getValue().toString();
 		
-		if (selectedRecalType.equals(CalculationConstants.RPYCHG_TILLDATE)) {
+		if (selectedRecalType.equals(CalculationConstants.RPYCHG_TILLDATE) || 
+				selectedRecalType.equals(CalculationConstants.RPYCHG_TILLMDT)) {
 			this.tillDateRow.setVisible(true);
 			if (isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))) {
 				fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
