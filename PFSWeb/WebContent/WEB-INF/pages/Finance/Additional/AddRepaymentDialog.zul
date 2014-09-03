@@ -8,14 +8,14 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_ChangeRepaymentDialog" border="normal"
-		apply="${changeRepaymentDialogCtrl}" width="525px" height="265px"
+		apply="${changeRepaymentDialogCtrl}" width="525px" height="300px"
 		sizable="false" title="${c:l('window_ChangeRepaymentDialog.title')}"  closable="true">
 
 		<borderlayout id="borderlayoutRepay">
 			<center border="none" autoscroll="true">
 
 				<groupbox id="gb_RepayDetails" 
-					height="175px" style="border:1px solid #F38C60;">
+					height="250px" style="border:1px solid #F38C60;">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
 						style="border:0px">
 						<columns>
