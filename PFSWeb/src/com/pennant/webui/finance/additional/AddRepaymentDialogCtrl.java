@@ -61,6 +61,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
@@ -103,15 +104,18 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	protected Combobox cbReCalType; 				// autowired
 	protected Combobox cbRepayFromDate; 			// autowired
 	protected Combobox cbRepayToDate; 				// autowired
+	protected Combobox cbFromDate; 			// autowired
 	protected Combobox cbTillDate; 					// autowired
 	protected Combobox cbSchdMthd; 					// autowired
 	protected Decimalbox wIAmount; 					// autowired
+	protected Row fromDateRow;                      // autowired
 	protected Row tillDateRow;
 	protected Row pftIntactRow;						// autowired
 	protected Checkbox pftIntact; 					// autowired
 	protected Row numOfTermsRow;
 	protected Intbox adjTerms; 						// autowired
-
+	protected Label label_ChangeRepaymentDialog_TillDate; 	// autowired
+   
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 				// overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; 	// overhanded per param
@@ -121,6 +125,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	// on the values are edited since the last init.
 	private transient int oldVar_wIRateChangeFromDate;
 	private transient int oldVar_wIRateChangeToDate;
+	private transient int oldVar_wIRateChangeTillFromDate;
 	private transient int oldVar_wIRateChangeTillDate;
 	private transient BigDecimal oldVar_wIAmount;
 	private transient int oldVar_wISchdMethd;
@@ -244,6 +249,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.oldVar_wIRateChangeFromDate = this.cbRepayFromDate.getSelectedIndex();
 		this.oldVar_wIRateChangeToDate = this.cbRepayToDate.getSelectedIndex();
 		this.oldVar_wIRateChangeTillDate = this.cbTillDate.getSelectedIndex();
+		this.oldVar_wIRateChangeTillFromDate = this.cbFromDate.getSelectedIndex();
 		this.oldVar_wIAmount = this.wIAmount.getValue();
 		this.oldVar_wISchdMethd = this.cbSchdMthd.getSelectedIndex();
 		this.oldVar_wIReCalType = this.cbReCalType.getSelectedIndex();
@@ -262,6 +268,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.wIAmount.setDisabled(true);
 		this.cbReCalType.setDisabled(true);
 		this.cbTillDate.setDisabled(true);
+		this.cbFromDate.setDisabled(true);
 		this.cbSchdMthd.setDisabled(true);
 		this.adjTerms.setReadonly(true);
 		this.pftIntact.setDisabled(true);
@@ -408,6 +415,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		if (this.oldVar_wIRateChangeTillDate != this.cbTillDate.getSelectedIndex()) {
 			return true;
 		}
+		if (this.oldVar_wIRateChangeTillFromDate != this.cbFromDate.getSelectedIndex()) {
+			return true;
+		}
 		if (this.oldVar_wISchdMethd != this.cbSchdMthd.getSelectedIndex()) {
 			return true;
 		}
@@ -441,7 +451,14 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}else {
 			fillSchToDates(this.cbRepayToDate, aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate(),true);
 		}
-		fillSchToDates(this.cbTillDate, aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate(),false);
+		
+		if(aFinSchData.getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLDATE)){
+			fillSchToDates(this.cbFromDate, aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate(),false);
+			fillSchToDates(this.cbTillDate, aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate(),false);
+		} else if(aFinSchData.getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLMDT)){
+			fillSchToDates(this.cbTillDate, aFinSchData.getFinanceScheduleDetails(), aFinSchData.getFinanceMain().getFinStartDate(),false);
+		}
+		
 	
 		// check the values and set in respective fields.
 		// If schedule detail is not null i.e. existing one
@@ -475,6 +492,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), recalTypes, ",ADDTERM,ADDLAST,ADJTERMS,CURPRD,");
 		}
 		if(getFinScheduleData().getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLDATE)) {
+			this.fromDateRow.setVisible(true);
+			this.tillDateRow.setVisible(true);
+		}
+		if(getFinScheduleData().getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLMDT)) {
 			this.tillDateRow.setVisible(true);
 		}
 
@@ -680,18 +701,19 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}catch (WrongValueException we) {
 			wve.add(we);
 		}
-		if(this.tillDateRow.isVisible()){
+		
+		if(this.fromDateRow.isVisible()){
 			try {
-				if(this.cbTillDate.getSelectedIndex() == 0) {
-					throw new WrongValueException(this.cbTillDate, Labels.getLabel("STATIC_INVALID",
-							new String[] { Labels.getLabel("label_ChangeRepaymentDialog_TillDate.value") }));
+				if(this.cbFromDate.getSelectedIndex() == 0) {
+					throw new WrongValueException(this.cbFromDate, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value") }));
 				}
-				if(this.cbRepayToDate.getSelectedIndex()>0 && ((Date) this.cbTillDate.getSelectedItem()
+				if(this.cbRepayToDate.getSelectedIndex()>0 && ((Date) this.cbFromDate.getSelectedItem()
 						.getValue())
 						.compareTo((Date) this.cbRepayToDate
 								.getSelectedItem().getValue()) < 0){
 					throw new WrongValueException(
-							this.cbTillDate,
+							this.cbFromDate,
 							Labels.getLabel(
 									"DATE_ALLOWED_AFTER",
 									new String[]{
@@ -700,6 +722,49 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 													PennantConstants.dateFormate)
 									}));
 				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+		
+		if(this.tillDateRow.isVisible()){
+			try {
+				if(this.cbTillDate.getSelectedIndex() == 0) {
+					throw new WrongValueException(this.cbTillDate, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_ChangeRepaymentDialog_TillDate.value") }));
+				}
+				if(this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLDATE)){
+					if(this.cbFromDate.getSelectedIndex()>0 && ((Date) this.cbTillDate.getSelectedItem()
+							.getValue())
+							.compareTo((Date) this.cbRepayToDate
+									.getSelectedItem().getValue()) < 0){
+						throw new WrongValueException(
+								this.cbTillDate,
+								Labels.getLabel(
+										"DATE_ALLOWED_AFTER",
+										new String[]{
+												Labels.getLabel("label_ChangeRepaymentDialog_TillDate.value"),
+												PennantAppUtil.formateDate((Date)this.cbRepayToDate.getSelectedItem().getValue(),
+														PennantConstants.dateFormate)
+										}));
+					}
+				} else {
+					if(this.cbRepayToDate.getSelectedIndex()>0 && ((Date) this.cbTillDate.getSelectedItem()
+							.getValue())
+							.compareTo((Date) this.cbRepayToDate
+									.getSelectedItem().getValue()) < 0){
+						throw new WrongValueException(
+								this.cbTillDate,
+								Labels.getLabel(
+										"DATE_ALLOWED_AFTER",
+										new String[]{
+												Labels.getLabel("label_ChangeRepaymentDialog_TillDate.value"),
+												PennantAppUtil.formateDate((Date)this.cbRepayToDate.getSelectedItem().getValue(),
+														PennantConstants.dateFormate)
+										}));
+					}
+				}
+				
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -749,8 +814,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				getFinScheduleData().getFinanceMain().setRecalFromDate(fromDate);
 				getFinScheduleData().getFinanceMain().setRecalToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
 			}  else {
+				getFinScheduleData().getFinanceMain().setRecalFromDate((Date)this.cbFromDate.getSelectedItem().getValue());
 				getFinScheduleData().getFinanceMain().setRecalToDate((Date)this.cbTillDate.getSelectedItem().getValue());
 			}
+			
 			setFinScheduleData(ScheduleCalculator.changeRepay(
 					getFinScheduleData(), PennantAppUtil.unFormateAmount(
 							this.wIAmount.getValue(),getFinScheduleData().getFinanceMain().getLovDescFinFormatter()),recalScheduleMethod));
@@ -805,6 +872,19 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		
 		if (selectedRecalType.equals(CalculationConstants.RPYCHG_TILLDATE) || 
 				selectedRecalType.equals(CalculationConstants.RPYCHG_TILLMDT)) {
+			
+		  if(selectedRecalType.equals(CalculationConstants.RPYCHG_TILLDATE)){
+				this.fromDateRow.setVisible(true);
+				if(isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))){
+					fillSchToDates(this.cbFromDate, getFinScheduleData().getFinanceScheduleDetails(),
+							(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
+				}
+			this.label_ChangeRepaymentDialog_TillDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_TillDate.value"));
+			} else {
+				this.fromDateRow.setVisible(false);
+				this.label_ChangeRepaymentDialog_TillDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value"));
+			}
+			
 			this.tillDateRow.setVisible(true);
 			if (isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))) {
 				fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
@@ -823,6 +903,15 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			this.tillDateRow.setVisible(false);
 			this.numOfTermsRow.setVisible(false);
 		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onChange$cbFromDate(Event event) {
+		logger.debug("Entering" + event.toString());
+		
+		fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
+				(Date) this.cbFromDate.getSelectedItem().getValue(), false);
+		
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -847,12 +936,23 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	public void onChange$cbRepayToDate(Event event) {
 		logger.debug("Entering" + event.toString());
 		fillSchdMethod();
-		if(this.cbRepayToDate.getSelectedIndex() > 0) {
-			fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
-					(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
-		}else {
-			this.cbTillDate.setSelectedIndex(0);
+		
+		if(finScheduleData.getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLDATE)){
+			if(this.cbRepayToDate.getSelectedIndex() > 0) {
+				fillSchToDates(this.cbFromDate, getFinScheduleData().getFinanceScheduleDetails(),
+						(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
+			}else {
+				this.cbFromDate.setSelectedIndex(0);
+			}
+		} else {
+			if(this.cbRepayToDate.getSelectedIndex() > 0) {
+				fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
+						(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
+			}else {
+				this.cbTillDate.setSelectedIndex(0);
+			}
 		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 	
