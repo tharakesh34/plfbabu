@@ -3671,6 +3671,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="customerService" ref="customerService" />
 		<property name="customerIncomeService" ref="customerIncomeService" />
+		<property name="stepPolicyService" ref="stepPolicyService" />
 	</bean>
 	
 	<bean id="murabahaWIFFinanceMainDialogCtrl"
