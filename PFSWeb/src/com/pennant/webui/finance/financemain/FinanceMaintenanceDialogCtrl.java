@@ -2831,7 +2831,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		logger.debug("Entering " + event.toString());
 
 		Filter[] filters = new Filter[3];
-		filters[0] = new Filter("CustCIF", this.custCIF.getValue(), Filter.OP_EQUAL);
+		filters[0] = new Filter("CustID", this.custID.longValue(), Filter.OP_EQUAL);
 		//filters[1] = new Filter("cmtBranch", this.finBranch.getValue(), Filter.OP_EQUAL);
 		filters[1] = new Filter("cmtCcy", this.finCcy.getValue(), Filter.OP_EQUAL);
 		if(this.finStartDate.getValue() != null){

@@ -1262,7 +1262,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.oldVar_finAmount = this.finAmount.getValue();
 		this.oldVar_securityDeposit = this.securityDeposit.getValue();
 		this.oldVar_downPayment = this.downPayment.getValue();
-		this.oldVar_custID = this.custID.getValue();
+		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_finBranch = this.finBranch.getValue();
 		this.oldVar_lovDescFinBranchName = this.finBranch.getDescription();
 		this.oldVar_repayAcctId = this.repayAcctId.getValue();
@@ -3072,7 +3072,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		logger.debug("Entering " + event.toString());
 
 		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("CustCIF", this.custCIF.getValue(), Filter.OP_EQUAL);
+		filters[0] = new Filter("CustID", this.custID.longValue(), Filter.OP_EQUAL);
 		//filters[1] = new Filter("cmtBranch", this.finBranch.getValue(), Filter.OP_EQUAL);
 	//	filters[1] = new Filter("cmtCcy", this.finCcy.getValue(), Filter.OP_EQUAL);
 		if(this.finStartDate.getValue() != null){

@@ -33,7 +33,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -1123,11 +1122,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 	public void onClick$viewCustInfo(Event event){
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			if(customer == null){
-				customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
-			}
-			
-			map.put("custid", customer.getCustID());
+			map.put("custid", this.custID.longValue());
 			map.put("custCIF", this.custCIF.getValue());
 			map.put("custShrtName", this.custCIF.getDescription());
 			map.put("finFormatter", getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());

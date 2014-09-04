@@ -599,7 +599,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected transient FinanceMainListCtrl financeMainListCtrl = null;// over handed per parameters
 	protected transient FinanceSelectCtrl financeSelectCtrl = null;// over handed per parameters
 	protected Customer customer = null;
-	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	
 	protected List<ValueLabel> profitDaysBasisList = PennantAppUtil.getProfitDaysBasis();
 	protected List<ValueLabel> schMethodList = PennantAppUtil.getScheduleMethod();
@@ -3869,7 +3868,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		int formatter = getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter();
 		FinanceMain financeMain=new FinanceMain();
 		financeMain.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
-		financeMain.setCustID(this.custID.getValue());
+		financeMain.setCustID(this.custID.longValue());
 		financeMain.setLovDescCustCIF(this.custCIF.getValue());
 		financeMain.setLovDescCustShrtName(this.custCIF.getDescription());
 		financeMain.setFinCcy(this.finCcy.getValue());
@@ -6045,8 +6044,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_profitDaysBasis"), this.cbProfitDaysBasis);
 		this.finBranch.setReadonly(isReadOnly("FinanceMainDialog_finBranch"));
 		this.finBranch.setMandatoryStyle(!isReadOnly("FinanceMainDialog_finBranch"));
-		//this.btnSearchCustCIF.setDisabled(isReadOnly("FinanceMainDialog_custID"));
-		//readOnlyComponent(isReadOnly("FinanceMainDialog_custID"), this.lovDescCustCIF);
 		this.custCIF.setReadonly(isReadOnly("FinanceMainDialog_custID"));
 		this.finRemarks.setReadonly(isReadOnly("FinanceMainDialog_finRemarks"));
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finStartDate"), this.finStartDate);
