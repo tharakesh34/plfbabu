@@ -863,7 +863,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 
 		try {
-			this.lovDescCustCIF.getValue();
+			this.custCIF.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -920,7 +920,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 	private void executeAccounting(boolean onLoadProcess) throws Exception{
 		logger.debug("Entering");
 
-		if(!StringUtils.trimToEmpty(this.lovDescCustCIF.getValue()).equals("")){
+		if(!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")){
 
 			if(onLoadProcess){
 				doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
@@ -1771,8 +1771,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 					new String[] { Labels.getLabel("label_FinanceMaintenanceDialog_FinBranch.value") }));
 		}
 
-		if (!this.btnSearchCustCIF.isDisabled()) {
-			this.lovDescCustCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+		if (!this.custCIF.isReadonly()) {
+			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[] { Labels.getLabel("label_FinanceMaintenanceDialog_CustID.value") }));
 		}
 
@@ -1840,7 +1840,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.lovDescFinTypeName.setConstraint("");
 		this.finCcy.setConstraint("");
 		this.finBranch.setConstraint("");
-		this.lovDescCustCIF.setConstraint("");
+		this.custCIF.setConstraint("");
 		this.lovDescCommitmentRefName.setConstraint("");
 		this.finPurpose.setConstraint("");
 
@@ -2831,7 +2831,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		logger.debug("Entering " + event.toString());
 
 		Filter[] filters = new Filter[3];
-		filters[0] = new Filter("custID", this.custID.longValue(), Filter.OP_EQUAL);
+		filters[0] = new Filter("CustCIF", this.custCIF.getValue(), Filter.OP_EQUAL);
 		//filters[1] = new Filter("cmtBranch", this.finBranch.getValue(), Filter.OP_EQUAL);
 		filters[1] = new Filter("cmtCcy", this.finCcy.getValue(), Filter.OP_EQUAL);
 		if(this.finStartDate.getValue() != null){
@@ -3817,8 +3817,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("custid", this.custID.longValue());
-			map.put("custCIF", this.lovDescCustCIF.getValue());
-			map.put("custShrtName", this.custShrtName.getValue());
+			map.put("custCIF", this.custCIF.getValue());
+			map.put("custShrtName", this.custCIF.getDescription());
 			map.put("finFormatter", getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
 			map.put("finReference", this.finReference.getValue());
 			map.put("finance", true);

@@ -117,20 +117,10 @@
 													</hbox>
 												</row>
 												<row>
-													<label
+                                                    <label
 														id="label_FinanceMaintenanceDialog_FinCcy"
 														value="${c:l('label_FinanceMaintenanceDialog_FinCcy.value')}" />
-													<hbox>
-														<space
-															spacing="2px" sclass="mandatory" />
-														<textbox
-															id="finCcy" width="27px" visible="false" />
-														<textbox
-															id="lovDescFinCcyName" width="250px" tabindex="-1" />
-														<button
-															id="btnSearchFinCcy" image="/images/icons/LOVSearch.png"
-															 />
-													</hbox>
+													<extendedcombobox id="finCcy"/>
 													<label
 														id="label_FinanceMaintenanceDialog_ProfitDaysBasis"
 														value="${c:l('label_FinanceMaintenanceDialog_ProfitDaysBasis.value')}" />
@@ -147,17 +137,10 @@
 														id="label_FinanceMaintenanceDialog_CustID"
 														value="${c:l('label_FinanceMaintenanceDialog_CustID.value')}" />
 													<hbox>
-														<space
-															id="space_custCIF" spacing="2px" sclass="mandatory" />
-														<longbox
+													    <longbox
 															id="custID" width="171px" maxlength="26" visible="false" />
-														<textbox
-															id="lovDescCustCIF" width="150px" />
-														<button
-															id="btnSearchCustCIF" image="/images/icons/LOVSearch.png"
-															 />
-														<label
-															id="custShrtName" />
+														<extendedcombobox
+															id="custCIF" />
 														<button
 															id="viewCustInfo" image="/images/icons/more.png"
 															tooltiptext="${c:l('tooltip_Custinfo')}">

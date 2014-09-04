@@ -104,7 +104,6 @@ import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
 import com.pennant.backend.model.rulefactory.AECommitment;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -865,7 +864,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 
 		try {
-			this.lovDescCustCIF.getValue();
+			this.custCIF.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -917,7 +916,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	private void executeAccounting(boolean onLoadProcess) throws Exception{
 		logger.debug("Entering");
 
-		if(!StringUtils.trimToEmpty(this.lovDescCustCIF.getValue()).equals("")){
+		if(!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")){
 
 			if(onLoadProcess){
 				doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
@@ -1800,8 +1799,8 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					new String[] { Labels.getLabel("label_SukuknrmFinanceMainDialog_FinBranch.value") }));
 		}
 
-		if (!this.btnSearchCustCIF.isDisabled()) {
-			this.lovDescCustCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+		if (!this.custCIF.isReadonly()) {
+			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[] { Labels.getLabel("label_SukuknrmFinanceMainDialog_CustID.value") }));
 		}
 
@@ -1869,7 +1868,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		this.lovDescFinTypeName.setConstraint("");
 		this.finCcy.setConstraint("");
 		this.finBranch.setConstraint("");
-		this.lovDescCustCIF.setConstraint("");
+		this.custCIF.setConstraint("");
 		this.lovDescCommitmentRefName.setConstraint("");
 		this.finPurpose.setConstraint("");
 
@@ -2124,7 +2123,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			}
 		}
 
-		if(StringUtils.trimToEmpty(this.lovDescCustCIF.getValue()).equals("")){
+		if(StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")){
 			aFinanceDetail.setStageAccountingList(null);
 		}else{
 
@@ -2701,50 +2700,35 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
-	 * When user clicks on button "customerId Search" button
-	 * 
-	 * @param event
+	/*
+	 * onFullFill Event For CustCIF
 	 */
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
-		this.lovDescCustCIF.clearErrorMessage();
-		doSearchCustomerCIF();
-		logger.debug("Leaving " + event.toString());
-	}
+	public void onFulfill$custCIF(Event event){
+		logger.debug("Entering " + event.toString()); 
 
-	/**
-	 * To load the customerSelect filter dialog
-	 * 
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
-	 */
-	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
-
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("DialogCtrl", this);
-		map.put("filtertype", "Extended");
-		map.put("searchObject", this.custCIFSearchObject);
-		map.put("finDivision", super.finDivision);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-
-		logger.debug("Leaving");
-	}
-
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
-		logger.debug("Entering");
-		customer = (Customer) nCustomer;
-		this.custCIFSearchObject = newSearchObject;
-		if(customer != null){
-			setCustomerData();
-			//			appendAvailmentTicket();
-		}else{	
-			this.disbAcctId.setCustCIF("");
-			this.repayAcctId.setCustCIF("");
-			this.downPayAccount.setCustCIF("");
+		this.custCIF.setConstraint("");
+		Object dataObject = custCIF.getObject();
+		
+		if (dataObject instanceof String) {
+			this.custCIF.setValue(dataObject.toString());
+		} else {
+			Customer details = (Customer) dataObject;
+			if (details != null) {
+				customer = (Customer) dataObject;
+				setCustomerData();
+			} else {
+				this.custID.setValue((long) 0);
+				this.custCIF.setValue("");
+				this.commitmentRef.setValue("");
+				this.lovDescCommitmentRefName.setValue("");
+				this.disbAcctId.setCustCIF("");
+				this.repayAcctId.setCustCIF("");
+				this.downPayAccount.setCustCIF("");
+				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_CustID.value") }));
+			}
 		}
-		logger.debug("Leaving");
+		//doFillCommonDetails();
+		logger.debug("Leaving " + event.toString());
 	}
 
 	/**
@@ -2930,7 +2914,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		logger.debug("Entering " + event.toString());
 
 		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("custID", this.custID.longValue(), Filter.OP_EQUAL);
+		filters[0] = new Filter("CustCIF", this.custCIF.getValue(), Filter.OP_EQUAL);
 		//filters[1] = new Filter("cmtBranch", this.finBranch.getValue(), Filter.OP_EQUAL);
 //		filters[1] = new Filter("cmtCcy", this.finCcy.getValue(), Filter.OP_EQUAL);
 		if(this.finStartDate.getValue() != null){
@@ -3508,34 +3492,6 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		logger.debug("Leaving");
 	}
 
-
-	/**
-	 * To set the customer id from Customer filter
-	 * 
-	 * @param nCustomer
-	 * @throws InterruptedException
-	 */
-	public void onChange$lovDescCustCIF(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-
-		this.lovDescCustCIF.clearErrorMessage();
-		customer = (Customer)PennantAppUtil.getCustomerObject(this.lovDescCustCIF.getValue(), null);
-
-		if (customer != null) {
-			setCustomerData();			
-		} else {
-			this.custID.setValue(Long.valueOf(0));
-			this.commitmentRef.setValue("");
-			this.lovDescCommitmentRefName.setValue("");
-			this.disbAcctId.setCustCIF("");
-			this.repayAcctId.setCustCIF("");
-			this.downPayAccount.setCustCIF("");
-			throw new WrongValueException(this.lovDescCustCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_SukuknrmFinanceMainDialog_CustID.value") }));
-		}
-
-		logger.debug("Leaving" + event.toString());
-	}
-	
 	/**
 	 * Change the branch for the Account on changing the finance Branch
 	 * @param event
@@ -3553,13 +3509,12 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	 */
 	private void setCustomerData(){
 		logger.debug("Entering");
-
-		this.lovDescCustCIF.setValue(String.valueOf(customer.getCustCIF()));
+		
 		this.custID.setValue(customer.getCustID());
+		this.custCIF.setValue(customer.getCustCIF(), customer.getCustShrtName());
 		this.disbAcctId.setCustCIF(customer.getCustCIF());
 		this.repayAcctId.setCustCIF(customer.getCustCIF());
 		this.downPayAccount.setCustCIF(customer.getCustCIF());
-		this.custShrtName.setValue(customer.getCustShrtName());
 		this.disbAcctId.setValue("");
 		this.repayAcctId.setValue("");
 		this.downPayAccount.setValue("");
@@ -3970,8 +3925,8 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("custid", this.custID.longValue());
-			map.put("custCIF", this.lovDescCustCIF.getValue());
-			map.put("custShrtName", this.custShrtName.getValue());
+			map.put("custCIF", this.custCIF.getValue());
+			map.put("custShrtName", this.custCIF.getDescription());
 			map.put("finFormatter", getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
 			map.put("finReference", this.finReference.getValue());
 			map.put("finance", true);
