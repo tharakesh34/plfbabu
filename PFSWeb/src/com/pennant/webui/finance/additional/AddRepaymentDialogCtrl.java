@@ -489,7 +489,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		//Check if schedule header is null or not and set the recal type fields.
 		if(aFinSchData.getFinanceMain() != null ) {
-			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), recalTypes, ",ADDTERM,ADDLAST,ADJTERMS,CURPRD,");
+			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), recalTypes, ",ADDLAST,ADJTERMS,CURPRD,");
 		}
 		if(getFinScheduleData().getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLDATE)) {
 			this.fromDateRow.setVisible(true);
