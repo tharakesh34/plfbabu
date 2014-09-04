@@ -30,7 +30,7 @@
 									<space spacing="2px" sclass="mandatory" />
 									<textbox id="brokerName" width="150px" visible="false"/>
 									<textbox id="lovDescbrokerName" readonly="true" width="180px" />
-									<button id="btnSearchbrokerName" image="/images/icons/LOVSearch.png" height="24px" />
+									<button id="btnSearchbrokerName" image="/images/icons/LOVSearch.png"  />
 								</hbox>
 								<label  value="${c:l('label_Commidity_FinAmount')}" />
 								<hbox>
@@ -53,9 +53,9 @@
 					</grid>
 
 					<div sclass="z-toolbar" style="padding:0"
-						height="24px">
+						>
 						<hbox pack="stretch"
-							sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+							sclass="hboxRemoveWhiteStrips"  width="100%"
 							style=" padding:1px;">
 							<toolbar align="start"
 								style="border:none;">
@@ -66,10 +66,10 @@
 							</toolbar>
 							<toolbar align="end"
 								style="float:right; border-style: none; padding:0px;"
-								height="24px">
+								>
 								<button
 									id="button_CommidityLoanDetailList_NewCommidityLoanDetail"
-									height="24px" label="${c:l('label_New')}"
+									 label="${c:l('label_New')}"
 									tooltiptext="${c:l('button_CommidityLoanDetailList_NewCommidityLoanDetail.tooltiptext')}" />
 							</toolbar>
 						</hbox>

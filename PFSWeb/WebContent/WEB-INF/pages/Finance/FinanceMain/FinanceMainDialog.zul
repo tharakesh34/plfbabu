@@ -22,28 +22,28 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
 								sclass="toolbar-start">
-								<button id="btnNew" height="24px"
+								<button id="btnNew" 
 									tooltiptext="${c:l('btnNew.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnEdit" height="24px"
+								<button id="btnEdit" 
 									tooltiptext="${c:l('btnEdit.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnDelete" height="24px"
+								<button id="btnDelete" 
 									tooltiptext="${c:l('btnDelete.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnSave" height="24px"
+								<button id="btnSave" 
 									tooltiptext="${c:l('btnSave.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnCancel" height="24px"
+								<button id="btnCancel" 
 									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-								<button id="btnNotes" height="24px"
+								<button id="btnNotes" 
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnValidate" label="Verify"
-									tooltiptext="${c:l('btnValidate.tooltiptext')}" height="24px" />
+									tooltiptext="${c:l('btnValidate.tooltiptext')}"  />
 								<button id="btnBuildSchedule"
 									label="Build" tooltiptext="${c:l('btnSchedule.tooltiptext')}"
-									height="24px" />
+									 />
 
 							</toolbar>
 
@@ -57,11 +57,11 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" height="24px"
+								<button id="btnHelp" 
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnClose" height="24px"
+								<button id="btnClose" 
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							</toolbar>
@@ -130,7 +130,7 @@
 															id="lovDescFinTypeName" width="250px" readonly="true" />
 														<button
 															id="btnSearchFinType" image="/images/icons/LOVSearch.png"
-															height="24px" disabled="true" />
+															 disabled="true" />
 													</hbox>
 													<label
 														id="label_FinanceMainDialog_FinReference"
@@ -155,7 +155,7 @@
 															id="lovDescFinCcyName" width="250px" readonly="true" />
 														<button
 															id="btnSearchFinCcy" image="/images/icons/LOVSearch.png"
-															height="24px" />
+															 />
 													</hbox>
 													<label
 														id="label_FinanceMainDialog_ProfitDaysBasis"
@@ -188,7 +188,7 @@
 														<button
 															id="btnSearchFinBranch"
 															image="/images/icons/LOVSearch.png" 
-															height="24px" />
+															 />
 													</hbox>
 												</row>
 												<row>
@@ -242,7 +242,7 @@
 															id="disbAcctId" width="175px" readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchDisbAcctId"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 														<label
 															id="disbAcctBal" />
 													</hbox>
@@ -256,7 +256,7 @@
 															id="repayAcctId" width="175px" readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchRepayAcctId"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 														<label
 															id="repayAcctBal" />
 													</hbox>
@@ -303,7 +303,7 @@
 															id="lovDescFinPurposeName" width="250px" readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchFinPurpose"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 												</row>
 												<row>
@@ -321,7 +321,7 @@
 															readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchCommitmentRef" 
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 													<label
 														id="label_FinanceMainDialog_DepriFrq"
@@ -393,7 +393,7 @@
 															id="lovDescJointCustCIF" width="150px" readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchJointCustCIF"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 														<label
 															id="jointcustShrtName" />
 													</hbox>
@@ -510,7 +510,7 @@
 															readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchGraceBaseRate"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 													<label
 														id="label_FinanceMainDialog_GraceSpecialRate"
@@ -525,7 +525,7 @@
 															readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchGraceSpecialRate"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 												</row>
 												<row>
@@ -580,7 +580,7 @@
 														<button
 															id="btnSearchGrcIndBaseRate"
 															image="/images/icons/LOVSearch.png"
-															height="24px" />
+															 />
 													</hbox>
 												</row>
 												<row id="grcPftFrqRow"
@@ -795,7 +795,7 @@
 															readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchRepayBaseRate"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 													<label
 														id="label_FinanceMainDialog_RepaySpecialRate"
@@ -810,7 +810,7 @@
 															readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchRepaySpecialRate"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 												</row>
 												<row
@@ -861,7 +861,7 @@
 															readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchRpyIndBaseRate"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 												</row>
 												<row id="rpyPftFrqRow"
@@ -1273,7 +1273,7 @@
 											<button
 												id="btnPrintContributor" label="${c:l('label_Print')}"
 												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
-												height="24px" />
+												 />
 											<space spacing="2px" />
 										</toolbar>
 										<toolbar align="end"
@@ -1281,7 +1281,7 @@
 											<button
 												id="btnNewContributor" label="${c:l('label_New')}"
 												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
-												height="24px" />
+												 />
 											<space spacing="5px" />
 										</toolbar>
 									</hbox>
@@ -1398,7 +1398,7 @@
 											<button id="btnPrintBilling"
 												label="${c:l('label_Print')}"
 												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
-												height="24px" />
+												 />
 											<space spacing="2px" />
 										</toolbar>
 										<toolbar align="end"
@@ -1406,7 +1406,7 @@
 											<button id="btnNewBilling"
 												label="${c:l('label_New')}"
 												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
-												height="24px" />
+												 />
 											<space spacing="5px" />
 										</toolbar>
 									</hbox>
@@ -1498,54 +1498,54 @@
 												id="btnAddReviewRate"
 												label="${c:l('btnAddRateChange.label')}"
 												tooltiptext="${c:l('btnAddRateChange.tooltiptext')}"
-												height="24px" disabled="true" />
+												 disabled="true" />
 											<button id="btnChangeRepay"
 												label="${c:l('btnChangeRepayment.label')}"
 												tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
-												height="24px" disabled="true" />
+												 disabled="true" />
 											<button
 												id="btnAddDisbursement"
 												label="${c:l('btnAddDisbursement.label')}"
 												tooltiptext="${c:l('btnAddDisbursement.tooltiptext')}"
-												height="24px" disabled="true" />
+												 disabled="true" />
 											<button
 												id="btnAddDefferment"
 												label="${c:l('btnAddDefferment.label')}"
 												tooltiptext="${c:l('btnAddDefferment.tooltiptext')}"
-												height="24px" disabled="true" />
+												 disabled="true" />
 											<button
 												id="btnRmvDefferment"
 												label="${c:l('btnRmvDefferment.label')}"
 												tooltiptext="${c:l('btnRmvDefferment.tooltiptext')}"
-												height="24px" disabled="true" />
+												 disabled="true" />
 											<space width="2px" />
 											<button id="btnAddTerms"
 												label="${c:l('btnAddTerm.label')}"
 												tooltiptext="${c:l('btnAddTerms.tooltiptext')}"
-												height="24px" />
+												 />
 											<space width="2px" />
 											<button id="btnRmvTerms"
 												label="${c:l('btnRmvTerm.label')}"
 												tooltiptext="${c:l('btnRmvTerms.tooltiptext')}"
-												height="24px" />
+												 />
 											<space width="2px" />
 											<button id="btnReCalcualte"
 												label="${c:l('btnReCalcualte.label')}"
 												tooltiptext="${c:l('btnReCalcualte.tooltiptext')}"
-												height="24px" />
+												 />
 											<space width="2px" />
 											<button id="btnSubSchedule"
 												label="${c:l('btnSubSchedule.label')}"
 												tooltiptext="${c:l('btnSubSchedule.tooltiptext')}"
-												height="24px" />
+												 />
 											<space width="2px" />
 											<button id="btnChangeProfit"
 												label="${c:l('btnChangeProfit.label')}"
 												tooltiptext="${c:l('btnChangeProfit.tooltiptext')}"
-												height="24px" />
+												 />
 											<space width="2px" />
 											<button
-												id="btnPrintSchedule" height="24px"
+												id="btnPrintSchedule" 
 												label="${c:l('label_Print')}"
 												tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
 												disabled="true" />
@@ -1588,7 +1588,7 @@
 									<button
 										label="${c:l('label_RuleExecute.label')}" id="btnElgRule"
 										tooltiptext="${c:l('btnExecuteElgRule.tooltiptext')}"
-										height="24px" />
+										 />
 									<space width="200px" />
 									<label id="label_ElgRuleSummary"
 										value="${c:l('label_Summary.label')}"
@@ -1647,7 +1647,7 @@
 									<button
 										label="${c:l('label_RuleExecute.label')}" id="btnScoringGroup"
 										tooltiptext="${c:l('btnExecuteScoringRule.tooltiptext')}"
-										height="24px" />
+										 />
 
 									<space width="50px" />
 
@@ -1846,7 +1846,7 @@
 													<button
 														id="btnSearchAuthorization1"
 														image="/images/icons/LOVSearch.png" 
-														height="24px" />
+														 />
 												</hbox>
 												<label
 													id="label_FinanceMainDialog_Authorization2"
@@ -1862,7 +1862,7 @@
 													<button
 														id="btnSearchAuthorization2"
 														image="/images/icons/LOVSearch.png" 
-														height="24px" />
+														 />
 												</hbox>
 											</row>
 										</rows>
@@ -1912,23 +1912,23 @@
 								style="overflow:auto">
 								<div id="documnetDetailsDiv" />
 								<div sclass="z-toolbar"
-									style="padding:0" height="24px">
+									style="padding:0" >
 									<hbox pack="stretch"
-										sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+										sclass="hboxRemoveWhiteStrips"  width="100%"
 										style=" padding:0px;">
 										<toolbar align="start"
 											style="float:left; border-style: none; padding:0px;"
-											width="300px" height="24px">
+											width="300px" >
 										</toolbar>
 										<toolbar align="center"
 											style="float:left; border-style: none; padding:0px;"
-											height="24px">
+											>
 										</toolbar>
 										<toolbar align="end"
 											style="float:right; border-style: none; padding:0px;"
-											height="24px">
+											>
 											<button
-												id="btnNew_DocumentDetails" height="24px"
+												id="btnNew_DocumentDetails" 
 												label="${c:l('label_New')}"
 												tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}" />
 										</toolbar>
@@ -1965,7 +1965,7 @@
 									<button
 										label="${c:l('label_RuleExecute.label')}" id="btnFeeCharges"
 										tooltiptext="${c:l('btnExecuteFeeRule.tooltiptext')}"
-										height="24px" />
+										 />
 									<space width="445px" />
 									<label id="label_feeChargesSummary"
 										value="${c:l('label_totalFCSummary.label')}"
@@ -2016,7 +2016,7 @@
 											<button
 												label="${c:l('label_RuleExecute.label')}" id="btnAccounting"
 												tooltiptext="${c:l('btnAccounting.tooltiptext')}"
-												height="24px" />
+												 />
 										</toolbar>
 										<toolbar align="center"
 											sclass="toolbar-center">
@@ -2046,7 +2046,7 @@
 										<toolbar align="end"
 											sclass="toolbar-end">
 											<button
-												id="btnPrintAccounting" height="24px"
+												id="btnPrintAccounting" 
 												label="${c:l('label_Print')}"
 												tooltiptext="${c:l('btnPrintAccounting.tooltiptext')}" />
 										</toolbar>
@@ -2102,7 +2102,7 @@
 										label="${c:l('label_RuleExecute.label')}"
 										id="btnStageAccounting"
 										tooltiptext="${c:l('btnAccounting.tooltiptext')}"
-										height="24px" />
+										 />
 									<space width="10px" />
 									<label
 										id="label_StageAccountingDisbSummaryVal"
@@ -2128,7 +2128,7 @@
 										style="font-weight:bold;font-size:11px;text-align:right;color:red;" />
 									<space width="10px" />
 									<button id="btnPrintStageAccounting"
-										height="24px" label="${c:l('label_Print')}"
+										 label="${c:l('label_Print')}"
 										tooltiptext="${c:l('btnPrintAccounting.tooltiptext')}" />
 								</toolbar>
 								<listbox id="listBoxFinStageAccountings"

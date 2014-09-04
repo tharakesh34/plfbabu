@@ -12,8 +12,8 @@
 	
 				CRUD BUTTONS
 				<toolbar align="end" style="float:right; border-style: none;" width = "100%">
-					<button id="btnHelp" height="24px" label = "${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-					<button id="btnClose" height="24px" tooltiptext="${c:l('btnClose.tooltiptext')}" image="/images/icons/btn_exitdoor2_16x16.gif" />
+					<button id="btnHelp"  label = "${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					<button id="btnClose"  tooltiptext="${c:l('btnClose.tooltiptext')}" image="/images/icons/btn_exitdoor2_16x16.gif" />
 				</toolbar>	
 		<iframe id="report" height="740px" width="100%" align="center"/>
 	

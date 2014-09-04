@@ -76,8 +76,8 @@
 							<row valign="middle">
 								<hbox align="start">
 									<button id="btnAddSubSchedule"
-										height="24px" label="${c:l('btnAddSubSchedule.label')}"/>
-									<button id="btnClose" height="24px"
+										 label="${c:l('btnAddSubSchedule.label')}"/>
+									<button id="btnClose" 
 										label="${c:l('btnClose.label')}"
 										tooltiptext="${c:l('btnClose.tooltiptext')}" />
 								</hbox>

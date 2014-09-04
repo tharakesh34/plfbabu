@@ -186,7 +186,7 @@
 													readonly="true" />
 												<button
 													id="btnSearchFinBankContingentAcType"
-													image="/images/icons/LOVSearch.png" height="24px" />
+													image="/images/icons/LOVSearch.png"  />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinIsOpenPftPayAcc"
@@ -550,7 +550,7 @@
 													readonly="true" />
 												<button
 													id="btnSearchFinGrcIndBaseRate"
-													image="/images/icons/LOVSearch.png" height="24px" />
+													image="/images/icons/LOVSearch.png"  />
 											</hbox>
 										</row>
 
@@ -1254,7 +1254,7 @@
 													readonly="true" />
 												<button
 													id="btnSearchFinContingentAcType"
-													image="/images/icons/LOVSearch.png" height="24px" />
+													image="/images/icons/LOVSearch.png"  />
 											</hbox>
 										</row>
 										<row>
@@ -1338,7 +1338,7 @@
 											style="float:right; border-style: none; padding:0px;"
 											height="100%">
 											<button
-												id="btnNew_FinTypeAccount" height="24px"
+												id="btnNew_FinTypeAccount" 
 												label="${c:l('label_New')}"
 												tooltiptext="${c:l('btnNew_FinTypeAccount.tooltiptext')}" />
 										</toolbar>
@@ -1517,7 +1517,7 @@
 														<button
 															id="btnSearchStepPolicy"
 															tooltiptext="${c:l('btnSearchUsrBranchCode.tooltiptext')}"
-															image="/images/icons/LOVSearch.png" height="24px"
+															image="/images/icons/LOVSearch.png" 
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
 													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
 														</button>

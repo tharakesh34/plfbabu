@@ -19,21 +19,21 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" height="24px"
+							<button id="btnNew" 
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnEdit" height="24px"
+							<button id="btnEdit" 
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnDelete" height="24px"
+							<button id="btnDelete" 
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnSave" height="24px"
+							<button id="btnSave" 
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnCancel" height="24px"
+							<button id="btnCancel" 
 								tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-							<button id="btnNotes" height="24px"
+							<button id="btnNotes" 
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						</toolbar>
@@ -48,11 +48,11 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" height="24px"
+							<button id="btnHelp" 
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnClose" height="24px"
+							<button id="btnClose" 
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						</toolbar>
@@ -189,9 +189,9 @@
 									<groupbox id="gb_FinanceCheckList"
 										sclass="gb-dialog">
 										<div sclass="z-toolbar"
-											style="padding:0" height="24px">
+											style="padding:0" >
 											<hbox pack="stretch"
-												sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+												sclass="hboxRemoveWhiteStrips"  width="100%"
 												style=" padding:0px;" widths="35%,30%,35%">
 
 												<!-- COMMON BUTTONS -->
@@ -214,7 +214,7 @@
 												<toolbar align="end"
 													sclass="toolbar-end">
 													<button
-														id="btnNew_FinanceCheckList" height="24px"
+														id="btnNew_FinanceCheckList" 
 														label="${c:l('label_New')}"
 														autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNew_FinanceCheckList"
 														tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}" />
@@ -256,7 +256,7 @@
 										id="gb_FinanceAgreementLink" sclass="gb-dialog">
 										<div sclass="z-toolbar">
 											<hbox pack="stretch"
-												sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+												sclass="hboxRemoveWhiteStrips"  width="100%"
 												style=" padding:0px;" widths="35%,30%,35%">
 												<toolbar align="start"
 													sclass="toolbar-start">
@@ -272,7 +272,7 @@
 												<toolbar align="end"
 													sclass="toolbar-end">
 													<button
-														id="btnNew_FinanceAgreementLink" height="24px"
+														id="btnNew_FinanceAgreementLink" 
 														label="${c:l('label_New')}"
 														tooltiptext="${c:l('button_NewFinanceAgreementLink.tooltiptext')}" />
 												</toolbar>
@@ -320,9 +320,9 @@
 									<groupbox
 										id="gb_FinanceEligibilityLink" sclass="gb-dialog">
 										<div sclass="z-toolbar"
-											style="padding:0" height="24px">
+											style="padding:0" >
 											<hbox pack="stretch"
-												sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+												sclass="hboxRemoveWhiteStrips"  width="100%"
 												style=" padding:0px;" widths="35%,30%,35%">
 												<toolbar align="start"
 													sclass="toolbar-start">
@@ -335,7 +335,7 @@
 												<toolbar align="end"
 													sclass="toolbar-end">
 													<button
-														id="btnNew_FinanceEligibilityLink" height="24px"
+														id="btnNew_FinanceEligibilityLink" 
 														label="${c:l('label_New')}"
 														tooltiptext="${c:l('button_NewFFinanceEligibilityLink.tooltiptext')}" />
 												</toolbar>
@@ -381,9 +381,9 @@
 									<groupbox
 										id="gb_FinanceScoringGroup" sclass="gb-dialog">
 										<div sclass="z-toolbar"
-											style="padding:0" height="24px">
+											style="padding:0" >
 											<hbox pack="stretch"
-												sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+												sclass="hboxRemoveWhiteStrips"  width="100%"
 												style=" padding:0px;" widths="35%,30%,35%">
 												<toolbar align="start"
 													sclass="toolbar-start">
@@ -396,7 +396,7 @@
 												<toolbar align="end"
 													sclass="toolbar-end">
 													<button
-														id="btnNew_FinanceScoringGroup" height="24px"
+														id="btnNew_FinanceScoringGroup" 
 														label="${c:l('label_New')}"
 														tooltiptext="${c:l('button_New_FinanceScoringGroup.tooltiptext')}" />
 												</toolbar>
@@ -442,9 +442,9 @@
 									<groupbox
 										id="gb_FinCorpScoringGroup" sclass="gb-dialog">
 										<div sclass="z-toolbar"
-											style="padding:0" height="24px">
+											style="padding:0" >
 											<hbox pack="stretch"
-												sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+												sclass="hboxRemoveWhiteStrips"  width="100%"
 												style=" padding:0px;" widths="35%,30%,35%">
 												<toolbar align="start"
 													sclass="toolbar-start">
@@ -457,7 +457,7 @@
 												<toolbar align="end"
 													sclass="toolbar-end">
 													<button
-														id="btnNew_FinCorpScoringGroup" height="24px"
+														id="btnNew_FinCorpScoringGroup" 
 														label="${c:l('label_New')}"
 														tooltiptext="${c:l('button_New_FinanceScoringGroup.tooltiptext')}" />
 												</toolbar>
@@ -503,9 +503,9 @@
 									<groupbox
 										id="gb_FinanceAdvanceAccounting" sclass="gb-dialog">
 										<div sclass="z-toolbar"
-											style="padding:0" height="24px">
+											style="padding:0" >
 											<hbox pack="stretch"
-												sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+												sclass="hboxRemoveWhiteStrips"  width="100%"
 												style=" padding:0px;" widths="35%,30%,35%">
 												<toolbar align="start"
 													sclass="toolbar-start">
@@ -518,7 +518,7 @@
 												<toolbar align="end"
 													sclass="toolbar-end">
 													<button
-														id="btnNew_FinanceAdvanceAccounting" height="24px"
+														id="btnNew_FinanceAdvanceAccounting" 
 														label="${c:l('label_New')}"
 														tooltiptext="${c:l('button_NewFinanceAdvanceAccountingLink.tooltiptext')}" />
 												</toolbar>
@@ -563,9 +563,9 @@
 									<groupbox
 										id="gb_FinanceMailTemplate" sclass="gb-dialog">
 										<div sclass="z-toolbar"
-											style="padding:0" height="24px">
+											style="padding:0" >
 											<hbox pack="stretch"
-												sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+												sclass="hboxRemoveWhiteStrips"  width="100%"
 												style=" padding:0px;" widths="35%,30%,35%">
 												<toolbar align="start"
 													sclass="toolbar-start">
@@ -578,7 +578,7 @@
 												<toolbar align="end"
 													sclass="toolbar-end">
 													<button
-														id="btnNew_FinanceMailTemplate" height="24px"
+														id="btnNew_FinanceMailTemplate" 
 														label="${c:l('label_New')}"
 														tooltiptext="${c:l('button_NewFinanceMailTemplateLink.tooltiptext')}" />
 												</toolbar>

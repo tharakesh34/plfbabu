@@ -20,21 +20,21 @@
 							<toolbar align="start"
 								sclass="toolbar-start">
 								<button id="btnNew" visible="false"
-									height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}"
+									 tooltiptext="${c:l('btnNew.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnEdit" visible="false"
-									height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									 tooltiptext="${c:l('btnEdit.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnDelete" visible="false"
-									height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									 tooltiptext="${c:l('btnDelete.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnSave" visible="false"
-									height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									 tooltiptext="${c:l('btnSave.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnCancel" visible="false"
-									height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+									 tooltiptext="${c:l('btnCancel.tooltiptext')}" />
 								<button id="btnNotes" visible="false"
-									height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									 tooltiptext="${c:l('btnNotes.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							</toolbar>
 							<!-- SEARCH AREA -->
@@ -46,11 +46,11 @@
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" height="24px"
+								<button id="btnHelp" 
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnClose" height="24px"
+								<button id="btnClose" 
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							</toolbar>
@@ -186,14 +186,14 @@
 						</groupbox>
 						<groupbox id="gb_EntryList">
 							<div sclass="z-toolbar" style="padding:0"
-								height="24px">
+								>
 								<hbox pack="stretch"
-									sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+									sclass="hboxRemoveWhiteStrips"  width="100%"
 									style=" padding:1px;">
 									<toolbar align="start"
 										style="border-style: none;">
 										<button
-											id="btnNewJVPostingEntry" height="24px"
+											id="btnNewJVPostingEntry" 
 											label="${c:l('label_New')}"
 											autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 											tooltiptext="${c:l('btnNew.tooltiptext')}" />
@@ -201,7 +201,7 @@
 											label="validate" />
 									</toolbar>
 									<toolbar align="center"
-										height="24px">
+										>
 										<label
 											id="label_JVPostingEntryList_Title"
 											style="font-weight:bold; font-size: 12px;" />

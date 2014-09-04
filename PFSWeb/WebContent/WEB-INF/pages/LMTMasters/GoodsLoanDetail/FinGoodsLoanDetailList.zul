@@ -98,9 +98,9 @@
 					</groupbox>
 					<groupbox zclass="none;">
 						<div sclass="z-toolbar" style="padding:0"
-							height="24px">
+							>
 							<hbox pack="stretch"
-								sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+								sclass="hboxRemoveWhiteStrips"  width="100%"
 								style=" padding:1px;">
 								<toolbar align="start"
 									style="border:none;">
@@ -111,10 +111,10 @@
 								</toolbar>
 								<toolbar align="end"
 									style="float:right; border-style: none; padding:0px;"
-									height="24px">
+									>
 									<button
 										id="button_GoodsLoanDetailList_NewGoodsLoanDetail"
-										height="24px" label="${c:l('label_New')}"
+										 label="${c:l('label_New')}"
 										tooltiptext="${c:l('button_GoodsLoanDetailList_NewGoodsLoanDetail.tooltiptext')}" />
 								</toolbar>
 							</hbox>

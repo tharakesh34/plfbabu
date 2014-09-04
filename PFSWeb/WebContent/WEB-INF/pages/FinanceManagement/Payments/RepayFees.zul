@@ -15,7 +15,7 @@
 					width="100%">
 					CRUD BUTTONS
 					<toolbar align="end">
-						<button id="btnCloseRepayfees" height="24px" image="/images/icons/btn_close_16x16.gif"
+						<button id="btnCloseRepayfees"  image="/images/icons/btn_close_16x16.gif"
 							tooltiptext="${c:l('btnClose.tooltiptext')}" />
 					</toolbar>
 				</hbox>

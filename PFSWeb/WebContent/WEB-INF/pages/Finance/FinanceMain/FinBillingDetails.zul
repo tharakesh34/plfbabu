@@ -86,7 +86,7 @@
 											<button id="btnPrintBilling"
 												label="${c:l('label_Print')}"
 												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
-												height="24px" />
+												 />
 											<space spacing="2px" />
 										</toolbar>
 										<toolbar align="end"
@@ -94,7 +94,7 @@
 											<button id="btnNewBilling"
 												label="${c:l('label_New')}"
 												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
-												height="24px" />
+												 />
 											<space spacing="5px" />
 										</toolbar>
 									</hbox>

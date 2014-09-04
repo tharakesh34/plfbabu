@@ -21,12 +21,12 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center" sclass="toolbar-center">
 						<button
-							id="button_CommitmentList_CommitmentSearch" height="24px"
+							id="button_CommitmentList_CommitmentSearch" 
 							label="${c:l('label_Filter')}"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CommitmentList_CommitmentSearch.tooltiptext')}" />
 						<button id="button_CommitmentList_PrintList"
-							height="24px" label="${c:l('label_Print')}" visible="false"
+							 label="${c:l('label_Print')}" visible="false"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CommitmentList_PrintList.tooltiptext')}" />
 					</toolbar>
@@ -34,14 +34,14 @@
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
 						<button id="button_CommitmentList_NewCommitment"
-							height="24px" label="${c:l('label_New')}" visible="false"
+							 label="${c:l('label_New')}" visible="false"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CommitmentList_NewCommitment.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label="${c:l('label_Refresh')}"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label="${c:l('label_Help')}"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />

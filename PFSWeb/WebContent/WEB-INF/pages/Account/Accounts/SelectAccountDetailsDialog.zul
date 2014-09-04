@@ -17,11 +17,11 @@
 				width="100%">
 				<toolbar align="end"
 					style="float:right; border-style: none;">
-					<button id="btnHelp" height="24px"
+					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
 						autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-					<button id="btnClose" height="24px"
+					<button id="btnClose" 
 						image="/images/icons/btn_exitdoor2_16x16.gif"
 						tooltiptext="${c:l('btnClose.tooltiptext')}"
 						autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" />
@@ -52,7 +52,7 @@
 										<textbox id="lovDescAccType"
 											width="400px" readonly="true" />
 										<button id="btnSearchAccType"
-											image="/images/icons/LOVSearch.png" height="24px"
+											image="/images/icons/LOVSearch.png" 
 											tooltiptext="${c:l('label_SelectAccountDetailsDialog_AccType.tooltiptext')}">
 										</button>
 									</hbox>
@@ -71,7 +71,7 @@
 										<textbox id="lovDescCustCIF"
 											width="200px" readonly="true" />
 										<button id="btnSearchCustomer"
-											image="/images/icons/LOVSearch.png" height="24px"
+											image="/images/icons/LOVSearch.png" 
 											tooltiptext="${c:l('label_SelectAccountDetailsDialog_btnSearchCustCIF.tooltiptext')}" />
 										<label id="custShortName"
 											width="200px" />
@@ -91,7 +91,7 @@
 										<textbox id="lovDescCurrency"
 											width="300px" readonly="true" />
 										<button id="btnSearchCurrency"
-											image="/images/icons/LOVSearch.png" height="24px"
+											image="/images/icons/LOVSearch.png" 
 											tooltiptext="${c:l('label_SelectAccountDetailsDialog_Currency.tooltiptext')}" />
 									</hbox>
 								</hbox>
@@ -109,7 +109,7 @@
 										<textbox
 											id="lovDescBranchCodeName" width="300px" readonly="true" />
 										<button id="btnSearchBranch"
-											image="/images/icons/LOVSearch.png" height="24px"
+											image="/images/icons/LOVSearch.png"
 											tooltiptext="${c:l('label_SelectAccountDetailsDialog_BranchCode.tooltiptext')}" />
 									</hbox>
 								</hbox>
@@ -122,7 +122,7 @@
 										<space spacing="10px" />
 										<button id="btnProceed"
 											label="${c:l('label_SelectAccountDetailsDialog_btnProceed.value')}"
-											height="24px" style="align:center;font-weight:bold;"
+											style="align:center;font-weight:bold;"
 											tooltiptext="${c:l('label_SelectAccountDetailsDialog_btnProceed.tooltiptext')}" />
 									</hbox>
 								</hbox>

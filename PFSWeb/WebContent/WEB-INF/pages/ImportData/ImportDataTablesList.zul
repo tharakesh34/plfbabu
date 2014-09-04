@@ -15,7 +15,7 @@
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
 					style="float:left; border-style: none;">
-					<button id="btnImportData" height="24px" label="Import"
+					<button id="btnImportData"  label="Import"
 						tooltiptext="Import the Details"
 						autodisable="+btnSend,btnHelp" /> 
 				</toolbar>
@@ -28,7 +28,7 @@
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
 					style="float:right; border-style: none;">
-					<button id="btnHelp" height="24px" label="HELP"
+					<button id="btnHelp"  label="HELP"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
 						autodisable="+btnSend,btnHelp" />
 				</toolbar>

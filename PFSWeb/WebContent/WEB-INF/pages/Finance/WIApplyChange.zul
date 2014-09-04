@@ -76,7 +76,7 @@
 											width="120px" readonly="true">
 										</textbox>
 										<button id="btnSearchWIBaseRate"
-											image="/images/icons/LOVSearch.png" height="24px">
+											image="/images/icons/LOVSearch.png" >
 										</button>
 									</hbox>
 								</hbox>
@@ -94,7 +94,7 @@
 											width="120px" readonly="true">
 										</textbox>
 										<button id="btnSearchWISplRate"
-											image="/images/icons/LOVSearch.png" height="24px">
+											image="/images/icons/LOVSearch.png" >
 										</button>
 									</hbox>
 								</hbox>
@@ -137,9 +137,9 @@
 							<row valign="middle">
 								<hbox align="start">
 									<button id="btnApplyChange"
-										height="24px" label="${c:l('btnApply.label')}"
+										 label="${c:l('btnApply.label')}"
 										tooltiptext="${c:l('btnApplyRate.tooltiptext')}" />
-									<button id="btnClose" height="24px"
+									<button id="btnClose" 
 										label="${c:l('btnClose.label')}"
 										tooltiptext="${c:l('btnClose.tooltiptext')}" />
 								</hbox>

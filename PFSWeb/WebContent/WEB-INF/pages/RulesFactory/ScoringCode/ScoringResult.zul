@@ -19,7 +19,7 @@
 				<toolbar align="end"
 					style="float:right; border-style: none;">
 
-					<button id="btnClose" height="24px"
+					<button id="btnClose" 
 						tooltiptext="Close" image="/images/icons/btn_close_16x16.gif" />
 				</toolbar>
 			</hbox>

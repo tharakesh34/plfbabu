@@ -59,7 +59,7 @@
 							<button
 								label="${c:l('label_RuleExecute.label')}" id="btnScoringGroup"
 								tooltiptext="${c:l('btnExecuteScoringRule.tooltiptext')}"
-								height="24px" />
+								 />
 							<space width="50px" />
 							<label id="label_TotalScore"
 								value="${c:l('label_TotalScore.label')}"

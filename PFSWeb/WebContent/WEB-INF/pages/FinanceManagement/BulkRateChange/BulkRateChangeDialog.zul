@@ -19,50 +19,50 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" height="24px"
+							<button id="btnNew" 
 								visible="false" tooltiptext="${c:l('btnNew.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnEdit" height="24px"
+							<button id="btnEdit" 
 								visible="false" tooltiptext="${c:l('btnEdit.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnDelete" height="24px" visible="false"
+							<button id="btnDelete"  visible="false"
 								 tooltiptext="${c:l('btnDelete.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnSave" height="24px"
+							<button id="btnSave" 
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnCancel" height="24px"
+							<button id="btnCancel" 
 								visible="false" tooltiptext="${c:l('btnCancel.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnNotes" height="24px"
+							<button id="btnNotes" 
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
 						<toolbar align="center"
 							sclass="toolbar-center">
-							<button id="btnPreview" height="24px"
+							<button id="btnPreview" 
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal"
 								label="PREVIEW" />
-							<button id="btnProceed" height="24px"
+							<button id="btnProceed" 
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal"
 								label="PROCEED" />
-							<button id="btnRecal" height="24px" visible="false"
+							<button id="btnRecal"  visible="false"
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal"
 								label="Recalculate" />
 						</toolbar>
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnRefresh" height="24px"
+							<button id="btnRefresh" 
 								visible="false" label="${c:l('label_Refresh')}"
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose"
 								tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-							<button id="btnHelp" height="24px"
+							<button id="btnHelp" 
 								label="${c:l('label_Help')}"
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-							<button id="btnClose" height="24px"
+							<button id="btnClose" 
 								label="${c:l('label_Close')}"
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose"
 								tooltiptext="${c:l('btnClose.tooltiptext')}" />

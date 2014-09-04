@@ -25,11 +25,11 @@
 					style="float:left; border-style: none;">
 					<hbox align="center">
 						<button
-							id="button_CollateralAssignmentList_SearchDialog" height="24px"
+							id="button_CollateralAssignmentList_SearchDialog" 
 							label = "${c:l('label_Filter')}"
 							tooltiptext="${c:l('button_CollateralAssignmentList_SearchDialog.tooltiptext')}" />
 						<button id="button_CollateralAssignmentList_PrintList"
-							height="24px" label = "${c:l('label_Print')}"
+							 label = "${c:l('label_Print')}"
 							tooltiptext="${c:l('button_CollateralAssignmentList_PrintList.tooltiptext')}" />
 					</hbox>
 				</toolbar>
@@ -38,12 +38,12 @@
 				<toolbar align="end"
 					style="float:right; border-style: none;">
 					<button id="button_CollateralAssignmentList_NewCollateralAssignment"
-						height="24px" label = "${c:l('label_New')}"
+						 label = "${c:l('label_New')}"
 						tooltiptext="${c:l('button_CollateralAssignmentList_NewCollateralAssignment.tooltiptext')}" />
-					<button id="btnRefresh" height="24px"
+					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-					<button id="btnHelp" height="24px"
+					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 				</toolbar>

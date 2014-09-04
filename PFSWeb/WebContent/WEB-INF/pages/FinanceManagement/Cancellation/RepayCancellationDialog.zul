@@ -22,7 +22,7 @@
 								label="${c:l('label_RepayCancel')}"
 								tooltiptext="${c:l('btnRepayCancel.tooltiptext')}"
 								autodisable="btnRepayCancel,btnNotes,btnHelp,btnClose" />
-							<button id="btnNotes" height="24px"
+							<button id="btnNotes" 
 								label="${c:l('btnNotes.label')}"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								autodisable="btnRepayCancel,btnNotes,btnHelp,btnClose" />

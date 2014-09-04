@@ -20,27 +20,27 @@
 					<toolbar align="start" sclass="toolbar-start">
 
 						<button id="btnNew" visible="false"
-							height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}"
+							 tooltiptext="${c:l('btnNew.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnEdit" visible="false"
-							height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+							 tooltiptext="${c:l('btnEdit.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnDelete" visible="false"
-							height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+							 tooltiptext="${c:l('btnDelete.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnSave" visible="false"
-							height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}"
+							 tooltiptext="${c:l('btnSave.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnCancel" visible="false"
-							height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+							 tooltiptext="${c:l('btnCancel.tooltiptext')}" />
 						<button id="btnNotes" visible="false"
-							height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+							 tooltiptext="${c:l('btnNotes.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnValidate" visible="true" label = "VALIDATE" 
-							height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}"
+							 tooltiptext="${c:l('btnSave.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnSimulate" visible="true" label = "SIMULATE"  
-							height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}"
+							 tooltiptext="${c:l('btnSave.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 					</toolbar>
 					<!-- SEARCH AREA -->
@@ -52,11 +52,11 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "HELP"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnClose" height="24px"
+						<button id="btnClose" 
 							tooltiptext="${c:l('btnClose.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 					</toolbar>

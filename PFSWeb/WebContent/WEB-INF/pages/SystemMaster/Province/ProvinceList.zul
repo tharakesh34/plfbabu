@@ -20,13 +20,13 @@
 				<!-- SEARCH AREA -->
 				<toolbar align="center" style="border-style: none;">
 					<button
-						id="button_ProvinceList_ProvinceSearchDialog" height="24px"
+						id="button_ProvinceList_ProvinceSearchDialog" 
 						label = "${c:l('label_Filter')}"
 						autodisable="button_ProvinceList_ProvinceSearchDialog,button_ProvinceList_PrintList,
 											 button_ProvinceList_NewProvince, btnRefresh, btnHelp"
 						tooltiptext="${c:l('button_ProvinceList_ProvinceSearchDialog.tooltiptext')}" />
 					<button id="button_ProvinceList_PrintList"
-						height="24px" label = "${c:l('label_Print')}"
+						 label = "${c:l('label_Print')}"
 						autodisable="button_ProvinceList_ProvinceSearchDialog,button_ProvinceList_PrintList,
 											 button_ProvinceList_NewProvince, btnRefresh, btnHelp"
 						tooltiptext="${c:l('button_ProvinceList_PrintList.tooltiptext')}" />
@@ -35,16 +35,16 @@
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" style="border-style: none;">
 					<button id="button_ProvinceList_NewProvince"
-						height="24px" label = "${c:l('label_New')}"
+						 label = "${c:l('label_New')}"
 						autodisable="button_ProvinceList_ProvinceSearchDialog,button_ProvinceList_PrintList,
 											 button_ProvinceList_NewProvince, btnRefresh, btnHelp"
 						tooltiptext="${c:l('button_ProvinceList_NewProvince.tooltiptext')}" />
-					<button id="btnRefresh" height="24px"
+					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
 						autodisable="button_ProvinceList_ProvinceSearchDialog,button_ProvinceList_PrintList,
 											 button_ProvinceList_NewProvince, btnRefresh, btnHelp"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-					<button id="btnHelp" height="24px"
+					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						autodisable="button_ProvinceList_ProvinceSearchDialog,button_ProvinceList_PrintList,
 											 button_ProvinceList_NewProvince, btnRefresh, btnHelp"

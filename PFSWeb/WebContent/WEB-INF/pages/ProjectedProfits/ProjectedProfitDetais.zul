@@ -44,9 +44,9 @@
 										value="${c:l('label_ProjectedProfitDetails_valueDate.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<datebox id="valueDate" height="24px" width="120px" />
-										<button id="btnExecute" height="24px" tooltiptext="${c:l('label_UploadEOD_Execute.value')}" label="${c:l('label_UploadEOD_Execute.value')}" />
-									    <button id="button_ProjectedProfitDetails_Print" height="24px" label="${c:l('label_Print')}"
+										<datebox id="valueDate"  width="120px" />
+										<button id="btnExecute"  tooltiptext="${c:l('label_UploadEOD_Execute.value')}" label="${c:l('label_UploadEOD_Execute.value')}" />
+									    <button id="button_ProjectedProfitDetails_Print"  label="${c:l('label_Print')}"
 						                       tooltiptext="${c:l('button_ProjectedProfitDetails_Print.tooltiptext')}" />
 						            </hbox>          
 								</row>

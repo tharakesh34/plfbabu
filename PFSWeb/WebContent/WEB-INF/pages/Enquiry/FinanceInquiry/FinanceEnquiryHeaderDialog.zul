@@ -17,9 +17,9 @@
 					<toolbar align="start"
 						style="border-style: none;margin-left:4px;">
 						<hbox height="15px">
-							<button id="btnPrint" height="24px"
+							<button id="btnPrint" 
 								label="${c:l('label_Print')}" />
-							<button id="btnDelete" height="24px"
+							<button id="btnDelete" 
 								label="${c:l('btnDelete.label')}"
 								tooltiptext="${c:l('btnCancel.tooltiptext')}" visible="false" />
 						</hbox>
@@ -52,7 +52,7 @@
 								</menu>
 							</menubar>
 							<space id="space_menubar" width="20px" />
-							<button id="btnClose" height="24px"
+							<button id="btnClose" 
 								style="align:right;" label="${c:l('btnClose.label')}" />
 						</hbox>
 					</toolbar>

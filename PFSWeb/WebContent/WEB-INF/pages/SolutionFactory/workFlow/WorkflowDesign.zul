@@ -33,10 +33,10 @@
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start" sclass="toolbar-start">
-					<button id="btnSave" height="24px"
+					<button id="btnSave" 
 						label="${c:l('btnSave.label')}"
 						tooltiptext="${c:l('btnSave.tooltiptext')}" />
-					<button id="btnCancel" height="24px"
+					<button id="btnCancel" 
 						label="${c:l('btnCancel.label')}"
 						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
 
@@ -50,7 +50,7 @@
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnClose" height="24px"
+					<button id="btnClose" 
 						label="${c:l('btnClose.label')}"
 						tooltiptext="${c:l('btnClose.tooltiptext')}" />
 				</toolbar>
@@ -114,7 +114,7 @@
 										width="400px" height="80px" multiline="true" rows="8"
 										readonly="true" />
 									<button id="btnUpload"
-										width="50px" height="24px" upload="true"
+										width="50px"  upload="true"
 										label="${c:l('label_WorkFlowDialog_WorkFlowUpload.value')}" />
 								</hbox>
 							</row>

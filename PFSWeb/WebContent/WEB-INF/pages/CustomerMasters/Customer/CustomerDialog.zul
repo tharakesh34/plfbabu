@@ -15,17 +15,17 @@
 						width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" height="24px"
+							<button id="btnNew" 
 								tooltiptext="${c:l('btnNew.tooltiptext')}" />
-							<button id="btnEdit" height="24px"
+							<button id="btnEdit" 
 								tooltiptext="${c:l('btnEdit.tooltiptext')}" />
-							<button id="btnDelete" height="24px"
+							<button id="btnDelete" 
 								tooltiptext="${c:l('btnDelete.tooltiptext')}" />
-							<button id="btnSave" height="24px"
+							<button id="btnSave" 
 								tooltiptext="${c:l('btnSave.tooltiptext')}" />
-							<button id="btnCancel" height="24px"
+							<button id="btnCancel" 
 								tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-							<button id="btnNotes" height="24px"
+							<button id="btnNotes" 
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
 						</toolbar>
 						<!-- SEARCH AREA -->
@@ -37,10 +37,10 @@
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" height="24px"
+							<button id="btnHelp" 
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-							<button id="btnClose" height="24px"
+							<button id="btnClose" 
 								tooltiptext="${c:l('btnClose.tooltiptext')}" />
 						</toolbar>
 					</hbox>
@@ -449,9 +449,9 @@
 							</groupbox>
 							<groupbox id="gb_rating">
 								<div sclass="z-toolbar"
-									style="padding:0" height="24px">
+									style="padding:0" >
 									<hbox pack="stretch"
-										sclass="hboxRemoveWhiteStrips" height="24px" width="100%"
+										sclass="hboxRemoveWhiteStrips"  width="100%"
 										style=" padding:1px;">
 										<toolbar align="start"
 											style="border:none;">
@@ -461,9 +461,9 @@
 										</toolbar>
 										<toolbar align="end"
 											style="float:right; border-style: none; padding:0px;"
-											height="24px">
+											>
 											<button
-												id="btnNew_CustomerRatings" height="24px"
+												id="btnNew_CustomerRatings" 
 												label="${c:l('label_New')}"
 												tooltiptext="${c:l('btnNew_CustomerRatings.tooltiptext')}" />
 										</toolbar>
@@ -510,10 +510,10 @@
 										<row spans="3">
 											<groupbox sclass="gb_dialog">
 												<div sclass="z-toolbar"
-													style="padding:0" height="24px">
+													style="padding:0" >
 													<hbox pack="stretch"
 														sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-														height="24px" width="100%">
+														 width="100%">
 														<toolbar
 															align="start" style="border:none;">
 															<label
@@ -524,9 +524,9 @@
 														<toolbar
 															align="end"
 															style="float:right; border-style: none; padding:0px;"
-															height="24px">
+															>
 															<button
-																id="btnNew_CustomerEmploymentDetail" height="24px"
+																id="btnNew_CustomerEmploymentDetail" 
 																label="${c:l('label_New')}"
 																tooltiptext="${c:l('btnNew_CustomerIncome.tooltiptext')}" />
 														</toolbar>
@@ -575,10 +575,10 @@
 										<row spans="3">
 											<groupbox sclass="gb_dialog">
 												<div sclass="z-toolbar"
-													style="padding:0" height="24px">
+													style="padding:0" >
 													<hbox pack="stretch"
 														sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-														height="24px" width="100%">
+														 width="100%">
 														<toolbar
 															align="start" style="border:none;">
 															<label
@@ -589,9 +589,9 @@
 														<toolbar
 															align="end"
 															style="float:right; border-style: none; padding:0px;"
-															height="24px">
+															>
 															<button
-																id="btnNew_CustomerDocuments" height="24px"
+																id="btnNew_CustomerDocuments" 
 																label="${c:l('label_New')}"
 																tooltiptext="${c:l('button_CustomerDocumentList_NewCustomerDocument.tooltiptext')}" />
 														</toolbar>
@@ -645,10 +645,10 @@
 											<groupbox
 												id="gb_customerAddressDetails" sclass="gb_dialog">
 												<div sclass="z-toolbar"
-													style="padding:0" height="24px">
+													style="padding:0" >
 													<hbox pack="stretch"
 														sclass="hboxRemoveWhiteStrips" width="100%"
-														style=" padding:0px;" height="24px">
+														style=" padding:0px;" >
 														<toolbar
 															align="start" style="border:none;">
 															<label
@@ -659,9 +659,9 @@
 														<toolbar
 															align="end"
 															style="float:right; border-style: none; padding:0px;"
-															height="24px">
+															>
 															<button
-																id="btnNew_CustomerAddress" height="24px"
+																id="btnNew_CustomerAddress" 
 																label="${c:l('label_New')}"
 																tooltiptext="${c:l('btnNew_CustomerAddress.tooltiptext')}" />
 														</toolbar>
@@ -696,10 +696,10 @@
 											<groupbox
 												id="gb_customerPhoneDetails" sclass="gb_dialog">
 												<div sclass="z-toolbar"
-													style="padding:0" height="24px">
+													style="padding:0" >
 													<hbox pack="stretch"
 														sclass="hboxRemoveWhiteStrips" width="100%"
-														style=" padding:0px;" height="24px">
+														style=" padding:0px;" >
 														<toolbar
 															align="start" style="border:none;">
 															<label
@@ -710,9 +710,9 @@
 														<toolbar
 															align="end"
 															style="float:right; border-style: none; padding:0px;"
-															height="24px">
+															>
 															<button
-																id="btnNew_CustomerPhoneNumbers" height="24px"
+																id="btnNew_CustomerPhoneNumbers" 
 																label="${c:l('label_New')}"
 																tooltiptext="${c:l('btnNew_CustomerPhone.tooltiptext')}" />
 														</toolbar>
@@ -755,10 +755,10 @@
 											<groupbox
 												id="gb_customerEmailDetails" sclass="gb_dialog">
 												<div sclass="z-toolbar"
-													style="padding:0" height="24px">
+													style="padding:0" >
 													<hbox pack="stretch"
 														sclass="hboxRemoveWhiteStrips" width="100%"
-														style=" padding:0px;" height="24px">
+														style=" padding:0px;" >
 														<toolbar
 															align="start" style="border:none;">
 															<label
@@ -769,9 +769,9 @@
 														<toolbar
 															align="end"
 															style="float:right; border-style: none; padding:0px;"
-															height="24px">
+															>
 															<button
-																id="btnNew_CustomerEmailAddress" height="24px"
+																id="btnNew_CustomerEmailAddress" 
 																label="${c:l('label_New')}"
 																tooltiptext="${c:l('btnNew_CustomerEmail.tooltiptext')}" />
 														</toolbar>
@@ -820,10 +820,10 @@
 						<tabpanel style="overflow:auto">
 							<groupbox id="gb_incomeDetails">
 								<div sclass="z-toolbar"
-									style="padding:0" height="24px">
+									style="padding:0" >
 									<hbox pack="stretch"
 										sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-										height="24px" width="100%">
+										 width="100%">
 										<toolbar align="start"
 											style="border:none;">
 											<label
@@ -832,9 +832,9 @@
 										</toolbar>
 										<toolbar align="end"
 											style="float:right; border-style: none; padding:0px;"
-											height="24px">
+											>
 											<button
-												id="btnNew_CustomerIncome" height="24px"
+												id="btnNew_CustomerIncome" 
 												label="${c:l('label_New')}"
 												tooltiptext="${c:l('btnNew_CustomerIncome.tooltiptext')}" />
 										</toolbar>
@@ -913,7 +913,7 @@
 											style="float:right; border-style: none; padding:0px;"
 											height="100%">
 											<button
-												id="btnNew_DirectorDetail" height="24px"
+												id="btnNew_DirectorDetail" 
 												label="${c:l('label_New')}"
 												tooltiptext="${c:l('btnNew_CustomerDirector.tooltiptext')}" />
 										</toolbar>

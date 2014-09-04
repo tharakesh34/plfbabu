@@ -94,13 +94,13 @@
 						style="float:left; border-style: none;">
 
 						<button id="btnNew" visible="false"
-							height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}"
+							 tooltiptext="${c:l('btnNew.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnEdit" visible="false"
-							height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+							 tooltiptext="${c:l('btnEdit.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnDelete" visible="false"
-							height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+							 tooltiptext="${c:l('btnDelete.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnSave"
 							label="SAVE"
@@ -108,9 +108,9 @@
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
 							w:onClick="validateJs(false,true);" />
 						<button id="btnCancel" visible="false"
-							height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+							 tooltiptext="${c:l('btnCancel.tooltiptext')}" />
 						<button id="btnNotes" visible="false"
-							height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+							 tooltiptext="${c:l('btnNotes.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnValidate"
 							tooltiptext="${c:l('button_Validation.tooltiptext')}"
@@ -135,11 +135,11 @@
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end"
 						style="float:right; border-style: none;">
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "HELP"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-						<button id="btnClose" height="24px"
+						<button id="btnClose" 
 							tooltiptext="${c:l('btnClose.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 					</toolbar>

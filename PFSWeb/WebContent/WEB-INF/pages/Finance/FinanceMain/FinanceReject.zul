@@ -18,7 +18,7 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnSave" height="24px" label="Save"
+							<button id="btnSave"  label="Save"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"/>
 						</toolbar>
 
@@ -31,7 +31,7 @@
 
 						<!-- CRUD BUTTONS -->
 					    <toolbar align="end" sclass="toolbar-end">
-							<button id="btnClose" height="24px" label="close"
+							<button id="btnClose"  label="close"
 								tooltiptext="${c:l('btnClose.tooltiptext')}" />
 						</toolbar>
 					</hbox>

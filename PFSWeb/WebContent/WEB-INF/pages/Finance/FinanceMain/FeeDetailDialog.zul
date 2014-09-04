@@ -64,7 +64,7 @@
 							<button
 								label="${c:l('label_RuleExecute.label')}" id="btnFeeCharges"
 								tooltiptext="${c:l('btnExecuteFeeRule.tooltiptext')}"
-								height="24px" visible="false"/>
+								 visible="false"/>
 							<space width="445px" />
 							<label id="label_feeChargesSummary"
 								value="${c:l('label_totalFCSummary.label')}"

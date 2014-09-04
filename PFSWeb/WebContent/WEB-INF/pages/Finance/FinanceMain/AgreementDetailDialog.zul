@@ -39,14 +39,14 @@
 										<space spacing="2px" />
 										<longbox id="authorization1" width="72px" visible="false" />
 										<textbox id="lovDescAuthorization1Name" width="250px" readonly="true" />
-										<button id="btnSearchAuthorization1" image="/images/icons/LOVSearch.png" tabindex="1" height="24px" />
+										<button id="btnSearchAuthorization1" image="/images/icons/LOVSearch.png" tabindex="1"  />
 									</hbox>
 									<label id="label_FinanceMainDialog_Authorization2" value="${c:l('label_FinanceMainDialog_Authorization2.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<longbox id="authorization2" width="72px" visible="false" />
 										<textbox id="lovDescAuthorization2Name" width="250px" readonly="true" />
-										<button id="btnSearchAuthorization2" image="/images/icons/LOVSearch.png" tabindex="1" height="24px" />
+										<button id="btnSearchAuthorization2" image="/images/icons/LOVSearch.png" tabindex="1"  />
 									</hbox>
 								</row>
 							</rows>

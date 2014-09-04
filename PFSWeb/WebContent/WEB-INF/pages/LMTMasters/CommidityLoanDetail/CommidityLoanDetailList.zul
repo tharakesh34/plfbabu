@@ -24,16 +24,16 @@
 						style="border-style: none;">
 						<button
 							id="button_CommidityLoanDetailList_NewCommidityLoanDetail"
-							height="24px" image="/images/icons/addnew.png" visible="false"
+							 image="/images/icons/addnew.png" visible="false"
 							autodisable="button_CommidityLoanDetailList_CommidityLoanDetailSearch,button_CommidityLoanDetailList_PrintList,button_CommidityLoanDetailList_NewCommidityLoanDetail,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CommidityLoanDetailList_NewCommidityLoanDetail.tooltiptext')}" />
 						<button
 							id="button_CommidityLoanDetailList_CommidityLoanDetailSearch"
-							height="24px" image="/images/icons/search.png"
+							 image="/images/icons/search.png"
 							autodisable="button_CommidityLoanDetailList_CommidityLoanDetailSearch,button_CommidityLoanDetailList_PrintList,button_CommidityLoanDetailList_NewCommidityLoanDetail,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CommidityLoanDetailList_CommidityLoanDetailSearch.tooltiptext')}" />
 						<button
-							id="button_CommidityLoanDetailList_PrintList" height="24px"
+							id="button_CommidityLoanDetailList_PrintList" 
 							image="/images/icons/print.png" visible="false"
 							autodisable="button_CommidityLoanDetailList_CommidityLoanDetailSearch,button_CommidityLoanDetailList_PrintList,button_CommidityLoanDetailList_NewCommidityLoanDetail,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CommidityLoanDetailList_PrintList.tooltiptext')}" />
@@ -41,11 +41,11 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							image="/images/icons/reload.png"
 							autodisable="button_CommidityLoanDetailList_CommidityLoanDetailSearch,button_CommidityLoanDetailList_PrintList,button_CommidityLoanDetailList_NewCommidityLoanDetail,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							image="/images/icons/help.png"
 							autodisable="button_CommidityLoanDetailList_CommidityLoanDetailSearch,button_CommidityLoanDetailList_PrintList,button_CommidityLoanDetailList_NewCommidityLoanDetail,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />

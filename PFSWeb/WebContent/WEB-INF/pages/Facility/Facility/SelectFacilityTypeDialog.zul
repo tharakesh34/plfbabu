@@ -21,7 +21,7 @@
 								<space spacing="2px" />
 								<hbox>
 									<space spacing="10px" />
-									<button id="btnProceed" label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}" height="24px" style="align:center" tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}"></button>
+									<button id="btnProceed" label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"  style="align:center" tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}"></button>
 								</hbox>
 							</hbox>
 						</row>

@@ -106,7 +106,7 @@
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
 					sclass="toolbar-start" >
-					<button id="btnSave" height="24px"
+					<button id="btnSave" 
 						label="${c:l('label_Save')}"
 						tooltiptext="${c:l('btnSave.tooltiptext')}" />
 				</toolbar>
@@ -120,7 +120,7 @@
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnClose" height="24px"
+					<button id="btnClose" 
 						label="${c:l('label_Close')}"
 						tooltiptext="${c:l('btnClose.tooltiptext')}" />
 				</toolbar>

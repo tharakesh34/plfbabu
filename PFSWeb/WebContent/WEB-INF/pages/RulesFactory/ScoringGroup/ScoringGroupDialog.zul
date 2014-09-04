@@ -165,7 +165,7 @@
 												height="auto">
 												<hbox pack="stretch"
 													widths="35%,30%,35%" sclass="hboxRemoveWhiteStrips"
-													height="24px" width="100%" style=" padding:0px;">
+													 width="100%" style=" padding:0px;">
 
 													<!-- COMMON BUTTONS -->
 													<toolbar
@@ -218,7 +218,7 @@
 												height="auto">
 												<hbox pack="stretch"
 													widths="35%,30%,35%" sclass="hboxRemoveWhiteStrips"
-													height="24px" width="100%" style=" padding:0px;">
+													 width="100%" style=" padding:0px;">
 
 													<!-- COMMON BUTTONS -->
 													<toolbar
@@ -285,7 +285,7 @@
 												height="auto">
 												<hbox pack="stretch"
 													widths="35%,30%,35%" sclass="hboxRemoveWhiteStrips"
-													height="24px" width="100%" style=" padding:0px;">
+													 width="100%" style=" padding:0px;">
 
 													<!-- COMMON BUTTONS -->
 													<toolbar
@@ -347,7 +347,7 @@
 											<div sclass="z-toolbar">
 												<hbox pack="stretch"
 													widths="35%,30%,35%" sclass="hboxRemoveWhiteStrips"
-													height="24px" width="100%" style=" padding:0px;">
+													 width="100%" style=" padding:0px;">
 
 													<!-- COMMON BUTTONS -->
 													<toolbar

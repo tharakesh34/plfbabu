@@ -33,7 +33,7 @@
 											<button
 												label="${c:l('label_RuleExecute.label')}" id="btnAccounting"
 												tooltiptext="${c:l('btnAccounting.tooltiptext')}"
-												height="24px" />
+												 />
 										</toolbar>
 										<toolbar align="center"
 											sclass="toolbar-center">
@@ -63,7 +63,7 @@
 										<toolbar align="end"
 											sclass="toolbar-end">
 											<button
-												id="btnPrintAccounting" height="24px"
+												id="btnPrintAccounting" 
 												label="${c:l('label_Print')}"
 												tooltiptext="${c:l('btnPrintAccounting.tooltiptext')}" />
 										</toolbar>

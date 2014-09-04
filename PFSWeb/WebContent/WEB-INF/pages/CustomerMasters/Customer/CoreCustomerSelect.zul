@@ -22,7 +22,7 @@
 							sclass="toolbar-center">
 						</toolbar>
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnClose" height="24px"
+							<button id="btnClose" 
 								label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}" />
 						</toolbar>
 					</hbox>
@@ -61,7 +61,7 @@
 										maxlength="6" />
 									<button id="btnSearchCustFetch"
 										label="Proceed" style="font-weight:bold;"
-										image="/images/icons/LOVSearch.png" height="24px" />
+										image="/images/icons/LOVSearch.png"  />
 								</hbox>
 							</row>
 							<row id="row_custCtgType" visible="false">

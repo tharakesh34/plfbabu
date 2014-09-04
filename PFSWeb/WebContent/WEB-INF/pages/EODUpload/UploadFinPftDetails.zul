@@ -36,7 +36,7 @@
 							</columns>
 							<rows>
 								<row>
-									<button id="btnUpload" height="24px" tooltiptext="${c:l('label_BatchAdminCtrl_Run.tooltiptext')}" label="${c:l('label_UploadEOD_Upload.value')}" />
+									<button id="btnUpload"  tooltiptext="${c:l('label_BatchAdminCtrl_Run.tooltiptext')}" label="${c:l('label_UploadEOD_Upload.value')}" />
 								</row>
 							</rows>
 						</grid>

@@ -17,12 +17,12 @@
 					SEARCH AREA
 					<toolbar align="center" style="border-style: none;">
 						<button
-							id="button_AccountingSetList_AccountingSetSearchDialog" height="24px"
+							id="button_AccountingSetList_AccountingSetSearchDialog" 
 							label = "${c:l('label_Filter')}"
 							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_AccountingSetList_AccountingSetSearchDialog.tooltiptext')}" />
 						<button id="button_AccountingSetList_PrintList"
-							height="24px" label = "${c:l('label_Print')}"
+							 label = "${c:l('label_Print')}"
 							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_AccountingSetList_PrintList.tooltiptext')}" />
 					</toolbar>
@@ -30,14 +30,14 @@
 					CRUD BUTTONS
 					<toolbar align="end" style="border-style: none;">
 						<button id="button_AccountingSetList_NewAccountingSet"
-							height="24px" label = "${c:l('label_New')}"
+							 label = "${c:l('label_New')}"
 							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_AccountingSetList_NewAccountingSet.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />

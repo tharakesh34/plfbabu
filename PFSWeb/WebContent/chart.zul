@@ -29,7 +29,7 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnClose" height="24px"
+							<button id="btnClose" 
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
 								label="${c:l('label_Close')}"
 								autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" />

@@ -17,17 +17,17 @@
 						width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" height="24px"
+							<button id="btnNew" 
 								tooltiptext="${c:l('btnNew.tooltiptext')}" />
-							<button id="btnEdit" height="24px"
+							<button id="btnEdit" 
 								tooltiptext="${c:l('btnEdit.tooltiptext')}" />
-							<button id="btnDelete" height="24px"
+							<button id="btnDelete" 
 								tooltiptext="${c:l('btnDelete.tooltiptext')}" />
-							<button id="btnSave" height="24px"
+							<button id="btnSave" 
 								tooltiptext="${c:l('btnSave.tooltiptext')}" />
-							<button id="btnCancel" height="24px"
+							<button id="btnCancel" 
 								tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-							<button id="btnNotes" height="24px"
+							<button id="btnNotes" 
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
 						</toolbar>
 						<!-- SEARCH AREA -->
@@ -39,10 +39,10 @@
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" height="24px"
+							<button id="btnHelp" 
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-							<button id="btnClose" height="24px"
+							<button id="btnClose" 
 								tooltiptext="${c:l('btnClose.tooltiptext')}" />
 						</toolbar>
 					</hbox>

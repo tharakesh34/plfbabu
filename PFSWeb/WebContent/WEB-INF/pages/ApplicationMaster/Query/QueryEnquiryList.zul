@@ -18,14 +18,14 @@
 						style="border-style: none;">
 						<button
 							id="button_QueryList_NewQuery"
-							height="24px" image="/images/icons/addnew.png" visible="false"/>
+							 image="/images/icons/addnew.png" visible="false"/>
 						<button
 							id="button_QueryList_QuerySearch"
-							height="24px" image="/images/icons/search.png"
+							 image="/images/icons/search.png"
 							autodisable="button_QueryList_QuerySearch,button_QueryList_PrintList,button_QueryList_NewQuery,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_QueryList_QuerySearch.tooltiptext')}" />
 						<button
-							id="button_QueryList_PrintList" height="24px"
+							id="button_QueryList_PrintList" 
 							image="/images/icons/print.png" visible="false"
 							autodisable="button_QueryList_QuerySearch,button_QueryList_PrintList,button_QueryList_NewQuery,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_QueryList_PrintList.tooltiptext')}" />
@@ -33,11 +33,11 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							image="/images/icons/reload.png"
 							autodisable="button_QueryList_QuerySearch,button_QueryList_PrintList,button_QueryList_NewQuery,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							image="/images/icons/help.png"
 							autodisable="button_QueryList_QuerySearch,button_QueryList_PrintList,button_QueryList_NewQuery,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />

@@ -27,10 +27,10 @@
 					<hbox align="center" style="padding: 2px">
 						<button
 							id="button_ProductFinanceTypeList_ProductFinanceTypeSearchDialog"
-							height="24px" label = "${c:l('label_Filter')}"
+							 label = "${c:l('label_Filter')}"
 							tooltiptext="${c:l('button_ProductFinanceTypeList_ProductFinanceTypeSearchDialog.tooltiptext')}" />
 						<button
-							id="button_ProductFinanceTypeList_PrintList" height="24px"
+							id="button_ProductFinanceTypeList_PrintList" 
 							label = "${c:l('label_Print')}"
 							tooltiptext="${c:l('button_ProductFinanceTypeList_PrintList.tooltiptext')}" />
 					</hbox>
@@ -41,13 +41,13 @@
 					style="float:right; border-style: none;">
 					<button
 						id="button_ProductFinanceTypeList_NewProductFinanceType"
-						height="24px" label = "${c:l('label_New')}"
+						 label = "${c:l('label_New')}"
 						tooltiptext="${c:l('button_ProductFinanceTypeList_NewProductFinanceType.tooltiptext')}" />
 
-					<button id="btnRefresh" height="24px"
+					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-					<button id="btnHelp" height="24px"
+					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 				</toolbar>

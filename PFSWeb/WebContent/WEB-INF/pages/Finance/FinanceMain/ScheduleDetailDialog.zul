@@ -103,59 +103,59 @@
 									<button id="btnAddReviewRate"
 										label="${c:l('btnAddRateChange.label')}"
 										tooltiptext="${c:l('btnAddRateChange.tooltiptext')}"
-										height="24px" disabled="true" visible = "false"
+										 disabled="true" visible = "false"
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" />
 									<button id="btnChangeRepay"
 										label="${c:l('btnChangeRepayment.label')}"
 										tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
-										height="24px" disabled="true" visible = "false"
+										 disabled="true" visible = "false"
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnAddDisbursement"
 										label="${c:l('btnAddDisbursement.label')}"
 										tooltiptext="${c:l('btnAddDatedSchedule.tooltiptext')}"
-										height="24px" disabled="true" visible = "false"
+										 disabled="true" visible = "false"
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnAddDatedSchedule"
 										label="${c:l('btnAddDatedSchedule.label')}"
 										tooltiptext="${c:l('btnAddDisbursement.tooltiptext')}"
-										height="24px" disabled="true" visible = "false"
+										 disabled="true" visible = "false"
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnAddDefferment"
 										label="${c:l('btnAddDefferment.label')}"
 										tooltiptext="${c:l('btnAddDefferment.tooltiptext')}"
-										height="24px" disabled="true" visible = "false"
+										 disabled="true" visible = "false"
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnRmvDefferment" 
 										label="${c:l('btnRmvDefferment.label')}"
 										tooltiptext="${c:l('btnRmvDefferment.tooltiptext')}"
-										height="24px" disabled="true" visible = "false"
+										 disabled="true" visible = "false"
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnAddTerms" disabled="true" visible = "false"
 										label="${c:l('btnAddTerm.label')}"
-										tooltiptext="${c:l('btnAddTerms.tooltiptext')}" height="24px" 
+										tooltiptext="${c:l('btnAddTerms.tooltiptext')}"  
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnRmvTerms" disabled="true" visible = "false"
 										label="${c:l('btnRmvTerm.label')}"
-										tooltiptext="${c:l('btnRmvTerms.tooltiptext')}" height="24px" 
+										tooltiptext="${c:l('btnRmvTerms.tooltiptext')}"  
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnReCalcualte" disabled="true" visible = "false"
 										label="${c:l('btnReCalcualte.label')}"
-										tooltiptext="${c:l('btnReCalcualte.tooltiptext')}" height="24px" 
+										tooltiptext="${c:l('btnReCalcualte.tooltiptext')}"  
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnSubSchedule" disabled="true" visible = "false"
 										label="${c:l('btnSubSchedule.label')}"
-										tooltiptext="${c:l('btnSubSchedule.tooltiptext')}" height="24px" 
+										tooltiptext="${c:l('btnSubSchedule.tooltiptext')}"  
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnChangeProfit" disabled="true" visible = "false"
 										label="${c:l('btnChangeProfit.label')}"
-										tooltiptext="${c:l('btnChangeProfit.tooltiptext')}" height="24px" 
+										tooltiptext="${c:l('btnChangeProfit.tooltiptext')}"  
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnChangeFrq" disabled="true" visible = "false"
 										label="${c:l('btnChangeFrq.label')}"
-										tooltiptext="${c:l('btnChangeFrq.tooltiptext')}" height="24px" 
+										tooltiptext="${c:l('btnChangeFrq.tooltiptext')}"  
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>
 									<button id="btnPrintSchedule" 
-										height="24px" label="${c:l('label_Print')}"
+										 label="${c:l('label_Print')}"
 										tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
 										disabled="true" visible = "false"
 										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"/>

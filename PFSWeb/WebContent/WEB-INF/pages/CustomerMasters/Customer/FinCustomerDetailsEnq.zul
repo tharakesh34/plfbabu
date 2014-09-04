@@ -15,7 +15,7 @@
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnClose" label="close" height="24px" tooltiptext="${c:l('btnClose.tooltiptext')}" />
+							<button id="btnClose" label="close"  tooltiptext="${c:l('btnClose.tooltiptext')}" />
 						</toolbar>
 					</hbox>
 				</div>

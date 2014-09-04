@@ -23,12 +23,12 @@
 							<toolbar align="start"
 								sclass="toolbar-start">
 								<button id="btnWriteoffPay"
-									label="${c:l('btnWriteoffPay.label')}" height="24px" />
+									label="${c:l('btnWriteoffPay.label')}"  />
 								<button id="btnWriteoffReCal"
-									label="${c:l('btnWriteoffReCal.label')}" height="24px" />
+									label="${c:l('btnWriteoffReCal.label')}"  />
 								<button id="btnWriteoffCal"
-									label="${c:l('btnWriteoffCal.label')}" height="24px" />
-								<button id="btnNotes" height="24px"
+									label="${c:l('btnWriteoffCal.label')}"  />
+								<button id="btnNotes" 
 									label="${c:l('btnNotes.label')}"
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 									autodisable="btnWriteoffPay,btnWriteoffReCal,btnWriteoffCal,btnNotes" />
@@ -297,7 +297,7 @@
 										<toolbar align="start"
 											sclass="toolbar-start">
 											<button
-												id="btnPrintSchedule" height="24px"
+												id="btnPrintSchedule" 
 												label="${c:l('label_Print')}"
 												tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
 												disabled="true" style="float:right;" />

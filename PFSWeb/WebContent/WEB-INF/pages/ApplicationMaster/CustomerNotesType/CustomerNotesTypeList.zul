@@ -23,11 +23,11 @@
 						style="border-style: none;">
 						<button
 							id="button_CustomerNotesTypeList_CustomerNotesTypeSearchDialog"
-							height="24px" label = "${c:l('label_Filter')}"
+							 label = "${c:l('label_Filter')}"
 							autodisable="button_CustomerNotesTypeList_CustomerNotesTypeSearchDialog,button_CustomerNotesTypeList_PrintList,button_CustomerNotesTypeList_NewCustomerNotesType, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_CustomerNotesTypeList_CustomerNotesTypeSearchDialog.tooltiptext')}" />
 						<button
-							id="button_CustomerNotesTypeList_PrintList" height="24px"
+							id="button_CustomerNotesTypeList_PrintList" 
 							label = "${c:l('label_Print')}"
 							autodisable="button_CustomerNotesTypeList_CustomerNotesTypeSearchDialog,button_CustomerNotesTypeList_PrintList,button_CustomerNotesTypeList_NewCustomerNotesType, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_CustomerNotesTypeList_PrintList.tooltiptext')}" />
@@ -37,14 +37,14 @@
 					<toolbar align="end" style="border-style: none;">
 						<button
 							id="button_CustomerNotesTypeList_NewCustomerNotesType"
-							height="24px" label = "${c:l('label_New')}"
+							 label = "${c:l('label_New')}"
 							autodisable="button_CustomerNotesTypeList_CustomerNotesTypeSearchDialog,button_CustomerNotesTypeList_PrintList,button_CustomerNotesTypeList_NewCustomerNotesType, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_CustomerNotesTypeList_NewCustomerNotesType.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_CustomerNotesTypeList_CustomerNotesTypeSearchDialog,button_CustomerNotesTypeList_PrintList,button_CustomerNotesTypeList_NewCustomerNotesType, btnRefresh, btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_CustomerNotesTypeList_CustomerNotesTypeSearchDialog,button_CustomerNotesTypeList_PrintList,button_CustomerNotesTypeList_NewCustomerNotesType, btnRefresh, btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />

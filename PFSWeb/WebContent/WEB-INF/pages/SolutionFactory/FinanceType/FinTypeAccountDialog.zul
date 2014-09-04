@@ -112,7 +112,7 @@
 									<textbox id="custAccountTypes"
 										width="175px" readonly="true" />
 									<button id="btnSearchAccountTypes"
-										image="/images/icons/LOVSearch.png" height="24px" />
+										image="/images/icons/LOVSearch.png"  />
 								</hbox>
 							</row>
 							<row>

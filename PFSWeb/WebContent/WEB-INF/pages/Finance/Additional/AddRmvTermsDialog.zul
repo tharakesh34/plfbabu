@@ -83,9 +83,8 @@
 						<rows>
 							<row valign="middle">
 								<hbox align="start">
-									<button id="btnAddRmvTerms"
-										height="24px" />
-									<button id="btnClose" height="24px"
+									<button id="btnAddRmvTerms" />
+									<button id="btnClose" 
 										label="${c:l('btnClose.label')}"
 										tooltiptext="${c:l('btnClose.tooltiptext')}" />
 								</hbox>

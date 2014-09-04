@@ -85,7 +85,7 @@
 								<toolbar align="end"
 									sclass="toolbar-end">
 									<button id="btnNew_FinStepPolicy"
-								visible="false" height="24px" label="${c:l('label_New')}"
+								visible="false"  label="${c:l('label_New')}"
 								tooltiptext="${c:l('button_StepDetailDialog_NewStepPolicy.tooltiptext')}" />
 								</toolbar>
 							</hbox>

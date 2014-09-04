@@ -26,10 +26,10 @@
 					<hbox align="center">
 						<button
 							id="button_CustomerMaintenaceList_CustomerSearchDialog"
-							height="24px" label="${c:l('label_Filter')}"
+							 label="${c:l('label_Filter')}"
 							tooltiptext="${c:l('button_CustomerMaintenaceList_CustomerSearchDialog.tooltiptext')}" />
 						<button
-							id="button_CustomerMaintenaceList_PrintList" height="24px"
+							id="button_CustomerMaintenaceList_PrintList" 
 							label="${c:l('label_Print')}"
 							tooltiptext="${c:l('button_CustomerMaintenaceList_PrintList.tooltiptext')}" />
 					</hbox>
@@ -39,13 +39,13 @@
 				<toolbar align="end"
 					style="float:right; border-style: none;">
 					<button
-						id="button_CustomerMaintenaceList_NewCustomer" height="24px"
+						id="button_CustomerMaintenaceList_NewCustomer" 
 						label="${c:l('label_New')}" visible="false"
 						tooltiptext="${c:l('button_CustomerMaintenaceList_NewCustomer.tooltiptext')}" />
-					<button id="btnRefresh" height="24px"
+					<button id="btnRefresh" 
 						label="${c:l('label_Refresh')}"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-					<button id="btnHelp" height="24px"
+					<button id="btnHelp" 
 						label="${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 				</toolbar>

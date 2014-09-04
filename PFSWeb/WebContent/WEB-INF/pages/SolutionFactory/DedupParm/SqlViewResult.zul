@@ -17,7 +17,7 @@
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start" sclass="toolbar-start">
 					<hbox>
-						<button id="btnSimulation" height="24px"
+						<button id="btnSimulation" 
 							image="/images/icons/gear_16.png"
 							tooltiptext="${c:l('btnDedupGen.tooltiptext')}" />
 					</hbox>
@@ -32,7 +32,7 @@
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnClose" height="24px"
+					<button id="btnClose" 
 						image="/images/icons/btn_exitdoor2_16x16.gif"
 						tooltiptext="${c:l('btnClose.tooltiptext')}" />
 				</toolbar>

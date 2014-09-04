@@ -21,11 +21,11 @@
 				<toolbar align="center" style="border-style: none;">
 					<button
 						id="button_ExtendedFieldDetailList_ExtendedFieldDetailSearchDialog"
-						height="24px" label = "${c:l('label_Filter')}"
+						 label = "${c:l('label_Filter')}"
 						autodisable="button_ExtendedFieldDetailList_ExtendedFieldDetailSearchDialog,button_ExtendedFieldDetailList_PrintList,button_ExtendedFieldDetailList_NewExtendedFieldDetail,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_ExtendedFieldDetailList_ExtendedFieldDetailSearchDialog.tooltiptext')}" />
 					<button
-						id="button_ExtendedFieldDetailList_PrintList" height="24px"
+						id="button_ExtendedFieldDetailList_PrintList" 
 						label = "${c:l('label_Print')}"
 						autodisable="button_ExtendedFieldDetailList_ExtendedFieldDetailSearchDialog,button_ExtendedFieldDetailList_PrintList,button_ExtendedFieldDetailList_NewExtendedFieldDetail,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_ExtendedFieldDetailList_PrintList.tooltiptext')}" />
@@ -34,14 +34,14 @@
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" style="border-style: none;">
 					<!-- <button id="button_ExtendedFieldDetailList_NewExtendedFieldDetail"
-						height="24px" label = "${c:l('label_New')}"
+						 label = "${c:l('label_New')}"
 						autodisable="button_ExtendedFieldDetailList_ExtendedFieldDetailSearchDialog,button_ExtendedFieldDetailList_PrintList,button_ExtendedFieldDetailList_NewExtendedFieldDetail,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_ExtendedFieldDetailList_NewExtendedFieldDetail.tooltiptext')}" /> -->
-					<button id="btnRefresh" height="24px"
+					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
 						autodisable="button_ExtendedFieldDetailList_ExtendedFieldDetailSearchDialog,button_ExtendedFieldDetailList_PrintList,button_ExtendedFieldDetailList_NewExtendedFieldDetail,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-					<button id="btnHelp" height="24px"
+					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						autodisable="button_ExtendedFieldDetailList_ExtendedFieldDetailSearchDialog,button_ExtendedFieldDetailList_PrintList,button_ExtendedFieldDetailList_NewExtendedFieldDetail,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />

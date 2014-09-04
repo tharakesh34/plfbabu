@@ -23,12 +23,12 @@
 						style="border-style: none;">
 						<button
 							id="button_CustomerCategoryList_CustomerCategorySearchDialog"
-							height="24px" label = "${c:l('label_Filter')}"
+							 label = "${c:l('label_Filter')}"
 							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
 											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CustomerCategoryList_CustomerCategorySearchDialog.tooltiptext')}" />
 						<button
-							id="button_CustomerCategoryList_PrintList" height="24px"
+							id="button_CustomerCategoryList_PrintList" 
 							label = "${c:l('label_Print')}"
 							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
 											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"
@@ -39,16 +39,16 @@
 					<toolbar align="end" style="border-style: none;">
 						<button
 							id="button_CustomerCategoryList_NewCustomerCategory"
-							height="24px" label = "${c:l('label_New')}"
+							 label = "${c:l('label_New')}"
 							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
 											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CustomerCategoryList_NewCustomerCategory.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
 											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_CustomerCategoryList_CustomerCategorySearchDialog,button_CustomerCategoryList_PrintList,
 											  button_CustomerCategoryList_NewCustomerCategory,,btnRefresh,btnHelp"

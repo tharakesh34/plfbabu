@@ -20,11 +20,11 @@
 						style="border-style: none;">
 						<button
 							id="button_FinanceRepayPriorityList_FinanceRepayPrioritySearchDialog"
-							height="24px" label="${c:l('label_Filter')}"
+							 label="${c:l('label_Filter')}"
 							autodisable="button_FinanceRepayPriorityList_FinanceRepayPrioritySearchDialog,button_FinanceRepayPriorityList_PrintList,button_FinanceRepayPriorityList_NewFinanceRepayPriority,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_FinanceRepayPriorityList_FinanceRepayPrioritySearchDialog.tooltiptext')}" />
 						<button
-							id="button_FinanceRepayPriorityList_PrintList" height="24px"
+							id="button_FinanceRepayPriorityList_PrintList" 
 							label="${c:l('label_Print')}"
 							autodisable="button_FinanceRepayPriorityList_FinanceRepayPrioritySearchDialog,button_FinanceRepayPriorityList_PrintList,button_FinanceRepayPriorityList_NewFinanceRepayPriority,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_FinanceRepayPriorityList_PrintList.tooltiptext')}" />
@@ -34,14 +34,14 @@
 					<toolbar align="end" style="border-style: none;">
 						<button
 							id="button_FinanceRepayPriorityList_NewFinanceRepayPriority"
-							height="24px" label="${c:l('label_New')}"
+							 label="${c:l('label_New')}"
 							autodisable="button_FinanceRepayPriorityList_FinanceRepayPrioritySearchDialog,button_FinanceRepayPriorityList_PrintList,button_FinanceRepayPriorityList_NewFinanceRepayPriority,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_FinanceRepayPriorityList_NewFinanceRepayPriority.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label="${c:l('label_Refresh')}"
 							autodisable="button_FinanceRepayPriorityList_FinanceRepayPrioritySearchDialog,button_FinanceRepayPriorityList_PrintList,button_FinanceRepayPriorityList_NewFinanceRepayPriority,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label="${c:l('label_Help')}"
 							autodisable="button_FinanceRepayPriorityList_FinanceRepayPrioritySearchDialog,button_FinanceRepayPriorityList_PrintList,button_FinanceRepayPriorityList_NewFinanceRepayPriority,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />

@@ -10,12 +10,12 @@
 						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start">
-								<button id="btnNew" visible="false" height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnEdit" visible="false" height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnDelete" visible="false" height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnSave" visible="false" height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnCancel" visible="false" height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-								<button id="btnNotes" visible="false" height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnNew" visible="false"  tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnEdit" visible="false"  tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnDelete" visible="false"  tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnSave" visible="false"  tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnCancel" visible="false"  tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+								<button id="btnNotes" visible="false"  tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
@@ -23,8 +23,8 @@
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" height="24px" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnClose" height="24px" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnHelp"  label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnClose"  tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -236,10 +236,10 @@
 													</groupbox>
 													<groupbox closable="true"  >
 														<caption label="${c:l('title_east_bottom')}"></caption>
-														<div sclass="z-toolbar" style="padding:0" height="24px">
-															<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" height="24px" width="100%" style=" padding:1px;">
-																<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="24px">
-																	<button id="button_CollateralList_NewCollateral" height="24px" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerRatings.tooltiptext')}" autodisable="button_CollateralList_NewCollateral"/>
+														<div sclass="z-toolbar" style="padding:0" >
+															<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"  width="100%" style=" padding:1px;">
+																<toolbar align="end" style="float:right; border-style: none; padding:0px;" >
+																	<button id="button_CollateralList_NewCollateral"  label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerRatings.tooltiptext')}" autodisable="button_CollateralList_NewCollateral"/>
 																</toolbar>
 															</hbox>
 														</div>

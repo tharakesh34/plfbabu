@@ -19,21 +19,21 @@
 							<toolbar align="start"
 								sclass="toolbar-start">
 								<button id="btnNew" visible="false"
-									height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}"
+									 tooltiptext="${c:l('btnNew.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnEdit" visible="false"
-									height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									 tooltiptext="${c:l('btnEdit.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnDelete" visible="false"
-									height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									 tooltiptext="${c:l('btnDelete.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnSave" visible="false"
-									height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									 tooltiptext="${c:l('btnSave.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnCancel" visible="false"
-									height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+									 tooltiptext="${c:l('btnCancel.tooltiptext')}" />
 								<button id="btnNotes" visible="false"
-									height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									 tooltiptext="${c:l('btnNotes.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							</toolbar>
 							<!-- SEARCH AREA -->
@@ -45,11 +45,11 @@
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" height="24px"
+								<button id="btnHelp" 
 									label = "${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnClose" height="24px"
+								<button id="btnClose" 
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							</toolbar>
@@ -80,7 +80,7 @@
 										<space id="space_ItemType" spacing="2px" />
 										<uppercasebox id="itemType" visible="false" maxlength="20" width="180px" focus="true"/>
 										<textbox id="lovDescItemType" readonly="true" width="180px"  />
-										<button id="btnSearchItemType" image="/images/icons/LOVSearch.png" height="24px" />
+										<button id="btnSearchItemType" image="/images/icons/LOVSearch.png"  />
 									</hlayout>
 									<label id="label_Quantity" value="${c:l('label_CommidityLoanDetailDialog_Quantity.value')}" />
 									<hlayout id="hlayout_Quantity">

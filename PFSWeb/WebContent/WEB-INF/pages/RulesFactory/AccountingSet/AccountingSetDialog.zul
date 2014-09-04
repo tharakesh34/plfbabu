@@ -86,7 +86,7 @@
 												width="72px" visible="true" readonly="true" />
 											<button label=""
 												id="btnSearchEventCode" image="/images/icons/LOVSearch.png"
-												height="24px" />
+												 />
 										</hbox>
 									</hbox>
 									<label
@@ -110,7 +110,7 @@
 											id="accountSetCode" maxlength="8" width="72px" />
 										<button label=""
 											id="btnSearchAccountSetCode"
-											image="/images/icons/LOVSearch.png" height="24px"
+											image="/images/icons/LOVSearch.png" 
 											visible="false" />
 									</hbox>
 									<label
@@ -160,7 +160,7 @@
 									sclass="toolbar-end">
 									<button
 										id="button_TransactionEntryList_NewTransactionEntry"
-										height="24px" label="${c:l('label_New')}"
+										 label="${c:l('label_New')}"
 										autodisable="button_TransactionEntryList_TransactionEntrySearchDialog,button_TransactionEntryList_PrintList,button_TransactionEntryList_NewTransactionEntry,btnRefresh,btnHelp"
 										tooltiptext="${c:l('button_TransactionEntryList_NewTransactionEntry.tooltiptext')}" />
 								</toolbar>

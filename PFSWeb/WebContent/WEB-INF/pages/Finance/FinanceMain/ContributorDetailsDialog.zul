@@ -147,7 +147,7 @@
 						<button
 							id="btnPrintContributor" label="${c:l('label_Print')}"
 							tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
-							height="24px" visible="false"/>
+							 visible="false"/>
 						<space spacing="2px" />
 					</toolbar>
 					<toolbar align="end"
@@ -155,7 +155,7 @@
 						<button
 							id="btnNewContributor" label="${c:l('label_New')}"
 							tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
-							height="24px" />
+							 />
 						<space spacing="5px" />
 					</toolbar>
 				</hbox>

@@ -8,13 +8,13 @@
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,50%,20%">
 					<toolbar align="start" style="border-style: none;margin-left:4px;">
 						<hbox height="15px">
-							<button id="btnPrint" height="24px" image="/images/icons/print.png" />
+							<button id="btnPrint"  image="/images/icons/print.png" />
 						</hbox>
 					</toolbar>
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="float:right; border-style: none;">
-						<button id="btnHelp" height="24px" image="/images/icons/help.png" tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-						<button id="btnClose" height="24px" tooltiptext="${c:l('btnClose.tooltiptext')}" image="/images/icons/btn_exitdoor2_16x16.gif" />
+						<button id="btnHelp"  image="/images/icons/help.png" tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						<button id="btnClose"  tooltiptext="${c:l('btnClose.tooltiptext')}" image="/images/icons/btn_exitdoor2_16x16.gif" />
 					</toolbar>
 				</hbox>
 			</div>

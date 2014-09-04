@@ -22,7 +22,7 @@
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end" >
 
-					<button id="btnClose" height="24px"
+					<button id="btnClose" 
 						tooltiptext="Close" label = "CLOSE" />
 				</toolbar>
 			</hbox>

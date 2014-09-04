@@ -42,7 +42,7 @@
 		<div sclass="z-toolbar" height="28px">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="20%,40%,20%,20%">
 				<toolbar align="start" sclass="toolbar-start">
-					<button id="btnStartJob" height="24px"
+					<button id="btnStartJob" 
 						tooltiptext="${c:l('label_BatchAdminCtrl_Run.tooltiptext')}"
 						label="Start" />
 				</toolbar>
@@ -58,7 +58,7 @@
 					</hbox>
 				</toolbar>
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnStaleJob" height="24px"
+					<button id="btnStaleJob" 
 						tooltiptext="${c:l('label_BatchAdminCtrl_Terminate.tooltiptext')}"
 						label="${c:l('label_BatchAdminCtrl_Terminate.value')}" />
 				</toolbar>

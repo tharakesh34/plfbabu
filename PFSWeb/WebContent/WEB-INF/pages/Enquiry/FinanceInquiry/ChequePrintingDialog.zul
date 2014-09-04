@@ -68,7 +68,7 @@
 											<label />
 											<hbox>
 												<space spacing="2px" />
-												<button id="button_Print" height="24px" 
+												<button id="button_Print"  
 								                 label="${c:l('label_Print')}"  />
 											</hbox>
 										</row>

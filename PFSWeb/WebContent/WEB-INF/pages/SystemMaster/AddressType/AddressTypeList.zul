@@ -22,13 +22,13 @@
 					<toolbar align="center"
 						style="border-style: none;">
 						<button
-							id="button_AddressTypeList_AddressTypeSearchDialog" height="24px"
+							id="button_AddressTypeList_AddressTypeSearchDialog" 
 							label = "${c:l('label_Filter')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_AddressTypeList_AddressTypeSearchDialog.tooltiptext')}" />
 						<button id="button_AddressTypeList_PrintList"
-							height="24px" label = "${c:l('label_Print')}"
+							 label = "${c:l('label_Print')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_AddressTypeList_PrintList.tooltiptext')}" />
@@ -37,17 +37,17 @@
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
 						<button
-							id="button_AddressTypeList_NewAddressType" height="24px"
+							id="button_AddressTypeList_NewAddressType" 
 							label = "${c:l('label_New')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_AddressTypeList_NewAddressType.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"

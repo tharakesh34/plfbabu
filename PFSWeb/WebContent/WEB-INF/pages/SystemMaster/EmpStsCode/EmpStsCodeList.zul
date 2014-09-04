@@ -22,12 +22,12 @@
 					<toolbar align="center"
 						style="border-style: none;">
 						<button
-							id="button_EmpStsCodeList_EmpStsCodeSearchDialog" height="24px"
+							id="button_EmpStsCodeList_EmpStsCodeSearchDialog" 
 							label = "${c:l('label_Filter')}"
 							autodisable="button_EmpStsCodeList_EmpStsCodeSearchDialog,button_EmpStsCodeList_PrintList,button_EmpStsCodeList_NewEmpStsCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_EmpStsCodeList_EmpStsCodeSearchDialog.tooltiptext')}" />
 						<button id="button_EmpStsCodeList_PrintList"
-							height="24px" label = "${c:l('label_Print')}"
+							 label = "${c:l('label_Print')}"
 							autodisable="button_EmpStsCodeList_EmpStsCodeSearchDialog,button_EmpStsCodeList_PrintList,button_EmpStsCodeList_NewEmpStsCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_EmpStsCodeList_PrintList.tooltiptext')}" />
 					</toolbar>
@@ -35,14 +35,14 @@
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
 						<button id="button_EmpStsCodeList_NewEmpStsCode"
-							height="24px" label = "${c:l('label_New')}"
+							 label = "${c:l('label_New')}"
 							autodisable="button_EmpStsCodeList_EmpStsCodeSearchDialog,button_EmpStsCodeList_PrintList,button_EmpStsCodeList_NewEmpStsCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_EmpStsCodeList_NewEmpStsCode.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_EmpStsCodeList_EmpStsCodeSearchDialog,button_EmpStsCodeList_PrintList,button_EmpStsCodeList_NewEmpStsCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_EmpStsCodeList_EmpStsCodeSearchDialog,button_EmpStsCodeList_PrintList,button_EmpStsCodeList_NewEmpStsCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />

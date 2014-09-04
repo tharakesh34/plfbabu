@@ -24,7 +24,7 @@
 					<label value="${c:l('window_templatePreview.title')}" sclass="label-heading" />
 				</toolbar>
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnClose" height="24px"
+					<button id="btnClose" 
 						tooltiptext="Close" image="/images/icons/btn_close_16x16.gif" />
 				</toolbar>
 			</hbox>

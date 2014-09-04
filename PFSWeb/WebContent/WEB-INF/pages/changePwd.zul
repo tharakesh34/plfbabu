@@ -26,10 +26,10 @@
 				<toolbar align="end"
 					style="float:right; border-style: none;" >
 						`<hbox>
-							<button id="btnSubmit" height="24px"  tabindex="5"
+							<button id="btnSubmit"   tabindex="5"
 									image="/images/icons/btn_save2_16x16.gif"
 									tooltiptext="${c:l('btnSubmit.tooltiptext')}" />	
-							<button id="btnReset" height="24px"  tabindex="6"
+							<button id="btnReset"   tabindex="6"
 									image="/images/icons/update.gif"
 									tooltiptext="${c:l('btnReset.tooltiptext')}" />
 							

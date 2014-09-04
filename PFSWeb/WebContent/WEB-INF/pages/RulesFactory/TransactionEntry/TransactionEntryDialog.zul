@@ -105,22 +105,22 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
 								sclass="toolbar-start">
-								<button id="btnNew" height="24px"
+								<button id="btnNew" 
 									tooltiptext="${c:l('btnNew.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnEdit" height="24px"
+								<button id="btnEdit" 
 									tooltiptext="${c:l('btnEdit.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnDelete" height="24px"
+								<button id="btnDelete" 
 									tooltiptext="${c:l('btnDelete.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnSave" height="24px"
+								<button id="btnSave" 
 									tooltiptext="${c:l('btnSave.tooltiptext')}"
 									w:onClick="validateJs('3');"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnCancel" height="24px"
+								<button id="btnCancel" 
 									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-								<button id="btnNotes" height="24px"
+								<button id="btnNotes" 
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 								<button id="btnValidate"
@@ -145,11 +145,11 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" height="24px"
+								<button id="btnHelp" 
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
-								<button id="btnClose" height="24px"
+								<button id="btnClose" 
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 							</toolbar>
@@ -270,7 +270,7 @@
 												readonly="true" />
 											<button label=""
 												id="btnSearchAccountSubHeadRule"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 									</row>
 									<row visible="true">
@@ -286,10 +286,10 @@
 												id="lovDescAccountTypeName" width="250px" readonly="true" />
 											<button label=""
 												id="btnSearchAccountType"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 											<button label=""
 												id="btnSearchSystemIntAccount"
-												image="/images/icons/LOVSearch.png" height="24px"
+												image="/images/icons/LOVSearch.png" 
 												visible="false" />
 										</hbox>
 										<label
@@ -303,7 +303,7 @@
 												id="lovDescAccountBranchName" width="250px" readonly="true" />
 											<button label=""
 												id="btnSearchAccountBranch"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 									</row>
 									<row visible="true">
@@ -320,7 +320,7 @@
 												readonly="true" />
 											<button label=""
 												id="btnSearchTranscationCode"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 										<label
 											id="label_TransactionEntryDialog_RvsTransactionCode"
@@ -335,7 +335,7 @@
 												readonly="true" />
 											<button label=""
 												id="btnSearchRvsTransactionCode"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 									</row>
 									<!-- <row>

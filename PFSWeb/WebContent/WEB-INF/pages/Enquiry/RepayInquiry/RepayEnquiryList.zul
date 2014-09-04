@@ -81,7 +81,7 @@
 											<button
 												id="btnSearchCustCIF"
 												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchCustCIF.tooltiptext')}"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 										<label
 											id="label_FinanceEnquiryList_Branch"
@@ -93,7 +93,7 @@
 												width="150px" />
 											<button id="btnSearchBranch"
 												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchBranch.tooltiptext')}"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 									</row>
 									<row visible="true">
@@ -130,7 +130,7 @@
 											<uppercasebox id="finProduct" width="150px" />
 											<button id="btnSearchFinProduct"
 												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchFinProduct.tooltiptext')}"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 										<label
 											id="label_FinanceEnquiryList_FinType"
@@ -144,7 +144,7 @@
 											<button
 												id="btnSearchFinType"
 												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchFinType.tooltiptext')}"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 									</row>
 									<row visible="true">
@@ -158,7 +158,7 @@
 												width="150px" />
 											<button id="btnSearchFinRef"
 												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchFinRef.tooltiptext')}"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 										<label
 											id="label_FinanceEnquiryList_FinCcy"
@@ -172,7 +172,7 @@
 											<button
 												id="btnSearchFinCcy"
 												tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchFinCcy.tooltiptext')}"
-												image="/images/icons/LOVSearch.png" height="24px" />
+												image="/images/icons/LOVSearch.png"  />
 										</hbox>
 									</row>
 								</rows>
@@ -183,11 +183,11 @@
 							style="border-style: none;">
 							<button id="button_Search" label="${c:l('label_FinanceEnquiryList_Search.value')}"
 								tooltiptext="${c:l('label_FinanceEnquiryList_button_Search.tooltiptext')}"
-								height="24px"  />
-							<button height="24px" id="button_Print"
+								  />
+							<button  id="button_Print"
 								label = "${c:l('label_Print')}"
 								tooltiptext="${c:l('button_FinanceEnquiryList_PrintList.tooltiptext')}" />
-							<button height="24px" id="button_Reset" label="${c:l('label_FinanceEnquiryList_Reset.value')}"
+							<button  id="button_Reset" label="${c:l('label_FinanceEnquiryList_Reset.value')}"
 								tooltiptext="${c:l('button_FinanceEnquiryList_ResetList.tooltiptext')}" />
 						</toolbar>
 

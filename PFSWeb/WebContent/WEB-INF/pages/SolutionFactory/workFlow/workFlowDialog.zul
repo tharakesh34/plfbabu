@@ -20,10 +20,10 @@
 				<toolbar align="start"
 					style="float:left; border-style: none;">
 
-					<button id="btnSave" height="24px"
+					<button id="btnSave" 
 						image="/images/icons/btn_save2_16x16.gif"
 						tooltiptext="${c:l('btnSave.tooltiptext')}" />
-					<button id="btnCancel" height="24px"
+					<button id="btnCancel" 
 						image="/images/icons/btn_cancel2_16x16.gif"
 						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
 
@@ -39,7 +39,7 @@
 				<toolbar align="end"
 					style="float:right; border-style: none;">
 
-					<button id="btnClose" height="24px"
+					<button id="btnClose" 
 						image="/images/icons/btn_exitdoor2_16x16.gif"
 						tooltiptext="${c:l('btnClose.tooltiptext')}" />
 				</toolbar>
@@ -101,7 +101,7 @@
 											<textbox id="workFlowXML"
 												width="400px" multiline="true" rows="8" readonly="true" />
 											<button id="btnUpload"
-												width="50px" height="24px" upload="true"
+												width="50px"  upload="true"
 												label="${c:l('label_WorkFlowDialog_WorkFlowUpload.value')}" />
 										</hbox>
 									</row>

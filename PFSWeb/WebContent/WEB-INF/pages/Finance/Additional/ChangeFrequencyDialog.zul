@@ -102,9 +102,9 @@
 							<row valign="middle">
 								<hbox align="start">
 									<button id="btnChangeFrq"
-										height="24px" label="${c:l('btnChangeFrq.label')}"
+										 label="${c:l('btnChangeFrq.label')}"
 										tooltiptext="${c:l('btnChangeFrq.tooltiptext')}" />
-									<button id="btnClose" height="24px"
+									<button id="btnClose" 
 										label="${c:l('btnClose.label')}"
 										tooltiptext="${c:l('btnClose.tooltiptext')}" />
 								</hbox>

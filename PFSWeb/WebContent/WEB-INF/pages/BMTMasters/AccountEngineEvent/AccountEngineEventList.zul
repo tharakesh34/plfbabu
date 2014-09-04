@@ -23,12 +23,12 @@
 						style="border-style: none;">
 						<button
 							id="button_AccountEngineEventList_AccountEngineEventSearchDialog"
-							height="24px" label = "${c:l('label_Filter')}"
+							 label = "${c:l('label_Filter')}"
 							autodisable="button_AccountEngineEventList_AccountEngineEventSearchDialog,button_AccountEngineEventList_PrintList,
 											 button_AccountEngineEventList_NewAccountEngineEvent, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_AccountEngineEventList_AccountEngineEventSearchDialog.tooltiptext')}" />
 						<button
-							id="button_AccountEngineEventList_PrintList" height="24px"
+							id="button_AccountEngineEventList_PrintList" 
 							label = "${c:l('label_Print')}"
 							autodisable="button_AccountEngineEventList_AccountEngineEventSearchDialog,button_AccountEngineEventList_PrintList,
 											 button_AccountEngineEventList_NewAccountEngineEvent, btnRefresh, btnHelp"
@@ -39,16 +39,16 @@
 					<toolbar align="end" style="border-style: none;">
 						<button
 							id="button_AccountEngineEventList_NewAccountEngineEvent"
-							height="24px" label = "${c:l('label_New')}"
+							 label = "${c:l('label_New')}"
 							autodisable="button_AccountEngineEventList_AccountEngineEventSearchDialog,button_AccountEngineEventList_PrintList,
 											 button_AccountEngineEventList_NewAccountEngineEvent, btnRefresh, btnHelp"
 							tooltiptext="${c:l('button_AccountEngineEventList_NewAccountEngineEvent.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_AccountEngineEventList_AccountEngineEventSearchDialog,button_AccountEngineEventList_PrintList,
 											 button_AccountEngineEventList_NewAccountEngineEvent, btnRefresh, btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_AccountEngineEventList_AccountEngineEventSearchDialog,button_AccountEngineEventList_PrintList,
 											 button_AccountEngineEventList_NewAccountEngineEvent, btnRefresh, btnHelp"

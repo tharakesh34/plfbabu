@@ -19,7 +19,7 @@
 
 					<toolbar align="start"
 						style="border-style: none;">
-						<button height="24px" id="button_Print" visible="false"
+						<button  id="button_Print" visible="false"
 							label = "${c:l('label_Print')}"
 							tooltiptext="${c:l('button_CustomerEnquiryDialog_PrintList.tooltiptext')}" />
 					</toolbar>

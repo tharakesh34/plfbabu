@@ -184,7 +184,7 @@
 											width="150px" visible="true" />
 										<button
 											id="btnSearchRepayAcctId" image="/images/icons/LOVSearch.png"
-											height="24px" />
+											 />
 									</hbox>
 								</row>
 								<row height="25px">
@@ -231,7 +231,7 @@
 											readonly="true" id="schdpenality" sclass="Mywhite"
 											tabindex="-1" />
 										<button id="btnPenalty"
-											image="/images/icons/btn_notes.gif" height="24px" />
+											image="/images/icons/btn_notes.gif"  />
 									</hbox>
 									<decimalbox width="150px"
 										readonly="true" id="schdpenalityPaid" sclass="Mywhite"
@@ -340,7 +340,7 @@
 											readonly="true" id="schdRefund" sclass="Mywhite"
 											tabindex="-1" />
 										<button id="btnRefund" 
-											image="/images/icons/btn_notes.gif" height="24px" />
+											image="/images/icons/btn_notes.gif"  />
 									</hbox>
 									<decimalbox width="150px"
 										readonly="false" id="schdRefundPaid" style="text-align:right" />

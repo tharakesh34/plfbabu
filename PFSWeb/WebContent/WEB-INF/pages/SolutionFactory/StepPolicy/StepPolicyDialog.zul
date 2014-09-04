@@ -113,7 +113,7 @@
 								<!-- CRUD BUTTONS -->
 								<toolbar align="end" sclass="toolbar-end">
 									<button id="button_StepPolicyDialog_btnNew_StepPolicyDetail"
-										height="24px" label="${c:l('label_New')}"
+										 label="${c:l('label_New')}"
 										tooltiptext="${c:l('button_TransactionEntryList_NewTransactionEntry.tooltiptext')}" />
 								</toolbar>
 							</hbox>

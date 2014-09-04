@@ -22,28 +22,28 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
 								sclass="toolbar-start">
-								<button id="btnNew" height="24px"
+								<button id="btnNew" 
 									tooltiptext="${c:l('btnNew.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" />
-								<button id="btnEdit" height="24px"
+								<button id="btnEdit" 
 									tooltiptext="${c:l('btnEdit.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" />
-								<button id="btnDelete" height="24px"
+								<button id="btnDelete" 
 									tooltiptext="${c:l('btnDelete.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" />
-								<button id="btnSave" height="24px"
+								<button id="btnSave" 
 									tooltiptext="${c:l('btnSave.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" />
-								<button id="btnCancel" height="24px"
+								<button id="btnCancel" 
 									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-								<button id="btnNotes" height="24px"
+								<button id="btnNotes" 
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" />
 								<button id="btnValidate" label="Verify"
-									tooltiptext="${c:l('btnValidate.tooltiptext')}" height="24px" />
+									tooltiptext="${c:l('btnValidate.tooltiptext')}"  />
 								<button id="btnBuildSchedule"
 									label="Build" tooltiptext="${c:l('btnSchedule.tooltiptext')}"
-									height="24px" />
+									 />
 
 							</toolbar>
 
@@ -57,11 +57,11 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" height="24px"
+								<button id="btnHelp" 
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" />
-								<button id="btnClose" height="24px"
+								<button id="btnClose" 
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" />
 							</toolbar>
@@ -104,7 +104,7 @@
 															id="lovDescFinTypeName" width="250px" readonly="true" />
 														<button
 															id="btnSearchFinType" image="/images/icons/LOVSearch.png"
-															tabindex="1" height="24px" disabled="true" visible="false"/>
+															tabindex="1"  disabled="true" visible="false"/>
 													</hbox>
 													<label
 														id="label_MudarabaFinanceMainDialog_FinReference"
@@ -128,7 +128,7 @@
 															id="lovDescFinCcyName" width="250px" />
 														<button
 															id="btnSearchFinCcy" image="/images/icons/LOVSearch.png"
-															tabindex="3" height="24px" />
+															tabindex="3"  />
 													</hbox>
 													<label
 														id="label_MudarabaFinanceMainDialog_ProfitDaysBasis"
@@ -337,7 +337,7 @@
 															readonly="true" />
 														<button
 															id="btnSearchGraceBaseRate"
-															image="/images/icons/LOVSearch.png" height="24px"
+															image="/images/icons/LOVSearch.png" 
 															tabindex="26" />
 													</hbox>
 													<label
@@ -353,7 +353,7 @@
 															readonly="true" />
 														<button
 															id="btnSearchGraceSpecialRate"
-															image="/images/icons/LOVSearch.png" height="24px"
+															image="/images/icons/LOVSearch.png" 
 															tabindex="27" />
 													</hbox>
 												</row>
@@ -395,7 +395,7 @@
 														<button
 															id="btnSearchGrcIndBaseRate"
 															image="/images/icons/LOVSearch.png" tabindex="30"
-															height="24px" />
+															 />
 													</hbox>
 												</row>
 												<row id="grcPftFrqRow"
@@ -613,7 +613,7 @@
 															readonly="true" />
 														<button
 															id="btnSearchRepayBaseRate"
-															image="/images/icons/LOVSearch.png" height="24px"
+															image="/images/icons/LOVSearch.png" 
 															tabindex="49" />
 													</hbox>
 													<label
@@ -629,7 +629,7 @@
 															readonly="true" />
 														<button
 															id="btnSearchRepaySpecialRate"
-															image="/images/icons/LOVSearch.png" height="24px"
+															image="/images/icons/LOVSearch.png" 
 															tabindex="50" />
 													</hbox>
 												</row>
@@ -681,7 +681,7 @@
 															readonly="true" />
 														<button
 															id="btnSearchRpyIndBaseRate" tabindex="54"
-															image="/images/icons/LOVSearch.png" height="24px" />
+															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 												</row>
 												<row id="rpyPftFrqRow"

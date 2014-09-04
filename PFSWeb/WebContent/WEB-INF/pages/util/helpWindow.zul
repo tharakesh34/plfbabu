@@ -34,7 +34,7 @@
 								<div align="right"
 									style="float: right; padding: 1px;">
 									<button id="btnHelpClose"
-										height="24px" image="/images/icons/stop.gif"
+										 image="/images/icons/stop.gif"
 										tooltiptext="${c:l('common.Close.Window')}"
 										forward="onClick=onClose" />
 								</div>

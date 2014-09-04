@@ -31,13 +31,13 @@
 						</grid>
 					</groupbox>
 					<groupbox zclass="none;">
-						<div sclass="z-toolbar" style="padding:0" height="24px">
-							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" height="24px" width="100%" style=" padding:1px;">
+						<div sclass="z-toolbar" style="padding:0" >
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"  width="100%" style=" padding:1px;">
 								<toolbar align="start" style="border:none;">
 									<label value="${c:l('panel_GenGoodsLoanDetailList.title')}" sclass="listboxHeading"></label>
 								</toolbar>
-								<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="24px">
-									<button id="button_GenGoodsLoanDetailList_NewGenGoodsLoanDetail" height="24px" label="${c:l('label_New')}" tooltiptext="${c:l('button_GenGoodsLoanDetailList_NewGenGoodsLoanDetail.tooltiptext')}" />
+								<toolbar align="end" style="float:right; border-style: none; padding:0px;" >
+									<button id="button_GenGoodsLoanDetailList_NewGenGoodsLoanDetail"  label="${c:l('label_New')}" tooltiptext="${c:l('button_GenGoodsLoanDetailList_NewGenGoodsLoanDetail.tooltiptext')}" />
 								</toolbar>
 							</hbox>
 						</div>

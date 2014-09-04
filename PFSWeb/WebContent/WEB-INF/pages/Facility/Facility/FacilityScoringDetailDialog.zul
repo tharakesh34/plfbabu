@@ -8,7 +8,7 @@
 				<center border="none" id="divCenter">
 					<div>
 						<toolbar align="start" style="border-style: none;" width="100%">
-							<button label="${c:l('label_RuleExecute.label')}" id="btnScoringGroup" tooltiptext="${c:l('btnExecuteScoringRule.tooltiptext')}" height="24px" />
+							<button label="${c:l('label_RuleExecute.label')}" id="btnScoringGroup" tooltiptext="${c:l('btnExecuteScoringRule.tooltiptext')}"  />
 							<space width="50px" />
 							<label id="label_TotalScore" value="${c:l('label_TotalScore.label')}" style="font-weight:bold;font-size:11px" visible="false" />
 							<space spacing="2px" />

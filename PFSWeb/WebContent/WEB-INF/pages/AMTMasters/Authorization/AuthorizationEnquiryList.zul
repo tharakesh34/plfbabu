@@ -18,14 +18,14 @@
 						style="border-style: none;">
 						<button
 							id="button_AuthorizationList_NewAuthorization"
-							height="24px" image="/images/icons/addnew.png" visible="false"/>
+							 image="/images/icons/addnew.png" visible="false"/>
 						<button
 							id="button_AuthorizationList_AuthorizationSearch"
-							height="24px" label = "${c:l('label_Filter')}"
+							 label = "${c:l('label_Filter')}"
 							autodisable="button_AuthorizationList_AuthorizationSearch,button_AuthorizationList_PrintList,button_AuthorizationList_NewAuthorization,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_AuthorizationList_AuthorizationSearch.tooltiptext')}" />
 						<button
-							id="button_AuthorizationList_PrintList" height="24px"
+							id="button_AuthorizationList_PrintList" 
 							label = "${c:l('label_Print')}" visible="false"
 							autodisable="button_AuthorizationList_AuthorizationSearch,button_AuthorizationList_PrintList,button_AuthorizationList_NewAuthorization,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_AuthorizationList_PrintList.tooltiptext')}" />
@@ -33,11 +33,11 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_AuthorizationList_AuthorizationSearch,button_AuthorizationList_PrintList,button_AuthorizationList_NewAuthorization,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_AuthorizationList_AuthorizationSearch,button_AuthorizationList_PrintList,button_AuthorizationList_NewAuthorization,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />

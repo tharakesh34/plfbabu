@@ -119,9 +119,8 @@
                         <rows>
                             <row valign="middle">
                                 <hbox align="start">
-                                    <button id="btnAddDefferment"
-                                        height="24px"  />
-                                    <button id="btnClose" height="24px"
+                                    <button id="btnAddDefferment" />
+                                    <button id="btnClose" 
                                         label="${c:l('btnClose.label')}"
                                         tooltiptext="${c:l('btnClose.tooltiptext')}" />
                                 </hbox>

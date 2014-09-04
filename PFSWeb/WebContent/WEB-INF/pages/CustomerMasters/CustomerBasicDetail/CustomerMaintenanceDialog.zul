@@ -21,22 +21,22 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
 								sclass="toolbar-start">
-								<button id="btnNew" height="24px"
+								<button id="btnNew" 
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									tooltiptext="${c:l('btnNew.tooltiptext')}" />
-								<button id="btnEdit" height="24px"
+								<button id="btnEdit" 
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									tooltiptext="${c:l('btnEdit.tooltiptext')}" />
-								<button id="btnDelete" height="24px"
+								<button id="btnDelete" 
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									tooltiptext="${c:l('btnDelete.tooltiptext')}" />
-								<button id="btnSave" height="24px"
+								<button id="btnSave" 
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									tooltiptext="${c:l('btnSave.tooltiptext')}" />
-								<button id="btnCancel" height="24px"
+								<button id="btnCancel" 
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-								<button id="btnNotes" height="24px"
+								<button id="btnNotes" 
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
 							</toolbar>
@@ -51,11 +51,11 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" height="24px"
+								<button id="btnHelp" 
 									label="${c:l('label_Help')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-								<button id="btnClose" height="24px"
+								<button id="btnClose" 
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									tooltiptext="${c:l('btnClose.tooltiptext')}" />
 							</toolbar>
@@ -138,7 +138,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustTypeCode"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustDftBranch"
@@ -154,7 +154,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustDftBranch"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row>
@@ -172,7 +172,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchcustGroupID"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustBaseCcy"
@@ -188,7 +188,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustBaseCcy"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row>
@@ -206,7 +206,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustLng" image="/images/icons/LOVSearch.png"
-														height="24px" />
+														 />
 												</hbox>
 											</row>
 										</rows>
@@ -241,7 +241,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustGenderCode"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustSalutationCode"
@@ -257,7 +257,7 @@
 														style="overflow: hidden;" width="250px" readonly="true" />
 													<button
 														id="btnSearchCustSalutationCode"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row>
@@ -388,7 +388,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustCOB" visible="true"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustMotherMaiden"
@@ -417,7 +417,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustProfession"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustMaritalSts"
@@ -433,7 +433,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustMaritalSts"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row>
@@ -534,7 +534,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCorpCustCOB"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 										</rows>
@@ -570,7 +570,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustSts" image="/images/icons/LOVSearch.png"
-														height="24px" />
+														 />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustStsChgDate"
@@ -597,7 +597,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustGroupSts"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustIsBlocked"
@@ -820,7 +820,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustBLRsnCode"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row>
@@ -847,7 +847,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustRejectedRsn"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row id="row_EmpSts"
@@ -866,7 +866,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustEmpSts"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 										</rows>
@@ -901,7 +901,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustCtgCode"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustSector"
@@ -917,7 +917,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustSector"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row>
@@ -935,7 +935,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustSubSector"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustIndustry"
@@ -951,7 +951,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustIndustry"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row>
@@ -969,7 +969,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustSegment"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustSubSegment"
@@ -985,7 +985,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustSubSegment"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 										</rows>
@@ -1018,7 +1018,7 @@
 														style="overflow: hidden;" width="250px" readonly="true" />
 													<button
 														id="btnSearchCustParentCountry"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustRiskCountry"
@@ -1034,7 +1034,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustRiskCountry"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row>
@@ -1052,7 +1052,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustResdCountry"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustNationality"
@@ -1068,7 +1068,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustNationality"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 										</rows>
@@ -1112,7 +1112,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustDSADept"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row>
@@ -1130,7 +1130,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustRO1" image="/images/icons/LOVSearch.png"
-														height="24px" />
+														 />
 												</hbox>
 												<label
 													id="label_CustomerMaintenanceDialog_CustRO2"
@@ -1146,7 +1146,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustRO2" image="/images/icons/LOVSearch.png"
-														height="24px" />
+														 />
 												</hbox>
 											</row>
 											<row>
@@ -1227,7 +1227,7 @@
 														style="overflow: hidden;" readonly="true" />
 													<button
 														id="btnSearchCustStmtDispatchMode"
-														image="/images/icons/LOVSearch.png" height="24px" />
+														image="/images/icons/LOVSearch.png"  />
 												</hbox>
 											</row>
 											<row visible="false">

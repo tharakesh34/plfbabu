@@ -23,11 +23,11 @@
 						style="border-style: none;">
 						<button
 							id="button_GroupStatusCodeList_GroupStatusCodeSearchDialog"
-							height="24px" label = "${c:l('label_Filter')}"
+							 label = "${c:l('label_Filter')}"
 							autodisable="button_GroupStatusCodeList_GroupStatusCodeSearchDialog,button_GroupStatusCodeList_PrintList,button_GroupStatusCodeList_NewGroupStatusCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_GroupStatusCodeList_GroupStatusCodeSearchDialog.tooltiptext')}" />
 						<button
-							id="button_GroupStatusCodeList_PrintList" height="24px"
+							id="button_GroupStatusCodeList_PrintList" 
 							label = "${c:l('label_Print')}"
 							autodisable="button_GroupStatusCodeList_GroupStatusCodeSearchDialog,button_GroupStatusCodeList_PrintList,button_GroupStatusCodeList_NewGroupStatusCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_GroupStatusCodeList_PrintList.tooltiptext')}" />
@@ -36,15 +36,15 @@
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
 						<button
-							id="button_GroupStatusCodeList_NewGroupStatusCode" height="24px"
+							id="button_GroupStatusCodeList_NewGroupStatusCode" 
 							label = "${c:l('label_New')}"
 							autodisable="button_GroupStatusCodeList_GroupStatusCodeSearchDialog,button_GroupStatusCodeList_PrintList,button_GroupStatusCodeList_NewGroupStatusCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_GroupStatusCodeList_NewGroupStatusCode.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_GroupStatusCodeList_GroupStatusCodeSearchDialog,button_GroupStatusCodeList_PrintList,button_GroupStatusCodeList_NewGroupStatusCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" height="24px"
+						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_GroupStatusCodeList_GroupStatusCodeSearchDialog,button_GroupStatusCodeList_PrintList,button_GroupStatusCodeList_NewGroupStatusCode,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" />

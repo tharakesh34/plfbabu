@@ -90,7 +90,7 @@
                                 		width="175px" readonly="true" />
                                 	<button id="btnSearchDisbAcctId"
                                 		image="/images/icons/LOVSearch.png"
-                                		tabindex="11" height="24px" />
+                                		tabindex="11"  />
                                 	<label id="disbAcctBal" />
                                 </hbox>
 							</row>
@@ -106,9 +106,9 @@
 							<row valign="middle">
 								<hbox align="start">
 									<button id="btnAddDisbursement"
-										height="24px" label="${c:l('btnAddDisbursement.label')}"
+										 label="${c:l('btnAddDisbursement.label')}"
 										tooltiptext="${c:l('btnAddDisbursement.tooltiptext')}" />
-									<button id="btnClose" height="24px"
+									<button id="btnClose" 
 										label="${c:l('btnClose.label')}"
 										tooltiptext="${c:l('btnClose.tooltiptext')}" />
 								</hbox>

@@ -15,21 +15,21 @@
 					width="100%" widths="30%,40%,30%">
 					<toolbar align="start"
 						style="border-style: none;">
-						<button id="btnNewJVPostingEntry" height="24px"
+						<button id="btnNewJVPostingEntry" 
 							label="${c:l('label_New')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 							tooltiptext="${c:l('btnNew.tooltiptext')}" />
 					</toolbar>
-					<toolbar align="center" height="24px">
+					<toolbar align="center" >
 						<label id="label_JVPostingEntryList_Title"
 							style="font-weight:bold; font-size: 12px;" />
 					</toolbar>
 					<toolbar align="end" style="border-style: none;">
-						<button id="btnSearch" height="24px"
+						<button id="btnSearch" 
 							label="${c:l('label_Filter')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 							tooltiptext="${c:l('button_JVPostingList_JVPostingSearch.tooltiptext')}" />
-						<button id="btnRefresh" height="24px"
+						<button id="btnRefresh" 
 							label="${c:l('label_Refresh')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
