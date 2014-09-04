@@ -82,6 +82,21 @@
 									</combobox>
 								</hbox>
 							</row>
+							<row id="fromDateRow" visible="false">
+								<label
+									id="label_ChangeRepaymentDialog_TillFromDate"
+									value="${c:l('label_ChangeRepaymentDialog_FromDate.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" id="space_TillFromDate" />
+										<combobox id="cbFromDate"
+										readonly="true" width="144px">
+									</combobox>
+									<datebox id="fromDate"
+										visible="false" width="144px">
+									</datebox>
+								</hbox>
+							</row>
 							<row id="tillDateRow" visible="false">
 								<label
 									id="label_ChangeRepaymentDialog_TillDate"
