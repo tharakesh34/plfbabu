@@ -64,6 +64,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.DefermentDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -714,6 +715,11 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 			this.cbAddTermAfter.setSelectedIndex(0);
 			if(recalType.equals(CalculationConstants.RPYCHG_TILLMDT)){
 				this.recallToDateRow.setVisible(false);
+				if(SystemParameterDetails.getSystemParameterValue("DEF_METHOD").equals(PennantConstants.DEF_METHOD_RECALRATE)){
+					this.excDefDateRow.setVisible(false);
+				} else {
+					this.excDefDateRow.setVisible(true);
+				}
 				this.cbTillDateTo.setDisabled(true);
 				if(this.cbDate.getSelectedItem() == null || this.cbDate.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)){
 					fillSchDates(this.cbTillDateFrom,getFinScheduleData(),false,getFinScheduleData().getFinanceMain().getFinStartDate(), true);

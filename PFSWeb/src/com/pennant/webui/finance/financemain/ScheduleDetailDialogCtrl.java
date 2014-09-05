@@ -73,6 +73,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportGenerationUtil;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -193,7 +194,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	private boolean isWIF = false;
 	private String roleCode = "";
 	private String menuItemRightName = null;
-	
+	private String defMethod = SystemParameterDetails.getSystemParameterValue("DEF_METHOD").toString();
 	protected Row  	row_istisna;
 	protected Row  	row_Musharak;
 	protected Decimalbox	schdl_Repayprofit;
@@ -433,6 +434,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				this.window_ScheduleDetailDialog.setHeight(this.borderLayoutHeight-80+"px");
 			}
 
+		 if(defMethod.equals(PennantConstants.DEF_METHOD_RECALRATE)){
+			 this.btnRmvDefferment.setVisible(false);
+		  }
 		} catch (final Exception e) {
 			logger.error(e);
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -1632,8 +1636,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				this.btnAddDefferment.setVisible(false);
 			}
 		} else if (moduleDefiner.equals(PennantConstants.RMV_DEFF)) {
-			if (getFinScheduleData().getDefermentHeaders().size() > 0 && 
-					getUserWorkspace().isAllowed("button_"+dialogName+"_btnRmvDeferment")) {
+			if ((getFinScheduleData().getDefermentHeaders().size() > 0 && 
+					getUserWorkspace().isAllowed("button_"+dialogName+"_btnRmvDeferment")) &&
+					!defMethod.equals(PennantConstants.DEF_METHOD_RECALRATE)) {
 				Events.postEvent("onClick$btnRmvDefferment", this.window_ScheduleDetailDialog, null);
 			}else{
 				this.btnRmvDefferment.setVisible(false);
