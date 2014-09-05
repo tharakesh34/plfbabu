@@ -8,17 +8,17 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_ProductAssetDialog"
-		title="${c:l('window_ProductAssetDialog.title')}" border="normal"
+		border="normal"
 		apply="${productAssetDialogCtrl}" width="720px" height="200px"
 		sizable="true">
 
 		<div sclass="z-toolbar" style="padding:0px">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;">
+					sclass="toolbar-start">
 
 					<button id="btnNew" 
 						tooltiptext="${c:l('btnNew.tooltiptext')}"
@@ -41,13 +41,13 @@
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center"
-					style="float:left; border-style: none;">
-					<hbox align="center" style="padding: 2px"></hbox>
+					sclass="toolbar-center">
+					<label value="${c:l('window_ProductAssetDialog.title')}" sclass="label-heading" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end">
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
@@ -129,7 +129,7 @@
 							<row spans="2">
 								<groupbox id="groupboxWf" width="97%">
 									<caption label="${c:l('Action')}" />
-									<hbox>
+									<hbox width="95%">
 										<radiogroup id="userAction"
 											name="action" />
 									</hbox>

@@ -96,11 +96,11 @@
 		sizable="false">
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%>
 
 				COMMON BUTTONS
 				<toolbar align="start"
-					style="float:left; border-style: none;">
+					sclass="toolbar-start">
 
 					<button id="btnNew" 
 						tooltiptext="${c:l('btnNew.tooltiptext')}"
@@ -122,7 +122,7 @@
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 				</toolbar>
 				SEARCH AREA
-				<toolbar align="center" style="border-style: none;">
+				<toolbar align="center" sclass="toolbar-center">
 					<button id="btnValidate" tooltiptext="validate"
 						image="/images/icons/tick_16.png" w:onClick="validateJs('1');" />
 					<button id="btnSimulate" tooltiptext="simulate"
@@ -134,7 +134,7 @@
 
 				CRUD BUTTONS
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end">
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"

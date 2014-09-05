@@ -14,11 +14,11 @@
 
 			<div sclass="z-toolbar" style="padding:0">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%">
+					width="100%" widths="35%,30%,35%">
 
 					<!-- COMMON BUTTONS -->
 					<toolbar align="start"
-						style="float:left; border-style: none;">
+						sclass="toolbar-start">
 						<button id="btnNew" visible="false"
 							 tooltiptext="${c:l('btnNew.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
@@ -40,7 +40,7 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="float:left; border-style: none;">
+						sclass="toolbar-center">
 							<button id="btnPreviewReport" 
 							image="/images/icons/icon-pdf_16x16.png"
 							tooltiptext="${c:l('btnPreviewReportView.tooltiptext')}"
@@ -49,7 +49,7 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end"
-						style="float:right; border-style: none;">
+						sclass="toolbar-end">
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"

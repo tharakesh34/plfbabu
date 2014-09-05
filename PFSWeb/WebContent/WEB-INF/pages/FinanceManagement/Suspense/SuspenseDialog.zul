@@ -22,7 +22,7 @@
 
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
-								style="float:left; border-style: none;">
+								sclass="toolbar-start">
 								<button id="btnEdit" 
 									label="${c:l('btnEdit.label')}"
 									tooltiptext="${c:l('btnEdit.tooltiptext')}"
@@ -58,7 +58,7 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end"
-								style="float:right; border-style: none;">
+								sclass="toolbar-end">
 								<button id="btnHelp" 
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
@@ -199,7 +199,7 @@
 					<groupbox id="groupboxWf" width="99%"
 						closable="false">
 						<caption label="${c:l('Action')}" />
-						<hbox width="75%">
+						<hbox width="95%">
 							<radiogroup id="userAction" name="action" />
 							<label
 								id="label_SuspenseDialog_RecordStatus"

@@ -51,7 +51,7 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end"
-								style="float:right; border-style: none;">
+								sclass="toolbar-end">
 								<button id="btnHelp" 
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
@@ -337,7 +337,7 @@
 				<south sclass="gb-dialog">
 					<groupbox id="groupboxWf" width="99%">
 						<caption label="${c:l('Action')}" />
-						<hbox width="75%">
+						<hbox width="95%">
 							<radiogroup id="userAction" name="action" />
 							<label id="label_AcountsDialog_RecordStatus"
 								value="${c:l('label_AcountsDialog_RecordStatus.value')}"

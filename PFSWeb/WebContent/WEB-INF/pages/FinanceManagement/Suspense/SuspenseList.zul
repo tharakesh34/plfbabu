@@ -20,7 +20,7 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						sclass="toolbar-center">
 						<button
 							id="button_SuspenseList_SuspenseSearchDialog" 
 							label="${c:l('label_Filter')}"
@@ -33,7 +33,7 @@
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="button_SuspenseList_NewSuspense" 
 							label="${c:l('label_New')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog,button_SuspenseList_PrintList,btnRefresh,btnHelp, button_SuspenseList_NewSuspense"

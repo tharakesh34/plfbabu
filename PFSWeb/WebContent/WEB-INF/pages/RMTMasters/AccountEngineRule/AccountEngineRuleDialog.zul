@@ -14,11 +14,11 @@
 
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;">
+					sclass="toolbar-start">
 					<button id="btnNew" 
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 						tooltiptext="${c:l('btnNew.tooltiptext')}" />
@@ -40,13 +40,13 @@
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center"
-					style="float:left; border-style: none;">
+					sclass="toolbar-center">
 					<hbox align="center" style="padding: 2px"></hbox>
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end">
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"

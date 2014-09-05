@@ -20,7 +20,7 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						sclass="toolbar-center">
 						<button
 							id="button_AddressTypeList_AddressTypeSearchDialog" 
 							label = "${c:l('label_Filter')}"
@@ -35,7 +35,7 @@
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button
 							id="button_AddressTypeList_NewAddressType" 
 							label = "${c:l('label_New')}"

@@ -6,14 +6,14 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-		<window id="window_HolidayMasterDetailsDialog" title="${c:l('window_HolidayMasterDialog.title')}" border="normal"
+		<window id="window_HolidayMasterDetailsDialog"  border="normal"
 			apply="${holidayMasterDetailsDialogCtrl}" width="80%" height="250px" sizable="false">
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+				width="100%" widths="35%,30%,35%">
 				
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start" style="float:left; border-style: none;">
+				<toolbar align="start" sclass="toolbar-start">
 
 					<button id="btnNew"  tooltiptext="${c:l('btnNew.tooltiptext')}"/>
 					<!-- label="${c:l('btnNew.label')}"	 -->
@@ -24,12 +24,12 @@
 					<button id="btnNotes"  tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"/>
 				</toolbar>
 				<!-- SEARCH AREA -->
-				<toolbar align="center" style="float:left; border-style: none;">
-					<hbox align="center" style="padding: 2px"></hbox>
+				<toolbar align="center" sclass="toolbar-center">
+					<label value="${c:l('window_HolidayMasterDialog.title')}" sclass="label-heading" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end" style="float:right; border-style: none;">
+				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnHelp"  label = "${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 					<button id="btnClose"  tooltiptext="${c:l('btnClose.tooltiptext')}" />
 					

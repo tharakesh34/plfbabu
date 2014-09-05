@@ -15,7 +15,7 @@
 			<north>
 				<div sclass="z-toolbar">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-						width="100%">
+						width="100%" widths="35%,30%,35%">
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
@@ -88,7 +88,7 @@
 			<south height="48px" border="none" style="padding:5px;">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />
-					<hbox width="75%">
+					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
 						<label
 							id="label_VehicleManufacturerDialog_RecordStatus"

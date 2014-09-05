@@ -19,7 +19,7 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						sclass="toolbar-center">
 						<button id="button_RuleList_RuleSearchDialog"
 							 label="${c:l('label_Filter')}"
 							tooltiptext="${c:l('button_RuleList_RuleSearchDialog.tooltiptext')}" />
@@ -30,7 +30,7 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end"
-						style="float:right; border-style: none;">
+						sclass="toolbar-end">
 						<button id="button_RuleList_NewRule"
 							 label="${c:l('label_New')}"
 							tooltiptext="${c:l('button_RuleList_NewRule.tooltiptext')}" />

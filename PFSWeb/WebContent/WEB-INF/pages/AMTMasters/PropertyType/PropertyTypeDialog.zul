@@ -24,7 +24,7 @@
 				</toolbar>
 				<!-- SEARCH AREA -->
 				<toolbar align="center" sclass="toolbar-center">
-					<label value="${c:l('window_PropertyTypeDialog.title')}" sclass="sub-heading" ></label>
+					<label value="${c:l('window_PropertyTypeDialog.title')}" sclass="label-heading" ></label>
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->

@@ -15,7 +15,7 @@
 					<!-- COMMON BUTTONS -->
 					<label value="" />	
 					<!-- SEARCH AREA -->
-					<toolbar align="center" style="border-style: none;">
+					<toolbar align="center" sclass="toolbar-start">
 						<button
 							id="button_AdditionalFieldsList_AdditionalFieldsSearchDialog" 
 							label = "${c:l('label_Filter')}"
@@ -28,7 +28,7 @@
 					</toolbar>
 	
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="button_AdditionalFieldsList_NewAdditionalFields"
 							 label = "${c:l('label_New')}"
 							autodisable="button_AdditionalFieldsList_AdditionalFieldsSearchDialog,button_AdditionalFieldsList_PrintList,button_AdditionalFieldsList_NewAdditionalFields,btnRefresh,btnHelp"

@@ -16,7 +16,7 @@
 					width="100%" widths="30%,50%,20%">
 
 					<toolbar align="start"
-						style="border-style: none;margin:4px;">
+						style="margin:4px;" sclass="toolbar-start">
 						<label value="${c:l('label_FinancesList')}"
 							style="font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
 							font-size: 11px;font-style: normal;font-weight:bold;"
@@ -24,7 +24,7 @@
 					</toolbar>
 
 					<toolbar align="center"
-						style="border-style: none;margin:4px;float:right;">
+						style="margin:4px;" sclass="toolbar-center">
 						<label
 							value="${c:l('label_FinanceEnquiry_Filter')} : "
 							style="font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
@@ -33,7 +33,7 @@
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<hbox width="250px" height="15px">
 							<menubar id="menubar" width="auto"
 								height="15px" style="float:left; border-style: none;">

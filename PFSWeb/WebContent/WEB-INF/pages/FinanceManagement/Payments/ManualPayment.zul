@@ -23,7 +23,7 @@
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;">
+					sclass="toolbar-start">
 					<button id="btnPay" label="${c:l('btnPay.label')}"
 						tooltiptext="${c:l('btnPay.tooltiptext')}" 
 						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" />
@@ -54,7 +54,7 @@
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end">
 					<button id="btnHelp" 
 						label="${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
@@ -711,8 +711,7 @@
 					</tabpanels>
 				</tabbox>
 			</center>
-			<south id="south" height="48px" border="none"
-				style="padding:5px;">
+			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="98%">
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">

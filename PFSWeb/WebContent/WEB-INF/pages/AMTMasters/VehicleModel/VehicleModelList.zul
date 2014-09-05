@@ -15,7 +15,7 @@
 					<!-- COMMON BUTTONS -->
 					<label value="" />	
 					<!-- SEARCH AREA -->
-					<toolbar align="center" style="border-style: none;">
+					<toolbar align="center" sclass="toolbar-center">
 						<button
 							id="button_VehicleModelList_VehicleModelSearchDialog" 
 							label = "${c:l('label_Filter')}"
@@ -28,7 +28,7 @@
 					</toolbar>
 	
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="button_VehicleModelList_NewVehicleModel"
 							 label = "${c:l('label_New')}"
 							autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"

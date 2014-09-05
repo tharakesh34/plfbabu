@@ -127,7 +127,7 @@
 				<groupbox id="groupboxWf" width="99%"
 					closable="false">
 					<caption label="${c:l('Action')}" />
-					<hbox width="75%">
+					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
 						<label id="label_SubSectorDialog_RecordStatus"
 							value="${c:l('label_SubSectorDialog_RecordStatus.value')} :"

@@ -8,17 +8,16 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_ReportFilterFieldsDialog"
-			title="${c:l('window_ReportFilterFieldsDialog.title')}"
 			border="normal" apply="${reportFilterFieldsDialogCtrl}" width="80%"
 			height="500px" sizable="false">
 
 			<div sclass="z-toolbar" style="padding:0">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%">
+					width="100%" widths="35%,30%,35%">
 
 					<!-- COMMON BUTTONS -->
 					<toolbar align="start"
-						style="float:left; border-style: none;">
+						sclass="toolbar-start">
 						<button id="btnNew" visible="false"
 							 tooltiptext="${c:l('btnNew.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
@@ -40,13 +39,13 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="float:left; border-style: none;">
-						<hbox align="center" style="padding: 2px"></hbox>
+						sclass="toolbar-center">
+						<label value="${c:l('window_ReportFilterFieldsDialog.title')}" sclass="label-heading" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end"
-						style="float:right; border-style: none;">
+						sclass="toolbar-end">
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"

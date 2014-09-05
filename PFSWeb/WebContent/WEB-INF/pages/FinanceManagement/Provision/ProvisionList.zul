@@ -32,7 +32,7 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
-						<button id="button_ProvisionList_NewProvision"
+						<button id="button_ProvisionList_NewProvision" 
 							 label="${c:l('label_New')}"
 							autodisable="button_ProvisionList_ProvisionSearchDialog,button_ProvisionList_PrintList,button_ProvisionList_NewProvision,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_ProvisionList_NewProvision.tooltiptext')}" />

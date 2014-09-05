@@ -22,7 +22,7 @@
 
 						<!-- SEARCH AREA -->
 						<toolbar align="center"
-							style="border-style: none;">
+							sclass="toolbar-center">
 							<button
 								id="button_InvestmentFinHeaderList_SearchDialog" 
 								label="${c:l('label_Filter')}"
@@ -37,7 +37,7 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end"
-							style="border-style: none;">
+							sclass="toolbar-end">
 							<button
 								id="button_InvestmentFinHeaderList_NewFinance" 
 								label="${c:l('label_New')}"

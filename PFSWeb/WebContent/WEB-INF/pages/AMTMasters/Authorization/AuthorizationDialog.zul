@@ -7,7 +7,7 @@
 			<div sclass="z-toolbar" style="padding:0">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 					<!-- COMMON BUTTONS -->
-					<toolbar align="start" style="float:left; border-style: none;">
+					<toolbar align="start" sclass="toolbar-start">
 						<button id="btnNew" visible="false"  tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnEdit" visible="false"  tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnDelete" visible="false"  tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
@@ -16,12 +16,12 @@
 						<button id="btnNotes" visible="false"  tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 					</toolbar>
 					<!-- SEARCH AREA -->
-					<toolbar align="center" style="float:left; border-style: none;">
+					<toolbar align="center" sclass="toolbar-center">
 						<label value="${c:l('window_AuthorizationDialog.title')}"
 								sclass="label-heading" />
 					</toolbar>
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="float:right; border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnHelp"   label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnClose"  tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 					</toolbar>
