@@ -36,7 +36,7 @@
 									</row>
 									<row>
 										<textbox id="txtbox_Username1"
-											width="180px" height="16px"
+											width="180px" height="24px"
 											style="display:none;" />
 									</row>
 									<row align="left">
@@ -45,11 +45,12 @@
 											value="${c:l('label_LoginDialog_user.value')}"
 											style="margin-left:65px;font-weight:bold;" />
 										<textbox id="txtbox_Username" sclass="z-textbox-loginUser"
-											name="j_username" width="150px" style="margin-right:60px" />
+											name="j_username" width="150px" 
+											height="24px" style="margin-right:60px" />
 									</row>
 									<row>
 										<textbox type="password"
-											id="txtbox_Password1" width="180px" height="16px"
+											id="txtbox_Password1" width="180px" height="24px"
 											style="display:none;" />
 									</row>
 									<row align="left">
@@ -58,8 +59,8 @@
 											value=" ${c:l('label_LoginDialog_pwd.value')}" 
 											style="margin-left:65px;font-weight:bold;" />
 										<textbox type="password" sclass="z-textbox-loginPassword" 
-											id="txtbox_Password" name="j_password" width="150px"
-											style="margin-right:60px" />
+											id="txtbox_Password" name="j_password" width="150px" height="24px"
+											style="margin-right:60px;" />
 									</row>
 									<row spans="2" height="12px" />
 									<row spans="2">
