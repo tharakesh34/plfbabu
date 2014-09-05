@@ -321,6 +321,7 @@ public class PennantConstants {
 	public static final String PROC_STATUS_COMPLETE = "C";
 	public static final String YES = "Y";
 	public static final String NO = "N";
+	public static final String DEF_METHOD_RECALRATE = "RECALRATE";
 
 	//Review Category Codes
 	public static final String RVW_UNPAID_INST = "RVWUPI";
