@@ -90,7 +90,7 @@
                             		value="${c:l('label_AddDeffermentDialog_ExDefDate.value')}" />
                             	<hbox>
                             		<space spacing="2px"
-                            			sclass="mandatory" id="space_ExDefDate" />
+                            			 id="space_ExDefDate" />
                             		<checkbox id="exDefDate"
                             			checked="false">
                             		</checkbox>
