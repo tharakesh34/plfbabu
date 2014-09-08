@@ -6343,6 +6343,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				tab = (Tab) tabsIndexCenter.getFellowIfAny("scheduleDetailsTab");
 				tab.setSelected(true);
 			}
+			
+			if(getStepDetailDialogCtrl() != null){
+				getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
+			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
