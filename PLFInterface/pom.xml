@@ -6,36 +6,11 @@
 		<groupId>com.pennant.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
 		<version>1.0.5-SNAPSHOT</version>
+		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
-	<groupId>com.pennant</groupId>
 	<artifactId>PLFInterface</artifactId>
-	<version>1.0.5-SNAPSHOT</version>
-
-	<name>PLFInterface</name>
-	<url>http://www.pennanttech.com</url>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-		<spring.version>3.0.7.RELEASE</spring.version>
-	</properties>
-
-	<repositories>
-		<repository>
-			<id>central</id>
-			<name>Central Repository</name>
-			<url>http://192.168.1.10:8080/nexus/content/groups/public/</url>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>central</id>
-			<name>Central Repository</name>
-			<url>http://192.168.1.10:8080/nexus/content/groups/public/</url>
-		</pluginRepository>
-	</pluginRepositories>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<!-- Spring Framework -->

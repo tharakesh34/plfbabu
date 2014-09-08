@@ -7,11 +7,14 @@
 	<version>1.0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>pff-aggregator</name>
-	<url>http://www.pennanttech.com</url>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.6</jdk.version>
+		<spring.version>3.0.7.RELEASE</spring.version>
+		<spring.security.version>3.1.1.RELEASE</spring.security.version>
+		<spring.batch.version>2.1.8.RELEASE</spring.batch.version>
+		<zk.version>7.0.2</zk.version>
+		<jasperreports.version>4.5.0</jasperreports.version>
 	</properties>
 
 	<repositories>
