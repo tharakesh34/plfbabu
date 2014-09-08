@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.pennant.pff</groupId>
+	<artifactId>pff-aggregator</artifactId>
+	<version>1.0.5-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>pff-aggregator</name>
+	<url>http://www.pennanttech.com</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://192.168.1.10:8080/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://192.168.1.10:8080/nexus/content/groups/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<modules>
+		<module>../PLFInterface</module>
+		<module>../PFSJava</module>
+		<module>../PFSBatch</module>
+		<module>../PFSWeb</module>
+	</modules>
+</project>

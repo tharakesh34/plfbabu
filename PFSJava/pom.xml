@@ -1,10 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.pennant.pff</groupId>
+		<artifactId>pff-aggregator</artifactId>
+		<version>1.0.5-SNAPSHOT</version>
+	</parent>
 
 	<groupId>com.pennant</groupId>
 	<artifactId>PFSJava</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>PFSJava</name>
@@ -37,11 +43,10 @@
 	</pluginRepositories>
 
 	<dependencies>
-	
 		<dependency>
 			<groupId>com.pennant</groupId>
 			<artifactId>PLFInterface</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.5-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Spring Framework -->
@@ -456,7 +461,7 @@
 			<artifactId>batik-bridge</artifactId>
 			<version>1.7</version>
 		</dependency>
-		
+
 		<!-- JDBC Driver -->
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
@@ -476,8 +481,8 @@
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz-all</artifactId>
 			<version>2.1.0</version>
-		</dependency>		
-		
+		</dependency>
+
 		<!-- javax.mail -->
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -556,7 +561,7 @@
 			<artifactId>cloning</artifactId>
 			<version>1.7.9</version>
 		</dependency>
-		
+
 		<!-- Axiom Jars -->
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
@@ -580,7 +585,7 @@
 			<artifactId>atlantic</artifactId>
 			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
-		
+
 		<!-- External Jars -->
 		<dependency>
 			<groupId>com.pennant.aspose</groupId>
@@ -592,7 +597,6 @@
 			<artifactId>pas-dte</artifactId>
 			<version>1.0.2</version>
 		</dependency>
-		
 	</dependencies>
 
 	<build>

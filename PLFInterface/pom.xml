@@ -2,9 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>com.pennant.pff</groupId>
+		<artifactId>pff-aggregator</artifactId>
+		<version>1.0.5-SNAPSHOT</version>
+	</parent>
+
 	<groupId>com.pennant</groupId>
 	<artifactId>PLFInterface</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.5-SNAPSHOT</version>
 
 	<name>PLFInterface</name>
 	<url>http://www.pennanttech.com</url>
@@ -32,7 +38,6 @@
 	</pluginRepositories>
 
 	<dependencies>
-	
 		<!-- Spring Framework -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -60,14 +65,13 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.4</version>
 		</dependency>
-		
+
 		<!-- Pennant -->
 		<dependency>
 			<groupId>com.pennant.pcml</groupId>
 			<artifactId>PLFPCML</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		
 	</dependencies>
 
 	<build>
