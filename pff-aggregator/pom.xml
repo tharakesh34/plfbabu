@@ -13,7 +13,7 @@
 		<spring.version>3.0.7.RELEASE</spring.version>
 		<spring.security.version>3.1.1.RELEASE</spring.security.version>
 		<spring.batch.version>2.1.8.RELEASE</spring.batch.version>
-		<zk.version>7.0.2</zk.version>
+		<zk.version>7.0.3</zk.version>
 		<jasperreports.version>4.5.0</jasperreports.version>
 	</properties>
 
@@ -39,6 +39,15 @@
 		<module>../PFSBatch</module>
 		<module>../PFSWeb</module>
 	</modules>
+
+	<dependencies>
+		<!-- Logging Framework -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>

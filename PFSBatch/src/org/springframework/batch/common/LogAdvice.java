@@ -16,9 +16,9 @@
 
 package org.springframework.batch.common;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
+
 
 /**
  * Wraps calls for 'Processing' methods which output a single Object to write
@@ -26,7 +26,7 @@ import org.aspectj.lang.JoinPoint;
  */
 public class LogAdvice {
     
-    private static Log log = LogFactory.getLog(LogAdvice.class);
+	private final static Logger log = Logger.getLogger(LogAdvice.class);
 
     /*
      * Wraps original method and adds logging both before and after method
