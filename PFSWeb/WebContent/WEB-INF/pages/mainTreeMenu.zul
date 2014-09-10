@@ -5,8 +5,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 
-	<window id="mainMenuWindow" border="normal" 
-		use="com.pennant.common.menu.MainMenuCtrl" vflex="1">
+	<window id="mainMenuWindow" border="normal"  use="com.pennant.common.menu.MainMenuCtrl" vflex="1" style="border:0px !important;">
 		
 		<style>.z-groupbox-body { background-color : white}
 
@@ -176,11 +175,9 @@ color: #FFF;
 </style>
 		
 
- 		<groupbox id="groupbox_menu" mold="3d" height="100%" closable="false" 
-					contentStyle=" border:none; overflow:auto;">
-					<caption 
-						label="${c:l('menuTitle')}" />
-				</groupbox>
+ 		<groupbox id="groupbox_menu" mold="3d" height="100%" closable="false" contentStyle="background-color: white; overflow:auto; border-right-width: 0px">
+			<caption  label="${c:l('menuTitle')}" />
+		</groupbox>
  
 	</window>
 
