@@ -96,7 +96,7 @@
 		<dependency>
 			<groupId>org.zkoss.zkforge</groupId>
 			<artifactId>ckez</artifactId>
-			<version>3.5.2.0</version>
+			<version>3.6.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zkforge.el</groupId>
@@ -117,6 +117,11 @@
 			<groupId>org.zkoss.fusionchart</groupId>
 			<artifactId>fusionchart</artifactId>
 			<version>2.2.50</version>
+		</dependency>
+		<dependency>
+			<groupId>bsh</groupId>
+			<artifactId>bsh</artifactId>
+			<version>2.0b4</version>
 		</dependency>
 
 		<!-- Jasper Reports -->
@@ -155,13 +160,13 @@
 			<artifactId>batik-bridge</artifactId>
 			<version>1.7</version>
 		</dependency>
-		
+
 		<!-- Apache Commons -->
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.4</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -172,7 +177,7 @@
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.2.2</version>
 		</dependency>
-		
+
 		<!-- Axiom -->
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
@@ -184,7 +189,7 @@
 			<artifactId>axiom-impl</artifactId>
 			<version>1.2.8</version>
 		</dependency>
-		
+
 
 		<!-- Scheduler -->
 		<dependency>
@@ -199,7 +204,7 @@
 			<artifactId>freemarker</artifactId>
 			<version>2.3.16</version>
 		</dependency>
-		
+
 		<!-- Pennant -->
 		<dependency>
 			<groupId>com.pennant.css.theme</groupId>
