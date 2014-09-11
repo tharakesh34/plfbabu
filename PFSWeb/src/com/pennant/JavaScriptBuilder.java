@@ -84,7 +84,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.StringReplacement;
-import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
