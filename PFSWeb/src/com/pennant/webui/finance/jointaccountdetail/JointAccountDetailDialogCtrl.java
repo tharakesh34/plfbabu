@@ -79,7 +79,6 @@ import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
