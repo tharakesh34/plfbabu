@@ -3,8 +3,6 @@
 	<name>PFSBatch</name>
 	<comment></comment>
 	<projects>
-		<project>PFSJava</project>
-		<project>PLFInterface</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

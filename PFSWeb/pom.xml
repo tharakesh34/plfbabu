@@ -32,9 +32,14 @@
 
 		<!-- Spring Framework -->
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-			<version>${spring.security.version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -43,8 +48,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
 			<version>${spring.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-core</artifactId>
+			<version>${spring.batch.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -86,6 +101,16 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zhtml</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.theme</groupId>
+			<artifactId>sapphire</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.theme</groupId>
+			<artifactId>silvertail</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
@@ -173,6 +198,11 @@
 			<version>1.3.1</version>
 		</dependency>
 		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.2.2</version>
@@ -190,7 +220,6 @@
 			<version>1.2.8</version>
 		</dependency>
 
-
 		<!-- Scheduler -->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -204,12 +233,46 @@
 			<artifactId>freemarker</artifactId>
 			<version>2.3.16</version>
 		</dependency>
+		
+		<!-- Aspose -->
+		<dependency>
+			<groupId>com.pennant.aspose</groupId>
+			<artifactId>Aspose.Words.jdk16</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pennant.document.generator</groupId>
+			<artifactId>pas-dte</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 
-		<!-- Pennant -->
+		<!-- CSS Theme -->
 		<dependency>
 			<groupId>com.pennant.css.theme</groupId>
 			<artifactId>atlantic</artifactId>
 			<version>2.0.0-SNAPSHOT</version>
+		</dependency>
+		
+		<!-- Miscellaneous -->
+		<dependency>
+			<groupId>com.healthmarketscience.sqlbuilder</groupId>
+			<artifactId>sqlbuilder</artifactId>
+			<version>2.0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.com.robust-it</groupId>
+			<artifactId>cloning</artifactId>
+			<version>1.7.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt-spring3</artifactId>
+			<version>1.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>3.0.FR</version>
 		</dependency>
 	</dependencies>
 
