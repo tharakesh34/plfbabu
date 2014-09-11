@@ -173,8 +173,7 @@ public class PTListReportUtils implements Serializable {
 	}
 
 	private ReportList getReportListDetails(String module){
-		ReportList reportList = getReportListService().getApprovedReportListById(module);
-		return reportList;
+		return getReportListService().getApprovedReportListById(module);
 	}
 
 

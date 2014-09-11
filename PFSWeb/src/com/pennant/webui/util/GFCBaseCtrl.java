@@ -289,8 +289,7 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 	public String getCurrentTab(){
 		final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");  
 		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter").getFellow("tabBoxIndexCenter");
-		String currentTab = tabbox.getSelectedTab().getId().toString();
-		return currentTab;
+		return tabbox.getSelectedTab().getId().toString();
 	}
 
 	/**
