@@ -584,8 +584,9 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 					deleteRecord=true;
 				}else if(reportFilterFields.isNew()){
 					saveRecord=true;
-				}else 
+				}else {
 					updateRecord=true;
+				}
 			}
 
 			ReportFilterFields tempDetail=new ReportFilterFields();

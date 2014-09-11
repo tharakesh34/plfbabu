@@ -462,8 +462,9 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	public Search setResultMode(int resultMode) {
-		if (resultMode < 0 || resultMode > 4)
+		if (resultMode < 0 || resultMode > 4){
 			throw new IllegalArgumentException("Result Mode ( " + resultMode + " ) is not a valid option.");
+		}
 		this.resultMode = resultMode;
 		return this;
 	}

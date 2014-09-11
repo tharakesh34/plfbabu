@@ -36,8 +36,9 @@ public class SearchUtil {
 	// ---------- Add ---------- //
 
 	public static void addFetch(IMutableSearch search, String property) {
-		if (property == null || "".equals(property))
+		if (property == null || "".equals(property)){
 			return; // null properties do nothing, don't bother to add them.
+		}
 
 		List<String> fetches = search.getFetches();
 		if (fetches == null) {
@@ -78,8 +79,9 @@ public class SearchUtil {
 	 * map.
 	 */
 	public static void addField(IMutableSearch search, String property) {
-		if (property == null)
+		if (property == null){
 			return; // null properties do nothing, don't bother to add them.
+		}
 		addField(search, new Field(property));
 	}
 
@@ -89,8 +91,9 @@ public class SearchUtil {
 	 * map.
 	 */
 	public static void addField(IMutableSearch search, String property, int operator) {
-		if (property == null)
+		if (property == null){
 			return; // null properties do nothing, don't bother to add them.
+		}
 		addField(search, new Field(property, operator));
 	}
 
@@ -99,8 +102,9 @@ public class SearchUtil {
 	 * <code>key</code> will be used as the key for this value in the map.
 	 */
 	public static void addField(IMutableSearch search, String property, int operator, String key) {
-		if (property == null || key == null)
+		if (property == null || key == null){
 			return; // null properties do nothing, don't bother to add them.
+		}
 		addField(search, new Field(property, operator, key));
 	}
 
@@ -109,8 +113,9 @@ public class SearchUtil {
 	 * <code>key</code> will be used as the key for this value in the map.
 	 */
 	public static void addField(IMutableSearch search, String property, String key) {
-		if (property == null || key == null)
+		if (property == null || key == null){
 			return; // null properties do nothing, don't bother to add them.
+		}
 		addField(search, new Field(property, key));
 	}
 
@@ -305,8 +310,9 @@ public class SearchUtil {
 
 	// Sorts
 	public static void addSort(IMutableSearch search, Sort sort) {
-		if (sort == null)
+		if (sort == null){
 			return;
+		}
 
 		List<Sort> sorts = search.getSorts();
 		if (sorts == null) {
@@ -337,8 +343,9 @@ public class SearchUtil {
 	 * if <code>desc == true</code>.
 	 */
 	public static void addSort(IMutableSearch search, String property, boolean desc, boolean ignoreCase) {
-		if (property == null)
+		if (property == null){
 			return; // null properties do nothing, don't bother to add them.
+		}
 		addSort(search, new Sort(property, desc, ignoreCase));
 	}
 
@@ -373,69 +380,81 @@ public class SearchUtil {
 	// ---------- Remove ----------
 
 	public static void removeFetch(IMutableSearch search, String property) {
-		if (search.getFetches() != null)
+		if (search.getFetches() != null){
 			search.getFetches().remove(property);
+		}
 	}
 
 	public static void removeField(IMutableSearch search, Field field) {
-		if (search.getFields() != null)
+		if (search.getFields() != null){
 			search.getFields().remove(field);
+		}
 	}
 
 	public static void removeField(IMutableSearch search, String property) {
-		if (search.getFields() == null)
+		if (search.getFields() == null){
 			return;
+		}
 
 		Iterator<Field> itr = search.getFields().iterator();
 		while (itr.hasNext()) {
-			if (itr.next().getProperty().equals(property))
+			if (itr.next().getProperty().equals(property)){
 				itr.remove();
+			}
 		}
 	}
 
 	public static void removeField(IMutableSearch search, String property, String key) {
-		if (search.getFields() == null)
+		if (search.getFields() == null){
 			return;
+		}
 
 		Iterator<Field> itr = search.getFields().iterator();
 		while (itr.hasNext()) {
 			Field field = itr.next();
-			if (field.getProperty().equals(property) && field.getKey().equals(key))
+			if (field.getProperty().equals(property) && field.getKey().equals(key)){
 				itr.remove();
+			}
 		}
 	}
 
 	public static void removeFilter(IMutableSearch search, Filter filter) {
 		List<Filter> filters = search.getFilters();
-		if (filters != null)
+		if (filters != null){
 			filters.remove(filter);
+		}
 	}
 
 	/**
 	 * Remove all filters on the given property.
 	 */
 	public static void removeFiltersOnProperty(IMutableSearch search, String property) {
-		if (property == null || search.getFilters() == null)
+		if (property == null || search.getFilters() == null){
 			return;
+		}
 		Iterator<Filter> itr = search.getFilters().iterator();
 		while (itr.hasNext()) {
-			if (property.equals(itr.next().getProperty()))
+			if (property.equals(itr.next().getProperty())){
 				itr.remove();
+			}
 		}
 	}
 
 	public static void removeSort(IMutableSearch search, Sort sort) {
-		if (search.getSorts() != null)
+		if (search.getSorts() != null){
 			search.getSorts().remove(sort);
+		}
 	}
 
 	public static void removeSort(IMutableSearch search, String property) {
-		if (property == null || search.getSorts() == null)
+		if (property == null || search.getSorts() == null){
 			return;
+		}
 		Iterator<Sort> itr = search.getSorts().iterator();
 		while (itr.hasNext()) {
-			if (property.equals(itr.next().getProperty()))
+			if (property.equals(itr.next().getProperty())){
 				itr.remove();
+			}
 		}
 	}
 
@@ -452,18 +471,21 @@ public class SearchUtil {
 	}
 
 	public static void clearFetches(IMutableSearch search) {
-		if (search.getFetches() != null)
+		if (search.getFetches() != null){
 			search.getFetches().clear();
+		}
 	}
 
 	public static void clearFields(IMutableSearch search) {
-		if (search.getFields() != null)
+		if (search.getFields() != null){
 			search.getFields().clear();
+		}
 	}
 
 	public static void clearFilters(IMutableSearch search) {
-		if (search.getFilters() != null)
+		if (search.getFilters() != null){
 			search.getFilters().clear();
+		}
 	}
 
 	public static void clearPaging(IMutableSearch search) {
@@ -473,8 +495,9 @@ public class SearchUtil {
 	}
 
 	public static void clearSorts(IMutableSearch search) {
-		if (search.getSorts() != null)
+		if (search.getSorts() != null){
 			search.getSorts().clear();
+		}
 	}
 
 	// ---------- Merge ----------
@@ -543,8 +566,9 @@ public class SearchUtil {
 							break;
 						}
 					}
-					if (!found)
+					if (!found){
 						list.add(sort);
+					}
 				}
 			}
 		} else {
@@ -792,28 +816,35 @@ public class SearchUtil {
 	 * Return true if the search objects have equivalent contents.
 	 */
 	public static boolean equals(ISearch search, Object obj) {
-		if (search == obj)
+		if (search == obj){
 			return true;
-		if (!(obj instanceof ISearch))
+		}
+		if (!(obj instanceof ISearch)){
 			return false;
+		}
 		ISearch s = (ISearch) obj;
-
 		if (search.getSearchClass() == null ? s.getSearchClass() != null : !search.getSearchClass().equals(
-				s.getSearchClass()))
+				s.getSearchClass())){
 			return false;
+		}
 		if (search.isDisjunction() != s.isDisjunction() || search.getResultMode() != s.getResultMode()
 				|| search.getFirstResult() != s.getFirstResult() || search.getPage() != s.getPage()
-				|| search.getMaxResults() != s.getMaxResults())
+				|| search.getMaxResults() != s.getMaxResults()){
 			return false;
+		}
 
-		if (search.getFetches() == null ? s.getFetches() != null : !search.getFetches().equals(s.getFetches()))
+		if (search.getFetches() == null ? s.getFetches() != null : !search.getFetches().equals(s.getFetches())){
 			return false;
-		if (search.getFields() == null ? s.getFields() != null : !search.getFields().equals(s.getFields()))
+		}
+		if (search.getFields() == null ? s.getFields() != null : !search.getFields().equals(s.getFields())){
 			return false;
-		if (search.getFilters() == null ? s.getFilters() != null : !search.getFilters().equals(s.getFilters()))
+		}
+		if (search.getFilters() == null ? s.getFilters() != null : !search.getFilters().equals(s.getFilters())){
 			return false;
-		if (search.getSorts() == null ? s.getSorts() != null : !search.getSorts().equals(s.getSorts()))
+		}
+		if (search.getSorts() == null ? s.getSorts() != null : !search.getSorts().equals(s.getSorts())){
 			return false;
+		}
 
 		return true;
 	}
@@ -909,11 +940,11 @@ public class SearchUtil {
 	 * changes are made, the original list is returned.
 	 */
 	public static <T> List<T> walkList(List<T> list, ItemVisitor<T> visitor, boolean removeNulls) {
-		if (list == null)
+		if (list == null){
 			return null;
+		}
 
 		ArrayList<T> copy = null;
-
 		int i = 0;
 		for (T item : list) {
 			T result = visitor.visit(item);
@@ -930,8 +961,9 @@ public class SearchUtil {
 		if (copy != null) {
 			if (removeNulls) {
 				for (int j = copy.size() - 1; j >= 0; j--) {
-					if (copy.get(j) == null)
+					if (copy.get(j) == null){
 						copy.remove(j);
+					}
 				}
 			}
 			return copy;

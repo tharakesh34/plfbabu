@@ -391,8 +391,9 @@ public class SecurityUserRolesServiceImpl extends GenericService<SecurityUserRol
 					deleteRecord=true;
 				}else if(securityUserRoles.isNew()){
 					saveRecord=true;
-				}else 
+				}else {
 					updateRecord=true;
+				}
 			}
 
 			SecurityUserRoles tempDetail=new SecurityUserRoles();

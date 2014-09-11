@@ -734,8 +734,9 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				deleteRecord = true;
 			} else if (commitmentMovement.isNew()) {
 				saveRecord = true;
-			} else
+			} else {
 				updateRecord = true;
+			}
 		}
 
 		if (approveRec) {

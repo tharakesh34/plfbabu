@@ -76,10 +76,7 @@ public class JdbcSearchProcessor  {
 	 */
 	@SuppressWarnings("rawtypes")
 	public List search(DataSource dataSource, ISearch search) {
-		if (search == null)
-			return null;
-
-		return search(dataSource, search.getSearchClass(), search);
+		return search == null ? null : search(dataSource, search.getSearchClass(), search);
 	}
 
 
@@ -92,8 +89,9 @@ public class JdbcSearchProcessor  {
 	 */
 	@SuppressWarnings({ "unchecked", "static-access", "rawtypes" })
 	public List search(DataSource dataSource, Class<?> searchClass, ISearch search) throws DataAccessException {
-		if (search == null || (searchClass == null && StringUtils.trimToEmpty(search.getTabelName()).equals(""))) //TODO to discuss with Vasu
+		if (search == null || (searchClass == null && StringUtils.trimToEmpty(search.getTabelName()).equals(""))){//TODO to discuss with Vasu
 			return null;
+		}
 
 		//Build query object
 		SelectQuery selectQuery =   new SelectQuery();
@@ -175,8 +173,9 @@ public class JdbcSearchProcessor  {
 		Map<String,Object> namedParameters = new HashMap<String,Object>();
 
 		boolean firstResult = false;
-		if (search.getFirstResult() > 0)
+		if (search.getFirstResult() > 0){
 			firstResult = true;
+		}
 		System.out.println("2SQL : " + getLimitString(selectQuery.toString(), firstResult, search.getFirstResult(),search.getMaxResults()));
 		
 		List rowTypes = null;
@@ -204,9 +203,7 @@ public class JdbcSearchProcessor  {
 	 * @see ISearch
 	 */
 	public int count(DataSource dataSource, ISearch search) {
-		if (search == null)
-			return 0;
-		return count(dataSource, search.getSearchClass(), search);
+		return search == null ? 0 : count(dataSource, search.getSearchClass(), search);
 	}
 
 	/**
@@ -221,8 +218,9 @@ public class JdbcSearchProcessor  {
 	public int count(DataSource dataSource, Class<?> searchClass, ISearch search) {
 		
 		int count;
-		if (searchClass == null || search == null)
+		if (searchClass == null || search == null){
 			return 0;
+		}
 
 		//Build query object
 		SelectQuery selectQuery =   new SelectQuery();
@@ -296,10 +294,7 @@ public class JdbcSearchProcessor  {
 	 */
 	@SuppressWarnings("rawtypes")
 	public SearchResult searchAndCount(DataSource dataSource, ISearch search) {
-		
-		if (search == null)
-			return null;
-		return searchAndCount(dataSource, search.getSearchClass(), search);
+		return search == null ? null : searchAndCount(dataSource, search.getSearchClass(), search); 
 	}
 
 	/**
@@ -313,8 +308,9 @@ public class JdbcSearchProcessor  {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SearchResult searchAndCount(DataSource dataSource, Class<?> searchClass, ISearch search) {
 	
-		if (searchClass == null || search == null)
+		if (searchClass == null || search == null){
 			return null;
+		}
 
 		SearchResult result = new SearchResult();
 		result.setResult(search(dataSource, searchClass, search));

@@ -595,8 +595,9 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 					deleteRecord=true;
 				}else if(checkListDetail.isNew()){
 					saveRecord=true;
-				}else 
+				}else {
 					updateRecord=true;
+				}
 			}
 
 			if(approveRec){

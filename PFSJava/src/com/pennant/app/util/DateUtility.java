@@ -111,10 +111,7 @@ public final class DateUtility {
 	 * @return String
 	 */
 	public static String formatDate(java.util.Date date, String format) {
-		if(date == null){
-			return "";
-		}
-		return new SimpleDateFormat(format).format(date) + "";
+		return date == null ? "" : new SimpleDateFormat(format).format(date) + "";
 	}
 
 	/**
@@ -149,12 +146,14 @@ public final class DateUtility {
 	 */
 	public static int getDaysBetween(java.util.Date date1, java.util.Date date2) {
 
-		if (date1 == null || date2 == null)
+		if (date1 == null || date2 == null){
 			return -1;
+		}
 		GregorianCalendar gc1 = convert(date1);
 		GregorianCalendar gc2 = convert(date2);
-		if (gc1.get(Calendar.YEAR) == gc2.get(Calendar.YEAR))
+		if (gc1.get(Calendar.YEAR) == gc2.get(Calendar.YEAR)) {
 			return Math.abs(gc1.get(Calendar.DAY_OF_YEAR) - gc2.get(Calendar.DAY_OF_YEAR));
+		}
 		long time1 = date1.getTime();
 		long time2 = date2.getTime();
 		long days = (time1 - time2) / (1000 * 60 * 60 * 24);
@@ -178,8 +177,9 @@ public final class DateUtility {
 		java.util.Date date1 = parseDate(argDate1);
 		java.util.Date date2 = parseDate(argDate2);
 
-		if (date1 == null || date2 == null)
+		if (date1 == null || date2 == null){
 			return -1;
+		}
 		GregorianCalendar gc1 = convert(date1);
 		GregorianCalendar gc2 = convert(date2);
 		if (gc1.get(Calendar.YEAR) == gc2.get(Calendar.YEAR))
@@ -200,9 +200,7 @@ public final class DateUtility {
 	 * @return sql date
 	 */
 	public static java.sql.Date convert(GregorianCalendar date) {
-		if (date == null)
-			return null;
-		return new java.sql.Date(date.getTime().getTime());
+		return date == null ? null : new java.sql.Date(date.getTime().getTime());
 	}
 
 	/**
@@ -218,10 +216,12 @@ public final class DateUtility {
 		GregorianCalendar gc1, gc2;
 		gc1 = new GregorianCalendar(getYear(date1), getMonth(date1) - 1, getDay(date1));
 		gc2 = new GregorianCalendar(getYear(date2), getMonth(date2) - 1, getDay(date2));
-		if (gc1.after(gc2))
+		if (gc1.after(gc2)){
 			return 1;
-		if (gc1.before(gc2))
+		}
+		if (gc1.before(gc2)){
 			return -1;
+		}
 		return 0;
 	}
 
@@ -235,9 +235,7 @@ public final class DateUtility {
 	 * @return int
 	 */
 	public static int getDay(java.util.Date date) {
-		if (date == null)
-			return -1;
-		return convert(date).get(Calendar.DATE);
+		return date == null ? -1 : convert(date).get(Calendar.DATE);
 	}
 
 	/**
@@ -250,9 +248,7 @@ public final class DateUtility {
 	 * @return int
 	 */
 	public static int getMonth(java.util.Date date) {
-		if (date == null)
-			return -1;
-		return convert(date).get(Calendar.MONTH) + 1;
+		return date == null ? -1 : convert(date).get(Calendar.MONTH) + 1;
 	}
 
 	/**
@@ -269,8 +265,9 @@ public final class DateUtility {
 		int month = getMonth(date);
 		int year = getYear(date);
 		int day = daysInAMonth[month];
-		if (isLeapYear(year) && month == 2)
+		if (isLeapYear(year) && month == 2){
 			day++;
+		}
 
 		return convert(new GregorianCalendar(year, month - 1, day));
 	}
@@ -302,9 +299,7 @@ public final class DateUtility {
 	 * @return int
 	 */
 	public static int getYear(java.util.Date date) {
-		if (date == null)
-			return -1;
-		return convert(date).get(Calendar.YEAR);
+		return date == null ? -1 : convert(date).get(Calendar.YEAR);
 	}
 
 	/**
@@ -325,8 +320,7 @@ public final class DateUtility {
 	 * @return boolean
 	 */
 	public static boolean isLeapYear(int year) {
-		GregorianCalendar gc = new GregorianCalendar();
-		return gc.isLeapYear(year);
+		return new GregorianCalendar().isLeapYear(year);
 	}
 
 	/**
@@ -344,17 +338,22 @@ public final class DateUtility {
 	 * @return boolean
 	 */
 	public static boolean isValidDate(int day, int month, int year) {
-		if (day < 1 || day > 31)
+		if (day < 1 || day > 31) {
 			return false;
-		if (month < 1 || month > 12)
+		}
+		if (month < 1 || month > 12) {
 			return false;
-		if (year < 1000 || year > 9999)
+		}
+		if (year < 1000 || year > 9999) {
 			return false;
+		}
 		int[] daysInAMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-		if (isLeapYear(year))
+		if (isLeapYear(year)) {
 			daysInAMonth[1]++;
-		if (day > daysInAMonth[month - 1])
+		}
+		if (day > daysInAMonth[month - 1]) {
 			return false;
+		}
 		return true;
 	}
 
@@ -373,53 +372,62 @@ public final class DateUtility {
 	 */
 	public static Date getSqlDate(String date, String format, char sep) {
 		if (format.trim().equalsIgnoreCase("DDMMYYYY")) {
-			if (sep == ' ' || sep == '\u0000')
+			if (sep == ' ' || sep == '\u0000') {
 				return parseDate(date, "ddMMyyyy");
-			else
+			} else {
 				return parseDate(date, "dd" + sep + "MM" + sep + "yyyy");
+			}
 		} else if (format.trim().equalsIgnoreCase("MMDDYYYY")) {
-			if (sep == ' ' || sep == '\u0000')
+			if (sep == ' ' || sep == '\u0000') {
 				return parseDate(date, "MMddyyyy");
-			else
+			} else {
 				return parseDate(date, "MM" + sep + "dd" + sep + "yyyy");
+			}
 		} else if (format.trim().equalsIgnoreCase("YYYYDDMM")) {
-			if (sep == ' ' || sep == '\u0000')
+			if (sep == ' ' || sep == '\u0000') {
 				return parseDate(date, "yyyyddMM");
-			else
+			} else {
 				return parseDate(date, "yyyy" + sep + "dd" + sep + "MM");
+			}
 		} else if (format.trim().equalsIgnoreCase("YYYYMMDD")) {
-			if (sep == ' ' || sep == '\u0000')
+			if (sep == ' ' || sep == '\u0000') {
 				return parseDate(date, "yyyyMMdd");
-			else
+			} else {
 				return parseDate(date, "yyyy" + sep + "MM" + sep + "dd");
+			}
 		} else if (format.trim().equalsIgnoreCase("MMYYYY")) {
-			if (sep == ' ' || sep == '\u0000')
+			if (sep == ' ' || sep == '\u0000') {
 				return parseDate(date, "MMyyyy");
-			else
+			} else {
 				return parseDate(date, "MM" + sep + "yyyy");
+			}
 		} else if (format.trim().equalsIgnoreCase("DD")) {
 			return parseDate(date, "dd");
 		} else if (format.trim().equalsIgnoreCase("MMMYYYY")) {
-			if (sep == ' ' || sep == '\u0000')
+			if (sep == ' ' || sep == '\u0000') {
 				return parseDate(date, "MMMyyyy");
-			else
+			} else {
 				return parseDate(date, "MMM" + sep + "yyyy");
+			}
 		}
 		if (format.trim().equalsIgnoreCase("DDMMYY")) {
-			if (sep == ' ' || sep == '\u0000')
+			if (sep == ' ' || sep == '\u0000') {
 				return parseDate(date, "ddMMyy");
-			else
+			} else {
 				return parseDate(date, "dd" + sep + "MM" + sep + "yy");
+			}
 		} else if (format.trim().equalsIgnoreCase("MMDDYY")) {
-			if (sep == ' ' || sep == '\u0000')
+			if (sep == ' ' || sep == '\u0000') {
 				return parseDate(date, "MMddyy");
-			else
+			} else {
 				return parseDate(date, "MM" + sep + "dd" + sep + "yy");
+			}
 		} else if (format.trim().equalsIgnoreCase("YYMMDD")) {
-			if (sep == ' ' || sep == '\u0000')
+			if (sep == ' ' || sep == '\u0000') {
 				return parseDate(date, "yyMMdd");
-			else
+			} else {
 				return parseDate(date, "yy" + sep + "MM" + sep + "dd");
+			}
 		} else {
 			return null;
 		}
@@ -430,8 +438,9 @@ public final class DateUtility {
 	 * MMDDYYYY, YYYYMMDD, YYYYDDMM, MMYYYY, MMMYYYY, DD, MMDDYY, YYMMDD, DDMMYY</font> Throws InvalidFormatException
 	 */
 	public static String format(Date date, String format, char dateSeparator) {
-		if (date == null)
+		if (date == null){
 			return null;
+		}
 		String allowed = " -./";
 		String dateSeparatorString = String.valueOf('/');
 		if (allowed.indexOf(dateSeparator) >= 0) {
@@ -484,10 +493,7 @@ public final class DateUtility {
 	}
 
 	public static String formatUtilDate(java.util.Date date, String format) {
-		if(date == null){
-			return "";
-		}
-		return formatDate(date, format);
+		return date == null ? "" : formatDate(date, format);
 	}
 
 	/**
@@ -505,10 +511,11 @@ public final class DateUtility {
 	 * @return String
 	 */
 	public static String format(Date date, String format, boolean seperatorRequired) {
-		if (seperatorRequired)
+		if (seperatorRequired) {
 			return format(date, format);
-		else
+		} else {
 			return format(date, format, '\u0000');
+		}
 	}
 
 	/**
@@ -520,10 +527,7 @@ public final class DateUtility {
 	 * @return boolean
 	 */
 	public static boolean beforeToday(java.util.Date date) {
-		if (date == null)
-			return false;
-		java.util.Date today = new java.util.Date();
-		return date.before(today);
+		return date == null ? false : date.before(new java.util.Date());
 	}
 
 	/**
@@ -535,10 +539,7 @@ public final class DateUtility {
 	 * @return boolean
 	 */
 	public static boolean afterToday(java.util.Date date) {
-		if (date == null)
-			return false;
-		java.util.Date today = new java.util.Date();
-		return date.after(today);
+		return date == null ? false : date.after(new java.util.Date());
 	}
 
 	/**
@@ -553,8 +554,9 @@ public final class DateUtility {
 	 * @return Date
 	 */
 	public static java.sql.Date addDays(java.util.Date date, int days) {
-		if (date == null)
+		if (date == null){
 			return null;
+		}
 		GregorianCalendar gc = convert(date);
 		gc.add(Calendar.DATE, days);
 		return convert(gc);
@@ -587,8 +589,9 @@ public final class DateUtility {
 	 * @return Date
 	 */
 	public static java.sql.Date addMonths(java.util.Date date, int months) {
-		if (date == null)
+		if (date == null){
 			return null;
+		}
 		GregorianCalendar gc = convert(date);
 		gc.add(Calendar.MONTH, months);
 		return convert(gc);
@@ -606,8 +609,9 @@ public final class DateUtility {
 	 * @return Date
 	 */
 	public static java.sql.Date addYears(java.util.Date date, int years) {
-		if (date == null)
+		if (date == null) {
 			return null;
+		}
 		GregorianCalendar gc = convert(date);
 		gc.add(Calendar.YEAR, years);
 		return convert(gc);
@@ -626,8 +630,9 @@ public final class DateUtility {
 	 */
 	public static java.sql.Date addFrequency(java.util.Date date, char frequency) {
 
-		if (date == null)
+		if (date == null){
 			return null;
+		}
 		GregorianCalendar gc = convert(date);
 		switch (frequency) {
 		case 'D':
@@ -676,8 +681,9 @@ public final class DateUtility {
 	 */
 	public static int getMonthsBetween(java.util.Date date1, java.util.Date date2) {
 
-		if (date1 == null || date2 == null)
+		if (date1 == null || date2 == null) {
 			return -1;
+		}
 		if (date1.before(date2)) {
 			java.util.Date temp = date2;
 			date2 = date1;
@@ -686,16 +692,18 @@ public final class DateUtility {
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
 		int months = convert(date1).get(Calendar.MONTH) - convert(date2).get(Calendar.MONTH);
 		months += years * 12;
-		if (convert(date1).get(Calendar.DATE) < convert(date2).get(Calendar.DATE))
+		if (convert(date1).get(Calendar.DATE) < convert(date2).get(Calendar.DATE)) {
 			months--;
+		}
 
 		return months;
 	}
 
 	public static int getMonthsBetween(java.util.Date date1, java.util.Date date2, boolean includeDate2) {
 
-		if (date1 == null || date2 == null)
+		if (date1 == null || date2 == null){
 			return -1;
+		}
 		if (date1.before(date2)) {
 			java.util.Date temp = date2;
 			date2 = date1;
@@ -735,19 +743,21 @@ public final class DateUtility {
 	 */
 	public static int getYearsBetween(java.util.Date date1, java.util.Date date2) {
 
-		if (date1 == null || date2 == null)
+		if (date1 == null || date2 == null){
 			return -1;
+		}
 		if (date1.before(date2)) {
 			java.util.Date temp = date2;
 			date2 = date1;
 			date1 = temp;
 		}
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
-		if (convert(date1).get(Calendar.MONTH) < convert(date2).get(Calendar.MONTH))
+		if (convert(date1).get(Calendar.MONTH) < convert(date2).get(Calendar.MONTH)) {
 			years--;
-		else if (convert(date1).get(Calendar.MONTH) == convert(date2).get(Calendar.MONTH)) {
-			if (convert(date1).get(Calendar.DATE) < convert(date2).get(Calendar.DATE))
+		} else if (convert(date1).get(Calendar.MONTH) == convert(date2).get(Calendar.MONTH)) {
+			if (convert(date1).get(Calendar.DATE) < convert(date2).get(Calendar.DATE)) {
 				years--;
+			}
 		}
 
 		return years;
@@ -766,8 +776,9 @@ public final class DateUtility {
 	 */
 	public static String getDurationBetween(java.util.Date date1, java.util.Date date2) {
 
-		if (date1 == null || date2 == null)
+		if (date1 == null || date2 == null){
 			return null;
+		}
 		int years = getYearsBetween(date1, date2);
 		int months = getMonthsBetween(date1, date2) % 12;
 		int days = getDay(date1) - getDay(date2);
@@ -791,8 +802,9 @@ public final class DateUtility {
 	 * @return GregorianCalendar
 	 */
 	public static GregorianCalendar convert(java.util.Date date) {
-		if (date == null)
+		if (date == null) {
 			return null;
+		}
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(date);
 		return gc;
@@ -803,8 +815,9 @@ public final class DateUtility {
 	 * half-year. If the date is not end of financial year, it will return -1; startMonth 1=Jan, 2=Feb....., 12=Dec
 	 */
 	public static int getDaysInYear(int startMonth, java.util.Date date) {
-		if (Math.abs(startMonth - getMonth(date) - 1) % 12 != 0)
+		if (Math.abs(startMonth - getMonth(date) - 1) % 12 != 0){
 			return -1;
+		}
 		return DateUtility.getDaysBetween(
 		        DateUtility.getMonthEndDate(DateUtility.addMonths(date, -12)),
 		        DateUtility.getMonthEndDate(date));
@@ -843,14 +856,12 @@ public final class DateUtility {
 
 	public static long getDateYYYYJDay() {
 		Calendar curCalendar = Calendar.getInstance();
-		long dateYYYYJDay = (curCalendar.get(Calendar.YEAR) * 1000)
-		        + curCalendar.get(Calendar.DAY_OF_YEAR);
-		return dateYYYYJDay;
+		return (curCalendar.get(Calendar.YEAR) * 1000)
+		          + curCalendar.get(Calendar.DAY_OF_YEAR);
 	}
 
 	public static int getDateJulionDay() {
-		Calendar curCalendar = Calendar.getInstance();
-		return curCalendar.get(Calendar.DAY_OF_YEAR);
+		return Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
 	}
 
 	public static long getDaysBetween(Calendar startCalendar, Calendar endCalendar) {

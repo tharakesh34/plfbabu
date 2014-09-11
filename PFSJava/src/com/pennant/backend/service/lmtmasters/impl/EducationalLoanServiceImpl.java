@@ -581,8 +581,9 @@ public class EducationalLoanServiceImpl extends GenericService<EducationalLoan> 
 					deleteRecord=true;
 				}else if(educationalExpense.isNew()){
 					saveRecord=true;
-				}else 
+				}else {
 					updateRecord=true;
+				}
 			}
 
 			if(approveRec){

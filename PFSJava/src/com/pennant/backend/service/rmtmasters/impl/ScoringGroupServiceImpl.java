@@ -774,8 +774,9 @@ GenericService<ScoringGroup> implements ScoringGroupService {
 					deleteRecord=true;
 				}else if(scoringSlab.isNew()){
 					saveRecord=true;
-				}else 
+				}else {
 					updateRecord=true;
+				}
 			}
 
 			if(approveRec){
@@ -867,8 +868,9 @@ GenericService<ScoringGroup> implements ScoringGroupService {
 					deleteRecord=true;
 				}else if(scoringMetrics.isNew()){
 					saveRecord=true;
-				}else 
+				}else {
 					updateRecord=true;
+				}
 			}
 
 			if(approveRec){

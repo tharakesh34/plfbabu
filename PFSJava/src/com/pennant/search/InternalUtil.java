@@ -61,12 +61,12 @@ public class InternalUtil {
 			}
 		}
 
-		if (value == null)
+		if (value == null){
 			return null;
-		if (type.isInstance(value))
+		}
+		if (type.isInstance(value)){
 			return value;
-
-
+		}
 
 		if (String.class.equals(type)) {
 			return value.toString();

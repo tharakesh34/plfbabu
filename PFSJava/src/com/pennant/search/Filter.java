@@ -404,25 +404,33 @@ public class Filter implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()){
 			return false;
+		}
 		Filter other = (Filter) obj;
-		if (operator != other.operator)
+		if (operator != other.operator){
 			return false;
+		}
 		if (property == null) {
-			if (other.property != null)
+			if (other.property != null){
 				return false;
-		} else if (!property.equals(other.property))
+			}
+		} else if (!property.equals(other.property)){
 			return false;
+		}
 		if (value == null) {
-			if (other.value != null)
+			if (other.value != null){
 				return false;
-		} else if (!value.equals(other.value))
+			}
+		} else if (!value.equals(other.value)){
 			return false;
+		}
 		return true;
 	}
 
@@ -485,8 +493,9 @@ public class Filter implements Serializable {
 					sb.append("**INVALID VALUE - NOT A FILTER: (" + o + ") **");
 				}
 			}
-			if (first)
+			if (first){
 				return (operator == Filter.OP_AND ? "AND: " : "OR: ") + "**EMPTY LIST**";
+			}
 
 			sb.append(")");
 			return sb.toString();
@@ -572,8 +581,9 @@ public class Filter implements Serializable {
 					sb.append("**INVALID VALUE - NOT A FILTER: (" + o + ") **");
 				}
 			}
-			if (first)
+			if (first){
 				return (operator == Filter.OP_AND ? " AND " : " OR ") + "**EMPTY LIST**";
+			}
 
 			sb.append(")");
 			return sb.toString();

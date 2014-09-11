@@ -493,22 +493,23 @@ public class HolidayUtil implements Serializable {
 	
 	private static String getHandlerType(String NBDAction)
 	{
-		if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT))
+		if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT)) {
 			return HolidayHandlerType.FORWARD;
-		else if(NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT_PREVIOUS))
+		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT_PREVIOUS)) {
 			return HolidayHandlerType.MODIFIED_FOLLOWING;
-		else if(NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS))
+		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS)) {
 			return HolidayHandlerType.BACKWARD;
-		else if(NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS_NEXT))
+		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS_NEXT)) {
 			return HolidayHandlerType.MODIFIED_PRECEDING;
-		else if(NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT_NONE))
+		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT_NONE)) {
 			return HolidayHandlerType.FORWARD_NOT_NEXT_MONTH;
-		else if(NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS_NONE))
+		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS_NONE)) {
 			return HolidayHandlerType.BACKWARD_NOT_PREVIOUS_MONTH;
-		else if(NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NONE))
+		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NONE)) {
 			return HolidayHandlerType.ACTUAL_DATE;
-		else
+		} else {
 			return HolidayHandlerType.FORWARD;
+		}
 	}
 	
 	public static Calendar getNextBusinessDate(String holidayCode,String Action,Date date) {
@@ -523,8 +524,7 @@ public class HolidayUtil implements Serializable {
 		dateCalculator.setStartDate(tempDate);
 		if(dateCalculator.isNonWorkingDay(tempDate)) {
 			return dateCalculator.getCurrentBusinessDate();
-		}
-		else {
+		} else {
 			return dateCalculator.moveByBusinessDays(moveBy).getCurrentBusinessDate();
 		}
 	}
