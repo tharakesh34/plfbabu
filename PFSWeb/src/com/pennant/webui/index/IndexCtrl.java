@@ -197,9 +197,7 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 	 * Returns the spring-security managed logged in user.<br>
 	 */
 	public String doGetLoggedInUser() {
-
-		final String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		return userName;
+		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 
 	/**
