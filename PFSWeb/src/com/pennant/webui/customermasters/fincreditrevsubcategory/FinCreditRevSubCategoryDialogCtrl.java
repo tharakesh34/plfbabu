@@ -1333,7 +1333,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseListCtrl<FinCredit
 				for(int i=0; i < this.getCreditApplicationReviewDialogCtrl().listOfFinCreditRevSubCategory.size(); i++){
 					FinCreditRevSubCategory aFinCreditRevSubCategory = this.getCreditApplicationReviewDialogCtrl().listOfFinCreditRevSubCategory.get(i);
 					
-					if(aFinCreditRevSubCategory.getSubCategoryCode().equals(this.finCreditRevSubCategory.getSubCategoryCode()))
+					if(aFinCreditRevSubCategory.getSubCategoryCode().equals(this.finCreditRevSubCategory.getSubCategoryCode())) {
 						if(this.finCreditRevSubCategory.equals(aFinCreditRevSubCategory)){
 							boolean isModified = false;
 						if(finCreditRevSubCategory.getRemarks().equals("R")){
@@ -1348,6 +1348,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseListCtrl<FinCredit
 						this.getCreditApplicationReviewDialogCtrl().modifiedFinCreditRevSubCategoryList.add(aFinCreditRevSubCategory);
 						}
 					}
+				}
 			}
 		}
 		

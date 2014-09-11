@@ -167,7 +167,6 @@ import com.pennant.backend.model.finance.FinBillingDetail;
 import com.pennant.backend.model.finance.FinBillingHeader;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
-import com.pennant.backend.model.finance.FinCustCreditReview;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -3915,8 +3914,9 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 		if (this.oldVar_repayProfitRate != this.repayProfitRate.getValue()) {
-			if (this.repayProfitRate.getValue().intValue() > 0)
+			if (this.repayProfitRate.getValue().intValue() > 0) {
 				return true;
+			}
 		}
 		if (this.oldVar_repayMargin != this.repayMargin.getValue()) {
 			return true;
@@ -4207,8 +4207,9 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 		if (this.oldVar_repayProfitRate != this.repayProfitRate.getValue()) {
-			if (this.repayProfitRate.getValue().intValue() > 0)
+			if (this.repayProfitRate.getValue().intValue() > 0) {
 				return true;
+			}
 		}
 		if (this.oldVar_repayMargin != this.repayMargin.getValue()) {
 			return true;

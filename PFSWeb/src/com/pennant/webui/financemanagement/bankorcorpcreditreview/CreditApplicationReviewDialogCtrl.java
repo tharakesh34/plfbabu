@@ -2686,9 +2686,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
         		comboitem.setValue(aFinCreditRevSubCategory.getSubCategoryCode());
         		comboitem.setLabel(aFinCreditRevSubCategory.getSubCategoryDesc());
         		comboitem.setParent(cb_MainCategoryCode);
-        		if(isEdit && aFinCreditRevSubCategory.getSubCategoryCode().equals(finCreditRevSubCategory.getMainSubCategoryCode()))
+        		if(isEdit && aFinCreditRevSubCategory.getSubCategoryCode().equals(finCreditRevSubCategory.getMainSubCategoryCode())){
         			cb_MainCategoryCode.setSelectedItem(comboitem);
+        		}
         		cb_MainCategoryCode.appendChild(comboitem);
+        		
         	}
         }
         cb_MainCategoryCode.setWidth("180px");

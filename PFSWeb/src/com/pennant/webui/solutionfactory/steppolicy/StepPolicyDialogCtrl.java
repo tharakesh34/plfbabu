@@ -1212,13 +1212,14 @@ public class StepPolicyDialogCtrl extends GFCBaseListCtrl<StepPolicyDetail> impl
 
 	public BigDecimal getTotTenorPerc(){
 		BigDecimal TotTenorPerc = BigDecimal.ZERO;
-		if(getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty())
+		if(getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty()) {
 			for (StepPolicyDetail stepPolicyDetail : getStepPolicyDetailList()) {
 				if(stepPolicyDetail.getTenorSplitPerc() != null && !StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) && 
 				!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
 					TotTenorPerc = TotTenorPerc.add(stepPolicyDetail.getTenorSplitPerc());
 				}
 			}
+		}
 		return TotTenorPerc;
 	}
 

@@ -673,14 +673,16 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			wve.add(we);
 		}
 		try {
-			if(this.usrCanSignonFrom != null)
+			if(this.usrCanSignonFrom != null) {
 				aSecurityUser.setUsrCanSignonFrom(PennantAppUtil.getTime(this.usrCanSignonFrom.getValue()));
+			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			if(this.usrCanSignonTo!= null)
+			if(this.usrCanSignonTo!= null) {
 				aSecurityUser.setUsrCanSignonTo(PennantAppUtil.getTime(this.usrCanSignonTo.getValue()));
+			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}

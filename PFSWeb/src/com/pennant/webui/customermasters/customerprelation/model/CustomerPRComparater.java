@@ -18,8 +18,9 @@ public class CustomerPRComparater implements Comparator<Object>, Serializable {
 			return 1;
 		}else if(data1.getPRCustID()<data2.getPRCustID()){
 			return -1;			
-		}else
+		}else {
 			return 0;
+		}
 	}
 
 }

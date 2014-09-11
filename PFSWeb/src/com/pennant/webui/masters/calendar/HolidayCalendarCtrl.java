@@ -135,10 +135,11 @@ public class HolidayCalendarCtrl extends GenericForwardComposer {
 	private void pageChange(int page) {
 		logger.debug("Entering");
 		
-		if (page > 0)
+		if (page > 0) {
 			calendars.previousPage();
-		else
+		} else {
 			calendars.nextPage();
+		}
 		loadEvents();
 		
 		logger.debug("Leaving");

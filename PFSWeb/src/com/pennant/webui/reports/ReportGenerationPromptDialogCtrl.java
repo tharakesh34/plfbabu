@@ -1098,8 +1098,9 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 							}else if(fromDateBox instanceof Decimalbox){
 								Number fromValue =(Number) (fromDateBox instanceof Intbox ?((Intbox) fromDateBox).getValue():((Decimalbox) fromDateBox).getValue());
 								Number toValue =(Number) (toDateBox instanceof Intbox ?((Intbox) toDateBox).getValue():((Decimalbox) toDateBox).getValue());
-								if(fromValue.doubleValue()>toValue.doubleValue())
+								if(fromValue.doubleValue()>toValue.doubleValue()) {
 									throw new WrongValueException( fromDateBox,Labels.getLabel("label_Error_FromValueMustGretaerTo.vlaue"));
+								}
 							}
 							whereCondition =getWhereConditionFromDateTimeAndRangeTypes(whereCondition,aReportFilterFields,  fromDateBox,">=");
 							whereCondition= getWhereConditionFromDateTimeAndRangeTypes(whereCondition,aReportFilterFields,  toDateBox,"<=");
@@ -2012,8 +2013,9 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 				}
 				for(int j=0 ;j< values.length;j++){
 					if(values[j].equals(resultantObject.getClass().getMethod(aReportFilterField.getLovHiddenFieldMethod())
-							.invoke(resultantObject).toString()))
+							.invoke(resultantObject).toString())) {
 						lovSearchMap.put(values[j], resultantObject);
+					}
 				}
 				logger.debug("Leaving");
 			}

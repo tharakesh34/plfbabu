@@ -1802,7 +1802,6 @@ public class JavaScriptBuilder extends Groupbox {
 				}else if(!validation && !StringUtils.trimToEmpty(((Textbox) component).getValue()).equals("")){
 					return "";
 				}
-
 			}
 			else{
 				((Longbox) component).setConstraint("");
@@ -1811,11 +1810,11 @@ public class JavaScriptBuilder extends Groupbox {
 			}
 		}else if(component instanceof Label){
 			Combobox leftOperandType = (Combobox) component.getNextSibling().getNextSibling();
-			if(validation)
-			return ((Label)component).getValue().toString().toLowerCase();
-			else if((!validation && leftOperandType.getSelectedIndex()>0) || ((Label)component).getValue().toString().equalsIgnoreCase("ELSE")){
+			if(validation) {
+			   return ((Label)component).getValue().toString().toLowerCase();
+			} else if((!validation && leftOperandType.getSelectedIndex()>0) || ((Label)component).getValue().toString().equalsIgnoreCase("ELSE")){
 				return ((Label)component).getValue().toString().toLowerCase();
-			}else if(!validation && leftOperandType.getSelectedIndex()<=0){
+			} else if(!validation && leftOperandType.getSelectedIndex()<=0){
 				return "";
 			}
 		}else if(component instanceof Button){
@@ -1965,8 +1964,9 @@ public class JavaScriptBuilder extends Groupbox {
 	 * @throws InterruptedException
 	 */
 	public void simulateQuery(Window window_NotificationsDialog) throws InterruptedException{
-		if(this.editable)
+		if(this.editable) {
 			getSqlQuery(true);
+		}
 
 		if(!StringUtils.trimToEmpty(sqlQuery).equals("")){
 			if(objectFieldList!=null && objectFieldList.size()>0){

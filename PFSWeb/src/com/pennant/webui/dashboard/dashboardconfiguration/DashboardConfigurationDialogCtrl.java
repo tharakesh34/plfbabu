@@ -733,10 +733,10 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 						||StringUtils.containsIgnoreCase(this.query.getValue().trim(), "update")
 						||StringUtils.containsIgnoreCase(this.query.getValue().trim(), "alter")
 						|| StringUtils.containsIgnoreCase(this.query.getValue().trim(), "truncate")
-						|| !StringUtils.startsWithIgnoreCase(this.query.getValue().trim(), "select"))
-
+						|| !StringUtils.startsWithIgnoreCase(this.query.getValue().trim(), "select")) {
 					throw new WrongValueException(
 							this.query,Labels.getLabel("label_DashboardConfigurationDialog_Query_Alert.value"));
+				}
 			}
 
 		}catch (WrongValueException we) {

@@ -1828,8 +1828,9 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 			return true;
 		}
 		if (this.oldVar_repayProfitRate != this.repayProfitRate.getValue()) {
-			if (this.repayProfitRate.getValue().intValue() > 0)
+			if (this.repayProfitRate.getValue().intValue() > 0) {
 				return true;
+			}
 		}
 		if (this.oldVar_repayMargin != this.repayMargin.getValue()) {
 			return true;

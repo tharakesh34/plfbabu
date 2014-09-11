@@ -42,13 +42,15 @@ public class HolidayCalendarModelRenderer extends SimpleCalendarModel implements
 	        long end = endDate.getTime();
 	        Iterator<CalendarEvent> i$ = _list.iterator();
 	        do {
-	            if (!i$.hasNext())
+	            if (!i$.hasNext()) {
 	                break;
+	            }
 	            CalendarEvent ce = (CalendarEvent) i$.next();
 	            long b = ce.getBeginDate().getTime();
 	            long e = ce.getEndDate().getTime();
-	            if (e >= begin && b < end && ce.getContent().toLowerCase().contains(filterText.toLowerCase()))
+	            if (e >= begin && b < end && ce.getContent().toLowerCase().contains(filterText.toLowerCase())) {
 	                list.add(ce);
+	            }
 	        } while (true);
 	        return list;
 	    }

@@ -671,7 +671,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				if(!((frSpecifier.equals(CalculationConstants.GRACE) || frSpecifier.equals(CalculationConstants.GRACE_END)) && 
 						(toSpecifier.equals(CalculationConstants.GRACE) || (toSpecifier.equals(CalculationConstants.GRACE_END)))) ||
 						((frSpecifier.equals(CalculationConstants.REPAY) ||frSpecifier.equals(CalculationConstants.MATURITY)) && 
-								(toSpecifier.equals(CalculationConstants.REPAY) || (toSpecifier.equals(CalculationConstants.MATURITY)))))
+								(toSpecifier.equals(CalculationConstants.REPAY) || (toSpecifier.equals(CalculationConstants.MATURITY))))) {
 					throw new WrongValueException(
 							this.cbRepayToDate,
 							Labels.getLabel(
@@ -679,6 +679,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 									new String[]{
 											Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"),
 											Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value")}));
+			  }
 			}
 			if (isValidComboValue(
 					this.cbSchdMthd,
