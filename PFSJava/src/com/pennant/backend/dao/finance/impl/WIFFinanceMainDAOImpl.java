@@ -130,7 +130,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		selectSql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate,RepayBaseRate,");
 		selectSql.append(" RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate,");
 		selectSql.append(" AllowRepayRvw,RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate,");
-		selectSql.append(" MaturityDate, CpzAtGraceEnd,DownPayment, GraceFlatAmount, ReqRepayAmount, TotalProfit,");
+		selectSql.append(" MaturityDate, CpzAtGraceEnd,DownPayment, ReqRepayAmount, TotalProfit,");
 		selectSql.append(" TotalGrcProfit, GrcRateBasis, RepayRateBasis, FinType,FinRemarks, FinCcy, ScheduleMethod,");
 		selectSql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,"); 
 		selectSql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments, FinIsActive,");
@@ -142,8 +142,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 			selectSql.append("lovDescFinFormatter,lovDescGraceBaseRateName,lovDescGraceSpecialRateName,");
 			selectSql.append(" lovDescRepayBaseRateName,lovDescRepaySpecialRateName,lovDescFinTypeName,");
 			selectSql.append(" lovDescFinCcyName,lovDescScheduleMethodName, lovDescProfitDaysBasisName,");
-			selectSql.append(" lovDescFinTypeName,lovDescFinIsAlwMD, lovDescFinMaxAmt,lovDescDwnPayReq,");
-			selectSql.append(" lovDescFinMinAmount,lovDescFinAlwDeferment, lovDescMinDwnPayPercent,");
+			selectSql.append(" lovDescFinTypeName, ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
@@ -257,7 +256,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		insertSql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate,RepayBaseRate,");
 		insertSql.append(" RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate,");
 		insertSql.append(" AllowRepayRvw,RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate,");
-		insertSql.append(" MaturityDate, CpzAtGraceEnd,DownPayment, GraceFlatAmount, ReqRepayAmount, TotalProfit,");
+		insertSql.append(" MaturityDate, CpzAtGraceEnd,DownPayment, ReqRepayAmount, TotalProfit,");
 		insertSql.append(" TotalGrcProfit, GrcRateBasis, RepayRateBasis, FinType,FinRemarks, FinCcy, ScheduleMethod,");
 		insertSql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,"); 
 		insertSql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments,");
@@ -270,7 +269,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		insertSql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
 		insertSql.append(" :RepaySpecialRate,:RepayProfitRate,:RepayFrq,:NextRepayDate,:RepayPftFrq,:NextRepayPftDate,");
 		insertSql.append(" :AllowRepayRvw,:RepayRvwFrq,:NextRepayRvwDate,:AllowRepayCpz,:RepayCpzFrq,:NextRepayCpzDate,");
-		insertSql.append(" :MaturityDate,:CpzAtGraceEnd,:DownPayment,:GraceFlatAmount,:ReqRepayAmount,:TotalProfit,");
+		insertSql.append(" :MaturityDate,:CpzAtGraceEnd,:DownPayment,:ReqRepayAmount,:TotalProfit,");
 		insertSql.append(" :TotalGrcProfit,:GrcRateBasis,:RepayRateBasis,:FinType,:FinRemarks,:FinCcy,:ScheduleMethod,");
 		insertSql.append(" :ProfitDaysBasis,:ReqMaturity,:CalTerms,:CalMaturity,:FirstRepay,:LastRepay,"); 
 		insertSql.append(" :FinStartDate,:FinAmount,:FinRepaymentAmount,:CustID,:Defferments,");
@@ -320,8 +319,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		updateSql.append(" NextRepayRvwDate = :NextRepayRvwDate, AllowRepayCpz = :AllowRepayCpz,");
 		updateSql.append(" RepayCpzFrq = :RepayCpzFrq, NextRepayCpzDate = :NextRepayCpzDate,");
 		updateSql.append(" MaturityDate = :MaturityDate, CpzAtGraceEnd = :CpzAtGraceEnd, DownPayment = :DownPayment,");
-		updateSql.append(" GraceFlatAmount = :GraceFlatAmount, ReqRepayAmount = :ReqRepayAmount,");
-		updateSql.append(" TotalProfit = :TotalProfit, TotalGrcProfit = :TotalGrcProfit,");
+		updateSql.append(" ReqRepayAmount = :ReqRepayAmount, TotalProfit = :TotalProfit, TotalGrcProfit = :TotalGrcProfit,");
 		updateSql.append(" GrcRateBasis = :GrcRateBasis, RepayRateBasis = :RepayRateBasis, FinType = :FinType,");
 		updateSql.append(" FinRemarks = :FinRemarks, FinCcy = :FinCcy, ScheduleMethod = :ScheduleMethod,");
 		updateSql.append(" ProfitDaysBasis = :ProfitDaysBasis, ReqMaturity = :ReqMaturity, CalTerms = :CalTerms,");

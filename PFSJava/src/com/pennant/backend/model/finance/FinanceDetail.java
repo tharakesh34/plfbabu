@@ -10,16 +10,33 @@
  */
 
 /**
- ******************************************************************************************** 
- * FILE HEADER *
- ******************************************************************************************** 
- * * FileName : FinanceMain.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * * Modified Date :
- * 15-11-2011 * * Description : * *
- ******************************************************************************************** 
- * Date Author Version Comments *
- ******************************************************************************************** 
- * 15-11-2011 Pennant 0.1 * * * * * * * * *
- ******************************************************************************************** 
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  FinanceDetail.java	                                                * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  22-03-2011    														*
+ *                                                                  						*
+ * Modified Date    :  22-03-2011    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 22-03-2011       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
  */
 
 package com.pennant.backend.model.finance;
@@ -67,7 +84,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean lovDescIsQDE;
 	private boolean isExtSource = false;
 
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>(1);
 	private FinContributorHeader finContributorHeader;
 	private FinBillingHeader finBillingHeader;
 	private CustomerEligibilityCheck customerEligibilityCheck;
@@ -85,43 +102,43 @@ public class FinanceDetail implements java.io.Serializable {
 	private IndicativeTermDetail indicativeTermDetail;
 	private FinancePremiumDetail premiumDetail;
 
-	private List<FinanceCheckListReference> financeCheckList = new ArrayList<FinanceCheckListReference>();
-	private List<FinanceReferenceDetail> checkList = new ArrayList<FinanceReferenceDetail>();
-	private Map<Long, Long> lovDescSelAnsCountMap = new HashMap<Long, Long>();
+	private List<FinanceCheckListReference> financeCheckList = new ArrayList<FinanceCheckListReference>(1);
+	private List<FinanceReferenceDetail> checkList = new ArrayList<FinanceReferenceDetail>(1);
+	private Map<Long, Long> lovDescSelAnsCountMap = new HashMap<Long, Long>(1);
 	private List<FinanceReferenceDetail> finRefDetailsList;
 	
-	private List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>();
+	private List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>(1);
 	//private List<FinAgreementDetail> finAgrDetailList = new ArrayList<FinAgreementDetail>();
 	
-	private List<FinanceReferenceDetail> eligibilityRuleList = new ArrayList<FinanceReferenceDetail>();
-	private List<FinanceEligibilityDetail> finElgRuleList = new ArrayList<FinanceEligibilityDetail>();
-	private List<FinanceEligibilityDetail> elgRuleList = new ArrayList<FinanceEligibilityDetail>();
+	private List<FinanceReferenceDetail> eligibilityRuleList = new ArrayList<FinanceReferenceDetail>(1);
+	private List<FinanceEligibilityDetail> finElgRuleList = new ArrayList<FinanceEligibilityDetail>(1);
+	private List<FinanceEligibilityDetail> elgRuleList = new ArrayList<FinanceEligibilityDetail>(1);
 	
 	//Scoring Details Purpose
-	private List<FinanceReferenceDetail> scoringGroupList = new ArrayList<FinanceReferenceDetail>();
-	private List<ScoringMetrics> finScoringMetricList = new ArrayList<ScoringMetrics>();
-	private List<ScoringMetrics> nonFinScoringMetricList = new ArrayList<ScoringMetrics>();
-	private HashMap<Long, List<ScoringMetrics>> scoringMetrics = new HashMap<Long, List<ScoringMetrics>>();
-	private HashMap<Long, List<ScoringSlab>> scoringSlabs = new HashMap<Long, List<ScoringSlab>>();
-	private List<FinanceScoreHeader> finScoreHeaderList = new ArrayList<FinanceScoreHeader>();
-	private HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
+	private List<FinanceReferenceDetail> scoringGroupList = new ArrayList<FinanceReferenceDetail>(1);
+	private List<ScoringMetrics> finScoringMetricList = new ArrayList<ScoringMetrics>(1);
+	private List<ScoringMetrics> nonFinScoringMetricList = new ArrayList<ScoringMetrics>(1);
+	private HashMap<Long, List<ScoringMetrics>> scoringMetrics = new HashMap<Long, List<ScoringMetrics>>(1);
+	private HashMap<Long, List<ScoringSlab>> scoringSlabs = new HashMap<Long, List<ScoringSlab>>(1);
+	private List<FinanceScoreHeader> finScoreHeaderList = new ArrayList<FinanceScoreHeader>(1);
+	private HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>(1);
 	
-	private List<Rule> feeCharges = new ArrayList<Rule>();	
+	private List<Rule> feeCharges = new ArrayList<Rule>(1);	
 	
-	private List<TransactionEntry> transactionEntries = new ArrayList<TransactionEntry>();
-	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>();
+	private List<TransactionEntry> transactionEntries = new ArrayList<TransactionEntry>(1);
+	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>(1);
 	
-	private List<TransactionEntry> cmtFinanceEntries = new ArrayList<TransactionEntry>();
-	private List<ReturnDataSet> cmtDataSetList = new ArrayList<ReturnDataSet>();
+	private List<TransactionEntry> cmtFinanceEntries = new ArrayList<TransactionEntry>(1);
+	private List<ReturnDataSet> cmtDataSetList = new ArrayList<ReturnDataSet>(1);
 	
-	private List<TransactionEntry> stageTransactionEntries = new ArrayList<TransactionEntry>();
-	private List<ReturnDataSet> stageAccountingList = new ArrayList<ReturnDataSet>();
+	private List<TransactionEntry> stageTransactionEntries = new ArrayList<TransactionEntry>(1);
+	private List<ReturnDataSet> stageAccountingList = new ArrayList<ReturnDataSet>(1);
 	
-	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>(1);
 	
-	private List<GuarantorDetail> gurantorsDetailList = new ArrayList<GuarantorDetail>();
-	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>();
-	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<ContractorAssetDetail>();
+	private List<GuarantorDetail> gurantorsDetailList = new ArrayList<GuarantorDetail>(1);
+	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>(1);
+	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<ContractorAssetDetail>(1);
 	
 	private WIFCustomer customer;
 	
@@ -133,7 +150,7 @@ public class FinanceDetail implements java.io.Serializable {
 	//Additional Fields
 	//**********************************************************************
 	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
-	private HashMap<String, Object> lovDescExtendedFieldValues = new HashMap<String, Object>();
+	private HashMap<String, Object> lovDescExtendedFieldValues = new HashMap<String, Object>(1);
 
 	public HashMap<String, Object> getLovDescExtendedFieldValues() {
 		return lovDescExtendedFieldValues;

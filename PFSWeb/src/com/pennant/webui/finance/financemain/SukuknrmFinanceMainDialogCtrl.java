@@ -672,7 +672,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 				this.downPayBank.clearErrorMessage();
 				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getValue(),
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescMinDwnPayPercent());
+						getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount());
 
 				BigDecimal downPayment = this.downPayBank.getValue();
 
@@ -1999,7 +1999,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		logger.debug("Entering");
 		super.doEdit();
 
-		if (getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescDwnPayReq() &&
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsDwPayRequired() &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			this.downPayBank.setDisabled(isReadOnly("FinanceMainDialog_downPayment"));
 			this.downPayAccount.setReadonly(isReadOnly("FinanceMainDialog_downPaymentAcc"));

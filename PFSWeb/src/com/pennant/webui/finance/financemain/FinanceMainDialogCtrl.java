@@ -138,7 +138,6 @@ import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.amtmasters.Authorization;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -1423,7 +1422,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.finContractDate.setValue(aFinanceMain.getFinContractDate());
 		}
 
-		if (aFinanceMain.isLovDescDwnPayReq() && 
+		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired() && 
 				aFinanceDetail.getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) > 0) {
 			this.hbox_downPay.setVisible(true);
 			this.label_FinanceMainDialog_DownPayment.setVisible(true);
@@ -2934,7 +2933,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 				this.downPayment.clearErrorMessage();
 				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getValue(),
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescMinDwnPayPercent());
+						getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount());
 
 				if (this.downPayment.getValue().compareTo(this.finAmount.getValue()) > 0) {
 					throw new WrongValueException(this.downPayment, Labels.getLabel("MAND_FIELD_MIN",
@@ -4833,7 +4832,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finContractDate.setDisabled(isReadOnly("FinanceMainDialog_finContractDate"));
 		this.finAmount.setReadonly(isReadOnly("FinanceMainDialog_finAmount"));
 		this.downPayment.setReadonly(isReadOnly("FinanceMainDialog_downPayment"));
-		if (getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescDwnPayReq() &&
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsDwPayRequired() &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) > 0) {
 			this.downPayment.setDisabled(false);
 		}
@@ -6340,8 +6339,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if(!StringUtils.trimToEmpty(this.lovDescCustCIF.getValue()).equals("")) {
 			Object dataObject;
 
-			List<Accounts> accountList = new ArrayList<Accounts>();
-		/*	accountList = getAccountsService().getAccountsByAcPurpose("M");
+			/*	List<Accounts> accountList = new ArrayList<Accounts>();
+			accountList = getAccountsService().getAccountsByAcPurpose("M");
 			String acType = "";
 			for (int i = 0; i < accountList.size(); i++) {
 				acType = acType + accountList.get(i).getAcType();
@@ -8100,7 +8099,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter())) < 0) {
 
 					errorList.add(new ErrorDetails("finAmount", "E0007",new String[] { PennantAppUtil.amountFormate(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinMinAmt(),
+							getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinAmount(),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()) }, new String[] {}));
 				}
 			}
@@ -8111,7 +8110,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter())) > 0) {
 
 					errorList.add(new ErrorDetails("finAmount", "E0008",new String[] { PennantAppUtil.amountFormate(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinMaxAmt(),
+							getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxAmount(),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()) }, new String[] {}));
 				}
 			}
@@ -8506,7 +8505,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 					}
 				}
 
-				if (aFinSchData.getFinanceMain().isLovDescFinAlwDeferment()) {
+				if (aFinSchData.getFinanceType().isFinIsAlwDifferment()) {
 					if (aFinSchData.getFinanceMain().getDefferments() > 0) {
 						this.btnAddDefferment.setDisabled(false);
 					}
@@ -11336,7 +11335,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * Method for Rendering List Of Agreements Attached before and Right Now in Stage of this Role
 	 * @param listBox_FinAgreementDetail2
 	 * @param finAgreementDetail
-	 */
+	 *//*
 	private void doFillFinAgrDetailList(Listbox listbox,FinAgreementDetail detail) {
 		logger.debug("Entering ");
 
@@ -11385,7 +11384,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		logger.debug("Leaving ");
-	}
+	}*/
 
 	/**
 	 * Method for Uploading Agreement Details File
@@ -14483,8 +14482,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 						agreement.getCrediReviewsBalance().add(crediReview);
 					}
 				}*/
-				List<FinCustCreditReview> creditReviewsIncome = getCreditRvwDetailsByCustomer(custid, 2);
-			/*	if (creditReviewsIncome != null && creditReviewsIncome.size() > 0) {
+				/*	List<FinCustCreditReview> creditReviewsIncome = getCreditRvwDetailsByCustomer(custid, 2);
+				if (creditReviewsIncome != null && creditReviewsIncome.size() > 0) {
 					agreement.setCrediReviewsIncome(new ArrayList<AgreementDetail.CustomerCrediReview>());
 					for (FinCustCreditReview finCustCreditReview : creditReviewsIncome) {
 						CustomerCrediReview crediReview = agreement.new CustomerCrediReview();
@@ -14588,14 +14587,14 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		jdbcSearchObject.addFilterEqual("CustID", Custid);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
-	private List<FinCustCreditReview> getCreditRvwDetailsByCustomer(long Custid,long CategoryId){
+	/*private List<FinCustCreditReview> getCreditRvwDetailsByCustomer(long Custid,long CategoryId){
 		//Customer Credit Review  Data
 		JdbcSearchObject<FinCustCreditReview> jdbcSearchObject = new JdbcSearchObject<FinCustCreditReview>(FinCustCreditReview.class);
 		jdbcSearchObject.addTabelName("CustCreditReviewReport_View");
 		jdbcSearchObject.addFilterEqual("CustomerId", Custid);
 		jdbcSearchObject.addFilterEqual("CategoryId", CategoryId);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
-	}
+	}*/
 
 	
 	

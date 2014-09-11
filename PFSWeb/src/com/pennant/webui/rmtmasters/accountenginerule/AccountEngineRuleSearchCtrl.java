@@ -156,32 +156,32 @@ public class AccountEngineRuleSearchCtrl extends GFCBaseCtrl implements Serializ
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_aEEvent.setModel(new ListModelList(
+		this.sortOperator_aEEvent.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_aEEvent.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_aERule.setModel(new ListModelList(
+		this.sortOperator_aERule.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_aERule.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_aERuleDesc.setModel(new ListModelList(
+		this.sortOperator_aERuleDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_aERuleDesc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_aEIsSysDefault.setModel(new ListModelList(
+		this.sortOperator_aEIsSysDefault.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_aEIsSysDefault.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

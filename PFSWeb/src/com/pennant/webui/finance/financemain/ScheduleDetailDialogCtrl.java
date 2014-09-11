@@ -707,7 +707,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 					this.btnAddDisbursement.setVisible(false);
 				}
 
-				if (aFinSchData.getFinanceMain().isLovDescFinAlwDeferment()) {
+				if (aFinSchData.getFinanceType().isFinIsAlwDifferment()) {
 					if (aFinSchData.getFinanceMain().getDefferments() > 0) {
 						this.btnAddDefferment.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddDeferment"));
 						this.btnAddDefferment.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddDeferment"));
@@ -1629,7 +1629,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				this.btnAddDisbursement.setVisible(false);
 			}
 		} else if (moduleDefiner.equals(PennantConstants.ADD_DEFF)) {
-			if (getFinScheduleData().getFinanceMain().isLovDescFinAlwDeferment() && 
+			if (getFinScheduleData().getFinanceType().isFinIsAlwDifferment() && 
 					getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddDeferment")) {
 				Events.postEvent("onClick$btnAddDefferment", this.window_ScheduleDetailDialog, null);
 			}else{

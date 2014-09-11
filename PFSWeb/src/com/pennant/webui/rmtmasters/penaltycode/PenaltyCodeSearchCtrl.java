@@ -152,27 +152,27 @@ public class PenaltyCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_penaltyType.setModel(new ListModelList(
+		this.sortOperator_penaltyType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_penaltyType
 				.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_penaltyDesc.setModel(new ListModelList(
+		this.sortOperator_penaltyDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_penaltyDesc
 				.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_penaltyIsActive.setModel(new ListModelList(
+		this.sortOperator_penaltyIsActive.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_penaltyIsActive
 				.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus
 					.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType
 					.setItemRenderer(new SearchOperatorListModelItemRenderer());

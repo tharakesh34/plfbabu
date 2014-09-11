@@ -1628,20 +1628,7 @@ public class InvestmentDealDialogCtrl extends DealFinanceBaseCtrl implements Ser
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
-	 * Method for Fetching Account Balance
-	 * @param acId
-	 * @return
-	 */
-	private String getAcBalance(String acId){
-		if (!StringUtils.trimToEmpty(acId).equals("")) {
-			return PennantAppUtil.amountFormate(getAccountInterfaceService().getAccountAvailableBal(acId), 
-					getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
-		}else{
-			return "";
-		}
-	}
-	
+
 	public FinanceMain getFinanceMain(){
 		FinanceMain financeMain=new FinanceMain();
 		financeMain.setFinReference(StringUtils.trimToEmpty(this.dealTcktRef.getValue()));

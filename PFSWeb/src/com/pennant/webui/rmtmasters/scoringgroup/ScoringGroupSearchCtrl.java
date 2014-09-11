@@ -161,28 +161,28 @@ public class ScoringGroupSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_scoreGroupId.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_scoreGroupId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_scoreGroupId.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_scoreGroupCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_scoreGroupCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_scoreGroupCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_scoreGroupName.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_scoreGroupName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_scoreGroupName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_minScore.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_minScore.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_minScore.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_isoverride.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_isoverride.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_isoverride.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_overrideScore.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_overrideScore.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_overrideScore.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

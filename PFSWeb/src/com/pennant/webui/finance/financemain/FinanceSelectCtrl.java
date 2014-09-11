@@ -927,7 +927,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		}else if(moduleDefiner.equals(PennantConstants.CHG_REPAY)) {
 			
 		}else if(moduleDefiner.equals(PennantConstants.ADD_DISB)) {
-			whereClause.append(" AND lovDescFinIsAlwMD = '1'  AND MaturityDate > " + appDate);  
+			whereClause.append(" AND LovDescFinIsAlwMD = '1'  AND MaturityDate > " + appDate);  
 		}else if(moduleDefiner.equals(PennantConstants.ADD_DEFF)) { 
 			whereClause.append(" AND (Defferments - AvailedDefRpyChange >= 0 ) "); 
 		}else if(moduleDefiner.equals(PennantConstants.RMV_DEFF)) { 

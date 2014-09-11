@@ -178,67 +178,67 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_mortgLoanId.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgLoanId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgLoanId.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_loanRefNumber.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_loanRefNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_loanRefNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_loanRefType.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_loanRefType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_loanRefType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgProperty.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgProperty.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgProperty.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgCurrentValue.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgCurrentValue.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgCurrentValue.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgPurposeOfLoan.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgPurposeOfLoan.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgPurposeOfLoan.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgPropertyRelation.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgPropertyRelation.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgPropertyRelation.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgOwnership.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgOwnership.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgOwnership.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrHNbr.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrHNbr.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrHNbr.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrFlatNbr.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrFlatNbr.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrFlatNbr.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrStreet.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrStreet.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrStreet.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrLane1.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrLane1.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrLane1.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrLane2.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrLane2.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrLane2.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrPOBox.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrPOBox.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrPOBox.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrCountry.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrCountry.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrCountry.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrProvince.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrProvince.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrProvince.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrCity.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrCity.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrCity.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrZIP.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrZIP.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrZIP.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_mortgAddrPhone.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_mortgAddrPhone.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mortgAddrPhone.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

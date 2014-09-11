@@ -158,27 +158,27 @@ public class CustomerTypeSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_custTypeCode.setModel(new ListModelList(
+		this.sortOperator_custTypeCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_custTypeCode.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custTypeDesc.setModel(new ListModelList(
+		this.sortOperator_custTypeDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_custTypeDesc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custTypeIsActive.setModel(new ListModelList(
+		this.sortOperator_custTypeIsActive.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_custTypeIsActive.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

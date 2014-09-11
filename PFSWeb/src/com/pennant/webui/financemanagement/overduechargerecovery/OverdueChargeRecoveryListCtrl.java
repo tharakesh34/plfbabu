@@ -185,7 +185,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 	private Textbox recoveryCode;
 	private String finReference = "";
-	private int ccyFormatter = 0;
+	//private int ccyFormatter = 0;
 
 	/**
 	 * default constructor.<br>
@@ -237,9 +237,9 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		if (args.containsKey("finReference")) {
 			this.finReference = (String) args.get("finReference");
 		} 
-		if (args.containsKey("ccyFormatter")) {
+		/*if (args.containsKey("ccyFormatter")) {
 			this.ccyFormatter = (Integer) args.get("ccyFormatter");
-		} 
+		} */
 		if (args.containsKey("financeEnquiryHeaderDialogCtrl")) {
 			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) args.get("financeEnquiryHeaderDialogCtrl");
 		} 

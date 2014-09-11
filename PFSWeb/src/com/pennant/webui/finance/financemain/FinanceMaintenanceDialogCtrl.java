@@ -518,7 +518,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		if (aFinanceMain.isLovDescDwnPayReq() && 
+		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired() && 
 				aFinanceDetail.getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			this.row_downPaySupl.setVisible(true);
 			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(),
@@ -672,7 +672,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 				this.downPayBank.clearErrorMessage();
 				this.downPaySupl.clearErrorMessage();
 				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getValue(),
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescMinDwnPayPercent());
+						getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount());
 
 				BigDecimal downPayment = this.downPayBank.getValue().add(this.downPaySupl.getValue());
 
@@ -1968,7 +1968,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		super.doEdit();
 		this.downPaySupl.setDisabled(true);
 
-		if (getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescDwnPayReq() &&
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsDwPayRequired() &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			this.downPayBank.setDisabled(isReadOnly("FinanceMainDialog_downPayment"));
 			this.downPaySupl.setDisabled(isReadOnly("FinanceMainDialog_downPaySupl"));

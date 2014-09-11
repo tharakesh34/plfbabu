@@ -233,7 +233,6 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl implements Seri
 	private transient OverDueRecoveryPostingsUtil recoveryPostingsUtil;
 	Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
 	private boolean isInquiry = false;
-	private transient BigDecimal  paidAmount = new BigDecimal(0);	
 	
 	/**
 	 * default constructor.<br>
@@ -1810,7 +1809,6 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl implements Seri
 	 * @param event
 	 * @throws Exception
 	 */
-	@SuppressWarnings("serial")
 	public void onClick$btnRecoverNow(Event event) throws Exception {
 		logger.debug("Entering"+event.toString());
 

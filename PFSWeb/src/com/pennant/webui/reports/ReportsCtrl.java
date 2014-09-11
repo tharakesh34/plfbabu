@@ -15,7 +15,7 @@ public class ReportsCtrl extends GFCBaseCtrl {
 	private static final long serialVersionUID = 7219917076107821148L;
 	private final static Logger logger = Logger.getLogger(ReportsCtrl.class);
 	private Window window_Report;
-	private Window window_parent;
+	//private Window window_parent;
 	protected Tabbox         tabbox;
 	private Iframe report;
 	public byte[] buf = null;
@@ -40,9 +40,9 @@ public class ReportsCtrl extends GFCBaseCtrl {
 		if (args.containsKey("dialogWindow")) {
 			dialogWindow = (Window) args.get("dialogWindow");
 		}
-		if (args.containsKey("parentWindow")) {
+		/*if (args.containsKey("parentWindow")) {
 			window_parent = (Window) args.get("parentWindow");
-		}
+		}*/
 		if (args.containsKey("tabbox")) {
 			tabbox = (Tabbox) args.get("tabbox");
 		}

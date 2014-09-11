@@ -845,7 +845,7 @@ public class IjarahWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			this.finStartDate.setValue(aFinanceMain.getFinStartDate());
 		}
 
-		if (aFinanceMain.isLovDescDwnPayReq() && 
+		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired() && 
 				aFinanceDetail.getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			
 			this.row_downPayBank.setVisible(true);
@@ -1958,7 +1958,7 @@ public class IjarahWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 
 				this.downPayBank.clearErrorMessage();
 				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getValue(),
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescMinDwnPayPercent());
+						getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount());
 				
 				BigDecimal downPayment = this.downPayBank.getValue();
 
@@ -3286,7 +3286,7 @@ public class IjarahWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finAmount.setReadonly(isReadOnly("WIFFinanceMainDialog_finAmount"));
 		this.downPayBank.setDisabled(true);
 		
-		if (getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescDwnPayReq() &&
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsDwPayRequired() &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			this.downPayBank.setDisabled(isReadOnly("WIFFinanceMainDialog_downPayment"));
 		}
@@ -5471,7 +5471,7 @@ public class IjarahWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter())) < 0) {
 
 					errorList.add(new ErrorDetails("finAmount", "E0007",new String[] { PennantAppUtil.amountFormate(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinMinAmt(),
+							getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinAmount(),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()) }, new String[] {}));
 				}
 			}
@@ -5482,7 +5482,7 @@ public class IjarahWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter())) > 0) {
 
 					errorList.add(new ErrorDetails("finAmount", "E0008",new String[] { PennantAppUtil.amountFormate(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinMaxAmt(),
+							getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxAmount(),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()) }, new String[] {}));
 				}
 			}

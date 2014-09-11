@@ -164,37 +164,37 @@ public class AccountTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		setListAccountPurpose();
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_acType.setModel(new ListModelList(
+		this.sortOperator_acType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_acType.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_acTypeDesc.setModel(new ListModelList(
+		this.sortOperator_acTypeDesc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_acTypeDesc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_acPurpose.setModel(new ListModelList(
+		this.sortOperator_acPurpose.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_acPurpose.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_internalAc.setModel(new ListModelList(
+		this.sortOperator_internalAc.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_internalAc.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_acTypeIsActive.setModel(new ListModelList(
+		this.sortOperator_acTypeIsActive.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_acTypeIsActive.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

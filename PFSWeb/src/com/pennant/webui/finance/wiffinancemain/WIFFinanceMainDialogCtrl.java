@@ -928,7 +928,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.finStartDate.setValue(aFinanceMain.getFinStartDate());
 		}
 
-		if (aFinanceMain.isLovDescDwnPayReq() && 
+		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired() && 
 				aFinanceDetail.getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			
 			this.row_downPayBank.setVisible(true);
@@ -2115,7 +2115,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				this.downPayBank.clearErrorMessage();
 				this.downPaySupl.clearErrorMessage();
 				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getValue(),
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescMinDwnPayPercent());
+						getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount());
 				
 				BigDecimal downPayment = this.downPayBank.getValue().add(this.downPaySupl.getValue());
 
@@ -3694,7 +3694,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.downPayBank.setDisabled(true);
 		this.downPaySupl.setDisabled(true);
 		
-		if (getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescDwnPayReq() &&
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsDwPayRequired() &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			this.downPayBank.setDisabled(isReadOnly("WIFFinanceMainDialog_downPayment"));
 			this.downPaySupl.setDisabled(isReadOnly("WIFFinanceMainDialog_downPayment"));
@@ -6218,7 +6218,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter())) < 0) {
 
 					errorList.add(new ErrorDetails("finAmount", "E0007",new String[] { PennantAppUtil.amountFormate(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinMinAmt(),
+							getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinAmount(),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()) }, new String[] {}));
 				}
 			}
@@ -6229,7 +6229,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter())) > 0) {
 
 					errorList.add(new ErrorDetails("finAmount", "E0008",new String[] { PennantAppUtil.amountFormate(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinMaxAmt(),
+							getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxAmount(),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()) }, new String[] {}));
 				}
 			}

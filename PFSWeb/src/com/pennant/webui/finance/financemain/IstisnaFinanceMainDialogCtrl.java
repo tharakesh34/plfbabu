@@ -555,7 +555,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 	 	this.securityDeposit.setValue(PennantAppUtil.formateAmount(aFinanceMain.getSecurityDeposit(), aFinanceMain.getLovDescFinFormatter()));
 	 
-		if (aFinanceMain.isLovDescDwnPayReq() && 
+		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired() && 
 				aFinanceDetail.getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			this.label_IstisnaFinanceMainDialog_DownPayment.setVisible(true);
 			this.downPayment.setDisabled(isReadOnly("FinanceMainDialog_downPayment"));

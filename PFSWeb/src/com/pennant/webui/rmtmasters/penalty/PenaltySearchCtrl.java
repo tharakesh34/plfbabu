@@ -164,47 +164,47 @@ public class PenaltySearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_penaltyType.setModel(new ListModelList(
+		this.sortOperator_penaltyType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_penaltyType.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_penaltyEffDate.setModel(new ListModelList(
+		this.sortOperator_penaltyEffDate.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getNumericOperators()));
 		this.sortOperator_penaltyEffDate.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_isPenaltyCapitalize.setModel(new ListModelList(
+		this.sortOperator_isPenaltyCapitalize.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_isPenaltyCapitalize.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_isPenaltyOnPriOnly.setModel(new ListModelList(
+		this.sortOperator_isPenaltyOnPriOnly.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_isPenaltyOnPriOnly.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_isPenaltyAftGrace.setModel(new ListModelList(
+		this.sortOperator_isPenaltyAftGrace.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_isPenaltyAftGrace.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_oDueGraceDays.setModel(new ListModelList(
+		this.sortOperator_oDueGraceDays.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getNumericOperators()));
 		this.sortOperator_oDueGraceDays.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_penaltyIsActive.setModel(new ListModelList(
+		this.sortOperator_penaltyIsActive.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getBooleanOperators()));
 		this.sortOperator_penaltyIsActive.setItemRenderer(
 				new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(
 					new SearchOperatorListModelItemRenderer());

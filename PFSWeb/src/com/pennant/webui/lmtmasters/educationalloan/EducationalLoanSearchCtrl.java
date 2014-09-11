@@ -164,49 +164,49 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_eduLoanId.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduLoanId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduLoanId.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_loanRefNumber.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_loanRefNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_loanRefNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_loanRefType.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_loanRefType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_loanRefType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduCourse.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduCourse.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduCourse.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduSpecialization.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduSpecialization.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduSpecialization.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduCourseType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduCourseType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduCourseType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduCourseFrom.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduCourseFrom.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduCourseFrom.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduCourseFromBranch.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduCourseFromBranch.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduCourseFromBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduAffiliatedTo.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduAffiliatedTo.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduAffiliatedTo.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduCommenceDate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduCommenceDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduCommenceDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduCompletionDate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduCompletionDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduCompletionDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduExpectedIncome.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduExpectedIncome.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduExpectedIncome.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eduLoanFromBranch.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_eduLoanFromBranch.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eduLoanFromBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

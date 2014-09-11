@@ -723,6 +723,7 @@ implements Serializable {
 					.setSearchObject(soProductFinanceType);
 
 					// now synchronize the ProductFinanceType listBox
+					@SuppressWarnings("rawtypes")
 					final ListModelList lml = (ListModelList) getProductFinanceTypeListCtrl().listBoxProductFinanceType
 					.getListModel();
 

@@ -264,12 +264,12 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain
 					alignSide = "right";
 				}
 				
-				String usrAlign = "";
+				/*String usrAlign = "";
 				if("right".equals(alignSide)){
 					usrAlign = "left";
 				}else{
 					usrAlign = "right";
-				}
+				}*/
 				
 				String content = "<p class='triangle-right "+alignSide+"'> <font style='font-weight:bold;'> "  +note.getRemarks()+" </font> <br>  ";
 				String date = DateUtility.formatUtilDate(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);

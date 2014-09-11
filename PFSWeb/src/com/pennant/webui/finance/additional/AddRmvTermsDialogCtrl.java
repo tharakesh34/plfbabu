@@ -246,7 +246,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
-		this.terms.setValue(aFinSchData.getFinanceMain().getReqTerms());
+		this.terms.setValue(0);
 		fillComboBox(this.cbAddTermAfter, CalculationConstants.ADDTERM_AFTMDT, addTermCodes, "");
 		if(isAddTerms()){
 			this.fromDateRow.setVisible(false);					
@@ -342,7 +342,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 			setFinScheduleData(ScheduleCalculator.deleteTerm(getFinScheduleData()));
 		}
 		
-		//Show Error Details in Schedule Maintainance
+		//Show Error Details in Schedule Maintenance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
 		}else{

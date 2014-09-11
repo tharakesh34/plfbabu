@@ -148,25 +148,25 @@ public class OverdueChargeSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_oDCRuleCode.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_oDCRuleCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_oDCRuleCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_oDCPLAccount.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_oDCPLAccount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_oDCPLAccount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_oDCCharityAccount.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_oDCCharityAccount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_oDCCharityAccount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_oDCPLShare.setModel(new ListModelList(new SearchOperators().getNumericOperators()));
+		this.sortOperator_oDCPLShare.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_oDCPLShare.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_oDCSweepCharges.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_oDCSweepCharges.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_oDCSweepCharges.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

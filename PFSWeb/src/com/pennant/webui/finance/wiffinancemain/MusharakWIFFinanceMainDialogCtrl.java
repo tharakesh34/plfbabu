@@ -1948,7 +1948,7 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 
 				this.downPayBank.clearErrorMessage();
 				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getValue(),
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescMinDwnPayPercent());
+						getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount());
 				
 				BigDecimal downPayment = this.downPayBank.getValue();
 
@@ -3278,7 +3278,7 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 		this.finAmount.setReadonly(isReadOnly("WIFFinanceMainDialog_finAmount"));
 		this.downPayBank.setDisabled(true);
 		
-		if (getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescDwnPayReq() &&
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsDwPayRequired() &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			this.downPayBank.setDisabled(isReadOnly("WIFFinanceMainDialog_downPayment"));
 		}
@@ -4617,9 +4617,9 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 	public void onSelect$cbDepreciationFrqDay(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		String frqCode = getComboboxValue(this.cbDepreciationFrqCode);
+		/*String frqCode = getComboboxValue(this.cbDepreciationFrqCode);
 		String frqMth = getComboboxValue(this.cbDepreciationFrqMth);
-		String frqDay = getComboboxValue(this.cbDepreciationFrqDay);
+		String frqDay = getComboboxValue(this.cbDepreciationFrqDay);*/
 
 		onSelectFrqDay(cbDepreciationFrqCode, cbDepreciationFrqMth, cbDepreciationFrqDay, this.depreciationFrq);
 		logger.debug("Leaving" + event.toString());
@@ -4696,9 +4696,9 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 	public void onSelect$cbGracePftRvwFrqDay(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		String frqCode = getComboboxValue(this.cbGracePftRvwFrqCode);
+		/*String frqCode = getComboboxValue(this.cbGracePftRvwFrqCode);
 		String frqMth = getComboboxValue(this.cbGracePftRvwFrqMth);
-		String frqDay = getComboboxValue(this.cbGracePftRvwFrqDay);
+		String frqDay = getComboboxValue(this.cbGracePftRvwFrqDay);*/
 
 		onSelectFrqDay(cbGracePftRvwFrqCode, cbGracePftRvwFrqMth, cbGracePftRvwFrqDay, this.gracePftRvwFrq);
 		this.nextGrcPftRvwDate.setText("");
@@ -4728,9 +4728,9 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 	public void onSelect$cbGraceCpzFrqDay(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		String frqCode = getComboboxValue(this.cbGraceCpzFrqCode);
+		/*String frqCode = getComboboxValue(this.cbGraceCpzFrqCode);
 		String frqMth = getComboboxValue(this.cbGraceCpzFrqMth);
-		String frqDay = getComboboxValue(this.cbGraceCpzFrqDay);
+		String frqDay = getComboboxValue(this.cbGraceCpzFrqDay);*/
 
 		onSelectFrqDay(cbGraceCpzFrqCode, cbGraceCpzFrqMth, cbGraceCpzFrqDay, this.graceCpzFrq);
 		this.nextGrcCpzDate.setText("");
@@ -4760,9 +4760,9 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 	public void onSelect$cbRepayFrqDay(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		String frqCode = getComboboxValue(this.cbRepayFrqCode);
+		/*String frqCode = getComboboxValue(this.cbRepayFrqCode);
 		String frqMth = getComboboxValue(this.cbRepayFrqMth);
-		String frqDay = getComboboxValue(this.cbRepayFrqDay);
+		String frqDay = getComboboxValue(this.cbRepayFrqDay);*/
 
 		onSelectFrqDay(cbRepayFrqCode, cbRepayFrqMth, cbRepayFrqDay, this.repayFrq);
 		this.nextRepayDate.setText("");
@@ -4830,9 +4830,9 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 	public void onSelect$cbRepayRvwFrqDay(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		String frqCode = getComboboxValue(this.cbRepayRvwFrqCode);
+		/*String frqCode = getComboboxValue(this.cbRepayRvwFrqCode);
 		String frqMth = getComboboxValue(this.cbRepayRvwFrqMth);
-		String frqDay = getComboboxValue(this.cbRepayRvwFrqDay);
+		String frqDay = getComboboxValue(this.cbRepayRvwFrqDay);*/
 
 		onSelectFrqDay(cbRepayRvwFrqCode, cbRepayRvwFrqMth, cbRepayRvwFrqDay, this.repayRvwFrq);
 		this.nextRepayRvwDate.setText("");
@@ -4862,9 +4862,9 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 	public void onSelect$cbRepayCpzFrqDay(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		String frqCode = getComboboxValue(this.cbRepayCpzFrqCode);
+		/*String frqCode = getComboboxValue(this.cbRepayCpzFrqCode);
 		String frqMth = getComboboxValue(this.cbRepayCpzFrqMth);
-		String frqDay = getComboboxValue(this.cbRepayCpzFrqDay);
+		String frqDay = getComboboxValue(this.cbRepayCpzFrqDay);*/
 
 		onSelectFrqDay(cbRepayCpzFrqCode, cbRepayCpzFrqMth, cbRepayCpzFrqDay, this.repayCpzFrq);
 		this.nextRepayCpzDate.setText("");
@@ -5492,7 +5492,7 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter())) < 0) {
 
 					errorList.add(new ErrorDetails("finAmount", "E0007",new String[] { PennantAppUtil.amountFormate(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinMinAmt(),
+							getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinAmount(),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()) }, new String[] {}));
 				}
 			}
@@ -5503,7 +5503,7 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter())) > 0) {
 
 					errorList.add(new ErrorDetails("finAmount", "E0008",new String[] { PennantAppUtil.amountFormate(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinMaxAmt(),
+							getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxAmount(),
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()) }, new String[] {}));
 				}
 			}

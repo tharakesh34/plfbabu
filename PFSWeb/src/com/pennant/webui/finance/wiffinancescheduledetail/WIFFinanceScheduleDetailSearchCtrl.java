@@ -201,109 +201,109 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 	
-		this.sortOperator_finReference.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_schDate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_schDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_schDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_schSeq.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_schSeq.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_schSeq.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_pftOnSchDate.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_pftOnSchDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_pftOnSchDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_cpzOnSchDate.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_cpzOnSchDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_cpzOnSchDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_repayOnSchDate.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_repayOnSchDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_repayOnSchDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_rvwOnSchDate.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_rvwOnSchDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_rvwOnSchDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_disbOnSchDate.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_disbOnSchDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_disbOnSchDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_downpaymentOnSchDate.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_downpaymentOnSchDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_downpaymentOnSchDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_balanceForPftCal.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_balanceForPftCal.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_balanceForPftCal.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_baseRate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_baseRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_baseRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_splRate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_splRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_splRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_actRate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_actRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_actRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_adjRate.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_adjRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_adjRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_noOfDays.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_noOfDays.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_noOfDays.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_dayFactor.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_dayFactor.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_dayFactor.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_profitCalc.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_profitCalc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_profitCalc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_profitSchd.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_profitSchd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_profitSchd.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_principalSchd.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_principalSchd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_principalSchd.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_repayAmount.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_repayAmount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_repayAmount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_profitBalance.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_profitBalance.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_profitBalance.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_disbAmount.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_disbAmount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_disbAmount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_downPaymentAmount.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_downPaymentAmount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_downPaymentAmount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_cpzAmount.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_cpzAmount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_cpzAmount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_diffProfitSchd.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_diffProfitSchd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_diffProfitSchd.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_dIffPrincipalSchd.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_dIffPrincipalSchd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_dIffPrincipalSchd.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_closingBalance.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_closingBalance.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_closingBalance.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_profitFraction.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_profitFraction.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_profitFraction.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_prvRepayAmount.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_prvRepayAmount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_prvRepayAmount.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_deffProfitBal.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_deffProfitBal.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_deffProfitBal.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_diffPrincipalBal.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_diffPrincipalBal.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_diffPrincipalBal.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_schdPriPaid.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+		this.sortOperator_schdPriPaid.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_schdPriPaid.setItemRenderer(new SearchOperatorListModelItemRenderer());
 	
-		this.sortOperator_isSchdPftPaid.setModel(new ListModelList(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_isSchdPftPaid.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_isSchdPftPaid.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
 		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{

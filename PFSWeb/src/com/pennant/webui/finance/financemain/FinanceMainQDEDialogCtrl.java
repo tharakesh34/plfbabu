@@ -538,7 +538,7 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		this.finReference.setValue(aFinanceMain.getFinReference());
 		this.numberOfTerms.setValue(aFinanceMain.getNumberOfTerms());
-		if (aFinanceMain.isLovDescDwnPayReq()) {
+		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired()) {
 			this.downPayment.setDisabled(false);
 			this.downPayment.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayment()
 					,aFinanceMain.getLovDescFinFormatter()));
@@ -616,7 +616,7 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if(!this.downPayment.isDisabled() && this.downPayment.getValue()!=null) {
 				this.downPayment.clearErrorMessage();
 				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getValue(),
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescMinDwnPayPercent());
+						getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount());
 				if (this.downPayment.getValue().compareTo(
 						this.finAmount.getValue()) > 0) {
 					throw new WrongValueException(

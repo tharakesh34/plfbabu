@@ -57,7 +57,7 @@ public class DSRCalculationReportData implements Serializable{
 	private String netIncome;
 	
 	// grace period details
-	private String AllowGrace;
+	private String allowGrace;
 	private String grcPeriodEndDate;
 	private String grcPftRate;
 	private String grcPeriod;
@@ -361,10 +361,10 @@ public class DSRCalculationReportData implements Serializable{
 	    return totalProfit;
     }	
 	public String getAllowGrace() {
-    	return AllowGrace;
+    	return allowGrace;
     }
 	public void setAllowGrace(String allowGrace) {
-    	AllowGrace = allowGrace;
+		this.allowGrace = allowGrace;
     }
 	public String getGrcPeriodEndDate() {
     	return grcPeriodEndDate;

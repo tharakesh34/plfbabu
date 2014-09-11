@@ -142,27 +142,27 @@ public class ProductFinanceTypeSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_prdFinId.setModel(new ListModelList(
+		this.sortOperator_prdFinId.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_prdFinId
 		.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_productCode.setModel(new ListModelList(
+		this.sortOperator_productCode.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_productCode
 		.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finType.setModel(new ListModelList(
+		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(
 				new SearchOperators().getStringOperators()));
 		this.sortOperator_finType
 		.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_recordStatus.setModel(new ListModelList(
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus
 			.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList(
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(
 					new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType
 			.setItemRenderer(new SearchOperatorListModelItemRenderer());

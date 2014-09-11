@@ -1054,6 +1054,8 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 					catch (WrongValueException we ) {
 						wve.add(we);
 					}
+				default:
+					break;
 
 				}
 				filedId=null;
@@ -1323,7 +1325,7 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 					timeFunction = "TIME("+aReportFieldsDetails.getFieldDBName()+")"+ filter+"'"
 					+DateUtility.formatUtilDate(timeBox.getValue()
 							,	PennantConstants.DBDateTimeFormat)+"'";
-				}if(PennantConstants.DatabaseSystem ==1 ){//SQL SERVER 
+				}if(PennantConstants.DatabaseSystem == 1 ){//SQL SERVER 
 					timeFunction = "CONVERT(VARCHAR(8),"+aReportFieldsDetails.getFieldDBName()+",108)"+ filter+"'"
 					+DateUtility.formatUtilDate(timeBox.getValue()
 							,	PennantConstants.DBTimeFormat)+"'";
@@ -1351,6 +1353,8 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 				whereCondition.append(aReportFieldsDetails.getFieldDBName()+" "+ filter+" '"+filedValue+"'");
 			}
 			break ;
+		default:
+			break;
 		}
 		if(component instanceof Datebox && ((Datebox) component).getValue()!=null){
 			filedValue =DateUtility.formatUtilDate((Date)filedValue,	dateFormat);
@@ -1932,6 +1936,8 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 					setBandBoxValue(bandbox ,reportSearchTemplate.getFieldValue());
 				}
 
+				break;
+			default:
 				break;
 			}
 			filedId=null;
