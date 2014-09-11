@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-import javax.rmi.CORBA.Util;
-
 import com.pennant.equation.util.DateUtility;
 
 public class EquationInterfaceException extends Exception {
