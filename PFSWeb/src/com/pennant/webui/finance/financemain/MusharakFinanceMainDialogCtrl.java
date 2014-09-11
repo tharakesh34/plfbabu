@@ -3879,9 +3879,8 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	/**
 	 * Get the Finance Main Details from the Screen
 	 */
-	public FinanceMain getFinanceMain(){
-		FinanceMain financeMain =  super.getFinanceMain();
-		return financeMain;
+	public FinanceMain getFinanceMain() {
+		return super.getFinanceMain();
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

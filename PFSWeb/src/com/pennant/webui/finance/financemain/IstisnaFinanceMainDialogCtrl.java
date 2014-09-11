@@ -4164,9 +4164,8 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	/**
 	 * Get the Finance Main Details from the Screen
 	 */
-	public FinanceMain getFinanceMain(){
-		FinanceMain financeMain =  super.getFinanceMain();
-		return financeMain;
+	public FinanceMain getFinanceMain() {
+		return super.getFinanceMain();
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

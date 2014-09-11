@@ -377,8 +377,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	 */
 	private String restoreString(String filterValue, Listbox listbox) {
 		if (listbox.getSelectedIndex() == 3) {
-			final String modifiedFilterValue = StringUtils.replaceChars(filterValue, "%", "");
-			return modifiedFilterValue;
+			return StringUtils.replaceChars(filterValue, "%", "");
 		}
 		return filterValue;
 	}
