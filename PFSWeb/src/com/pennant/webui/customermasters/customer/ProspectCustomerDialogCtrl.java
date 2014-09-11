@@ -68,7 +68,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
