@@ -1016,8 +1016,7 @@ public class PennantAppUtil {
 		jdbcSearchObject.addTabelName("SecurityUserDivBranch");
 		jdbcSearchObject.addFilterEqual("UsrId", usrId);
 		jdbcSearchObject.addSort("UserDivision", true);
-		List<SecurityUserDivBranch> securityUserDivBranchList = pagedListService.getBySearchObject(jdbcSearchObject);
-		return securityUserDivBranchList;
+		return pagedListService.getBySearchObject(jdbcSearchObject);
 	}
 	
 	/**
