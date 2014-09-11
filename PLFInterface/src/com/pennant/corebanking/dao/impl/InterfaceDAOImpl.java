@@ -532,26 +532,22 @@ public class InterfaceDAOImpl {
 	public static BigDecimal getDecimalDate(Date date){
 		BigDecimal as400Date= null;
 		BigDecimal dateInt = null;
-
 		String strDate = null;
 
 		if(date==null) {
 			return BigDecimal.ZERO;
 		}
-
 		strDate = DateUtility.formatDate(date, "yyyy-MM-dd");
-
 		strDate = StringUtils.trimToEmpty(strDate);
 		if (!strDate.equals("")) {
 			dateInt = 	new BigDecimal(strDate.substring(0,4) + strDate.substring(5,7) + strDate.substring(8,10));
 			as400Date = new BigDecimal(19000000).subtract(dateInt);
 			as400Date = new BigDecimal(-1).multiply(as400Date);
-		}
-		else
+		} else {
 			as400Date = null;
+		}
 
 		return as400Date;
-
 	}
 	
 	
