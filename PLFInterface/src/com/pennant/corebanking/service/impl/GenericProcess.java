@@ -18,8 +18,7 @@ public class GenericProcess {
 	}
 	
 	protected BigDecimal getEquationDate(ProgramCallDocument doc, String pcml, String name) throws PcmlException {
-		BigDecimal value = (BigDecimal) doc.getValue(pcml + name);
-		return value;
+		return (BigDecimal) doc.getValue(pcml + name);
 	}
 	
 	protected BigDecimal getBalance(ProgramCallDocument doc, String pcml, String name) throws PcmlException {
