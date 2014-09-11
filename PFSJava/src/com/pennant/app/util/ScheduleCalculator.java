@@ -4106,7 +4106,7 @@ public class ScheduleCalculator {
 			String schdMethod = null;
 
 			// Set FROM
-			if (recalStartDate.after(finScheduleData.getFinanceMain().getGrcPeriodEndDate())) {
+			if (recalStartDate != null && recalStartDate.after(finScheduleData.getFinanceMain().getGrcPeriodEndDate())) {
 				fromDate = recalStartDate;
 				toDate = recalEndDate;
 			} else {
