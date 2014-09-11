@@ -28,7 +28,7 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 	 * @throws Exception  
 	 */
 	@Override
-	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, String linkedTranId) throws Exception{
+	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, String linkedTranId) throws AccountNotFoundException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -87,7 +87,7 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 			throw e;
 		}catch (Exception e) {
 			logger.error("Exception " + e);
-			throw e;
+			throw new AccountNotFoundException(e.getMessage());
 		} finally {
 			this.hostConnection.closeConnection(as400);
 		}

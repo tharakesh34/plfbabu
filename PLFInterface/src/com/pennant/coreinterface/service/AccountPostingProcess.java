@@ -12,5 +12,5 @@ public interface AccountPostingProcess {
 			String createNow) throws AccountNotFoundException ;
 
 	List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings, Date valueDate,
-			String postBranch, String isDummy) throws Exception;
+			String postBranch, String isDummy) throws AccountNotFoundException;
 }

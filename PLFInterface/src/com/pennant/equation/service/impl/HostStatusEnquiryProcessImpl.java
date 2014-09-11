@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.data.ProgramCallDocument;
+import com.pennant.coreinterface.exception.EquationInterfaceException;
 import com.pennant.coreinterface.model.HostEnquiry;
 import com.pennant.coreinterface.service.HostStatusEnquiryProcess;
 import com.pennant.equation.util.HostConnection;
@@ -18,7 +19,7 @@ public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 	 * Method For getting AS400 Connection Status
 	 */
 	@Override
-	public HostEnquiry getHostStatus() throws Exception {
+	public HostEnquiry getHostStatus() throws EquationInterfaceException {
 
 		AS400 as400 = null;
 		ProgramCallDocument pcmlDoc = null;
@@ -52,9 +53,7 @@ public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 			
 		} catch (Exception e) {
 			logger.error("Exception " + e);
-			e.printStackTrace();
-			throw new Exception(
-					"Host Connection Failed.. Please contact administrator ");
+			throw new EquationInterfaceException("Host Connection Failed.. Please contact administrator ");
 		} finally {
 			this.hostConnection.closeConnection(as400);
 		}

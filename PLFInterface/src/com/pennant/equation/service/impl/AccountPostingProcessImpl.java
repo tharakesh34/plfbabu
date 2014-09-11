@@ -12,7 +12,6 @@ import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
-import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.CoreBankAccountPosting;
 import com.pennant.coreinterface.service.AccountPostingProcess;
 import com.pennant.equation.util.DateUtility;
@@ -137,7 +136,7 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 	 * @throws Exception
 	 */
 	@Override
-	public List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings,  Date valueDate, String postBranch, String isDummy)  throws Exception{
+	public List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings,  Date valueDate, String postBranch, String isDummy)  throws AccountNotFoundException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -227,10 +226,10 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 			
 		}catch (ConnectionPoolException e){
 			logger.error("Exception " + e);
-			throw new CustomerNotFoundException("Host Connection Failed.. Please contact administrator ");
+			throw new AccountNotFoundException("Host Connection Failed.. Please contact administrator ");
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw e;
+			throw new AccountNotFoundException(e.getMessage());
 		}  finally {			
 			getHostConnection().closeConnection(as400);
 		}

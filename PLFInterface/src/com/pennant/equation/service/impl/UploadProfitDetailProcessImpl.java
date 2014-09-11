@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.ProgramCallDocument;
-import com.pennant.coreinterface.exception.CustomerNotFoundException;
+import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.model.EodFinProfitDetail;
 import com.pennant.coreinterface.service.UploadProfitDetailProcess;
 import com.pennant.equation.util.DateUtility;
@@ -21,7 +21,7 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 	private HostConnection hostConnection;
 
 	@Override
-	public void doUploadPftDetails(List<EodFinProfitDetail> profitDetails, boolean isItFirstCall) throws Exception {
+	public void doUploadPftDetails(List<EodFinProfitDetail> profitDetails, boolean isItFirstCall) throws AccountNotFoundException {
 		logger.debug("Entering");
 				
 		AS400 as400 = null;
@@ -83,9 +83,9 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FinStatus", indices, StringUtils.trimToEmpty(pftDetails.getFinStatus())); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FinStsReason", indices, StringUtils.trimToEmpty(pftDetails.getFinStsReason())); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FinWorstStatus", indices, StringUtils.trimToEmpty(pftDetails.getFinWorstStatus())); 
-				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.TAKAFULPaidAmt", indices, pftDetails.getTAKAFULPaidAmt()); 			
+				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.TAKAFULPaidAmt", indices, pftDetails.getTakafulPaidAmt()); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.AdminPaidAmt", indices, pftDetails.getAdminPaidAmt()); 			
-				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.TAKAFULInsCal", indices, pftDetails.getTAKAFULInsCal()); 			
+				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.TAKAFULInsCal", indices, pftDetails.getTakafulInsCal()); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.NOInst", indices, pftDetails.getNOInst()); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.NOPaidInst", indices, pftDetails.getNOPaidInst()); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.NOODInst", indices, pftDetails.getNOODInst()); 			
@@ -98,7 +98,7 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.IncomeAccount", indices, pftDetails.getIncomeAccount()); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.UEIncomeSuspAccount", indices, pftDetails.getUEIncomeSuspAccount()); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FinCommitmentRef", indices, StringUtils.trimToEmpty(pftDetails.getFinCommitmentRef())); 			
-				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FinIsActive", indices, pftDetails.getFinIsActive() == true ? 1 : 0); 
+				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FinIsActive", indices, pftDetails.isFinIsActive() == true ? 1 : 0); 
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.NORepayments", indices, pftDetails.getNORepayments()); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FirstRepay", indices, DateUtility.formatDate(pftDetails.getFirstRepayDate(),"ddMMyyyy")); 	 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FirstRepayAmt", indices, pftDetails.getFirstRepayAmt()); 			
@@ -139,12 +139,10 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 			
 		}catch (ConnectionPoolException e){
 			logger.error("Exception " + e);
-			throw new CustomerNotFoundException("Host Connection Failed.. Please contact administrator ");
+			throw new AccountNotFoundException("Host Connection Failed.. Please contact administrator ");
 		}catch (Exception e) {
 			logger.debug("FinReference :"+ pftDetails.getFinReference());
-			logger.error(e);
-			e.printStackTrace();
-			throw e;
+			throw new AccountNotFoundException(e.getMessage());
 		}  finally {			
 			getHostConnection().closeConnection(as400);
 		}

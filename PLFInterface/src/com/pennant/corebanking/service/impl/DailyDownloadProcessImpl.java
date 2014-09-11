@@ -47,6 +47,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.pennant.corebanking.dao.impl.InterfaceDAOImpl;
+import com.pennant.coreinterface.exception.EquationInterfaceException;
 import com.pennant.coreinterface.model.EquationAccountType;
 import com.pennant.coreinterface.model.EquationCurrency;
 import com.pennant.coreinterface.model.EquationCustomerGroup;
@@ -66,7 +67,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Currency Details
 	 */
 	@Override
-	public List<EquationCurrency>  importCurrencyDetails() throws Exception{
+	public List<EquationCurrency>  importCurrencyDetails() throws EquationInterfaceException{
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -77,7 +78,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Relation Ship Officer Details
 	 */
 	@Override
-	public List<EquationRelationshipOfficer> importRelationShipOfficersDetails() throws Exception {
+	public List<EquationRelationshipOfficer> importRelationShipOfficersDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -88,7 +89,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Customer Type Details
 	 */
 	@Override
-	public List<EquationCustomerType> importCustomerTypeDetails() throws Exception {
+	public List<EquationCustomerType> importCustomerTypeDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -99,7 +100,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Department Details
 	 */
 	@Override
-	public List<EquationDepartment> importDepartmentDetails() throws Exception {
+	public List<EquationDepartment> importDepartmentDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -110,7 +111,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Customer Group Details
 	 */
 	@Override
-	public List<EquationCustomerGroup> importCustomerGroupDetails() throws Exception {
+	public List<EquationCustomerGroup> importCustomerGroupDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -121,7 +122,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Account Type Details
 	 */
 	@Override
-	public List<EquationAccountType> importAccountTypeDetails() throws Exception {
+	public List<EquationAccountType> importAccountTypeDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -133,7 +134,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Customer Rating Details
 	 */
 	@Override
-	public List<EquationCustomerRating> importCustomerRatingDetails() throws Exception {
+	public List<EquationCustomerRating> importCustomerRatingDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");

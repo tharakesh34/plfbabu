@@ -93,7 +93,8 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 	 * @throws Exception
 	 */
 	@Override
-	public List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings,  Date valueDate, String postBranch, String isDummy)  throws Exception{
+	public List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings,  
+			Date valueDate, String postBranch, String isDummy)  throws AccountNotFoundException{
 		logger.debug("Entering");
 
 		logger.debug("Leaving");

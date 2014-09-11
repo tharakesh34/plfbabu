@@ -10,7 +10,7 @@ public class AccountBalance  implements Serializable {
 	private String repayAccount;
 	private BigDecimal accBalance;
 	private String acHoldStatus;
-	private String StatusDesc;
+	private String statusDesc;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -38,10 +38,10 @@ public class AccountBalance  implements Serializable {
 	}
 	
 	public String getStatusDesc() {
-		return StatusDesc;
+		return statusDesc;
 	}
 	public void setStatusDesc(String statusDesc) {
-		StatusDesc = statusDesc;
+		this.statusDesc = statusDesc;
 	}
 	
 }

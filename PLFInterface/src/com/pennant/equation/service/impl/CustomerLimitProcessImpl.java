@@ -170,8 +170,8 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 					item.setLimitAmount(new BigDecimal(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.LmtAmount",indices).toString()));
 					item.setAvailAmount(new BigDecimal(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.AvailAmount",indices).toString()));
 					item.setRiskAmount(new BigDecimal(pcmlDoc.getValue(pcml +  ".@RSPDTA.DETDTA.RiskAmount",indices).toString()));					
-			//		item.setErrorId(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.ErrorId",indices).toString());
-			//		item.setErrorMsg(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.ErrorMsg",indices).toString());
+					/*item.setErrorId(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.ErrorId",indices).toString());
+					item.setErrorMsg(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.ErrorMsg",indices).toString());*/
 
 					list.add(item);
 				}
@@ -242,8 +242,6 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {	
 				dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.@NOREQ").toString());
 				
-			//	System.out.println(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA").toString());
-
 				for (indices[0] = 0; indices[0] < dsRspCount; indices[0]++){
 					item = new CustomerLimit();
 

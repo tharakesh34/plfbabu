@@ -130,9 +130,9 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 				finPftDetail.setFinStatus(resultSet.getString("FinStatus")); 
 				finPftDetail.setFinStsReason(resultSet.getString("FinStsReason")); 
 				finPftDetail.setFinWorstStatus(resultSet.getString("FinWorstStatus")); 
-				finPftDetail.setTAKAFULPaidAmt(resultSet.getBigDecimal("TAKAFULPaidAmt")); 
+				finPftDetail.setTakafulPaidAmt(resultSet.getBigDecimal("TAKAFULPaidAmt")); 
 				finPftDetail.setAdminPaidAmt(resultSet.getBigDecimal("AdminPaidAmt")); 
-				finPftDetail.setTAKAFULInsCal(resultSet.getBigDecimal("TAKAFULInsCal")); 
+				finPftDetail.setTakafulInsCal(resultSet.getBigDecimal("TAKAFULInsCal")); 
 				finPftDetail.setNOInst(resultSet.getLong("NOInst")); 
 				finPftDetail.setNOPaidInst(resultSet.getLong("NOPaidInst")); 
 				finPftDetail.setNOODInst(resultSet.getLong("NOODInst"));

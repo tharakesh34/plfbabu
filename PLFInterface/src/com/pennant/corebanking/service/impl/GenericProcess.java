@@ -8,13 +8,7 @@ import com.ibm.as400.data.ProgramCallDocument;
 public class GenericProcess {
 
 	protected String getString(ProgramCallDocument doc, String pcml, String name) throws PcmlException {		
-		String value = (String) doc.getValue(pcml + name);		
-		if (value != null) {
-			return value.toString();
-		} else {
-			return value;
-		}
-
+		return (String) doc.getValue(pcml + name);		
 	}
 	
 	protected BigDecimal getEquationDate(ProgramCallDocument doc, String pcml, String name) throws PcmlException {

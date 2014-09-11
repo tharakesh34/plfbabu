@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
+import com.pennant.coreinterface.exception.EquationInterfaceException;
 import com.pennant.coreinterface.model.EquationAccountType;
 import com.pennant.coreinterface.model.EquationCurrency;
 import com.pennant.coreinterface.model.EquationCustomerGroup;
@@ -75,7 +76,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Currency Details
 	 */
 	@Override
-	public List<EquationCurrency>  importCurrencyDetails() throws Exception{
+	public List<EquationCurrency>  importCurrencyDetails() throws EquationInterfaceException{
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -93,7 +94,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			do{
 				
-				pcmlDoc = PTIPSC8R(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
+				pcmlDoc = getCurrencies(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
 				if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
 					dsRspEnd = pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPEND").toString();
 					dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPCURRCDS").toString());
@@ -122,7 +123,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			
 		}catch (Exception e) {
 			logger.error("Exception " + e);
-			throw e;
+			throw new EquationInterfaceException(e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -136,7 +137,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Relation Ship Officer Details
 	 */
 	@Override
-	public List<EquationRelationshipOfficer> importRelationShipOfficersDetails() throws Exception {
+	public List<EquationRelationshipOfficer> importRelationShipOfficersDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -156,7 +157,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			do{
 				
-				pcmlDoc = PTPFFC2R(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
+				pcmlDoc = getRelationShipOfficers(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
 				if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
 					dsRspEnd = pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPEND").toString();
 					dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPCURRCDS").toString());
@@ -177,7 +178,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			
 		}catch (Exception e) {
 			logger.error("Exception " + e);
-			throw e;
+			throw new EquationInterfaceException(e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -192,7 +193,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Customer Type Details
 	 */
 	@Override
-	public List<EquationCustomerType> importCustomerTypeDetails() throws Exception {
+	public List<EquationCustomerType> importCustomerTypeDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -210,7 +211,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			do{
-				pcmlDoc = PTPFFC4R(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
+				pcmlDoc = getCustTypes(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
 				if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
 					dsRspEnd = pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPEND").toString();
 					dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPCURRCDS").toString());
@@ -231,7 +232,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			
 		}catch (Exception e) {
 			logger.error("Exception " + e);
-			throw e;
+			throw new EquationInterfaceException(e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -246,7 +247,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Department Details
 	 */
 	@Override
-	public List<EquationDepartment> importDepartmentDetails() throws Exception {
+	public List<EquationDepartment> importDepartmentDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -264,7 +265,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			do{
-				pcmlDoc = PTPFFGKR(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
+				pcmlDoc = getDepartments(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
 				if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
 					dsRspEnd = pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPEND").toString();
 					dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPCURRCDS").toString());
@@ -284,7 +285,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			
 		}catch (Exception e) {
 			logger.error("Exception " + e);
-			throw e;
+			throw new EquationInterfaceException(e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -299,7 +300,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Customer Group Details
 	 */
 	@Override
-	public List<EquationCustomerGroup> importCustomerGroupDetails() throws Exception {
+	public List<EquationCustomerGroup> importCustomerGroupDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -317,7 +318,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			do{
-				pcmlDoc = PTPFFTAR(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
+				pcmlDoc = getCustGroups(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
 				if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
 					dsRspEnd = pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPEND").toString();
 					dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPCURRCDS").toString());
@@ -338,7 +339,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		
 		}catch (Exception e) {
 			logger.error("Exception " + e);
-			throw e;
+			throw new EquationInterfaceException(e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -353,7 +354,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Account Type Details
 	 */
 	@Override
-	public List<EquationAccountType> importAccountTypeDetails() throws Exception {
+	public List<EquationAccountType> importAccountTypeDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -371,7 +372,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			do{
-				pcmlDoc = PTPFFC5R(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
+				pcmlDoc = getAccountTypes(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
 				if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
 					dsRspEnd = pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPEND").toString();
 					dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPCURRCDS").toString());
@@ -406,7 +407,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			
 		}catch (Exception e) {
 			logger.error("Exception " + e);
-			throw e;
+			throw new EquationInterfaceException(e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -422,7 +423,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Customer Rating Details
 	 */
 	@Override
-	public List<EquationCustomerRating> importCustomerRatingDetails() throws Exception {
+	public List<EquationCustomerRating> importCustomerRatingDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -441,7 +442,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			do{
-				pcmlDoc = PTPFFRTR(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
+				pcmlDoc = getCustRatings(requestStart, dsRspCount, recordsTillNow, pcmlDoc,pcml);
 				if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
 					dsRspEnd = pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPEND").toString();
 					dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPCURRCDS").toString());
@@ -467,7 +468,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 			
 		}catch (Exception e) {
 			logger.error("Exception " + e);
-			throw e;
+			throw new EquationInterfaceException(e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -480,7 +481,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	
 	
 	
-	private ProgramCallDocument PTIPSC8R(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
+	private ProgramCallDocument getCurrencies(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQSTART", requestStart); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTOTAL", reqTotal); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTILLNOW", recordsTillNow); 	
@@ -493,7 +494,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return pcmlDoc;
 	}
 	
-	private ProgramCallDocument PTPFFC2R(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
+	private ProgramCallDocument getRelationShipOfficers(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQSTART", requestStart); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTOTAL", reqTotal); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTILLNOW", recordsTillNow); 	
@@ -506,7 +507,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return pcmlDoc;
 	}
 	
-	private ProgramCallDocument PTPFFC4R(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
+	private ProgramCallDocument getCustTypes(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQSTART", requestStart); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTOTAL", reqTotal); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTILLNOW", recordsTillNow); 	
@@ -519,7 +520,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return pcmlDoc;
 	}
 	
-	private ProgramCallDocument PTPFFGKR(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
+	private ProgramCallDocument getDepartments(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQSTART", requestStart); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTOTAL", reqTotal); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTILLNOW", recordsTillNow); 	
@@ -532,7 +533,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return pcmlDoc;
 	}
 	
-	private ProgramCallDocument PTPFFTAR(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
+	private ProgramCallDocument getCustGroups(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQSTART", requestStart); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTOTAL", reqTotal); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTILLNOW", recordsTillNow); 	
@@ -545,7 +546,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return pcmlDoc;
 	}
 	
-	private ProgramCallDocument PTPFFC5R(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
+	private ProgramCallDocument getAccountTypes(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQSTART", requestStart); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTOTAL", reqTotal); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTILLNOW", recordsTillNow); 	
@@ -558,7 +559,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return pcmlDoc;
 	}
 	
-	private ProgramCallDocument PTPFFRTR(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
+	private ProgramCallDocument getCustRatings(String requestStart, int reqTotal, int recordsTillNow,ProgramCallDocument pcmlDoc,String pcml) throws PcmlException, Exception {
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQSTART", requestStart); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTOTAL", reqTotal); 	
 		pcmlDoc.setValue(pcml + ".@REQDTA.DSREQTILLNOW", recordsTillNow); 	

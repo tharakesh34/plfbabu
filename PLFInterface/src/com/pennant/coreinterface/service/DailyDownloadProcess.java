@@ -44,6 +44,7 @@ package com.pennant.coreinterface.service;
 
 import java.util.List;
 
+import com.pennant.coreinterface.exception.EquationInterfaceException;
 import com.pennant.coreinterface.model.EquationAccountType;
 import com.pennant.coreinterface.model.EquationCurrency;
 import com.pennant.coreinterface.model.EquationCustomerGroup;
@@ -54,18 +55,18 @@ import com.pennant.coreinterface.model.EquationRelationshipOfficer;
 
 public interface DailyDownloadProcess {
 	
-	List<EquationCurrency>  importCurrencyDetails() throws Exception;
+	List<EquationCurrency>  importCurrencyDetails() throws EquationInterfaceException;
 	
-	List<EquationRelationshipOfficer>  importRelationShipOfficersDetails() throws Exception;
+	List<EquationRelationshipOfficer>  importRelationShipOfficersDetails() throws EquationInterfaceException;
 	
-	List<EquationCustomerType>   importCustomerTypeDetails() throws Exception;
+	List<EquationCustomerType>   importCustomerTypeDetails() throws EquationInterfaceException;
 	
-	List<EquationDepartment>  importDepartmentDetails() throws Exception;
+	List<EquationDepartment>  importDepartmentDetails() throws EquationInterfaceException;
 	
-	List<EquationCustomerGroup>  importCustomerGroupDetails() throws Exception;
+	List<EquationCustomerGroup>  importCustomerGroupDetails() throws EquationInterfaceException;
 	
-	List<EquationAccountType>  importAccountTypeDetails() throws Exception;
+	List<EquationAccountType>  importAccountTypeDetails() throws EquationInterfaceException;
 	
-	List<EquationCustomerRating> importCustomerRatingDetails() throws Exception;
+	List<EquationCustomerRating> importCustomerRatingDetails() throws EquationInterfaceException;
 
 }

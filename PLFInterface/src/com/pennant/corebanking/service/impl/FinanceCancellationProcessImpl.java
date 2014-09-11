@@ -23,7 +23,8 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 	 * @throws Exception  
 	 */
 	@Override
-	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, String linkedTranId) throws Exception{
+	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, 
+			String linkedTranId){
 		logger.debug("Entering");
 
 		logger.debug("Leaving");
