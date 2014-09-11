@@ -198,14 +198,23 @@ public class Field implements Serializable {
 
 		boolean parens = true;
 		switch (operator) {
-		case OP_AVG: sb.append("AVG("); break;
-		case OP_COUNT: sb.append("COUNT("); break;
-		case OP_COUNT_DISTINCT: sb.append("COUNT_DISTINCT("); break;
-		case OP_MAX: sb.append("MAX("); break;
-		case OP_MIN: sb.append("MIN("); break;
-		case OP_PROPERTY: parens = false; break;
-		case OP_SUM: sb.append("SUM("); break;
-		default:  sb.append("**INVALID OPERATOR: (" + operator + ")** "); parens = false; break;
+		case OP_AVG: sb.append("AVG(");
+		             break;
+		case OP_COUNT: sb.append("COUNT(");
+		  			 break;
+		case OP_COUNT_DISTINCT: sb.append("COUNT_DISTINCT(");
+				     break;
+		case OP_MAX: sb.append("MAX(");
+					 break;
+		case OP_MIN: sb.append("MIN(");
+					 break;
+		case OP_PROPERTY: parens = false; 
+					 break;
+		case OP_SUM: sb.append("SUM(");
+					 break;
+		  default: 	 sb.append("**INVALID OPERATOR: (" + operator + ")** "); 
+				     parens = false;
+				     break;
 		}
 
 		if (property == null) {

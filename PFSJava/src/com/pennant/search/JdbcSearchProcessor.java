@@ -350,13 +350,16 @@ public class JdbcSearchProcessor  {
 	}
 
 	public static String getMSSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
-		if (startRow > 1 || endRow > 1) return getMSSQLLimitString(sql, startRow, endRow);
+		if (startRow > 1 || endRow > 1) {
+			return getMSSQLLimitString(sql, startRow, endRow);
+		}
 		return sql;
-
 	}
 	 
 	public static String getDB2LimitString(String sql, boolean hasOffset, int startRow, int endRow) {
-		if (startRow > 1 || endRow > 1) return getDB2LimitString(sql, startRow, endRow);
+		if (startRow > 1 || endRow > 1) {
+			return getDB2LimitString(sql, startRow, endRow);
+		}
 		return sql;
  	}
 	
