@@ -652,7 +652,9 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		doSetLOVValidation();
 		
 		super.doWriteComponentsToBean(aFinanceSchData, wve);
-		aFinanceSchData = super.doWriteSchData(aFinanceSchData, false);
+		if(wve.isEmpty()){
+			aFinanceSchData = super.doWriteSchData(aFinanceSchData, false);
+		}
 
 		//FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);

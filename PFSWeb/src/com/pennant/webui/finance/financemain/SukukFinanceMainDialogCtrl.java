@@ -819,7 +819,9 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 			wve.add(we);
 		}
 		
-		aFinanceDetail.setFinScheduleData(super.doWriteSchData(aFinanceDetail.getFinScheduleData(), false));
+		if(wve.isEmpty()){
+			aFinanceDetail.setFinScheduleData(super.doWriteSchData(aFinanceDetail.getFinScheduleData(), false));
+		}
 		
 		//Premium Detail Validation
 		aFinanceDetail.setPremiumDetail(doPreparePremiumDetail(aFinanceDetail, aFinanceMain.getRepayPftFrq(), wve));

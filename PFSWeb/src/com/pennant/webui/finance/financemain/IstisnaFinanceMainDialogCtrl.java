@@ -712,7 +712,9 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			}
 		}
 		
-		aFinanceSchData = super.doWriteSchData(aFinanceSchData, true);
+		if(wve.isEmpty()){
+			aFinanceSchData = super.doWriteSchData(aFinanceSchData, true);
+		}
 
 		//FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);

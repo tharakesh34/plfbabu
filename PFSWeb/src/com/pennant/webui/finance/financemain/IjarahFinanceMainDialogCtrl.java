@@ -746,7 +746,9 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 			wve.add(we);
 		}
 		
-		aFinanceSchData = super.doWriteSchData(aFinanceSchData, false);
+		if(wve.isEmpty()){
+			aFinanceSchData = super.doWriteSchData(aFinanceSchData, false);
+		}
 
 		//FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);

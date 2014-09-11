@@ -728,7 +728,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			wve.add(we);
 		}
 		
-		aFinanceSchData = super.doWriteSchData(aFinanceSchData, false);
+		if(wve.isEmpty()){
+			aFinanceSchData = super.doWriteSchData(aFinanceSchData, false);
+		}
 
 		//FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);
