@@ -55,7 +55,6 @@ import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAu
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.gui.service.GuiLoginLoggingPolicService;
 import com.pennant.policy.model.PolicyManager;
