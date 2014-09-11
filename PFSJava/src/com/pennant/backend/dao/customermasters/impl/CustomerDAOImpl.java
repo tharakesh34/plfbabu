@@ -499,8 +499,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	
 	@Override
 	public String getNewProspectCustomerCIF(){
-		String id="PC"+getNextidviewDAO().getNextId("SeqProspectCustomer");
-		return id;
+		return "PC"+getNextidviewDAO().getNextId("SeqProspectCustomer");
 	}
 	
 	@Override

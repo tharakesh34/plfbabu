@@ -247,8 +247,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * @return FinanceType
 	 */
 	public FinanceType getApprovedFinanceTypeById(String id) {
-		FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(id, "_AView");
-		return financeType;
+		return getFinanceTypeDAO().getFinanceTypeByID(id, "_AView");
 	}
 
 	/**

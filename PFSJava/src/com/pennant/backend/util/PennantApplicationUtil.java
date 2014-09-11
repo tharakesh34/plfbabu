@@ -349,8 +349,7 @@ public class PennantApplicationUtil {
 //			searchObject.addFilterEqual("RoleCd", roleCode);
 			
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-			List<SecurityRole> rolesList = pagedListService.getBySearchObject(searchObject);
-			return rolesList;
+			return pagedListService.getBySearchObject(searchObject);
  	}
 
 	public static String getUserDesc(long userID){

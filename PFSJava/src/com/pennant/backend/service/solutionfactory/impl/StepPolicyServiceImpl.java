@@ -118,8 +118,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 
 	@Override
 	public StepPolicyHeader getNewStepPolicyHeader() {		
-		StepPolicyHeader stepPolicyHeader=getStepPolicyHeaderDAO().getNewStepPolicyHeader();
-		return stepPolicyHeader;
+		return getStepPolicyHeaderDAO().getNewStepPolicyHeader();
 	}
 
 	/**
@@ -247,8 +246,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	 * @return StepPolicyHeader
 	 */
 	public StepPolicyHeader getApprovedStepPolicyHeaderById(String id) {
-		StepPolicyHeader stepPolicyHeader = getStepPolicyHeaderDAO().getStepPolicyHeaderByID(id, "_AView");
-		return stepPolicyHeader;
+		return getStepPolicyHeaderDAO().getStepPolicyHeaderByID(id, "_AView");
 	}
 
 	/**

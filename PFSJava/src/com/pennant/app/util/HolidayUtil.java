@@ -488,8 +488,7 @@ public class HolidayUtil implements Serializable {
 		tempDate.setTime(date);
 		DateCalculator<Calendar> dateCalculator = getDateCalendar(holidayCode,tempDate,handlerType);
 		dateCalculator.setStartDate(tempDate);
-		Calendar finalDate = dateCalculator.getCurrentBusinessDate();
-		return finalDate;
+		return dateCalculator.getCurrentBusinessDate();
 	}
 	
 	private static String getHandlerType(String NBDAction)
@@ -571,8 +570,7 @@ public class HolidayUtil implements Serializable {
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	private static Set<Calendar> perminentHolidays(List<HolidayDetail> holidayDetails){
-		Set<Calendar> holidays=new HashSet<Calendar>(); 
-		return holidays;
+		return new HashSet<Calendar>(); 
 	}
 	
 	public static WeekendMasterDAO getWeekendMasterDAO() {

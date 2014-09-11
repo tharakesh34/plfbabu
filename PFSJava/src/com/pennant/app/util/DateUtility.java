@@ -114,8 +114,7 @@ public final class DateUtility {
 		if(date == null){
 			return "";
 		}
-		SimpleDateFormat df = new SimpleDateFormat(format);
-		return df.format(date) + "";
+		return new SimpleDateFormat(format).format(date) + "";
 	}
 
 	/**
@@ -946,8 +945,7 @@ public final class DateUtility {
 
 		GregorianCalendar gcal = (GregorianCalendar) GregorianCalendar.getInstance();
 		gcal.setTimeInMillis(timestamp.getTime());
-		XMLGregorianCalendar xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
-		return xgcal;
+		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
 	}
 
 	/**

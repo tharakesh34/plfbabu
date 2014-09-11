@@ -119,9 +119,8 @@ public class ContractorAssetDetail implements java.io.Serializable {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		return new HashSet<String>();
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

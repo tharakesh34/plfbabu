@@ -60,8 +60,7 @@ public class NextIdViewMySQLDaoImpl extends BasisDAO<Nextidview> implements Next
 
 	public long getNextId(String seqName) {
 		String selectCountSql = 	"select * from "+seqName ;
-		long count = this.namedParameterJdbcTemplate.getJdbcOperations().queryForLong(selectCountSql);		
-		return count;
+		return this.namedParameterJdbcTemplate.getJdbcOperations().queryForLong(selectCountSql);		
 	}
 
 	public void setDataSource(DataSource dataSource) {

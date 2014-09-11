@@ -118,8 +118,7 @@ public class SharesDetail implements java.io.Serializable {
 	}
 
 	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+		return new HashSet<String>();
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

@@ -48,9 +48,9 @@ public class FinanceStepPolicyDetail implements Serializable {
 	public FinanceStepPolicyDetail(String id) {
 		this.setId(id);
 	}
+
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
-		return excludeFields;
+		return new HashSet<String>();
 	}
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
