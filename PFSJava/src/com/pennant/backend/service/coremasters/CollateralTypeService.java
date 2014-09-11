@@ -43,9 +43,8 @@
 
 package com.pennant.backend.service.coremasters;
 
-import com.pennant.backend.model.coremasters.CollateralType;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.coremasters.CollateralType;
 
 public interface CollateralTypeService {
 	

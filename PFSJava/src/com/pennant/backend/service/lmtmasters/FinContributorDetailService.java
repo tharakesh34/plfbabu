@@ -48,7 +48,6 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
-import com.pennant.backend.model.lmtmasters.CommidityLoanDetail;
 
 public interface FinContributorDetailService {
 	

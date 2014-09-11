@@ -45,7 +45,6 @@ package com.pennant.backend.service.amtmasters;
 
 import com.pennant.backend.model.amtmasters.Authorization;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.ErrorDetails;
 
 public interface AuthorizationService {
 	

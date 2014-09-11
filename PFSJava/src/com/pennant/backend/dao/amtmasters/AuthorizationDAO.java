@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.amtmasters;
 import com.pennant.backend.model.amtmasters.Authorization;
-import com.pennant.backend.model.systemmasters.Academic;
-import com.pennant.backend.model.ErrorDetails;
 
 public interface AuthorizationDAO {
 
