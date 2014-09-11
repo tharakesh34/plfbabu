@@ -6,7 +6,7 @@
 	id="PFSWeb" version="3.0">
   
   <display-name>PFS</display-name>
-  <description>PFS Application 1.0.0</description>
+  <description>pennApps Finance Factory</description>
   
   <context-param>
     <param-name>contextConfigLocation</param-name>
