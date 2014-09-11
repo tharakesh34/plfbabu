@@ -113,8 +113,7 @@ public final class DateUtility {
 	   String dateFormat = "MM/dd/yyyy hh:mm:ss";
 	   java.text.SimpleDateFormat df = new java.text.SimpleDateFormat(dateFormat);
 	   Calendar objCalendar = Calendar.getInstance();	
-	   String strValue = df.format(objCalendar.getTime());
-	   return strValue;
+	   return df.format(objCalendar.getTime());
 	}
 	
 }
