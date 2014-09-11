@@ -217,8 +217,7 @@
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.2.2</version>
 		</dependency>
-		
-
+	
 		<!-- Axiom -->
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
