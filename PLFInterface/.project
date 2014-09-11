@@ -3,7 +3,6 @@
 	<name>PLFInterface</name>
 	<comment></comment>
 	<projects>
-		<project>PFSJava</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
