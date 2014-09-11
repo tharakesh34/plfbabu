@@ -92,7 +92,7 @@ public class ScheduleGenerator {
 				int stepCount = -1;
 				FinanceStepPolicyDetail policyDetail = null;
 				
-				for (int i = (1+financeMain.getGraceTerms()); i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+				for (int i = financeMain.getGraceTerms(); i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 					
 					FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 					if(repayStart == repayEnd){
