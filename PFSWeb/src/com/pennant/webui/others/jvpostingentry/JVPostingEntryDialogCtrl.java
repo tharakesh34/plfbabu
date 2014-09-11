@@ -44,64 +44,8 @@
 package com.pennant.webui.others.jvpostingentry;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
-import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.WrongValueException;
-import org.zkoss.zk.ui.WrongValuesException;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.Button;
-import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Hlayout;
-import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.South;
-import org.zkoss.zul.Space;
-import org.zkoss.zul.Textbox;
-import org.zkoss.zul.Window;
-
-import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.accounts.Accounts;
-import com.pennant.backend.model.applicationmaster.Currency;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.others.JVPostingEntry;
-import com.pennant.backend.service.PagedListService;
-import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
-import com.pennant.util.Constraint.PTDecimalValidator;
-import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.util.Constraint.StaticListValidator;
-import com.pennant.webui.others.jvposting.JVPostingDialogCtrl;
-import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MultiLineMessageBox;
-import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.ScreenCTL;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>

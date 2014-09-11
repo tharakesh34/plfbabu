@@ -50,12 +50,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 
 
 /**
