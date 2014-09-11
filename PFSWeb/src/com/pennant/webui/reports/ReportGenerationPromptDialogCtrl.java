@@ -1187,10 +1187,10 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 		}
 
 		//Add Static variables 
-		if(whereCondition.toString().trim().equals("where") && !saticValuesWhereCondition.toString().trim().equals("")){
+		if(whereCondition.toString().trim().equals("where") && !(saticValuesWhereCondition.length()==0)){
 			whereCondition.append(" "+saticValuesWhereCondition.toString());
 
-		}else if (!whereCondition.toString().trim().equals("where") && !saticValuesWhereCondition.toString().trim().equals("")) {
+		}else if (!whereCondition.toString().trim().equals("where") && !(saticValuesWhereCondition.length()==0)) {
 			whereCondition.append(" and "+saticValuesWhereCondition.toString());
 		}
 		logger.debug("where Condition :"+whereCondition.toString());
@@ -1971,7 +1971,9 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 			for(int j=0 ;j< values.length;j++){
 				boolean isChecked=filedValue.equals("")?false:checkBox.getLabel().trim().equals(values[j].trim());
 				checkBox.setChecked(isChecked);
-				if(isChecked) break;
+				if (isChecked) {
+					break;
+				}
 			}
 		}
 		logger.debug("Leaving");
@@ -2249,7 +2251,7 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 
 		//Forming In Condition RightType in ('0','1','2')
 		if(aReportFieldsDetails.getFieldType().equals(FIELDTYPE.MULTISELINLIST.toString()) 
-				&& !csvValues.toString().equals("")){
+				&& !(csvValues.length() == 0)){
 			addAndCondition(WhereCondition);
 			String inCondition =getINCondition(csvValues.toString());
 			String[] inCondSize = inCondition.split(",");

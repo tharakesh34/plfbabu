@@ -337,7 +337,8 @@ public class NationalityCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 			if (searchOpId == -1) {
 				// do nothing
 			} else {
-				if (this.nationalityIsActive.isChecked()) {so.addFilter(new Filter("nationalityIsActive", 1, searchOpId));
+				if (this.nationalityIsActive.isChecked()) {
+					so.addFilter(new Filter("nationalityIsActive", 1, searchOpId));
 				} else {
 					so.addFilter(new Filter("nationalityIsActive", 0, searchOpId));
 				}

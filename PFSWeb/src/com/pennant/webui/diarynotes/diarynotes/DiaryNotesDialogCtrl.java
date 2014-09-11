@@ -482,7 +482,9 @@ public class DiaryNotesDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		// Added Newly to Identify Wheather the Record is Approved 
 		approvedDN  = diaryNotesService.getApprovedDiaryNotesById(aDiaryNotes.getId());
-			if(approvedDN !=null){ dnType = approvedDN.getDnType();	}
+		if (approvedDN != null) {
+			dnType = approvedDN.getDnType();
+		}
 		
 		if(!aDiaryNotes.isNew()){
 			this.dnType.setDisabled(true);
