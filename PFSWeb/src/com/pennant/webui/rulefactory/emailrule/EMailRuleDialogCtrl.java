@@ -44,7 +44,6 @@
 package com.pennant.webui.rulefactory.emailrule;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +51,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -77,23 +75,19 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.JavaScriptBuilder;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.mail.MailTemplate;
-import com.pennant.backend.model.rulefactory.RuleModule;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.rulefactory.EMailRule;
+import com.pennant.backend.model.rulefactory.RuleModule;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.mail.MailTemplateService;
 //import com.pennant.backend.service.applicationmaster.RuleBuilderService;
 import com.pennant.backend.service.rulefactory.RuleService;
-import com.pennant.backend.service.mail.MailTemplateService;
-import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.StringReplacement;
-import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -101,7 +95,6 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennant.backend.service.rulefactory.RuleService;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
