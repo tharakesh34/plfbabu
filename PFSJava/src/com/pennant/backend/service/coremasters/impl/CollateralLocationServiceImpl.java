@@ -347,7 +347,7 @@ public class CollateralLocationServiceImpl extends GenericService<CollateralLoca
 			}
 			CollateralLocation befCollateralLocation= getCollateralLocationDAO().getCollateralLocationById(collateralLocation.getId(), "");
 			
-			CollateralLocation old_CollateralLocation= collateralLocation.getBefImage();
+			CollateralLocation oldCollateralLocation= collateralLocation.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -379,7 +379,7 @@ public class CollateralLocationServiceImpl extends GenericService<CollateralLoca
 					if (befCollateralLocation ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_CollateralLocation!=null && !old_CollateralLocation.getLastMntOn().equals(befCollateralLocation.getLastMntOn())){
+						if (oldCollateralLocation!=null && !oldCollateralLocation.getLastMntOn().equals(befCollateralLocation.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -393,7 +393,7 @@ public class CollateralLocationServiceImpl extends GenericService<CollateralLoca
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_CollateralLocation!=null && !old_CollateralLocation.getLastMntOn().equals(tempCollateralLocation.getLastMntOn())){ 
+					if (oldCollateralLocation!=null && !oldCollateralLocation.getLastMntOn().equals(tempCollateralLocation.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

@@ -181,8 +181,8 @@ public class RatingCodeServiceImpl extends GenericService<RatingCode> implements
 	 * @return RatingCode
 	 */
 	@Override
-	public RatingCode getRatingCodeById(String RatingType, String RatingCode) {
-		return getRatingCodeDAO().getRatingCodeById(RatingType, RatingCode, "_View");
+	public RatingCode getRatingCodeById(String ratingType, String ratingCode) {
+		return getRatingCodeDAO().getRatingCodeById(ratingType, ratingCode, "_View");
 	}
 
 	/**
@@ -194,8 +194,8 @@ public class RatingCodeServiceImpl extends GenericService<RatingCode> implements
 	 *            (String)
 	 * @return RatingCode
 	 */
-	public RatingCode getApprovedRatingCodeById(String RatingType,String RatingCode) {
-		return getRatingCodeDAO().getRatingCodeById(RatingType, RatingCode, "_AView");
+	public RatingCode getApprovedRatingCodeById(String ratingType,String ratingCode) {
+		return getRatingCodeDAO().getRatingCodeById(ratingType, ratingCode, "_AView");
 	}
 
 	/**
@@ -353,7 +353,7 @@ public class RatingCodeServiceImpl extends GenericService<RatingCode> implements
 		}
 
 		RatingCode befRatingCode = getRatingCodeDAO().getRatingCodeById(ratingCode.getRatingType(), ratingCode.getRatingCode(), "");
-		RatingCode old_RatingCode = ratingCode.getBefImage();
+		RatingCode oldRatingCode = ratingCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -392,8 +392,8 @@ public class RatingCodeServiceImpl extends GenericService<RatingCode> implements
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_RatingCode != null
-							&& !old_RatingCode.getLastMntOn().equals(befRatingCode.getLastMntOn())) {
+					if (oldRatingCode != null
+							&& !oldRatingCode.getLastMntOn().equals(befRatingCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -410,8 +410,8 @@ public class RatingCodeServiceImpl extends GenericService<RatingCode> implements
 				}
 
 				if (tempRatingCode != null
-						&& old_RatingCode != null
-						&& !old_RatingCode.getLastMntOn().equals(tempRatingCode.getLastMntOn())) {
+						&& oldRatingCode != null
+						&& !oldRatingCode.getLastMntOn().equals(tempRatingCode.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

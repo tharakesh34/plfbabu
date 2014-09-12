@@ -349,7 +349,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 		}
 
 		RatingType befRatingType = getRatingTypeDAO().getRatingTypeById(ratingType.getId(), "");
-		RatingType old_RatingType = ratingType.getBefImage();
+		RatingType oldRatingType = ratingType.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -383,8 +383,8 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_RatingType != null
-							&& !old_RatingType.getLastMntOn().equals(befRatingType.getLastMntOn())) {
+					if (oldRatingType != null
+							&& !oldRatingType.getLastMntOn().equals(befRatingType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -400,8 +400,8 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 				}
 
 				if (tempRatingType != null
-						&& old_RatingType != null
-						&& !old_RatingType.getLastMntOn().equals(tempRatingType.getLastMntOn())) {
+						&& oldRatingType != null
+						&& !oldRatingType.getLastMntOn().equals(tempRatingType.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

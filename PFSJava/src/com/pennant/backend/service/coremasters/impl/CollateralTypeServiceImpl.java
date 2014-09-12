@@ -347,7 +347,7 @@ public class CollateralTypeServiceImpl extends GenericService<CollateralType> im
 			}
 			CollateralType befCollateralType= getCollateralTypeDAO().getCollateralTypeById(collateralType.getId(), "");
 			
-			CollateralType old_CollateralType= collateralType.getBefImage();
+			CollateralType oldCollateralType= collateralType.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -379,7 +379,7 @@ public class CollateralTypeServiceImpl extends GenericService<CollateralType> im
 					if (befCollateralType ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_CollateralType!=null && !old_CollateralType.getLastMntOn().equals(befCollateralType.getLastMntOn())){
+						if (oldCollateralType!=null && !oldCollateralType.getLastMntOn().equals(befCollateralType.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -393,7 +393,7 @@ public class CollateralTypeServiceImpl extends GenericService<CollateralType> im
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_CollateralType!=null && !old_CollateralType.getLastMntOn().equals(tempCollateralType.getLastMntOn())){ 
+					if (oldCollateralType!=null && !oldCollateralType.getLastMntOn().equals(tempCollateralType.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

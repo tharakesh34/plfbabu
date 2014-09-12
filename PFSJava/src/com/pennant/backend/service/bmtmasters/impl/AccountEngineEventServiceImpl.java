@@ -382,7 +382,7 @@ public class AccountEngineEventServiceImpl extends
 
 		AccountEngineEvent befAccountEngineEvent = getAccountEngineEventDAO()
 				.getAccountEngineEventById(accountEngineEvent.getId(), "");
-		AccountEngineEvent old_AccountEngineEvent = accountEngineEvent
+		AccountEngineEvent oldAccountEngineEvent = accountEngineEvent
 				.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -441,8 +441,8 @@ public class AccountEngineEventServiceImpl extends
 									errParm, null));
 				} else {
 
-					if (old_AccountEngineEvent != null
-							&& !old_AccountEngineEvent.getLastMntOn().equals(
+					if (oldAccountEngineEvent != null
+							&& !oldAccountEngineEvent.getLastMntOn().equals(
 									befAccountEngineEvent.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -468,8 +468,8 @@ public class AccountEngineEventServiceImpl extends
 				}
 
 				if (tempAccountEngineEvent != null
-						&& old_AccountEngineEvent != null
-						&& !old_AccountEngineEvent.getLastMntOn().equals(
+						&& oldAccountEngineEvent != null
+						&& !oldAccountEngineEvent.getLastMntOn().equals(
 								tempAccountEngineEvent.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

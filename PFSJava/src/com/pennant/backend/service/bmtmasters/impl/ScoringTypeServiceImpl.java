@@ -338,7 +338,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 		}
 		ScoringType befScoringType= getScoringTypeDAO().getScoringTypeById(scoringType.getId(), "");
 
-		ScoringType old_ScoringType= scoringType.getBefImage();
+		ScoringType oldScoringType= scoringType.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -374,7 +374,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_ScoringType!=null && !old_ScoringType.getLastMntOn().equals(befScoringType.getLastMntOn())){
+					if (oldScoringType!=null && !oldScoringType.getLastMntOn().equals(befScoringType.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
@@ -391,7 +391,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_ScoringType!=null && !old_ScoringType.getLastMntOn().equals(tempScoringType.getLastMntOn())){ 
+				if (oldScoringType!=null && !oldScoringType.getLastMntOn().equals(tempScoringType.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}

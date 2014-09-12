@@ -350,7 +350,7 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 			}
 			Question befQuestion= getQuestionDAO().getQuestionById(question.getId(), "");
 			
-			Question old_Question= question.getBefImage();
+			Question oldQuestion= question.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -382,7 +382,7 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 					if (befQuestion ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_Question!=null && !old_Question.getLastMntOn().equals(befQuestion.getLastMntOn())){
+						if (oldQuestion!=null && !oldQuestion.getLastMntOn().equals(befQuestion.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -396,7 +396,7 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_Question!=null && !old_Question.getLastMntOn().equals(tempQuestion.getLastMntOn())){ 
+					if (oldQuestion!=null && !oldQuestion.getLastMntOn().equals(tempQuestion.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

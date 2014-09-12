@@ -55,8 +55,8 @@ public interface RatingCodeService {
 	RatingCode getRatingCode();
 	RatingCode getNewRatingCode();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	RatingCode getRatingCodeById(String RatingType, String RatingCode);
-	RatingCode getApprovedRatingCodeById(String RatingType, String RatingCode);
+	RatingCode getRatingCodeById(String ratingType, String ratingCode);
+	RatingCode getApprovedRatingCodeById(String ratingType, String ratingCode);
 	RatingCode refresh(RatingCode ratingCode);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);

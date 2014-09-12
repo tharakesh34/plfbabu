@@ -437,7 +437,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			tempProduct = getProductDAO().getProductByID(product.getId(),product.getProductCode(),"_Temp");
 		}
 		Product befProduct = getProductDAO().getProductByID(product.getId(),product.getProductCode(), "");
-		Product old_Product = product.getBefImage();
+		Product oldProduct = product.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
@@ -475,7 +475,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41002",errParm, valueParm),usrLanguage));
 				} else {
-					if (old_Product != null && !old_Product.getLastMntOn().equals(befProduct.getLastMntOn())) {
+					if (oldProduct != null && !oldProduct.getLastMntOn().equals(befProduct.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
@@ -493,7 +493,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 							PennantConstants.KEY_FIELD, "41005",errParm, valueParm),usrLanguage));
 				}
 
-				if (tempProduct != null && old_Product != null && !old_Product.getLastMntOn().equals(
+				if (tempProduct != null && oldProduct != null && !oldProduct.getLastMntOn().equals(
 						tempProduct.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41005",errParm, valueParm),usrLanguage));

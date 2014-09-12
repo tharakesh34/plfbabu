@@ -479,8 +479,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			tempCommitment = getCommitmentDAO().getCommitmentById(commitment.getId(), "_Temp");
 		}
 		Commitment befCommitment = getCommitmentDAO().getCommitmentById(commitment.getId(), "");
-
-		Commitment old_Commitment = commitment.getBefImage();
+		Commitment oldCommitment = commitment.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -526,8 +525,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_Commitment != null
-					        && !old_Commitment.getLastMntOn().equals(befCommitment.getLastMntOn())) {
+					if (oldCommitment != null
+					        && !oldCommitment.getLastMntOn().equals(befCommitment.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
@@ -547,8 +546,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_Commitment != null
-				        && !old_Commitment.getLastMntOn().equals(tempCommitment.getLastMntOn())) {
+				if (oldCommitment != null
+				        && !oldCommitment.getLastMntOn().equals(tempCommitment.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
