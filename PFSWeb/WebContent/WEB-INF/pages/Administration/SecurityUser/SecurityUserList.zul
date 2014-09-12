@@ -227,7 +227,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingSecurityUserList" height="35px" />
+					<paging id="pagingSecurityUserList"   />
 				</south>
 			</borderlayout>
 		</window>

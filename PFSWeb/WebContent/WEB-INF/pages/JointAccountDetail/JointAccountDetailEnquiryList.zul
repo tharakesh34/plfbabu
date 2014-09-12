@@ -97,7 +97,7 @@
 				</center>
 
 				<south border="none" >
-					<paging id="pagingJountAccountDetailList" height="35px"/>
+					<paging id="pagingJountAccountDetailList"  />
 				</south>
 				
 			</borderlayout>

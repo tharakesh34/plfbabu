@@ -96,7 +96,7 @@
 			</center>
 			
 			<south border="none">
-				<paging id="pagingCustomerDetailsList" height="35px" />
+				<paging id="pagingCustomerDetailsList"   />
 			</south>
 
 		</borderlayout>

@@ -72,8 +72,7 @@
 					</listbox>
 				</center>
 				<south border="none">
-					<paging id="pagingFinCreditRevSubCategoryList"
-						height="35px" />
+					<paging id="pagingFinCreditRevSubCategoryList" />
 				</south>
 
 			</borderlayout>

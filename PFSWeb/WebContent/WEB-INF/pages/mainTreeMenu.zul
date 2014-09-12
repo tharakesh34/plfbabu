@@ -95,7 +95,7 @@ tr.z-treerow-hover-selected > td.subItem   {
 
 /** Change the styles for Selected Menu **/
 tr.z-treerow-selected > td.subItem  {
-	background: none repeat scroll 0 0 #EDEDED;
+	background: none repeat scroll 0 0 #BC5C5C;
 }
 	  
 div.z-tree-body td.subItem.z-treecell,
@@ -172,6 +172,7 @@ color: #FFF;
 .z-treerow-selected>.z-treecell>.z-treecell-content {
 color: #FFF;
 }
+
 </style>
 		
 

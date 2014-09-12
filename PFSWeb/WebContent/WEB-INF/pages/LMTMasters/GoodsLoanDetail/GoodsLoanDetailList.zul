@@ -110,7 +110,7 @@
 				</center>
 
 				<south border="none" >
-					<paging id="pagingGoodsLoanDetailList" height="35px"/>
+					<paging id="pagingGoodsLoanDetailList"  />
 				</south>
 				
 			</borderlayout>

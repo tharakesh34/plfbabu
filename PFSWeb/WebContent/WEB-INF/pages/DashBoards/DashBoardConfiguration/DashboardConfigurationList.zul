@@ -75,7 +75,7 @@
 					</listbox>
 				</center>
 				<south border="none" >
-					<paging id="pagingDashboardConfigurationList" height="35px"/>
+					<paging id="pagingDashboardConfigurationList"  />
 				</south>
 				
 			</borderlayout>

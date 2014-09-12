@@ -113,7 +113,7 @@
 			</center>
 			<south border="none">
 				<paging id="pagingExtendedFieldDetailList"
-					height="35px" />
+					  />
 			</south>
 
 		</borderlayout>

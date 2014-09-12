@@ -107,7 +107,7 @@
 				</center>
 
 				<south border="none" >
-					<paging id="pagingGuarantorDetailList" height="35px"/>
+					<paging id="pagingGuarantorDetailList"  />
 				</south>
 				
 			</borderlayout>

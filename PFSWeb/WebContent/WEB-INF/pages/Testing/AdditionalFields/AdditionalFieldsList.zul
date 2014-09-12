@@ -69,7 +69,7 @@
 				</center>
 				
 				<south border="none" >
-					<paging id="pagingAdditionalFieldsList" height="35px"/>
+					<paging id="pagingAdditionalFieldsList"  />
 				</south>
 				
 			</borderlayout>

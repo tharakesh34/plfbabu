@@ -182,7 +182,7 @@
 				</center>
 				<south border="none">
 					<paging id="pagingReportConfigurationList"
-						height="35px" />
+						  />
 				</south>
 			</borderlayout>
 		</window>

@@ -170,7 +170,7 @@
 
 				<south border="none">
 					<paging id="pagingCommidityLoanDetailList"
-						height="35px" />
+						  />
 				</south>
 
 			</borderlayout>

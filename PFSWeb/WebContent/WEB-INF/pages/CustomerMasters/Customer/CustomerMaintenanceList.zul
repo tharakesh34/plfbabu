@@ -91,7 +91,7 @@
 				</listbox>
 			</center>
 			<south border="none">
-				<paging id="pagingCustomerMaintenaceList" height="35px" />
+				<paging id="pagingCustomerMaintenaceList"   />
 			</south>
 
 		</borderlayout>

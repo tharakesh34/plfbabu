@@ -186,7 +186,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingJVPostingList" height="35px" />
+					<paging id="pagingJVPostingList"   />
 				</south>
 
 			</borderlayout>

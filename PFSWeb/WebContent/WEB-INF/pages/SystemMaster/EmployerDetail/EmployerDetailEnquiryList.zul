@@ -135,7 +135,7 @@
 				</center>
 
 				<south border="none" >
-					<paging id="pagingEmployerDetailList" height="35px"/>
+					<paging id="pagingEmployerDetailList"  />
 				</south>
 				
 			</borderlayout>

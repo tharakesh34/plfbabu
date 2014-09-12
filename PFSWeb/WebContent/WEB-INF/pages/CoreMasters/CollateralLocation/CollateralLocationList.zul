@@ -68,7 +68,7 @@
 					</listbox>
 				</center>
 				<south border="none" >
-					<paging id="pagingCollateralLocationList" height="35px"/>
+					<paging id="pagingCollateralLocationList"  />
 				</south>
 				
 			</borderlayout>

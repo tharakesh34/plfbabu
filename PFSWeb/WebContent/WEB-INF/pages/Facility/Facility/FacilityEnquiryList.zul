@@ -131,7 +131,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingFacilityList" height="35px" />
+					<paging id="pagingFacilityList"   />
 				</south>
 			</borderlayout>
 		</window>

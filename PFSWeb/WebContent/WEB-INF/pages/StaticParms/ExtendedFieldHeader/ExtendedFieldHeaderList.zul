@@ -82,7 +82,7 @@
 			</center>
 			<south border="none">
 				<paging id="pagingExtendedFieldHeaderList"
-					height="35px" />
+					  />
 			</south>
 
 		</borderlayout>

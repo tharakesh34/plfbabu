@@ -116,7 +116,7 @@
 				</center>
 
 				<south border="none" >
-					<paging id="pagingMailTemplateList" height="35px"/>
+					<paging id="pagingMailTemplateList"  />
 				</south>
 				
 			</borderlayout>

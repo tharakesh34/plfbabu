@@ -237,7 +237,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingCommitmentList" height="35px" />
+					<paging id="pagingCommitmentList"   />
 				</south>
 
 			</borderlayout>

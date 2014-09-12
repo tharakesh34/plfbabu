@@ -991,25 +991,25 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 	public int calculateBorderLayoutHeight() {
 		if(this.borderLayoutHeight == 0){
 			int northHeight = 55;
-			int southHeight = 26;
-			int tabHeight = 27;
-			int rowheight = 24;
+			int tabHeight = 26;
+			int toolBarHeight = 26;
+			int rowheight = 26;
 			
-			this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - (northHeight + tabHeight + southHeight);
+			this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - (northHeight + tabHeight + toolBarHeight);
 			this.listRows = Math.round(this.borderLayoutHeight/ rowheight) - 1;
 		}
 		return borderLayoutHeight;
 	}
 
 	public String getListBoxHeight(int gridRowCount) {
-		int rowheight = 24;  
+		int rowheight = 22;  
 		int listBoxHScroll = 16;
 		if(this.borderLayoutHeight == 0){
 			getBorderLayoutHeight();
 		}
 		
 		int listboxheight = this.borderLayoutHeight - listBoxHScroll;		
-		listboxheight = listboxheight-(gridRowCount * 24);			
+		listboxheight = listboxheight-(gridRowCount * 26);			
 		this.listRows = Math.round(listboxheight / rowheight) - 1; // - 1  For cross browser; 
 		
 		return listboxheight + "px";

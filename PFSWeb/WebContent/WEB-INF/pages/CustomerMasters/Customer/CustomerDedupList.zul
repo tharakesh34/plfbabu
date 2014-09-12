@@ -62,7 +62,7 @@
 				</panel>
 			</center>
 			<south border="none">
-				<paging id="pagingCustomerDedupList" height="35px" />
+				<paging id="pagingCustomerDedupList"   />
 			</south>
 
 		</borderlayout>
