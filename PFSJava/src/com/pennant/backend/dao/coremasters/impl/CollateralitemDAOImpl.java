@@ -288,9 +288,9 @@ public class CollateralitemDAOImpl extends BasisCodeDAO<Collateralitem> implemen
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String HYCUS, String userLanguage){
+	private ErrorDetails  getError(String errorId, String hYCUS, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = HYCUS;
+		parms[1][0] = hYCUS;
 		parms[0][0] = PennantJavaUtil.getLabel("label_HYCUS")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}

@@ -288,9 +288,9 @@ public class CollateralTypeDAOImpl extends BasisCodeDAO<CollateralType> implemen
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String HWCLP, String userLanguage){
+	private ErrorDetails  getError(String errorId, String hWCLP, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = HWCLP;
+		parms[1][0] = hWCLP;
 		parms[0][0] = PennantJavaUtil.getLabel("label_HWCLP")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}

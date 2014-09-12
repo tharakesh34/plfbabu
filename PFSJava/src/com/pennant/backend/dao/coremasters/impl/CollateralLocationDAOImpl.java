@@ -288,9 +288,9 @@ public class CollateralLocationDAOImpl extends BasisCodeDAO<CollateralLocation> 
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String HZCLO, String userLanguage){
+	private ErrorDetails  getError(String errorId, String hZCLO, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = HZCLO;
+		parms[1][0] = hZCLO;
 		parms[0][0] = PennantJavaUtil.getLabel("label_HZCLO")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
