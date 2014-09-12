@@ -361,7 +361,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 		}
 		PFSParameter befPFSParameter = getPFSParameterDAO().getPFSParameterById(pFSParameter.getId(), "");
 
-		PFSParameter old_PFSParameter = pFSParameter.getBefImage();
+		PFSParameter oldPFSParameter = pFSParameter.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
@@ -413,8 +413,8 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 							"41002", errParm, null));
 				}
 
-				if (old_PFSParameter != null
-						&& !old_PFSParameter.getLastMntOn().equals(
+				if (oldPFSParameter != null
+						&& !oldPFSParameter.getLastMntOn().equals(
 								befPFSParameter.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -434,8 +434,8 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 									PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (old_PFSParameter != null
-						&& !old_PFSParameter.getLastMntOn().equals(
+				if (oldPFSParameter != null
+						&& !oldPFSParameter.getLastMntOn().equals(
 								tempPFSParameter.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(
 									PennantConstants.KEY_FIELD, "41005", errParm, null));

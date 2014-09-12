@@ -68,7 +68,7 @@ public class ProductAssetValidation {
 		}
 
 		ProductAsset befProductAsset= getProductAssetDAO().getProductAssetById(productAsset.getId(),"");
-		ProductAsset old_ProductAsset= productAsset.getBefImage();
+		ProductAsset oldProductAsset= productAsset.getBefImage();
 
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
@@ -107,7 +107,7 @@ public class ProductAssetValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_ProductAsset!=null && !old_ProductAsset.getLastMntOn().equals(befProductAsset.getLastMntOn())){
+					if (oldProductAsset!=null && !oldProductAsset.getLastMntOn().equals(befProductAsset.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -122,7 +122,7 @@ public class ProductAssetValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempProductAsset!=null  && old_ProductAsset!=null && !old_ProductAsset.getLastMntOn().equals(tempProductAsset.getLastMntOn())){ 
+				if (tempProductAsset!=null  && oldProductAsset!=null && !oldProductAsset.getLastMntOn().equals(tempProductAsset.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}

@@ -60,7 +60,7 @@ private OverdueChargeDetailDAO overdueChargeDetailDAO;
 		}
 		
 		OverdueChargeDetail befChargeDetail= getDetailsDAO().getOverdueChargeDetailById(overdueChargeDetail.getoDCRuleCode(),overdueChargeDetail.getoDCCustCtg(),"");
-		OverdueChargeDetail old_ChargeDetail= overdueChargeDetail.getBefImage();
+		OverdueChargeDetail oldChargeDetail= overdueChargeDetail.getBefImage();
 		
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
@@ -95,7 +95,7 @@ private OverdueChargeDetailDAO overdueChargeDetailDAO;
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_ChargeDetail!=null && !old_ChargeDetail.getLastMntOn().equals(befChargeDetail.getLastMntOn())){
+					if (oldChargeDetail!=null && !oldChargeDetail.getLastMntOn().equals(befChargeDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -110,7 +110,7 @@ private OverdueChargeDetailDAO overdueChargeDetailDAO;
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempChargeDetail!=null  && old_ChargeDetail!=null && !old_ChargeDetail.getLastMntOn().equals(tempChargeDetail.getLastMntOn())){ 
+				if (tempChargeDetail!=null  && oldChargeDetail!=null && !oldChargeDetail.getLastMntOn().equals(tempChargeDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 

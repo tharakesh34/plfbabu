@@ -297,7 +297,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster>
 						holidayMaster.getHolidayYear(),
 						holidayMaster.getHolidayType(), "");
 
-		HolidayMaster old_HolidayMaster = holidayMaster.getBefImage();
+		HolidayMaster oldHolidayMaster = holidayMaster.getBefImage();
 
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
@@ -372,8 +372,8 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster>
 									errParm, null));
 				}
 
-				if (old_HolidayMaster != null
-						&& !old_HolidayMaster.getLastMntOn().equals(
+				if (oldHolidayMaster != null
+						&& !oldHolidayMaster.getLastMntOn().equals(
 								befHolidayMaster.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -395,8 +395,8 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster>
 									errParm, null));
 				}
 
-				if (old_HolidayMaster != null
-						&& !old_HolidayMaster.getLastMntOn().equals(
+				if (oldHolidayMaster != null
+						&& !oldHolidayMaster.getLastMntOn().equals(
 								tempHolidayMaster.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

@@ -393,7 +393,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		}
 
 		Rule befRule = getRuleDAO().getRuleByID(rule.getRuleCode(),rule.getRuleModule(),rule.getRuleEvent(), "");
-		Rule old_Rule = rule.getBefImage();
+		Rule oldRule = rule.getBefImage();
 
 		String[] valueParm = new String[3];
 		String[] errParm = new String[2];
@@ -436,7 +436,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 					// table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_Rule != null && !old_Rule.getLastMntOn().equals(befRule.getLastMntOn())) {
+					if (oldRule != null && !oldRule.getLastMntOn().equals(befRule.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
 						} else {
@@ -450,7 +450,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 					// flow table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
-				if (tempRule != null && old_Rule != null && !old_Rule.getLastMntOn().equals(tempRule.getLastMntOn())) {
+				if (tempRule != null && oldRule != null && !oldRule.getLastMntOn().equals(tempRule.getLastMntOn())) {
 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

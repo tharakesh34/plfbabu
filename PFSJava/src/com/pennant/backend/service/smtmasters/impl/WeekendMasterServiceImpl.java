@@ -371,7 +371,7 @@ implements WeekendMasterService {
 
 		WeekendMaster befWeekendMaster = getWeekendMasterDAO()
 		.getWeekendMasterByID(weekendMaster.getId(), "");
-		WeekendMaster old_WeekendMaster = weekendMaster.getBefImage();
+		WeekendMaster oldWeekendMaster = weekendMaster.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
@@ -429,8 +429,8 @@ implements WeekendMasterService {
 							PennantConstants.KEY_FIELD, "41002",
 							errParm, null));
 				} else {
-					if (old_WeekendMaster != null
-							&& !old_WeekendMaster.getLastMntOn().equals(
+					if (oldWeekendMaster != null
+							&& !oldWeekendMaster.getLastMntOn().equals(
 									befWeekendMaster.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -455,8 +455,8 @@ implements WeekendMasterService {
 				}
 
 				if (tempWeekendMaster != null
-						&& old_WeekendMaster != null
-						&& !old_WeekendMaster.getLastMntOn().equals(
+						&& oldWeekendMaster != null
+						&& !oldWeekendMaster.getLastMntOn().equals(
 								tempWeekendMaster.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(
