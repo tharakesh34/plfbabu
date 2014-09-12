@@ -89,8 +89,8 @@ public class FinanceStepDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> imp
 	}
 	
 	@Override
-	public void initialize(FinanceStepPolicyDetail FinStepDetail) {
-		super.initialize(FinStepDetail);
+	public void initialize(FinanceStepPolicyDetail finStepDetail) {
+		super.initialize(finStepDetail);
 	}
 
 	/**

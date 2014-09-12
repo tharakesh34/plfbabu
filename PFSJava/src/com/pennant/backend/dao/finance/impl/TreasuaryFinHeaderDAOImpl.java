@@ -155,7 +155,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 	@Override
 	public InvestmentFinHeader getTreasuaryFinHeader(final String finReference, String tableType) {
 		logger.debug("Entering");
-		List<InvestmentFinHeader> InvHeadeList = null;
+		List<InvestmentFinHeader> invHeadeList = null;
 		InvestmentFinHeader investmentFinHeader = null;
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finReference);
@@ -182,7 +182,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		        .newInstance(InvestmentFinHeader.class);
 
 		try {
-			InvHeadeList = this.namedParameterJdbcTemplate.query(selectSql.toString(),
+			invHeadeList = this.namedParameterJdbcTemplate.query(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			investmentFinHeader = new InvestmentFinHeader();
@@ -190,8 +190,8 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 			financeMain = null;
 		}
 
-		if (InvHeadeList != null && !InvHeadeList.isEmpty()) {
-			investmentFinHeader = InvHeadeList.get(0);
+		if (invHeadeList != null && !invHeadeList.isEmpty()) {
+			investmentFinHeader = invHeadeList.get(0);
 		}
 		logger.debug("Leaving");
 		return investmentFinHeader;
@@ -373,9 +373,9 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails getError(String errorId, String FinReference, String userLanguage) {
+	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
 		String[][] parms = new String[2][1];
-		parms[1][0] = FinReference;
+		parms[1][0] = finReference;
 		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
 		        parms[0], parms[1]), userLanguage);

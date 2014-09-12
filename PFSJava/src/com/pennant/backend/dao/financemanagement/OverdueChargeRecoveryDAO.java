@@ -61,7 +61,7 @@ public interface OverdueChargeRecoveryDAO {
 	public void refresh(OverdueChargeRecovery entity);
 	public BigDecimal getPendingODCAmount(String id);
 	public List<String> getOverDueFinanceList();
-	public OverdueChargeRecovery getMaxOverdueChargeRecoveryById(String finReference, Date SchdDate, String finODFor, String type);
+	public OverdueChargeRecovery getMaxOverdueChargeRecoveryById(String finReference, Date schdDate, String finODFor, String type);
 	public void deleteUnpaid(String finReference, Date finODSchdDate, String finODFor, String type);
 	public void updatePenaltyPaid(OverdueChargeRecovery recovery, String type);
 	public List<OverdueChargeRecovery> getFinancePenaltysByFinRef(String id, String type);

@@ -333,11 +333,11 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 	 * Method for Fetch Finance Suspend Details List
 	 */
 	@Override
-	public List<FinStatusDetail> getCustSuspDate(List<Long> CustIdList) {
+	public List<FinStatusDetail> getCustSuspDate(List<Long> custIdList) {
 		logger.debug("Entering");
 		
 		Map<String, List<Long>> beanParameters=new HashMap<String, List<Long>>();
-		beanParameters.put("CustId", CustIdList);
+		beanParameters.put("CustId", custIdList);
 		
 		StringBuilder selectSql =new StringBuilder("Select CustId, MIN(FinSuspTrfDate) AS ValueDate " );
 		selectSql.append(" FROM FinSuspHead where CustId IN(:CustId) AND FinIsInSusp = 1 GROUP BY CustId ");

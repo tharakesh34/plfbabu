@@ -323,9 +323,9 @@ public class WIFFinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursem
 	}
 	
 	
-	private ErrorDetails  getError(String errorId, String FinReference, String userLanguage){
+	private ErrorDetails  getError(String errorId, String finReference, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = FinReference;
+		parms[1][0] = finReference;
 		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}

@@ -326,9 +326,9 @@ public class FinanceRepayPriorityDAOImpl extends BasisCodeDAO<FinanceRepayPriori
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
-	private ErrorDetails  getError(String errorId, String FinType, String userLanguage){
+	private ErrorDetails  getError(String errorId, String finType, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = FinType;
+		parms[1][0] = finType;
 		parms[0][0] = PennantJavaUtil.getLabel("label_FinType")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
