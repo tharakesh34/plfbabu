@@ -187,8 +187,8 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail>
 	 * @return DirectorDetail
 	 */
 	@Override
-	public DirectorDetail getDirectorDetailById(long id,long CustID) {
-		return getDirectorDetailDAO().getDirectorDetailById(id,CustID,"_View");
+	public DirectorDetail getDirectorDetailById(long id,long custID) {
+		return getDirectorDetailDAO().getDirectorDetailById(id,custID,"_View");
 	}
 
 	/**

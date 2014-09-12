@@ -931,7 +931,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 		Customer befCustomer = getCustomerDAO().getCustomerByID(customer.getId(), "");
 
-		Customer old_Customer = customer.getBefImage();
+		Customer oldCustomer = customer.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -977,8 +977,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					        "41002", errParm, null));
 				} else {
 
-					if (old_Customer != null
-					        && !old_Customer.getLastMntOn().equals(befCustomer.getLastMntOn())) {
+					if (oldCustomer != null
+					        && !oldCustomer.getLastMntOn().equals(befCustomer.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
@@ -998,8 +998,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					        "41005", errParm, null));
 				}
 
-				if (tempCustomer != null && old_Customer != null
-				        && !old_Customer.getLastMntOn().equals(tempCustomer.getLastMntOn())) {
+				if (tempCustomer != null && oldCustomer != null
+				        && !oldCustomer.getLastMntOn().equals(tempCustomer.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 					        "41005", errParm, null));
 				}

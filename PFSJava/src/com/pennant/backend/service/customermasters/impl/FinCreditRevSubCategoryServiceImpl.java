@@ -362,7 +362,7 @@ public class FinCreditRevSubCategoryServiceImpl extends GenericService<FinCredit
 			}
 			FinCreditRevSubCategory befFinCreditRevSubCategory= getFinCreditRevSubCategoryDAO().getFinCreditRevSubCategoryById(finCreditRevSubCategory.getId(), "");
 			
-			FinCreditRevSubCategory old_FinCreditRevSubCategory= finCreditRevSubCategory.getBefImage();
+			FinCreditRevSubCategory oldFinCreditRevSubCategory= finCreditRevSubCategory.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -394,7 +394,7 @@ public class FinCreditRevSubCategoryServiceImpl extends GenericService<FinCredit
 					if (befFinCreditRevSubCategory ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_FinCreditRevSubCategory!=null && !old_FinCreditRevSubCategory.getLastMntOn().equals(befFinCreditRevSubCategory.getLastMntOn())){
+						if (oldFinCreditRevSubCategory!=null && !oldFinCreditRevSubCategory.getLastMntOn().equals(befFinCreditRevSubCategory.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -408,7 +408,7 @@ public class FinCreditRevSubCategoryServiceImpl extends GenericService<FinCredit
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_FinCreditRevSubCategory!=null && !old_FinCreditRevSubCategory.getLastMntOn().equals(tempFinCreditRevSubCategory.getLastMntOn())){ 
+					if (oldFinCreditRevSubCategory!=null && !oldFinCreditRevSubCategory.getLastMntOn().equals(tempFinCreditRevSubCategory.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

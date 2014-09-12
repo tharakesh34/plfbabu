@@ -372,7 +372,7 @@ public class CustomerAdditionalDetailServiceImpl extends
 		CustomerAdditionalDetail befCustomerAdditionalDetail = getCustomerAdditionalDetailDAO()
 				.getCustomerAdditionalDetailById(customerAdditionalDetail.getId(), "");
 
-		CustomerAdditionalDetail old_CustomerAdditionalDetail = customerAdditionalDetail
+		CustomerAdditionalDetail oldCustomerAdditionalDetail = customerAdditionalDetail
 				.getBefImage();
 
 		String[] valueParm = new String[1];
@@ -423,8 +423,8 @@ public class CustomerAdditionalDetailServiceImpl extends
 					auditDetail.setErrorDetail(new ErrorDetails(
 								PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_CustomerAdditionalDetail != null
-							&& !old_CustomerAdditionalDetail.getLastMntOn()
+					if (oldCustomerAdditionalDetail != null
+							&& !oldCustomerAdditionalDetail.getLastMntOn()
 									.equals(befCustomerAdditionalDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -446,8 +446,8 @@ public class CustomerAdditionalDetailServiceImpl extends
 				}
 
 				if (tempCustomerAdditionalDetail != null
-						&& old_CustomerAdditionalDetail != null
-						&& !old_CustomerAdditionalDetail.getLastMntOn().equals(
+						&& oldCustomerAdditionalDetail != null
+						&& !oldCustomerAdditionalDetail.getLastMntOn().equals(
 								tempCustomerAdditionalDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(
 									PennantConstants.KEY_FIELD, "41005",errParm, null));

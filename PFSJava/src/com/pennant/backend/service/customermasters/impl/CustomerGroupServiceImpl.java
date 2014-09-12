@@ -356,7 +356,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 		}
 
 		CustomerGroup befCustomerGroup = getCustomerGroupDAO().getCustomerGroupByID(customerGroup.getId(), "");
-		CustomerGroup old_CustomerGroup = customerGroup.getBefImage();
+		CustomerGroup oldCustomerGroup = customerGroup.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -398,8 +398,8 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}
 
-				if (old_CustomerGroup != null
-						&& !old_CustomerGroup.getLastMntOn().equals(befCustomerGroup.getLastMntOn())) {
+				if (oldCustomerGroup != null
+						&& !oldCustomerGroup.getLastMntOn().equals(befCustomerGroup.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, null));
 					} else {
@@ -414,7 +414,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempCustomerGroup != null && old_CustomerGroup != null && !old_CustomerGroup.getLastMntOn().equals(
+				if (tempCustomerGroup != null && oldCustomerGroup != null && !oldCustomerGroup.getLastMntOn().equals(
 						tempCustomerGroup.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}

@@ -347,7 +347,7 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 		}
 		CustomerIdentity befCustomerIdentity= getCustomerIdentityDAO().getCustomerIdentityByID(customerIdentity.getId(),customerIdentity.getIdType(), "");
 
-		CustomerIdentity old_CustomerIdentity= customerIdentity.getBefImage();
+		CustomerIdentity oldCustomerIdentity= customerIdentity.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -405,8 +405,8 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_CustomerIdentity != null
-							&& !old_CustomerIdentity.getLastMntOn().equals(
+					if (oldCustomerIdentity != null
+							&& !oldCustomerIdentity.getLastMntOn().equals(
 									befCustomerIdentity.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -430,8 +430,8 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 									errParm, null));
 				}
 				if (tempCustomerIdentity != null
-						&& old_CustomerIdentity != null
-						&& !old_CustomerIdentity.getLastMntOn().equals(
+						&& oldCustomerIdentity != null
+						&& !oldCustomerIdentity.getLastMntOn().equals(
 								tempCustomerIdentity.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(
