@@ -53,7 +53,7 @@ public interface RatingCodeDAO {
 
 	public RatingCode getRatingCode();
 	public RatingCode getNewRatingCode();
-	public RatingCode getRatingCodeById(String RatingType, String RatingCode,String type);
+	public RatingCode getRatingCodeById(String ratingType, String ratingCode,String type);
 	public void update(RatingCode ratingCode, String type);
 	public void delete(RatingCode ratingCode, String type);
 	public String save(RatingCode ratingCode, String type);
