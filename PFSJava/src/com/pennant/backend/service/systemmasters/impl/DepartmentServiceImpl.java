@@ -369,7 +369,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 
 		Department befDepartment = getDepartmentDAO().getDepartmentById(
 				department.getId(), "");
-		Department old_Department = department.getBefImage();
+		Department oldDepartment = department.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -424,8 +424,8 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 									errParm, null));
 				} else {
 
-					if (old_Department != null
-							&& !old_Department.getLastMntOn().equals(
+					if (oldDepartment != null
+							&& !oldDepartment.getLastMntOn().equals(
 									befDepartment.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -450,8 +450,8 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 									errParm, null));
 				}
 				if (tempDepartment != null
-						&& old_Department != null
-						&& !old_Department.getLastMntOn().equals(
+						&& oldDepartment != null
+						&& !oldDepartment.getLastMntOn().equals(
 								tempDepartment.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

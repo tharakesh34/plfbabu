@@ -349,7 +349,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 		}
 
 		Salutation befSalutation = getSalutationDAO().getSalutationById(salutation.getId(), "");
-		Salutation old_Salutation = salutation.getBefImage();
+		Salutation oldSalutation = salutation.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -387,8 +387,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_Salutation != null
-							&& !old_Salutation.getLastMntOn().equals(befSalutation.getLastMntOn())) {
+					if (oldSalutation != null
+							&& !oldSalutation.getLastMntOn().equals(befSalutation.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -404,8 +404,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempSalutation != null
-						&& old_Salutation != null
-						&& !old_Salutation.getLastMntOn().equals(tempSalutation.getLastMntOn())) {
+						&& oldSalutation != null
+						&& !oldSalutation.getLastMntOn().equals(tempSalutation.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

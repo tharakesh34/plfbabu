@@ -375,7 +375,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 		}
 
 		MaritalStatusCode befMaritalStatusCode = getMaritalStatusCodeDAO().getMaritalStatusCodeById(maritalStatusCode.getId(), "");
-		MaritalStatusCode old_MaritalStatusCode = maritalStatusCode.getBefImage();
+		MaritalStatusCode oldMaritalStatusCode = maritalStatusCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -414,8 +414,8 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
 
-					if (old_MaritalStatusCode != null
-							&& !old_MaritalStatusCode.getLastMntOn().equals(befMaritalStatusCode.getLastMntOn())) {
+					if (oldMaritalStatusCode != null
+							&& !oldMaritalStatusCode.getLastMntOn().equals(befMaritalStatusCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
 						} else {
@@ -432,8 +432,8 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempMaritalStatusCode != null
-						&& old_MaritalStatusCode != null
-						&& !old_MaritalStatusCode.getLastMntOn().equals(tempMaritalStatusCode.getLastMntOn())) {
+						&& oldMaritalStatusCode != null
+						&& !oldMaritalStatusCode.getLastMntOn().equals(tempMaritalStatusCode.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

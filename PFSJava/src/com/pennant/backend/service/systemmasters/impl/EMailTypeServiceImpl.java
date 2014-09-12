@@ -373,7 +373,7 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 
 		EMailType befEMailType = getEMailTypeDAO().getEMailTypeById(
 				eMailType.getId(), "");
-		EMailType old_EMailType = eMailType.getBefImage();
+		EMailType oldEMailType = eMailType.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -426,8 +426,8 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 									errParm, null));
 				} else {
 
-					if (old_EMailType != null
-							&& !old_EMailType.getLastMntOn().equals(
+					if (oldEMailType != null
+							&& !oldEMailType.getLastMntOn().equals(
 									befEMailType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -454,8 +454,8 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 				}
 
 				if (tempEMailType != null
-						&& old_EMailType != null
-						&& !old_EMailType.getLastMntOn().equals(
+						&& oldEMailType != null
+						&& !oldEMailType.getLastMntOn().equals(
 								tempEMailType.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

@@ -351,7 +351,7 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 		}
 
 		Segment befSegment = getSegmentDAO().getSegmentById(segment.getId(), "");
-		Segment old_Segment = segment.getBefImage();
+		Segment oldSegment = segment.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -386,8 +386,8 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_Segment != null
-							&& !old_Segment.getLastMntOn().equals(befSegment.getLastMntOn())) {
+					if (oldSegment != null
+							&& !oldSegment.getLastMntOn().equals(befSegment.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -403,8 +403,8 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempSegment != null
-						&& old_Segment != null
-						&& !old_Segment.getLastMntOn().equals(tempSegment.getLastMntOn())) {
+						&& oldSegment != null
+						&& !oldSegment.getLastMntOn().equals(tempSegment.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

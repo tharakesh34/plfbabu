@@ -369,7 +369,7 @@ public class CountryServiceImpl extends GenericService<Country> implements
 
 		Country befCountry = getCountryDAO()
 				.getCountryById(country.getId(), "");
-		Country old_Country = country.getBefImage();
+		Country oldCountry = country.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -422,8 +422,8 @@ public class CountryServiceImpl extends GenericService<Country> implements
 									errParm, null));
 				} else {
 
-					if (old_Country != null
-							&& !old_Country.getLastMntOn().equals(
+					if (oldCountry != null
+							&& !oldCountry.getLastMntOn().equals(
 									befCountry.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -448,8 +448,8 @@ public class CountryServiceImpl extends GenericService<Country> implements
 									errParm, null));
 				}
 				if (tempCountry != null
-						&& old_Country != null
-						&& !old_Country.getLastMntOn().equals(
+						&& oldCountry != null
+						&& !oldCountry.getLastMntOn().equals(
 								tempCountry.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

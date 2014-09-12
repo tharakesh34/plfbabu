@@ -375,7 +375,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		GeneralDepartment befGeneralDepartment = getGeneralDepartmentDAO()
 				.getGeneralDepartmentById(generalDepartment.getId(), "");
 
-		GeneralDepartment old_GeneralDepartment = generalDepartment
+		GeneralDepartment oldGeneralDepartment = generalDepartment
 				.getBefImage();
 
 		String[] valueParm = new String[1];
@@ -418,8 +418,8 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_GeneralDepartment != null
-							&& !old_GeneralDepartment.getLastMntOn().equals(
+					if (oldGeneralDepartment != null
+							&& !oldGeneralDepartment.getLastMntOn().equals(
 									befGeneralDepartment.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -437,8 +437,8 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempGeneralDepartment != null && old_GeneralDepartment != null
-						&& !old_GeneralDepartment.getLastMntOn().equals(
+				if (tempGeneralDepartment != null && oldGeneralDepartment != null
+						&& !oldGeneralDepartment.getLastMntOn().equals(
 								tempGeneralDepartment.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

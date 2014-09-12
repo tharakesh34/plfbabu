@@ -376,7 +376,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		Academic befAcademic = getAcademicDAO().getAcademic(
 				academic.getAcademicLevel(), academic.getAcademicDecipline(),
 				" ");
-		Academic old_Academic = academic.getBefImage();
+		Academic oldAcademic = academic.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -417,8 +417,8 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 											// table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				} else {
-					if (old_Academic != null
-							&& !old_Academic.getLastMntOn().equals(
+					if (oldAcademic != null
+							&& !oldAcademic.getLastMntOn().equals(
 									befAcademic.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -434,8 +434,8 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 				
-				if ( tempAcademic != null &&  old_Academic != null
-						&& !old_Academic.getLastMntOn().equals(
+				if ( tempAcademic != null &&  oldAcademic != null
+						&& !oldAcademic.getLastMntOn().equals(
 								tempAcademic.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

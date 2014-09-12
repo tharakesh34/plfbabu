@@ -367,7 +367,7 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 
 		AddressType befAddressType = getAddressTypeDAO().getAddressTypeById(
 				addressType.getId(), "");
-		AddressType old_AddressType = addressType.getBefImage();
+		AddressType oldAddressType = addressType.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -423,8 +423,8 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 									errParm, null));
 				} else {
 
-					if (old_AddressType != null
-							&& !old_AddressType.getLastMntOn().equals(
+					if (oldAddressType != null
+							&& !oldAddressType.getLastMntOn().equals(
 									befAddressType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -448,8 +448,8 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 									errParm, null));
 				}
 				if (tempAddressType != null
-						&& old_AddressType != null
-						&& !old_AddressType.getLastMntOn().equals(
+						&& oldAddressType != null
+						&& !oldAddressType.getLastMntOn().equals(
 								tempAddressType.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

@@ -185,8 +185,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 * @return Province
 	 */
 	@Override
-	public Province getProvinceById(String CPCountry, String CPProvince) {
-		return getProvinceDAO().getProvinceById(CPCountry, CPProvince, "_View");
+	public Province getProvinceById(String cPCountry, String cPProvince) {
+		return getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_View");
 	}
 
 	/**
@@ -198,8 +198,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 *            (String)
 	 * @return Province
 	 */
-	public Province getApprovedProvinceById(String CPCountry, String CPProvince) {
-		return getProvinceDAO().getProvinceById(CPCountry, CPProvince, "_AView");
+	public Province getApprovedProvinceById(String cPCountry, String cPProvince) {
+		return getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_AView");
 	}
 
 	/**
@@ -365,7 +365,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		Province befProvince = getProvinceDAO().getProvinceById(
 				province.getCPCountry(), province.getCPProvince(), "");
 
-		Province old_Province = province.getBefImage();
+		Province oldProvince = province.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm= new String[2];
@@ -406,8 +406,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 	
-					if (old_Province != null
-							&& !old_Province.getLastMntOn().equals(
+					if (oldProvince != null
+							&& !oldProvince.getLastMntOn().equals(
 									befProvince.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -425,8 +425,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempProvince != null && old_Province != null
-						&& !old_Province.getLastMntOn().equals(
+				if (tempProvince != null && oldProvince != null
+						&& !oldProvince.getLastMntOn().equals(
 								tempProvince.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

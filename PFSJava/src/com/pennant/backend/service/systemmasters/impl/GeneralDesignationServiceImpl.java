@@ -377,7 +377,7 @@ public class GeneralDesignationServiceImpl extends GenericService<GeneralDesigna
 		GeneralDesignation befGeneralDesignation = getGeneralDesignationDAO()
 				.getGeneralDesignationById(generalDesignation.getId(), "");
 
-		GeneralDesignation old_GeneralDesignation = generalDesignation
+		GeneralDesignation oldGeneralDesignation = generalDesignation
 				.getBefImage();
 
 		String[] valueParm = new String[1];
@@ -421,8 +421,8 @@ public class GeneralDesignationServiceImpl extends GenericService<GeneralDesigna
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_GeneralDesignation != null
-							&& !old_GeneralDesignation.getLastMntOn().equals(
+					if (oldGeneralDesignation != null
+							&& !oldGeneralDesignation.getLastMntOn().equals(
 									befGeneralDesignation.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -440,8 +440,8 @@ public class GeneralDesignationServiceImpl extends GenericService<GeneralDesigna
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempGeneralDesignation != null && old_GeneralDesignation != null
-						&& !old_GeneralDesignation.getLastMntOn().equals(
+				if (tempGeneralDesignation != null && oldGeneralDesignation != null
+						&& !oldGeneralDesignation.getLastMntOn().equals(
 								tempGeneralDesignation.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

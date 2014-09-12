@@ -368,7 +368,7 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail>
 		LovFieldDetail befLovFieldDetail= getLovFieldDetailDAO().getLovFieldDetailById(
 				lovFieldDetail.getId(), "");
 
-		LovFieldDetail old_LovFieldDetail= lovFieldDetail.getBefImage();
+		LovFieldDetail oldLovFieldDetail= lovFieldDetail.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -408,7 +408,7 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail>
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
 									errParm,valueParm), usrLanguage));
 				}else{
-					if (old_LovFieldDetail!=null && !old_LovFieldDetail.getLastMntOn().equals(
+					if (oldLovFieldDetail!=null && !oldLovFieldDetail.getLastMntOn().equals(
 							befLovFieldDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
@@ -430,7 +430,7 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail>
 									errParm,valueParm), usrLanguage));
 				}
 
-				if (old_LovFieldDetail!=null && !old_LovFieldDetail.getLastMntOn().equals(
+				if (oldLovFieldDetail!=null && !oldLovFieldDetail.getLastMntOn().equals(
 						tempLovFieldDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 

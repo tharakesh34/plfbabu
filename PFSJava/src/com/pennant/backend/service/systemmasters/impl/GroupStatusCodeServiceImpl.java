@@ -376,7 +376,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 
 		GroupStatusCode befGroupStatusCode = getGroupStatusCodeDAO()
 				.getGroupStatusCodeById(groupStatusCode.getId(), "");
-		GroupStatusCode old_GroupStatusCode = groupStatusCode.getBefImage();
+		GroupStatusCode oldGroupStatusCode = groupStatusCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -431,8 +431,8 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_GroupStatusCode != null
-							&& !old_GroupStatusCode.getLastMntOn().equals(
+					if (oldGroupStatusCode != null
+							&& !oldGroupStatusCode.getLastMntOn().equals(
 									befGroupStatusCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -456,8 +456,8 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 									errParm, null));
 				}
 				if (tempGroupStatusCode != null
-						&& old_GroupStatusCode != null
-						&& !old_GroupStatusCode.getLastMntOn().equals(
+						&& oldGroupStatusCode != null
+						&& !oldGroupStatusCode.getLastMntOn().equals(
 								tempGroupStatusCode.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

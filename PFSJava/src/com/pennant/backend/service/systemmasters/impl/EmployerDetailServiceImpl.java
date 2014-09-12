@@ -378,7 +378,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 			}
 			EmployerDetail befEmployerDetail= getEmployerDetailDAO().getEmployerDetailById(employerDetail.getId(), "");
 			
-			EmployerDetail old_EmployerDetail= employerDetail.getBefImage();
+			EmployerDetail oldEmployerDetail= employerDetail.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -410,7 +410,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 					if (befEmployerDetail ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_EmployerDetail!=null && !old_EmployerDetail.getLastMntOn().equals(befEmployerDetail.getLastMntOn())){
+						if (oldEmployerDetail!=null && !oldEmployerDetail.getLastMntOn().equals(befEmployerDetail.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -424,7 +424,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_EmployerDetail!=null && !old_EmployerDetail.getLastMntOn().equals(tempEmployerDetail.getLastMntOn())){ 
+					if (oldEmployerDetail!=null && !oldEmployerDetail.getLastMntOn().equals(tempEmployerDetail.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

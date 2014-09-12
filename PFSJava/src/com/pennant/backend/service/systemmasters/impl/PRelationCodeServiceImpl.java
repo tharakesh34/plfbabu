@@ -354,7 +354,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 		}
 
 		PRelationCode befPRelationCode = getPRelationCodeDAO().getPRelationCodeById(pRelationCode.getId(), "");
-		PRelationCode old_PRelationCode = pRelationCode.getBefImage();
+		PRelationCode oldPRelationCode = pRelationCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -390,8 +390,8 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_PRelationCode != null
-							&& !old_PRelationCode.getLastMntOn().equals(befPRelationCode.getLastMntOn())) {
+					if (oldPRelationCode != null
+							&& !oldPRelationCode.getLastMntOn().equals(befPRelationCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -408,8 +408,8 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 				}
 
 				if (tempPRelationCode != null
-						&& old_PRelationCode != null
-						&& !old_PRelationCode.getLastMntOn().equals(tempPRelationCode.getLastMntOn())) {
+						&& oldPRelationCode != null
+						&& !oldPRelationCode.getLastMntOn().equals(tempPRelationCode.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

@@ -367,7 +367,7 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		}
 
 		IncomeType befIncomeType = getIncomeTypeDAO().getIncomeTypeById(incomeType.getId(),incomeType.getIncomeExpense(),incomeType.getCategory(),"");
-		IncomeType old_IncomeType = incomeType.getBefImage();
+		IncomeType oldIncomeType = incomeType.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -420,8 +420,8 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_IncomeType != null
-							&& !old_IncomeType.getLastMntOn().equals(
+					if (oldIncomeType != null
+							&& !oldIncomeType.getLastMntOn().equals(
 									befIncomeType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -445,8 +445,8 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 									errParm, null));
 				}
 				if (tempIncomeType != null
-						&& old_IncomeType != null
-						&& !old_IncomeType.getLastMntOn().equals(
+						&& oldIncomeType != null
+						&& !oldIncomeType.getLastMntOn().equals(
 								tempIncomeType.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

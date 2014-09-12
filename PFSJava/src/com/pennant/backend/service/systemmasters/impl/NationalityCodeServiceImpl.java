@@ -361,7 +361,7 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 		}
 
 		NationalityCode befNationalityCode = getNationalityCodeDAO().getNationalityCodeById(nationalityCode.getId(), "");
-		NationalityCode old_NationalityCode = nationalityCode.getBefImage();
+		NationalityCode oldNationalityCode = nationalityCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -400,8 +400,8 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
 
-					if (old_NationalityCode != null
-							&& !old_NationalityCode.getLastMntOn().equals(befNationalityCode.getLastMntOn())) {
+					if (oldNationalityCode != null
+							&& !oldNationalityCode.getLastMntOn().equals(befNationalityCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -417,8 +417,8 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempNationalityCode != null
-						&& old_NationalityCode != null
-						&& !old_NationalityCode.getLastMntOn().equals(tempNationalityCode.getLastMntOn())) {
+						&& oldNationalityCode != null
+						&& !oldNationalityCode.getLastMntOn().equals(tempNationalityCode.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

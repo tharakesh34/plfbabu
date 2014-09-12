@@ -370,7 +370,7 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 		EmploymentType befEmploymentType = getEmploymentTypeDAO()
 				.getEmploymentTypeById(employmentType.getId(), "");
 
-		EmploymentType old_EmploymentType = employmentType.getBefImage();
+		EmploymentType oldEmploymentType = employmentType.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm= new String[1];
@@ -411,8 +411,8 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_EmploymentType != null
-							&& !old_EmploymentType.getLastMntOn().equals(
+					if (oldEmploymentType != null
+							&& !oldEmploymentType.getLastMntOn().equals(
 									befEmploymentType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -430,8 +430,8 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempEmploymentType != null && old_EmploymentType != null
-						&& !old_EmploymentType.getLastMntOn().equals(
+				if (tempEmploymentType != null && oldEmploymentType != null
+						&& !oldEmploymentType.getLastMntOn().equals(
 								tempEmploymentType.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

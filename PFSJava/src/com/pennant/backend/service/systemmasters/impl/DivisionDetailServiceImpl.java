@@ -377,7 +377,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 			}
 			DivisionDetail befDivisionDetail= getDivisionDetailDAO().getDivisionDetailById(divisionDetail.getId(), "");
 			
-			DivisionDetail old_DivisionDetail= divisionDetail.getBefImage();
+			DivisionDetail oldDivisionDetail= divisionDetail.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -409,7 +409,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 					if (befDivisionDetail ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_DivisionDetail!=null && !old_DivisionDetail.getLastMntOn().equals(befDivisionDetail.getLastMntOn())){
+						if (oldDivisionDetail!=null && !oldDivisionDetail.getLastMntOn().equals(befDivisionDetail.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -423,7 +423,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_DivisionDetail!=null && !old_DivisionDetail.getLastMntOn().equals(tempDivisionDetail.getLastMntOn())){ 
+					if (oldDivisionDetail!=null && !oldDivisionDetail.getLastMntOn().equals(tempDivisionDetail.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

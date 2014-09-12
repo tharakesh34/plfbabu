@@ -370,7 +370,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 		}
 
 		Industry befIndustry = getIndustryDAO().getIndustryById(industry.getId(), "");
-		Industry old_Industry = industry.getBefImage();
+		Industry oldIndustry = industry.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -414,8 +414,8 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
 
-					if (old_Industry != null
-							&& !old_Industry.getLastMntOn().equals(befIndustry.getLastMntOn())) {
+					if (oldIndustry != null
+							&& !oldIndustry.getLastMntOn().equals(befIndustry.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
 						} else {
@@ -430,8 +430,8 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempIndustry != null
-						&& old_Industry != null
-						&& !old_Industry.getLastMntOn().equals(tempIndustry.getLastMntOn())) {
+						&& oldIndustry != null
+						&& !oldIndustry.getLastMntOn().equals(tempIndustry.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

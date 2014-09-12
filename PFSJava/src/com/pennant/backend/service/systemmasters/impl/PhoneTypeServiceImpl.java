@@ -352,7 +352,7 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 		}
 
 		PhoneType befPhoneType = getPhoneTypeDAO().getPhoneTypeById(phoneType.getId(), "");
-		PhoneType old_PhoneType = phoneType.getBefImage();
+		PhoneType oldPhoneType = phoneType.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -386,8 +386,8 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_PhoneType != null
-							&& !old_PhoneType.getLastMntOn().equals(befPhoneType.getLastMntOn())) {
+					if (oldPhoneType != null
+							&& !oldPhoneType.getLastMntOn().equals(befPhoneType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -404,8 +404,8 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 				}
 
 				if (tempPhoneType != null
-						&& old_PhoneType != null
-						&& !old_PhoneType.getLastMntOn().equals(tempPhoneType.getLastMntOn())) {
+						&& oldPhoneType != null
+						&& !oldPhoneType.getLastMntOn().equals(tempPhoneType.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

@@ -371,7 +371,7 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 
 		DocumentType befDocumentType = getDocumentTypeDAO()
 				.getDocumentTypeById(documentType.getId(), "");
-		DocumentType old_DocumentType = documentType.getBefImage();
+		DocumentType oldDocumentType = documentType.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -425,8 +425,8 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_DocumentType != null
-							&& !old_DocumentType.getLastMntOn().equals(
+					if (oldDocumentType != null
+							&& !oldDocumentType.getLastMntOn().equals(
 									befDocumentType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -451,8 +451,8 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 									errParm, null));
 				}
 				if (tempDocumentType != null
-						&& old_DocumentType != null
-						&& !old_DocumentType.getLastMntOn().equals(
+						&& oldDocumentType != null
+						&& !oldDocumentType.getLastMntOn().equals(
 								tempDocumentType.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

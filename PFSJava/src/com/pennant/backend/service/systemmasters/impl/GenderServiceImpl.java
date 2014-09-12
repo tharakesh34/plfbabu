@@ -370,7 +370,7 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 		}
 
 		Gender befGender = getGenderDAO().getGenderById(gender.getId(), "");
-		Gender old_Gender = gender.getBefImage();
+		Gender oldGender = gender.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -422,8 +422,8 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_Gender != null
-							&& !old_Gender.getLastMntOn().equals(
+					if (oldGender != null
+							&& !oldGender.getLastMntOn().equals(
 									befGender.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -449,8 +449,8 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 									errParm, null));
 				}
 				if (tempGender != null
-						&& old_Gender != null
-						&& !old_Gender.getLastMntOn().equals(
+						&& oldGender != null
+						&& !oldGender.getLastMntOn().equals(
 								tempGender.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

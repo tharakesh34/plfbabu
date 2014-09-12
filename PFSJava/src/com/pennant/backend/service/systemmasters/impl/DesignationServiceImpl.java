@@ -375,7 +375,7 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 
 		Designation befDesignation = getDesignationDAO().getDesignationById(
 				designation.getId(), "");
-		Designation old_Designation = designation.getBefImage();
+		Designation oldDesignation = designation.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -429,8 +429,8 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_Designation != null
-							&& !old_Designation.getLastMntOn().equals(
+					if (oldDesignation != null
+							&& !oldDesignation.getLastMntOn().equals(
 									befDesignation.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -455,8 +455,8 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 									errParm, null));
 				}
 				if (tempDesignation != null
-						&& old_Designation != null
-						&& !old_Designation.getLastMntOn().equals(
+						&& oldDesignation != null
+						&& !oldDesignation.getLastMntOn().equals(
 								tempDesignation.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

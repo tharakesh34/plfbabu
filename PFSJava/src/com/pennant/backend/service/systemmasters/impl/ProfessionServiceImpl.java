@@ -354,7 +354,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 		}
 
 		Profession befProfession = getProfessionDAO().getProfessionById(profession.getId(), "");
-		Profession old_Profession = profession.getBefImage();
+		Profession oldProfession = profession.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -391,8 +391,8 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_Profession != null
-							&& !old_Profession.getLastMntOn().equals(befProfession.getLastMntOn())) {
+					if (oldProfession != null
+							&& !oldProfession.getLastMntOn().equals(befProfession.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -409,8 +409,8 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 				}
 
 				if (tempProfession != null
-						&& old_Profession != null
-						&& !old_Profession.getLastMntOn().equals(tempProfession.getLastMntOn())) {
+						&& oldProfession != null
+						&& !oldProfession.getLastMntOn().equals(tempProfession.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

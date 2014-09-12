@@ -380,7 +380,7 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 
 		IdentityDetails befIdentityDetails = getIdentityDetailsDAO()
 				.getIdentityDetailsById(identityDetails.getId(), "");
-		IdentityDetails old_IdentityDetails = identityDetails.getBefImage();
+		IdentityDetails oldIdentityDetails = identityDetails.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -437,8 +437,8 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 									errParm, null));
 				} else {
 
-					if (old_IdentityDetails != null
-							&& !old_IdentityDetails.getLastMntOn().equals(
+					if (oldIdentityDetails != null
+							&& !oldIdentityDetails.getLastMntOn().equals(
 									befIdentityDetails.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -464,8 +464,8 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 									errParm, null));
 				}
 				if (tempIdentityDetails != null
-						&& old_IdentityDetails != null
-						&& !old_IdentityDetails.getLastMntOn().equals(
+						&& oldIdentityDetails != null
+						&& !oldIdentityDetails.getLastMntOn().equals(
 								tempIdentityDetails.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

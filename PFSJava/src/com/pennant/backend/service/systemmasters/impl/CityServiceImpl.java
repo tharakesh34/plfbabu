@@ -182,8 +182,8 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 * @return City
 	 */
 	@Override
-	public City getCityById(String pCCountry, String PCProvince, String PCCity) {
-		return getCityDAO().getCityById(pCCountry, PCProvince, PCCity, "_View");
+	public City getCityById(String pCCountry, String pCProvince, String pCCity) {
+		return getCityDAO().getCityById(pCCountry, pCProvince, pCCity, "_View");
 	}
 	
 	/**
@@ -195,9 +195,9 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 *            (String)
 	 * @return City
 	 */
-	public City getApprovedCityById(String pCCountry, String PCProvince,
-			String PCCity) {
-		return getCityDAO().getCityById(pCCountry, PCProvince, PCCity, "_AView");
+	public City getApprovedCityById(String pCCountry, String pCProvince,
+			String pCCity) {
+		return getCityDAO().getCityById(pCCountry, pCProvince, pCCity, "_AView");
 	}
 		
 	/**
@@ -359,7 +359,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 		City befCity = getCityDAO().getCityById(city.getPCCountry(),
 				city.getPCProvince(), city.getPCCity(), "");
 
-		City old_City = city.getBefImage();
+		City oldCity = city.getBefImage();
 
 		String[] valueParm = new String[3];
 		String[] errParm= new String[3];
@@ -401,8 +401,8 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_City != null
-							&& !old_City.getLastMntOn().equals(
+					if (oldCity != null
+							&& !oldCity.getLastMntOn().equals(
 									befCity.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -419,8 +419,8 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempCity != null && old_City != null
-						&& !old_City.getLastMntOn().equals(
+				if (tempCity != null && oldCity != null
+						&& !oldCity.getLastMntOn().equals(
 								tempCity.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

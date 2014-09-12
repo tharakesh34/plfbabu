@@ -376,7 +376,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 
 		DispatchMode befDispatchMode = getDispatchModeDAO()
 				.getDispatchModeById(dispatchMode.getId(), "");
-		DispatchMode old_DispatchMode = dispatchMode.getBefImage();
+		DispatchMode oldDispatchMode = dispatchMode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -429,8 +429,8 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_DispatchMode != null
-							&& !old_DispatchMode.getLastMntOn().equals(
+					if (oldDispatchMode != null
+							&& !oldDispatchMode.getLastMntOn().equals(
 									befDispatchMode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -455,8 +455,8 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 									errParm, null));
 				}
 				if (tempDispatchMode != null
-						&& old_DispatchMode != null
-						&& !old_DispatchMode.getLastMntOn().equals(
+						&& oldDispatchMode != null
+						&& !oldDispatchMode.getLastMntOn().equals(
 								tempDispatchMode.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

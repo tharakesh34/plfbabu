@@ -356,7 +356,7 @@ public class SubSectorServiceImpl extends GenericService<SubSector> implements S
 		}
 
 		SubSector befSubSector = getSubSectorDAO().getSubSectorById(subSector.getId(), subSector.getSubSectorCode(), "");
-		SubSector old_SubSector = subSector.getBefImage();
+		SubSector oldSubSector = subSector.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -394,8 +394,8 @@ public class SubSectorServiceImpl extends GenericService<SubSector> implements S
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_SubSector != null
-							&& !old_SubSector.getLastMntOn().equals(befSubSector.getLastMntOn())) {
+					if (oldSubSector != null
+							&& !oldSubSector.getLastMntOn().equals(befSubSector.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -411,8 +411,8 @@ public class SubSectorServiceImpl extends GenericService<SubSector> implements S
 				}
 
 				if (tempSubSector != null
-						&& old_SubSector != null
-						&& !old_SubSector.getLastMntOn().equals(tempSubSector.getLastMntOn())) {
+						&& oldSubSector != null
+						&& !oldSubSector.getLastMntOn().equals(tempSubSector.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

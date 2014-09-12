@@ -381,7 +381,7 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 
 		BlackListReasonCode befBlackListReasonCode = getBlackListReasonCodeDAO()
 				.getBlackListReasonCodeById(blackListReasonCode.getId(), "");
-		BlackListReasonCode old_BlackListReasonCode = blackListReasonCode
+		BlackListReasonCode oldBlackListReasonCode = blackListReasonCode
 				.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -439,8 +439,8 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_BlackListReasonCode != null
-							&& !old_BlackListReasonCode.getLastMntOn().equals(
+					if (oldBlackListReasonCode != null
+							&& !oldBlackListReasonCode.getLastMntOn().equals(
 									befBlackListReasonCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -466,8 +466,8 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 									errParm, null));
 				}
 				if (tempBlackListReasonCode != null
-						&& old_BlackListReasonCode != null
-						&& !old_BlackListReasonCode.getLastMntOn().equals(
+						&& oldBlackListReasonCode != null
+						&& !oldBlackListReasonCode.getLastMntOn().equals(
 								tempBlackListReasonCode.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

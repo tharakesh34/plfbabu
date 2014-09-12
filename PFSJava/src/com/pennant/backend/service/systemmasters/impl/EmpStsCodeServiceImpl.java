@@ -367,7 +367,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 
 		EmpStsCode befEmpStsCode = getEmpStsCodeDAO().getEmpStsCodeById(
 				empStsCode.getId(), "");
-		EmpStsCode old_EmpStsCode = empStsCode.getBefImage();
+		EmpStsCode oldEmpStsCode = empStsCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -420,8 +420,8 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_EmpStsCode != null
-							&& !old_EmpStsCode.getLastMntOn().equals(
+					if (oldEmpStsCode != null
+							&& !oldEmpStsCode.getLastMntOn().equals(
 									befEmpStsCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -445,8 +445,8 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 									errParm, null));
 				}
 				if (tempEmpStsCode != null
-						&& old_EmpStsCode != null
-						&& !old_EmpStsCode.getLastMntOn().equals(
+						&& oldEmpStsCode != null
+						&& !oldEmpStsCode.getLastMntOn().equals(
 								tempEmpStsCode.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

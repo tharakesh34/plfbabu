@@ -350,7 +350,7 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 		}
 
 		Sector befSector = getSectorDAO().getSectorById(sector.getId(), "");
-		Sector old_Sector = sector.getBefImage();
+		Sector oldSector = sector.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -386,8 +386,8 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_Sector != null
-							&& !old_Sector.getLastMntOn().equals(befSector.getLastMntOn())) {
+					if (oldSector != null
+							&& !oldSector.getLastMntOn().equals(befSector.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -403,8 +403,8 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempSector != null
-						&& old_Sector != null
-						&& !old_Sector.getLastMntOn().equals(tempSector.getLastMntOn())) {
+						&& oldSector != null
+						&& !oldSector.getLastMntOn().equals(tempSector.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
