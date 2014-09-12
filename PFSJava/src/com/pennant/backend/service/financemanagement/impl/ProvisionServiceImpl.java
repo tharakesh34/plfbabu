@@ -388,9 +388,7 @@ public class ProvisionServiceImpl extends GenericService<Provision> implements P
 			tempProvision = getProvisionDAO().getProvisionById(provision.getId(), "_Temp");
 		}
 		Provision befProvision= getProvisionDAO().getProvisionById(provision.getId(), "");
-
-		Provision old_Provision= provision.getBefImage();
-
+		Provision oldProvision= provision.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -421,7 +419,7 @@ public class ProvisionServiceImpl extends GenericService<Provision> implements P
 				if (befProvision ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_Provision!=null && !old_Provision.getLastMntOn().equals(befProvision.getLastMntOn())){
+					if (oldProvision!=null && !oldProvision.getLastMntOn().equals(befProvision.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -435,7 +433,7 @@ public class ProvisionServiceImpl extends GenericService<Provision> implements P
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_Provision!=null && !old_Provision.getLastMntOn().equals(tempProvision.getLastMntOn())){ 
+				if (oldProvision!=null && !oldProvision.getLastMntOn().equals(tempProvision.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

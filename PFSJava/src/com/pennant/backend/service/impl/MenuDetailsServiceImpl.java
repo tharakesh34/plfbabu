@@ -82,7 +82,7 @@ public class MenuDetailsServiceImpl implements MenuDetailsService {
 	}
 
 	@Override
-    public Map<String, Object> getLastLoginInfo(String procedureName, String UsrLogin, Map<String, Object> inputParamMap,  Map<String, Object> outputParamMap) {
-		return MenuDetailsDAO.getLastLoginInfo(procedureName, UsrLogin, inputParamMap, outputParamMap);	    
+    public Map<String, Object> getLastLoginInfo(String procedureName, String usrLogin, Map<String, Object> inputParamMap,  Map<String, Object> outputParamMap) {
+		return MenuDetailsDAO.getLastLoginInfo(procedureName, usrLogin, inputParamMap, outputParamMap);	    
     }
 }

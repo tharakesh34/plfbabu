@@ -367,9 +367,7 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 		getOverdueChargeRecoveryById(overdueChargeRecovery.getId(),
 				overdueChargeRecovery.getFinODSchdDate(),
 				overdueChargeRecovery.getFinODFor(), "");
-
-		OverdueChargeRecovery old_OverdueChargeRecovery= overdueChargeRecovery.getBefImage();
-
+		OverdueChargeRecovery oldOverdueChargeRecovery= overdueChargeRecovery.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -400,7 +398,7 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 				if (befOverdueChargeRecovery ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_OverdueChargeRecovery!=null && !old_OverdueChargeRecovery.getLastMntOn().equals(befOverdueChargeRecovery.getLastMntOn())){
+					if (oldOverdueChargeRecovery!=null && !oldOverdueChargeRecovery.getLastMntOn().equals(befOverdueChargeRecovery.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -414,7 +412,7 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_OverdueChargeRecovery!=null && !old_OverdueChargeRecovery.getLastMntOn().equals(tempOverdueChargeRecovery.getLastMntOn())){ 
+				if (oldOverdueChargeRecovery!=null && !oldOverdueChargeRecovery.getLastMntOn().equals(tempOverdueChargeRecovery.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

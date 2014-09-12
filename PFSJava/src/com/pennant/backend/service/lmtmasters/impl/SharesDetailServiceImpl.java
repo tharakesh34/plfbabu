@@ -381,9 +381,7 @@ public class SharesDetailServiceImpl extends GenericService<SharesDetail> implem
 		}
 		
 		SharesDetail befSharesDetail = getSharesDetailDAO().getSharesDetailById(sharesDetail.getId(), sharesDetail.getCompanyName(), "");
-
-		SharesDetail old_sharesDetail= sharesDetail.getBefImage();
-
+		SharesDetail oldSharesDetail= sharesDetail.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -414,7 +412,7 @@ public class SharesDetailServiceImpl extends GenericService<SharesDetail> implem
 				if (befSharesDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_sharesDetail!=null && !old_sharesDetail.getLastMntOn().equals(befSharesDetail.getLastMntOn())){
+					if (oldSharesDetail!=null && !oldSharesDetail.getLastMntOn().equals(befSharesDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -428,7 +426,7 @@ public class SharesDetailServiceImpl extends GenericService<SharesDetail> implem
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_sharesDetail!=null && !old_sharesDetail.getLastMntOn().equals(tempsharesDetail.getLastMntOn())){ 
+				if (oldSharesDetail!=null && !oldSharesDetail.getLastMntOn().equals(tempsharesDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

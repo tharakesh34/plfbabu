@@ -432,8 +432,7 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 			tempFacilityReferenceDetail = getFacilityReferenceDetailDAO().getFacilityReferenceDetailById(facilityReferenceDetail.getId(), "_Temp");
 		}
 		FacilityReferenceDetail befFacilityReferenceDetail = getFacilityReferenceDetailDAO().getFacilityReferenceDetailById(facilityReferenceDetail.getId(), "");
-
-		FacilityReferenceDetail old_FacilityReferenceDetail = facilityReferenceDetail.getBefImage();
+		FacilityReferenceDetail oldFacilityReferenceDetail = facilityReferenceDetail.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -483,7 +482,7 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_FacilityReferenceDetail != null && !old_FacilityReferenceDetail.getLastMntOn().equals(befFacilityReferenceDetail.getLastMntOn())) {
+					if (oldFacilityReferenceDetail != null && !oldFacilityReferenceDetail.getLastMntOn().equals(befFacilityReferenceDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
@@ -499,7 +498,7 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_FacilityReferenceDetail != null && !old_FacilityReferenceDetail.getLastMntOn().equals(tempFacilityReferenceDetail.getLastMntOn())) {
+				if (oldFacilityReferenceDetail != null && !oldFacilityReferenceDetail.getLastMntOn().equals(tempFacilityReferenceDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
@@ -554,9 +553,9 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	 * Method for Fetching Eligibility Rule List based upon Finance Type
 	 */
 	public List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, 
-			String MandInputInStage, String type){
+			String mandInputInStage, String type){
 		return getFacilityReferenceDetailDAO().getFinRefDetByRoleAndFinType(financeType, 
-				MandInputInStage,null, type);
+				mandInputInStage,null, type);
 	}
 
 	public void setCheckListDAO(CheckListDAO checkListDAO) {

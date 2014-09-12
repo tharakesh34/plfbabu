@@ -461,9 +461,7 @@ public class SuspenseServiceImpl extends GenericService<FinanceSuspHead> impleme
 			tempFinanceSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeSuspHead.getId(), "_Temp");
 		}
 		FinanceSuspHead befFinanceSuspHead= getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeSuspHead.getId(), "");
-
-		FinanceSuspHead old_FinanceSuspHead= financeSuspHead.getBefImage();
-
+		FinanceSuspHead oldFinanceSuspHead= financeSuspHead.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -494,7 +492,7 @@ public class SuspenseServiceImpl extends GenericService<FinanceSuspHead> impleme
 				if (befFinanceSuspHead ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_FinanceSuspHead!=null && !old_FinanceSuspHead.getLastMntOn().equals(befFinanceSuspHead.getLastMntOn())){
+					if (oldFinanceSuspHead!=null && !oldFinanceSuspHead.getLastMntOn().equals(befFinanceSuspHead.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -508,7 +506,7 @@ public class SuspenseServiceImpl extends GenericService<FinanceSuspHead> impleme
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_FinanceSuspHead!=null && !old_FinanceSuspHead.getLastMntOn().equals(tempFinanceSuspHead.getLastMntOn())){ 
+				if (oldFinanceSuspHead!=null && !oldFinanceSuspHead.getLastMntOn().equals(tempFinanceSuspHead.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

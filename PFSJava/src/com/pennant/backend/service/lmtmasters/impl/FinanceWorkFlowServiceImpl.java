@@ -365,9 +365,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 			tempFinanceWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeWorkFlow.getId(), "_Temp");
 		}
 		FinanceWorkFlow befFinanceWorkFlow= getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeWorkFlow.getId(), "");
-
-		FinanceWorkFlow old_FinanceWorkFlow= financeWorkFlow.getBefImage();
-
+		FinanceWorkFlow oldFinanceWorkFlow= financeWorkFlow.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -398,7 +396,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 				if (befFinanceWorkFlow ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_FinanceWorkFlow!=null && !old_FinanceWorkFlow.getLastMntOn().equals(befFinanceWorkFlow.getLastMntOn())){
+					if (oldFinanceWorkFlow!=null && !oldFinanceWorkFlow.getLastMntOn().equals(befFinanceWorkFlow.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -412,7 +410,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_FinanceWorkFlow!=null && !old_FinanceWorkFlow.getLastMntOn().equals(tempFinanceWorkFlow.getLastMntOn())){ 
+				if (oldFinanceWorkFlow!=null && !oldFinanceWorkFlow.getLastMntOn().equals(tempFinanceWorkFlow.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

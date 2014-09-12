@@ -64,6 +64,6 @@ public interface FinanceReferenceDetailService {
 	FinanceReference getApprovedFinanceReference(String finType);
 	FinanceReference getFinanceReferenceList(String finType);
 	List<FinanceReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, 
-			String MandInputInStage, String type);	
+			String mandInputInStage, String type);	
 	
 }

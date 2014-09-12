@@ -414,8 +414,7 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 		}
 		
 		CarLoanDetail befCarLoanDetail= getCarLoanDetailDAO().getCarLoanDetailByID(carLoanDetail.getLoanRefNumber(), "");
-
-		CarLoanDetail old_CarLoanDetail= carLoanDetail.getBefImage();
+		CarLoanDetail oldCarLoanDetail= carLoanDetail.getBefImage();
 		
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -459,8 +458,8 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_CarLoanDetail != null
-							&& !old_CarLoanDetail.getLastMntOn().equals(
+					if (oldCarLoanDetail != null
+							&& !oldCarLoanDetail.getLastMntOn().equals(
 									befCarLoanDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -480,8 +479,8 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempCarLoanDetail != null && old_CarLoanDetail != null
-						&& !old_CarLoanDetail.getLastMntOn().equals(
+				if (tempCarLoanDetail != null && oldCarLoanDetail != null
+						&& !oldCarLoanDetail.getLastMntOn().equals(
 								tempCarLoanDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));

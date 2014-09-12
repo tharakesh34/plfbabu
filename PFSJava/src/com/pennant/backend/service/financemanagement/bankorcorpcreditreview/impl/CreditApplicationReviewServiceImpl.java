@@ -427,8 +427,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 
 		CustomerDocument befCustomerDocument = getCustomerDocumentDAO().getCustomerDocumentById(
 		        customerDocument.getId(), customerDocument.getCustDocCategory(), "");
-
-		CustomerDocument old_CustomerDocument = customerDocument.getBefImage();
+		CustomerDocument oldCustomerDocument = customerDocument.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -477,8 +476,8 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 					        "41002", errParm, null));
 				}
 
-				if (old_CustomerDocument != null
-				        && !old_CustomerDocument.getLastMntOn().equals(
+				if (oldCustomerDocument != null
+				        && !oldCustomerDocument.getLastMntOn().equals(
 				                befCustomerDocument.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 					        PennantConstants.TRAN_DEL)) {
@@ -498,8 +497,8 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 				}
 
 				if (tempCustomerDocument != null
-				        && old_CustomerDocument != null
-				        && !old_CustomerDocument.getLastMntOn().equals(
+				        && oldCustomerDocument != null
+				        && !oldCustomerDocument.getLastMntOn().equals(
 				                tempCustomerDocument.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 					        "41005", errParm, null));
@@ -527,8 +526,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 			tempCreditReviewDetails = getCreditApplicationReviewDAO().getCreditReviewDetailsById(creditReviewDetails.getDetailId(), "_Temp");
 		}
 		FinCreditReviewDetails befCreditReviewDetails = getCreditApplicationReviewDAO().getCreditReviewDetailsById(creditReviewDetails.getDetailId(), "");
-
-		FinCreditReviewDetails old_CreditReviewDetails = creditReviewDetails.getBefImage();
+		FinCreditReviewDetails oldCreditReviewDetails = creditReviewDetails.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -566,7 +564,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_CreditReviewDetails != null && !old_CreditReviewDetails.getLastMntOn().equals(befCreditReviewDetails.getLastMntOn())) {
+					if (oldCreditReviewDetails != null && !oldCreditReviewDetails.getLastMntOn().equals(befCreditReviewDetails.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
@@ -581,7 +579,7 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_CreditReviewDetails != null && !old_CreditReviewDetails.getLastMntOn().equals(tempCreditReviewDetails.getLastMntOn())) {
+				if (oldCreditReviewDetails != null && !oldCreditReviewDetails.getLastMntOn().equals(tempCreditReviewDetails.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}

@@ -51,7 +51,7 @@ private CreditReviewSummaryDAO creditReviewSummaryDAO;
 		}
 		
 		FinCreditReviewSummary befcreditReviewSummary= getCreditReviewSummaryDAO().getCreditReviewSummaryById(creditReviewSummary.getSummaryId(),creditReviewSummary.getDetailId(),"");
-		FinCreditReviewSummary old_creditReviewSummary= creditReviewSummary.getBefImage();
+		FinCreditReviewSummary oldCreditReviewSummary= creditReviewSummary.getBefImage();
 		
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
@@ -88,7 +88,7 @@ private CreditReviewSummaryDAO creditReviewSummaryDAO;
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_creditReviewSummary!=null && !old_creditReviewSummary.getLastMntOn().equals(befcreditReviewSummary.getLastMntOn())){
+					if (oldCreditReviewSummary!=null && !oldCreditReviewSummary.getLastMntOn().equals(befcreditReviewSummary.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -103,7 +103,7 @@ private CreditReviewSummaryDAO creditReviewSummaryDAO;
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempCreditReviewSummary!=null  && old_creditReviewSummary!=null && !old_creditReviewSummary.getLastMntOn().equals(tempCreditReviewSummary.getLastMntOn())){ 
+				if (tempCreditReviewSummary!=null  && oldCreditReviewSummary!=null && !oldCreditReviewSummary.getLastMntOn().equals(tempCreditReviewSummary.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}

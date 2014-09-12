@@ -346,9 +346,7 @@ public class ProvisionMovementServiceImpl extends GenericService<ProvisionMoveme
 				tempProvisionMovement = getProvisionMovementDAO().getProvisionMovementById(provisionMovement.getId(),provisionMovement.getProvMovementDate(), "_Temp");
 			}
 			ProvisionMovement befProvisionMovement= getProvisionMovementDAO().getProvisionMovementById(provisionMovement.getId(),provisionMovement.getProvMovementDate(), "");
-			
-			ProvisionMovement old_ProvisionMovement= provisionMovement.getBefImage();
-			
+			ProvisionMovement oldProvisionMovement= provisionMovement.getBefImage();
 			
 			String[] errParm= new String[1];
 			String[] valueParm= new String[1];
@@ -379,7 +377,7 @@ public class ProvisionMovementServiceImpl extends GenericService<ProvisionMoveme
 					if (befProvisionMovement ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_ProvisionMovement!=null && !old_ProvisionMovement.getLastMntOn().equals(befProvisionMovement.getLastMntOn())){
+						if (oldProvisionMovement!=null && !oldProvisionMovement.getLastMntOn().equals(befProvisionMovement.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -393,7 +391,7 @@ public class ProvisionMovementServiceImpl extends GenericService<ProvisionMoveme
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_ProvisionMovement!=null && !old_ProvisionMovement.getLastMntOn().equals(tempProvisionMovement.getLastMntOn())){ 
+					if (oldProvisionMovement!=null && !oldProvisionMovement.getLastMntOn().equals(tempProvisionMovement.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

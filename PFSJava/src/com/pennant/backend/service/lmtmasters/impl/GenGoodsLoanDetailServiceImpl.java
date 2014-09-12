@@ -384,9 +384,7 @@ public class GenGoodsLoanDetailServiceImpl extends GenericService<GenGoodsLoanDe
 			tempGenGoodsLoanDetail = getGenGoodsLoanDetailDAO().getGenGoodsLoanDetailById(goodsLoanDetail.getId(),goodsLoanDetail.getItemNumber(), "_Temp");
 		}
 		GenGoodsLoanDetail befGenGoodsLoanDetail= getGenGoodsLoanDetailDAO().getGenGoodsLoanDetailById(goodsLoanDetail.getId(),goodsLoanDetail.getItemNumber(), "");
-
-		GenGoodsLoanDetail old_GenGoodsLoanDetail= goodsLoanDetail.getBefImage();
-
+		GenGoodsLoanDetail oldGenGoodsLoanDetail= goodsLoanDetail.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -417,7 +415,7 @@ public class GenGoodsLoanDetailServiceImpl extends GenericService<GenGoodsLoanDe
 				if (befGenGoodsLoanDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_GenGoodsLoanDetail!=null && !old_GenGoodsLoanDetail.getLastMntOn().equals(befGenGoodsLoanDetail.getLastMntOn())){
+					if (oldGenGoodsLoanDetail!=null && !oldGenGoodsLoanDetail.getLastMntOn().equals(befGenGoodsLoanDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -431,7 +429,7 @@ public class GenGoodsLoanDetailServiceImpl extends GenericService<GenGoodsLoanDe
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_GenGoodsLoanDetail!=null && !old_GenGoodsLoanDetail.getLastMntOn().equals(tempGenGoodsLoanDetail.getLastMntOn())){ 
+				if (oldGenGoodsLoanDetail!=null && !oldGenGoodsLoanDetail.getLastMntOn().equals(tempGenGoodsLoanDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
@@ -561,15 +559,14 @@ public class GenGoodsLoanDetailServiceImpl extends GenericService<GenGoodsLoanDe
 		GenGoodsLoanDetail goodsLoanDetail= (GenGoodsLoanDetail) auditDetail.getModelData();
 		GenGoodsLoanDetail tempGenGoodsLoanDetail= null;
 		GenGoodsLoanDetail befGenGoodsLoanDetail = null;
-		GenGoodsLoanDetail old_GenGoodsLoanDetail = null;
+		GenGoodsLoanDetail oldGenGoodsLoanDetail = null;
 
 		if (goodsLoanDetail.isWorkflow()){
 			tempGenGoodsLoanDetail = getGenGoodsLoanDetailDAO().getGenGoodsLoanDetailById(goodsLoanDetail.getLoanRefNumber(),goodsLoanDetail.getItemNumber(), "_Temp");
 		}
 
 		befGenGoodsLoanDetail = getGenGoodsLoanDetailDAO().getGenGoodsLoanDetailById(goodsLoanDetail.getLoanRefNumber(),goodsLoanDetail.getItemNumber(), "");
-		old_GenGoodsLoanDetail = goodsLoanDetail.getBefImage();
-
+		oldGenGoodsLoanDetail = goodsLoanDetail.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -600,7 +597,7 @@ public class GenGoodsLoanDetailServiceImpl extends GenericService<GenGoodsLoanDe
 				if (befGenGoodsLoanDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_GenGoodsLoanDetail!=null && !old_GenGoodsLoanDetail.getLastMntOn().equals(befGenGoodsLoanDetail.getLastMntOn())){
+					if (oldGenGoodsLoanDetail!=null && !oldGenGoodsLoanDetail.getLastMntOn().equals(befGenGoodsLoanDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -614,7 +611,7 @@ public class GenGoodsLoanDetailServiceImpl extends GenericService<GenGoodsLoanDe
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (tempGenGoodsLoanDetail!=null && old_GenGoodsLoanDetail!=null && !old_GenGoodsLoanDetail.getLastMntOn().equals(tempGenGoodsLoanDetail.getLastMntOn())){ 
+				if (tempGenGoodsLoanDetail!=null && oldGenGoodsLoanDetail!=null && !oldGenGoodsLoanDetail.getLastMntOn().equals(tempGenGoodsLoanDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
