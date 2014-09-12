@@ -332,9 +332,9 @@ public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<Corporate
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, long CustId, String userLanguage){
+	private ErrorDetails  getError(String errorId, long custId, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = String.valueOf(CustId);
+		parms[1][0] = String.valueOf(custId);
 		parms[0][0] = PennantJavaUtil.getLabel("label_CustId")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 				errorId, parms[0],parms[1]), userLanguage);
