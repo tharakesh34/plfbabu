@@ -67,7 +67,7 @@ public class CustomerIncomeValidation {
 
 		CustomerIncome befCustomerIncome= getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"");
 		
-		CustomerIncome old_CustomerIncome= customerIncome.getBefImage();
+		CustomerIncome oldCustomerIncome= customerIncome.getBefImage();
 
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
@@ -111,7 +111,7 @@ public class CustomerIncomeValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_CustomerIncome!=null && !old_CustomerIncome.getLastMntOn().equals(befCustomerIncome.getLastMntOn())){
+					if (oldCustomerIncome!=null && !oldCustomerIncome.getLastMntOn().equals(befCustomerIncome.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -124,7 +124,7 @@ public class CustomerIncomeValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempCustomerIncome!=null  && old_CustomerIncome!=null && !old_CustomerIncome.getLastMntOn().equals(tempCustomerIncome.getLastMntOn())){ 
+				if (tempCustomerIncome!=null  && oldCustomerIncome!=null && !oldCustomerIncome.getLastMntOn().equals(tempCustomerIncome.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}

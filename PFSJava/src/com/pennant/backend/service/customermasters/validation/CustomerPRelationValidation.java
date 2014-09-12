@@ -59,7 +59,7 @@ public class CustomerPRelationValidation {
 		}
 		
 		CustomerPRelation befCustomerPRelation= getCustomerPRelationDAO().getCustomerPRelationByID(customerPRelation.getId(),customerPRelation.getPRCustPRSNo(),"");
-		CustomerPRelation old_CustomerPRelation= customerPRelation.getBefImage();
+		CustomerPRelation oldCustomerPRelation= customerPRelation.getBefImage();
 		
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -100,7 +100,7 @@ public class CustomerPRelationValidation {
 							errParm,null));
 				}else{
 
-					if (old_CustomerPRelation!=null && !old_CustomerPRelation.getLastMntOn().equals(
+					if (oldCustomerPRelation!=null && !oldCustomerPRelation.getLastMntOn().equals(
 							befCustomerPRelation.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
@@ -119,8 +119,8 @@ public class CustomerPRelationValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempCustomerPRelation!=null  && old_CustomerPRelation!=null && 
-						!old_CustomerPRelation.getLastMntOn().equals(tempCustomerPRelation.getLastMntOn())){ 
+				if (tempCustomerPRelation!=null  && oldCustomerPRelation!=null && 
+						!oldCustomerPRelation.getLastMntOn().equals(tempCustomerPRelation.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 

@@ -362,7 +362,7 @@ implements DashboardConfigurationService {
 
 		DashboardConfiguration befDashboardConfiguration = getDashboardConfigurationDAO()
 		.getDashboardDetailByID(dashboardConfiguration.getId(), "");
-		DashboardConfiguration old_DashboardConfiguration = dashboardConfiguration.getBefImage();
+		DashboardConfiguration oldDashboardConfiguration = dashboardConfiguration.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -402,7 +402,7 @@ implements DashboardConfigurationService {
 					// table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_DashboardConfiguration != null && !old_DashboardConfiguration.getLastMntOn()
+					if (oldDashboardConfiguration != null && !oldDashboardConfiguration.getLastMntOn()
 							.equals(befDashboardConfiguration.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -417,7 +417,7 @@ implements DashboardConfigurationService {
 					// flow table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
-				if (tempDashboardConfiguration != null && old_DashboardConfiguration != null && !old_DashboardConfiguration.getLastMntOn()
+				if (tempDashboardConfiguration != null && oldDashboardConfiguration != null && !oldDashboardConfiguration.getLastMntOn()
 						.equals(tempDashboardConfiguration.getLastMntOn())) {
 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));

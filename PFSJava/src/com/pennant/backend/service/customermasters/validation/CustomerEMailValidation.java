@@ -63,7 +63,7 @@ public class CustomerEMailValidation {
 		CustomerEMail befCustomerEMail= getCustomerEMailDAO().getCustomerEMailById(
 				customerEMail.getId(),customerEMail.getCustEMailTypeCode(),"");
 		
-		CustomerEMail old_CustomerEMail= customerEMail.getBefImage();
+		CustomerEMail oldCustomerEMail= customerEMail.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -101,7 +101,7 @@ public class CustomerEMailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_CustomerEMail!=null && !old_CustomerEMail.getLastMntOn().equals(
+					if (oldCustomerEMail!=null && !oldCustomerEMail.getLastMntOn().equals(
 							befCustomerEMail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
@@ -119,7 +119,7 @@ public class CustomerEMailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempCustomerEMail!=null  && old_CustomerEMail!=null && !old_CustomerEMail.getLastMntOn().equals(tempCustomerEMail.getLastMntOn())){ 
+				if (tempCustomerEMail!=null  && oldCustomerEMail!=null && !oldCustomerEMail.getLastMntOn().equals(tempCustomerEMail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 

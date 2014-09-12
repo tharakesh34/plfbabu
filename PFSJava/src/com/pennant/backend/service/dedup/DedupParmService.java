@@ -60,8 +60,8 @@ public interface DedupParmService {
 	DedupParm getDedupParm();
 	DedupParm getNewDedupParm();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	DedupParm getDedupParmById(String id ,String QueryModule,String QuerySubCode);
-	DedupParm getApprovedDedupParmById(String id,String QueryModule,String QuerySubCode);
+	DedupParm getDedupParmById(String id ,String queryModule,String querySubCode);
+	DedupParm getApprovedDedupParmById(String id,String queryModule,String querySubCode);
 	DedupParm refresh(DedupParm dedupParm);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);

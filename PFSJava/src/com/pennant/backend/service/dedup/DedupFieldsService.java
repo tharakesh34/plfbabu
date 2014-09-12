@@ -62,6 +62,6 @@ public interface DedupFieldsService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	ErrorDetails getErrorDetails(String errorCode,String language,String[] parm);
-	List<BuilderTable> getFieldList(String QueryModule);
+	List<BuilderTable> getFieldList(String queryModule);
 	
 }

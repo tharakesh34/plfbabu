@@ -68,7 +68,7 @@ public class CustomerBalanceSheetValidation {
 		CustomerBalanceSheet befCustomerBalanceSheet= getCustomerBalanceSheetDAO().getCustomerBalanceSheetById(
 				customerBalanceSheet.getId(),customerBalanceSheet.getCustId(), "");
 		
-		CustomerBalanceSheet old_CustomerBalanceSheet= customerBalanceSheet.getBefImage();
+		CustomerBalanceSheet oldCustomerBalanceSheet= customerBalanceSheet.getBefImage();
 		
 		String[] errParm= new String[2];
 		String[] valueParm= new String[2];
@@ -111,7 +111,7 @@ public class CustomerBalanceSheetValidation {
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
 									errParm,valueParm), usrLanguage));
 				}else{
-					if (old_CustomerBalanceSheet!=null && !old_CustomerBalanceSheet.getLastMntOn().equals(
+					if (oldCustomerBalanceSheet!=null && !oldCustomerBalanceSheet.getLastMntOn().equals(
 							befCustomerBalanceSheet.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
@@ -133,7 +133,7 @@ public class CustomerBalanceSheetValidation {
 									errParm,valueParm), usrLanguage));
 				}
 				
-				if (old_CustomerBalanceSheet!=null && !old_CustomerBalanceSheet.getLastMntOn().equals(
+				if (oldCustomerBalanceSheet!=null && !oldCustomerBalanceSheet.getLastMntOn().equals(
 						tempCustomerBalanceSheet.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 

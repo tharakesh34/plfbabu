@@ -61,7 +61,7 @@ public class CustomerRatingValidation {
 		
 		CustomerRating befCustomerRating= getCustomerRatingDAO().getCustomerRatingByID(
 				customerRating.getId(),customerRating.getCustRatingType(),"");
-		CustomerRating old_CustomerRating= customerRating.getBefImage();
+		CustomerRating oldCustomerRating= customerRating.getBefImage();
 		
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -98,7 +98,7 @@ public class CustomerRatingValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_CustomerRating!=null && !old_CustomerRating.getLastMntOn().equals(befCustomerRating.getLastMntOn())){
+					if (oldCustomerRating!=null && !oldCustomerRating.getLastMntOn().equals(befCustomerRating.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -112,7 +112,7 @@ public class CustomerRatingValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempCustomerRating!=null  && old_CustomerRating!=null && !old_CustomerRating.getLastMntOn().equals(tempCustomerRating.getLastMntOn())){ 
+				if (tempCustomerRating!=null  && oldCustomerRating!=null && !oldCustomerRating.getLastMntOn().equals(tempCustomerRating.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}

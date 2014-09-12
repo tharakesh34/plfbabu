@@ -67,7 +67,7 @@ public class CustomerDirectorValidation {
 		DirectorDetail befDirectorDetail= getDirectorDetailDAO().getDirectorDetailById(
 				directorDetail.getDirectorId(),directorDetail.getCustID(), "");
 
-		DirectorDetail old_DirectorDetail= directorDetail.getBefImage();
+		DirectorDetail oldDirectorDetail= directorDetail.getBefImage();
 
 
 		String[] errParm= new String[2];
@@ -117,7 +117,7 @@ public class CustomerDirectorValidation {
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
 									errParm,valueParm), usrLanguage));
 				}else{
-					if (old_DirectorDetail!=null && !old_DirectorDetail.getLastMntOn().equals(
+					if (oldDirectorDetail!=null && !oldDirectorDetail.getLastMntOn().equals(
 							befDirectorDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
@@ -139,7 +139,7 @@ public class CustomerDirectorValidation {
 									errParm,valueParm), usrLanguage));
 				}
 
-				if (tempDirectorDetail != null && old_DirectorDetail!=null && !old_DirectorDetail.getLastMntOn().equals(
+				if (tempDirectorDetail != null && oldDirectorDetail!=null && !oldDirectorDetail.getLastMntOn().equals(
 						tempDirectorDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 

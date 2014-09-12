@@ -66,7 +66,7 @@ public class CorporateCustomerValidation {
 		CorporateCustomerDetail befCorporateCustomerDetail= getCorporateCustomerDetailDAO().getCorporateCustomerDetailById(
 				corporateCustomerDetail.getId(), "");
 
-		CorporateCustomerDetail old_CorporateCustomerDetail= corporateCustomerDetail.getBefImage();
+		CorporateCustomerDetail oldCorporateCustomerDetail= corporateCustomerDetail.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -106,8 +106,8 @@ public class CorporateCustomerValidation {
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
 									errParm,valueParm), usrLanguage));
 				}else{
-					if (old_CorporateCustomerDetail!=null && 
-							!old_CorporateCustomerDetail.getLastMntOn().equals(
+					if (oldCorporateCustomerDetail!=null && 
+							!oldCorporateCustomerDetail.getLastMntOn().equals(
 									befCorporateCustomerDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
@@ -129,8 +129,8 @@ public class CorporateCustomerValidation {
 									errParm,valueParm), usrLanguage));
 				}
 
-				if (old_CorporateCustomerDetail!=null && 
-						!old_CorporateCustomerDetail.getLastMntOn().equals(
+				if (oldCorporateCustomerDetail!=null && 
+						!oldCorporateCustomerDetail.getLastMntOn().equals(
 								tempCorporateCustomerDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 

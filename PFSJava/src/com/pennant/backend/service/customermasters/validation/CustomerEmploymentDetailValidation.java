@@ -59,7 +59,7 @@ public class CustomerEmploymentDetailValidation {
 		}
 		
 		CustomerEmploymentDetail befCustomerEmploymentDetail= getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailByID(customerEmploymentDetail.getId(),customerEmploymentDetail.getCustEmpName(),"");
-		CustomerEmploymentDetail old_CustomerEmploymentDetail= customerEmploymentDetail.getBefImage();
+		CustomerEmploymentDetail oldCustomerEmploymentDetail= customerEmploymentDetail.getBefImage();
 		
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -99,7 +99,7 @@ public class CustomerEmploymentDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_CustomerEmploymentDetail!=null && !old_CustomerEmploymentDetail.getLastMntOn().equals(befCustomerEmploymentDetail.getLastMntOn())){
+					if (oldCustomerEmploymentDetail!=null && !oldCustomerEmploymentDetail.getLastMntOn().equals(befCustomerEmploymentDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -113,7 +113,7 @@ public class CustomerEmploymentDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempCustomerEmploymentDetail!=null  && old_CustomerEmploymentDetail!=null && !old_CustomerEmploymentDetail.getLastMntOn().equals(tempCustomerEmploymentDetail.getLastMntOn())){ 
+				if (tempCustomerEmploymentDetail!=null  && oldCustomerEmploymentDetail!=null && !oldCustomerEmploymentDetail.getLastMntOn().equals(tempCustomerEmploymentDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}

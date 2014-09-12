@@ -62,7 +62,7 @@ public class CustomerPhoneNumberValidation {
 	CustomerPhoneNumber befCustomerPhoneNumber= getCustomerPhoneNumberDAO().getCustomerPhoneNumberByID(
 			customerPhoneNumber.getId(),customerPhoneNumber.getPhoneTypeCode(), "");
 
-	CustomerPhoneNumber old_CustomerPhoneNumber= customerPhoneNumber.getBefImage();
+	CustomerPhoneNumber oldCustomerPhoneNumber= customerPhoneNumber.getBefImage();
 
 	String[] valueParm = new String[2];
 	String[] errParm = new String[2];
@@ -103,7 +103,7 @@ public class CustomerPhoneNumberValidation {
 						PennantConstants.KEY_FIELD, "41002",errParm, null));
 			}else{
 
-				if (old_CustomerPhoneNumber!=null && !old_CustomerPhoneNumber.getLastMntOn().equals(
+				if (oldCustomerPhoneNumber!=null && !oldCustomerPhoneNumber.getLastMntOn().equals(
 						befCustomerPhoneNumber.getLastMntOn())){
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 							PennantConstants.TRAN_DEL)){
@@ -123,8 +123,8 @@ public class CustomerPhoneNumberValidation {
 						PennantConstants.KEY_FIELD, "41005",errParm, null));
 			}
 
-			if (tempCustomerPhoneNumber!=null && old_CustomerPhoneNumber!=null && 
-					!old_CustomerPhoneNumber.getLastMntOn().equals(tempCustomerPhoneNumber.getLastMntOn())){ 
+			if (tempCustomerPhoneNumber!=null && oldCustomerPhoneNumber!=null && 
+					!oldCustomerPhoneNumber.getLastMntOn().equals(tempCustomerPhoneNumber.getLastMntOn())){ 
 				auditDetail.setErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD, "41005",errParm, null));
 			}

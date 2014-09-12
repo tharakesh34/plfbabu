@@ -67,7 +67,7 @@ public class CustomerDocumentValidation {
 		CustomerDocument befCustomerDocument= getCustomerDocumentDAO().getCustomerDocumentById(
 				customerDocument.getId(),customerDocument.getCustDocCategory(),"");
 		
-		CustomerDocument old_CustomerDocument= customerDocument.getBefImage();
+		CustomerDocument oldCustomerDocument= customerDocument.getBefImage();
 		
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -117,8 +117,8 @@ public class CustomerDocumentValidation {
 							PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}
 
-				if (old_CustomerDocument != null
-						&& !old_CustomerDocument.getLastMntOn().equals(
+				if (oldCustomerDocument != null
+						&& !oldCustomerDocument.getLastMntOn().equals(
 								befCustomerDocument.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -137,8 +137,8 @@ public class CustomerDocumentValidation {
 							PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempCustomerDocument != null && old_CustomerDocument != null
-						&& !old_CustomerDocument.getLastMntOn().equals(
+				if (tempCustomerDocument != null && oldCustomerDocument != null
+						&& !oldCustomerDocument.getLastMntOn().equals(
 								tempCustomerDocument.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41005", errParm, null));

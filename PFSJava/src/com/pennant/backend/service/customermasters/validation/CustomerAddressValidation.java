@@ -75,7 +75,7 @@ public class CustomerAddressValidation {
 
 		CustomerAddres befCustomerAddres = getCustomerAddresDAO()
 				.getCustomerAddresById(customerAddres.getId(), customerAddres.getCustAddrType(), "");
-		CustomerAddres old_CustomerAddres = customerAddres.getBefImage();
+		CustomerAddres oldCustomerAddres = customerAddres.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -127,7 +127,7 @@ public class CustomerAddressValidation {
 									PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
-					if (old_CustomerAddres != null && !old_CustomerAddres.getLastMntOn().equals(
+					if (oldCustomerAddres != null && !oldCustomerAddres.getLastMntOn().equals(
 									befCustomerAddres.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).
 								equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -147,8 +147,8 @@ public class CustomerAddressValidation {
 							PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempCustomerAddres != null && old_CustomerAddres != null
-						&& !old_CustomerAddres.getLastMntOn().equals(tempCustomerAddres.getLastMntOn())) {
+				if (tempCustomerAddres != null && oldCustomerAddres != null
+						&& !oldCustomerAddres.getLastMntOn().equals(tempCustomerAddres.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(
 									PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
