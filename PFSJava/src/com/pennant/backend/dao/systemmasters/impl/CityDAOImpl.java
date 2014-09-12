@@ -118,12 +118,12 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	 * @return City
 	 */
 	@Override
-	public City getCityById(final String pCCountry,String PCProvince,String PCCity, String type) {
+	public City getCityById(final String pCCountry,String pCProvince,String pCCity, String type) {
 		logger.debug("Entering ");
 		City city = new City();
 		city.setPCCountry(pCCountry);
-		city.setPCProvince(PCProvince);
-		city.setPCCity(PCCity);
+		city.setPCProvince(pCProvince);
+		city.setPCCity(pCCity);
 		
 		StringBuilder selectSql = new StringBuilder("SELECT PCCountry, PCProvince, PCCity, PCCityName,");
 		if(type.contains("View")){

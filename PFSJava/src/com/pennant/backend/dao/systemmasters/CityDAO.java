@@ -52,7 +52,7 @@ public interface CityDAO {
 
 	public City getCity();
 	public City getNewCity();
-	public City getCityById(String pCCountry,String PCProvince,String PCCity,String type);
+	public City getCityById(String pCCountry,String pCProvince,String pCCity,String type);
 	public void update(City city,String type);
 	public void delete(City city,String type);
 	public void save(City city,String type);

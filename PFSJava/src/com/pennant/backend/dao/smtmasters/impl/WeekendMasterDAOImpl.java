@@ -356,11 +356,11 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 	}
 	
 	private ErrorDetails getError(String errorId, 
-			String WeekendCode, String userLanguage) {
+			String weekendCode, String userLanguage) {
 		
 		String[][] parms = new String[2][2];
 		
-		parms[1][0] = WeekendCode;
+		parms[1][0] = weekendCode;
 		parms[0][0] = PennantJavaUtil.getLabel("label_WeekendCode") + ":" + parms[1][0];
 		
 		return ErrorUtil.getErrorDetail(new ErrorDetails(

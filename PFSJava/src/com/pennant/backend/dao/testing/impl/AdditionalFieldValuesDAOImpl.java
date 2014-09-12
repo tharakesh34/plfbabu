@@ -197,9 +197,9 @@ private static Logger logger = Logger.getLogger(AdditionalFieldValuesDAOImpl.cla
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	private ErrorDetails  getError(String errorId, String Code, String userLanguage){
+	private ErrorDetails  getError(String errorId, String code, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = Code;
+		parms[1][0] = code;
 		parms[0][0] = PennantJavaUtil.getLabel("label_Code")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}

@@ -329,9 +329,9 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails  getError(String errorId, String ModuleId, String userLanguage){
+	private ErrorDetails  getError(String errorId, String moduleId, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = ModuleId;
+		parms[1][0] = moduleId;
 		parms[0][0] = PennantJavaUtil.getLabel("label_ModuleName")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
 				parms[0],parms[1]), userLanguage);

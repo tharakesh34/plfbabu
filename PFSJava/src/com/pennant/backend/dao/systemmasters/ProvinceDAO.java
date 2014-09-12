@@ -52,7 +52,7 @@ public interface ProvinceDAO {
 
 	public Province getProvince();
 	public Province getNewProvince();
-	public Province getProvinceById(String CPCountry, String CPProvince,String type);
+	public Province getProvinceById(String cPCountry, String cPProvince,String type);
 	public void update(Province province,String type);
 	public void delete(Province province,String type);
 	public void save(Province province,String type);

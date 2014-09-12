@@ -119,11 +119,11 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 	 *            (String) ""/_Temp/_View
 	 * @return Province
 	 */
-	public Province getProvinceById(final String CPCountry, String CPProvince,String type) {
+	public Province getProvinceById(final String cPCountry, String cPProvince,String type) {
 		logger.debug("Entering");
 		Province province = new Province();
-		province.setCPCountry(CPCountry);
-		province.setCPProvince(CPProvince);
+		province.setCPCountry(cPCountry);
+		province.setCPProvince(cPProvince);
 
 		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName," );
 		if(type.contains("View")){
