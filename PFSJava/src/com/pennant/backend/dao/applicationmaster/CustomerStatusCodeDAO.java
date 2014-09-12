@@ -56,13 +56,13 @@ public interface CustomerStatusCodeDAO {
 
 	public CustomerStatusCode getCustomerStatusCodeById(String id, String type);
 	
-	public void update(CustomerStatusCode CustomerStatusCode, String type);
+	public void update(CustomerStatusCode customerStatusCode, String type);
 
-	public void delete(CustomerStatusCode CustomerStatusCode, String type);
+	public void delete(CustomerStatusCode customerStatusCode, String type);
 
-	public String save(CustomerStatusCode CustomerStatusCode, String type);
+	public String save(CustomerStatusCode customerStatusCode, String type);
 
-	public void initialize(CustomerStatusCode CustomerStatusCode);
+	public void initialize(CustomerStatusCode customerStatusCode);
 
 	public void refresh(CustomerStatusCode entity);
 	
