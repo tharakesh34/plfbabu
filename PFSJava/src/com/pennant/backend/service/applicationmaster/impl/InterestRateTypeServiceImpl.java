@@ -364,7 +364,7 @@ public class InterestRateTypeServiceImpl extends GenericService<InterestRateType
 
 		InterestRateType befInterestRateType = getInterestRateTypeDAO()
 		.getInterestRateTypeById(interestRateType.getId(), "");
-		InterestRateType old_InterestRateType = interestRateType.getBefImage();
+		InterestRateType oldInterestRateType = interestRateType.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -404,8 +404,8 @@ public class InterestRateTypeServiceImpl extends GenericService<InterestRateType
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
 
-					if (old_InterestRateType != null
-							&& !old_InterestRateType.getLastMntOn().equals(befInterestRateType.getLastMntOn())) {
+					if (oldInterestRateType != null
+							&& !oldInterestRateType.getLastMntOn().equals(befInterestRateType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -420,8 +420,8 @@ public class InterestRateTypeServiceImpl extends GenericService<InterestRateType
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempInterestRateType != null
-						&& old_InterestRateType != null
-						&& !old_InterestRateType.getLastMntOn().equals(tempInterestRateType.getLastMntOn())) {
+						&& oldInterestRateType != null
+						&& !oldInterestRateType.getLastMntOn().equals(tempInterestRateType.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

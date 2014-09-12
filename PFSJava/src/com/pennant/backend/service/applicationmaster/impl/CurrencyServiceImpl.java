@@ -360,7 +360,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 		Currency befCurrency = getCurrencyDAO().getCurrencyById(
 				currency.getId(), "");
 
-		Currency old_Currency = currency.getBefImage();
+		Currency oldCurrency = currency.getBefImage();
 
 		String[] valueParm = new String[3];
 		String[] errParm= new String[3];
@@ -401,8 +401,8 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_Currency != null
-							&& !old_Currency.getLastMntOn().equals(
+					if (oldCurrency != null
+							&& !oldCurrency.getLastMntOn().equals(
 									befCurrency.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -419,8 +419,8 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempCurrency != null && old_Currency != null
-						&& !old_Currency.getLastMntOn().equals(
+				if (tempCurrency != null && oldCurrency != null
+						&& !oldCurrency.getLastMntOn().equals(
 								tempCurrency.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

@@ -387,7 +387,7 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 		
 		RelationshipOfficer befRelationshipOfficer = getRelationshipOfficerDAO()
 				.getRelationshipOfficerById(relationshipOfficer.getId(), "");
-		RelationshipOfficer old_RelationshipOfficer = relationshipOfficer
+		RelationshipOfficer oldRelationshipOfficer = relationshipOfficer
 				.getBefImage();
 
 		String[] errParm = new String[2];
@@ -442,8 +442,8 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 							new ErrorDetails(PennantConstants.KEY_FIELD,
 									"41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_RelationshipOfficer != null
-							&& !old_RelationshipOfficer.getLastMntOn().equals(
+					if (oldRelationshipOfficer != null
+							&& !oldRelationshipOfficer.getLastMntOn().equals(
 									befRelationshipOfficer.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -471,8 +471,8 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 									"41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_RelationshipOfficer != null
-						&& !old_RelationshipOfficer.getLastMntOn().equals(
+				if (oldRelationshipOfficer != null
+						&& !oldRelationshipOfficer.getLastMntOn().equals(
 								tempRelationshipOfficer.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD,

@@ -352,7 +352,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		}
 		Branch befBranch = getBranchDAO().getBranchById(branch.getId(), "");
 
-		Branch old_Branch = branch.getBefImage();
+		Branch oldBranch = branch.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm= new String[1];
@@ -389,8 +389,8 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_Branch != null
-							&& !old_Branch.getLastMntOn().equals(
+					if (oldBranch != null
+							&& !oldBranch.getLastMntOn().equals(
 									befBranch.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -407,8 +407,8 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempBranch != null && old_Branch != null
-						&& !old_Branch.getLastMntOn().equals(
+				if (tempBranch != null && oldBranch != null
+						&& !oldBranch.getLastMntOn().equals(
 								tempBranch.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

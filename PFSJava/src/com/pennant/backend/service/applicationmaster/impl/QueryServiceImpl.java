@@ -377,7 +377,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 			}
 			Query befQuery= getQueryDAO().getQueryById(query, "");
 			
-			Query old_Query= query.getBefImage();
+			Query oldQuery= query.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -409,7 +409,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 					if (befQuery ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 					}else{
-						if (old_Query!=null && !old_Query.getLastMntOn().equals(befQuery.getLastMntOn())){
+						if (oldQuery!=null && !oldQuery.getLastMntOn().equals(befQuery.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 							}else{
@@ -423,7 +423,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 					
-					if (old_Query!=null && !old_Query.getLastMntOn().equals(tempQuery.getLastMntOn())){ 
+					if (oldQuery!=null && !oldQuery.getLastMntOn().equals(tempQuery.getLastMntOn())){ 
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}

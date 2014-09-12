@@ -380,7 +380,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 
 		CustomerCategory befCustomerCategory = getCustomerCategoryDAO()
 				.getCustomerCategoryById(customerCategory.getId(), "");
-		CustomerCategory old_CustomerCategory = customerCategory.getBefImage();
+		CustomerCategory oldCustomerCategory = customerCategory.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -436,8 +436,8 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_CustomerCategory != null
-							&& !old_CustomerCategory.getLastMntOn().equals(
+					if (oldCustomerCategory != null
+							&& !oldCustomerCategory.getLastMntOn().equals(
 									befCustomerCategory.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -464,8 +464,8 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 				}
 
 				if (tempCustomerCategory != null
-						&& old_CustomerCategory != null
-						&& !old_CustomerCategory.getLastMntOn().equals(
+						&& oldCustomerCategory != null
+						&& !oldCustomerCategory.getLastMntOn().equals(
 								tempCustomerCategory.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

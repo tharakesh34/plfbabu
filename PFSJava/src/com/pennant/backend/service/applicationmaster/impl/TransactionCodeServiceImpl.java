@@ -372,7 +372,7 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode>
 		TransactionCode befTransactionCode= getTransactionCodeDAO().getTransactionCodeById(
 				transactionCode.getId(), "");
 
-		TransactionCode old_TransactionCode= transactionCode.getBefImage();
+		TransactionCode oldTransactionCode= transactionCode.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -412,7 +412,7 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode>
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
 									errParm,valueParm), usrLanguage));
 				}else{
-					if (old_TransactionCode!=null && !old_TransactionCode.getLastMntOn().equals(
+					if (oldTransactionCode!=null && !oldTransactionCode.getLastMntOn().equals(
 							befTransactionCode.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).
 								equalsIgnoreCase(PennantConstants.TRAN_DEL)){
@@ -434,7 +434,7 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode>
 									errParm,valueParm), usrLanguage));
 				}
 
-				if (old_TransactionCode!=null && !old_TransactionCode.getLastMntOn().
+				if (oldTransactionCode!=null && !oldTransactionCode.getLastMntOn().
 						equals(tempTransactionCode.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 

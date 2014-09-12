@@ -375,7 +375,7 @@ public class CustomerNotesTypeServiceImpl extends
 
 		CustomerNotesType befCustomerNotesType = getCustomerNotesTypeDAO()
 				.getCustomerNotesTypeById(customerNotesType.getId(), "");
-		CustomerNotesType old_CustomerNotesType = customerNotesType
+		CustomerNotesType oldCustomerNotesType = customerNotesType
 				.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -432,8 +432,8 @@ public class CustomerNotesTypeServiceImpl extends
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_CustomerNotesType != null
-							&& !old_CustomerNotesType.getLastMntOn().equals(
+					if (oldCustomerNotesType != null
+							&& !oldCustomerNotesType.getLastMntOn().equals(
 									befCustomerNotesType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -457,8 +457,8 @@ public class CustomerNotesTypeServiceImpl extends
 									errParm, null));
 				}
 				if (tempCustomerNotesType != null
-						&& old_CustomerNotesType != null
-						&& !old_CustomerNotesType.getLastMntOn().equals(
+						&& oldCustomerNotesType != null
+						&& !oldCustomerNotesType.getLastMntOn().equals(
 								tempCustomerNotesType.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

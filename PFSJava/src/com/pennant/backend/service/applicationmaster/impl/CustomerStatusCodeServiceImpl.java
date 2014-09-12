@@ -378,7 +378,7 @@ public class CustomerStatusCodeServiceImpl extends GenericService<CustomerStatus
 
 		CustomerStatusCode befCustomerStatusCode = getCustomerStatusCodeDAO()
 				.getCustomerStatusCodeById(customerStatusCode.getId(), "");
-		CustomerStatusCode old_CustomerStatusCode = customerStatusCode.getBefImage();
+		CustomerStatusCode oldCustomerStatusCode = customerStatusCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -434,8 +434,8 @@ public class CustomerStatusCodeServiceImpl extends GenericService<CustomerStatus
 									errParm, null));
 				} else {
 
-					if (old_CustomerStatusCode != null
-							&& !old_CustomerStatusCode.getLastMntOn().equals(
+					if (oldCustomerStatusCode != null
+							&& !oldCustomerStatusCode.getLastMntOn().equals(
 									befCustomerStatusCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -461,8 +461,8 @@ public class CustomerStatusCodeServiceImpl extends GenericService<CustomerStatus
 									errParm, null));
 				}
 				if (tempCustomerStatusCode != null
-						&& old_CustomerStatusCode != null
-						&& !old_CustomerStatusCode.getLastMntOn().equals(
+						&& oldCustomerStatusCode != null
+						&& !oldCustomerStatusCode.getLastMntOn().equals(
 								tempCustomerStatusCode.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

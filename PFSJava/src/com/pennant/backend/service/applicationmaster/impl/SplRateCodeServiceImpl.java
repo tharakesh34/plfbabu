@@ -367,7 +367,7 @@ public class SplRateCodeServiceImpl extends GenericService<SplRateCode> implemen
 
 		SplRateCode befSplRateCode = getSplRateCodeDAO().getSplRateCodeById(
 				splRateCode.getId(), "");
-		SplRateCode old_SplRateCode = splRateCode.getBefImage();
+		SplRateCode oldSplRateCode = splRateCode.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm= new String[1];
@@ -408,8 +408,8 @@ public class SplRateCodeServiceImpl extends GenericService<SplRateCode> implemen
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_SplRateCode != null
-							&& !old_SplRateCode.getLastMntOn().equals(
+					if (oldSplRateCode != null
+							&& !oldSplRateCode.getLastMntOn().equals(
 									befSplRateCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -426,8 +426,8 @@ public class SplRateCodeServiceImpl extends GenericService<SplRateCode> implemen
 												// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
-				if (tempSplRateCode != null && old_SplRateCode != null
-						&& !old_SplRateCode.getLastMntOn().equals(
+				if (tempSplRateCode != null && oldSplRateCode != null
+						&& !oldSplRateCode.getLastMntOn().equals(
 								tempSplRateCode.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

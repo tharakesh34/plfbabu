@@ -360,7 +360,7 @@ public class BaseRateCodeServiceImpl extends GenericService<BaseRateCode> implem
 		BaseRateCode befBaseRateCode = getBaseRateCodeDAO()
 		.getBaseRateCodeById(baseRateCode.getId(), "");
 
-		BaseRateCode old_BaseRateCode = baseRateCode.getBefImage();
+		BaseRateCode oldBaseRateCode = baseRateCode.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm= new String[1];
@@ -396,8 +396,8 @@ public class BaseRateCodeServiceImpl extends GenericService<BaseRateCode> implem
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_BaseRateCode != null
-							&& !old_BaseRateCode.getLastMntOn().equals(
+					if (oldBaseRateCode != null
+							&& !oldBaseRateCode.getLastMntOn().equals(
 									befBaseRateCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -414,8 +414,8 @@ public class BaseRateCodeServiceImpl extends GenericService<BaseRateCode> implem
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempBaseRateCode != null && old_BaseRateCode != null
-						&& !old_BaseRateCode.getLastMntOn().equals(
+				if (tempBaseRateCode != null && oldBaseRateCode != null
+						&& !oldBaseRateCode.getLastMntOn().equals(
 								tempBaseRateCode.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

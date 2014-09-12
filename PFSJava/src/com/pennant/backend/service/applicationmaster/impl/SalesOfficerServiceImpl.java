@@ -378,7 +378,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer>
 		
 		SalesOfficer befSalesOfficer = getSalesOfficerDAO()
 				.getSalesOfficerById(salesOfficer.getId(), "");
-		SalesOfficer old_SalesOfficer = salesOfficer.getBefImage();
+		SalesOfficer oldSalesOfficer = salesOfficer.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
@@ -431,8 +431,8 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer>
 							new ErrorDetails(PennantConstants.KEY_FIELD,
 									"41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_SalesOfficer != null
-							&& !old_SalesOfficer.getLastMntOn().equals(
+					if (oldSalesOfficer != null
+							&& !oldSalesOfficer.getLastMntOn().equals(
 									befSalesOfficer.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -460,8 +460,8 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer>
 									"41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_SalesOfficer != null
-						&& !old_SalesOfficer.getLastMntOn().equals(
+				if (oldSalesOfficer != null
+						&& !oldSalesOfficer.getLastMntOn().equals(
 								tempSalesOfficer.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD,

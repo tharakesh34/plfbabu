@@ -398,7 +398,7 @@ public class FinanceApplicationCodeServiceImpl extends
 		FinanceApplicationCode befFinanceApplicationCode = getFinanceApplicationCodeDAO()
 				.getFinanceApplicationCodeById(financeApplicationCode.getId(),
 						"");
-		FinanceApplicationCode old_FinanceApplicationCode = financeApplicationCode
+		FinanceApplicationCode oldFinanceApplicationCode = financeApplicationCode
 				.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -457,8 +457,8 @@ public class FinanceApplicationCodeServiceImpl extends
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_FinanceApplicationCode != null
-							&& !old_FinanceApplicationCode.getLastMntOn()
+					if (oldFinanceApplicationCode != null
+							&& !oldFinanceApplicationCode.getLastMntOn()
 									.equals(befFinanceApplicationCode
 											.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
@@ -487,8 +487,8 @@ public class FinanceApplicationCodeServiceImpl extends
 				}
 
 				if (tempFinanceApplicationCode != null
-						&& old_FinanceApplicationCode != null
-						&& !old_FinanceApplicationCode.getLastMntOn().equals(
+						&& oldFinanceApplicationCode != null
+						&& !oldFinanceApplicationCode.getLastMntOn().equals(
 								tempFinanceApplicationCode.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

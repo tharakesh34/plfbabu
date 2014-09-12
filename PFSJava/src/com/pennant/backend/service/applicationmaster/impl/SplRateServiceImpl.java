@@ -381,7 +381,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 		}
 		SplRate befSplRate = getSplRateDAO()
 				.getSplRateById(splRate.getId(),splRate.getSREffDate(), "");
-		SplRate old_SplRate = splRate.getBefImage();
+		SplRate oldSplRate = splRate.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm= new String[2];
@@ -424,8 +424,8 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_SplRate != null
-							&& !old_SplRate.getLastMntOn().equals(
+					if (oldSplRate != null
+							&& !oldSplRate.getLastMntOn().equals(
 									befSplRate.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -441,8 +441,8 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempSplRate != null && old_SplRate != null
-						&& !old_SplRate.getLastMntOn().equals(
+				if (tempSplRate != null && oldSplRate != null
+						&& !oldSplRate.getLastMntOn().equals(
 								tempSplRate.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

@@ -374,7 +374,7 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 
 		CorpRelationCode befCorpRelationCode = getCorpRelationCodeDAO()
 				.getCorpRelationCodeById(corpRelationCode.getId(), "");
-		CorpRelationCode old_CorpRelationCode = corpRelationCode.getBefImage();
+		CorpRelationCode oldCorpRelationCode = corpRelationCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -431,8 +431,8 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_CorpRelationCode != null
-							&& !old_CorpRelationCode.getLastMntOn().equals(
+					if (oldCorpRelationCode != null
+							&& !oldCorpRelationCode.getLastMntOn().equals(
 									befCorpRelationCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -459,8 +459,8 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 				}
 
 				if (tempCorpRelationCode != null
-						&& old_CorpRelationCode != null
-						&& !old_CorpRelationCode.getLastMntOn().equals(
+						&& oldCorpRelationCode != null
+						&& !oldCorpRelationCode.getLastMntOn().equals(
 								tempCorpRelationCode.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

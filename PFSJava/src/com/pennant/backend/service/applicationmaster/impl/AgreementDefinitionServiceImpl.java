@@ -336,7 +336,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 			tempAgreementDefinition = getAgreementDefinitionDAO().getAgreementDefinitionByCode(agreementDefinition.getAggCode(), "_Temp");
 		}
 		AgreementDefinition befAgreementDefinition= getAgreementDefinitionDAO().getAgreementDefinitionByCode(agreementDefinition.getAggCode(), "");
-		AgreementDefinition old_AgreementDefinition= agreementDefinition.getBefImage();
+		AgreementDefinition oldAgreementDefinition= agreementDefinition.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -372,7 +372,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_AgreementDefinition!=null && !old_AgreementDefinition.getLastMntOn().equals(befAgreementDefinition.getLastMntOn())){
+					if (oldAgreementDefinition!=null && !oldAgreementDefinition.getLastMntOn().equals(befAgreementDefinition.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
@@ -389,7 +389,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_AgreementDefinition!=null && !old_AgreementDefinition.getLastMntOn().equals(tempAgreementDefinition.getLastMntOn())){ 
+				if (oldAgreementDefinition!=null && !oldAgreementDefinition.getLastMntOn().equals(tempAgreementDefinition.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}

@@ -384,7 +384,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 		BaseRate befBaseRate = getBaseRateDAO().getBaseRateById(
 				baseRate.getBRType(), baseRate.getBREffDate(), "");
 
-		BaseRate old_BaseRate = baseRate.getBefImage();
+		BaseRate oldBaseRate = baseRate.getBefImage();
 
 
 		String[] valueParm = new String[2];
@@ -425,8 +425,8 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_BaseRate != null
-							&& !old_BaseRate.getLastMntOn().equals(
+					if (oldBaseRate != null
+							&& !oldBaseRate.getLastMntOn().equals(
 									befBaseRate.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -443,8 +443,8 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempBaseRate != null && old_BaseRate != null
-						&& !old_BaseRate.getLastMntOn().equals(
+				if (tempBaseRate != null && oldBaseRate != null
+						&& !oldBaseRate.getLastMntOn().equals(
 								tempBaseRate.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

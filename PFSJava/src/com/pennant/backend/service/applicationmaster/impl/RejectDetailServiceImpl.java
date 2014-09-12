@@ -349,7 +349,7 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 		}
 
 		RejectDetail befRejectDetail = getRejectDetailDAO().getRejectDetailById(rejectDetail.getId(), "");
-		RejectDetail old_RejectDetail = rejectDetail.getBefImage();
+		RejectDetail oldRejectDetail = rejectDetail.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -382,8 +382,8 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_RejectDetail != null
-							&& !old_RejectDetail.getLastMntOn().equals(befRejectDetail.getLastMntOn())) {
+					if (oldRejectDetail != null
+							&& !oldRejectDetail.getLastMntOn().equals(befRejectDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -399,8 +399,8 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 				}
 
 				if (tempRejectDetail != null
-						&& old_RejectDetail != null
-						&& !old_RejectDetail.getLastMntOn().equals(tempRejectDetail.getLastMntOn())) {
+						&& oldRejectDetail != null
+						&& !oldRejectDetail.getLastMntOn().equals(tempRejectDetail.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

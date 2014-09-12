@@ -373,7 +373,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 		}
 		CheckList befCheckList= getCheckListDAO().getCheckListById(checkList.getId(), "");
 
-		CheckList old_CheckList= checkList.getBefImage();
+		CheckList oldCheckList= checkList.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -409,7 +409,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_CheckList!=null && !old_CheckList.getLastMntOn().equals(befCheckList.getLastMntOn())){
+					if (oldCheckList!=null && !oldCheckList.getLastMntOn().equals(befCheckList.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
@@ -426,7 +426,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_CheckList!=null && !old_CheckList.getLastMntOn().equals(tempCheckList.getLastMntOn())){ 
+				if (oldCheckList!=null && !oldCheckList.getLastMntOn().equals(tempCheckList.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
