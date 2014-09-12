@@ -27,8 +27,8 @@ public class AuditDataPurgingTaskLet implements Tasklet{
 		logger.debug("START: Audit Data Purging for Value Date: "+ dateValueDate);
 		try {
 			BatchUtil.setExecution(context, "INFO", "");
-			String 	AUDIT_PURGING_Status = getDataPurgingProcess().executeAuditDataPurging();
-			context.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("AUDITPURGING_STATUS", AUDIT_PURGING_Status);
+			String 	auditPurgingStatus = getDataPurgingProcess().executeAuditDataPurging();
+			context.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("AUDITPURGING_STATUS", auditPurgingStatus);
 		} catch (Exception e) {
 			logger.error("Audit Data Purging Failed "+e);
 			throw e;

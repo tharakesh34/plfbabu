@@ -27,12 +27,12 @@ public class BackupDatabaseTaskLet implements Tasklet{
     	logger.debug("START: Data Base Backup for Value Date: "+ dateValueDate);
 		try {
 			BatchUtil.setExecution(context, "INFO", "");
-			String 	DB_BACK_UP_Status = getBackupDatabase().backupDatabase(isBeforeEod());
+			String 	dbBackUpStatus = getBackupDatabase().backupDatabase(isBeforeEod());
 			
-			if(!isBeforeEod() && !DB_BACK_UP_Status.equals("")){
-			  context.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("DBBACKUP_STATUS", DB_BACK_UP_Status);
-			} else if(!DB_BACK_UP_Status.equals("")) {
-				throw new Exception(DB_BACK_UP_Status.split(",")[1]);
+			if(!isBeforeEod() && !dbBackUpStatus.equals("")){
+			  context.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("DBBACKUP_STATUS", dbBackUpStatus);
+			} else if(!dbBackUpStatus.equals("")) {
+				throw new Exception(dbBackUpStatus.split(",")[1]);
 			}
 		} catch (Exception e) {
 			logger.error(e);
