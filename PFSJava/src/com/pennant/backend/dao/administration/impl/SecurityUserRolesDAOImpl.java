@@ -267,7 +267,7 @@ public class SecurityUserRolesDAOImpl extends BasisNextidDaoImpl<SecurityUser> i
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserRoles);
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
-		/*if (recordCount <= 0) {
+		/*if (this.count <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
 			ErrorDetails errorDetails= getError ("41004",securityUserRoles.getId() , securityUserRoles.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {};
@@ -276,13 +276,13 @@ public class SecurityUserRolesDAOImpl extends BasisNextidDaoImpl<SecurityUser> i
 	}
 	/**
 	 * This method get  RoleIds count from UserRoles_View
-	 * @param RoleId (long)
+	 * @param roleId (long)
 	 * @return List<Long RoleIDs>
 	 */
-	public int getRoleIdCount(long RoleId){
+	public int getRoleIdCount(long roleId){
 		int status;
 		logger.debug("Entering ");
-		Map<String, Long> namedParamters=Collections.singletonMap("RoleId", RoleId);
+		Map<String, Long> namedParamters=Collections.singletonMap("RoleId", roleId);
 		StringBuilder  selectSql = new StringBuilder ("SELECT COUNT(*) FROM UserRoles_View where RoleId=:RoleId ");
 		logger.debug("selectSql: " + selectSql.toString());      
 
