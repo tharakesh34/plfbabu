@@ -269,7 +269,7 @@ public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implemen
 	}
 */	
 
-	private String getInsertQry(Object dataObject,String ImageType,AuditHeader auditHeader,String fields,String values,int SeqNo){
+	private String getInsertQry(Object dataObject,String imageType,AuditHeader auditHeader,String fields,String values,int seqNo){
 		
 		StringBuffer sqlString = new StringBuffer();
 		sqlString.append("insert into Adt" +PennantJavaUtil.getTabelMap(dataObject.getClass().getSimpleName())+" (");
@@ -277,7 +277,7 @@ public class AuditHeaderDAOImpl extends BasisNextidDaoImpl<AuditHeader> implemen
 		sqlString.append (" VALUES (");
 		sqlString.append(String.valueOf(auditHeader.getId())+",");
 		sqlString.append("'"+PennantJavaUtil.dbTimeStamp(auditHeader.getAuditDate(), PennantConstants.DBDateTimeFormat)+"',");
-		sqlString.append(SeqNo+",'"+ImageType+"',");
+		sqlString.append(seqNo+",'"+imageType+"',");
 		sqlString.append(values+")");
 		return sqlString.toString();
 	}
