@@ -428,9 +428,9 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		logger.debug("Leaving");
     }
 	
-	private ErrorDetails  getError(String errorId, String AccointId, String userLanguage){
+	private ErrorDetails  getError(String errorId, String accountId, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = AccointId;
+		parms[1][0] = accountId;
 		parms[0][0] = PennantJavaUtil.getLabel("label_AccountId")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
