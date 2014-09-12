@@ -119,11 +119,11 @@ public class RatingCodeDAOImpl extends BasisCodeDAO<RatingCode> implements Ratin
 	 * @return RatingCode
 	 */
 	@Override
-	public RatingCode getRatingCodeById(final String RatingType, String RatingCode, String type) {
+	public RatingCode getRatingCodeById(final String ratingType, String ratingCode, String type) {
 		logger.debug("Entering");
-		RatingCode ratingCode = new RatingCode();
-		ratingCode.setRatingType(RatingType);
-		ratingCode.setRatingCode(RatingCode);
+		RatingCode aRatingCode = new RatingCode();
+		aRatingCode.setRatingType(ratingType);
+		aRatingCode.setRatingCode(ratingCode);
 		StringBuilder selectSql = new StringBuilder();
 		
 		selectSql.append("SELECT RatingType, RatingCode, RatingCodeDesc, RatingIsActive,");
@@ -137,16 +137,16 @@ public class RatingCodeDAOImpl extends BasisCodeDAO<RatingCode> implements Ratin
 		selectSql.append(" Where RatingType =:RatingType AND RatingCode=:RatingCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ratingCode);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aRatingCode);
 		RowMapper<RatingCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RatingCode.class);
 
 		try {
-			ratingCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			aRatingCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			ratingCode = null;
+			aRatingCode = null;
 		}
 		logger.debug("Leaving");
-		return ratingCode;
+		return aRatingCode;
 	}
 
 	/**
