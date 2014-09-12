@@ -63,7 +63,7 @@ public interface DashboardConfigurationDAO {
 
  	public List<DashboardPosition> getDashboardPositionsByUser(long userId);
   	public void SavePositions(DashboardPosition dashboardPosition); 
-	public void delete(long UserId);
+	public void delete(long userId);
 	public List<ChartSetElement> getLabelAndValues(DashboardConfiguration dashboardDetail);
 	public List<DashboardConfiguration> getDashboardConfigurations(long userId);
  
