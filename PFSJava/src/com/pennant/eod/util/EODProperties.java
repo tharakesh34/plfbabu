@@ -120,8 +120,8 @@ public class EODProperties {
 	 * @param ccyCode
 	 * @return
 	 */
-	public static String getSIANumber(String SIACode) {
-		return internalAccMap.get(SIACode);
+	public static String getSIANumber(String sIACode) {
+		return internalAccMap.get(sIACode);
 	}
 	
 	/**

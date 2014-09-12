@@ -5,7 +5,7 @@ import com.pennant.backend.model.Entity;
 public class ChartData implements java.io.Serializable,Entity {
 
 	private String label;
-	private String Value;
+	private String value;
 	
 	
 	
@@ -44,17 +44,17 @@ public class ChartData implements java.io.Serializable,Entity {
 	}
 
 	public void setValue(String value) {
-		Value = value;
+		this.value = value;
 	}
 
 	public String getValue() {
-		return Value;
+		return value;
 	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((Value == null) ? 0 : Value.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		return result;
 	}
@@ -71,11 +71,11 @@ public class ChartData implements java.io.Serializable,Entity {
 			return false;
 		}
 		ChartData other = (ChartData) obj;
-		if (Value == null) {
-			if (other.Value != null) {
+		if (value == null) {
+			if (other.value != null) {
 				return false;
 			}
-		} else if (!Value.equals(other.Value)) {
+		} else if (!value.equals(other.value)) {
 			return false;
 		}
 		if (label == null) {

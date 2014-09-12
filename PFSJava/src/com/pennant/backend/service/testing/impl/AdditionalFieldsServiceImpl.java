@@ -220,13 +220,13 @@ public class AdditionalFieldsServiceImpl extends GenericService<AdditionalFields
 	
 	@Override
 	public AdditionalFields getAdditionalFieldsById(String id) {
-		AdditionalFields AdditionalFields =getAdditionalFieldsDAO().getAdditionalFieldsById(id,"_View");
+		AdditionalFields additionalFields =getAdditionalFieldsDAO().getAdditionalFieldsById(id,"_View");
 		List<AdditionalFieldValues>  additionalFieldValues=     getAdditionalFieldValuesDAO().getAddfeldList("Customer", "");
 		for (int i = 0; i < additionalFieldValues.size(); i++) {			
-			AdditionalFields.setLovDescAdditionalFields(additionalFieldValues.get(i).getFieldName(), additionalFieldValues.get(i).getFieldValue());
+			additionalFields.setLovDescAdditionalFields(additionalFieldValues.get(i).getFieldName(), additionalFieldValues.get(i).getFieldValue());
 		}
 	
-		return AdditionalFields;
+		return additionalFields;
 	}
 	/**
 	 * getApprovedAdditional FieldsById fetch the details by using Additional FieldsDAO's getAdditional FieldsById method .
@@ -380,7 +380,7 @@ public class AdditionalFieldsServiceImpl extends GenericService<AdditionalFields
 			}
 			AdditionalFields befAdditionalFields= getAdditionalFieldsDAO().getAdditionalFieldsById(additionalFields.getId(), "");
 			
-			AdditionalFields old_AdditionalFields= additionalFields.getBefImage();
+			AdditionalFields oldAdditionalFields= additionalFields.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -412,7 +412,7 @@ public class AdditionalFieldsServiceImpl extends GenericService<AdditionalFields
 					if (befAdditionalFields ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_AdditionalFields!=null && !old_AdditionalFields.getLastMntOn().equals(befAdditionalFields.getLastMntOn())){
+						if (oldAdditionalFields!=null && !oldAdditionalFields.getLastMntOn().equals(befAdditionalFields.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -426,7 +426,7 @@ public class AdditionalFieldsServiceImpl extends GenericService<AdditionalFields
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_AdditionalFields!=null && !old_AdditionalFields.getLastMntOn().equals(tempAdditionalFields.getLastMntOn())){ 
+					if (oldAdditionalFields!=null && !oldAdditionalFields.getLastMntOn().equals(tempAdditionalFields.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

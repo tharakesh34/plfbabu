@@ -892,14 +892,14 @@ public class PennantStaticListUtil {
 	 * Method for Getting Operators in query builder
 	 * */
 	public static ArrayList<ValueLabel> getOperators(String type) {
-		ArrayList<ValueLabel> OperatorsList = new ArrayList<ValueLabel>();
+		ArrayList<ValueLabel> operatorsList = new ArrayList<ValueLabel>();
 		if(type.equals("JS")){
-			OperatorsList.add(new ValueLabel( " === " ,Labels.getLabel("EQUALS_LABEL")));
-			OperatorsList.add(new ValueLabel(" > ",Labels.getLabel("GREATER_LABEL")));
-			OperatorsList.add(new ValueLabel(" >= ",Labels.getLabel("GREATEREQUAL_LABEL")));
-			OperatorsList.add(new ValueLabel(" < ",Labels.getLabel("LESS_LABEL")));
-			OperatorsList.add(new ValueLabel(" <= ",Labels.getLabel("LESSEQUAL_LABEL")));
-			OperatorsList.add(new ValueLabel(" !== ",Labels.getLabel("NOTEQUAL_LABEL")));
+			operatorsList.add(new ValueLabel( " === " ,Labels.getLabel("EQUALS_LABEL")));
+			operatorsList.add(new ValueLabel(" > ",Labels.getLabel("GREATER_LABEL")));
+			operatorsList.add(new ValueLabel(" >= ",Labels.getLabel("GREATEREQUAL_LABEL")));
+			operatorsList.add(new ValueLabel(" < ",Labels.getLabel("LESS_LABEL")));
+			operatorsList.add(new ValueLabel(" <= ",Labels.getLabel("LESSEQUAL_LABEL")));
+			operatorsList.add(new ValueLabel(" !== ",Labels.getLabel("NOTEQUAL_LABEL")));
 			//OperatorsList.add(new ValueLabel(" LIKE ",Labels.getLabel("LIKE_LABEL")));
 			//OperatorsList.add(new ValueLabel(" LIKE= ",PennantConstants.LIKEEQUALWOCASE_LABEL));
 			//OperatorsList.add(new ValueLabel(" NOT LIKE ",Labels.getLabel("NOTLIKE_LABEL")));
@@ -911,24 +911,24 @@ public class PennantStaticListUtil {
 			//OperatorsList.add(new ValueLabel(" IS  NULL",Labels.getLabel("ISNOTNULL_LABEL")));
 			//OperatorsList.add(new ValueLabel(PennantConstants.GROUPBY,PennantConstants.GROUPBY_LABEL));
 		}else{
-			OperatorsList.add(new ValueLabel( " = " ,Labels.getLabel("EQUALS_LABEL")));
-			OperatorsList.add(new ValueLabel(" > ",Labels.getLabel("GREATER_LABEL")));
-			OperatorsList.add(new ValueLabel(" >= ",Labels.getLabel("GREATEREQUAL_LABEL")));
-			OperatorsList.add(new ValueLabel(" < ",Labels.getLabel("LESS_LABEL")));
-			OperatorsList.add(new ValueLabel(" <= ",Labels.getLabel("LESSEQUAL_LABEL")));
-			OperatorsList.add(new ValueLabel(" != ",Labels.getLabel("NOTEQUAL_LABEL")));
-			OperatorsList.add(new ValueLabel(" LIKE ",Labels.getLabel("LIKE_LABEL")));
+			operatorsList.add(new ValueLabel( " = " ,Labels.getLabel("EQUALS_LABEL")));
+			operatorsList.add(new ValueLabel(" > ",Labels.getLabel("GREATER_LABEL")));
+			operatorsList.add(new ValueLabel(" >= ",Labels.getLabel("GREATEREQUAL_LABEL")));
+			operatorsList.add(new ValueLabel(" < ",Labels.getLabel("LESS_LABEL")));
+			operatorsList.add(new ValueLabel(" <= ",Labels.getLabel("LESSEQUAL_LABEL")));
+			operatorsList.add(new ValueLabel(" != ",Labels.getLabel("NOTEQUAL_LABEL")));
+			operatorsList.add(new ValueLabel(" LIKE ",Labels.getLabel("LIKE_LABEL")));
 			//OperatorsList.add(new ValueLabel(" LIKE= ",PennantConstants.LIKEEQUALWOCASE_LABEL));
-			OperatorsList.add(new ValueLabel(" NOT LIKE ",Labels.getLabel("NOTLIKE_LABEL")));
-			OperatorsList.add(new ValueLabel(" IN ",Labels.getLabel("IN_LABEL")));
-			OperatorsList.add(new ValueLabel(" NOT IN ",Labels.getLabel("NOTIN_LABEL")));
-			OperatorsList.add(new ValueLabel(" EXISTS ",Labels.getLabel("EXISTS_LABEL")));
-			OperatorsList.add(new ValueLabel(" NOT EXISTS ",Labels.getLabel("NOTEXISTS_LABEL")));
-			OperatorsList.add(new ValueLabel(" IS NULL",Labels.getLabel("ISNULL_LABEL")));
-			OperatorsList.add(new ValueLabel(" IS NOT NULL",Labels.getLabel("ISNOTNULL_LABEL")));
+			operatorsList.add(new ValueLabel(" NOT LIKE ",Labels.getLabel("NOTLIKE_LABEL")));
+			operatorsList.add(new ValueLabel(" IN ",Labels.getLabel("IN_LABEL")));
+			operatorsList.add(new ValueLabel(" NOT IN ",Labels.getLabel("NOTIN_LABEL")));
+			operatorsList.add(new ValueLabel(" EXISTS ",Labels.getLabel("EXISTS_LABEL")));
+			operatorsList.add(new ValueLabel(" NOT EXISTS ",Labels.getLabel("NOTEXISTS_LABEL")));
+			operatorsList.add(new ValueLabel(" IS NULL",Labels.getLabel("ISNULL_LABEL")));
+			operatorsList.add(new ValueLabel(" IS NOT NULL",Labels.getLabel("ISNOTNULL_LABEL")));
 			//OperatorsList.add(new ValueLabel(PennantConstants.GROUPBY,PennantConstants.GROUPBY_LABEL));
 		}
-		return OperatorsList;
+		return operatorsList;
 	}
 
 	/**
@@ -963,15 +963,15 @@ public class PennantStaticListUtil {
 	 * Method for Getting Operators in query builder
 	 * */
 	public static ArrayList<ValueLabel> getLogicalOperators(String type) {
-		ArrayList<ValueLabel> LogicalOperatorsList = new ArrayList<ValueLabel>();
+		ArrayList<ValueLabel> logicalOperatorsList = new ArrayList<ValueLabel>();
 		if(type.equals("JS")){
-			LogicalOperatorsList.add(new ValueLabel(" && " ,"AND"));
-			LogicalOperatorsList.add(new ValueLabel(" || ","OR"));
+			logicalOperatorsList.add(new ValueLabel(" && " ,"AND"));
+			logicalOperatorsList.add(new ValueLabel(" || ","OR"));
 		}else{
-			LogicalOperatorsList.add(new ValueLabel("AND",Labels.getLabel("AND")));
-			LogicalOperatorsList.add(new ValueLabel("OR",Labels.getLabel("OR")));
+			logicalOperatorsList.add(new ValueLabel("AND",Labels.getLabel("AND")));
+			logicalOperatorsList.add(new ValueLabel("OR",Labels.getLabel("OR")));
 		}
-		return LogicalOperatorsList;
+		return logicalOperatorsList;
 	}
 
 	public static ArrayList<ValueLabel> getFacilityApprovalFor() {
@@ -1188,6 +1188,4 @@ public class PennantStaticListUtil {
 		custRelationList.add(new ValueLabel("03", "Others"));
 		return custRelationList;
 	}
-	
-	
 }

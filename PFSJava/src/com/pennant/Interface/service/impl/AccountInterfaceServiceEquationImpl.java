@@ -164,11 +164,11 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 	 * 
 	 * @throws AccountNotFoundException
 	 */
-	public BigDecimal getAccountAvailableBal(String AccountId) {
+	public BigDecimal getAccountAvailableBal(String accountId) {
 		logger.debug("Entering");
 		BigDecimal acBalance=BigDecimal.ZERO;
 		CoreBankAccountDetail coreBankAccountDetail = new CoreBankAccountDetail();
-		coreBankAccountDetail.setAccountNumber(AccountId);
+		coreBankAccountDetail.setAccountNumber(accountId);
 
 		//Connecting to CoreBanking Interface
 		try {
