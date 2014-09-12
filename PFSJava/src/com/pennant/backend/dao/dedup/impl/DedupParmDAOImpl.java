@@ -122,14 +122,14 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 	 * @return DedupParm
 	 */
 	@Override
-	public DedupParm getDedupParmByID(final String id,String QueryModule ,String querySubCode,
+	public DedupParm getDedupParmByID(final String id,String queryModule ,String querySubCode,
 			String type) {
 		logger.debug("Entering");
 		
 		DedupParm dedupParm = new DedupParm();
 		dedupParm.setId(id);
 		dedupParm.setQuerySubCode(querySubCode);
-		dedupParm.setQueryModule(QueryModule);
+		dedupParm.setQueryModule(queryModule);
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select QueryCode, QueryModule, QuerySubCode,QueryDesc, SQLQuery, ActualBlock, ");

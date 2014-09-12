@@ -315,10 +315,10 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 	 * @param userLanguage (String)
 	 * @return ErrorDetails
 	 */
-	private ErrorDetails  getError(String errorId, String FieldName, String userLanguage){
+	private ErrorDetails  getError(String errorId, String fieldName, String userLanguage){
 		String[][] parms = new String[2][2];
 
-		parms[1][0] = FieldName;
+		parms[1][0] = fieldName;
 		parms[0][0] = PennantJavaUtil.getLabel("label_FieldName") + ":" + parms[1][0];
 
 		return ErrorUtil.getErrorDetail(new ErrorDetails(
@@ -334,12 +334,12 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 	 * @throws EmptyResultDataAccessException
 	 * 
 	 */
-	public List<BuilderTable> getFieldList(String QueryModule) {
+	public List<BuilderTable> getFieldList(String queryModule) {
 		logger.debug("Entering");		
 		
 		List<BuilderTable> fieldList = new ArrayList<BuilderTable>();
 		
-		String selectListSql = " select fieldName,fieldDesc ,fieldControl from DedupFields where QueryModule='"+QueryModule+"'";
+		String selectListSql = " select fieldName,fieldDesc ,fieldControl from DedupFields where QueryModule='"+queryModule+"'";
 		RowMapper<BuilderTable> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(BuilderTable.class);
 

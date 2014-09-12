@@ -40,7 +40,7 @@ public interface GuarantorDetailDAO {
 	public long save(GuarantorDetail guarantorDetail, String type);
 	public void initialize(GuarantorDetail guarantorDetail);
 	public void refresh(GuarantorDetail entity);
-	public GuarantorDetail getGuarantorDetailByRefId(String finReference, String CIF, String type);
+	public GuarantorDetail getGuarantorDetailByRefId(String finReference, String cIF, String type);
 	public void deleteByFinRef(String finReference, String type);
 	public List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type);	
 	public List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail);

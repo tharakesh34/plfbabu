@@ -59,6 +59,6 @@ public interface DedupFieldsDAO {
 	public void initialize(DedupFields dedupFields);
 	public void refresh(DedupFields entity);
 	public ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
-	List<BuilderTable> getFieldList(String QueryModule);
+	List<BuilderTable> getFieldList(String queryModule);
 	
 }

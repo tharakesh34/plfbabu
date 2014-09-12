@@ -56,7 +56,7 @@ public interface DedupParmDAO {
 
 	public DedupParm getDedupParm();
 	public DedupParm getNewDedupParm();
-	public DedupParm getDedupParmByID(String id,String QueryModule,String querySubCode, String type);
+	public DedupParm getDedupParmByID(String id,String queryModule,String querySubCode, String type);
 	public void update(DedupParm dedupParm,String type);
 	public void delete(DedupParm dedupParm,String type);
 	public String save(DedupParm dedupParm,String type);

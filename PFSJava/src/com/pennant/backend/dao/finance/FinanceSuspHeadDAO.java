@@ -63,7 +63,7 @@ public interface FinanceSuspHeadDAO {
 	public void refresh(FinanceSuspHead suspHead);
 	public List<String> getSuspFinanceList();
 	public void delete(FinanceSuspHead financeSuspHead, String string);
-	public List<FinStatusDetail> getCustSuspDate(List<Long> CustIdList);
+	public List<FinStatusDetail> getCustSuspDate(List<Long> custIdList);
 	public Date getCustSuspDate(long custId);
 	public void updateSuspFlag(String finReference);
 	 

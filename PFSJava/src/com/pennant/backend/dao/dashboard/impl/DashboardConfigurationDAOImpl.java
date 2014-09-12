@@ -358,7 +358,7 @@ implements DashboardConfigurationDAO {
 		logger.debug("Entering");
 		DashboardConfiguration dashboardConfigurations = new DashboardConfiguration();
 		dashboardConfigurations.setLovDescUsrId(userId);
-		List<DashboardPosition> DashboardConfigurationList;
+		List<DashboardPosition> dashboardConfigurationList;
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("select UsrId, DashboardRef, DashboardCol ,DashboardRow from DashboardPositions ");
@@ -370,14 +370,14 @@ implements DashboardConfigurationDAO {
 		.newInstance(DashboardPosition.class);
 
 		try {
-			DashboardConfigurationList = this.namedParameterJdbcTemplate.query(
+			dashboardConfigurationList = this.namedParameterJdbcTemplate.query(
 					selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
-			DashboardConfigurationList = null;
+			dashboardConfigurationList = null;
 		}
 		logger.debug("Leaving");
-		return DashboardConfigurationList;
+		return dashboardConfigurationList;
 	}
 
 	/**
@@ -470,13 +470,13 @@ implements DashboardConfigurationDAO {
 	/**
 	 * This method for getting the error details
 	 * @param errorId (String)
-	 * @param Id (String)
+	 * @param iD (String)
 	 * @param userLanguage (String)
 	 * @return ErrorDetails
 	 */
-	private ErrorDetails  getError(String errorId, String Id, String userLanguage){
+	private ErrorDetails  getError(String errorId, String iD, String userLanguage){
 		String[][] parms= new String[2][1]; 
-		parms[1][0] =Id;
+		parms[1][0] =iD;
 		parms[0][0] = PennantJavaUtil.getLabel("label_DashboardRef")+":" +parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
