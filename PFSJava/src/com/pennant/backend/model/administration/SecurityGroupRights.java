@@ -107,8 +107,8 @@ public class SecurityGroupRights implements java.io.Serializable,Entity{
 	public void setLovDescRightName(String lovDescRightName) {
 		this.lovDescRightName = lovDescRightName;
 	}
-	public void setId(long ID){
-		this.grpRightID =ID ;
+	public void setId(long grpRightID){
+		this.grpRightID =grpRightID ;
 
 	}
 	public long getId(){

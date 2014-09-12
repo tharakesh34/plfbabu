@@ -109,15 +109,15 @@ public class BuilderTable implements java.io.Serializable {
 	public String getData_type() {
 		return data_type;
 	}
-	public void setData_type(String data_type) {
-		this.data_type = data_type;
+	public void setData_type(String dataType) {
+		this.data_type = dataType;
 	}
 	
 	public String getCharacter_maximum_length() {
 		return character_maximum_length;
 	}
-	public void setCharacter_maximum_length(String character_maximum_length) {
-		this.character_maximum_length = character_maximum_length;
+	public void setCharacter_maximum_length(String characterMaximumLength) {
+		this.character_maximum_length = characterMaximumLength;
 	}	
 	
 }

@@ -81,8 +81,8 @@ private static final long serialVersionUID = -8921214349365225047L;
 		return menuId;
 	}
 
-	public void setId(long Id){
-		this.menuId=Id;
+	public void setId(long menuId){
+		this.menuId=menuId;
 	}
 	
 	public long getMenuId() {

@@ -62,18 +62,18 @@ public class ModuleMapping implements Serializable {
 	
 	
 	@SuppressWarnings("rawtypes")
-	public ModuleMapping (Class moduleClass,String tabelName,String[] LovFields,String[][] lovCondition,String workflowType,int lovListWidth){
+	public ModuleMapping (Class moduleClass,String tabelName,String[] lovFields,String[][] lovCondition,String workflowType,int lovListWidth){
 		setModuleName(moduleClass.getSimpleName());
 		setTabelName(tabelName);
 		setLovDBObjectName(tabelName);
 		setModuleClass(moduleClass);
-		setLovFields(LovFields);
+		setLovFields(lovFields);
 		setLovCondition(lovCondition);
 		setWorkflowType(workflowType);
 		setLovListWidth(lovListWidth);
 	}
 	
-	public ModuleMapping (Object moduleObject,String[] dbObjectNames,String[] LovFields,String[][] lovCondition,String workflowType,int lovListWidth){
+	public ModuleMapping (Object moduleObject,String[] dbObjectNames,String[] lovFields,String[][] lovCondition,String workflowType,int lovListWidth){
 		setModuleName(moduleObject.getClass().getSimpleName());
 		setDbObjectNames(dbObjectNames);
 		if(dbObjectNames!=null){
@@ -86,19 +86,19 @@ public class ModuleMapping implements Serializable {
 		}
 		setModuleClass(moduleObject.getClass());
 		setModuleObject(moduleObject);
-		setLovFields(LovFields);
+		setLovFields(lovFields);
 		setLovCondition(lovCondition);
 		setWorkflowType(workflowType);
 		setLovListWidth(lovListWidth);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public ModuleMapping (String moduleName,Class moduleClass,String tabelName,String[] LovFields,String[][] lovCondition,String workflowType,int lovListWidth){
+	public ModuleMapping (String moduleName,Class moduleClass,String tabelName,String[] lovFields,String[][] lovCondition,String workflowType,int lovListWidth){
 		setModuleName(moduleName);
 		setTabelName(tabelName);
 		setLovDBObjectName(tabelName);
 		setModuleClass(moduleClass);
-		setLovFields(LovFields);
+		setLovFields(lovFields);
 		setLovCondition(lovCondition);
 		setWorkflowType(workflowType);
 		setLovListWidth(lovListWidth);

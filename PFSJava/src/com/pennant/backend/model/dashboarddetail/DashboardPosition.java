@@ -94,8 +94,8 @@ public class DashboardPosition implements java.io.Serializable {
 
 	//Getter and Setter methods
 	
-	public void setId(String Id) {
-		this.dashboardRef = Id;
+	public void setId(String dashboardRef) {
+		this.dashboardRef = dashboardRef;
 	}
 	
 	public String getId() {

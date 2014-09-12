@@ -1712,15 +1712,15 @@ public class FinanceType implements java.io.Serializable {
 		this.lovDescPftPayAcTypeName = lovDescPftPayAcTypeName;
 	}
 
-	public void setLovDescAERule(String AEEvent, AccountingSet lovDescAERule) {
+	public void setLovDescAERule(String aEEvent, AccountingSet lovDescAERule) {
 		if (this.lovDescAERule == null) {
 			this.lovDescAERule = new HashMap<String, AccountingSet>();
 		} else {
-			if (this.lovDescAERule.containsKey(AEEvent)) {
-				this.lovDescAERule.remove(AEEvent);
+			if (this.lovDescAERule.containsKey(aEEvent)) {
+				this.lovDescAERule.remove(aEEvent);
 			}
 		}
-		this.lovDescAERule.put(AEEvent, lovDescAERule);
+		this.lovDescAERule.put(aEEvent, lovDescAERule);
 
 	}
 

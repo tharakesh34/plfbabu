@@ -288,32 +288,32 @@ public class JVPostingEntry implements java.io.Serializable, Entity {
 		return exchRate_Batch;
 	}
 
-	public void setExchRate_Batch(BigDecimal exchRate_Batch) {
-		this.exchRate_Batch = exchRate_Batch;
+	public void setExchRate_Batch(BigDecimal exchRateBatch) {
+		this.exchRate_Batch = exchRateBatch;
 	}
 
 	public BigDecimal getExchRate_Ac() {
 		return exchRate_Ac;
 	}
 
-	public void setExchRate_Ac(BigDecimal exchRate_Ac) {
-		this.exchRate_Ac = exchRate_Ac;
+	public void setExchRate_Ac(BigDecimal exchRatAc) {
+		this.exchRate_Ac = exchRatAc;
 	}
 
 	public BigDecimal getTxnAmount_Batch() {
 		return txnAmount_Batch;
 	}
 
-	public void setTxnAmount_Batch(BigDecimal txnAmount_Batch) {
-		this.txnAmount_Batch = txnAmount_Batch;
+	public void setTxnAmount_Batch(BigDecimal txnAmountBatch) {
+		this.txnAmount_Batch = txnAmountBatch;
 	}
 
 	public BigDecimal getTxnAmount_Ac() {
 		return txnAmount_Ac;
 	}
 
-	public void setTxnAmount_Ac(BigDecimal txnAmount_Ac) {
-		this.txnAmount_Ac = txnAmount_Ac;
+	public void setTxnAmount_Ac(BigDecimal txnAmountAc) {
+		this.txnAmount_Ac = txnAmountAc;
 	}
 
 	public int getVersion() {

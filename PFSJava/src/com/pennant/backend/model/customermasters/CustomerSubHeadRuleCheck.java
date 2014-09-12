@@ -239,8 +239,8 @@ public class CustomerSubHeadRuleCheck {
 		HashMap<String, String> customerEligibityMap = new HashMap<String, String>();
 		try {
 			for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
-				String Type=this.getClass().getDeclaredFields()[i].getType().toString();
-				customerEligibityMap.put(this.getClass().getDeclaredFields()[i].getName(),Type );
+				String type=this.getClass().getDeclaredFields()[i].getType().toString();
+				customerEligibityMap.put(this.getClass().getDeclaredFields()[i].getName(),type );
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

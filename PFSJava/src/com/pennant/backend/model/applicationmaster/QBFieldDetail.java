@@ -64,7 +64,6 @@ import com.pennant.backend.util.WorkFlowUtil;
 public class QBFieldDetail implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1073404971137750236L;
-	private long id = Long.MIN_VALUE;
 	private String entityCode;
 	private String qbModule;
 	private String qbFldName;
@@ -400,8 +399,7 @@ public class QBFieldDetail implements java.io.Serializable {
 		}
 
 		if (obj instanceof QBFieldDetail) {
-			QBFieldDetail QBFieldDetail = (QBFieldDetail) obj;
-			return equals(QBFieldDetail);
+			return equals((QBFieldDetail) obj);
 		}
 		return false;
 	}

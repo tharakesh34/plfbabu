@@ -116,7 +116,7 @@ public class SecurityUser implements java.io.Serializable, Entity {
 	}
 	public SecurityUser(long usrID, String usrLogin, String usrPwd, boolean usrEnabled, Date usrCanSignonFrom,Date usrCanSignonTo,
 			boolean usrCanOverrideLimits,boolean usrAcExp, boolean usrCredentialsExp, boolean usrAcLocked,String usrToken,
-			boolean usrIsMultiBranch,int UsrInvldLoginTries) {
+			boolean usrIsMultiBranch,int usrInvldLoginTries) {
 		this.setUsrID(usrID);
 		this.usrLogin = usrLogin;
 		this.usrPwd = usrPwd;
@@ -129,13 +129,13 @@ public class SecurityUser implements java.io.Serializable, Entity {
 		this.usrAcLocked = usrAcLocked;
 		this.usrToken=usrToken;
 		this.usrIsMultiBranch=usrIsMultiBranch;
-		this.UsrInvldLoginTries=UsrInvldLoginTries;
+		this.UsrInvldLoginTries=usrInvldLoginTries;
 	}
 	
 	public SecurityUser(long usrID, String usrLogin, String usrPwd, String usrLName, String usrMName, String usrFName,String usrMobile ,String usrEmail, boolean usrEnabled,  
 			Date usrCanSignonFrom,Date usrCanSignonTo,boolean usrCanOverrideLimits,boolean usrAcExp,boolean usrCredentialsExp, 
 			boolean usrAcLocked,String usrLanguage,long usrDftAppId,String usrBranchCode,String usrDeptCode,String usrToken,
-			 boolean usrIsMultiBranch,int UsrInvldLoginTries,long lastMntBy,Timestamp lastMntOn) {
+			 boolean usrIsMultiBranch,int usrInvldLoginTries,long lastMntBy,Timestamp lastMntOn) {
 		this.setUsrID(usrID);
 		this.usrLogin = usrLogin;
 		this.usrPwd = usrPwd;
@@ -157,7 +157,7 @@ public class SecurityUser implements java.io.Serializable, Entity {
 		this.usrDeptCode=usrDeptCode;
 		this.usrToken=usrToken;
 		this.usrIsMultiBranch=usrIsMultiBranch;
-		this.UsrInvldLoginTries=UsrInvldLoginTries;
+		this.UsrInvldLoginTries=usrInvldLoginTries;
 		this.lastMntBy=lastMntBy;
 		this.lastMntOn=lastMntOn;
 	}

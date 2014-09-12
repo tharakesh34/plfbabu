@@ -531,9 +531,9 @@ public class AuditHeader implements java.io.Serializable,Entity {
 	private boolean isEqual(ErrorDetails oldDetails,ErrorDetails newDetails){
 		boolean isSame=true;
 		if(StringUtils.trimToEmpty(oldDetails.getErrorCode()).equals(StringUtils.trimToEmpty(newDetails.getErrorCode()))){
-			if(oldDetails.getErrorFieldValues()==null && oldDetails.getErrorFieldValues()==null){
+			if(oldDetails.getErrorFieldValues()==null && newDetails.getErrorFieldValues()==null){
 				isSame=true;
-			}else  if(oldDetails.getErrorFieldValues()==null || oldDetails.getErrorFieldValues()==null){
+			}else  if(oldDetails.getErrorFieldValues()==null || newDetails.getErrorFieldValues()==null){
 				isSame=false;
 			}else{
 				for (int i = 0; i < oldDetails.getErrorFieldValues().length; i++) {
