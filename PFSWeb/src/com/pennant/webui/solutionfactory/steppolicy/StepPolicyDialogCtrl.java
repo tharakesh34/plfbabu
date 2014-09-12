@@ -1211,16 +1211,16 @@ public class StepPolicyDialogCtrl extends GFCBaseListCtrl<StepPolicyDetail> impl
 
 
 	public BigDecimal getTotTenorPerc(){
-		BigDecimal TotTenorPerc = BigDecimal.ZERO;
+		BigDecimal totTenorPerc = BigDecimal.ZERO;
 		if(getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty()) {
 			for (StepPolicyDetail stepPolicyDetail : getStepPolicyDetailList()) {
 				if(stepPolicyDetail.getTenorSplitPerc() != null && !StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) && 
 				!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
-					TotTenorPerc = TotTenorPerc.add(stepPolicyDetail.getTenorSplitPerc());
+					totTenorPerc = totTenorPerc.add(stepPolicyDetail.getTenorSplitPerc());
 				}
 			}
 		}
-		return TotTenorPerc;
+		return totTenorPerc;
 	}
 
 
@@ -1345,8 +1345,8 @@ public class StepPolicyDialogCtrl extends GFCBaseListCtrl<StepPolicyDetail> impl
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {

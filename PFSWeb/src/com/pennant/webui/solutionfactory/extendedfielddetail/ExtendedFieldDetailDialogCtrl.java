@@ -661,22 +661,22 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 						if("RANGE".equals(value)){
 
 							if(this.parent_fieldConstraint.getFellowIfAny("range_From") != null){
-								Datebox range_From = (Datebox) this.parent_fieldConstraint.getFellowIfAny("range_From");
-								if(range_From.getValue()==null || range_From.getValue().after(DateUtility.getUtilDate()) ){
-									throw new WrongValueException(range_From, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL", new String[] {"From Date",
+								Datebox rangeFrom = (Datebox) this.parent_fieldConstraint.getFellowIfAny("range_From");
+								if(rangeFrom.getValue()==null || rangeFrom.getValue().after(DateUtility.getUtilDate()) ){
+									throw new WrongValueException(rangeFrom, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL", new String[] {"From Date",
 											DateUtility.formatUtilDate(DateUtility.getUtilDate(), PennantConstants.dateFormat)}));
 								}
 
-								value = value +","+DateUtility.formatUtilDate(range_From.getValue(),PennantConstants.dateTimeFormat);
+								value = value +","+DateUtility.formatUtilDate(rangeFrom.getValue(),PennantConstants.dateTimeFormat);
 							}
 
 							if(this.parent_fieldConstraint.getFellowIfAny("range_To") != null){
-								Datebox range_To = (Datebox) this.parent_fieldConstraint.getFellowIfAny("range_To");
-								if(range_To.getValue()==null || range_To.getValue().before(DateUtility.getUtilDate()) ){
-									throw new WrongValueException(range_To, Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[] {"To Date",
+								Datebox rangeTo = (Datebox) this.parent_fieldConstraint.getFellowIfAny("range_To");
+								if(rangeTo.getValue()==null || rangeTo.getValue().before(DateUtility.getUtilDate()) ){
+									throw new WrongValueException(rangeTo, Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[] {"To Date",
 											DateUtility.formatUtilDate(DateUtility.getUtilDate(), PennantConstants.dateFormat)}));
 								}
-								value = value +","+DateUtility.formatUtilDate(range_To.getValue(),PennantConstants.dateTimeFormat);
+								value = value +","+DateUtility.formatUtilDate(rangeTo.getValue(),PennantConstants.dateTimeFormat);
 							}
 
 						} else if("FUTURE_DAYS".equals(value) ||  "PAST_DAYS".equals(value)){
@@ -1786,8 +1786,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void onClick$btnNotes(Event event) throws Exception {
@@ -2059,26 +2059,26 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 	private void onChangeDateConstraint(String constType,boolean newSel){
 
 		if("RANGE".equals(constType)){
-			Datebox range_From = new Datebox();
-			range_From.setId("range_From");
-			range_From.setFormat(PennantConstants.dateFormat);
+			Datebox rangeFrom = new Datebox();
+			rangeFrom.setId("range_From");
+			rangeFrom.setFormat(PennantConstants.dateFormat);
 
-			Datebox range_To = new Datebox();
-			range_To.setId("range_To");
-			range_To.setFormat(PennantConstants.dateFormat);
+			Datebox rangeTo = new Datebox();
+			rangeTo.setId("range_To");
+			rangeTo.setFormat(PennantConstants.dateFormat);
 
 			Hbox hbox = new Hbox(); 
 			hbox.setId("range");
-			hbox.appendChild(range_From);
+			hbox.appendChild(rangeFrom);
 			hbox.setStyle("padding-left:10px;");
 
 			hbox.appendChild(new Label(" To "));
-			hbox.appendChild(range_To);
+			hbox.appendChild(rangeTo);
 			parent_fieldConstraint.appendChild(hbox);
 			
 			if(!newSel){
-				range_From.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[1],PennantConstants.dateFormat));
-				range_To.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[2],PennantConstants.dateFormat));
+				rangeFrom.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[1],PennantConstants.dateFormat));
+				rangeTo.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[2],PennantConstants.dateFormat));
 			}
 
 		}else if("FUTURE_DAYS".equals(constType) || "PAST_DAYS".equals(constType)){
