@@ -368,7 +368,6 @@ public class NotificationsDAOImpl extends BasisCodeDAO<Notifications> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public List<Notifications> getNotificationsByModule(String module, String type) {
 		logger.debug("Entering");

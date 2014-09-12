@@ -249,10 +249,8 @@ public class SecurityUserRolesDAOImpl extends BasisNextidDaoImpl<SecurityUser> i
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void update(SecurityUserRoles securityUserRoles,String type) {
 		logger.debug("Entering ");
-		int recordCount = 0;
 		
 		StringBuilder   updateSql = new StringBuilder  ("Update SecUserRoles");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
@@ -267,7 +265,7 @@ public class SecurityUserRolesDAOImpl extends BasisNextidDaoImpl<SecurityUser> i
 		
 		logger.debug("updateSql:"+updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserRoles);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		/*if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);

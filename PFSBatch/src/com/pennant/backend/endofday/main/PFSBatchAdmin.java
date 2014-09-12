@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.endofday.main;
 
+import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
@@ -56,7 +58,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennant.app.util.DateUtility;
 
-public class PFSBatchAdmin {
+public class PFSBatchAdmin implements Serializable {
 
 	private static final long serialVersionUID = -1648550888126596125L;
 	private final static Logger logger = Logger.getLogger(PFSBatchAdmin.class);

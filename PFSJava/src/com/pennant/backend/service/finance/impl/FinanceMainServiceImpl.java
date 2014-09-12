@@ -469,11 +469,11 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		FinanceMain  finMain = (FinanceMain) auditHeader.getAuditDetail().getModelData();
 
-		String auditTranType="";
+		//String auditTranType="";
 
 		if(method.equals("saveOrUpdate") || method.equals("doApprove") || method.equals("doReject") ){
 			if (finMain.isWorkflow()) {
-				auditTranType= PennantConstants.TRAN_WF;
+				//auditTranType= PennantConstants.TRAN_WF;
 			}
 		}
 		auditHeader.getAuditDetail().setModelData(finMain);

@@ -279,7 +279,7 @@ public class Filter implements Serializable {
 	@SuppressWarnings("unchecked")
 	public void add(Filter filter) {
 		if (value == null || !(value instanceof List)) {
-			value = new ArrayList();
+			value = new ArrayList<Filter>();
 		}
 		((List<Filter>) value).add(filter);
 	}
@@ -289,11 +289,11 @@ public class Filter implements Serializable {
 	 * filters as their value. This method removes a filter from that list.
 	 */
 	@SuppressWarnings("unchecked")
-	public void remove(Filter filter) {
+    public void remove(Filter filter) {
 		if (value == null || !(value instanceof List)) {
 			return;
 		}
-		((List) value).remove(filter);
+		((List<Filter>) value).remove(filter);
 	}
 
 	public String getProperty() {
@@ -439,7 +439,8 @@ public class Filter implements Serializable {
 	 * 
 	 *  @return String
 	 */
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public String toString() {
 		switch (operator) {
 		case Filter.OP_IN:
@@ -481,7 +482,7 @@ public class Filter implements Serializable {
 
 			StringBuilder sb = new StringBuilder("(");
 			boolean first = true;
-			for (Object o : ((List) value)) {
+			for (Object o : ((List<Object>) value)) {
 				if (first) {
 					first = false;
 				} else {
@@ -528,7 +529,8 @@ public class Filter implements Serializable {
 	 * 
 	 *  @return String
 	 */
-	public String getSqlOperator() {
+	@SuppressWarnings("unchecked")
+    public String getSqlOperator() {
 		switch (operator) {
 		case Filter.OP_IN:
 			return " in ";
@@ -569,7 +571,7 @@ public class Filter implements Serializable {
 
 			StringBuilder sb = new StringBuilder("(");
 			boolean first = true;
-			for (Object o : ((List) value)) {
+			for (Object o : ((List<Object>) value)) {
 				if (first) {
 					first = false;
 				} else {

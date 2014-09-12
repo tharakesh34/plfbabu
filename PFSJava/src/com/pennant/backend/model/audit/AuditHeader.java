@@ -426,8 +426,8 @@ public class AuditHeader implements java.io.Serializable,Entity {
 		LoginUserDetails userDetails = null;
 		
 		try {
-			if (objData.getClass().getMethod( "getUserDetails",null)!=null){
-				userDetails = (LoginUserDetails) objData.getClass().getMethod( "getUserDetails",null).invoke(objData, null);
+			if (objData.getClass().getMethod( "getUserDetails")!=null){
+				userDetails = (LoginUserDetails) objData.getClass().getMethod( "getUserDetails").invoke(objData);
 			}
 			
 		} catch (Exception e) {

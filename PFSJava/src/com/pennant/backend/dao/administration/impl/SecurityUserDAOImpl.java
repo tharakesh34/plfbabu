@@ -75,7 +75,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements SecurityUserDAO {
 
 	private static Logger logger = Logger.getLogger(SecurityUserDAOImpl.class);
-    private SecurityUser securityUser;
+	
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	/**
@@ -451,7 +451,8 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	/**
 	 * This method is to Update  SecurityUser Division Branch  Details
 	 */
-	@Override
+	@SuppressWarnings("serial")
+    @Override
 	public void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type) {
 		logger.debug("Entering ");
 		int recordCount = 0;
@@ -479,7 +480,8 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	/**
 	 * This method is to Delete  Each Branch Under Division   
 	 */
-	@Override
+	@SuppressWarnings("serial")
+    @Override
 	public void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type) {
 		logger.debug("Entering ");
 		int recordCount = 0;
@@ -538,7 +540,8 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	/**
 	 * This method is to Delete  SecurityUser Division Branch  Details Under User
 	 */
-	@Override
+	@SuppressWarnings("serial")
+    @Override
 	public void deleteBranchs(SecurityUser securityUser,String type) {
 		logger.debug("Entering ");
 		int recordCount = 0;

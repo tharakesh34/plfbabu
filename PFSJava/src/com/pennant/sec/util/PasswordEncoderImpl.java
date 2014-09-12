@@ -58,6 +58,7 @@ import sun.misc.BASE64Encoder;
 
 import com.pennant.backend.model.administration.SecurityUser;
 
+@SuppressWarnings("restriction")
 public class PasswordEncoderImpl implements Serializable {
 	private final static Logger logger = Logger.getLogger(PasswordEncoderImpl.class);
 	private static final long serialVersionUID = -4639404994225504281L;
@@ -139,7 +140,7 @@ public class PasswordEncoderImpl implements Serializable {
 	 * @return  byte[] 
 	 * @throws IOException
 	 */
-	private byte[] base64ToByte(String data) throws IOException {
+    private byte[] base64ToByte(String data) throws IOException {
 		logger.debug("Entering ");
 		BASE64Decoder decoder = new BASE64Decoder();
 		return decoder.decodeBuffer(data);
@@ -150,7 +151,7 @@ public class PasswordEncoderImpl implements Serializable {
 	 * @return String 
 	 * @throws IOException
 	 */
-	private static String byteToBase64(byte[] data) {
+    private static String byteToBase64(byte[] data) {
 		logger.debug("Entering ");
 		BASE64Encoder endecoder = new BASE64Encoder();
 		return endecoder.encode(data);

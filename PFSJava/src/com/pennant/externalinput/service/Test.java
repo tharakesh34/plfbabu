@@ -1,6 +1,5 @@
 package com.pennant.externalinput.service;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -50,7 +49,7 @@ public class Test {
 			conn = DriverManager.getConnection(url , userName, password);  
 		    String printfileName = JasperFillManager.fillReportToFile(inputfileName, new HashMap<String, Object>(), conn);  
 		    
-			File destFile = new File(outFilenameExcel);   
+			//File destFile = new File(outFilenameExcel);   
 			JRXlsExporter exporter = new JRXlsExporter();   
 
 			exporter.setParameter(JRExporterParameter.INPUT_FILE_NAME,printfileName); 

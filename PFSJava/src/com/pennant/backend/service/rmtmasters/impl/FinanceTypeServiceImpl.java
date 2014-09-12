@@ -531,10 +531,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> MarginSlabauditDetailMap = new HashMap<String, List<AuditDetail>>();
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
-		String auditTranType = "";
+		//String auditTranType = "";
 		if (method.equals("saveOrUpdate") || method.equals("doApprove") || method.equals("doReject")) {
 			if (financeType.isWorkflow()) {
-				auditTranType = PennantConstants.TRAN_WF;
+				//auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 		financeType.setLovDescMarginSlabAuditDetailMap(MarginSlabauditDetailMap);

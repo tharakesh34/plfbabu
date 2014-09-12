@@ -42,9 +42,10 @@
 */
 package com.pennant.backend.model.reports;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class ReportSearchTemplate {
+public class ReportSearchTemplate implements Serializable {
 	
 	private static final long serialVersionUID = -619353564397203914L;
 	private long      reportID;

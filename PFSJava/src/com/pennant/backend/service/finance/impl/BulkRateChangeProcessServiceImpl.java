@@ -812,7 +812,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericService<BulkProcess
 	 * @param custId
 	 * @return
 	 */
-	private List<AuditDetail> processBulkProcessDetails(List<AuditDetail> auditDetails, long detailId, String type) {
+	/*private List<AuditDetail> processBulkProcessDetails(List<AuditDetail> auditDetails, long detailId, String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -895,7 +895,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericService<BulkProcess
 
 		return auditDetails;
 
-	}
+	}*/
 	
 	
 	/**
@@ -1549,8 +1549,8 @@ public class BulkRateChangeProcessServiceImpl extends GenericService<BulkProcess
 				auditHeader.getUsrLanguage(), method);
 		
 		auditHeader = getAuditDetails(auditHeader, method);
-		BulkProcessHeader bulkProcessHeader = (BulkProcessHeader) auditHeader.getAuditDetail().getModelData();
-		String usrLanguage = bulkProcessHeader.getUserDetails().getUsrLanguage();
+		/*BulkProcessHeader bulkProcessHeader = (BulkProcessHeader) auditHeader.getAuditDetail().getModelData();
+		String usrLanguage = bulkProcessHeader.getUserDetails().getUsrLanguage();*/
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		/*if (bulkProcessHeader.getBulkProcessDetailsList() != null && bulkProcessHeader.getBulkProcessDetailsList().size() > 0) {

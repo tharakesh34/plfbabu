@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.pennant.backend.model.GlobalVariable;
+import com.pennant.backend.model.applicationmaster.Query;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -14,7 +15,7 @@ public class StringReplacement {
 
 	String templateStr = "";
 
-	public static String getReplacedQuery(String templateStr,List globalList,List subQueryList) {
+	public static String getReplacedQuery(String templateStr,List<GlobalVariable> globalList,List<Query> subQueryList) {
 
 		StringWriter result = new StringWriter();
 
@@ -22,7 +23,7 @@ public class StringReplacement {
 
 			Configuration cfg = new Configuration();
 			// Create a data-model
-			LinkedHashMap root = new LinkedHashMap();
+			LinkedHashMap<String,String> root = new LinkedHashMap<String,String>();
 			
 			if(globalList!=null && globalList.size()>0){
 				for(int i=0; i<globalList.size();i++){
@@ -52,14 +53,14 @@ public class StringReplacement {
 		}
 		return result.getBuffer().toString();
 	}
-	public static String getReplacedQueryToInsert(String templateStr,List globalList,List subQueryList) {
+	public static String getReplacedQueryToInsert(String templateStr,List<GlobalVariable> globalList,List<Query> subQueryList) {
 
 		StringWriter result = new StringWriter();
 		try {
 
 			Configuration cfg = new Configuration();
 			// Create a data-model
-			LinkedHashMap root = new LinkedHashMap();
+			LinkedHashMap<String, String> root = new LinkedHashMap<String, String>();
 
 			for(int i=0; i<globalList.size();i++){
 				GlobalVariable globalVariable = (GlobalVariable)globalList.get(i);

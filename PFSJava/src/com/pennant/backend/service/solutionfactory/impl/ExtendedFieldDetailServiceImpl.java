@@ -700,7 +700,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 				Object object = ((AuditDetail)list.get(i)).getModelData();			
 				try {
 
-					rcdType = object.getClass().getMethod( "getRecordType", null).invoke( object, null ).toString();
+					rcdType = object.getClass().getMethod( "getRecordType").invoke( object).toString();
 
 					if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 						transType= PennantConstants.TRAN_ADD;

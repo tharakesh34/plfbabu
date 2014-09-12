@@ -101,7 +101,8 @@ public class AuditDetail  implements java.io.Serializable,Entity {
 		this.modelData=modelData;
 	}
 
-	public AuditDetail(String auditTranType, int auditSeq, Object befImage,Object modelData) {
+	@SuppressWarnings("unchecked")
+    public AuditDetail(String auditTranType, int auditSeq, Object befImage,Object modelData) {
 		super();
 		this.auditTranType = auditTranType;
 		this.auditSeq = auditSeq;
@@ -110,10 +111,10 @@ public class AuditDetail  implements java.io.Serializable,Entity {
 		String[] fields=null;
 
 		try {
-			Method method = modelData.getClass().getMethod("getExcludeFields",null);
+			Method method = modelData.getClass().getMethod("getExcludeFields");
 			Object object= null;
 			if(method!=null){
-				object=method.invoke(modelData, null);
+				object=method.invoke(modelData);
 				if(object.getClass().isInstance(String.class)){
 					fields = PennantJavaUtil.getFieldDetails(modelData,(String) object);
 				}else  if(object.getClass().isInstance(new HashSet<String>())){
