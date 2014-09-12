@@ -149,10 +149,10 @@ public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> impl
 	}
 	
 	@Override
-	public Authorization getAuthorization(long AuthUserId,String authType,String type) {
+	public Authorization getAuthorization(long authUserId,String authType,String type) {
 		logger.debug("Entering");
 		Authorization authorization = new Authorization();
-		authorization.setAuthUserId(AuthUserId);
+		authorization.setAuthUserId(authUserId);
 		authorization.setAuthType(authType);
 		StringBuilder selectSql = new StringBuilder();
 
