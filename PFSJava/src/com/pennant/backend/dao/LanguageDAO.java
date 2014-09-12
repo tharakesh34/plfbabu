@@ -50,7 +50,7 @@ public interface LanguageDAO {
 
 	public List<Language> getAllLanguages();
 
-	public Language getLanguageById(int lan_id);
+	public Language getLanguageById(int lanID);
 
-	public Language getLanguageByLocale(String lan_locale);
+	public Language getLanguageByLocale(String lanLocale);
 }

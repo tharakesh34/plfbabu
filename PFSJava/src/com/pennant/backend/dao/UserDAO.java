@@ -55,9 +55,9 @@ public interface UserDAO {
 
 	public List<SecurityUser> getAlleUser();
 
-	public SecurityUser getUserByID(Long usr_id);
+	public SecurityUser getUserByID(Long usrID);
 
-	public SecurityUser getUserByFiluserNr(String usr_nr);
+	public SecurityUser getUserByFiluserNr(String usrNum);
 
 	public SecurityUser getUserByNameAndPassword(String userName, String passWord);
 
