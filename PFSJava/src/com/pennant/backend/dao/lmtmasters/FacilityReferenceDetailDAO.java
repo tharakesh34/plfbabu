@@ -51,14 +51,14 @@ public interface FacilityReferenceDetailDAO {
 	public FacilityReferenceDetail getFacilityReferenceDetail();
 	public FacilityReferenceDetail getNewFacilityReferenceDetail();
 	public FacilityReferenceDetail getFacilityReferenceDetailById(long id,String type);
-	public void update(FacilityReferenceDetail FacilityReferenceDetail,String type);
-	public void delete(FacilityReferenceDetail FacilityReferenceDetail,String type);
-	public long save(FacilityReferenceDetail FacilityReferenceDetail,String type);
-	public void initialize(FacilityReferenceDetail FacilityReferenceDetail);
+	public void update(FacilityReferenceDetail facilityReferenceDetail,String type);
+	public void delete(FacilityReferenceDetail facilityReferenceDetail,String type);
+	public long save(FacilityReferenceDetail facilityReferenceDetail,String type);
+	public void initialize(FacilityReferenceDetail facilityReferenceDetail);
 	public void refresh(FacilityReferenceDetail entity);
 	public List<FacilityReferenceDetail> getFacilityReferenceDetail(String financeType,String roleCode, String type);
 	public List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(String financeType,
-			String MandInputInStage, List<String> groupIds, String type);
+			String mandInputInStage, List<String> groupIds, String type);
 	public void deleteByFinType(String finType, String type);
 	public List<FacilityReferenceDetail> getFacilityReferenceDetailById(String finType);
 }

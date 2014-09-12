@@ -89,12 +89,12 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 	public CommidityLoanDetail getCommidityLoanDetail() {
 		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("CommidityLoanDetail");
-		CommidityLoanDetail CommidityLoanDetail= new CommidityLoanDetail();
+		CommidityLoanDetail commidityLoanDetail= new CommidityLoanDetail();
 		if (workFlowDetails!=null){
-			CommidityLoanDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
+			commidityLoanDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
-		return CommidityLoanDetail;
+		return commidityLoanDetail;
 	}
 
 
@@ -107,10 +107,10 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 	@Override
 	public CommidityLoanDetail getNewCommidityLoanDetail() {
 		logger.debug("Entering");
-		CommidityLoanDetail CommidityLoanDetail = getCommidityLoanDetail();
-		CommidityLoanDetail.setNewRecord(true);
+		CommidityLoanDetail commidityLoanDetail = getCommidityLoanDetail();
+		commidityLoanDetail.setNewRecord(true);
 		logger.debug("Leaving");
-		return CommidityLoanDetail;
+		return commidityLoanDetail;
 	}
 
 	/**
@@ -124,10 +124,10 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 	@Override
 	public CommidityLoanDetail getCommidityLoanDetailById(final String id,String itemType, String type) {
 		logger.debug("Entering");
-		CommidityLoanDetail CommidityLoanDetail = new CommidityLoanDetail();
+		CommidityLoanDetail commidityLoanDetail = new CommidityLoanDetail();
 		
-		CommidityLoanDetail.setId(id);
-		CommidityLoanDetail.setItemType(itemType);
+		commidityLoanDetail.setId(id);
+		commidityLoanDetail.setItemType(itemType);
 		
 		StringBuilder selectSql = new StringBuilder("Select LoanRefNumber, ItemType, Quantity, UnitBuyPrice, BuyAmount, UnitSellPrice, SellAmount ");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -139,22 +139,22 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 		selectSql.append(" Where LoanRefNumber =:LoanRefNumber and ItemType=:ItemType");
 		
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanDetail);
 		RowMapper<CommidityLoanDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommidityLoanDetail.class);
 		
 		try{
-			CommidityLoanDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			commidityLoanDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
-			CommidityLoanDetail = null;
+			commidityLoanDetail = null;
 		}
 		logger.debug("Leaving");
-		return CommidityLoanDetail;
+		return commidityLoanDetail;
 	}
 	@Override
 	public List<CommidityLoanDetail> getCommidityLoanDetailByFinRef(final String id, String type) {
 		logger.debug("Entering");
-		CommidityLoanDetail CommidityLoanDetail = new CommidityLoanDetail();
-		CommidityLoanDetail.setId(id);
+		CommidityLoanDetail commidityLoanDetail = new CommidityLoanDetail();
+		commidityLoanDetail.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select LoanRefNumber, ItemType, Quantity, UnitBuyPrice, BuyAmount, UnitSellPrice, SellAmount ");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -166,7 +166,7 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 		selectSql.append(" Where LoanRefNumber =:LoanRefNumber");
 		
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanDetail);
 		RowMapper<CommidityLoanDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommidityLoanDetail.class);
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
@@ -174,20 +174,20 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 	
 	/**
 	 * This method initialise the Record.
-	 * @param CommidityLoanDetail (CommidityLoanDetail)
+	 * @param commidityLoanDetail (CommidityLoanDetail)
  	 * @return CommidityLoanDetail
 	 */
 	@Override
-	public void initialize(CommidityLoanDetail CommidityLoanDetail) {
-		super.initialize(CommidityLoanDetail);
+	public void initialize(CommidityLoanDetail commidityLoanDetail) {
+		super.initialize(commidityLoanDetail);
 	}
 	/**
 	 * This method refresh the Record.
-	 * @param CommidityLoanDetail (CommidityLoanDetail)
+	 * @param commidityLoanDetail (CommidityLoanDetail)
  	 * @return void
 	 */
 	@Override
-	public void refresh(CommidityLoanDetail CommidityLoanDetail) {
+	public void refresh(CommidityLoanDetail commidityLoanDetail) {
 		
 	}
 	
@@ -213,7 +213,7 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(CommidityLoanDetail CommidityLoanDetail,String type) {
+	public void delete(CommidityLoanDetail commidityLoanDetail,String type) {
 		logger.debug("Entering");
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From LMTCommidityLoanDetail");
@@ -221,12 +221,12 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 		deleteSql.append(" Where LoanRefNumber =:LoanRefNumber and ItemType=:ItemType");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanDetail);
 		try{
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
 			logger.error(e);
-			ErrorDetails errorDetails= getError("41006",CommidityLoanDetail.getId() ,CommidityLoanDetail.getUserDetails().getUsrLanguage());
+			ErrorDetails errorDetails= getError("41006",commidityLoanDetail.getId() ,commidityLoanDetail.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {};
 		}
 		logger.debug("Leaving");
@@ -246,7 +246,7 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 	 */
 	
 	@Override
-	public String save(CommidityLoanDetail CommidityLoanDetail,String type) {
+	public String save(CommidityLoanDetail commidityLoanDetail,String type) {
 		logger.debug("Entering");
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into LMTCommidityLoanDetail");
@@ -258,10 +258,10 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanDetail);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-		return CommidityLoanDetail.getId();
+		return commidityLoanDetail.getId();
 	}
 	
 	/**
@@ -279,7 +279,7 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 	
 	@SuppressWarnings("serial")
 	@Override
-	public void update(CommidityLoanDetail CommidityLoanDetail,String type) {
+	public void update(CommidityLoanDetail commidityLoanDetail,String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update LMTCommidityLoanDetail");
@@ -294,12 +294,12 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanDetail);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",CommidityLoanDetail.getId() ,CommidityLoanDetail.getUserDetails().getUsrLanguage());
+			ErrorDetails errorDetails= getError("41004",commidityLoanDetail.getId() ,commidityLoanDetail.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {};
 		}
 		logger.debug("Leaving");
@@ -316,19 +316,17 @@ public class CommidityLoanDetailDAOImpl extends BasisCodeDAO<CommidityLoanDetail
 	@Override
     public void deleteByFinRef(String loanReference, String tableType) {
 		logger.debug("Entering");
-		CommidityLoanDetail CommidityLoanDetail = new CommidityLoanDetail();
-		CommidityLoanDetail.setId(loanReference);
+		CommidityLoanDetail commidityLoanDetail = new CommidityLoanDetail();
+		commidityLoanDetail.setId(loanReference);
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From LMTCommidityLoanDetail");
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" Where LoanRefNumber =:LoanRefNumber ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanDetail);
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	    
     }
-
-	
 }

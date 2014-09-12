@@ -87,12 +87,12 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 	public CommidityLoanHeader getCommidityLoanHeader() {
 		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("CommidityLoanHeader");
-		CommidityLoanHeader CommidityLoanHeader= new CommidityLoanHeader();
+		CommidityLoanHeader commidityLoanHeader= new CommidityLoanHeader();
 		if (workFlowDetails!=null){
-			CommidityLoanHeader.setWorkflowId(workFlowDetails.getWorkFlowId());
+			commidityLoanHeader.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
-		return CommidityLoanHeader;
+		return commidityLoanHeader;
 	}
 
 
@@ -105,10 +105,10 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 	@Override
 	public CommidityLoanHeader getNewCommidityLoanHeader() {
 		logger.debug("Entering");
-		CommidityLoanHeader CommidityLoanHeader = getCommidityLoanHeader();
-		CommidityLoanHeader.setNewRecord(true);
+		CommidityLoanHeader commidityLoanHeader = getCommidityLoanHeader();
+		commidityLoanHeader.setNewRecord(true);
 		logger.debug("Leaving");
-		return CommidityLoanHeader;
+		return commidityLoanHeader;
 	}
 
 	/**
@@ -122,8 +122,8 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 	@Override
 	public CommidityLoanHeader getCommidityLoanHeaderById(final String id, String type) {
 		logger.debug("Entering");
-		CommidityLoanHeader CommidityLoanHeader = new CommidityLoanHeader();
-		CommidityLoanHeader.setId(id);
+		CommidityLoanHeader commidityLoanHeader = new CommidityLoanHeader();
+		commidityLoanHeader.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select LoanRefNumber, BrokerName, SplInstruction ");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -135,34 +135,34 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 		selectSql.append(" Where LoanRefNumber =:LoanRefNumber ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanHeader);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanHeader);
 		RowMapper<CommidityLoanHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommidityLoanHeader.class);
 		
 		try{
-			CommidityLoanHeader = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			commidityLoanHeader = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
-			CommidityLoanHeader = null;
+			commidityLoanHeader = null;
 		}
 		logger.debug("Leaving");
-		return CommidityLoanHeader;
+		return commidityLoanHeader;
 	}
 	
 	/**
 	 * This method initialise the Record.
-	 * @param CommidityLoanHeader (CommidityLoanHeader)
+	 * @param commidityLoanHeader (CommidityLoanHeader)
  	 * @return CommidityLoanHeader
 	 */
 	@Override
-	public void initialize(CommidityLoanHeader CommidityLoanHeader) {
-		super.initialize(CommidityLoanHeader);
+	public void initialize(CommidityLoanHeader commidityLoanHeader) {
+		super.initialize(commidityLoanHeader);
 	}
 	/**
 	 * This method refresh the Record.
-	 * @param CommidityLoanHeader (CommidityLoanHeader)
+	 * @param commidityLoanHeader (CommidityLoanHeader)
  	 * @return void
 	 */
 	@Override
-	public void refresh(CommidityLoanHeader CommidityLoanHeader) {
+	public void refresh(CommidityLoanHeader commidityLoanHeader) {
 		
 	}
 	
@@ -187,7 +187,7 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 	 * @throws DataAccessException
 	 * 
 	 */
-	public int delete(CommidityLoanHeader CommidityLoanHeader,String type) {
+	public int delete(CommidityLoanHeader commidityLoanHeader,String type) {
 		logger.debug("Entering");
 		
 		int recordCount = 0;
@@ -196,7 +196,7 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 		deleteSql.append(" Where LoanRefNumber =:LoanRefNumber");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanHeader);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanHeader);
 		recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return recordCount;
@@ -215,7 +215,7 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 	 * 
 	 */
 	@Override
-	public String save(CommidityLoanHeader CommidityLoanHeader,String type) {
+	public String save(CommidityLoanHeader commidityLoanHeader,String type) {
 		logger.debug("Entering");
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into LMTCommidityLoanHeader");
@@ -227,10 +227,10 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanHeader);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanHeader);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-		return CommidityLoanHeader.getId();
+		return commidityLoanHeader.getId();
 	}
 	
 	/**
@@ -248,7 +248,7 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 	
 	@SuppressWarnings("serial")
 	@Override
-	public void update(CommidityLoanHeader CommidityLoanHeader,String type) {
+	public void update(CommidityLoanHeader commidityLoanHeader,String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update LMTCommidityLoanHeader");
@@ -263,12 +263,12 @@ public class CommidityLoanHeaderDAOImpl extends BasisCodeDAO<CommidityLoanHeader
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(CommidityLoanHeader);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commidityLoanHeader);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",CommidityLoanHeader.getId() ,CommidityLoanHeader.getUserDetails().getUsrLanguage());
+			ErrorDetails errorDetails= getError("41004",commidityLoanHeader.getId() ,commidityLoanHeader.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {};
 		}
 		logger.debug("Leaving");

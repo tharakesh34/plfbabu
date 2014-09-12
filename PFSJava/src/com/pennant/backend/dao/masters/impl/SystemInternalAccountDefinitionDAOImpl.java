@@ -348,9 +348,9 @@ public class SystemInternalAccountDefinitionDAOImpl extends BasisCodeDAO<SystemI
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String SIACode, String userLanguage){
+	private ErrorDetails  getError(String errorId, String sIACode, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = SIACode;
+		parms[1][0] = sIACode;
 		parms[0][0] = PennantJavaUtil.getLabel("label_SIACode")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}

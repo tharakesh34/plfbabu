@@ -392,7 +392,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 	 * @return List<FacilityReferenceDetail>
 	 */
 	@Override
-	public List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, String MandInputInStage,
+	public List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, String mandInputInStage,
 			List<String> groupIds, String type) {
 		logger.debug("Entering");
 		
@@ -415,11 +415,11 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 			selectSql.append(" FinRefId NOT IN (:GroupIds) AND ");
 		}
 		
-		if(MandInputInStage != null){
+		if(mandInputInStage != null){
 			if(type.equals("_AEView")){
-				selectSql.append(" AllowInputInStage like '%" + MandInputInStage + ",%' AND ");
+				selectSql.append(" AllowInputInStage like '%" + mandInputInStage + ",%' AND ");
 			}else{
-				selectSql.append(" MandInputInStage like '%" + MandInputInStage + ",%' AND ");
+				selectSql.append(" MandInputInStage like '%" + mandInputInStage + ",%' AND ");
 			}	
 		}
 		selectSql.append(" IsActive = 1 ");

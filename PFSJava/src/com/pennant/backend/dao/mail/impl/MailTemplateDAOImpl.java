@@ -294,9 +294,9 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String TemplateCode, String userLanguage){
+	private ErrorDetails  getError(String errorId, String templateCode, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = TemplateCode;
+		parms[1][0] = templateCode;
 		parms[0][0] = PennantJavaUtil.getLabel("label_TemplateCode")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
