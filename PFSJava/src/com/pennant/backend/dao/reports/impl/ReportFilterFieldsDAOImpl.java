@@ -158,10 +158,10 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 	 * @return ReportFilterFields
 	 */
 	@Override
-	public List<ReportFilterFields> getReportFilterFieldsByReportId(final long ReportID,String type){
+	public List<ReportFilterFields> getReportFilterFieldsByReportId(final long reportID,String type){
 		logger.debug("Entering");
 		ReportFilterFields reportFilterFields = new ReportFilterFields();
-		reportFilterFields.setReportID(ReportID);
+		reportFilterFields.setReportID(reportID);
 
 		StringBuilder selectSql = new StringBuilder("SELECT ReportID, FieldID, FieldName, FieldType, FieldLabel, FieldDBName," );
 		selectSql.append(" AppUtilMethodName, ModuleName, LovHiddenFieldMethod, LovTextFieldMethod, MultiSelectSearch, FieldLength," );
@@ -254,10 +254,10 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 	/**
 	 * Method for Deletion of ReportConfiguration Related List of ReportFilterFields
 	 */
-	public void deleteByReportId(final long ReportID,String type){
+	public void deleteByReportId(final long reportID,String type){
 		logger.debug("Entering");
 		ReportFilterFields reportFilterFields = new ReportFilterFields();
-		reportFilterFields.setReportID(ReportID);
+		reportFilterFields.setReportID(reportID);
 
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("Delete From ReportFilterFields" );
@@ -364,10 +364,10 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 	}
 
 	
-	private ErrorDetails  getError(String errorId, String ReportID, String userLanguage){
+	private ErrorDetails  getError(String errorId, String reportID, String userLanguage){
 		String[][] parms= new String[2][1]; 
 
-		parms[1][0] = ReportID;
+		parms[1][0] = reportID;
 		parms[0][0] = PennantJavaUtil.getLabel("label_ReportId")+ ":" + parms[1][0]; 
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 				errorId, parms[0],parms[1]), userLanguage);

@@ -343,10 +343,10 @@ public class FinanceMarginSlabDAOImpl extends BasisCodeDAO<FinanceMarginSlab> im
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String FinType, BigDecimal SlabAmount, String userLanguage){
+	private ErrorDetails  getError(String errorId, String finType, BigDecimal slabAmount, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = FinType;
-		parms[1][1] = String.valueOf(SlabAmount);
+		parms[1][0] = finType;
+		parms[1][1] = String.valueOf(slabAmount);
 		
 		parms[0][0] = PennantJavaUtil.getLabel("label_FinType")+ ":" + parms[1][0];
 		parms[0][1] = PennantJavaUtil.getLabel("label_SlabAmount")+ ":" + parms[1][1];

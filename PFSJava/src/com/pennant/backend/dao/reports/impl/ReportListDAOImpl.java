@@ -286,9 +286,9 @@ public class ReportListDAOImpl extends BasisCodeDAO<ReportList> implements Repor
 	 * @param userLanguage (String)
 	 * @return ErrorDetails
 	 */
-	private ErrorDetails  getError(String errorId, String Module, String userLanguage){
+	private ErrorDetails  getError(String errorId, String module, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = Module;
+		parms[1][0] = module;
 		parms[0][0] = PennantJavaUtil.getLabel("label_Module")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}

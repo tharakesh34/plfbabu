@@ -339,10 +339,10 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails  getError(String errorId, String ScoreMetricCode,String scoringGroupCode, String userLanguage){
+	private ErrorDetails  getError(String errorId, String scoreMetricCode,String scoringGroupCode, String userLanguage){
 
 		String[][] parms= new String[2][2];
-		parms[1][0] = ScoreMetricCode;
+		parms[1][0] = scoreMetricCode;
 		parms[1][1] = scoringGroupCode;
 		parms[0][0] = PennantJavaUtil.getLabel("label_ScoringMetricCode")+": "+parms[1][0];
 		parms[0][1] = PennantJavaUtil.getLabel("label_ScoreGroupCode")+": "+parms[1][1];

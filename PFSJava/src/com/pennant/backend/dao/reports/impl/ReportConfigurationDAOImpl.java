@@ -346,10 +346,10 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
     }
 	
 	
-	private ErrorDetails  getError(String errorId, String ReportID, String userLanguage){
+	private ErrorDetails  getError(String errorId, String reportID, String userLanguage){
 		String[][] parms= new String[2][1]; 
 
-		parms[1][0] = ReportID;
+		parms[1][0] = reportID;
 		parms[0][0] = PennantJavaUtil.getLabel("label_ReportID")+ ":" + parms[1][0]; 
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 				errorId, parms[0],parms[1]), userLanguage);

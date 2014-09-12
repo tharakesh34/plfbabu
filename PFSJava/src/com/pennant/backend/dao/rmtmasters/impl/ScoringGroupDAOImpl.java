@@ -291,9 +291,9 @@ public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implem
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String ScoreGroupId, String userLanguage){
+	private ErrorDetails  getError(String errorId, String scoreGroupId, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = ScoreGroupId;
+		parms[1][0] = scoreGroupId;
 		parms[0][0] = PennantJavaUtil.getLabel("label_ScoreGroupCode")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
