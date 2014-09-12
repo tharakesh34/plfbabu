@@ -371,7 +371,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 		ReportConfiguration befReportConfiguration = getReportConfigurationDAO().getReportConfigurationById(
 				reportConfiguration.getId(), "");
 
-		ReportConfiguration old_ReportConfiguration = reportConfiguration.getBefImage();
+		ReportConfiguration oldReportConfiguration = reportConfiguration.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -406,8 +406,8 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_ReportConfiguration != null
-							&& !old_ReportConfiguration.getLastMntOn().equals(
+					if (oldReportConfiguration != null
+							&& !oldReportConfiguration.getLastMntOn().equals(
 									befReportConfiguration.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -424,8 +424,8 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempReportConfiguration != null && old_ReportConfiguration != null
-						&& !old_ReportConfiguration.getLastMntOn().equals(
+				if (tempReportConfiguration != null && oldReportConfiguration != null
+						&& !oldReportConfiguration.getLastMntOn().equals(
 								tempReportConfiguration.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

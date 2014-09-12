@@ -387,7 +387,7 @@ public class AccountEngineRuleServiceImpl extends GenericService<AccountEngineRu
 		}
 		AccountEngineRule befAccountEngineRule = getAccountEngineRuleDAO().getAccountEngineRuleById(accountEngineRule.getId(), "");
 
-		AccountEngineRule old_AccountEngineRule = accountEngineRule.getBefImage();
+		AccountEngineRule oldAccountEngineRule = accountEngineRule.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm= new String[2];
@@ -426,8 +426,8 @@ public class AccountEngineRuleServiceImpl extends GenericService<AccountEngineRu
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_AccountEngineRule != null
-							&& !old_AccountEngineRule.getLastMntOn().equals(
+					if (oldAccountEngineRule != null
+							&& !oldAccountEngineRule.getLastMntOn().equals(
 									befAccountEngineRule.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -444,8 +444,8 @@ public class AccountEngineRuleServiceImpl extends GenericService<AccountEngineRu
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempAccountEngineRule != null && old_AccountEngineRule != null
-						&& !old_AccountEngineRule.getLastMntOn().equals(
+				if (tempAccountEngineRule != null && oldAccountEngineRule != null
+						&& !oldAccountEngineRule.getLastMntOn().equals(
 								tempAccountEngineRule.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

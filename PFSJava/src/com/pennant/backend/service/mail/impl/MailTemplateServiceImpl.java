@@ -345,8 +345,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 			tempMailTemplate = getMailTemplateDAO().getMailTemplateById(mailTemplate.getId(), mailTemplate.getTemplateFor() ,"_Temp");
 		}
 		MailTemplate befMailTemplate= getMailTemplateDAO().getMailTemplateById(mailTemplate.getId(), mailTemplate.getTemplateFor(), "");
-
-		MailTemplate old_MailTemplate= mailTemplate.getBefImage();
+		MailTemplate oldMailTemplate= mailTemplate.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -377,7 +376,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 				if (befMailTemplate ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_MailTemplate!=null && !old_MailTemplate.getLastMntOn().equals(befMailTemplate.getLastMntOn())){
+					if (oldMailTemplate!=null && !oldMailTemplate.getLastMntOn().equals(befMailTemplate.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -391,7 +390,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_MailTemplate!=null && !old_MailTemplate.getLastMntOn().equals(tempMailTemplate.getLastMntOn())){ 
+				if (oldMailTemplate!=null && !oldMailTemplate.getLastMntOn().equals(tempMailTemplate.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

@@ -363,7 +363,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 		CustomerType befCustomerType = getCustomerTypeDAO()
 				.getCustomerTypeById(customerType.getId(), "");
 
-		CustomerType old_CustomerType = customerType.getBefImage();
+		CustomerType oldCustomerType = customerType.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm= new String[1];
@@ -404,8 +404,8 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_CustomerType != null
-							&& !old_CustomerType.getLastMntOn().equals(
+					if (oldCustomerType != null
+							&& !oldCustomerType.getLastMntOn().equals(
 									befCustomerType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -423,8 +423,8 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempCustomerType != null && old_CustomerType != null
-						&& !old_CustomerType.getLastMntOn().equals(
+				if (tempCustomerType != null && oldCustomerType != null
+						&& !oldCustomerType.getLastMntOn().equals(
 								tempCustomerType.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

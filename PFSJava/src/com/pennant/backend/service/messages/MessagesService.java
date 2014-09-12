@@ -16,7 +16,7 @@ import com.pennant.backend.model.messages.UserContactsList;
 public interface MessagesService {
 	
  public List<OfflineUsersMessagesBackup> getOfflineUsersMessagesBackupByUsrId(String usrId);
- public void  saveOfflineUsersMessages(List<OfflineUsersMessagesBackup> OfflineMsgsList);
+ public void  saveOfflineUsersMessages(List<OfflineUsersMessagesBackup> offlineMsgsList);
  public void deleteOfflineUsersMessages(String usrId);
  public UserContactsList getUserContactsList(String usrId,String type );
  public void  saveUserContactsList(UserContactsList userContactsList);

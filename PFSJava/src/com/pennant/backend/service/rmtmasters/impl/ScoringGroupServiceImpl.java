@@ -499,7 +499,7 @@ GenericService<ScoringGroup> implements ScoringGroupService {
 		}
 		ScoringGroup befScoringGroup= getScoringGroupDAO().getScoringGroupById(scoringGroup.getId(), "");
 
-		ScoringGroup old_ScoringGroup= scoringGroup.getBefImage();
+		ScoringGroup oldScoringGroup= scoringGroup.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -531,7 +531,7 @@ GenericService<ScoringGroup> implements ScoringGroupService {
 				if (befScoringGroup ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_ScoringGroup!=null && !old_ScoringGroup.getLastMntOn().equals(befScoringGroup.getLastMntOn())){
+					if (oldScoringGroup!=null && !oldScoringGroup.getLastMntOn().equals(befScoringGroup.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -545,7 +545,7 @@ GenericService<ScoringGroup> implements ScoringGroupService {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_ScoringGroup!=null && !old_ScoringGroup.getLastMntOn().equals(tempScoringGroup.getLastMntOn())){ 
+				if (oldScoringGroup!=null && !oldScoringGroup.getLastMntOn().equals(tempScoringGroup.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

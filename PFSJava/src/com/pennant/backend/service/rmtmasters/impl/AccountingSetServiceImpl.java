@@ -426,7 +426,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 		}
 		AccountingSet befAccountingSet = getAccountingSetDAO().getAccountingSetById(accountingSet.getId(), "");
 
-		AccountingSet old_AccountingSet = accountingSet.getBefImage();
+		AccountingSet oldAccountingSet = accountingSet.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -464,7 +464,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 												// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_AccountingSet != null && !old_AccountingSet.getLastMntOn().equals(befAccountingSet.getLastMntOn())) {
+					if (oldAccountingSet != null && !oldAccountingSet.getLastMntOn().equals(befAccountingSet.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
@@ -479,7 +479,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_AccountingSet != null && !old_AccountingSet.getLastMntOn().equals(tempAccountingSet.getLastMntOn())) {
+				if (oldAccountingSet != null && !oldAccountingSet.getLastMntOn().equals(tempAccountingSet.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}

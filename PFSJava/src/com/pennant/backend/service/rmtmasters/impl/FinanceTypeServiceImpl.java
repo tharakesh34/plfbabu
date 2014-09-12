@@ -425,7 +425,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 		FinanceType befFinanceType = getFinanceTypeDAO().getFinanceTypeByID(financeType.getId(), "");
 
-		FinanceType old_FinanceType = financeType.getBefImage();
+		FinanceType oldFinanceType = financeType.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -479,8 +479,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 				} else {
 
-					if (old_FinanceType != null
-							&& !old_FinanceType.getLastMntOn().equals(befFinanceType.getLastMntOn())) {
+					if (oldFinanceType != null
+							&& !oldFinanceType.getLastMntOn().equals(befFinanceType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
@@ -498,8 +498,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempFinanceType != null && old_FinanceType != null
-						&& !old_FinanceType.getLastMntOn().equals(tempFinanceType.getLastMntOn())) {
+				if (tempFinanceType != null && oldFinanceType != null
+						&& !oldFinanceType.getLastMntOn().equals(tempFinanceType.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
@@ -529,7 +529,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {//TODO check for need of this method--siva
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> MarginSlabauditDetailMap = new HashMap<String, List<AuditDetail>>();
+		HashMap<String, List<AuditDetail>> marginSlabauditDetailMap = new HashMap<String, List<AuditDetail>>();
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		//String auditTranType = "";
 		if (method.equals("saveOrUpdate") || method.equals("doApprove") || method.equals("doReject")) {
@@ -537,7 +537,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				//auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		financeType.setLovDescMarginSlabAuditDetailMap(MarginSlabauditDetailMap);
+		financeType.setLovDescMarginSlabAuditDetailMap(marginSlabauditDetailMap);
 		auditHeader.getAuditDetail().setModelData(financeType);
 		auditHeader.setAuditDetails(auditDetails);
 		return auditHeader;
@@ -782,7 +782,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 		FinTypeAccount befFinTypeAccount= getFinTypeAccountDAO().getFinTypeAccountByID( finTypeAccount, "");
 		
-		FinTypeAccount old_finTypeAccountReference= finTypeAccount.getBefImage();
+		FinTypeAccount oldFinTypeAccountReference= finTypeAccount.getBefImage();
 		
 		
 		String[] errParm= new String[1];
@@ -816,7 +816,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				if (befFinTypeAccount ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
-					if (old_finTypeAccountReference!=null && !old_finTypeAccountReference.getLastMntOn().equals(befFinTypeAccount.getLastMntOn())){
+					if (oldFinTypeAccountReference!=null && !oldFinTypeAccountReference.getLastMntOn().equals(befFinTypeAccount.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
@@ -830,7 +830,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
-				if (old_finTypeAccountReference!=null && !old_finTypeAccountReference.getLastMntOn().equals(tempFinTypeAccount.getLastMntOn())){ 
+				if (oldFinTypeAccountReference!=null && !oldFinTypeAccountReference.getLastMntOn().equals(tempFinTypeAccount.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}

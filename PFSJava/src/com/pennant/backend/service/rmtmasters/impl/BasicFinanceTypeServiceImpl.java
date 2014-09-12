@@ -375,7 +375,7 @@ public class BasicFinanceTypeServiceImpl extends GenericService<BasicFinanceType
 		BasicFinanceType befBasicFinanceType = getBasicFinanceTypeDAO()
 				.getBasicFinanceTypeById(basicFinanceType.getId(), "");
 
-		BasicFinanceType old_BasicFinanceType = basicFinanceType.getBefImage();
+		BasicFinanceType oldBasicFinanceType = basicFinanceType.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm= new String[1];
@@ -420,8 +420,8 @@ public class BasicFinanceTypeServiceImpl extends GenericService<BasicFinanceType
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_BasicFinanceType != null
-							&& !old_BasicFinanceType.getLastMntOn().equals(
+					if (oldBasicFinanceType != null
+							&& !oldBasicFinanceType.getLastMntOn().equals(
 									befBasicFinanceType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -439,8 +439,8 @@ public class BasicFinanceTypeServiceImpl extends GenericService<BasicFinanceType
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempBasicFinanceType != null && old_BasicFinanceType != null
-						&& !old_BasicFinanceType.getLastMntOn().equals(
+				if (tempBasicFinanceType != null && oldBasicFinanceType != null
+						&& !oldBasicFinanceType.getLastMntOn().equals(
 								tempBasicFinanceType.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

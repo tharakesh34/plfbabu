@@ -410,7 +410,7 @@ public class ProductFinanceTypeServiceImpl extends GenericService<ProductFinance
 		ProductFinanceType befProductFinanceType = getProductFinanceTypeDAO()
 		.getProductFinanceTypeById(productFinanceType.getId(), "");
 
-		ProductFinanceType old_ProductFinanceType = productFinanceType
+		ProductFinanceType oldProductFinanceType = productFinanceType
 		.getBefImage();
 
 		String[] valueParm = new String[1];
@@ -452,8 +452,8 @@ public class ProductFinanceTypeServiceImpl extends GenericService<ProductFinance
 					// the main table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				} else {
-					if (old_ProductFinanceType != null
-							&& !old_ProductFinanceType.getLastMntOn().equals(
+					if (oldProductFinanceType != null
+							&& !oldProductFinanceType.getLastMntOn().equals(
 									befProductFinanceType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -471,8 +471,8 @@ public class ProductFinanceTypeServiceImpl extends GenericService<ProductFinance
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempProductFinanceType != null && old_ProductFinanceType != null
-						&& !old_ProductFinanceType.getLastMntOn().equals(
+				if (tempProductFinanceType != null && oldProductFinanceType != null
+						&& !oldProductFinanceType.getLastMntOn().equals(
 								tempProductFinanceType.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

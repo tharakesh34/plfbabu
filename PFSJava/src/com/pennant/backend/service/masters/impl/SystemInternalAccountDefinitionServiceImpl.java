@@ -345,7 +345,7 @@ public class SystemInternalAccountDefinitionServiceImpl extends GenericService<S
 			}
 			SystemInternalAccountDefinition befSystemInternalAccountDefinition= getSystemInternalAccountDefinitionDAO().getSystemInternalAccountDefinitionById(systemInternalAccountDefinition.getId(), "");
 			
-			SystemInternalAccountDefinition old_SystemInternalAccountDefinition= systemInternalAccountDefinition.getBefImage();
+			SystemInternalAccountDefinition oldSystemInternalAccountDefinition= systemInternalAccountDefinition.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -377,7 +377,7 @@ public class SystemInternalAccountDefinitionServiceImpl extends GenericService<S
 					if (befSystemInternalAccountDefinition ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_SystemInternalAccountDefinition!=null && !old_SystemInternalAccountDefinition.getLastMntOn().equals(befSystemInternalAccountDefinition.getLastMntOn())){
+						if (oldSystemInternalAccountDefinition!=null && !oldSystemInternalAccountDefinition.getLastMntOn().equals(befSystemInternalAccountDefinition.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -391,7 +391,7 @@ public class SystemInternalAccountDefinitionServiceImpl extends GenericService<S
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_SystemInternalAccountDefinition!=null && !old_SystemInternalAccountDefinition.getLastMntOn().equals(tempSystemInternalAccountDefinition.getLastMntOn())){ 
+					if (oldSystemInternalAccountDefinition!=null && !oldSystemInternalAccountDefinition.getLastMntOn().equals(tempSystemInternalAccountDefinition.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

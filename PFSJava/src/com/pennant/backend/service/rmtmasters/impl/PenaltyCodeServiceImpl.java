@@ -365,7 +365,7 @@ public class PenaltyCodeServiceImpl extends GenericService<PenaltyCode> implemen
 		PenaltyCode befPenaltyCode = getPenaltyCodeDAO().getPenaltyCodeById(
 				penaltyCode.getId(), "");
 
-		PenaltyCode old_PenaltyCode = penaltyCode.getBefImage();
+		PenaltyCode oldPenaltyCode = penaltyCode.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm= new String[1];
@@ -405,8 +405,8 @@ public class PenaltyCodeServiceImpl extends GenericService<PenaltyCode> implemen
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_PenaltyCode != null
-							&& !old_PenaltyCode.getLastMntOn().equals(
+					if (oldPenaltyCode != null
+							&& !oldPenaltyCode.getLastMntOn().equals(
 									befPenaltyCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -422,8 +422,8 @@ public class PenaltyCodeServiceImpl extends GenericService<PenaltyCode> implemen
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempPenaltyCode != null && old_PenaltyCode != null
-						&& !old_PenaltyCode.getLastMntOn().equals(
+				if (tempPenaltyCode != null && oldPenaltyCode != null
+						&& !oldPenaltyCode.getLastMntOn().equals(
 								tempPenaltyCode.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

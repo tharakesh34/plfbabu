@@ -390,7 +390,7 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 		Notifications befNotifications = getNotificationsDAO().getNotifications(
 				notifications.getRuleCode(), notifications.getRuleModule(),
 				" ");
-		Notifications old_Notifications = notifications.getBefImage();
+		Notifications oldNotifications = notifications.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -431,8 +431,8 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 											// table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				} else {
-					if (old_Notifications != null
-							&& !old_Notifications.getLastMntOn().equals(
+					if (oldNotifications != null
+							&& !oldNotifications.getLastMntOn().equals(
 									befNotifications.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -448,8 +448,8 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 				
-				if ( tempNotifications != null &&  old_Notifications != null
-						&& !old_Notifications.getLastMntOn().equals(
+				if ( tempNotifications != null &&  oldNotifications != null
+						&& !oldNotifications.getLastMntOn().equals(
 								tempNotifications.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

@@ -60,7 +60,7 @@ public class TransactionEntryValidation {
 		}
 		
 		TransactionEntry beftransactionEntry= getFeeTierDAO().getTransactionEntryById(transactionEntry.getId(),transactionEntry.getTransOrder(),"");
-		TransactionEntry old_transactionEntry= transactionEntry.getBefImage();
+		TransactionEntry oldTransactionEntry= transactionEntry.getBefImage();
 		
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
@@ -99,7 +99,7 @@ public class TransactionEntryValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_transactionEntry!=null && !old_transactionEntry.getLastMntOn().equals(beftransactionEntry.getLastMntOn())){
+					if (oldTransactionEntry!=null && !oldTransactionEntry.getLastMntOn().equals(beftransactionEntry.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -114,7 +114,7 @@ public class TransactionEntryValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempFeeTier!=null  && old_transactionEntry!=null && !old_transactionEntry.getLastMntOn().equals(tempFeeTier.getLastMntOn())){ 
+				if (tempFeeTier!=null  && oldTransactionEntry!=null && !oldTransactionEntry.getLastMntOn().equals(tempFeeTier.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 

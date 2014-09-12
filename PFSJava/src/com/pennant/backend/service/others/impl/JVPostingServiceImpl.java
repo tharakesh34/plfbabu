@@ -442,8 +442,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		String tranType = "";
 
 		// Checking if it is Re-Posting Process, If Yes then Update record in Main Table otherwise Insert.
-		JVPosting RePosting = getjVPostingDAO().getJVPostingById(jVPosting.getBatchReference(), "_AView");
-		if (RePosting != null) {
+		JVPosting rePosting = getjVPostingDAO().getJVPostingById(jVPosting.getBatchReference(), "_AView");
+		if (rePosting != null) {
 			jVPosting.setVersion(jVPosting.getVersion()+1);
 			getjVPostingDAO().update(jVPosting, "");
 		} else {
@@ -582,7 +582,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		}
 		JVPosting befJVPosting = getJVPostingDAO().getJVPostingById(jVPosting.getId(), "");
 
-		JVPosting old_JVPosting = jVPosting.getBefImage();
+		JVPosting oldJVPosting = jVPosting.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -621,8 +621,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					        new ErrorDetails(PennantConstants.KEY_FIELD,
 					                "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_JVPosting != null
-					        && !old_JVPosting.getLastMntOn().equals(befJVPosting.getLastMntOn())) {
+					if (oldJVPosting != null
+					        && !oldJVPosting.getLastMntOn().equals(befJVPosting.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
@@ -642,8 +642,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					        new ErrorDetails(PennantConstants.KEY_FIELD,
 					                "41005", errParm, valueParm), usrLanguage));
 				}
-				if (old_JVPosting != null
-				        && !StringUtils.equals(old_JVPosting.getLastMntOn().toString(),
+				if (oldJVPosting != null
+				        && !StringUtils.equals(oldJVPosting.getLastMntOn().toString(),
 				                tempJVPosting.getLastMntOn().toString())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 					        new ErrorDetails(PennantConstants.KEY_FIELD,

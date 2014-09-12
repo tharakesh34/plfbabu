@@ -359,7 +359,7 @@ public class PenaltyServiceImpl extends GenericService<Penalty> implements Penal
 		Penalty befPenalty = getPenaltyDAO()
 				.getPenaltyById(penalty.getId(), "");
 
-		Penalty old_Penalty = penalty.getBefImage();
+		Penalty oldPenalty = penalty.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm= new String[2];
@@ -397,8 +397,8 @@ public class PenaltyServiceImpl extends GenericService<Penalty> implements Penal
 				if (befPenalty == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
-					if (old_Penalty != null
-							&& !old_Penalty.getLastMntOn().equals(
+					if (oldPenalty != null
+							&& !oldPenalty.getLastMntOn().equals(
 									befPenalty.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -412,8 +412,8 @@ public class PenaltyServiceImpl extends GenericService<Penalty> implements Penal
 				if (tempPenalty == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
-				if (tempPenalty != null && old_Penalty != null
-						&& !old_Penalty.getLastMntOn().equals(
+				if (tempPenalty != null && oldPenalty != null
+						&& !oldPenalty.getLastMntOn().equals(
 								tempPenalty.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

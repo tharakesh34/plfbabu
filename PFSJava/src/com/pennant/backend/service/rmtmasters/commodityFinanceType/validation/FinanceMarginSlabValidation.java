@@ -71,7 +71,7 @@ public class FinanceMarginSlabValidation {
 		}
 		FinanceMarginSlab befFinanceMarginSlab= getFinanceMarginSlabDAO().getFinanceMarginSlabById(financeMarginSlab.getId(), "");
 
-		FinanceMarginSlab old_FinanceMarginSlab= financeMarginSlab.getBefImage();
+		FinanceMarginSlab oldFinanceMarginSlab= financeMarginSlab.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -110,7 +110,7 @@ public class FinanceMarginSlabValidation {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_FinanceMarginSlab!=null && !old_FinanceMarginSlab.getLastMntOn().equals(befFinanceMarginSlab.getLastMntOn())){
+					if (oldFinanceMarginSlab!=null && !oldFinanceMarginSlab.getLastMntOn().equals(befFinanceMarginSlab.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
@@ -127,8 +127,8 @@ public class FinanceMarginSlabValidation {
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (tempFinanceMarginSlab != null && old_FinanceMarginSlab!=null 
-						&& !old_FinanceMarginSlab.getLastMntOn().equals(tempFinanceMarginSlab.getLastMntOn())){ 
+				if (tempFinanceMarginSlab != null && oldFinanceMarginSlab!=null 
+						&& !oldFinanceMarginSlab.getLastMntOn().equals(tempFinanceMarginSlab.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}

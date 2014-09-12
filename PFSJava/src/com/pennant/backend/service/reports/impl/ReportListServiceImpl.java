@@ -334,7 +334,7 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 		}
 		ReportList befReportList= getReportListDAO().getReportListById(reportList.getId(), "");
 
-		ReportList old_ReportList= reportList.getBefImage();
+		ReportList oldReportList= reportList.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -370,7 +370,7 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_ReportList!=null && !old_ReportList.getLastMntOn().equals(befReportList.getLastMntOn())){
+					if (oldReportList!=null && !oldReportList.getLastMntOn().equals(befReportList.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
@@ -387,7 +387,7 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_ReportList!=null && !old_ReportList.getLastMntOn().equals(tempReportList.getLastMntOn())){ 
+				if (oldReportList!=null && !oldReportList.getLastMntOn().equals(tempReportList.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}

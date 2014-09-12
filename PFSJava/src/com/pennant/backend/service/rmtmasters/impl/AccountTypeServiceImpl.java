@@ -365,7 +365,7 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 		AccountType befAccountType = getAccountTypeDAO().getAccountTypeById(
 				accountType.getId(), "");
 
-		AccountType old_AccountType = accountType.getBefImage();
+		AccountType oldAccountType = accountType.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -401,8 +401,8 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 				if (befAccountType == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
-					if (old_AccountType != null
-							&& !old_AccountType.getLastMntOn().equals(
+					if (oldAccountType != null
+							&& !oldAccountType.getLastMntOn().equals(
 									befAccountType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -416,8 +416,8 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 				if (tempAccountType == null) { // if records not exists in the WorkFlow table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
-				if (tempAccountType != null && old_AccountType != null
-						&& !old_AccountType.getLastMntOn().equals(
+				if (tempAccountType != null && oldAccountType != null
+						&& !oldAccountType.getLastMntOn().equals(
 								tempAccountType.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
