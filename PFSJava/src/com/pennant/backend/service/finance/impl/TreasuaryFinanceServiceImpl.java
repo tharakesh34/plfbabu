@@ -654,7 +654,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 		InvestmentFinHeader befTreasuaryFinance= getTreasuaryFinHeaderDAO().getTreasuaryFinHeaderById(treasuaryFinance.getId(), "");
 
-		InvestmentFinHeader old_TreasuaryFinance= treasuaryFinance.getBefImage();
+		InvestmentFinHeader oldTreasuaryFinance= treasuaryFinance.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -686,7 +686,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 				if (befTreasuaryFinance ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_TreasuaryFinance!=null && !old_TreasuaryFinance.getLastMntOn().equals(befTreasuaryFinance.getLastMntOn())){
+					if (oldTreasuaryFinance!=null && !oldTreasuaryFinance.getLastMntOn().equals(befTreasuaryFinance.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -700,7 +700,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 				
-				if (old_TreasuaryFinance!=null && !old_TreasuaryFinance.getLastMntOn().equals(tempTreasuaryFinance.getLastMntOn())){ 
+				if (oldTreasuaryFinance!=null && !oldTreasuaryFinance.getLastMntOn().equals(tempTreasuaryFinance.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
@@ -1465,7 +1465,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		}
 		FinanceMain befFinanceMain= getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", false);
 
-		FinanceMain old_FinanceMain= financeMain.getBefImage();
+		FinanceMain oldFinanceMain= financeMain.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -1497,7 +1497,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 				if (befFinanceMain ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_FinanceMain!=null && !old_FinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())){
+					if (oldFinanceMain!=null && !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -1511,7 +1511,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_FinanceMain!=null && !old_FinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())){ 
+				if (oldFinanceMain!=null && !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
@@ -1569,8 +1569,8 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 				Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 				
 				//Fetch Existing data before Modification
-				FinScheduleData old_finSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);
-				old_finSchdData.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+				FinScheduleData oldFinSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);
+				oldFinSchdData.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 
 				//Create log entry for Action for Schedule Modification
 				FinLogEntryDetail entryDetail = new FinLogEntryDetail();
@@ -1582,7 +1582,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 				long logKey = getFinLogEntryDetailDAO().save(entryDetail);
 
 				//Save Schedule Details For Future Modifications
-				listSave(old_finSchdData, "_Log", isWIF, logKey);
+				listSave(oldFinSchdData, "_Log", isWIF, logKey);
 			}
 
 			listDeletion(financeDetail.getFinScheduleData(), tableType, isWIF);

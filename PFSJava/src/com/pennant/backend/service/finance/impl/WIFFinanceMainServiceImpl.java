@@ -393,7 +393,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 			
 			FinanceMain befWIFFinanceMain= getWIFFinanceMainDAO().getWIFFinanceMainById(wIFFinanceMain.getId(), "");
 			
-			FinanceMain old_WIFFinanceMain= wIFFinanceMain.getBefImage();
+			FinanceMain oldWIFFinanceMain= wIFFinanceMain.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -425,7 +425,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 					if (befWIFFinanceMain ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_WIFFinanceMain!=null && !old_WIFFinanceMain.getLastMntOn().equals(befWIFFinanceMain.getLastMntOn())){
+						if (oldWIFFinanceMain!=null && !oldWIFFinanceMain.getLastMntOn().equals(befWIFFinanceMain.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -439,7 +439,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_WIFFinanceMain!=null && !old_WIFFinanceMain.getLastMntOn().equals(tempWIFFinanceMain.getLastMntOn())){ 
+					if (oldWIFFinanceMain!=null && !oldWIFFinanceMain.getLastMntOn().equals(tempWIFFinanceMain.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

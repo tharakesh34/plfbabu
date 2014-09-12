@@ -389,7 +389,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		}
 		JointAccountDetail befJountAccountDetail= getJountAccountDetailDAO().getJountAccountDetailById(jountAccountDetail.getId(), "");
 
-		JointAccountDetail old_JountAccountDetail= jountAccountDetail.getBefImage();
+		JointAccountDetail oldJountAccountDetail= jountAccountDetail.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -421,7 +421,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				if (befJountAccountDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_JountAccountDetail!=null && !old_JountAccountDetail.getLastMntOn().equals(befJountAccountDetail.getLastMntOn())){
+					if (oldJountAccountDetail!=null && !oldJountAccountDetail.getLastMntOn().equals(befJountAccountDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -435,7 +435,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_JountAccountDetail!=null && !old_JountAccountDetail.getLastMntOn().equals(tempJountAccountDetail.getLastMntOn())){ 
+				if (oldJountAccountDetail!=null && !oldJountAccountDetail.getLastMntOn().equals(tempJountAccountDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
@@ -548,7 +548,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		JointAccountDetail jountAccountDetail = (JointAccountDetail) auditDetail.getModelData();
 		JointAccountDetail tempJountAccountDetail = null;
 		JointAccountDetail befJountAccountDetail = null;
-		JointAccountDetail old_JountAccountDetail = null;
+		JointAccountDetail oldJountAccountDetail = null;
 		
 
 		if (jountAccountDetail.isWorkflow()) {
@@ -557,7 +557,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		} 
 		
 		befJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailByRefId(jountAccountDetail.getFinReference(), jountAccountDetail.getCustCIF(), "");
-		old_JountAccountDetail = jountAccountDetail.getBefImage();
+		oldJountAccountDetail = jountAccountDetail.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
@@ -596,8 +596,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_JountAccountDetail != null
-							&& !old_JountAccountDetail.getLastMntOn().equals(
+					if (oldJountAccountDetail != null
+							&& !oldJountAccountDetail.getLastMntOn().equals(
 									befJountAccountDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -619,8 +619,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				}
 
 				if (tempJountAccountDetail != null
-						&& old_JountAccountDetail != null
-						&& !old_JountAccountDetail.getLastMntOn().equals(
+						&& oldJountAccountDetail != null
+						&& !oldJountAccountDetail.getLastMntOn().equals(
 								tempJountAccountDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
@@ -738,7 +738,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		BigDecimal currentExposer = BigDecimal.ZERO;
 		BigDecimal overDueAmount = BigDecimal.ZERO;
 		
-		int DFT_CURR_EDIT_FIELD = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR_EDIT_FIELD").toString());
+		int dftCurntEdtField = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR_EDIT_FIELD").toString());
 		
 		if(exposerList != null && !exposerList.isEmpty()) {
 			for (FinanceExposure financeExposure : exposerList) {
@@ -749,7 +749,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				}
 			}
 		}
-		exposerSummaryDetail.setCcyEditField(DFT_CURR_EDIT_FIELD);
+		exposerSummaryDetail.setCcyEditField(dftCurntEdtField);
 		exposerSummaryDetail.setFinanceAmtinBaseCCY(finaceAmout);
 		exposerSummaryDetail.setCurrentExpoSureinBaseCCY(currentExposer);
 		exposerSummaryDetail.setOverdueAmtBaseCCY(overDueAmount);

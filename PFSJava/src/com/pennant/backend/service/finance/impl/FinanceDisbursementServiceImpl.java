@@ -348,7 +348,7 @@ public class FinanceDisbursementServiceImpl extends GenericService<FinanceDisbur
 			}
 			FinanceDisbursement befFinanceDisbursement= getFinanceDisbursementDAO().getFinanceDisbursementById(financeDisbursement.getId(), "",isWIF);
 			
-			FinanceDisbursement old_FinanceDisbursement= financeDisbursement.getBefImage();
+			FinanceDisbursement oldFinanceDisbursement= financeDisbursement.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -380,7 +380,7 @@ public class FinanceDisbursementServiceImpl extends GenericService<FinanceDisbur
 					if (befFinanceDisbursement ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_FinanceDisbursement!=null && !old_FinanceDisbursement.getLastMntOn().equals(befFinanceDisbursement.getLastMntOn())){
+						if (oldFinanceDisbursement!=null && !oldFinanceDisbursement.getLastMntOn().equals(befFinanceDisbursement.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -394,7 +394,7 @@ public class FinanceDisbursementServiceImpl extends GenericService<FinanceDisbur
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_FinanceDisbursement!=null && !old_FinanceDisbursement.getLastMntOn().equals(tempFinanceDisbursement.getLastMntOn())){ 
+					if (oldFinanceDisbursement!=null && !oldFinanceDisbursement.getLastMntOn().equals(tempFinanceDisbursement.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

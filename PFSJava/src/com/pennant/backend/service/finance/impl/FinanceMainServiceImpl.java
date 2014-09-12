@@ -384,7 +384,7 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		}
 		FinanceMain befFinanceMain= getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "",isWIF);
 
-		FinanceMain old_FinanceMain= financeMain.getBefImage();
+		FinanceMain oldFinanceMain= financeMain.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -416,7 +416,7 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 				if (befFinanceMain ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_FinanceMain!=null && !old_FinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())){
+					if (oldFinanceMain!=null && !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -430,7 +430,7 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_FinanceMain!=null && !old_FinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())){ 
+				if (oldFinanceMain!=null && !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

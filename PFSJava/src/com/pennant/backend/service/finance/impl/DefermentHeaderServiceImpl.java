@@ -348,7 +348,7 @@ public class DefermentHeaderServiceImpl extends GenericService<DefermentHeader> 
 			}
 			DefermentHeader befDefermentHeader= getDefermentHeaderDAO().getDefermentHeaderById(defermentHeader.getId(), "",isWIF);
 			
-			DefermentHeader old_DefermentHeader= defermentHeader.getBefImage();
+			DefermentHeader oldDefermentHeader= defermentHeader.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -380,7 +380,7 @@ public class DefermentHeaderServiceImpl extends GenericService<DefermentHeader> 
 					if (befDefermentHeader ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_DefermentHeader!=null && !old_DefermentHeader.getLastMntOn().equals(befDefermentHeader.getLastMntOn())){
+						if (oldDefermentHeader!=null && !oldDefermentHeader.getLastMntOn().equals(befDefermentHeader.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -394,7 +394,7 @@ public class DefermentHeaderServiceImpl extends GenericService<DefermentHeader> 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_DefermentHeader!=null && !old_DefermentHeader.getLastMntOn().equals(tempDefermentHeader.getLastMntOn())){ 
+					if (oldDefermentHeader!=null && !oldDefermentHeader.getLastMntOn().equals(tempDefermentHeader.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

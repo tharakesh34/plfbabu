@@ -348,7 +348,7 @@ public class RepayInstructionServiceImpl extends GenericService<RepayInstruction
 			}
 			RepayInstruction befRepayInstruction= getRepayInstructionDAO().getRepayInstructionById(repayInstruction.getId(), "", isWIF);
 			
-			RepayInstruction old_RepayInstruction= repayInstruction.getBefImage();
+			RepayInstruction oldRepayInstruction= repayInstruction.getBefImage();
 			
 			
 			String[] errParm= new String[1];
@@ -380,7 +380,7 @@ public class RepayInstructionServiceImpl extends GenericService<RepayInstruction
 					if (befRepayInstruction ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_RepayInstruction!=null && !old_RepayInstruction.getLastMntOn().equals(befRepayInstruction.getLastMntOn())){
+						if (oldRepayInstruction!=null && !oldRepayInstruction.getLastMntOn().equals(befRepayInstruction.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -394,7 +394,7 @@ public class RepayInstructionServiceImpl extends GenericService<RepayInstruction
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_RepayInstruction!=null && !old_RepayInstruction.getLastMntOn().equals(tempRepayInstruction.getLastMntOn())){ 
+					if (oldRepayInstruction!=null && !oldRepayInstruction.getLastMntOn().equals(tempRepayInstruction.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

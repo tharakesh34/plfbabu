@@ -305,7 +305,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		getFinanceCheckListReferenceById(financeCheckListReference.getId(),financeCheckListReference.getQuestionId(),
 				financeCheckListReference.getAnswer(), "");
 
-		FinanceCheckListReference old_FinanceCheckListReference= financeCheckListReference.getBefImage();
+		FinanceCheckListReference oldFinanceCheckListReference= financeCheckListReference.getBefImage();
 
 
 		String[] errParm= new String[3];
@@ -341,8 +341,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_FinanceCheckListReference!=null 
-							&& !old_FinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
+					if (oldFinanceCheckListReference!=null 
+							&& !oldFinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -358,8 +358,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
-				if (tempFinanceCheckListReference!=null && old_FinanceCheckListReference!=null 
-						&& !old_FinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
+				if (tempFinanceCheckListReference!=null && oldFinanceCheckListReference!=null 
+						&& !oldFinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}

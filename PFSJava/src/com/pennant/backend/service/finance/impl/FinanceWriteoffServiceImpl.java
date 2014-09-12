@@ -595,7 +595,7 @@ public class FinanceWriteoffServiceImpl  extends GenericService<FinanceMain>  im
 			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "_Temp", false);
 		}
 		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", false);
-		FinanceMain old_FinanceMain = financeMain.getBefImage();
+		FinanceMain oldFinanceMain = financeMain.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -637,7 +637,7 @@ public class FinanceWriteoffServiceImpl  extends GenericService<FinanceMain>  im
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_FinanceMain != null && !old_FinanceMain.getLastMntOn()
+					if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn()
 							.equals(befFinanceMain.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -657,8 +657,8 @@ public class FinanceWriteoffServiceImpl  extends GenericService<FinanceMain>  im
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempFinanceMain != null && old_FinanceMain != null
-						&& !old_FinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
+				if (tempFinanceMain != null && oldFinanceMain != null
+						&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

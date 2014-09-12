@@ -378,7 +378,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		BigDecimal currentExposer = BigDecimal.ZERO;
 		BigDecimal overDueAmount = BigDecimal.ZERO;
 		
-		int DFT_CURR_EDIT_FIELD = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR_EDIT_FIELD").toString());
+		int dftCurntEdtField = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR_EDIT_FIELD").toString());
 		
 		if(exposerList != null && !exposerList.isEmpty()) {
 			for (FinanceExposure financeExposure : exposerList) {
@@ -389,7 +389,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 				}
 			}
 		}
-		exposerSummaryDetail.setCcyEditField(DFT_CURR_EDIT_FIELD);
+		exposerSummaryDetail.setCcyEditField(dftCurntEdtField);
 		exposerSummaryDetail.setFinanceAmtinBaseCCY(finaceAmout);
 		exposerSummaryDetail.setCurrentExpoSureinBaseCCY(currentExposer);
 		exposerSummaryDetail.setOverdueAmtBaseCCY(overDueAmount);
@@ -452,7 +452,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		GuarantorDetail befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailById(
 				guarantorDetail.getId(), "");
 
-		GuarantorDetail old_GuarantorDetail = guarantorDetail.getBefImage();
+		GuarantorDetail oldGuarantorDetail = guarantorDetail.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -489,8 +489,8 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_GuarantorDetail != null
-							&& !old_GuarantorDetail.getLastMntOn().equals(
+					if (oldGuarantorDetail != null
+							&& !oldGuarantorDetail.getLastMntOn().equals(
 									befGuarantorDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -511,8 +511,8 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_GuarantorDetail != null
-						&& !old_GuarantorDetail.getLastMntOn().equals(
+				if (oldGuarantorDetail != null
+						&& !oldGuarantorDetail.getLastMntOn().equals(
 								tempGuarantorDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
@@ -637,7 +637,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		GuarantorDetail guarantorDetail = (GuarantorDetail) auditDetail.getModelData();
 		GuarantorDetail tempGuarantorDetail = null;
 		GuarantorDetail befGuarantorDetail = null;
-		GuarantorDetail old_GuarantorDetail = null;
+		GuarantorDetail oldGuarantorDetail = null;
 
 		String finReference = guarantorDetail.getFinReference();
 		String guarantorCIF = guarantorDetail.getGuarantorCIF();
@@ -656,7 +656,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		}
 
 		befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(finReference, keyField, "");
-		old_GuarantorDetail = guarantorDetail.getBefImage();
+		oldGuarantorDetail = guarantorDetail.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
@@ -696,8 +696,8 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_GuarantorDetail != null
-							&& !old_GuarantorDetail.getLastMntOn().equals(
+					if (oldGuarantorDetail != null
+							&& !oldGuarantorDetail.getLastMntOn().equals(
 									befGuarantorDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -719,8 +719,8 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 				}
 
 				if (tempGuarantorDetail != null
-						&& old_GuarantorDetail != null
-						&& !old_GuarantorDetail.getLastMntOn().equals(
+						&& oldGuarantorDetail != null
+						&& !oldGuarantorDetail.getLastMntOn().equals(
 								tempGuarantorDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
@@ -799,10 +799,10 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 	}
 	
 	@Override
-	public String getWorstStaus(long CustID){
+	public String getWorstStaus(long custID){
 		String status="";
 		try {
-	        status = getCustomerDAO().getCustWorstStsDesc(CustID);
+	        status = getCustomerDAO().getCustWorstStsDesc(custID);
         } catch (Exception e) {
 	     logger.debug(e);
         }

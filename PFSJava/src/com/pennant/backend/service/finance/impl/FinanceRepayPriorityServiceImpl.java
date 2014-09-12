@@ -349,7 +349,7 @@ public class FinanceRepayPriorityServiceImpl extends GenericService<FinanceRepay
 			}
 			FinanceRepayPriority befFinanceRepayPriority= getFinanceRepayPriorityDAO().getFinanceRepayPriorityById(financeRepayPriority.getId(), "");
 			
-			FinanceRepayPriority old_FinanceRepayPriority= financeRepayPriority.getBefImage();
+			FinanceRepayPriority oldFinanceRepayPriority= financeRepayPriority.getBefImage();
 			List<FinanceRepayPriority>    priority  =getFinanceRepayPriorityDAO().getFinanceRpyPriorByPriority(financeRepayPriority.getFinPriority(), "_View");
 			
 			String[] errParm= new String[1];
@@ -382,7 +382,7 @@ public class FinanceRepayPriorityServiceImpl extends GenericService<FinanceRepay
 					if (befFinanceRepayPriority ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_FinanceRepayPriority!=null && !old_FinanceRepayPriority.getLastMntOn().equals(befFinanceRepayPriority.getLastMntOn())){
+						if (oldFinanceRepayPriority!=null && !oldFinanceRepayPriority.getLastMntOn().equals(befFinanceRepayPriority.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -396,7 +396,7 @@ public class FinanceRepayPriorityServiceImpl extends GenericService<FinanceRepay
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_FinanceRepayPriority!=null && !old_FinanceRepayPriority.getLastMntOn().equals(tempFinanceRepayPriority.getLastMntOn())){ 
+					if (oldFinanceRepayPriority!=null && !oldFinanceRepayPriority.getLastMntOn().equals(tempFinanceRepayPriority.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

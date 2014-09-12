@@ -288,22 +288,22 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 		if (finScoreHeaderList != null && !finScoreHeaderList.isEmpty()) {
 		
 			for (FinanceScoreHeader header : finScoreHeaderList) {
-				List<FinanceScoreDetail> ScoreDetailList  = null;
+				List<FinanceScoreDetail> scoreDetailList  = null;
 				
 				if (financeDetail.getScoreDetailListMap().containsKey(header.getHeaderId())) {
-					ScoreDetailList = financeDetail.getScoreDetailListMap().get(header.getHeaderId());
+					scoreDetailList = financeDetail.getScoreDetailListMap().get(header.getHeaderId());
 				}
 				
 				header.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 				getFinanceScoreHeaderDAO().deleteHeader(header, "");
 				long headerId = getFinanceScoreHeaderDAO().saveHeader(header, "");
 				
-				if (ScoreDetailList!=null) {
-					for (FinanceScoreDetail detail : ScoreDetailList) {
+				if (scoreDetailList!=null) {
+					for (FinanceScoreDetail detail : scoreDetailList) {
 						detail.setHeaderId(headerId);
 					}
-					getFinanceScoreHeaderDAO().deleteDetailList(ScoreDetailList, "");
-					getFinanceScoreHeaderDAO().saveDetailList(ScoreDetailList, "");
+					getFinanceScoreHeaderDAO().deleteDetailList(scoreDetailList, "");
+					getFinanceScoreHeaderDAO().saveDetailList(scoreDetailList, "");
 				}
 			}
 		}

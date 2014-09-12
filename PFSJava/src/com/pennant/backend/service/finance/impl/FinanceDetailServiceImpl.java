@@ -842,10 +842,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if(!isWIF && tableType.equals("") && financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
 				//Fetch Existing data before Modification
 				
-				FinScheduleData old_finSchdData = null;
+				FinScheduleData oldFinSchdData = null;
 				if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
-					old_finSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);
-					old_finSchdData.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+					oldFinSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);
+					oldFinSchdData.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 				}
 
 				//Create log entry for Action for Schedule Modification
@@ -859,7 +859,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				//Save Schedule Details For Future Modifications
 				if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
-					listSave(old_finSchdData, "_Log", false, logKey);
+					listSave(oldFinSchdData, "_Log", false, logKey);
 				}
 			}
 
@@ -1268,10 +1268,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if(!isWIF){
 					
 					//Fetch Existing data before Modification
-					FinScheduleData old_finSchdData = null;
+					FinScheduleData oldFinSchdData = null;
 					if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
-						old_finSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);
-						old_finSchdData.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+						oldFinSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);
+						oldFinSchdData.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 					}
 
 					//Create log entry for Action for Schedule Modification
@@ -1286,7 +1286,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 					//Save Schedule Details For Future Modifications
 					if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
-						listSave(old_finSchdData, "_Log", isWIF, logKey);
+						listSave(oldFinSchdData, "_Log", isWIF, logKey);
 					}
 				}
 				
@@ -1666,7 +1666,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "_Temp", isWIF);
 		}
 		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", isWIF);
-		FinanceMain old_FinanceMain = financeMain.getBefImage();
+		FinanceMain oldFinanceMain = financeMain.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -1708,7 +1708,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_FinanceMain != null && !old_FinanceMain.getLastMntOn()
+					if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn()
 							.equals(befFinanceMain.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -1728,8 +1728,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempFinanceMain != null && old_FinanceMain != null
-						&& !old_FinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
+				if (tempFinanceMain != null && oldFinanceMain != null
+						&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -2687,8 +2687,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy("");
 		//Check Customer has Past Due or not and Stop Proceeding further if exist
-		long ODDays = getFinODDetailsDAO().checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
-		if(ODDays > 0){
+		long oDDays = getFinODDetailsDAO().checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
+		if(oDDays > 0){
 			financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(PennantConstants.WF_PAST_DUE);
 			logger.debug("Leaving");
 		}
@@ -2705,10 +2705,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy("");
 		//Check Customer has Past Due or not and Stop Proceeding further if exist
-		long ODDays = getFinODDetailsDAO().checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
+		long oDDays = getFinODDetailsDAO().checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
 		int allowedDays = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("MAX_ALLOW_ODDAYS").toString());
-		if(ODDays >  0 ){
-			if(ODDays <= allowedDays){
+		if(oDDays >  0 ){
+			if(oDDays <= allowedDays){
 				financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(PennantConstants.WF_PAST_DUE_OVERRIDE);
 			}else{
 				financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(PennantConstants.WF_PAST_DUE);

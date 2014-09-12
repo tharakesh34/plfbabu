@@ -285,16 +285,16 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 	/**
 	 * 
 	 * Validate the Customer Eligibility Details
-	 * @param FinanceEligibilityDetailList
+	 * @param financeEligibilityDetailList
 	 * @param auditDetail
 	 * @param errParm
 	 * @param valueParm
 	 * @param usrLanguage
 	 */
 	@Override
-	public void validate(List<FinanceEligibilityDetail> FinanceEligibilityDetailList, AuditDetail auditDetail, String[] errParm, String[] valueParm, String usrLanguage) {
+	public void validate(List<FinanceEligibilityDetail> financeEligibilityDetailList, AuditDetail auditDetail, String[] errParm, String[] valueParm, String usrLanguage) {
 		// Eligibility
-		if (!isCustEligible(FinanceEligibilityDetailList)) {
+		if (!isCustEligible(financeEligibilityDetailList)) {
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,  "S0007", errParm, valueParm), usrLanguage));
 		}
 	}

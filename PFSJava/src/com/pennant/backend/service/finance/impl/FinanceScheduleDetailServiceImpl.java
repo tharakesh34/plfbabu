@@ -352,7 +352,7 @@ public class FinanceScheduleDetailServiceImpl extends GenericService<FinanceSche
 		}
 		FinanceScheduleDetail befWIFFinanceScheduleDetail= getFinanceScheduleDetailDAO().getFinanceScheduleDetailById(financeScheduleDetail.getId(), new Date(),"",isWIF);
 
-		FinanceScheduleDetail old_WIFFinanceScheduleDetail= financeScheduleDetail.getBefImage();
+		FinanceScheduleDetail oldWIFFinanceScheduleDetail= financeScheduleDetail.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -384,7 +384,7 @@ public class FinanceScheduleDetailServiceImpl extends GenericService<FinanceSche
 				if (befWIFFinanceScheduleDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_WIFFinanceScheduleDetail!=null && !old_WIFFinanceScheduleDetail.getLastMntOn().equals(befWIFFinanceScheduleDetail.getLastMntOn())){
+					if (oldWIFFinanceScheduleDetail!=null && !oldWIFFinanceScheduleDetail.getLastMntOn().equals(befWIFFinanceScheduleDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -398,7 +398,7 @@ public class FinanceScheduleDetailServiceImpl extends GenericService<FinanceSche
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_WIFFinanceScheduleDetail!=null && !old_WIFFinanceScheduleDetail.getLastMntOn().equals(tempWIFFinanceScheduleDetail.getLastMntOn())){ 
+				if (oldWIFFinanceScheduleDetail!=null && !oldWIFFinanceScheduleDetail.getLastMntOn().equals(tempWIFFinanceScheduleDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
