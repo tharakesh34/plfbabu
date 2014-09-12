@@ -315,7 +315,7 @@ public class CommodityBrokerDetailServiceImpl extends GenericService<CommodityBr
 		}
 		CommodityBrokerDetail befCommodityBrokerDetail= getCommodityBrokerDetailDAO().getCommodityBrokerDetailById(commodityBrokerDetail.getId(), "");
 
-		CommodityBrokerDetail old_CommodityBrokerDetail= commodityBrokerDetail.getBefImage();
+		CommodityBrokerDetail oldCommodityBrokerDetail= commodityBrokerDetail.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -347,7 +347,7 @@ public class CommodityBrokerDetailServiceImpl extends GenericService<CommodityBr
 				if (befCommodityBrokerDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_CommodityBrokerDetail!=null && !old_CommodityBrokerDetail.getLastMntOn().equals(befCommodityBrokerDetail.getLastMntOn())){
+					if (oldCommodityBrokerDetail!=null && !oldCommodityBrokerDetail.getLastMntOn().equals(befCommodityBrokerDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -361,7 +361,7 @@ public class CommodityBrokerDetailServiceImpl extends GenericService<CommodityBr
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_CommodityBrokerDetail!=null && !old_CommodityBrokerDetail.getLastMntOn().equals(tempCommodityBrokerDetail.getLastMntOn())){ 
+				if (oldCommodityBrokerDetail!=null && !oldCommodityBrokerDetail.getLastMntOn().equals(tempCommodityBrokerDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

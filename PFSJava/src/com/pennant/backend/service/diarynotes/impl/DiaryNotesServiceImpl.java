@@ -350,7 +350,7 @@ public class DiaryNotesServiceImpl implements DiaryNotesService {
 			}
 			DiaryNotes befDiaryNotes= getDiaryNotesDAO().getDiaryNotesById(diaryNotes.getId(), "");
 			
-			DiaryNotes old_DiaryNotes= diaryNotes.getBefImage();
+			DiaryNotes oldDiaryNotes= diaryNotes.getBefImage();
 			
 			
 			String[] errParm= new String[4];
@@ -385,7 +385,7 @@ public class DiaryNotesServiceImpl implements DiaryNotesService {
 					if (befDiaryNotes ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 					}else{
-						if (old_DiaryNotes!=null && !old_DiaryNotes.getLastMntOn().equals(befDiaryNotes.getLastMntOn())){
+						if (oldDiaryNotes!=null && !oldDiaryNotes.getLastMntOn().equals(befDiaryNotes.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
 							}else{
@@ -398,7 +398,7 @@ public class DiaryNotesServiceImpl implements DiaryNotesService {
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 					
-					if (old_DiaryNotes!=null && !old_DiaryNotes.getLastMntOn().equals(tempDiaryNotes.getLastMntOn())){ 
+					if (oldDiaryNotes!=null && !oldDiaryNotes.getLastMntOn().equals(tempDiaryNotes.getLastMntOn())){ 
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					}
 				}

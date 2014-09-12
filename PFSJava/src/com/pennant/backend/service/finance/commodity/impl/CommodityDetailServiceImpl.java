@@ -316,7 +316,7 @@ public class CommodityDetailServiceImpl extends GenericService<CommodityDetail> 
 		}
 		CommodityDetail befCommodityDetail= getCommodityDetailDAO().getCommodityDetailById(commodityDetail, "");
 
-		CommodityDetail old_CommodityDetail= commodityDetail.getBefImage();
+		CommodityDetail oldCommodityDetail= commodityDetail.getBefImage();
 
 
 		String[] errParm= new String[2];
@@ -352,7 +352,7 @@ public class CommodityDetailServiceImpl extends GenericService<CommodityDetail> 
 				if (befCommodityDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_CommodityDetail!=null && !old_CommodityDetail.getLastMntOn()
+					if (oldCommodityDetail!=null && !oldCommodityDetail.getLastMntOn()
 							.equals(befCommodityDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								       .equalsIgnoreCase(PennantConstants.TRAN_DEL)){
@@ -371,7 +371,7 @@ public class CommodityDetailServiceImpl extends GenericService<CommodityDetail> 
 							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_CommodityDetail!=null && !old_CommodityDetail.getLastMntOn().equals(tempCommodityDetail.getLastMntOn())){ 
+				if (oldCommodityDetail!=null && !oldCommodityDetail.getLastMntOn().equals(tempCommodityDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil
 							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}

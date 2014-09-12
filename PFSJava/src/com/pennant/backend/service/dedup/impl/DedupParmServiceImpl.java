@@ -191,8 +191,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return DedupParm
 	 */
 	@Override
-	public DedupParm getDedupParmById(String id,String QueryModule,String QuerySubCode) {
-		return getDedupParmDAO().getDedupParmByID(id,QueryModule,QuerySubCode,"_View");
+	public DedupParm getDedupParmById(String id,String queryModule,String querySubCode) {
+		return getDedupParmDAO().getDedupParmByID(id,queryModule,querySubCode,"_View");
 	}
 
 	/**
@@ -432,7 +432,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		DedupParm befDedupParm = getDedupParmDAO().getDedupParmByID(
 				dedupParm.getId(),dedupParm.getQueryModule(),dedupParm.getQuerySubCode(), "");
 
-		DedupParm old_DedupParm = dedupParm.getBefImage();
+		DedupParm oldDedupParm = dedupParm.getBefImage();
 
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
@@ -471,8 +471,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 											// table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				} else {
-					if (old_DedupParm != null
-							&& !old_DedupParm.getLastMntOn().equals(
+					if (oldDedupParm != null
+							&& !oldDedupParm.getLastMntOn().equals(
 									befDedupParm.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -489,8 +489,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (old_DedupParm != null
-						&& !old_DedupParm.getLastMntOn().equals(
+				if (oldDedupParm != null
+						&& !oldDedupParm.getLastMntOn().equals(
 								tempDedupParm.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}

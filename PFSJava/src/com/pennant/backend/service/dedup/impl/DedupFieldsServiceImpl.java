@@ -362,7 +362,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 		DedupFields befDedupFields = getDedupFieldsDAO().getDedupFieldsByID(
 				dedupFields.getId(), "");
 
-		DedupFields old_DedupFields = dedupFields.getBefImage();
+		DedupFields oldDedupFields = dedupFields.getBefImage();
 
 		String[] parm = new String[4];
 		parm[0] = PennantJavaUtil.getLabel("label_FieldName");
@@ -405,8 +405,8 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 					auditDetail.setErrorDetail(getDedupFieldsDAO()
 							.getErrorDetail("41002", usrLanguage, parm));
 				} else {
-					if (old_DedupFields != null
-							&& !old_DedupFields.getLastMntOn().equals(
+					if (oldDedupFields != null
+							&& !oldDedupFields.getLastMntOn().equals(
 									befDedupFields.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -427,8 +427,8 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 							.getErrorDetail("41005", usrLanguage, parm));
 				}
 
-				if (old_DedupFields != null
-						&& !old_DedupFields.getLastMntOn().equals(
+				if (oldDedupFields != null
+						&& !oldDedupFields.getLastMntOn().equals(
 								tempDedupFields.getLastMntOn())) {
 					auditDetail.setErrorDetail(getDedupFieldsDAO()
 							.getErrorDetail("41005", usrLanguage, parm));
@@ -471,8 +471,8 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	}
 
 	@Override
-	public List<BuilderTable> getFieldList(String QueryModule) {
-		return dedupFieldsDAO.getFieldList(QueryModule);
+	public List<BuilderTable> getFieldList(String queryModule) {
+		return dedupFieldsDAO.getFieldList(queryModule);
 	}
 
 

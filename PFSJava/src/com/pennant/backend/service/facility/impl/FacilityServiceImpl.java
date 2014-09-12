@@ -684,7 +684,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 		Facility befFacility = getFacilityDAO().getFacilityById(facility.getId(), "");
 
-		Facility old_Facility = facility.getBefImage();
+		Facility oldFacility = facility.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -719,8 +719,8 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 					        "41002", errParm, valueParm));
 				} else {
-					if (old_Facility != null
-					        && !old_Facility.getLastMntOn().equals(befFacility.getLastMntOn())) {
+					if (oldFacility != null
+					        && !oldFacility.getLastMntOn().equals(befFacility.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
@@ -738,8 +738,8 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 					        "41005", errParm, valueParm));
 				}
 
-				if (old_Facility != null
-				        && !old_Facility.getLastMntOn().equals(tempFacility.getLastMntOn())) {
+				if (oldFacility != null
+				        && !oldFacility.getLastMntOn().equals(tempFacility.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 					        "41005", errParm, valueParm));
 				}
@@ -1527,7 +1527,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			}
 			DocumentDetails befDocumentDetails= getDocumentDetailsDAO().getDocumentDetailsById( documentDetails.getId(), "");
 
-			DocumentDetails old_DocumentDetails= documentDetails.getBefImage();
+			DocumentDetails oldDocumentDetails= documentDetails.getBefImage();
 
 
 			String[] errParm= new String[1];
@@ -1559,7 +1559,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 					if (befDocumentDetails ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 					}else{
-						if (old_DocumentDetails!=null && !old_DocumentDetails.getLastMntOn().equals(befDocumentDetails.getLastMntOn())){
+						if (oldDocumentDetails!=null && !oldDocumentDetails.getLastMntOn().equals(befDocumentDetails.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 							}else{
@@ -1573,7 +1573,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 
-					if (old_DocumentDetails!=null && !old_DocumentDetails.getLastMntOn().equals(tempDocumentDetails.getLastMntOn())){ 
+					if (oldDocumentDetails!=null && !oldDocumentDetails.getLastMntOn().equals(tempDocumentDetails.getLastMntOn())){ 
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 					}
 				}
@@ -1733,7 +1733,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 		FinanceCheckListReference befFinanceCheckListReference= getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceById( finCheckRef.getFinReference(),finCheckRef.getQuestionId(),finCheckRef.getAnswer(), "");
 		
-		FinanceCheckListReference old_FinanceCheckListReference= finCheckRef.getBefImage();
+		FinanceCheckListReference oldFinanceCheckListReference= finCheckRef.getBefImage();
 		
 		
 		String[] errParm= new String[1];
@@ -1765,7 +1765,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (befFinanceCheckListReference ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
-					if (old_FinanceCheckListReference!=null && !old_FinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
+					if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
@@ -1779,7 +1779,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
-				if (old_FinanceCheckListReference!=null && !old_FinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
+				if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
@@ -1800,20 +1800,20 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 		if (finScoreHeaderList != null && !finScoreHeaderList.isEmpty()) {
 			for (FinanceScoreHeader header : finScoreHeaderList) {
-				List<FinanceScoreDetail> ScoreDetailList  = null;
+				List<FinanceScoreDetail> scoreDetailList  = null;
 				if (facility.getScoreDetailListMap().containsKey(header.getHeaderId())) {
-					ScoreDetailList = facility.getScoreDetailListMap().get(header.getHeaderId());
+					scoreDetailList = facility.getScoreDetailListMap().get(header.getHeaderId());
 				}
 				header.setFinReference(facility.getCAFReference());
 				getFinanceScoreHeaderDAO().deleteHeader(header, "");
 				long headerId = getFinanceScoreHeaderDAO().saveHeader(header, "");
 
-				if (ScoreDetailList != null) {
-					for (FinanceScoreDetail detail : ScoreDetailList) {
+				if (scoreDetailList != null) {
+					for (FinanceScoreDetail detail : scoreDetailList) {
 						detail.setHeaderId(headerId);
 					}
-					getFinanceScoreHeaderDAO().deleteDetailList(ScoreDetailList, "");
-					getFinanceScoreHeaderDAO().saveDetailList(ScoreDetailList, "");
+					getFinanceScoreHeaderDAO().deleteDetailList(scoreDetailList, "");
+					getFinanceScoreHeaderDAO().saveDetailList(scoreDetailList, "");
 				}
 			}
 		}
@@ -1964,7 +1964,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 		Collateral befCollateral= getCollateralDAO().getCollateralById( collateral.getCAFReference(),collateral.getReference(), "");
 		
-		Collateral old_FinanceCheckListReference= collateral.getBefImage();
+		Collateral oldFinanceCheckListReference= collateral.getBefImage();
 		
 		
 		String[] errParm= new String[1];
@@ -1996,7 +1996,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (befCollateral ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
-					if (old_FinanceCheckListReference!=null && !old_FinanceCheckListReference.getLastMntOn().equals(befCollateral.getLastMntOn())){
+					if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(befCollateral.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
@@ -2010,7 +2010,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
-				if (old_FinanceCheckListReference!=null && !old_FinanceCheckListReference.getLastMntOn().equals(tempCollateral.getLastMntOn())){ 
+				if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(tempCollateral.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
@@ -2170,7 +2170,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 		FacilityDetail befFacilityDetail= getFacilityDetailDAO().getFacilityDetailById(facilityDetail.getFacilityRef(), "");
 		
-		FacilityDetail old_FacilityDetail= facilityDetail.getBefImage();
+		FacilityDetail oldFacilityDetail= facilityDetail.getBefImage();
 		
 		
 		String[] errParm= new String[1];
@@ -2202,7 +2202,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (befFacilityDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
-					if (old_FacilityDetail!=null && !old_FacilityDetail.getLastMntOn().equals(befFacilityDetail.getLastMntOn())){
+					if (oldFacilityDetail!=null && !oldFacilityDetail.getLastMntOn().equals(befFacilityDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
@@ -2216,7 +2216,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
-				if (old_FacilityDetail!=null && !old_FacilityDetail.getLastMntOn().equals(tempFacilityDetail.getLastMntOn())){ 
+				if (oldFacilityDetail!=null && !oldFacilityDetail.getLastMntOn().equals(tempFacilityDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}
@@ -2376,7 +2376,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 		CustomerRating befCustomerRating= getCustomerRatingDAO().getCustomerRatingByID(customerRating.getCustID(), customerRating.getCustRatingType(), "");
 		
-		CustomerRating old_CustomerRating= customerRating.getBefImage();
+		CustomerRating oldCustomerRating= customerRating.getBefImage();
 		
 		
 		String[] errParm= new String[1];
@@ -2408,7 +2408,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (befCustomerRating ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
-					if (old_CustomerRating!=null && !old_CustomerRating.getLastMntOn().equals(befCustomerRating.getLastMntOn())){
+					if (oldCustomerRating!=null && !oldCustomerRating.getLastMntOn().equals(befCustomerRating.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
@@ -2422,7 +2422,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
-				if (old_CustomerRating!=null && !old_CustomerRating.getLastMntOn().equals(tempCustomerRating.getLastMntOn())){ 
+				if (oldCustomerRating!=null && !oldCustomerRating.getLastMntOn().equals(tempCustomerRating.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}

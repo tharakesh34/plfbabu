@@ -18,7 +18,7 @@ public interface EligibilityDetailService {
 	public boolean getEligibilityStatus(FinanceEligibilityDetail financeEligibilityDetail, String finCcy, BigDecimal finAmount);
 	public boolean isCustEligible(List<FinanceEligibilityDetail> financeEligibilityDetails);
 	public List<FinanceEligibilityDetail> getFinElgDetailList(String finReference);
-	public void validate(List<FinanceEligibilityDetail> FinanceEligibilityDetailList, AuditDetail auditDetail, String[] errParm, String[] valueParm, String usrLanguage);
+	public void validate(List<FinanceEligibilityDetail> financeEligibilityDetailList, AuditDetail auditDetail, String[] errParm, String[] valueParm, String usrLanguage);
 	public void saveOrUpdate(FinanceDetail financeDetail);
 	public RuleExecutionUtil getRuleExecutionUtil();
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil);
