@@ -61,7 +61,7 @@ public interface SecurityRightDAO {
 
 	public int getCountAllSecurityRights();
 
-	public SecurityRight getRightById(Long right_id);
+	public SecurityRight getRightById(Long rightID);
 
 	public List<SecurityRight> getRightsByUser(SecurityUser user);
 

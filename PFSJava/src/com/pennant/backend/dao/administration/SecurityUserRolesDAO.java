@@ -64,11 +64,11 @@ public interface  SecurityUserRolesDAO {
 	
 	public long save(SecurityUserRoles securityUserRoles,String type);
 	
-	public int  getRoleIdCount(long RoleId);
+	public int  getRoleIdCount(long roleId);
 	
 	public List<SecurityRole> getRolesByUserId(long userId,boolean assigned);
 	
-	public SecurityUserRoles getUserRolesByUsrAndRoleIds(long userId,long RoleId);
+	public SecurityUserRoles getUserRolesByUsrAndRoleIds(long userId,long roleID);
 	
 	public int getUserIdCount(long userId);
 	

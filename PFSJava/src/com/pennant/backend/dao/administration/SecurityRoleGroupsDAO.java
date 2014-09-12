@@ -60,9 +60,9 @@ public interface  SecurityRoleGroupsDAO {
 
 	public void deleteByRoleID(SecurityRoleGroups securityRoleGroups);
 
-	public int getRoleIdCount(long RoleId);
+	public int getRoleIdCount(long roleID);
 
-	public int getGroupIdCount(long GroupId);
+	public int getGroupIdCount(long groupId);
 
 	public List<SecurityGroup> getGroupsByRoleId(long roleId, boolean isAssigned);
 

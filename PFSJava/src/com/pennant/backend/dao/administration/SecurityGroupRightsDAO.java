@@ -58,9 +58,9 @@ public interface SecurityGroupRightsDAO {
 
 	public void delete(SecurityGroupRights securityGroupRights);
 
-	public int getGroupIdCount(long GroupId);
+	public int getGroupIdCount(long groupId);
 
-	public int getRightIdCount(long RightID);
+	public int getRightIdCount(long rightID);
 
 	public List<SecurityRight> getRightsByGroupId(long grpID, boolean isAssigned);
 
