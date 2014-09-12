@@ -107,7 +107,7 @@ public class MortgageLoanDetailValidation {
 		MortgageLoanDetail befMortgageLoanDetail= getMortgageLoanDetailDAO().getMortgageLoanDetailById(
 				mortgageLoanDetail.getId(), "");
 
-		MortgageLoanDetail old_MortgageLoanDetail= mortgageLoanDetail.getBefImage();
+		MortgageLoanDetail oldMortgageLoanDetail= mortgageLoanDetail.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -143,7 +143,7 @@ public class MortgageLoanDetailValidation {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_MortgageLoanDetail!=null && !old_MortgageLoanDetail.getLastMntOn().equals(
+					if (oldMortgageLoanDetail!=null && !oldMortgageLoanDetail.getLastMntOn().equals(
 							befMortgageLoanDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)){
@@ -162,7 +162,7 @@ public class MortgageLoanDetailValidation {
 							PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (tempMortgageLoanDetail!=null  && old_MortgageLoanDetail!=null && !old_MortgageLoanDetail.getLastMntOn().equals(
+				if (tempMortgageLoanDetail!=null  && oldMortgageLoanDetail!=null && !oldMortgageLoanDetail.getLastMntOn().equals(
 						tempMortgageLoanDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));

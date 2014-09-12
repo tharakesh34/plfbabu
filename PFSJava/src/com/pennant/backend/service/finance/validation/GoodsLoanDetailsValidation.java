@@ -103,7 +103,7 @@ public class GoodsLoanDetailsValidation {
 		}
 		GoodsLoanDetail befGoodsLoanDetail= getGoodsLoanDetailDAO().getGoodsLoanDetailById(goodsLoanDetail.getLoanRefNumber(),goodsLoanDetail.getItemNumber(), "");
 		
-		GoodsLoanDetail old_GoodsLoanDetail= goodsLoanDetail.getBefImage();
+		GoodsLoanDetail oldGoodsLoanDetail= goodsLoanDetail.getBefImage();
 		
 		
 		String[] errParm= new String[1];
@@ -135,7 +135,7 @@ public class GoodsLoanDetailsValidation {
 				if (befGoodsLoanDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_GoodsLoanDetail!=null && !old_GoodsLoanDetail.getLastMntOn().equals(befGoodsLoanDetail.getLastMntOn())){
+					if (oldGoodsLoanDetail!=null && !oldGoodsLoanDetail.getLastMntOn().equals(befGoodsLoanDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -149,7 +149,7 @@ public class GoodsLoanDetailsValidation {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 				
-				if (tempGoodsLoanDetail!=null && old_GoodsLoanDetail!=null && !old_GoodsLoanDetail.getLastMntOn().equals(tempGoodsLoanDetail.getLastMntOn())){ 
+				if (tempGoodsLoanDetail!=null && oldGoodsLoanDetail!=null && !oldGoodsLoanDetail.getLastMntOn().equals(tempGoodsLoanDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

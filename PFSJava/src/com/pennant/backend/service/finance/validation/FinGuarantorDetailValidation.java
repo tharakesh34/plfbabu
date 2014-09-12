@@ -58,7 +58,7 @@ public class FinGuarantorDetailValidation {
 		GuarantorDetail befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(
 		        guarantorDetail.getFinReference(), guarantorDetail.getGuarantorCIF(), "");
 
-		GuarantorDetail old_GuarantorDetail = guarantorDetail.getBefImage();
+		GuarantorDetail oldGuarantorDetail = guarantorDetail.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
@@ -97,8 +97,8 @@ public class FinGuarantorDetailValidation {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_GuarantorDetail != null
-					        && !old_GuarantorDetail.getLastMntOn().equals(
+					if (oldGuarantorDetail != null
+					        && !oldGuarantorDetail.getLastMntOn().equals(
 					                befGuarantorDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -120,8 +120,8 @@ public class FinGuarantorDetailValidation {
 				}
 
 				if (tempGuarantorDetail != null
-				        && old_GuarantorDetail != null
-				        && !old_GuarantorDetail.getLastMntOn().equals(
+				        && oldGuarantorDetail != null
+				        && !oldGuarantorDetail.getLastMntOn().equals(
 				                tempGuarantorDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));

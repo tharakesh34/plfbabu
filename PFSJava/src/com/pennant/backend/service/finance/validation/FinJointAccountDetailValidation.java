@@ -66,7 +66,7 @@ public class FinJointAccountDetailValidation {
 		JointAccountDetail befJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailByRefId(
 		        jountAccountDetail.getFinReference(), jountAccountDetail.getCustCIF(), "");
 
-		JointAccountDetail old_JountAccountDetail = jountAccountDetail.getBefImage();
+		JointAccountDetail oldJountAccountDetail = jountAccountDetail.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
@@ -105,8 +105,8 @@ public class FinJointAccountDetailValidation {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_JountAccountDetail != null
-					        && !old_JountAccountDetail.getLastMntOn().equals(
+					if (oldJountAccountDetail != null
+					        && !oldJountAccountDetail.getLastMntOn().equals(
 					                befJountAccountDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -128,8 +128,8 @@ public class FinJointAccountDetailValidation {
 				}
 
 				if (tempJountAccountDetail != null
-				        && old_JountAccountDetail != null
-				        && !old_JountAccountDetail.getLastMntOn().equals(
+				        && oldJountAccountDetail != null
+				        && !oldJountAccountDetail.getLastMntOn().equals(
 				                tempJountAccountDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));

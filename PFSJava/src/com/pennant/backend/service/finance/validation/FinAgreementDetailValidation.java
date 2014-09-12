@@ -62,7 +62,7 @@ public class FinAgreementDetailValidation {
 		FinAgreementDetail befFinAgreementDetail= getFinAgreementDetailDAO().getFinAgreementDetailById(
 				agreementDetail.getFinReference(),agreementDetail.getAgrId(),"");
 		
-		FinAgreementDetail old_FinAgreementDetail= agreementDetail.getBefImage();
+		FinAgreementDetail oldFinAgreementDetail= agreementDetail.getBefImage();
 		
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -99,7 +99,7 @@ public class FinAgreementDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_FinAgreementDetail!=null && !old_FinAgreementDetail.getLastMntOn().equals(befFinAgreementDetail.getLastMntOn())){
+					if (oldFinAgreementDetail!=null && !oldFinAgreementDetail.getLastMntOn().equals(befFinAgreementDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -113,7 +113,7 @@ public class FinAgreementDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempFinAgreementDetail!=null  && old_FinAgreementDetail!=null && !old_FinAgreementDetail.getLastMntOn().equals(tempFinAgreementDetail.getLastMntOn())){ 
+				if (tempFinAgreementDetail!=null  && oldFinAgreementDetail!=null && !oldFinAgreementDetail.getLastMntOn().equals(tempFinAgreementDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}

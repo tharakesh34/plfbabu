@@ -100,7 +100,7 @@ public class FinContractAssetDetailValidation {
 		}
 		ContractorAssetDetail befContractorAssetDetail = getContractorAssetDetailDAO().getContractorAssetDetailById( contractorAssetDetail.getFinReference(), contractorAssetDetail.getContractorId(), "");
 		
-		ContractorAssetDetail old_ContractorAssetDetail = contractorAssetDetail.getBefImage();
+		ContractorAssetDetail oldContractorAssetDetail = contractorAssetDetail.getBefImage();
 		
 		
 		String[] errParm= new String[1];
@@ -132,7 +132,7 @@ public class FinContractAssetDetailValidation {
 				if (befContractorAssetDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_ContractorAssetDetail!=null && !old_ContractorAssetDetail.getLastMntOn().equals(befContractorAssetDetail.getLastMntOn())){
+					if (oldContractorAssetDetail!=null && !oldContractorAssetDetail.getLastMntOn().equals(befContractorAssetDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -146,7 +146,7 @@ public class FinContractAssetDetailValidation {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 				
-				if (tempContractorAssetDetail!=null && old_ContractorAssetDetail != null && ! old_ContractorAssetDetail.getLastMntOn().equals(tempContractorAssetDetail.getLastMntOn())){ 
+				if (tempContractorAssetDetail!=null && oldContractorAssetDetail != null && ! oldContractorAssetDetail.getLastMntOn().equals(tempContractorAssetDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

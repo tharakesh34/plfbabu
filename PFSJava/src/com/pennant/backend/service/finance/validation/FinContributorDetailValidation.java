@@ -61,7 +61,7 @@ public class FinContributorDetailValidation {
 		
 		FinContributorDetail befFinContributorDetail= getFinContributorDetailDAO().getFinContributorDetailByID(
 				contributorDetail.getFinReference(),contributorDetail.getContributorBaseNo(),"");
-		FinContributorDetail old_FinContributorDetail= contributorDetail.getBefImage();
+		FinContributorDetail oldFinContributorDetail= contributorDetail.getBefImage();
 		
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -98,7 +98,7 @@ public class FinContributorDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_FinContributorDetail!=null && !old_FinContributorDetail.getLastMntOn().equals(befFinContributorDetail.getLastMntOn())){
+					if (oldFinContributorDetail!=null && !oldFinContributorDetail.getLastMntOn().equals(befFinContributorDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -112,7 +112,7 @@ public class FinContributorDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempFinContributorDetail!=null  && old_FinContributorDetail!=null && !old_FinContributorDetail.getLastMntOn().equals(tempFinContributorDetail.getLastMntOn())){ 
+				if (tempFinContributorDetail!=null  && oldFinContributorDetail!=null && !oldFinContributorDetail.getLastMntOn().equals(tempFinContributorDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}

@@ -62,7 +62,7 @@ public class FinBillingDetailValidation {
 		
 		FinBillingDetail befFinBillingDetail= getFinBillingDetailDAO().getFinBillingDetailByID(
 				billingDetail.getFinReference(),billingDetail.getProgClaimDate(),"");
-		FinBillingDetail old_FinBillingDetail= billingDetail.getBefImage();
+		FinBillingDetail oldFinBillingDetail= billingDetail.getBefImage();
 		
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -99,7 +99,7 @@ public class FinBillingDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}else{
 
-					if (old_FinBillingDetail!=null && !old_FinBillingDetail.getLastMntOn().equals(befFinBillingDetail.getLastMntOn())){
+					if (oldFinBillingDetail!=null && !oldFinBillingDetail.getLastMntOn().equals(befFinBillingDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 						}else{
@@ -113,7 +113,7 @@ public class FinBillingDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 
-				if (tempFinBillingDetail!=null  && old_FinBillingDetail!=null && !old_FinBillingDetail.getLastMntOn().equals(tempFinBillingDetail.getLastMntOn())){ 
+				if (tempFinBillingDetail!=null  && oldFinBillingDetail!=null && !oldFinBillingDetail.getLastMntOn().equals(tempFinBillingDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 				}
 			}

@@ -105,7 +105,7 @@ public class HomeLoanDetailValidation {
 		HomeLoanDetail befHomeLoanDetail = getHomeLoanDetailDAO().getHomeLoanDetailByID(
 				homeLoanDetail.getId(), "");
 
-		HomeLoanDetail old_HomeLoanDetail = homeLoanDetail.getBefImage();
+		HomeLoanDetail oldHomeLoanDetail = homeLoanDetail.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -152,8 +152,8 @@ public class HomeLoanDetailValidation {
 							new ErrorDetails(PennantConstants.KEY_FIELD,
 									"41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_HomeLoanDetail != null
-							&& !old_HomeLoanDetail.getLastMntOn().equals(
+					if (oldHomeLoanDetail != null
+							&& !oldHomeLoanDetail.getLastMntOn().equals(
 									befHomeLoanDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
@@ -174,8 +174,8 @@ public class HomeLoanDetailValidation {
 									"41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempHomeLoanDetail != null && old_HomeLoanDetail != null
-						&& !old_HomeLoanDetail.getLastMntOn().equals(
+				if (tempHomeLoanDetail != null && oldHomeLoanDetail != null
+						&& !oldHomeLoanDetail.getLastMntOn().equals(
 								tempHomeLoanDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD,
