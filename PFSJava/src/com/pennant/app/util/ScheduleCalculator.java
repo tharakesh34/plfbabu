@@ -75,9 +75,9 @@ public class ScheduleCalculator {
 	private BigDecimal expectedResult = BigDecimal.ZERO;
 	private BigDecimal comparisionAmount = BigDecimal.ZERO;
 	private BigDecimal comparisionToAmount = BigDecimal.ZERO;
-	private BigDecimal defPrincipalBal = new BigDecimal(0.0);
-	private BigDecimal defProfitBal = new BigDecimal(0.0);
-	private BigDecimal totalEarlyPaidBal = new BigDecimal(0.0);
+	private BigDecimal defPrincipalBal = BigDecimal.ZERO;
+	private BigDecimal defProfitBal = BigDecimal.ZERO;
+	private BigDecimal totalEarlyPaidBal = BigDecimal.ZERO;
 	private BigDecimal number2 = new BigDecimal(2);
 
 	private boolean isExactMatch = false;
@@ -96,9 +96,7 @@ public class ScheduleCalculator {
 	private Date recalStartDate = new Date();
 	private Date recalEndDate = new Date();
 	private Date lastRepayDate = null;
-	private Date curBussniessDate = (Date) SystemParameterDetails
-	        .getSystemParameterValue("APP_DATE");
-	
+	private Date curBussniessDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 	private String defermentMethod = SystemParameterDetails.getSystemParameterValue("DEF_METHOD").toString();
 	
 	private FinScheduleData finScheduleData;
@@ -122,9 +120,9 @@ public class ScheduleCalculator {
 		        mrgRate, calculatedRate, isCalSchedule).getFinScheduleData();
 	}
 
-	public static FinScheduleData changeRepay(FinScheduleData finScheduleData, BigDecimal Amount,
+	public static FinScheduleData changeRepay(FinScheduleData finScheduleData, BigDecimal amount,
 	        String schdMethod) {
-		return new ScheduleCalculator("procChangeRepay", finScheduleData, Amount, schdMethod, null)
+		return new ScheduleCalculator("procChangeRepay", finScheduleData, amount, schdMethod, null)
 		        .getFinScheduleData();
 	}
 
@@ -135,8 +133,8 @@ public class ScheduleCalculator {
 	}
 
 	public static FinScheduleData addDisbursement(FinScheduleData finScheduleData,
-	        BigDecimal Amount, String schdMethod, BigDecimal feeChargeAmt) {
-		return new ScheduleCalculator("procAddDisbursement", finScheduleData, Amount, schdMethod,
+	        BigDecimal amount, String schdMethod, BigDecimal feeChargeAmt) {
+		return new ScheduleCalculator("procAddDisbursement", finScheduleData, amount, schdMethod,
 		        feeChargeAmt).getFinScheduleData();
 	}
 	
@@ -144,9 +142,9 @@ public class ScheduleCalculator {
 		return new ScheduleCalculator("procAddDatedSchedule", finScheduleData).getFinScheduleData();
 	}
 
-	public static FinScheduleData addRepayment(FinScheduleData finScheduleData, BigDecimal Amount,
+	public static FinScheduleData addRepayment(FinScheduleData finScheduleData, BigDecimal amount,
 	        String schdMethod) {
-		return new ScheduleCalculator("procAddRepayment", finScheduleData, Amount, schdMethod, null)
+		return new ScheduleCalculator("procAddRepayment", finScheduleData, amount, schdMethod, null)
 		        .getFinScheduleData();
 	}
 
@@ -348,7 +346,7 @@ public class ScheduleCalculator {
 					finScheduleData.getFinanceMain().setAdjTerms(1);;
 				}
 		
-				setFinScheduleData(procChangeRepay(finScheduleData, new BigDecimal(0), finScheduleData.getFinanceMain().getScheduleMethod()));
+				setFinScheduleData(procChangeRepay(finScheduleData, BigDecimal.ZERO, finScheduleData.getFinanceMain().getScheduleMethod()));
             } else {
             	setFinScheduleData(procAddDeferment(finScheduleData));
 			}
@@ -1746,7 +1744,7 @@ public class ScheduleCalculator {
 	 * =================================================================================================================
 	 */
 
-	private FinScheduleData procAddDisbursement(FinScheduleData finScheduleData, BigDecimal Amount,
+	private FinScheduleData procAddDisbursement(FinScheduleData finScheduleData, BigDecimal amount,
 	        String addTermAfter, BigDecimal feeChargeAmt) {
 		logger.debug("Entering");
 
@@ -1775,7 +1773,7 @@ public class ScheduleCalculator {
 			FinanceDisbursement curDisb = finScheduleData.getDisbursementDetails().get(i);
 			if (curDisb.getDisbDate().compareTo(evtFromDate) == 0) {
 				isDisburseFoundInDB = true;
-				curDisb.setDisbAmount(curDisb.getDisbAmount().add(Amount));
+				curDisb.setDisbAmount(curDisb.getDisbAmount().add(amount));
 				curDisb.setFeeChargeAmt(curDisb.getFeeChargeAmt().add(feeChargeAmt));
 				break;
 			}
@@ -1783,7 +1781,7 @@ public class ScheduleCalculator {
 
 		if (!isDisburseFoundInDB) {
 			FinanceDisbursement dd = new FinanceDisbursement();
-			dd.setDisbAmount(Amount);
+			dd.setDisbAmount(amount);
 			dd.setDisbDate(evtFromDate);
 			dd.setFeeChargeAmt(feeChargeAmt);
 			finScheduleData.getDisbursementDetails().add(dd);
@@ -1795,7 +1793,7 @@ public class ScheduleCalculator {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			if (curSchd.getSchDate().compareTo(evtFromDate) == 0) {
 				isDisburseFoundInSD = true;
-				curSchd.setDisbAmount(curSchd.getDisbAmount().add(Amount));
+				curSchd.setDisbAmount(curSchd.getDisbAmount().add(amount));
 				curSchd.setDisbOnSchDate(true);
 				curSchd.setFeeChargeAmt(curSchd.getFeeChargeAmt().add(feeChargeAmt));
 				break;
@@ -1833,7 +1831,7 @@ public class ScheduleCalculator {
 			sd.setPrincipalSchd(BigDecimal.ZERO);
 			sd.setRepayAmount(BigDecimal.ZERO);
 			sd.setProfitBalance(BigDecimal.ZERO);
-			sd.setDisbAmount(Amount);
+			sd.setDisbAmount(amount);
 			sd.setDownPaymentAmount(BigDecimal.ZERO);
 			sd.setCpzAmount(BigDecimal.ZERO);
 			sd.setClosingBalance(BigDecimal.ZERO);
@@ -4271,7 +4269,7 @@ public class ScheduleCalculator {
 	private BigDecimal getClosingBalance(FinanceScheduleDetail curSchd,
 	        FinanceScheduleDetail prvSchd, String repayRateBasis) {
 
-		BigDecimal closingBal = new BigDecimal(0);
+		BigDecimal closingBal = BigDecimal.ZERO;
 
 		if (repayRateBasis.equals(CalculationConstants.RATE_BASIS_D)) {
 			closingBal = prvSchd
@@ -4540,7 +4538,7 @@ public class ScheduleCalculator {
 			BigDecimal returnCalProfit = BigDecimal.ZERO;
 
 			effRateofReturn = finScheduleData.getFinanceScheduleDetails().get(0).getCalculatedRate();
-			finScheduleData = procChangeRate(finScheduleData, "", "", new BigDecimal(0),
+			finScheduleData = procChangeRate(finScheduleData, "", "", BigDecimal.ZERO,
 					effRateofReturn, false , false);
 			finScheduleData = graceSchdCal(finScheduleData);
 			finScheduleData = repaySchdCal(finScheduleData, false);
@@ -4620,7 +4618,7 @@ public class ScheduleCalculator {
 			effRateofReturn = (lowAssumptionRate.add(highAssumptionRate)).divide(number2, 9,
 					RoundingMode.HALF_DOWN);
 
-			finScheduleData = procChangeRate(finScheduleData, "", "", new BigDecimal(0),
+			finScheduleData = procChangeRate(finScheduleData, "", "", BigDecimal.ZERO,
 					effRateofReturn, false , false);
 
 			finScheduleData = getRpyInstructDetails(finScheduleData);
@@ -4664,7 +4662,7 @@ public class ScheduleCalculator {
 			}
 
 			//Calculate Schedule Building process with Effective Rate
-			finScheduleData = procChangeRate(finScheduleData, "", "", new BigDecimal(0),
+			finScheduleData = procChangeRate(finScheduleData, "", "", BigDecimal.ZERO,
 					effRateofReturn, false,  false);
 			finScheduleData = graceSchdCal(finScheduleData);
 			finScheduleData = repaySchdCal(finScheduleData, false);
@@ -4682,7 +4680,7 @@ public class ScheduleCalculator {
 			}
 		}
 
-		finScheduleData = procChangeRate(finScheduleData, "", "", new BigDecimal(0),
+		finScheduleData = procChangeRate(finScheduleData, "", "", BigDecimal.ZERO,
 				effRateofReturn, false , false);
 
 		finScheduleData = graceSchdCal(finScheduleData);
