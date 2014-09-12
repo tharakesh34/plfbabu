@@ -292,9 +292,9 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String CheckListDesc, String userLanguage){
+	private ErrorDetails  getError(String errorId, String checkListDesc, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = CheckListDesc;
+		parms[1][0] = checkListDesc;
 		parms[0][0] = PennantJavaUtil.getLabel("label_CheckListDesc")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}

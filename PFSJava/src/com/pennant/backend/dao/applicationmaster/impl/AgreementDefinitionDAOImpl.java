@@ -333,9 +333,9 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String AggCode, String userLanguage){
+	private ErrorDetails  getError(String errorId, String aggCode, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = AggCode;
+		parms[1][0] = aggCode;
 		parms[0][0] = PennantJavaUtil.getLabel("label_AggCode")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 				errorId, parms[0],parms[1]), userLanguage);

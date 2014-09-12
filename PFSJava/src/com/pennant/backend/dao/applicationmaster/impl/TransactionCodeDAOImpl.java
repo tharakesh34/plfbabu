@@ -290,9 +290,9 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode>  imple
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String TranCode, String userLanguage){
+	private ErrorDetails  getError(String errorId, String tranCode, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = TranCode;
+		parms[1][0] = tranCode;
 		parms[0][0] = PennantJavaUtil.getLabel("label_TranCode")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 				errorId, parms[0],parms[1]), userLanguage);
