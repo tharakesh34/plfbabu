@@ -54,5 +54,5 @@ public interface AuthorizationDAO {
 	public long save(Authorization authorization,String type);
 	public void initialize(Authorization authorization);
 	public void refresh(Authorization entity);
-	public Authorization getAuthorization(long AuthUserId,String authType,String type);
+	public Authorization getAuthorization(long authUserId,String authType,String type);
 }
