@@ -353,7 +353,7 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 		}
 		SecurityRole befSecurityRole= getSecurityRoleDAO().getSecurityRoleById(secRoles.getId(), "");
 		SecurityRole aBefSecurityRole= getSecurityRoleDAO().getSecurityRoleByRoleCd(secRoles.getRoleCd(), "");
-		SecurityRole old_SecurityRole= secRoles.getBefImage();
+		SecurityRole oldSecurityRole= secRoles.getBefImage();
 
 
 		String[] errParm= new String[4];
@@ -413,7 +413,7 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 					
 				}
 
-				if (befSecurityRole!=null && old_SecurityRole!=null && !old_SecurityRole.getLastMntOn().equals(befSecurityRole.getLastMntOn())){
+				if (befSecurityRole!=null && oldSecurityRole!=null && !oldSecurityRole.getLastMntOn().equals(befSecurityRole.getLastMntOn())){
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));	
 					}else{
@@ -429,7 +429,7 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 					return auditDetail;
 				}
 
-				if (tempSecurityRole!=null && old_SecurityRole!=null && !old_SecurityRole.getLastMntOn().equals(tempSecurityRole.getLastMntOn())){ 
+				if (tempSecurityRole!=null && oldSecurityRole!=null && !oldSecurityRole.getLastMntOn().equals(tempSecurityRole.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));		
 				}
 			}

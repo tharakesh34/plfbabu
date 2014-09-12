@@ -376,7 +376,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 		VehicleVersion befVehicleVersion = getVehicleVersionDAO()
 		.getVehicleVersionById(vehicleVersion.getId(), "");
 
-		VehicleVersion old_VehicleVersion = vehicleVersion.getBefImage();
+		VehicleVersion oldVehicleVersion = vehicleVersion.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -428,8 +428,8 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 							new ErrorDetails(PennantConstants.KEY_FIELD,
 									"41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_VehicleVersion != null
-							&& !old_VehicleVersion.getLastMntOn().equals(
+					if (oldVehicleVersion != null
+							&& !oldVehicleVersion.getLastMntOn().equals(
 									befVehicleVersion.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -455,8 +455,8 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 									"41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_VehicleVersion != null
-						&& !old_VehicleVersion.getLastMntOn().equals(
+				if (oldVehicleVersion != null
+						&& !oldVehicleVersion.getLastMntOn().equals(
 								tempVehicleVersion.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD,

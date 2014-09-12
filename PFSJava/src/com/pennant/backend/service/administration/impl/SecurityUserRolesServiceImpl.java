@@ -206,7 +206,7 @@ public class SecurityUserRolesServiceImpl extends GenericService<SecurityUserRol
 		}
 		
 		SecurityUser befSecurityUser= getSecurityUserDAO().getSecurityUserById(secUser.getId(), "");
-		SecurityUser old_SecurityUser= secUser.getBefImage();
+		SecurityUser oldSecurityUser= secUser.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -238,7 +238,7 @@ public class SecurityUserRolesServiceImpl extends GenericService<SecurityUserRol
 				if (befSecurityUser ==null){ 	// if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_SecurityUser!=null && !old_SecurityUser.getLastMntOn().equals(befSecurityUser.getLastMntOn())){
+					if (oldSecurityUser!=null && !oldSecurityUser.getLastMntOn().equals(befSecurityUser.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -252,7 +252,7 @@ public class SecurityUserRolesServiceImpl extends GenericService<SecurityUserRol
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_SecurityUser!=null && !old_SecurityUser.getLastMntOn().equals(tempSecurityUser.getLastMntOn())) { 
+				if (oldSecurityUser!=null && !oldSecurityUser.getLastMntOn().equals(tempSecurityUser.getLastMntOn())) { 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
@@ -473,8 +473,8 @@ public class SecurityUserRolesServiceImpl extends GenericService<SecurityUserRol
 	 * This method fetches SecurityUserRoles record with "userId" and "RoleId" condition by 
 	 * calling SecurityUsersRolesDAO's getUserRolesByUsrAndRoleIds)
 	 */
-	public  SecurityUserRoles getUserRolesByUsrAndRoleIds(long userId,long RoleId){
-		return getSecurityUserRolesDAO().getUserRolesByUsrAndRoleIds(userId,RoleId);
+	public  SecurityUserRoles getUserRolesByUsrAndRoleIds(long userId,long roleId){
+		return getSecurityUserRolesDAO().getUserRolesByUsrAndRoleIds(userId,roleId);
 
 	}
 

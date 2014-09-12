@@ -347,7 +347,7 @@ public class SecurityRightServiceImpl  extends GenericService<SecurityRight> imp
 		}
 		SecurityRight befSecurityRight= getSecurityRightDAO().getSecurityRightByID(securityRight.getId(), "");
 		SecurityRight aBefSecurityRight = getSecurityRightDAO().getSecurityRightByRightName(securityRight.getRightName(), "");
-		SecurityRight old_SecurityRight= securityRight.getBefImage();
+		SecurityRight oldSecurityRight= securityRight.getBefImage();
 
 		String[] parm= new String[4];
 		parm[0]=PennantJavaUtil.getLabel("label_RightID");
@@ -400,7 +400,7 @@ public class SecurityRightServiceImpl  extends GenericService<SecurityRight> imp
 
 				}
 
-				if (befSecurityRight!=null && old_SecurityRight!=null && !old_SecurityRight.getLastMntOn().equals(befSecurityRight.getLastMntOn())){
+				if (befSecurityRight!=null && oldSecurityRight!=null && !oldSecurityRight.getLastMntOn().equals(befSecurityRight.getLastMntOn())){
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",parm,null));	
 					}else{
@@ -416,7 +416,7 @@ public class SecurityRightServiceImpl  extends GenericService<SecurityRight> imp
 
 				}
 
-				if (tempSecurityRight !=null && old_SecurityRight!=null && !old_SecurityRight.getLastMntOn().equals(tempSecurityRight.getLastMntOn())){ 
+				if (tempSecurityRight !=null && oldSecurityRight!=null && !oldSecurityRight.getLastMntOn().equals(tempSecurityRight.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",parm,null));
 
 				}

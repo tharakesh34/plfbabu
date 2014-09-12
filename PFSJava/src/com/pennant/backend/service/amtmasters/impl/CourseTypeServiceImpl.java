@@ -340,7 +340,7 @@ public class CourseTypeServiceImpl extends GenericService<CourseType> implements
 		}
 		CourseType befCourseType= getCourseTypeDAO().getCourseTypeById(courseType.getId(), "");
 
-		CourseType old_CourseType= courseType.getBefImage();
+		CourseType oldCourseType= courseType.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -372,7 +372,7 @@ public class CourseTypeServiceImpl extends GenericService<CourseType> implements
 				if (befCourseType ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_CourseType!=null && !old_CourseType.getLastMntOn().equals(befCourseType.getLastMntOn())){
+					if (oldCourseType!=null && !oldCourseType.getLastMntOn().equals(befCourseType.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -386,7 +386,7 @@ public class CourseTypeServiceImpl extends GenericService<CourseType> implements
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_CourseType!=null && !old_CourseType.getLastMntOn().equals(tempCourseType.getLastMntOn())){ 
+				if (oldCourseType!=null && !oldCourseType.getLastMntOn().equals(tempCourseType.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

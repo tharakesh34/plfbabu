@@ -341,7 +341,7 @@ public class VehicleModelServiceImpl extends GenericService<VehicleModel> implem
 		}
 		VehicleModel befVehicleModel= getVehicleModelDAO().getVehicleModelById(vehicleModel.getId(), "");
 
-		VehicleModel old_VehicleModel= vehicleModel.getBefImage();
+		VehicleModel oldVehicleModel= vehicleModel.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -373,7 +373,7 @@ public class VehicleModelServiceImpl extends GenericService<VehicleModel> implem
 				if (befVehicleModel ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_VehicleModel!=null && !old_VehicleModel.getLastMntOn().equals(befVehicleModel.getLastMntOn())){
+					if (oldVehicleModel!=null && !oldVehicleModel.getLastMntOn().equals(befVehicleModel.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -387,7 +387,7 @@ public class VehicleModelServiceImpl extends GenericService<VehicleModel> implem
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_VehicleModel!=null && !old_VehicleModel.getLastMntOn().equals(tempVehicleModel.getLastMntOn())){ 
+				if (oldVehicleModel!=null && !oldVehicleModel.getLastMntOn().equals(tempVehicleModel.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

@@ -58,7 +58,7 @@ public interface SecurityUserRolesService {
 	public AuditHeader               	saveOrUpdate(AuditHeader auditHeader);
 	public  List<SecurityRole>         getRolesByUserId(long userId,boolean isAssigned);
 	public List<SecurityGroupRights> 	getGroupRightsByGrpId(SecurityGroup securityGroup);
-	public  SecurityUserRoles        	getUserRolesByUsrAndRoleIds(long userId,long RoleId);
+	public  SecurityUserRoles        	getUserRolesByUsrAndRoleIds(long userId,long roleId);
 	public  List<SecurityRole> getApprovedRoles();
 	public AuditHeader doApprove(AuditHeader auditHeader);
 	public List<SecurityRoleGroups> getApprovedRoleGroupsByRoleId(long roleId);

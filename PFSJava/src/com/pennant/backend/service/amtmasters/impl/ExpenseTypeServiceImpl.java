@@ -343,7 +343,7 @@ public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implemen
 		}
 		ExpenseType befExpenseType= getExpenseTypeDAO().getExpenseTypeById(expenseType.getId(), "");
 
-		ExpenseType old_ExpenseType= expenseType.getBefImage();
+		ExpenseType oldExpenseType= expenseType.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -375,7 +375,7 @@ public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implemen
 				if (befExpenseType ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_ExpenseType!=null && !old_ExpenseType.getLastMntOn().equals(befExpenseType.getLastMntOn())){
+					if (oldExpenseType!=null && !oldExpenseType.getLastMntOn().equals(befExpenseType.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -389,7 +389,7 @@ public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implemen
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_ExpenseType!=null && !old_ExpenseType.getLastMntOn().equals(tempExpenseType.getLastMntOn())){ 
+				if (oldExpenseType!=null && !oldExpenseType.getLastMntOn().equals(tempExpenseType.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

@@ -368,7 +368,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup>imple
 		.getSecurityGroupByCode(securityGroup.getGrpCode(), "");
 
 
-		SecurityGroup old_SecurityGroup= securityGroup.getBefImage();
+		SecurityGroup oldSecurityGroup= securityGroup.getBefImage();
 
 
 		String[] errParm= new String[4];
@@ -422,7 +422,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup>imple
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
 				}
 
-				if (befSecurityGroup!=null && old_SecurityGroup!=null && !old_SecurityGroup.getLastMntOn()
+				if (befSecurityGroup!=null && oldSecurityGroup!=null && !oldSecurityGroup.getLastMntOn()
 						.equals(befSecurityGroup.getLastMntOn())){
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)){
@@ -440,7 +440,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup>imple
 
 				}
 
-				if (tempSecurityGroup!=null && old_SecurityGroup!=null && !old_SecurityGroup.getLastMntOn()
+				if (tempSecurityGroup!=null && oldSecurityGroup!=null && !oldSecurityGroup.getLastMntOn()
 						.equals(tempSecurityGroup.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 

@@ -379,7 +379,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 			}
 			Authorization befAuthorization= getAuthorizationDAO().getAuthorization(authorization.getAuthUserId(),authorization.getAuthType(), "");
 			
-			Authorization old_Authorization= authorization.getBefImage();
+			Authorization oldAuthorization= authorization.getBefImage();
 			
 			
 			String[] errParm= new String[2];
@@ -413,7 +413,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 					if (befAuthorization ==null){ // if records not exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 					}else{
-						if (old_Authorization!=null && !old_Authorization.getLastMntOn().equals(befAuthorization.getLastMntOn())){
+						if (oldAuthorization!=null && !oldAuthorization.getLastMntOn().equals(befAuthorization.getLastMntOn())){
 							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 							}else{
@@ -427,7 +427,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 					
-					if (old_Authorization!=null && !old_Authorization.getLastMntOn().equals(tempAuthorization.getLastMntOn())){ 
+					if (oldAuthorization!=null && !oldAuthorization.getLastMntOn().equals(tempAuthorization.getLastMntOn())){ 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 					}
 				}

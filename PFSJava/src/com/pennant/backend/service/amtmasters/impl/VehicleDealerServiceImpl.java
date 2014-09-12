@@ -363,7 +363,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 		VehicleDealer befVehicleDealer = getVehicleDealerDAO()
 		.getVehicleDealerById(vehicleDealer.getId(), "");
 
-		VehicleDealer old_VehicleDealer= vehicleDealer.getBefImage();
+		VehicleDealer oldVehicleDealer= vehicleDealer.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -414,8 +414,8 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 							new ErrorDetails(PennantConstants.KEY_FIELD,
 									"41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_VehicleDealer != null
-							&& !old_VehicleDealer.getLastMntOn().equals(
+					if (oldVehicleDealer != null
+							&& !oldVehicleDealer.getLastMntOn().equals(
 									befVehicleDealer.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -441,8 +441,8 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 									"41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_VehicleDealer != null
-						&& !old_VehicleDealer.getLastMntOn().equals(
+				if (oldVehicleDealer != null
+						&& !oldVehicleDealer.getLastMntOn().equals(
 								tempVehicleDealer.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD,

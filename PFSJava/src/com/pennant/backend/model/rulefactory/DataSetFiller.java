@@ -402,8 +402,8 @@ public class DataSetFiller implements Serializable {
 	public BigDecimal getCPZCHG() {
 		return CPZCHG;
 	}
-	public void setCPZCHG(BigDecimal CPZCHG) {
-		this.CPZCHG = CPZCHG;
+	public void setCPZCHG(BigDecimal cPZCHG) {
+		this.CPZCHG = cPZCHG;
 	}
 	
 	public BigDecimal getRPPFT() {
@@ -437,8 +437,8 @@ public class DataSetFiller implements Serializable {
 	public BigDecimal getACCRUE_S() {
 		return ACCRUE_S;
 	}
-	public void setACCRUE_S(BigDecimal aCCRUE_S) {
-		ACCRUE_S = aCCRUE_S;
+	public void setACCRUE_S(BigDecimal aCCRUES) {
+		ACCRUE_S = aCCRUES;
 	}
 	
 	public BigDecimal getDOWNPAY() {

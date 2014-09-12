@@ -341,7 +341,7 @@ public class OwnerShipTypeServiceImpl extends GenericService<OwnerShipType> impl
 		}
 		OwnerShipType befOwnerShipType= getOwnerShipTypeDAO().getOwnerShipTypeById(ownerShipType.getId(), "");
 
-		OwnerShipType old_OwnerShipType= ownerShipType.getBefImage();
+		OwnerShipType oldOwnerShipType= ownerShipType.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -373,7 +373,7 @@ public class OwnerShipTypeServiceImpl extends GenericService<OwnerShipType> impl
 				if (befOwnerShipType ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_OwnerShipType!=null && !old_OwnerShipType.getLastMntOn().equals(befOwnerShipType.getLastMntOn())){
+					if (oldOwnerShipType!=null && !oldOwnerShipType.getLastMntOn().equals(befOwnerShipType.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -387,7 +387,7 @@ public class OwnerShipTypeServiceImpl extends GenericService<OwnerShipType> impl
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_OwnerShipType!=null && !old_OwnerShipType.getLastMntOn().equals(tempOwnerShipType.getLastMntOn())){ 
+				if (oldOwnerShipType!=null && !oldOwnerShipType.getLastMntOn().equals(tempOwnerShipType.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}
