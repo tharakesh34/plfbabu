@@ -73,8 +73,8 @@ public class DynamicWhereConditionUtil implements Serializable {
 
 		Map<String,String> listDynWhereConditions = getWhereConditionsList();
 		String query=aDashboardConfiguration.getQuery().toUpperCase();
-		for(String ValueLabel:listDynWhereConditions.keySet()){
-			String whereCondtion=ValueLabel.toUpperCase();
+		for(String valueLabel:listDynWhereConditions.keySet()){
+			String whereCondtion=valueLabel.toUpperCase();
 			if(StringUtils.contains(query, whereCondtion)){
 				if(StringUtils.equalsIgnoreCase(whereCondtion, Labels
 						.getLabel("label_WhereConditonConstant_&ROLES"))){    //Replacing User Roles  

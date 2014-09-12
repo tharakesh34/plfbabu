@@ -80,8 +80,8 @@ public class StoredProcedureUtil extends StoredProcedure {
 		return super.execute(inputs);
 	}
 
-	public Map<String, Object> execute(String UsrLogin) {
-		return super.execute(UsrLogin);
+	public Map<String, Object> execute(String usrLogin) {
+		return super.execute(usrLogin);
 	}
 
 }

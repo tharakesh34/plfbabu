@@ -934,7 +934,7 @@ public class FrequencyUtil implements Serializable {
 		
 		List<Calendar> scheduleList = new ArrayList<Calendar>();
 		Calendar calDate = Calendar.getInstance();
-		int Terms=0;
+		int terms=0;
 		Date tempDate = startDate;
 		int cont = -1;
 		String[] errParm = new String[2];
@@ -955,7 +955,7 @@ public class FrequencyUtil implements Serializable {
 		if(includeStartDate){
 			calDate.setTime(startDate);
 			scheduleList.add((Calendar) calDate.clone());
-			Terms++;
+			terms++;
 			cont = DateUtility.compare(tempDate, endDate);
 		}
 		
@@ -966,23 +966,23 @@ public class FrequencyUtil implements Serializable {
 			cont = DateUtility.compare(tempDate, endDate);
 			if (cont == 0){
 				scheduleList.add((Calendar) calDate.clone());
-				Terms++;
+				terms++;
 				break;
 			}
 			if (cont == 1){
 				if(includeEndDate){
 					calDate.setTime(endDate);
 					scheduleList.add((Calendar) calDate.clone());
-					Terms++;
+					terms++;
 				}
 				break;
 			}
 			
 			scheduleList.add((Calendar) calDate.clone());
-			Terms++;
+			terms++;
 		}
 		
-		frequencyDetails.setTerms(Terms);
+		frequencyDetails.setTerms(terms);
 		frequencyDetails.setScheduleList(scheduleList);
 		frequencyDetails.setNextFrequencyDate(scheduleList.get(0).getTime());
 		

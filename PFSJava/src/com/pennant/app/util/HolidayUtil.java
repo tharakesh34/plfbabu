@@ -479,11 +479,11 @@ public class HolidayUtil implements Serializable {
 		}
 	}	 
 	
-	public static Calendar  getBusinessDate(String holidayCode,String NBDAction,Date date){
+	public static Calendar  getBusinessDate(String holidayCode,String nBDAction,Date date){
 		if(holidayCode.equals("") || holidayCode == null) {	
 			holidayCode = "GEN";
 		}
-		String handlerType = getHandlerType(NBDAction);
+		String handlerType = getHandlerType(nBDAction);
 		Calendar tempDate = Calendar.getInstance();
 		tempDate.setTime(date);
 		DateCalculator<Calendar> dateCalculator = getDateCalendar(holidayCode,tempDate,handlerType);
@@ -491,33 +491,33 @@ public class HolidayUtil implements Serializable {
 		return dateCalculator.getCurrentBusinessDate();
 	}
 	
-	private static String getHandlerType(String NBDAction)
+	private static String getHandlerType(String nBDAction)
 	{
-		if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT)) {
+		if (nBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT)) {
 			return HolidayHandlerType.FORWARD;
-		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT_PREVIOUS)) {
+		} else if (nBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT_PREVIOUS)) {
 			return HolidayHandlerType.MODIFIED_FOLLOWING;
-		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS)) {
+		} else if (nBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS)) {
 			return HolidayHandlerType.BACKWARD;
-		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS_NEXT)) {
+		} else if (nBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS_NEXT)) {
 			return HolidayHandlerType.MODIFIED_PRECEDING;
-		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT_NONE)) {
+		} else if (nBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NEXT_NONE)) {
 			return HolidayHandlerType.FORWARD_NOT_NEXT_MONTH;
-		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS_NONE)) {
+		} else if (nBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_PREVIOUS_NONE)) {
 			return HolidayHandlerType.BACKWARD_NOT_PREVIOUS_MONTH;
-		} else if (NBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NONE)) {
+		} else if (nBDAction.equalsIgnoreCase(HolidayHandlerTypes.MOVE_NONE)) {
 			return HolidayHandlerType.ACTUAL_DATE;
 		} else {
 			return HolidayHandlerType.FORWARD;
 		}
 	}
 	
-	public static Calendar getNextBusinessDate(String holidayCode,String Action,Date date) {
+	public static Calendar getNextBusinessDate(String holidayCode,String action,Date date) {
 		if(holidayCode.equals("") || holidayCode == null) {	
 			holidayCode = "GEN";
 		}
-		String handlerType = getHandlerType(Action);
-		int moveBy = (Action == HolidayHandlerTypes.MOVE_PREVIOUS ? -1:1);
+		String handlerType = getHandlerType(action);
+		int moveBy = (action == HolidayHandlerTypes.MOVE_PREVIOUS ? -1:1);
 		Calendar tempDate = Calendar.getInstance();
 		tempDate.setTime(date);
 		DateCalculator<Calendar> dateCalculator = getDateCalendar(holidayCode,tempDate,handlerType);

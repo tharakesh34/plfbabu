@@ -275,14 +275,14 @@ public class CalculationUtil implements Serializable {
 		return interest;
 	}
 
-	public static BigDecimal calInstallment(BigDecimal principle, BigDecimal rate, String Paymentfrequency, int noOfTerms) {
+	public static BigDecimal calInstallment(BigDecimal principle, BigDecimal rate, String paymentFrequency, int noOfTerms) {
 		/*
 		 * M = P(1+r)n r / [(1+r)n-1] 
 		 * r=rate/100*frequency
 		 */
 		int frqequency = 0;
 
-		switch (FrequencyUtil.getFrequencyCode(Paymentfrequency).charAt(0)) {
+		switch (FrequencyUtil.getFrequencyCode(paymentFrequency).charAt(0)) {
 
 		case 'D' :
 			frqequency = CalculationConstants.FRQ_DAILY;
@@ -312,10 +312,10 @@ public class CalculationUtil implements Serializable {
 
 		}
 		if(rate.compareTo(BigDecimal.ZERO)!=0){
-		BigDecimal R = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
+		BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
 				BigDecimal.ROUND_HALF_DOWN);
-		BigDecimal nTimesOfr = (R.add(BigDecimal.ONE)).pow(noOfTerms);
-		BigDecimal numerator = principle.multiply(nTimesOfr).multiply(R);
+		BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
+		BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
 		BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);	
 		return numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
 		}else{

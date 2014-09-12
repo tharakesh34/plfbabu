@@ -93,7 +93,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	public List<Object> oDRPostingProcess(FinanceMain financeMain, Date dateValueDate, Date SchdDate,
+	public List<Object> oDRPostingProcess(FinanceMain financeMain, Date dateValueDate, Date schdDate,
 	        String finODFor, Date movementDate, BigDecimal penalty, BigDecimal prvPenaltyPaid,
 	        BigDecimal waiverAmt, String chargeType, boolean isRIAFinance, long linkedTranId, String finDivision)
 	        throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
@@ -165,7 +165,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			if (isPayNow) {
 
 				// DataSet Creation
-				DataSet dataSet = AEAmounts.createDataSet(financeMain, "LATEPAY", dateValueDate,SchdDate);
+				DataSet dataSet = AEAmounts.createDataSet(financeMain, "LATEPAY", dateValueDate,schdDate);
 				dataSet.setNewRecord(false);
 
 				// AmountCodes Preparation
@@ -195,13 +195,13 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				if (isPostingSuccess) {
 
 					//Overdue Recovery Details Updation for Paid Amounts & Record Deletion Status
-					doUpdateRecoveryData(finReference, SchdDate, finODFor, movementDate, chargeType,
+					doUpdateRecoveryData(finReference, schdDate, finODFor, movementDate, chargeType,
 							penaltyPaidNow, waiverAmt, isPaidClear);
 
 					//Overdue Details Updation for Totals
 					FinODDetails detail = new FinODDetails();
 					detail.setFinReference(finReference);
-					detail.setFinODSchdDate(SchdDate);
+					detail.setFinODSchdDate(schdDate);
 					detail.setFinODFor(finODFor);
 					detail.setTotPenaltyAmt(BigDecimal.ZERO);
 					detail.setTotPenaltyPaid(penaltyPaidNow);
@@ -232,14 +232,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @param dbUpdate
 	 * @return
 	 */
-	private OverdueChargeRecovery doUpdateRecoveryData(String finReference, Date SchdDate,
+	private OverdueChargeRecovery doUpdateRecoveryData(String finReference, Date schdDate,
 	        String finODFor, Date movementDate, String chargeType, BigDecimal penaltyPaid,
 	        BigDecimal waiverPaid, boolean isPaidClear) {
 		logger.debug("Entering");
 
 		OverdueChargeRecovery recovery = new OverdueChargeRecovery();
 		recovery.setFinReference(finReference);
-		recovery.setFinODSchdDate(SchdDate);
+		recovery.setFinODSchdDate(schdDate);
 		recovery.setFinODFor(finODFor);
 		recovery.setMovementDate(movementDate);
 		recovery.setPenaltyPaid(penaltyPaid);
@@ -419,7 +419,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				}
 
 				boolean resetTotals = true;
-				int SeqNo = 1;
+				int seqNo = 1;
 				//Stop calculation for paid penalty for Charge Type 'FLAT' & 'PERCONETIME'
 				if (!PennantConstants.PERCONDUEDAYS.equals(odDetails.getODChargeType())  && 
 						recovery != null && (recovery.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0 || 
@@ -431,7 +431,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 					//Store Previous values for Total Calculations
 					if (recovery != null) {
-						SeqNo = recovery.getSeqNo() + 1;
+						seqNo = recovery.getSeqNo() + 1;
 
 						if (prvRecovery != null && prvRecovery.isRcdCanDel()) {
 							prvPenalty = prvPenalty.subtract(prvRecovery.getPenalty());
@@ -473,7 +473,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 					finODDate = recovery.getMovementDate();
 				}
 
-				recovery.setSeqNo(SeqNo);
+				recovery.setSeqNo(seqNo);
 				recovery.setMovementDate(dateValueDate);
 				recovery.setODDays(DateUtility.getDaysBetween(dateValueDate, finODDate));
 				recovery.setFinCurODAmt(odDetails.getFinCurODAmt());

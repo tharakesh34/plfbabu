@@ -120,21 +120,21 @@ public class SystemParameterDetails {
 	/**
 	 * Get the System Parameter Value 
 	 * 
-	 * @param ParmCode (String)
+	 * @param parmCode (String)
 	 * 
 	 * @return object
 	 */
-	public static Object getSystemParameterValue(String ParmCode) {
-		return getSystemParameterValue(parmDetails.get(ParmCode));			
+	public static Object getSystemParameterValue(String parmCode) {
+		return getSystemParameterValue(parmDetails.get(parmCode));			
 	}
 	
 	/**
 	 * Method for get the Record Data of PFSParameter
-	 * @param ParmCode
+	 * @param parmCode
 	 * @return
 	 */
-	public static PFSParameter getSystemParameterObject(String ParmCode) {
-		return parmDetails.get(ParmCode);			
+	public static PFSParameter getSystemParameterObject(String parmCode) {
+		return parmDetails.get(parmCode);			
 	}
 	
 	/**
