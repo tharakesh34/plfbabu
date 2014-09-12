@@ -335,9 +335,9 @@ public class CollateralDAOImpl extends BasisNextidDaoImpl<Collateral> implements
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String CAFReference, String userLanguage){
+	private ErrorDetails  getError(String errorId, String cAFReference, String userLanguage){
 		String[][] parms= new String[2][1];
-		parms[1][0] = CAFReference;
+		parms[1][0] = cAFReference;
 		parms[0][0] = PennantJavaUtil.getLabel("label_CAFReference")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
