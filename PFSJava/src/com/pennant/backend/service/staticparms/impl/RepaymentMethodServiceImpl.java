@@ -372,7 +372,7 @@ public class RepaymentMethodServiceImpl extends GenericService<RepaymentMethod> 
 
 		RepaymentMethod befRepaymentMethod = getRepaymentMethodDAO()
 		.getRepaymentMethodById(repaymentMethod.getId(), "");
-		RepaymentMethod old_RepaymentMethod = repaymentMethod.getBefImage();
+		RepaymentMethod oldRepaymentMethod = repaymentMethod.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
@@ -406,8 +406,8 @@ public class RepaymentMethodServiceImpl extends GenericService<RepaymentMethod> 
 				if (befRepaymentMethod == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (old_RepaymentMethod != null
-							&& !old_RepaymentMethod.getLastMntOn().equals(befRepaymentMethod.getLastMntOn())) {
+					if (oldRepaymentMethod != null
+							&& !oldRepaymentMethod.getLastMntOn().equals(befRepaymentMethod.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003", errParm, valueParm),usrLanguage));
@@ -422,8 +422,8 @@ public class RepaymentMethodServiceImpl extends GenericService<RepaymentMethod> 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (old_RepaymentMethod != null
-						&& !old_RepaymentMethod.getLastMntOn().equals(tempRepaymentMethod.getLastMntOn())) {
+				if (oldRepaymentMethod != null
+						&& !oldRepaymentMethod.getLastMntOn().equals(tempRepaymentMethod.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm, valueParm), usrLanguage));
 				}
 			}

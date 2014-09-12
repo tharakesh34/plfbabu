@@ -616,7 +616,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 		}
 		ExtendedFieldDetail befExtendedFieldDetail= getExtendedFieldDetailDAO().getExtendedFieldDetailById(extendedFieldDetail.getId(),extendedFieldDetail.getFieldName(), "");
 		
-		ExtendedFieldDetail old_ExtendedFieldDetail= extendedFieldDetail.getBefImage();
+		ExtendedFieldDetail oldExtendedFieldDetail= extendedFieldDetail.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
@@ -647,7 +647,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 				if (befExtendedFieldDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_ExtendedFieldDetail!=null && !old_ExtendedFieldDetail.getLastMntOn().equals(befExtendedFieldDetail.getLastMntOn())){
+					if (oldExtendedFieldDetail!=null && !oldExtendedFieldDetail.getLastMntOn().equals(befExtendedFieldDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -661,7 +661,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_ExtendedFieldDetail!=null && !old_ExtendedFieldDetail.getLastMntOn().equals(tempExtendedFieldDetail.getLastMntOn())){ 
+				if (oldExtendedFieldDetail!=null && !oldExtendedFieldDetail.getLastMntOn().equals(tempExtendedFieldDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

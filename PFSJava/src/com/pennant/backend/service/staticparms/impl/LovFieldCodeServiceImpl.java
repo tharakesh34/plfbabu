@@ -331,7 +331,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 		}
 		LovFieldCode befLovFieldCode= getLovFieldCodeDAO().getLovFieldCodeById(lovFieldCode.getId(), "");
 
-		LovFieldCode old_LovFieldCode= lovFieldCode.getBefImage();
+		LovFieldCode oldLovFieldCode= lovFieldCode.getBefImage();
 
 
 		String[] errParm= new String[1];
@@ -363,7 +363,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 				if (befLovFieldCode ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_LovFieldCode!=null && !old_LovFieldCode.getLastMntOn().equals(befLovFieldCode.getLastMntOn())){
+					if (oldLovFieldCode!=null && !oldLovFieldCode.getLastMntOn().equals(befLovFieldCode.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
 						}else{
@@ -377,7 +377,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_LovFieldCode!=null && !old_LovFieldCode.getLastMntOn().equals(tempLovFieldCode.getLastMntOn())){ 
+				if (oldLovFieldCode!=null && !oldLovFieldCode.getLastMntOn().equals(tempLovFieldCode.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
 				}
 			}

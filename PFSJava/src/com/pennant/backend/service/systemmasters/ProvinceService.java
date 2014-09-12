@@ -55,8 +55,8 @@ public interface ProvinceService {
 	Province getProvince();
 	Province getNewProvince();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	Province getProvinceById(String CPCountry, String CPProvince);
-	Province getApprovedProvinceById(String CPCountry, String CPProvince);
+	Province getProvinceById(String cPCountry, String cPProvince);
+	Province getApprovedProvinceById(String cPCountry, String cPProvince);
 	Province refresh(Province province);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);

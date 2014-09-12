@@ -426,7 +426,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		}
 		StepPolicyHeader befStepPolicyHeader = getStepPolicyHeaderDAO().getStepPolicyHeaderByID(stepPolicyHeader.getId(), "");
 
-		StepPolicyHeader old_StepPolicyHeader = stepPolicyHeader.getBefImage();
+		StepPolicyHeader oldStepPolicyHeader = stepPolicyHeader.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -480,8 +480,8 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 
 				} else {
 
-					if (old_StepPolicyHeader != null
-							&& !old_StepPolicyHeader.getLastMntOn().equals(befStepPolicyHeader.getLastMntOn())) {
+					if (oldStepPolicyHeader != null
+							&& !oldStepPolicyHeader.getLastMntOn().equals(befStepPolicyHeader.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
@@ -499,8 +499,8 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 					// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempStepPolicyHeader != null && old_StepPolicyHeader != null
-						&& !old_StepPolicyHeader.getLastMntOn().equals(tempStepPolicyHeader.getLastMntOn())) {
+				if (tempStepPolicyHeader != null && oldStepPolicyHeader != null
+						&& !oldStepPolicyHeader.getLastMntOn().equals(tempStepPolicyHeader.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
@@ -789,7 +789,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		}
 		StepPolicyDetail befStepPolicyDetail= getStepPolicyDetailDAO().getStepPolicyDetailByID( stepPolicyDetail, "");
 		
-		StepPolicyDetail old_stepPolicyDetailReference= stepPolicyDetail.getBefImage();
+		StepPolicyDetail oldStepPolicyDetailReference= stepPolicyDetail.getBefImage();
 		
 		
 		String[] errParm= new String[1];
@@ -823,7 +823,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 				if (befStepPolicyDetail ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
 				}else{
-					if (old_stepPolicyDetailReference!=null && !old_stepPolicyDetailReference.getLastMntOn().equals(befStepPolicyDetail.getLastMntOn())){
+					if (oldStepPolicyDetailReference!=null && !oldStepPolicyDetailReference.getLastMntOn().equals(befStepPolicyDetail.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
 						}else{
@@ -837,7 +837,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 				
-				if (old_stepPolicyDetailReference!=null && !old_stepPolicyDetailReference.getLastMntOn().equals(tempStepPolicyDetail.getLastMntOn())){ 
+				if (oldStepPolicyDetailReference!=null && !oldStepPolicyDetailReference.getLastMntOn().equals(tempStepPolicyDetail.getLastMntOn())){ 
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
 				}
 			}

@@ -368,7 +368,7 @@ public class LanguageServiceImpl extends GenericService<Language> implements Lan
 		}
 
 		Language befLanguage = getLanguageDAO().getLanguageById(language.getId(), "");
-		Language old_Language = language.getBefImage();
+		Language oldLanguage = language.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -405,8 +405,8 @@ public class LanguageServiceImpl extends GenericService<Language> implements Lan
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
 
-					if (old_Language != null
-							&& !old_Language.getLastMntOn().equals(befLanguage.getLastMntOn())) {
+					if (oldLanguage != null
+							&& !oldLanguage.getLastMntOn().equals(befLanguage.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
@@ -424,8 +424,8 @@ public class LanguageServiceImpl extends GenericService<Language> implements Lan
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempLanguage != null
-						&& old_Language != null
-						&& !old_Language.getLastMntOn().equals(tempLanguage.getLastMntOn())) {
+						&& oldLanguage != null
+						&& !oldLanguage.getLastMntOn().equals(tempLanguage.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

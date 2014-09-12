@@ -370,7 +370,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 
 		Frequency befFrequency = getFrequencyDAO().getFrequencyById(
 				frequency.getId(), "");
-		Frequency old_Frequency = frequency.getBefImage();
+		Frequency oldFrequency = frequency.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -422,8 +422,8 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 									PennantConstants.KEY_FIELD, "41002",
 									errParm, null));
 				} else {
-					if (old_Frequency != null
-							&& !old_Frequency.getLastMntOn().equals(
+					if (oldFrequency != null
+							&& !oldFrequency.getLastMntOn().equals(
 									befFrequency.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -447,8 +447,8 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 									errParm, null));
 				}
 				if (tempFrequency != null
-						&& old_Frequency != null
-						&& !old_Frequency.getLastMntOn().equals(
+						&& oldFrequency != null
+						&& !oldFrequency.getLastMntOn().equals(
 								tempFrequency.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(

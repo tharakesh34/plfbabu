@@ -369,7 +369,7 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 
 		InterestRateBasisCode befInterestRateBasisCode = getInterestRateBasisCodeDAO()
 		.getInterestRateBasisCodeById(interestRateBasisCode.getId(), "");
-		InterestRateBasisCode old_InterestRateBasisCode = interestRateBasisCode
+		InterestRateBasisCode oldInterestRateBasisCode = interestRateBasisCode
 		.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -410,8 +410,8 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
 				} else {
-					if (old_InterestRateBasisCode != null
-							&& !old_InterestRateBasisCode.getLastMntOn()
+					if (oldInterestRateBasisCode != null
+							&& !oldInterestRateBasisCode.getLastMntOn()
 							.equals(befInterestRateBasisCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(
 								auditDetail.getAuditTranType())
@@ -428,8 +428,8 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}
 				if (tempInterestRateBasisCode != null
-						&& old_InterestRateBasisCode != null
-						&& !old_InterestRateBasisCode.getLastMntOn().equals(tempInterestRateBasisCode.getLastMntOn())) {
+						&& oldInterestRateBasisCode != null
+						&& !oldInterestRateBasisCode.getLastMntOn().equals(tempInterestRateBasisCode.getLastMntOn())) {
 					auditDetail
 					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
 				}

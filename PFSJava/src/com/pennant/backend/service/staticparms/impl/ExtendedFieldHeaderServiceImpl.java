@@ -346,7 +346,7 @@ public class ExtendedFieldHeaderServiceImpl extends GenericService<ExtendedField
 		}
 		ExtendedFieldHeader befExtendedFieldHeader= getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(extendedFieldHeader.getModuleName(),extendedFieldHeader.getSubModuleName(), "");
 
-		ExtendedFieldHeader old_ExtendedFieldHeader= extendedFieldHeader.getBefImage();
+		ExtendedFieldHeader oldExtendedFieldHeader= extendedFieldHeader.getBefImage();
 
 		String[] errParm= new String[2];
 		String[] valueParm= new String[2];
@@ -385,7 +385,7 @@ public class ExtendedFieldHeaderServiceImpl extends GenericService<ExtendedField
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 							"41002", errParm,valueParm), usrLanguage));
 				}else{
-					if (old_ExtendedFieldHeader!=null && !old_ExtendedFieldHeader.getLastMntOn().equals(befExtendedFieldHeader.getLastMntOn())){
+					if (oldExtendedFieldHeader!=null && !oldExtendedFieldHeader.getLastMntOn().equals(befExtendedFieldHeader.getLastMntOn())){
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 									"41003", errParm,valueParm), usrLanguage));
@@ -402,7 +402,7 @@ public class ExtendedFieldHeaderServiceImpl extends GenericService<ExtendedField
 							"41005", errParm,valueParm), usrLanguage));
 				}
 
-				if (old_ExtendedFieldHeader!=null && !old_ExtendedFieldHeader.getLastMntOn().equals(tempExtendedFieldHeader.getLastMntOn())){ 
+				if (oldExtendedFieldHeader!=null && !oldExtendedFieldHeader.getLastMntOn().equals(tempExtendedFieldHeader.getLastMntOn())){ 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 							"41005", errParm,valueParm), usrLanguage));
 				}
