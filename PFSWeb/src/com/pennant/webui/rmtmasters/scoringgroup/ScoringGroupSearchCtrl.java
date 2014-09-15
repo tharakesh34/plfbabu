@@ -320,10 +320,10 @@ public class ScoringGroupSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.scoreGroupCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_ScoreGroupCode = this.sortOperator_scoreGroupCode.getSelectedItem();
+			final Listitem itemScoreGroupCode = this.sortOperator_scoreGroupCode.getSelectedItem();
 
-			if (item_ScoreGroupCode != null) {
-				final int searchOpId = ((SearchOperators) item_ScoreGroupCode.getAttribute("data")).getSearchOperatorId();
+			if (itemScoreGroupCode != null) {
+				final int searchOpId = ((SearchOperators) itemScoreGroupCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("scoreGroupCode", "%" + this.scoreGroupCode.getValue().toUpperCase() + "%", searchOpId));
@@ -338,10 +338,10 @@ public class ScoringGroupSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.scoreGroupName.getValue())) {
 
 			// get the search operator
-			final Listitem item_ScoreGroupName = this.sortOperator_scoreGroupName.getSelectedItem();
+			final Listitem itemScoreGroupName = this.sortOperator_scoreGroupName.getSelectedItem();
 
-			if (item_ScoreGroupName != null) {
-				final int searchOpId = ((SearchOperators) item_ScoreGroupName.getAttribute("data")).getSearchOperatorId();
+			if (itemScoreGroupName != null) {
+				final int searchOpId = ((SearchOperators) itemScoreGroupName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("scoreGroupName", "%" + this.scoreGroupName.getValue().toUpperCase() + "%", searchOpId));
@@ -354,9 +354,9 @@ public class ScoringGroupSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}
 
 		if (this.minScore.getValue()!=null) {	  
-			final Listitem item_MinScore = this.sortOperator_minScore.getSelectedItem();
-			if (item_MinScore != null) {
-				final int searchOpId = ((SearchOperators) item_MinScore.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemMinScore = this.sortOperator_minScore.getSelectedItem();
+			if (itemMinScore != null) {
+				final int searchOpId = ((SearchOperators) itemMinScore.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -372,10 +372,10 @@ public class ScoringGroupSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}	
 
 		// get the search operator
-		final Listitem item_Isoverride = this.sortOperator_isoverride.getSelectedItem();
+		final Listitem itemIsoverride = this.sortOperator_isoverride.getSelectedItem();
 
-		if (item_Isoverride != null) {
-			final int searchOpId = ((SearchOperators) item_Isoverride.getAttribute("data")).getSearchOperatorId();
+		if (itemIsoverride != null) {
+			final int searchOpId = ((SearchOperators) itemIsoverride.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -390,9 +390,9 @@ public class ScoringGroupSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}
 
 		if (this.overrideScore.getValue()!=null) {	  
-			final Listitem item_OverrideScore = this.sortOperator_overrideScore.getSelectedItem();
-			if (item_OverrideScore != null) {
-				final int searchOpId = ((SearchOperators) item_OverrideScore.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemOverrideScore = this.sortOperator_overrideScore.getSelectedItem();
+			if (itemOverrideScore != null) {
+				final int searchOpId = ((SearchOperators) itemOverrideScore.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -409,9 +409,9 @@ public class ScoringGroupSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -430,9 +430,9 @@ public class ScoringGroupSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

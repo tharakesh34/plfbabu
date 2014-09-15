@@ -952,10 +952,10 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 
 		if(getProductDialogCtrl().getProductAssetList()!=null && getProductDialogCtrl().getProductAssetList().size()>0){
 			for (int i = 0; i < getProductDialogCtrl().getProductAssetList().size(); i++) {
-				ProductAsset ProductAsset = getProductDialogCtrl().getProductAssetList().get(i);
+				ProductAsset productAsset = getProductDialogCtrl().getProductAssetList().get(i);
 
-				if(aProductAsset.getAssetCode().equals(ProductAsset.getAssetCode()) && 
-						aProductAsset.getProductCode().equals(ProductAsset.getProductCode())){ // Both Current and Existing list addresses same
+				if(aProductAsset.getAssetCode().equals(productAsset.getAssetCode()) && 
+						aProductAsset.getProductCode().equals(productAsset.getProductCode())){ // Both Current and Existing list addresses same
 
 					if(aProductAsset.isNew()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -978,10 +978,10 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 						}else if(aProductAsset.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
 							recordAdded=true;
 							for (int j = 0; j < getProductDialogCtrl().getProductAssetList().size(); j++) {
-								ProductAsset productAsset =  getProductDialogCtrl().getProductAssetList().get(j);
-								if(productAsset.getProductCode() == aProductAsset.getProductCode() 
-										&& productAsset.getAssetCode().equals(aProductAsset.getAssetCode())){
-									productAssets.add(productAsset);
+								ProductAsset prodctAsset =  getProductDialogCtrl().getProductAssetList().get(j);
+								if(prodctAsset.getProductCode() == prodctAsset.getProductCode() 
+										&& prodctAsset.getAssetCode().equals(prodctAsset.getAssetCode())){
+									productAssets.add(prodctAsset);
 								}
 							}
 						}else if(aProductAsset.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
@@ -989,11 +989,11 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 						}
 					}else{
 						if(tranType!=PennantConstants.TRAN_UPD){
-							productAssets.add(ProductAsset);
+							productAssets.add(productAsset);
 						}
 					}
 				}else{
-					productAssets.add(ProductAsset);
+					productAssets.add(productAsset);
 				}
 			}
 		}
@@ -1155,8 +1155,8 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setNewRecord(boolean newRecord) {

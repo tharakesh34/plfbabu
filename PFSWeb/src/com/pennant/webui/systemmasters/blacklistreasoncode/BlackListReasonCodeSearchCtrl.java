@@ -310,10 +310,10 @@ public class BlackListReasonCodeSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.bLRsnCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_BLRsnCode = this.sortOperator_bLRsnCode.getSelectedItem();
+			final Listitem itemBLRsnCode = this.sortOperator_bLRsnCode.getSelectedItem();
 
-			if (item_BLRsnCode != null) {
-				final int searchOpId = ((SearchOperators) item_BLRsnCode.getAttribute("data")).getSearchOperatorId();
+			if (itemBLRsnCode != null) {
+				final int searchOpId = ((SearchOperators) itemBLRsnCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("bLRsnCode", "%" + this.bLRsnCode.getValue().toUpperCase() + "%",  searchOpId));
@@ -327,10 +327,10 @@ public class BlackListReasonCodeSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.bLRsnDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_BLRsnDesc = this.sortOperator_bLRsnDesc.getSelectedItem();
+			final Listitem itemBLRsnDesc = this.sortOperator_bLRsnDesc.getSelectedItem();
 
-			if (item_BLRsnDesc != null) {
-				final int searchOpId = ((SearchOperators) item_BLRsnDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemBLRsnDesc != null) {
+				final int searchOpId = ((SearchOperators) itemBLRsnDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("bLRsnDesc", "%"+ this.bLRsnDesc.getValue().toUpperCase() + "%",searchOpId));
@@ -342,10 +342,10 @@ public class BlackListReasonCodeSearchCtrl extends GFCBaseCtrl implements Serial
 			}
 		}
 		// get the search operator
-		final Listitem item_BLIsActive = this.sortOperator_bLIsActive.getSelectedItem();
+		final Listitem itemBLIsActive = this.sortOperator_bLIsActive.getSelectedItem();
 
-		if (item_BLIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_BLIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemBLIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemBLIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -360,9 +360,9 @@ public class BlackListReasonCodeSearchCtrl extends GFCBaseCtrl implements Serial
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"+ this.recordStatus.getValue().toUpperCase() + "%",searchOpId));
@@ -381,9 +381,9 @@ public class BlackListReasonCodeSearchCtrl extends GFCBaseCtrl implements Serial
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"+ selectedValue.toUpperCase() + "%", searchOpId));

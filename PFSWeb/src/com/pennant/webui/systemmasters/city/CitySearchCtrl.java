@@ -323,11 +323,10 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.pCCountry.getValue())) {
 
 			// get the search operator
-			final Listitem item_PCCountry = this.sortOperator_pCCountry
-					.getSelectedItem();
+			final Listitem itemPCCountry = this.sortOperator_pCCountry.getSelectedItem();
 
-			if (item_PCCountry != null) {
-				final int searchOpId = ((SearchOperators) item_PCCountry
+			if (itemPCCountry != null) {
+				final int searchOpId = ((SearchOperators) itemPCCountry
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -344,11 +343,10 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.pCProvince.getValue())) {
 
 			// get the search operator
-			final Listitem item_PCProvince = this.sortOperator_pCProvince
-					.getSelectedItem();
+			final Listitem itemPCProvince = this.sortOperator_pCProvince.getSelectedItem();
 
-			if (item_PCProvince != null) {
-				final int searchOpId = ((SearchOperators) item_PCProvince
+			if (itemPCProvince != null) {
+				final int searchOpId = ((SearchOperators) itemPCProvince
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -365,11 +363,10 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.pCCity.getValue())) {
 
 			// get the search operator
-			final Listitem item_PCCity = this.sortOperator_pCCity
-					.getSelectedItem();
+			final Listitem itemPCCity = this.sortOperator_pCCity.getSelectedItem();
 
-			if (item_PCCity != null) {
-				final int searchOpId = ((SearchOperators) item_PCCity
+			if (itemPCCity != null) {
+				final int searchOpId = ((SearchOperators) itemPCCity
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -386,11 +383,10 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.pCCityName.getValue())) {
 
 			// get the search operator
-			final Listitem item_PCCityName = this.sortOperator_pCCityName
-					.getSelectedItem();
+			final Listitem itemPCCityName = this.sortOperator_pCCityName.getSelectedItem();
 
-			if (item_PCCityName != null) {
-				final int searchOpId = ((SearchOperators) item_PCCityName
+			if (itemPCCityName != null) {
+				final int searchOpId = ((SearchOperators) itemPCCityName
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -407,10 +403,9 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -433,10 +428,9 @@ public class CitySearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

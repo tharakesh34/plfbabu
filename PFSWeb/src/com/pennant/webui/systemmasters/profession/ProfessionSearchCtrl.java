@@ -303,10 +303,10 @@ public class ProfessionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.professionCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProfessionCode = this.sortOperator_professionCode.getSelectedItem();
+			final Listitem itemProfessionCode = this.sortOperator_professionCode.getSelectedItem();
 
-			if (item_ProfessionCode != null) {
-				final int searchOpId = ((SearchOperators) item_ProfessionCode.getAttribute("data")).getSearchOperatorId();
+			if (itemProfessionCode != null) {
+				final int searchOpId = ((SearchOperators) itemProfessionCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("professionCode", "%" + this.professionCode.getValue().toUpperCase() + "%", searchOpId));
@@ -320,10 +320,10 @@ public class ProfessionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.professionDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProfessionDesc = this.sortOperator_professionDesc.getSelectedItem();
+			final Listitem itemProfessionDesc = this.sortOperator_professionDesc.getSelectedItem();
 
-			if (item_ProfessionDesc != null) {
-				final int searchOpId = ((SearchOperators) item_ProfessionDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemProfessionDesc != null) {
+				final int searchOpId = ((SearchOperators) itemProfessionDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("professionDesc", "%"+ this.professionDesc.getValue().toUpperCase()	+ "%", searchOpId));
@@ -335,10 +335,10 @@ public class ProfessionSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_ProfessionIsActive = this.sortOperator_professionIsActive.getSelectedItem();
+		final Listitem itemProfessionIsActive = this.sortOperator_professionIsActive.getSelectedItem();
 
-		if (item_ProfessionIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_ProfessionIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemProfessionIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemProfessionIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -353,9 +353,9 @@ public class ProfessionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%",searchOpId));
@@ -374,9 +374,9 @@ public class ProfessionSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

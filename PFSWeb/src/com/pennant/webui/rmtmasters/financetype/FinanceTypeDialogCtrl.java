@@ -5686,10 +5686,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	}
 
-	private void doFillAssestType(Combobox codeCombobox, String value, String Product) {
+	private void doFillAssestType(Combobox codeCombobox, String value, String product) {
 		logger.debug("Entering");
 		JdbcSearchObject<ProductAsset> searchObject = new JdbcSearchObject<ProductAsset>(ProductAsset.class);
-		searchObject.addFilter(new Filter("ProductCode", Product, Filter.OP_EQUAL));
+		searchObject.addFilter(new Filter("ProductCode", product, Filter.OP_EQUAL));
 		searchObject.addSort("AssetCode", false);
 		List<ProductAsset> appList = getPagedListService().getBySearchObject(searchObject);
 		codeCombobox.getChildren().clear();
@@ -6293,8 +6293,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	/** To get Note Dialog on clicking the button note */
@@ -6727,17 +6727,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	/* Tab 2 */
 	public void onSelect$cbfinGrcDftIntFrqCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinGrcDftIntFrqCode);
-		onSelectFrqCode(StmtFrqCode, this.cbfinGrcDftIntFrqCode, this.cbfinGrcDftIntFrqMth, this.cbfinGrcDftIntFrqDays, this.finGrcDftIntFrq,
+		String stmtFrqCode = getComboboxValue(this.cbfinGrcDftIntFrqCode);
+		onSelectFrqCode(stmtFrqCode, this.cbfinGrcDftIntFrqCode, this.cbfinGrcDftIntFrqMth, this.cbfinGrcDftIntFrqDays, this.finGrcDftIntFrq,
 		        isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelect$cbfinGrcDftIntFrqMth(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinGrcDftIntFrqCode);
-		String StmtFrqMonth = getComboboxValue(this.cbfinGrcDftIntFrqMth);
-		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinDftIntFrqMth, this.cbfinGrcDftIntFrqDays, this.finGrcDftIntFrq, isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinGrcDftIntFrqCode);
+		String stmtFrqMonth = getComboboxValue(this.cbfinGrcDftIntFrqMth);
+		onSelectFrqMth(stmtFrqCode, stmtFrqMonth, this.cbfinDftIntFrqMth, this.cbfinGrcDftIntFrqDays, this.finGrcDftIntFrq, isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -6749,16 +6749,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onSelect$cbfinGrcCpzFrqCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinGrcCpzFrqCode);
-		onSelectFrqCode(StmtFrqCode, this.cbfinGrcCpzFrqCode, this.cbfinGrcCpzFrqMth, this.cbfinGrcCpzFrqDays, this.finGrcCpzFrq, isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinGrcCpzFrqCode);
+		onSelectFrqCode(stmtFrqCode, this.cbfinGrcCpzFrqCode, this.cbfinGrcCpzFrqMth, this.cbfinGrcCpzFrqDays, this.finGrcCpzFrq, isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelect$cbfinGrcCpzFrqMth(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinGrcCpzFrqCode);
-		String StmtFrqMonth = getComboboxValue(this.cbfinGrcCpzFrqMth);
-		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinGrcCpzFrqMth, this.cbfinGrcCpzFrqDays, this.finGrcCpzFrq, isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinGrcCpzFrqCode);
+		String stmtFrqMonth = getComboboxValue(this.cbfinGrcCpzFrqMth);
+		onSelectFrqMth(stmtFrqCode, stmtFrqMonth, this.cbfinGrcCpzFrqMth, this.cbfinGrcCpzFrqDays, this.finGrcCpzFrq, isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -6770,16 +6770,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onSelect$cbfinGrcRvwFrqCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinGrcRvwFrqCode);
-		onSelectFrqCode(StmtFrqCode, this.cbfinGrcRvwFrqCode, this.cbfinGrcRvwFrqMth, this.cbfinGrcRvwFrqDays, this.finGrcRvwFrq, isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinGrcRvwFrqCode);
+		onSelectFrqCode(stmtFrqCode, this.cbfinGrcRvwFrqCode, this.cbfinGrcRvwFrqMth, this.cbfinGrcRvwFrqDays, this.finGrcRvwFrq, isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelect$cbfinGrcRvwFrqMth(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinGrcRvwFrqCode);
-		String StmtFrqMonth = getComboboxValue(this.cbfinGrcRvwFrqMth);
-		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinGrcRvwFrqMth, this.cbfinGrcRvwFrqDays, this.finGrcRvwFrq, isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinGrcRvwFrqCode);
+		String stmtFrqMonth = getComboboxValue(this.cbfinGrcRvwFrqMth);
+		onSelectFrqMth(stmtFrqCode, stmtFrqMonth, this.cbfinGrcRvwFrqMth, this.cbfinGrcRvwFrqDays, this.finGrcRvwFrq, isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -6792,16 +6792,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	/* Tab 3 */
 	public void onSelect$cbfinDftIntFrqCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinDftIntFrqCode);
-		onSelectFrqCode(StmtFrqCode, this.cbfinDftIntFrqCode, this.cbfinDftIntFrqMth, this.cbfinDftIntFrqDays, this.finDftIntFrq, isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinDftIntFrqCode);
+		onSelectFrqCode(stmtFrqCode, this.cbfinDftIntFrqCode, this.cbfinDftIntFrqMth, this.cbfinDftIntFrqDays, this.finDftIntFrq, isReadOnly("FinanceTypeDialog_finDftIntFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelect$cbfinDftIntFrqMth(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinDftIntFrqCode);
-		String StmtFrqMonth = getComboboxValue(this.cbfinDftIntFrqMth);
-		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinDftIntFrqMth, this.cbfinDftIntFrqDays, this.finDftIntFrq, isReadOnly("FinanceTypeDialog_finDftIntFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinDftIntFrqCode);
+		String stmtFrqMonth = getComboboxValue(this.cbfinDftIntFrqMth);
+		onSelectFrqMth(stmtFrqCode, stmtFrqMonth, this.cbfinDftIntFrqMth, this.cbfinDftIntFrqDays, this.finDftIntFrq, isReadOnly("FinanceTypeDialog_finDftIntFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -6813,16 +6813,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onSelect$cbfinRpyFrqCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinRpyFrqCode);
-		onSelectFrqCode(StmtFrqCode, this.cbfinRpyFrqCode, this.cbfinRpyFrqMth, this.cbfinRpyFrqDays, this.finRpyFrq, isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinRpyFrqCode);
+		onSelectFrqCode(stmtFrqCode, this.cbfinRpyFrqCode, this.cbfinRpyFrqMth, this.cbfinRpyFrqDays, this.finRpyFrq, isReadOnly("FinanceTypeDialog_finRpyFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelect$cbfinRpyFrqMth(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinRpyFrqCode);
-		String StmtFrqMonth = getComboboxValue(this.cbfinRpyFrqMth);
-		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinRpyFrqMth, this.cbfinRpyFrqDays, this.finRpyFrq, isReadOnly("FinanceTypeDialog_finRpyFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinRpyFrqCode);
+		String stmtFrqMonth = getComboboxValue(this.cbfinRpyFrqMth);
+		onSelectFrqMth(stmtFrqCode, stmtFrqMonth, this.cbfinRpyFrqMth, this.cbfinRpyFrqDays, this.finRpyFrq, isReadOnly("FinanceTypeDialog_finRpyFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -6834,16 +6834,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onSelect$cbfinCpzFrqCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinCpzFrqCode);
-		onSelectFrqCode(StmtFrqCode, this.cbfinCpzFrqCode, this.cbfinCpzFrqMth, this.cbfinCpzFrqDays, this.finCpzFrq, isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinCpzFrqCode);
+		onSelectFrqCode(stmtFrqCode, this.cbfinCpzFrqCode, this.cbfinCpzFrqMth, this.cbfinCpzFrqDays, this.finCpzFrq, isReadOnly("FinanceTypeDialog_finCpzFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelect$cbfinCpzFrqMth(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinCpzFrqCode);
-		String StmtFrqMonth = getComboboxValue(this.cbfinCpzFrqMth);
-		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinCpzFrqMth, this.cbfinCpzFrqDays, this.finCpzFrq, isReadOnly("FinanceTypeDialog_finCpzFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinCpzFrqCode);
+		String stmtFrqMonth = getComboboxValue(this.cbfinCpzFrqMth);
+		onSelectFrqMth(stmtFrqCode, stmtFrqMonth, this.cbfinCpzFrqMth, this.cbfinCpzFrqDays, this.finCpzFrq, isReadOnly("FinanceTypeDialog_finCpzFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -6855,16 +6855,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onSelect$cbfinRvwFrqCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinRvwFrqCode);
-		onSelectFrqCode(StmtFrqCode, this.cbfinRvwFrqCode, this.cbfinRvwFrqMth, this.cbfinRvwFrqDays, this.finRvwFrq, isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinRvwFrqCode);
+		onSelectFrqCode(stmtFrqCode, this.cbfinRvwFrqCode, this.cbfinRvwFrqMth, this.cbfinRvwFrqDays, this.finRvwFrq, isReadOnly("FinanceTypeDialog_finRvwFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelect$cbfinRvwFrqMth(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinRvwFrqCode);
-		String StmtFrqMonth = getComboboxValue(this.cbfinRvwFrqMth);
-		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinRvwFrqMth, this.cbfinRvwFrqDays, this.finRvwFrq, isReadOnly("FinanceTypeDialog_finRvwFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinRvwFrqCode);
+		String stmtFrqMonth = getComboboxValue(this.cbfinRvwFrqMth);
+		onSelectFrqMth(stmtFrqCode, stmtFrqMonth, this.cbfinRvwFrqMth, this.cbfinRvwFrqDays, this.finRvwFrq, isReadOnly("FinanceTypeDialog_finRvwFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -6877,16 +6877,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	//=============================================== Hidden =========================================================//
 	public void onSelect$cbfinDftStmtFrqCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinDftStmtFrqCode);
-		onSelectFrqCode(StmtFrqCode, this.cbfinDftStmtFrqCode, this.cbfinDftStmtFrqMth, this.cbfinDftStmtFrqDays, this.finDftStmtFrq, isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinDftStmtFrqCode);
+		onSelectFrqCode(stmtFrqCode, this.cbfinDftStmtFrqCode, this.cbfinDftStmtFrqMth, this.cbfinDftStmtFrqDays, this.finDftStmtFrq, isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelect$cbfinDftStmtFrqMth(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinDftStmtFrqCode);
-		String StmtFrqMonth = getComboboxValue(this.cbfinDftStmtFrqMth);
-		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinDftStmtFrqMth, this.cbfinDftStmtFrqDays, this.finDftStmtFrq, isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinDftStmtFrqCode);
+		String stmtFrqMonth = getComboboxValue(this.cbfinDftStmtFrqMth);
+		onSelectFrqMth(stmtFrqCode, stmtFrqMonth, this.cbfinDftStmtFrqMth, this.cbfinDftStmtFrqDays, this.finDftStmtFrq, isReadOnly("FinanceTypeDialog_finDftStmtFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -6898,17 +6898,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onSelect$cbfinDepreciationCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinDepreciationCode);
-		onSelectFrqCode(StmtFrqCode, this.cbfinDepreciationCode, this.cbfinDepreciationMth, this.cbfinDepreciationDays, this.finDepreciationFrq,
+		String stmtFrqCode = getComboboxValue(this.cbfinDepreciationCode);
+		onSelectFrqCode(stmtFrqCode, this.cbfinDepreciationCode, this.cbfinDepreciationMth, this.cbfinDepreciationDays, this.finDepreciationFrq,
 		        isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelect$cbfinDepreciationMth(Event event) {
 		logger.debug("Entering" + event.toString());
-		String StmtFrqCode = getComboboxValue(this.cbfinDepreciationCode);
-		String StmtFrqMonth = getComboboxValue(this.cbfinDepreciationMth);
-		onSelectFrqMth(StmtFrqCode, StmtFrqMonth, this.cbfinDepreciationMth, this.cbfinDepreciationDays, this.finDepreciationFrq, isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
+		String stmtFrqCode = getComboboxValue(this.cbfinDepreciationCode);
+		String stmtFrqMonth = getComboboxValue(this.cbfinDepreciationMth);
+		onSelectFrqMth(stmtFrqCode, stmtFrqMonth, this.cbfinDepreciationMth, this.cbfinDepreciationDays, this.finDepreciationFrq, isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
 		logger.debug("Leaving" + event.toString());
 	}
 

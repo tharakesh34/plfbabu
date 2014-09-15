@@ -314,10 +314,10 @@ public class SubSegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.segmentCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_SegmentCode = this.sortOperator_segmentCode.getSelectedItem();
+			final Listitem itemSegmentCode = this.sortOperator_segmentCode.getSelectedItem();
 
-			if (item_SegmentCode != null) {
-				final int searchOpId = ((SearchOperators) item_SegmentCode.getAttribute("data")).getSearchOperatorId();
+			if (itemSegmentCode != null) {
+				final int searchOpId = ((SearchOperators) itemSegmentCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("segmentCode", "%" + this.segmentCode.getValue().toUpperCase() + "%", searchOpId));
@@ -331,10 +331,10 @@ public class SubSegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.subSegmentCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_SubSegmentCode = this.sortOperator_subSegmentCode.getSelectedItem();
+			final Listitem itemSubSegmentCode = this.sortOperator_subSegmentCode.getSelectedItem();
 
-			if (item_SubSegmentCode != null) {
-				final int searchOpId = ((SearchOperators) item_SubSegmentCode.getAttribute("data")).getSearchOperatorId();
+			if (itemSubSegmentCode != null) {
+				final int searchOpId = ((SearchOperators) itemSubSegmentCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("subSegmentCode", "%" + this.subSegmentCode.getValue().toUpperCase() + "%", searchOpId));
@@ -348,10 +348,10 @@ public class SubSegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.subSegmentDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_SubSegmentDesc = this.sortOperator_subSegmentDesc.getSelectedItem();
+			final Listitem itemSubSegmentDesc = this.sortOperator_subSegmentDesc.getSelectedItem();
 
-			if (item_SubSegmentDesc != null) {
-				final int searchOpId = ((SearchOperators) item_SubSegmentDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemSubSegmentDesc != null) {
+				final int searchOpId = ((SearchOperators) itemSubSegmentDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("subSegmentDesc", "%" + this.subSegmentDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -363,10 +363,10 @@ public class SubSegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_SubSegmentIsActive = this.sortOperator_subSegmentIsActive.getSelectedItem();
+		final Listitem itemSubSegmentIsActive = this.sortOperator_subSegmentIsActive.getSelectedItem();
 
-		if (item_SubSegmentIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_SubSegmentIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemSubSegmentIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemSubSegmentIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -381,9 +381,9 @@ public class SubSegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -402,9 +402,9 @@ public class SubSegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

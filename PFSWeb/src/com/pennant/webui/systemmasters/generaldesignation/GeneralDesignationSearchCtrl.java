@@ -308,11 +308,10 @@ public class GeneralDesignationSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.genDesignation.getValue())) {
 
 			// get the search operator
-			final Listitem item_GenDesignation = this.sortOperator_genDesignation
-					.getSelectedItem();
+			final Listitem itemGenDesignation = this.sortOperator_genDesignation.getSelectedItem();
 
-			if (item_GenDesignation != null) {
-				final int searchOpId = ((SearchOperators) item_GenDesignation
+			if (itemGenDesignation != null) {
+				final int searchOpId = ((SearchOperators) itemGenDesignation
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -330,11 +329,10 @@ public class GeneralDesignationSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.genDesgDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_GenDesgDesc = this.sortOperator_genDesgDesc
-					.getSelectedItem();
+			final Listitem itemGenDesgDesc = this.sortOperator_genDesgDesc.getSelectedItem();
 
-			if (item_GenDesgDesc != null) {
-				final int searchOpId = ((SearchOperators) item_GenDesgDesc
+			if (itemGenDesgDesc != null) {
+				final int searchOpId = ((SearchOperators) itemGenDesgDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -350,10 +348,9 @@ public class GeneralDesignationSearchCtrl extends GFCBaseCtrl implements Seriali
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -375,10 +372,9 @@ public class GeneralDesignationSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

@@ -327,11 +327,11 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.holidayCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_HolidayCode = this.sortOperator_holidayCode
+			final Listitem itemHolidayCode = this.sortOperator_holidayCode
 					.getSelectedItem();
 
-			if (item_HolidayCode != null) {
-				final int searchOpId = ((SearchOperators) item_HolidayCode
+			if (itemHolidayCode != null) {
+				final int searchOpId = ((SearchOperators) itemHolidayCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -349,11 +349,11 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.holidayYear.getValue())) {
 
 			// get the search operator
-			final Listitem item_HolidayYear = this.sortOperator_holidayYear
+			final Listitem itemHolidayYear = this.sortOperator_holidayYear
 					.getSelectedItem();
 
-			if (item_HolidayYear != null) {
-				final int searchOpId = ((SearchOperators) item_HolidayYear
+			if (itemHolidayYear != null) {
+				final int searchOpId = ((SearchOperators) itemHolidayYear
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -371,10 +371,10 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.holidayType.getValue())) {
 
 			// get the search operator
-			final Listitem item_HolidayType = this.sortOperator_holidayType.getSelectedItem();
+			final Listitem itemHolidayType = this.sortOperator_holidayType.getSelectedItem();
 
-			if (item_HolidayType != null) {
-				final int searchOpId = ((SearchOperators) item_HolidayType
+			if (itemHolidayType != null) {
+				final int searchOpId = ((SearchOperators) itemHolidayType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -389,13 +389,13 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 				}
 			}
 		}
-		/*if (StringUtils.isNotEmpty(this.holidays.getValue())) {
+		/* if (StringUtils.isNotEmpty(this.holidays.getValue())) {
 
 			// get the search operator
-			final Listitem item_Holidays = this.sortOperator_holidays.getSelectedItem();
+			final Listitem itemHolidays = this.sortOperator_holidays.getSelectedItem();
 
-			if (item_Holidays != null) {
-				final int searchOpId = ((SearchOperators) item_Holidays.getAttribute("data")).getSearchOperatorId();
+			if (itemHolidays != null) {
+				final int searchOpId = ((SearchOperators) itemHolidays.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("holidays", "%" + this.holidays.getValue().toUpperCase() + "%", searchOpId));
@@ -409,10 +409,10 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.holidayDesc1.getValue())) {
 
 			// get the search operator
-			final Listitem item_HolidayDesc1 = this.sortOperator_holidayDesc1.getSelectedItem();
+			final Listitem itemHolidayDesc1 = this.sortOperator_holidayDesc1.getSelectedItem();
 
-			if (item_HolidayDesc1 != null) {
-				final int searchOpId = ((SearchOperators) item_HolidayDesc1.getAttribute("data")).getSearchOperatorId();
+			if (itemHolidayDesc1 != null) {
+				final int searchOpId = ((SearchOperators) itemHolidayDesc1.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("holidayDesc1", "%" + this.holidayDesc1.getValue().toUpperCase() + "%", searchOpId));
@@ -426,10 +426,10 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.holidayDesc2.getValue())) {
 
 			// get the search operator
-			final Listitem item_HolidayDesc2 = this.sortOperator_holidayDesc2.getSelectedItem();
+			final Listitem itemHolidayDesc2 = this.sortOperator_holidayDesc2.getSelectedItem();
 
-			if (item_HolidayDesc2 != null) {
-				final int searchOpId = ((SearchOperators) item_HolidayDesc2.getAttribute("data")).getSearchOperatorId();
+			if (itemHolidayDesc2 != null) {
+				final int searchOpId = ((SearchOperators) itemHolidayDesc2.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("holidayDesc2", "%" + this.holidayDesc2.getValue().toUpperCase() + "%", searchOpId));
@@ -443,10 +443,10 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.holidayDesc3.getValue())) {
 
 			// get the search operator
-			final Listitem item_HolidayDesc3 = this.sortOperator_holidayDesc3.getSelectedItem();
+			final Listitem itemHolidayDesc3 = this.sortOperator_holidayDesc3.getSelectedItem();
 
-			if (item_HolidayDesc3 != null) {
-				final int searchOpId = ((SearchOperators) item_HolidayDesc3.getAttribute("data")).getSearchOperatorId();
+			if (itemHolidayDesc3 != null) {
+				final int searchOpId = ((SearchOperators) itemHolidayDesc3.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("holidayDesc3", "%" + this.holidayDesc3.getValue().toUpperCase() + "%", searchOpId));
@@ -459,9 +459,9 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -480,9 +480,9 @@ public class HolidayMasterSearchCtrl extends GFCBaseCtrl implements Serializable
 		
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

@@ -1171,8 +1171,8 @@ implements Serializable {
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void onClick$btnNotes(Event event) throws Exception {
@@ -1256,18 +1256,18 @@ implements Serializable {
 		if (this.listbox_ProductFintype.getSelectedCount() != 0) {
 			// Messagebox.show(Integer.toString(i));
 			Listitem li = new Listitem();// To read List Item
-			Set SeletedSet = new HashSet();// To get Selected Items
-			SeletedSet = this.listbox_ProductFintype.getSelectedItems();
-			Iterator it = SeletedSet.iterator();
+			Set seletedSet = new HashSet();// To get Selected Items
+			seletedSet = this.listbox_ProductFintype.getSelectedItems();
+			Iterator it = seletedSet.iterator();
 			while (it.hasNext()) {
 				li = (Listitem) it.next();
 				Listcell slecteditem = new Listcell();
 				Listcell slecteditemDesc = new Listcell();
-				List SelectedRowValues = new ArrayList();// TO get each row
+				List selectedRowValues = new ArrayList();// TO get each row
 				// Details
-				SelectedRowValues = li.getChildren();
-				slecteditem = (Listcell) SelectedRowValues.get(0);
-				slecteditemDesc = (Listcell) SelectedRowValues.get(1);
+				selectedRowValues = li.getChildren();
+				slecteditem = (Listcell) selectedRowValues.get(0);
+				slecteditemDesc = (Listcell) selectedRowValues.get(1);
 				fillListbox(this.listbox_ProductFintypeSelected,
 						slecteditem.getLabel(), slecteditemDesc.getLabel());
 				// apply the not equal filter for selected values
@@ -1347,14 +1347,14 @@ implements Serializable {
 	/**
 	 * To fill the List box Values
 	 */
-	private void fillListbox(Listbox listbox, String value1, String Value2) {
+	private void fillListbox(Listbox listbox, String value1, String value2) {
 		Listitem item = new Listitem(); // To Create List item
 		Listcell lc;
 		lc = new Listcell();
 		lc.setLabel(value1);
 		lc.setParent(item);
 		lc = new Listcell();
-		lc.setLabel(Value2);
+		lc.setLabel(value2);
 		lc.setParent(item);
 		listbox.appendChild(item);
 	}

@@ -297,10 +297,10 @@ public class SegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.segmentCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_SegmentCode = this.sortOperator_segmentCode.getSelectedItem();
+			final Listitem itemSegmentCode = this.sortOperator_segmentCode.getSelectedItem();
 
-			if (item_SegmentCode != null) {
-				final int searchOpId = ((SearchOperators) item_SegmentCode.getAttribute("data")).getSearchOperatorId();
+			if (itemSegmentCode != null) {
+				final int searchOpId = ((SearchOperators) itemSegmentCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("segmentCode", "%" + this.segmentCode.getValue().toUpperCase() + "%", searchOpId));
@@ -314,10 +314,10 @@ public class SegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.segmentDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_SegmentDesc = this.sortOperator_segmentDesc.getSelectedItem();
+			final Listitem itemSegmentDesc = this.sortOperator_segmentDesc.getSelectedItem();
 
-			if (item_SegmentDesc != null) {
-				final int searchOpId = ((SearchOperators) item_SegmentDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemSegmentDesc != null) {
+				final int searchOpId = ((SearchOperators) itemSegmentDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("segmentDesc", "%" + this.segmentDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -329,10 +329,10 @@ public class SegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_SegmentIsActive = this.sortOperator_segmentIsActive.getSelectedItem();
+		final Listitem itemSegmentIsActive = this.sortOperator_segmentIsActive.getSelectedItem();
 
-		if (item_SegmentIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_SegmentIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemSegmentIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemSegmentIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -347,9 +347,9 @@ public class SegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -368,9 +368,9 @@ public class SegmentSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

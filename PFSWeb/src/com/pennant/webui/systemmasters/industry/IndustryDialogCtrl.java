@@ -1261,15 +1261,15 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return this.validationOn;
 	}
 
-	public void setOldVar_subSectorCode(String oldVar_subSectorCode) {
-		this.oldVar_subSectorCode = oldVar_subSectorCode;
+	public void setOldVar_subSectorCode(String oldVarSubSectorCode) {
+		this.oldVar_subSectorCode = oldVarSubSectorCode;
 	}
 	public String getOldVar_subSectorCode() {
 		return oldVar_subSectorCode;
 	}
 
-	public void setOldVar_lovDescSubSector(String oldVar_lovDescSubSector) {
-		this.oldVar_lovDescSubSector = oldVar_lovDescSubSector;
+	public void setOldVar_lovDescSubSector(String oldVarlovDescSubSector) {
+		this.oldVar_lovDescSubSector = oldVarlovDescSubSector;
 	}
 	public String getOldVar_lovDescSubSector() {
 		return oldVar_lovDescSubSector;
@@ -1306,8 +1306,8 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 }

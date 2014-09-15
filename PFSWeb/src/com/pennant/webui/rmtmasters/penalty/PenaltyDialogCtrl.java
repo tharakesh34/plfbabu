@@ -770,16 +770,16 @@ public class PenaltyDialogCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
  		
- 		String old_penaltyEffDate = "";
-	  	String new_penaltyEffDate ="";
+ 		String oldPenaltyEffDate = "";
+	  	String newPenaltyEffDate ="";
 		if (this.oldVar_penaltyEffDate!=null){
-			old_penaltyEffDate=DateUtility.formatDate(this.oldVar_penaltyEffDate,PennantConstants.dateFormat);
+			oldPenaltyEffDate=DateUtility.formatDate(this.oldVar_penaltyEffDate,PennantConstants.dateFormat);
 		}
 		if (this.penaltyEffDate.getValue()!=null){
-			new_penaltyEffDate=DateUtility.formatDate(this.penaltyEffDate.getValue(),PennantConstants.dateFormat);
+			newPenaltyEffDate=DateUtility.formatDate(this.penaltyEffDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_penaltyEffDate).equals(
-				StringUtils.trimToEmpty(new_penaltyEffDate))) {
+		if (!StringUtils.trimToEmpty(oldPenaltyEffDate).equals(
+				StringUtils.trimToEmpty(newPenaltyEffDate))) {
 			return true;
 		}
 		if (this.oldVar_isPenaltyCapitalize != this.isPenaltyCapitalize.isChecked()) {
@@ -1503,8 +1503,8 @@ public class PenaltyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 }

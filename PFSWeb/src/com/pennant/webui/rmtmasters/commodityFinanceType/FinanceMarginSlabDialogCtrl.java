@@ -1366,8 +1366,8 @@ public class FinanceMarginSlabDialogCtrl extends GFCBaseCtrl implements Serializ
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setNewRecord(boolean newRecord) {

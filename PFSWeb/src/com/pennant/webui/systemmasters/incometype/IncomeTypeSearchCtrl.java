@@ -300,10 +300,10 @@ public class IncomeTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.incomeTypeCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_IncomeTypeCode = this.sortOperator_incomeTypeCode.getSelectedItem();
+			final Listitem itemIncomeTypeCode = this.sortOperator_incomeTypeCode.getSelectedItem();
 
-			if (item_IncomeTypeCode != null) {
-				final int searchOpId = ((SearchOperators) item_IncomeTypeCode.getAttribute("data")).getSearchOperatorId();
+			if (itemIncomeTypeCode != null) {
+				final int searchOpId = ((SearchOperators) itemIncomeTypeCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("incomeTypeCode", "%"
@@ -318,10 +318,10 @@ public class IncomeTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.incomeTypeDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_IncomeTypeDesc = this.sortOperator_incomeTypeDesc.getSelectedItem();
+			final Listitem itemIncomeTypeDesc = this.sortOperator_incomeTypeDesc.getSelectedItem();
 
-			if (item_IncomeTypeDesc != null) {
-				final int searchOpId = ((SearchOperators) item_IncomeTypeDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemIncomeTypeDesc != null) {
+				final int searchOpId = ((SearchOperators) itemIncomeTypeDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("incomeTypeDesc", "%"
@@ -334,10 +334,10 @@ public class IncomeTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_IncomeTypeIsActive = this.sortOperator_incomeTypeIsActive.getSelectedItem();
+		final Listitem itemIncomeTypeIsActive = this.sortOperator_incomeTypeIsActive.getSelectedItem();
 
-		if (item_IncomeTypeIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_IncomeTypeIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemIncomeTypeIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemIncomeTypeIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -352,9 +352,9 @@ public class IncomeTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"
@@ -372,9 +372,9 @@ public class IncomeTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"

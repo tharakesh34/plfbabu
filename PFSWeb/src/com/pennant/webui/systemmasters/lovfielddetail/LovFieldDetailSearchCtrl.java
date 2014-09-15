@@ -308,10 +308,10 @@ public class LovFieldDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.fieldCodeId.getValue())) {
 
 			// get the search operator
-			final Listitem item_FieldCodeId = this.sortOperator_fieldCodeId.getSelectedItem();
+			final Listitem itemFieldCodeId = this.sortOperator_fieldCodeId.getSelectedItem();
 
-			if (item_FieldCodeId != null) {
-				final int searchOpId = ((SearchOperators) item_FieldCodeId.getAttribute("data")).
+			if (itemFieldCodeId != null) {
+				final int searchOpId = ((SearchOperators) itemFieldCodeId.getAttribute("data")).
 								getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -328,10 +328,10 @@ public class LovFieldDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.fieldCodeValue.getValue())) {
 
 			// get the search operator
-			final Listitem item_FieldCodeValue = this.sortOperator_fieldCodeValue.getSelectedItem();
+			final Listitem itemFieldCodeValue = this.sortOperator_fieldCodeValue.getSelectedItem();
 
-			if (item_FieldCodeValue != null) {
-				final int searchOpId = ((SearchOperators) item_FieldCodeValue.getAttribute("data")).
+			if (itemFieldCodeValue != null) {
+				final int searchOpId = ((SearchOperators) itemFieldCodeValue.getAttribute("data")).
 										getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -347,10 +347,10 @@ public class LovFieldDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		
 		// get the search operator
-		final Listitem item_isActive = this.sortOperator_isActive.getSelectedItem();
+		final Listitem itemisActive = this.sortOperator_isActive.getSelectedItem();
 
-		if (item_isActive != null) {
-			final int searchOpId = ((SearchOperators) item_isActive.getAttribute("data")).
+		if (itemisActive != null) {
+			final int searchOpId = ((SearchOperators) itemisActive.getAttribute("data")).
 							getSearchOperatorId();
 			
 			if (searchOpId == -1) {
@@ -366,9 +366,9 @@ public class LovFieldDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).
 								getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
@@ -389,9 +389,9 @@ public class LovFieldDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).
 								getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {

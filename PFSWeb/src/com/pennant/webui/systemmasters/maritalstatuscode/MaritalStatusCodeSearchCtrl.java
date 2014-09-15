@@ -302,10 +302,10 @@ public class MaritalStatusCodeSearchCtrl extends GFCBaseCtrl implements	Serializ
 		if (StringUtils.isNotEmpty(this.maritalStsCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_MaritalStsCode = this.sortOperator_maritalStsCode.getSelectedItem();
+			final Listitem itemMaritalStsCode = this.sortOperator_maritalStsCode.getSelectedItem();
 
-			if (item_MaritalStsCode != null) {
-				final int searchOpId = ((SearchOperators) item_MaritalStsCode.getAttribute("data")).getSearchOperatorId();
+			if (itemMaritalStsCode != null) {
+				final int searchOpId = ((SearchOperators) itemMaritalStsCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("maritalStsCode", "%" + this.maritalStsCode.getValue().toUpperCase() + "%", searchOpId));
@@ -319,10 +319,10 @@ public class MaritalStatusCodeSearchCtrl extends GFCBaseCtrl implements	Serializ
 		if (StringUtils.isNotEmpty(this.maritalStsDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_MaritalStsDesc = this.sortOperator_maritalStsDesc.getSelectedItem();
+			final Listitem itemMaritalStsDesc = this.sortOperator_maritalStsDesc.getSelectedItem();
 
-			if (item_MaritalStsDesc != null) {
-				final int searchOpId = ((SearchOperators) item_MaritalStsDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemMaritalStsDesc != null) {
+				final int searchOpId = ((SearchOperators) itemMaritalStsDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("maritalStsDesc", "%" + this.maritalStsDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -334,10 +334,10 @@ public class MaritalStatusCodeSearchCtrl extends GFCBaseCtrl implements	Serializ
 			}
 		}
 		// get the search operator
-		final Listitem item_MaritalStsIsActive = this.sortOperator_maritalStsIsActive.getSelectedItem();
+		final Listitem itemMaritalStsIsActive = this.sortOperator_maritalStsIsActive.getSelectedItem();
 
-		if (item_MaritalStsIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_MaritalStsIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemMaritalStsIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemMaritalStsIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -352,9 +352,9 @@ public class MaritalStatusCodeSearchCtrl extends GFCBaseCtrl implements	Serializ
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"	+ this.recordStatus.getValue().toUpperCase() + "%",	searchOpId));
@@ -373,9 +373,9 @@ public class MaritalStatusCodeSearchCtrl extends GFCBaseCtrl implements	Serializ
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

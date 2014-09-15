@@ -328,10 +328,10 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.finReference.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinReference = this.sortOperator_finReference.getSelectedItem();
+			final Listitem itemFinReference = this.sortOperator_finReference.getSelectedItem();
 
-			if (item_FinReference != null) {
-				final int searchOpId = ((SearchOperators) item_FinReference.getAttribute("data")).getSearchOperatorId();
+			if (itemFinReference != null) {
+				final int searchOpId = ((SearchOperators) itemFinReference.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finReference", "%" + this.finReference.getValue().toUpperCase() + "%", searchOpId));
@@ -345,10 +345,10 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.disbDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_DisbDate = this.sortOperator_disbDate.getSelectedItem();
+			final Listitem itemDisbDate = this.sortOperator_disbDate.getSelectedItem();
 
-			if (item_DisbDate != null) {
-				final int searchOpId = ((SearchOperators) item_DisbDate.getAttribute("data")).getSearchOperatorId();
+			if (itemDisbDate != null) {
+				final int searchOpId = ((SearchOperators) itemDisbDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("disbDate", "%" + this.disbDate.getValue().toUpperCase() + "%", searchOpId));
@@ -362,10 +362,10 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.disbSeq.getValue())) {
 
 			// get the search operator
-			final Listitem item_DisbSeq = this.sortOperator_disbSeq.getSelectedItem();
+			final Listitem itemDisbSeq = this.sortOperator_disbSeq.getSelectedItem();
 
-			if (item_DisbSeq != null) {
-				final int searchOpId = ((SearchOperators) item_DisbSeq.getAttribute("data")).getSearchOperatorId();
+			if (itemDisbSeq != null) {
+				final int searchOpId = ((SearchOperators) itemDisbSeq.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("disbSeq", "%" + this.disbSeq.getValue().toUpperCase() + "%", searchOpId));
@@ -379,10 +379,10 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.disbDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_DisbDesc = this.sortOperator_disbDesc.getSelectedItem();
+			final Listitem itemDisbDesc = this.sortOperator_disbDesc.getSelectedItem();
 
-			if (item_DisbDesc != null) {
-				final int searchOpId = ((SearchOperators) item_DisbDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemDisbDesc != null) {
+				final int searchOpId = ((SearchOperators) itemDisbDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("disbDesc", "%" + this.disbDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -396,10 +396,10 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.disbAmount.getValue())) {
 
 			// get the search operator
-			final Listitem item_DisbAmount = this.sortOperator_disbAmount.getSelectedItem();
+			final Listitem itemDisbAmount = this.sortOperator_disbAmount.getSelectedItem();
 
-			if (item_DisbAmount != null) {
-				final int searchOpId = ((SearchOperators) item_DisbAmount.getAttribute("data")).getSearchOperatorId();
+			if (itemDisbAmount != null) {
+				final int searchOpId = ((SearchOperators) itemDisbAmount.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("disbAmount", "%" + this.disbAmount.getValue().toUpperCase() + "%", searchOpId));
@@ -413,10 +413,10 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.disbActDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_DisbActDate = this.sortOperator_disbActDate.getSelectedItem();
+			final Listitem itemDisbActDate = this.sortOperator_disbActDate.getSelectedItem();
 
-			if (item_DisbActDate != null) {
-				final int searchOpId = ((SearchOperators) item_DisbActDate.getAttribute("data")).getSearchOperatorId();
+			if (itemDisbActDate != null) {
+				final int searchOpId = ((SearchOperators) itemDisbActDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("disbActDate", "%" + this.disbActDate.getValue().toUpperCase() + "%", searchOpId));
@@ -428,10 +428,10 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_DisbDisbursed = this.sortOperator_disbDisbursed.getSelectedItem();
+		final Listitem itemDisbDisbursed = this.sortOperator_disbDisbursed.getSelectedItem();
 
-		if (item_DisbDisbursed != null) {
-			final int searchOpId = ((SearchOperators) item_DisbDisbursed.getAttribute("data")).getSearchOperatorId();
+		if (itemDisbDisbursed != null) {
+			final int searchOpId = ((SearchOperators) itemDisbDisbursed.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -445,10 +445,10 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_DisbIsActive = this.sortOperator_disbIsActive.getSelectedItem();
+		final Listitem itemDisbIsActive = this.sortOperator_disbIsActive.getSelectedItem();
 
-		if (item_DisbIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_DisbIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemDisbIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemDisbIsActive.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -464,10 +464,10 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.disbRemarks.getValue())) {
 
 			// get the search operator
-			final Listitem item_DisbRemarks = this.sortOperator_disbRemarks.getSelectedItem();
+			final Listitem itemDisbRemarks = this.sortOperator_disbRemarks.getSelectedItem();
 
-			if (item_DisbRemarks != null) {
-				final int searchOpId = ((SearchOperators) item_DisbRemarks.getAttribute("data")).getSearchOperatorId();
+			if (itemDisbRemarks != null) {
+				final int searchOpId = ((SearchOperators) itemDisbRemarks.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("disbRemarks", "%" + this.disbRemarks.getValue().toUpperCase() + "%", searchOpId));
@@ -480,9 +480,9 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -501,9 +501,9 @@ public class FinanceDisbursementSearchCtrl extends GFCBaseCtrl implements Serial
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

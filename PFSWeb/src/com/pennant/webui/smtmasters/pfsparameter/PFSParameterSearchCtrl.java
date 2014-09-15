@@ -298,10 +298,10 @@ public class PFSParameterSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.sysParmCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_SysParmCode = this.sortOperator_sysParmCode.getSelectedItem();
+			final Listitem listItemSysParmCode = this.sortOperator_sysParmCode.getSelectedItem();
 
-			if (item_SysParmCode != null) {
-				final int searchOpId = ((SearchOperators) item_SysParmCode.getAttribute("data")).getSearchOperatorId();
+			if (listItemSysParmCode != null) {
+				final int searchOpId = ((SearchOperators) listItemSysParmCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("sysParmCode", "%" + this.sysParmCode.getValue().toUpperCase() + "%", searchOpId));
@@ -315,10 +315,10 @@ public class PFSParameterSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.sysParmDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_SysParmDesc = this.sortOperator_sysParmDesc.getSelectedItem();
+			final Listitem listItemSysParmDesc = this.sortOperator_sysParmDesc.getSelectedItem();
 
-			if (item_SysParmDesc != null) {
-				final int searchOpId = ((SearchOperators) item_SysParmDesc.getAttribute("data")).getSearchOperatorId();
+			if (listItemSysParmDesc != null) {
+				final int searchOpId = ((SearchOperators) listItemSysParmDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("sysParmDesc", "%" + this.sysParmDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -332,10 +332,10 @@ public class PFSParameterSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.sysParmValue.getValue())) {
 
 			// get the search operator
-			final Listitem item_SysParmValue = this.sortOperator_sysParmValue.getSelectedItem();
+			final Listitem listItemSysParmValue = this.sortOperator_sysParmValue.getSelectedItem();
 
-			if (item_SysParmValue != null) {
-				final int searchOpId = ((SearchOperators) item_SysParmValue.getAttribute("data")).getSearchOperatorId();
+			if (listItemSysParmValue != null) {
+				final int searchOpId = ((SearchOperators) listItemSysParmValue.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("sysParmValue", "%" + this.sysParmValue.getValue().toUpperCase() + "%", searchOpId));
@@ -348,9 +348,9 @@ public class PFSParameterSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem listItemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (listItemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -369,9 +369,9 @@ public class PFSParameterSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem listItemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (listItemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

@@ -307,11 +307,11 @@ public class ProductSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.productCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProductCode = this.sortOperator_productCode
+			final Listitem listItemProductCode = this.sortOperator_productCode
 			.getSelectedItem();
 
-			if (item_ProductCode != null) {
-				final int searchOpId = ((SearchOperators) item_ProductCode
+			if (listItemProductCode != null) {
+				final int searchOpId = ((SearchOperators) listItemProductCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -329,11 +329,11 @@ public class ProductSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.productDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProductDesc = this.sortOperator_productDesc
+			final Listitem listItemProductDesc = this.sortOperator_productDesc
 			.getSelectedItem();
 
-			if (item_ProductDesc != null) {
-				final int searchOpId = ((SearchOperators) item_ProductDesc
+			if (listItemProductDesc != null) {
+				final int searchOpId = ((SearchOperators) listItemProductDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -350,10 +350,10 @@ public class ProductSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
+			final Listitem listItemRecordStatus = this.sortOperator_recordStatus
 			.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			if (listItemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) listItemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -377,10 +377,10 @@ public class ProductSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
+			final Listitem listItemRecordType = this.sortOperator_recordType
 			.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			if (listItemRecordType != null) {
+				final int searchOpId = ((SearchOperators) listItemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

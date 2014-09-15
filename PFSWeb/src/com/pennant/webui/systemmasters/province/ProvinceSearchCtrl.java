@@ -315,11 +315,10 @@ public class ProvinceSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.cPCountry.getValue())) {
 
 			// get the search operator
-			final Listitem item_CPCountry = this.sortOperator_cPCountry
-					.getSelectedItem();
+			final Listitem itemCPCountry = this.sortOperator_cPCountry.getSelectedItem();
 
-			if (item_CPCountry != null) {
-				final int searchOpId = ((SearchOperators) item_CPCountry
+			if (itemCPCountry != null) {
+				final int searchOpId = ((SearchOperators) itemCPCountry
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -336,11 +335,10 @@ public class ProvinceSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.cPProvince.getValue())) {
 
 			// get the search operator
-			final Listitem item_CPProvince = this.sortOperator_cPProvince
-					.getSelectedItem();
+			final Listitem itemCPProvince = this.sortOperator_cPProvince.getSelectedItem();
 
-			if (item_CPProvince != null) {
-				final int searchOpId = ((SearchOperators) item_CPProvince
+			if (itemCPProvince != null) {
+				final int searchOpId = ((SearchOperators) itemCPProvince
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -357,11 +355,10 @@ public class ProvinceSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.cPProvinceName.getValue())) {
 
 			// get the search operator
-			final Listitem item_CPProvinceName = this.sortOperator_cPProvinceName
-					.getSelectedItem();
+			final Listitem itemCPProvinceName = this.sortOperator_cPProvinceName.getSelectedItem();
 
-			if (item_CPProvinceName != null) {
-				final int searchOpId = ((SearchOperators) item_CPProvinceName
+			if (itemCPProvinceName != null) {
+				final int searchOpId = ((SearchOperators) itemCPProvinceName
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -378,10 +375,9 @@ public class ProvinceSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -403,10 +399,9 @@ public class ProvinceSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

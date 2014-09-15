@@ -376,11 +376,11 @@ public class AccountTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.acType.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcType = this.sortOperator_acType
+			final Listitem itemAcType = this.sortOperator_acType
 			.getSelectedItem();
 
-			if (item_AcType != null) {
-				final int searchOpId = ((SearchOperators) item_AcType
+			if (itemAcType != null) {
+				final int searchOpId = ((SearchOperators) itemAcType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -397,11 +397,11 @@ public class AccountTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.acTypeDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcTypeDesc = this.sortOperator_acTypeDesc
+			final Listitem itemAcTypeDesc = this.sortOperator_acTypeDesc
 			.getSelectedItem();
 
-			if (item_AcTypeDesc != null) {
-				final int searchOpId = ((SearchOperators) item_AcTypeDesc
+			if (itemAcTypeDesc != null) {
+				final int searchOpId = ((SearchOperators) itemAcTypeDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -419,11 +419,11 @@ public class AccountTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 				&& (!StringUtils.equals(this.acPurpose.getSelectedItem().getLabel()
 						,Labels.getLabel("common.Select")))) {
 			// get the search operator
-			final Listitem item_AcPurpose = this.sortOperator_acPurpose.getSelectedItem();
+			final Listitem itemAcPurpose = this.sortOperator_acPurpose.getSelectedItem();
 
 
-			if (item_AcPurpose != null) {
-				final int searchOpId = ((SearchOperators) item_AcPurpose.getAttribute("data")).getSearchOperatorId();
+			if (itemAcPurpose != null) {
+				final int searchOpId = ((SearchOperators) itemAcPurpose.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -439,11 +439,11 @@ public class AccountTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_InternalAc = this.sortOperator_internalAc
+		final Listitem itemInternalAc = this.sortOperator_internalAc
 		.getSelectedItem();
 
-		if (item_InternalAc != null) {
-			final int searchOpId = ((SearchOperators) item_InternalAc
+		if (itemInternalAc != null) {
+			final int searchOpId = ((SearchOperators) itemInternalAc
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -458,11 +458,11 @@ public class AccountTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_AcTypeIsActive = this.sortOperator_acTypeIsActive
+		final Listitem itemAcTypeIsActive = this.sortOperator_acTypeIsActive
 		.getSelectedItem();
 
-		if (item_AcTypeIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_AcTypeIsActive
+		if (itemAcTypeIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemAcTypeIsActive
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -478,10 +478,10 @@ public class AccountTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus
 			.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -503,10 +503,10 @@ public class AccountTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
+			final Listitem itemRecordType = this.sortOperator_recordType
 			.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

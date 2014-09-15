@@ -302,10 +302,10 @@ public class DispatchModeSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.dispatchModeCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_DispatchModeCode = this.sortOperator_dispatchModeCode.getSelectedItem();
+			final Listitem itemDispatchModeCode = this.sortOperator_dispatchModeCode.getSelectedItem();
 
-			if (item_DispatchModeCode != null) {
-				final int searchOpId = ((SearchOperators) item_DispatchModeCode.getAttribute("data")).getSearchOperatorId();
+			if (itemDispatchModeCode != null) {
+				final int searchOpId = ((SearchOperators) itemDispatchModeCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dispatchModeCode", "%"	+ this.dispatchModeCode.getValue().toUpperCase()+ "%", searchOpId));
@@ -319,10 +319,10 @@ public class DispatchModeSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.dispatchModeDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_DispatchModeDesc = this.sortOperator_dispatchModeDesc.getSelectedItem();
+			final Listitem itemDispatchModeDesc = this.sortOperator_dispatchModeDesc.getSelectedItem();
 
-			if (item_DispatchModeDesc != null) {
-				final int searchOpId = ((SearchOperators) item_DispatchModeDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemDispatchModeDesc != null) {
+				final int searchOpId = ((SearchOperators) itemDispatchModeDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dispatchModeDesc", "%"	+ this.dispatchModeDesc.getValue().toUpperCase()+ "%", searchOpId));
@@ -334,10 +334,10 @@ public class DispatchModeSearchCtrl extends GFCBaseCtrl implements Serializable 
 			}
 		}
 		// get the search operator
-		final Listitem item_DispatchModeIsActive = this.sortOperator_dispatchModeIsActive.getSelectedItem();
+		final Listitem itemDispatchModeIsActive = this.sortOperator_dispatchModeIsActive.getSelectedItem();
 
-		if (item_DispatchModeIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_DispatchModeIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemDispatchModeIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemDispatchModeIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -352,9 +352,9 @@ public class DispatchModeSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -373,9 +373,9 @@ public class DispatchModeSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

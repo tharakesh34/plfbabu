@@ -304,10 +304,10 @@ public class GenderSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.genderCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_GenderCode = this.sortOperator_genderCode.getSelectedItem();
+			final Listitem itemGenderCode = this.sortOperator_genderCode.getSelectedItem();
 
-			if (item_GenderCode != null) {
-				final int searchOpId = ((SearchOperators) item_GenderCode.getAttribute("data")).getSearchOperatorId();
+			if (itemGenderCode != null) {
+				final int searchOpId = ((SearchOperators) itemGenderCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("genderCode", "%" + this.genderCode.getValue().toUpperCase() + "%",	searchOpId));
@@ -321,10 +321,10 @@ public class GenderSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.genderDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_GenderDesc = this.sortOperator_genderDesc.getSelectedItem();
+			final Listitem itemGenderDesc = this.sortOperator_genderDesc.getSelectedItem();
 
-			if (item_GenderDesc != null) {
-				final int searchOpId = ((SearchOperators) item_GenderDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemGenderDesc != null) {
+				final int searchOpId = ((SearchOperators) itemGenderDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("genderDesc", "%" + this.genderDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -336,10 +336,10 @@ public class GenderSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_GenderIsActive = this.sortOperator_genderIsActive.getSelectedItem();
+		final Listitem itemGenderIsActive = this.sortOperator_genderIsActive.getSelectedItem();
 
-		if (item_GenderIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_GenderIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemGenderIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemGenderIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -354,9 +354,9 @@ public class GenderSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%",searchOpId));
@@ -375,9 +375,9 @@ public class GenderSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"+ selectedValue.toUpperCase() + "%", searchOpId));

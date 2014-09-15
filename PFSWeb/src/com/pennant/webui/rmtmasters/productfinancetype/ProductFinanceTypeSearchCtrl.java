@@ -298,11 +298,11 @@ public class ProductFinanceTypeSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.prdFinId.getValue())) {
 
 			// get the search operator
-			final Listitem item_PrdFinId = this.sortOperator_prdFinId
+			final Listitem itemPrdFinId = this.sortOperator_prdFinId
 			.getSelectedItem();
 
-			if (item_PrdFinId != null) {
-				final int searchOpId = ((SearchOperators) item_PrdFinId
+			if (itemPrdFinId != null) {
+				final int searchOpId = ((SearchOperators) itemPrdFinId
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -320,11 +320,11 @@ public class ProductFinanceTypeSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.productCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProductCode = this.sortOperator_productCode
+			final Listitem itemProductCode = this.sortOperator_productCode
 			.getSelectedItem();
 
-			if (item_ProductCode != null) {
-				final int searchOpId = ((SearchOperators) item_ProductCode
+			if (itemProductCode != null) {
+				final int searchOpId = ((SearchOperators) itemProductCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -342,11 +342,11 @@ public class ProductFinanceTypeSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.finType.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinType = this.sortOperator_finType
+			final Listitem itemFinType = this.sortOperator_finType
 			.getSelectedItem();
 
-			if (item_FinType != null) {
-				final int searchOpId = ((SearchOperators) item_FinType
+			if (itemFinType != null) {
+				final int searchOpId = ((SearchOperators) itemFinType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -363,10 +363,10 @@ public class ProductFinanceTypeSearchCtrl extends GFCBaseCtrl implements Seriali
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus
 			.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -390,10 +390,10 @@ public class ProductFinanceTypeSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
+			final Listitem itemRecordType = this.sortOperator_recordType
 			.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

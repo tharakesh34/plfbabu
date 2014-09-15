@@ -308,11 +308,10 @@ public class GeneralDepartmentSearchCtrl extends GFCBaseCtrl implements Serializ
 		if (StringUtils.isNotEmpty(this.genDepartment.getValue())) {
 
 			// get the search operator
-			final Listitem item_GenDepartment = this.sortOperator_genDepartment
-					.getSelectedItem();
+			final Listitem itemGenDepartment = this.sortOperator_genDepartment.getSelectedItem();
 
-			if (item_GenDepartment != null) {
-				final int searchOpId = ((SearchOperators) item_GenDepartment
+			if (itemGenDepartment != null) {
+				final int searchOpId = ((SearchOperators) itemGenDepartment
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -330,11 +329,10 @@ public class GeneralDepartmentSearchCtrl extends GFCBaseCtrl implements Serializ
 		if (StringUtils.isNotEmpty(this.genDeptDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_GenDeptDesc = this.sortOperator_genDeptDesc
-					.getSelectedItem();
+			final Listitem itemGenDeptDesc = this.sortOperator_genDeptDesc.getSelectedItem();
 
-			if (item_GenDeptDesc != null) {
-				final int searchOpId = ((SearchOperators) item_GenDeptDesc
+			if (itemGenDeptDesc != null) {
+				final int searchOpId = ((SearchOperators) itemGenDeptDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -350,10 +348,9 @@ public class GeneralDepartmentSearchCtrl extends GFCBaseCtrl implements Serializ
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -375,10 +372,9 @@ public class GeneralDepartmentSearchCtrl extends GFCBaseCtrl implements Serializ
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

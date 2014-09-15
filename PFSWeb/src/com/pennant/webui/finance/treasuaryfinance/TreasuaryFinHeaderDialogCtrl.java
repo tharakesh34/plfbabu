@@ -1019,26 +1019,26 @@ Serializable {
 		if (this.oldVar_profitDaysBasis != this.profitDaysBasis.getValue()) {
 			return true;
 		}
-		String old_startDate = "";
-		String new_startDate = "";
+		String oldStartDate = "";
+		String newStartDate = "";
 		if (this.oldVar_startDate != null) {
-			old_startDate = DateUtility.formatDate(this.oldVar_startDate,PennantConstants.dateFormat);
+			oldStartDate = DateUtility.formatDate(this.oldVar_startDate,PennantConstants.dateFormat);
 		}
 		if (this.startDate.getValue() != null) {
-			new_startDate = DateUtility.formatDate(this.startDate.getValue(),PennantConstants.dateFormat);
+			newStartDate = DateUtility.formatDate(this.startDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_startDate).equals(StringUtils.trimToEmpty(new_startDate))) {
+		if (!StringUtils.trimToEmpty(oldStartDate).equals(StringUtils.trimToEmpty(newStartDate))) {
 			return true;
 		}
-		String old_maturityDate = "";
-		String new_maturityDate = "";
+		String oldMaturityDate = "";
+		String newMaturityDate = "";
 		if (this.oldVar_maturityDate != null) {
-			old_maturityDate = DateUtility.formatDate(this.oldVar_maturityDate,PennantConstants.dateFormat);
+			oldMaturityDate = DateUtility.formatDate(this.oldVar_maturityDate,PennantConstants.dateFormat);
 		}
 		if (this.maturityDate.getValue() != null) {
-			new_maturityDate = DateUtility.formatDate(this.maturityDate.getValue(), PennantConstants.dateFormat);
+			newMaturityDate = DateUtility.formatDate(this.maturityDate.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_maturityDate).equals(StringUtils.trimToEmpty(new_maturityDate))) {
+		if (!StringUtils.trimToEmpty(oldMaturityDate).equals(StringUtils.trimToEmpty(newMaturityDate))) {
 			return true;
 		}
 
@@ -1744,8 +1744,8 @@ Serializable {
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setValidationOn(boolean validationOn) {

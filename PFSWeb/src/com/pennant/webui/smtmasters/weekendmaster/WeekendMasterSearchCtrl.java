@@ -277,11 +277,11 @@ Serializable {
 		if (StringUtils.isNotEmpty(this.weekendCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_WeekendCode = this.sortOperator_weekendCode
+			final Listitem listItemWeekendCode = this.sortOperator_weekendCode
 			.getSelectedItem();
 
-			if (item_WeekendCode != null) {
-				final int searchOpId = ((SearchOperators) item_WeekendCode
+			if (listItemWeekendCode != null) {
+				final int searchOpId = ((SearchOperators) listItemWeekendCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -299,11 +299,11 @@ Serializable {
 		if (StringUtils.isNotEmpty(this.weekendDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_WeekendDesc = this.sortOperator_weekendDesc
+			final Listitem listItemWeekendDesc = this.sortOperator_weekendDesc
 			.getSelectedItem();
 
-			if (item_WeekendDesc != null) {
-				final int searchOpId = ((SearchOperators) item_WeekendDesc
+			if (listItemWeekendDesc != null) {
+				final int searchOpId = ((SearchOperators) listItemWeekendDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -321,11 +321,11 @@ Serializable {
 		if (StringUtils.isNotEmpty(this.weekend.getValue())) {
 
 			// get the search operator
-			final Listitem item_Weekend = this.sortOperator_weekend
+			final Listitem listItemWeekend = this.sortOperator_weekend
 			.getSelectedItem();
 
-			if (item_Weekend != null) {
-				final int searchOpId = ((SearchOperators) item_Weekend
+			if (listItemWeekend != null) {
+				final int searchOpId = ((SearchOperators) listItemWeekend
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

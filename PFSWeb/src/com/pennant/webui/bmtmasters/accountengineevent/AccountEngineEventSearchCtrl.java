@@ -280,10 +280,10 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.aEEventCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_AEEventCode = this.sortOperator_aEEventCode.getSelectedItem();
+			final Listitem listItemAEEventCode = this.sortOperator_aEEventCode.getSelectedItem();
 
-			if (item_AEEventCode != null) {
-				final int searchOpId = ((SearchOperators) item_AEEventCode.getAttribute("data")).getSearchOperatorId();
+			if (listItemAEEventCode != null) {
+				final int searchOpId = ((SearchOperators) listItemAEEventCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("aEEventCode", "%"	+ this.aEEventCode.getValue().toUpperCase() + "%", searchOpId));
@@ -297,10 +297,10 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.aEEventCodeDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_AEEventCodeDesc = this.sortOperator_aEEventCodeDesc.getSelectedItem();
+			final Listitem listItemAEEventCodeDesc = this.sortOperator_aEEventCodeDesc.getSelectedItem();
 
-			if (item_AEEventCodeDesc != null) {
-				final int searchOpId = ((SearchOperators) item_AEEventCodeDesc.getAttribute("data")).getSearchOperatorId();
+			if (listItemAEEventCodeDesc != null) {
+				final int searchOpId = ((SearchOperators) listItemAEEventCodeDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("aEEventCodeDesc", "%" + this.aEEventCodeDesc.getValue().toUpperCase()+ "%", searchOpId));
@@ -313,9 +313,9 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl implements Seriali
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem listItemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (listItemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%",searchOpId));
@@ -334,9 +334,9 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem listItemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (listItemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

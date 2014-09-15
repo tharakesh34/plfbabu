@@ -313,11 +313,10 @@ public class BasicFinanceTypeSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.finBasicType.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinBasicType = this.sortOperator_finBasicType
-					.getSelectedItem();
+			final Listitem itemFinBasicType = this.sortOperator_finBasicType.getSelectedItem();
 
-			if (item_FinBasicType != null) {
-				final int searchOpId = ((SearchOperators) item_FinBasicType
+			if (itemFinBasicType != null) {
+				final int searchOpId = ((SearchOperators) itemFinBasicType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -334,11 +333,10 @@ public class BasicFinanceTypeSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.finBasicDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinBasicDesc = this.sortOperator_finBasicDesc
-					.getSelectedItem();
+			final Listitem itemFinBasicDesc = this.sortOperator_finBasicDesc.getSelectedItem();
 
-			if (item_FinBasicDesc != null) {
-				final int searchOpId = ((SearchOperators) item_FinBasicDesc
+			if (itemFinBasicDesc != null) {
+				final int searchOpId = ((SearchOperators) itemFinBasicDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -354,10 +352,9 @@ public class BasicFinanceTypeSearchCtrl extends GFCBaseCtrl implements Serializa
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -379,10 +376,9 @@ public class BasicFinanceTypeSearchCtrl extends GFCBaseCtrl implements Serializa
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

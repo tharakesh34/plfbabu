@@ -1126,8 +1126,8 @@ public class AcademicDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public Academic getAcademic() {
 		return this.academic;
 	}
-	public void setAcademic(Academic Academic) {
-		this.academic = Academic;
+	public void setAcademic(Academic academic) {
+		this.academic = academic;
 	}
 
 	public void setAcademicService(AcademicService academicService) {
@@ -1154,8 +1154,8 @@ public class AcademicDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 }

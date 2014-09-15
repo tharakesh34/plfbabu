@@ -325,10 +325,10 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.questionId.getValue())) {
 
 			// get the search operator
-			final Listitem item_QuestionId = this.sortOperator_questionId.getSelectedItem();
+			final Listitem listItemQuestionId = this.sortOperator_questionId.getSelectedItem();
 
-			if (item_QuestionId != null) {
-				final int searchOpId = ((SearchOperators) item_QuestionId.getAttribute("data")).getSearchOperatorId();
+			if (listItemQuestionId != null) {
+				final int searchOpId = ((SearchOperators) listItemQuestionId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("questionId", "%" + this.questionId.getValue().toUpperCase() + "%", searchOpId));
@@ -342,10 +342,10 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.questionDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_QuestionDesc = this.sortOperator_questionDesc.getSelectedItem();
+			final Listitem listItemQuestionDesc = this.sortOperator_questionDesc.getSelectedItem();
 
-			if (item_QuestionDesc != null) {
-				final int searchOpId = ((SearchOperators) item_QuestionDesc.getAttribute("data")).getSearchOperatorId();
+			if (listItemQuestionDesc != null) {
+				final int searchOpId = ((SearchOperators) listItemQuestionDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("questionDesc", "%" + this.questionDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -359,10 +359,10 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.answerA.getValue())) {
 
 			// get the search operator
-			final Listitem item_AnswerA = this.sortOperator_answerA.getSelectedItem();
+			final Listitem listItemAnswerA = this.sortOperator_answerA.getSelectedItem();
 
-			if (item_AnswerA != null) {
-				final int searchOpId = ((SearchOperators) item_AnswerA.getAttribute("data")).getSearchOperatorId();
+			if (listItemAnswerA != null) {
+				final int searchOpId = ((SearchOperators) listItemAnswerA.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("answerA", "%" + this.answerA.getValue().toUpperCase() + "%", searchOpId));
@@ -376,10 +376,10 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.answerB.getValue())) {
 
 			// get the search operator
-			final Listitem item_AnswerB = this.sortOperator_answerB.getSelectedItem();
+			final Listitem listItemAnswerB = this.sortOperator_answerB.getSelectedItem();
 
-			if (item_AnswerB != null) {
-				final int searchOpId = ((SearchOperators) item_AnswerB.getAttribute("data")).getSearchOperatorId();
+			if (listItemAnswerB != null) {
+				final int searchOpId = ((SearchOperators) listItemAnswerB.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("answerB", "%" + this.answerB.getValue().toUpperCase() + "%", searchOpId));
@@ -393,10 +393,10 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.answerC.getValue())) {
 
 			// get the search operator
-			final Listitem item_AnswerC = this.sortOperator_answerC.getSelectedItem();
+			final Listitem listItemAnswerC = this.sortOperator_answerC.getSelectedItem();
 
-			if (item_AnswerC != null) {
-				final int searchOpId = ((SearchOperators) item_AnswerC.getAttribute("data")).getSearchOperatorId();
+			if (listItemAnswerC != null) {
+				final int searchOpId = ((SearchOperators) listItemAnswerC.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("answerC", "%" + this.answerC.getValue().toUpperCase() + "%", searchOpId));
@@ -410,10 +410,10 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.answerD.getValue())) {
 
 			// get the search operator
-			final Listitem item_AnswerD = this.sortOperator_answerD.getSelectedItem();
+			final Listitem listItemAnswerD = this.sortOperator_answerD.getSelectedItem();
 
-			if (item_AnswerD != null) {
-				final int searchOpId = ((SearchOperators) item_AnswerD.getAttribute("data")).getSearchOperatorId();
+			if (listItemAnswerD != null) {
+				final int searchOpId = ((SearchOperators) listItemAnswerD.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("answerD", "%" + this.answerD.getValue().toUpperCase() + "%", searchOpId));
@@ -427,10 +427,10 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.correctAnswer.getValue())) {
 
 			// get the search operator
-			final Listitem item_CorrectAnswer = this.sortOperator_correctAnswer.getSelectedItem();
+			final Listitem listItemCorrectAnswer = this.sortOperator_correctAnswer.getSelectedItem();
 
-			if (item_CorrectAnswer != null) {
-				final int searchOpId = ((SearchOperators) item_CorrectAnswer.getAttribute("data")).getSearchOperatorId();
+			if (listItemCorrectAnswer != null) {
+				final int searchOpId = ((SearchOperators) listItemCorrectAnswer.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("correctAnswer", "%" + this.correctAnswer.getValue().toUpperCase() + "%", searchOpId));
@@ -442,10 +442,10 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_QuestionIsActive = this.sortOperator_questionIsActive.getSelectedItem();
+		final Listitem listItemQuestionIsActive = this.sortOperator_questionIsActive.getSelectedItem();
 
-		if (item_QuestionIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_QuestionIsActive.getAttribute("data")).getSearchOperatorId();
+		if (listItemQuestionIsActive != null) {
+			final int searchOpId = ((SearchOperators) listItemQuestionIsActive.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -460,9 +460,9 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem listItemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (listItemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -481,9 +481,9 @@ public class QuestionSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem listItemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (listItemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

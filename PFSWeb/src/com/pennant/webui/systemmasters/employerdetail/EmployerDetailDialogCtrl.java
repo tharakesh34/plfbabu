@@ -1078,15 +1078,15 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (!StringUtils.trimToEmpty(this.oldVar_EmpName).equals(StringUtils.trimToEmpty(this.empName.getValue()))) {
 			return true;
 		}
-		String old_EstablishDate = "";
-		String new_EstablishDate ="";
+		String oldEstablishDate = "";
+		String newEstablishDate ="";
 		if (this.oldVar_EstablishDate!=null){
-			old_EstablishDate=DateUtility.formatDate(this.oldVar_EstablishDate,PennantConstants.dateFormat);
+			oldEstablishDate=DateUtility.formatDate(this.oldVar_EstablishDate,PennantConstants.dateFormat);
 		}
 		if (this.establishDate.getValue()!=null){
-			new_EstablishDate=DateUtility.formatDate(this.establishDate.getValue(),PennantConstants.dateFormat);
+			newEstablishDate=DateUtility.formatDate(this.establishDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_EstablishDate).equals(StringUtils.trimToEmpty(new_EstablishDate))) {
+		if (!StringUtils.trimToEmpty(oldEstablishDate).equals(StringUtils.trimToEmpty(newEstablishDate))) {
 			return true;
 		}
 
@@ -1762,8 +1762,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 }

@@ -367,11 +367,10 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 		if (StringUtils.isNotEmpty(this.empIndustry.getValue())) {
 			
 			// get the search operator
-			final Listitem item_EmpIndustry = this.sortOperator_EmpIndustry
-			.getSelectedItem();
+			final Listitem itemEmpIndustry = this.sortOperator_EmpIndustry.getSelectedItem();
 			
-			if (item_EmpIndustry != null) {
-				final int searchOpId = ((SearchOperators) item_EmpIndustry
+			if (itemEmpIndustry != null) {
+				final int searchOpId = ((SearchOperators) itemEmpIndustry
 						.getAttribute("data")).getSearchOperatorId();
 				
 				if (searchOpId == Filter.OP_LIKE) {
@@ -389,11 +388,10 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 		if (StringUtils.isNotEmpty(this.empName.getValue())) {
 
 			// get the search operator
-			final Listitem item_EmpName = this.sortOperator_EmpName
-					.getSelectedItem();
+			final Listitem itemEmpName = this.sortOperator_EmpName.getSelectedItem();
 
-			if (item_EmpName != null) {
-				final int searchOpId = ((SearchOperators) item_EmpName
+			if (itemEmpName != null) {
+				final int searchOpId = ((SearchOperators) itemEmpName
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -411,11 +409,10 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 		if (StringUtils.isNotEmpty(this.empFlatNbr.getValue())) {
 
 			// get the search operator
-			final Listitem item_EmpFlatNbr = this.sortOperator_EmpFlatNbr
-					.getSelectedItem();
+			final Listitem itemEmpFlatNbr = this.sortOperator_EmpFlatNbr.getSelectedItem();
 
-			if (item_EmpFlatNbr != null) {
-				final int searchOpId = ((SearchOperators) item_EmpFlatNbr
+			if (itemEmpFlatNbr != null) {
+				final int searchOpId = ((SearchOperators) itemEmpFlatNbr
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -433,11 +430,10 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 		if (StringUtils.isNotEmpty(this.empPOBox.getValue())) {
 			
 			// get the search operator
-			final Listitem item_EmpPOBox = this.sortOperator_EmpPOBox
-			.getSelectedItem();
+			final Listitem itemEmpPOBox = this.sortOperator_EmpPOBox.getSelectedItem();
 			
-			if (item_EmpPOBox != null) {
-				final int searchOpId = ((SearchOperators) item_EmpPOBox
+			if (itemEmpPOBox != null) {
+				final int searchOpId = ((SearchOperators) itemEmpPOBox
 						.getAttribute("data")).getSearchOperatorId();
 				
 				if (searchOpId == Filter.OP_LIKE) {
@@ -455,11 +451,10 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 		if (StringUtils.isNotEmpty(this.empCountry.getValue())) {
 			
 			// get the search operator
-			final Listitem item_EmpCountry = this.sortOperator_EmpCountry
-			.getSelectedItem();
+			final Listitem itemEmpCountry = this.sortOperator_EmpCountry.getSelectedItem();
 			
-			if (item_EmpCountry != null) {
-				final int searchOpId = ((SearchOperators) item_EmpCountry
+			if (itemEmpCountry != null) {
+				final int searchOpId = ((SearchOperators) itemEmpCountry
 						.getAttribute("data")).getSearchOperatorId();
 				
 				if (searchOpId == Filter.OP_LIKE) {
@@ -477,11 +472,10 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 		if (StringUtils.isNotEmpty(this.empProvince.getValue())) {
 			
 			// get the search operator
-			final Listitem item_EmpProvince = this.sortOperator_EmpProvince
-			.getSelectedItem();
+			final Listitem itemEmpProvince = this.sortOperator_EmpProvince.getSelectedItem();
 			
-			if (item_EmpProvince != null) {
-				final int searchOpId = ((SearchOperators) item_EmpProvince
+			if (itemEmpProvince != null) {
+				final int searchOpId = ((SearchOperators) itemEmpProvince
 						.getAttribute("data")).getSearchOperatorId();
 				
 				if (searchOpId == Filter.OP_LIKE) {
@@ -499,11 +493,10 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 		if (StringUtils.isNotEmpty(this.empCity.getValue())) {
 			
 			// get the search operator
-			final Listitem item_EmpCity = this.sortOperator_EmpCity
-			.getSelectedItem();
+			final Listitem itemEmpCity = this.sortOperator_EmpCity.getSelectedItem();
 			
-			if (item_EmpCity != null) {
-				final int searchOpId = ((SearchOperators) item_EmpCity
+			if (itemEmpCity != null) {
+				final int searchOpId = ((SearchOperators) itemEmpCity
 						.getAttribute("data")).getSearchOperatorId();
 				
 				if (searchOpId == Filter.OP_LIKE) {
@@ -520,11 +513,10 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 		if (!StringUtils.trimToEmpty(this.empAlocationType.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
 			
 			// get the search operator
-			final Listitem item_EmpAlocationType = this.sortOperator_EmpAlocationType
-			.getSelectedItem();
+			final Listitem itemEmpAlocationType = this.sortOperator_EmpAlocationType.getSelectedItem();
 			
-			if (item_EmpAlocationType != null) {
-				final int searchOpId = ((SearchOperators) item_EmpAlocationType
+			if (itemEmpAlocationType != null) {
+				final int searchOpId = ((SearchOperators) itemEmpAlocationType
 						.getAttribute("data")).getSearchOperatorId();
 				
 				if (searchOpId == Filter.OP_LIKE) {
@@ -543,10 +535,9 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 		
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_RecordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_RecordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -568,10 +559,9 @@ public class EmployerDetailSearchCtrl extends GFCBaseCtrl implements
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_RecordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_RecordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

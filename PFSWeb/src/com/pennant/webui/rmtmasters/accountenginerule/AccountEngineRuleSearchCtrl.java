@@ -326,10 +326,10 @@ public class AccountEngineRuleSearchCtrl extends GFCBaseCtrl implements Serializ
 		if (StringUtils.isNotEmpty(this.aEEvent.getValue())) {
 
 			// get the search operator
-			final Listitem item_AEEvent = this.sortOperator_aEEvent.getSelectedItem();
+			final Listitem itemAEEvent = this.sortOperator_aEEvent.getSelectedItem();
 
-			if (item_AEEvent != null) {
-				final int searchOpId = ((SearchOperators) item_AEEvent
+			if (itemAEEvent != null) {
+				final int searchOpId = ((SearchOperators) itemAEEvent
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -345,10 +345,10 @@ public class AccountEngineRuleSearchCtrl extends GFCBaseCtrl implements Serializ
 		if (StringUtils.isNotEmpty(this.aERule.getValue())) {
 
 			// get the search operator
-			final Listitem item_AERule = this.sortOperator_aERule.getSelectedItem();
+			final Listitem itemAERule = this.sortOperator_aERule.getSelectedItem();
 
-			if (item_AERule != null) {
-				final int searchOpId = ((SearchOperators) item_AERule
+			if (itemAERule != null) {
+				final int searchOpId = ((SearchOperators) itemAERule
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -364,10 +364,10 @@ public class AccountEngineRuleSearchCtrl extends GFCBaseCtrl implements Serializ
 		if (StringUtils.isNotEmpty(this.aERuleDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_AERuleDesc = this.sortOperator_aERuleDesc.getSelectedItem();
+			final Listitem itemAERuleDesc = this.sortOperator_aERuleDesc.getSelectedItem();
 
-			if (item_AERuleDesc != null) {
-				final int searchOpId = ((SearchOperators) item_AERuleDesc
+			if (itemAERuleDesc != null) {
+				final int searchOpId = ((SearchOperators) itemAERuleDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -381,10 +381,10 @@ public class AccountEngineRuleSearchCtrl extends GFCBaseCtrl implements Serializ
 			}
 		}
 		// get the search operator
-		final Listitem item_AEIsSysDefault = this.sortOperator_aEIsSysDefault.getSelectedItem();
+		final Listitem itemAEIsSysDefault = this.sortOperator_aEIsSysDefault.getSelectedItem();
 
-		if (item_AEIsSysDefault != null) {
-			final int searchOpId = ((SearchOperators) item_AEIsSysDefault
+		if (itemAEIsSysDefault != null) {
+			final int searchOpId = ((SearchOperators) itemAEIsSysDefault
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -400,10 +400,9 @@ public class AccountEngineRuleSearchCtrl extends GFCBaseCtrl implements Serializ
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -424,9 +423,9 @@ public class AccountEngineRuleSearchCtrl extends GFCBaseCtrl implements Serializ
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

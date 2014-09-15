@@ -286,10 +286,10 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.scoType.getValue())) {
 
 			// get the search operator
-			final Listitem item_ScoType = this.sortOperator_scoType.getSelectedItem();
+			final Listitem listItemScoType = this.sortOperator_scoType.getSelectedItem();
 
-			if (item_ScoType != null) {
-				final int searchOpId = ((SearchOperators) item_ScoType.getAttribute("data")).getSearchOperatorId();
+			if (listItemScoType != null) {
+				final int searchOpId = ((SearchOperators) listItemScoType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("scoType", "%" + this.scoType.getValue().toUpperCase() + "%", searchOpId));
@@ -304,10 +304,10 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.scoDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_ScoDesc = this.sortOperator_scoDesc.getSelectedItem();
+			final Listitem listItemScoDesc = this.sortOperator_scoDesc.getSelectedItem();
 
-			if (item_ScoDesc != null) {
-				final int searchOpId = ((SearchOperators) item_ScoDesc.getAttribute("data")).getSearchOperatorId();
+			if (listItemScoDesc != null) {
+				final int searchOpId = ((SearchOperators) listItemScoDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("scoDesc", "%" + this.scoDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -321,9 +321,9 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem listItemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (listItemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -342,9 +342,9 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem listItemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (listItemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

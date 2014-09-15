@@ -293,10 +293,10 @@ public class AcademicSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.academicLevel.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcademicLevel = this.sortOperator_academicLevel.getSelectedItem();
+			final Listitem itemAcademicLevel = this.sortOperator_academicLevel.getSelectedItem();
 
-			if (item_AcademicLevel != null) {
-				final int searchOpId = ((SearchOperators) item_AcademicLevel.getAttribute("data")).getSearchOperatorId();
+			if (itemAcademicLevel != null) {
+				final int searchOpId = ((SearchOperators) itemAcademicLevel.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("academicLevel", "%" + this.academicLevel.getValue().toUpperCase() + "%", searchOpId));
@@ -310,10 +310,10 @@ public class AcademicSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.academicDecipline.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcademicDecipline = this.sortOperator_academicDecipline.getSelectedItem();
+			final Listitem itemAcademicDecipline = this.sortOperator_academicDecipline.getSelectedItem();
 
-			if (item_AcademicDecipline != null) {
-				final int searchOpId = ((SearchOperators) item_AcademicDecipline.getAttribute("data")).getSearchOperatorId();
+			if (itemAcademicDecipline != null) {
+				final int searchOpId = ((SearchOperators) itemAcademicDecipline.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("academicDecipline", "%" + this.academicDecipline.getValue().toUpperCase() + "%", searchOpId));
@@ -327,10 +327,10 @@ public class AcademicSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.academicDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcademicDesc = this.sortOperator_academicDesc.getSelectedItem();
+			final Listitem itemAcademicDesc = this.sortOperator_academicDesc.getSelectedItem();
 
-			if (item_AcademicDesc != null) {
-				final int searchOpId = ((SearchOperators) item_AcademicDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemAcademicDesc != null) {
+				final int searchOpId = ((SearchOperators) itemAcademicDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("academicDesc", "%" + this.academicDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -343,9 +343,9 @@ public class AcademicSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -364,9 +364,9 @@ public class AcademicSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

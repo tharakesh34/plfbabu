@@ -329,10 +329,10 @@ public class CountrySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.countryCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CountryCode = this.sortOperator_countryCode.getSelectedItem();
+			final Listitem itemCountryCode = this.sortOperator_countryCode.getSelectedItem();
 
-			if (item_CountryCode != null) {
-				final int searchOpId = ((SearchOperators) item_CountryCode.getAttribute("data")).getSearchOperatorId();
+			if (itemCountryCode != null) {
+				final int searchOpId = ((SearchOperators) itemCountryCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("countryCode", "%" + this.countryCode.getValue().toUpperCase() + "%", searchOpId));
@@ -346,10 +346,10 @@ public class CountrySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.countryDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_CountryDesc = this.sortOperator_countryDesc.getSelectedItem();
+			final Listitem itemCountryDesc = this.sortOperator_countryDesc.getSelectedItem();
 
-			if (item_CountryDesc != null) {
-				final int searchOpId = ((SearchOperators) item_CountryDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemCountryDesc != null) {
+				final int searchOpId = ((SearchOperators) itemCountryDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("countryDesc", "%" + this.countryDesc.getValue().toUpperCase() + "%",searchOpId));
@@ -364,10 +364,10 @@ public class CountrySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.countryParentLimit.getValue()!=null) {
 
 			// get the search operator
-			final Listitem item_CountryParentLimit = this.sortOperator_countryParentLimit.getSelectedItem();
+			final Listitem itemCountryParentLimit = this.sortOperator_countryParentLimit.getSelectedItem();
 
-			if (item_CountryParentLimit != null) {
-				final int searchOpId = ((SearchOperators) item_CountryParentLimit.getAttribute("data")).getSearchOperatorId();
+			if (itemCountryParentLimit != null) {
+				final int searchOpId = ((SearchOperators) itemCountryParentLimit.getAttribute("data")).getSearchOperatorId();
 
 				 if (searchOpId == -1) {
 					// do nothing
@@ -379,10 +379,10 @@ public class CountrySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.countryResidenceLimit.getValue()!=null) {
 
 			// get the search operator
-			final Listitem item_CountryResidenceLimit = this.sortOperator_countryResidenceLimit.getSelectedItem();
+			final Listitem itemCountryResidenceLimit = this.sortOperator_countryResidenceLimit.getSelectedItem();
 
-			if (item_CountryResidenceLimit != null) {
-				final int searchOpId = ((SearchOperators) item_CountryResidenceLimit.getAttribute("data")).getSearchOperatorId();
+			if (itemCountryResidenceLimit != null) {
+				final int searchOpId = ((SearchOperators) itemCountryResidenceLimit.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -394,10 +394,10 @@ public class CountrySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.countryRiskLimit.getValue()!=null) {
 
 			// get the search operator
-			final Listitem item_CountryRiskLimit = this.sortOperator_countryRiskLimit.getSelectedItem();
+			final Listitem itemCountryRiskLimit = this.sortOperator_countryRiskLimit.getSelectedItem();
 
-			if (item_CountryRiskLimit != null) {
-				final int searchOpId = ((SearchOperators) item_CountryRiskLimit.getAttribute("data")).getSearchOperatorId();
+			if (itemCountryRiskLimit != null) {
+				final int searchOpId = ((SearchOperators) itemCountryRiskLimit.getAttribute("data")).getSearchOperatorId();
 
 				 if (searchOpId == -1) {
 					// do nothing
@@ -407,10 +407,10 @@ public class CountrySearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_CountryIsActive = this.sortOperator_countryIsActive.getSelectedItem();
+		final Listitem itemCountryIsActive = this.sortOperator_countryIsActive.getSelectedItem();
 
-		if (item_CountryIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_CountryIsActive.getAttribute("data")).getSearchOperatorId();
+		if (itemCountryIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemCountryIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -425,9 +425,9 @@ public class CountrySearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"
@@ -447,9 +447,9 @@ public class CountrySearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"

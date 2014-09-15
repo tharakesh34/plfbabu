@@ -320,11 +320,10 @@ public class PenaltyCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.penaltyType.getValue())) {
 
 			// get the search operator
-			final Listitem item_PenaltyType = this.sortOperator_penaltyType
-					.getSelectedItem();
+			final Listitem itemPenaltyType = this.sortOperator_penaltyType.getSelectedItem();
 
-			if (item_PenaltyType != null) {
-				final int searchOpId = ((SearchOperators) item_PenaltyType
+			if (itemPenaltyType != null) {
+				final int searchOpId = ((SearchOperators) itemPenaltyType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -341,11 +340,10 @@ public class PenaltyCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.penaltyDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_PenaltyDesc = this.sortOperator_penaltyDesc
-					.getSelectedItem();
+			final Listitem itemPenaltyDesc = this.sortOperator_penaltyDesc.getSelectedItem();
 
-			if (item_PenaltyDesc != null) {
-				final int searchOpId = ((SearchOperators) item_PenaltyDesc
+			if (itemPenaltyDesc != null) {
+				final int searchOpId = ((SearchOperators) itemPenaltyDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -360,11 +358,10 @@ public class PenaltyCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_PenaltyIsActive = this.sortOperator_penaltyIsActive
-				.getSelectedItem();
+		final Listitem itemPenaltyIsActive = this.sortOperator_penaltyIsActive.getSelectedItem();
 
-		if (item_PenaltyIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_PenaltyIsActive
+		if (itemPenaltyIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemPenaltyIsActive
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -380,10 +377,9 @@ public class PenaltyCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -407,10 +403,9 @@ public class PenaltyCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
