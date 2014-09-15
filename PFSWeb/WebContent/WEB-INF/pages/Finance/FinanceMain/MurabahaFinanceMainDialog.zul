@@ -13,8 +13,8 @@
 			sizable="false">
 
 			<borderlayout id="borderlayoutFinanceMain">
-				<north>
-					<div sclass="z-toolbar" style="padding:0">
+				<north sclass="z-toolbar">
+					<div>
 						<hbox pack="stretch"
 							sclass="hboxRemoveWhiteStrips" width="100%"
 							widths="35%,30%,35%">

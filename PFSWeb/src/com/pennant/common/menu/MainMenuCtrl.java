@@ -71,16 +71,17 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Image;
 import org.zkoss.zul.Menubar;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Separator;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Tree;
 import org.zkoss.zul.Treechildren;
 import org.zkoss.zul.Treeitem;
@@ -154,7 +155,7 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 	private void createMenu() throws InterruptedException {
 		logger.debug("Entering ");
 
-		Toolbarbutton toolbarbutton;
+		Image image;
 		final Groupbox gb = (Groupbox) getMainMenuWindow().getFellowIfAny("groupbox_menu");
 
 		// Hbox for the expand/collapse buttons
@@ -162,24 +163,24 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 		hbox.setStyle("backgound-color: " + bgColorInner);
 		hbox.setParent(gb);
 
-		// ToolbarButton for expanding the menutree
-		toolbarbutton = new Toolbarbutton();
-		hbox.appendChild(toolbarbutton);
-		toolbarbutton.setId("btnMainMenuExpandAll");
-		toolbarbutton.setImage("/images/icons/open4.jpg");
-		toolbarbutton.setTooltiptext(Labels.getLabel("btnFolderExpand.tooltiptext"));
-		toolbarbutton.addEventListener("onClick", new EventListener<Event>() {
+		image = new Image("/images/icons/open4.png");
+		hbox.appendChild(image);
+		Space space = new Space();
+		space.setWidth("0px");
+		hbox.appendChild(space);
+		image.setId("btnMainMenuExpandAll");
+		image.setTooltiptext(Labels.getLabel("btnFolderExpand.tooltiptext"));
+		image.addEventListener("onClick", new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
 				onClick$btnMainMenuExpandAll(event);
 			}
 		});
-		toolbarbutton = new Toolbarbutton();
-		hbox.appendChild(toolbarbutton);
-		toolbarbutton.setId("btnMainMenuCollapseAll");
-		toolbarbutton.setImage("/images/icons/close4.png");
-		toolbarbutton.setTooltiptext(Labels.getLabel("btnFolderCollapse.tooltiptext"));
-		toolbarbutton.addEventListener("onClick", new EventListener<Event>() {
+		image = new Image("/images/icons/close4.png");
+		hbox.appendChild(image);
+		image.setId("btnMainMenuCollapseAll");
+		image.setTooltiptext(Labels.getLabel("btnFolderCollapse.tooltiptext"));
+		image.addEventListener("onClick", new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
 				onClick$btnMainMenuCollapseAll(event);

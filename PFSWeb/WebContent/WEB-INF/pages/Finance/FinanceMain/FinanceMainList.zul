@@ -9,7 +9,7 @@
 
 	<window id="window_FinanceMainList"  apply="${financeMainListCtrl}"
 		border="none" width="100%">
-			<div sclass="z-toolbar" style="padding:0px" height="28px">
+			<div sclass="z-toolbar">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 	
 					<!-- COMMON BUTTONS -->

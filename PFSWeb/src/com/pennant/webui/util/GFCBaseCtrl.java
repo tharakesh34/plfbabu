@@ -90,6 +90,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timebox;
 import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
+import org.zkoss.zul.impl.InputElement;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
@@ -990,28 +991,24 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 	
 	public int calculateBorderLayoutHeight() {
 		if(this.borderLayoutHeight == 0){
-			int northHeight = 55;
-			int tabHeight = 26;
-			int toolBarHeight = 26;
-			int rowheight = 26;
-			
-			this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - (northHeight + tabHeight + toolBarHeight);
-			this.listRows = Math.round(this.borderLayoutHeight/ rowheight) - 1;
+		if (this.borderLayoutHeight == 0) {
+			this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
+			this.gridRows = Math.round(this.borderLayoutHeight / 31) - 1;
+			this.listRows = Math.round(this.borderLayoutHeight / 24) - 1;
 		}
+		return borderLayoutHeight;
+	}
 		return borderLayoutHeight;
 	}
 
 	public String getListBoxHeight(int gridRowCount) {
-		int rowheight = 22;  
-		int listBoxHScroll = 16;
-		if(this.borderLayoutHeight == 0){
+		int rowheight = 31;
+		if (this.borderLayoutHeight == 0) {
 			getBorderLayoutHeight();
 		}
-		
-		int listboxheight = this.borderLayoutHeight - listBoxHScroll;		
-		listboxheight = listboxheight-(gridRowCount * 26);			
-		this.listRows = Math.round(listboxheight / rowheight) - 1; // - 1  For cross browser; 
-		
+		int listboxheight = this.borderLayoutHeight;
+		listboxheight = listboxheight - (gridRowCount * rowheight) - 35;
+		this.listRows = Math.round(listboxheight / 24) - 1;
 		return listboxheight + "px";
 	}
 
