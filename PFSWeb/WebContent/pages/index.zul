@@ -65,6 +65,8 @@
 							<timer id="timer" delay="1000"
 									repeats="true">
 									<attribute name="onTimer">
+									 String hostStatusReq= com.pennant.app.util.SystemParameterDetails.getSystemParameterValue("HOST_STATUS_ENQ").toString();
+									 if(hostStatusReq.equals("Y")){
 										Date date = new Date();
 										java.text.DateFormat dateFormat = new java.text.SimpleDateFormat(
 												"dd/MMM/yyyy");
@@ -83,6 +85,7 @@
 										 		image.setSrc("//images//Pennant//HostDown.jpg");
 										 	}
 										}
+									}
 									</attribute>
 						</timer>
 					</window>
