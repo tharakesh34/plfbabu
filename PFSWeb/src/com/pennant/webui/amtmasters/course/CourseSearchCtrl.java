@@ -273,10 +273,10 @@ public class CourseSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.courseName.getValue())) {
 
 			// get the search operator
-			final Listitem item_CourseName = this.sortOperator_courseName.getSelectedItem();
+			final Listitem itemCourseName = this.sortOperator_courseName.getSelectedItem();
 
-			if (item_CourseName != null) {
-				final int searchOpId = ((SearchOperators) item_CourseName.getAttribute("data")).getSearchOperatorId();
+			if (itemCourseName != null) {
+				final int searchOpId = ((SearchOperators) itemCourseName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("courseName", "%" + this.courseName.getValue().toUpperCase() + "%", searchOpId));
@@ -290,10 +290,10 @@ public class CourseSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.courseDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_CourseDesc = this.sortOperator_courseDesc.getSelectedItem();
+			final Listitem itemCourseDesc = this.sortOperator_courseDesc.getSelectedItem();
 
-			if (item_CourseDesc != null) {
-				final int searchOpId = ((SearchOperators) item_CourseDesc.getAttribute("data")).getSearchOperatorId();
+			if (itemCourseDesc != null) {
+				final int searchOpId = ((SearchOperators) itemCourseDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("courseDesc", "%" + this.courseDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -306,9 +306,9 @@ public class CourseSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -327,9 +327,9 @@ public class CourseSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

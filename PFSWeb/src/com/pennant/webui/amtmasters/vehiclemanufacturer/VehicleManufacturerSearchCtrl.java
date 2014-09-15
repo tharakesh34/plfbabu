@@ -269,10 +269,10 @@ public class VehicleManufacturerSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.manufacturerId.getValue())) {
 
 			// get the search operator
-			final Listitem item_ManufacturerId = this.sortOperator_manufacturerId.getSelectedItem();
+			final Listitem itemManufacturerId = this.sortOperator_manufacturerId.getSelectedItem();
 
-			if (item_ManufacturerId != null) {
-				final int searchOpId = ((SearchOperators) item_ManufacturerId.getAttribute("data")).getSearchOperatorId();
+			if (itemManufacturerId != null) {
+				final int searchOpId = ((SearchOperators) itemManufacturerId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("manufacturerId", "%" + this.manufacturerId.getValue().toUpperCase() + "%", searchOpId));
@@ -286,10 +286,10 @@ public class VehicleManufacturerSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.manufacturerName.getValue())) {
 
 			// get the search operator
-			final Listitem item_ManufacturerName = this.sortOperator_manufacturerName.getSelectedItem();
+			final Listitem itemManufacturerName = this.sortOperator_manufacturerName.getSelectedItem();
 
-			if (item_ManufacturerName != null) {
-				final int searchOpId = ((SearchOperators) item_ManufacturerName.getAttribute("data")).getSearchOperatorId();
+			if (itemManufacturerName != null) {
+				final int searchOpId = ((SearchOperators) itemManufacturerName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("manufacturerName", "%" + this.manufacturerName.getValue().toUpperCase() + "%", searchOpId));
@@ -302,9 +302,9 @@ public class VehicleManufacturerSearchCtrl extends GFCBaseCtrl implements Serial
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -323,9 +323,9 @@ public class VehicleManufacturerSearchCtrl extends GFCBaseCtrl implements Serial
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

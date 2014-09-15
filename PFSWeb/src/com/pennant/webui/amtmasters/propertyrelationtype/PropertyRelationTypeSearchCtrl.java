@@ -269,10 +269,10 @@ public class PropertyRelationTypeSearchCtrl extends GFCBaseCtrl implements Seria
 		if (StringUtils.isNotEmpty(this.propertyRelationTypeId.getValue())) {
 
 			// get the search operator
-			final Listitem item_PropertyRelationTypeId = this.sortOperator_propertyRelationTypeId.getSelectedItem();
+			final Listitem itemPropertyRelationTypeId = this.sortOperator_propertyRelationTypeId.getSelectedItem();
 
-			if (item_PropertyRelationTypeId != null) {
-				final int searchOpId = ((SearchOperators) item_PropertyRelationTypeId.getAttribute("data")).getSearchOperatorId();
+			if (itemPropertyRelationTypeId != null) {
+				final int searchOpId = ((SearchOperators) itemPropertyRelationTypeId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("propertyRelationTypeId", "%" + this.propertyRelationTypeId.getValue().toUpperCase() + "%", searchOpId));
@@ -286,10 +286,10 @@ public class PropertyRelationTypeSearchCtrl extends GFCBaseCtrl implements Seria
 		if (StringUtils.isNotEmpty(this.propertyRelationTypeName.getValue())) {
 
 			// get the search operator
-			final Listitem item_PropertyRelationTypeName = this.sortOperator_propertyRelationTypeName.getSelectedItem();
+			final Listitem itemPropertyRelationTypeName = this.sortOperator_propertyRelationTypeName.getSelectedItem();
 
-			if (item_PropertyRelationTypeName != null) {
-				final int searchOpId = ((SearchOperators) item_PropertyRelationTypeName.getAttribute("data")).getSearchOperatorId();
+			if (itemPropertyRelationTypeName != null) {
+				final int searchOpId = ((SearchOperators) itemPropertyRelationTypeName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("propertyRelationTypeName", "%" + this.propertyRelationTypeName.getValue().toUpperCase() + "%", searchOpId));
@@ -302,9 +302,9 @@ public class PropertyRelationTypeSearchCtrl extends GFCBaseCtrl implements Seria
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -323,9 +323,9 @@ public class PropertyRelationTypeSearchCtrl extends GFCBaseCtrl implements Seria
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

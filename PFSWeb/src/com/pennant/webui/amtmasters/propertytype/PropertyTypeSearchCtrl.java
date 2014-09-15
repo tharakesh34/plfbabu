@@ -269,10 +269,10 @@ public class PropertyTypeSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.propertyTypeId.getValue())) {
 
 			// get the search operator
-			final Listitem item_PropertyTypeId = this.sortOperator_propertyTypeId.getSelectedItem();
+			final Listitem itemPropertyTypeId = this.sortOperator_propertyTypeId.getSelectedItem();
 
-			if (item_PropertyTypeId != null) {
-				final int searchOpId = ((SearchOperators) item_PropertyTypeId.getAttribute("data")).getSearchOperatorId();
+			if (itemPropertyTypeId != null) {
+				final int searchOpId = ((SearchOperators) itemPropertyTypeId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("propertyTypeId", "%" + this.propertyTypeId.getValue().toUpperCase() + "%", searchOpId));
@@ -286,10 +286,10 @@ public class PropertyTypeSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.propertyTypeName.getValue())) {
 
 			// get the search operator
-			final Listitem item_PropertyTypeName = this.sortOperator_propertyTypeName.getSelectedItem();
+			final Listitem itemPropertyTypeName = this.sortOperator_propertyTypeName.getSelectedItem();
 
-			if (item_PropertyTypeName != null) {
-				final int searchOpId = ((SearchOperators) item_PropertyTypeName.getAttribute("data")).getSearchOperatorId();
+			if (itemPropertyTypeName != null) {
+				final int searchOpId = ((SearchOperators) itemPropertyTypeName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("propertyTypeName", "%" + this.propertyTypeName.getValue().toUpperCase() + "%", searchOpId));
@@ -302,9 +302,9 @@ public class PropertyTypeSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -323,9 +323,9 @@ public class PropertyTypeSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

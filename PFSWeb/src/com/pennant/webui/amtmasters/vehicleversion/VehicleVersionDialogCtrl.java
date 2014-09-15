@@ -1182,8 +1182,8 @@ public class VehicleVersionDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.lovDescVehicleModelIdName.setConstraint("");
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {

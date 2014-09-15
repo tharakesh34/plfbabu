@@ -293,11 +293,11 @@ public class VehicleVersionSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.vehicleVersionId.getValue())) {
 
 			// get the search operator
-			final Listitem item_VehicleVersionId = this.sortOperator_vehicleVersionId
+			final Listitem itemVehicleVersionId = this.sortOperator_vehicleVersionId
 					.getSelectedItem();
 
-			if (item_VehicleVersionId != null) {
-				final int searchOpId = ((SearchOperators) item_VehicleVersionId
+			if (itemVehicleVersionId != null) {
+				final int searchOpId = ((SearchOperators) itemVehicleVersionId
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -314,11 +314,11 @@ public class VehicleVersionSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.vehicleModelId.getValue())) {
 
 			// get the search operator
-			final Listitem item_VehicleModelId = this.sortOperator_vehicleModelId
+			final Listitem itemVehicleModelId = this.sortOperator_vehicleModelId
 					.getSelectedItem();
 
-			if (item_VehicleModelId != null) {
-				final int searchOpId = ((SearchOperators) item_VehicleModelId
+			if (itemVehicleModelId != null) {
+				final int searchOpId = ((SearchOperators) itemVehicleModelId
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -335,11 +335,10 @@ public class VehicleVersionSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.vehicleVersionCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_VehicleVersionCode = this.sortOperator_vehicleVersionCode
-					.getSelectedItem();
+			final Listitem itemVehicleVersionCode = this.sortOperator_vehicleVersionCode.getSelectedItem();
 
-			if (item_VehicleVersionCode != null) {
-				final int searchOpId = ((SearchOperators) item_VehicleVersionCode
+			if (itemVehicleVersionCode != null) {
+				final int searchOpId = ((SearchOperators) itemVehicleVersionCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -355,10 +354,9 @@ public class VehicleVersionSearchCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -380,10 +378,9 @@ public class VehicleVersionSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

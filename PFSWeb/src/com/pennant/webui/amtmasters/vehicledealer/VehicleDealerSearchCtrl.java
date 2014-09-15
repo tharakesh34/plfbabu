@@ -286,10 +286,10 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.dealerId.getValue())) {
 
 			// get the search operator
-			final Listitem item_DealerId = this.sortOperator_dealerId.getSelectedItem();
+			final Listitem itemDealerId = this.sortOperator_dealerId.getSelectedItem();
 
-			if (item_DealerId != null) {
-				final int searchOpId = ((SearchOperators) item_DealerId.getAttribute("data")).getSearchOperatorId();
+			if (itemDealerId != null) {
+				final int searchOpId = ((SearchOperators) itemDealerId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dealerId", "%" + this.dealerId.getValue().toUpperCase() + "%", searchOpId));
@@ -303,10 +303,10 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.dealerName.getValue())) {
 
 			// get the search operator
-			final Listitem item_DealerName = this.sortOperator_dealerName.getSelectedItem();
+			final Listitem itemDealerName = this.sortOperator_dealerName.getSelectedItem();
 
-			if (item_DealerName != null) {
-				final int searchOpId = ((SearchOperators) item_DealerName.getAttribute("data")).getSearchOperatorId();
+			if (itemDealerName != null) {
+				final int searchOpId = ((SearchOperators) itemDealerName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dealerName", "%" + this.dealerName.getValue().toUpperCase() + "%", searchOpId));
@@ -320,10 +320,10 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.dealerType.getValue())) {
 
 			// get the search operator
-			final Listitem item_DealerType = this.sortOperator_dealerType.getSelectedItem();
+			final Listitem itemDealerType = this.sortOperator_dealerType.getSelectedItem();
 
-			if (item_DealerType != null) {
-				final int searchOpId = ((SearchOperators) item_DealerType.getAttribute("data")).getSearchOperatorId();
+			if (itemDealerType != null) {
+				final int searchOpId = ((SearchOperators) itemDealerType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dealerType", "%" + this.dealerType.getValue().toUpperCase() + "%", searchOpId));
@@ -337,10 +337,10 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.dealerTelephone.getValue())) {
 
 			// get the search operator
-			final Listitem item_DealerTelephone = this.sortOperator_dealerTelephone.getSelectedItem();
+			final Listitem itemDealerTelephone = this.sortOperator_dealerTelephone.getSelectedItem();
 
-			if (item_DealerTelephone != null) {
-				final int searchOpId = ((SearchOperators) item_DealerTelephone.getAttribute("data")).getSearchOperatorId();
+			if (itemDealerTelephone != null) {
+				final int searchOpId = ((SearchOperators) itemDealerTelephone.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dealerTelephone", "%" + this.dealerTelephone.getValue().toUpperCase() + "%", searchOpId));
@@ -353,9 +353,9 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -374,9 +374,9 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

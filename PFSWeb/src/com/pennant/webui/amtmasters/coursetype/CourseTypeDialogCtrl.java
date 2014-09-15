@@ -1053,8 +1053,8 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setNotes_entered(String notes) {

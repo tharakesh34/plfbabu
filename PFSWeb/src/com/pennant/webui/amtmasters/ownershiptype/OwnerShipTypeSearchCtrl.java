@@ -269,10 +269,10 @@ public class OwnerShipTypeSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.ownerShipTypeId.getValue())) {
 
 			// get the search operator
-			final Listitem item_OwnerShipTypeId = this.sortOperator_ownerShipTypeId.getSelectedItem();
+			final Listitem itemOwnerShipTypeId = this.sortOperator_ownerShipTypeId.getSelectedItem();
 
-			if (item_OwnerShipTypeId != null) {
-				final int searchOpId = ((SearchOperators) item_OwnerShipTypeId.getAttribute("data")).getSearchOperatorId();
+			if (itemOwnerShipTypeId != null) {
+				final int searchOpId = ((SearchOperators) itemOwnerShipTypeId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("ownerShipTypeId", "%" + this.ownerShipTypeId.getValue().toUpperCase() + "%", searchOpId));
@@ -286,10 +286,10 @@ public class OwnerShipTypeSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.ownerShipTypeName.getValue())) {
 
 			// get the search operator
-			final Listitem item_OwnerShipTypeName = this.sortOperator_ownerShipTypeName.getSelectedItem();
+			final Listitem itemOwnerShipTypeName = this.sortOperator_ownerShipTypeName.getSelectedItem();
 
-			if (item_OwnerShipTypeName != null) {
-				final int searchOpId = ((SearchOperators) item_OwnerShipTypeName.getAttribute("data")).getSearchOperatorId();
+			if (itemOwnerShipTypeName != null) {
+				final int searchOpId = ((SearchOperators) itemOwnerShipTypeName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("ownerShipTypeName", "%" + this.ownerShipTypeName.getValue().toUpperCase() + "%", searchOpId));
@@ -302,9 +302,9 @@ public class OwnerShipTypeSearchCtrl extends GFCBaseCtrl implements Serializable
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -323,9 +323,9 @@ public class OwnerShipTypeSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));
