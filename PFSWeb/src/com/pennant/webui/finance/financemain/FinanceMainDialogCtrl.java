@@ -3765,21 +3765,21 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		int formatter = getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinFormetter();
 
-		BigDecimal old_finAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal new_finAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
-		if (old_finAmount.compareTo(new_finAmount) != 0) {
+		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
+		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			return true;
 		}
 
-		BigDecimal old_dwnPayAmount = PennantAppUtil.unFormateAmount(this.oldVar_downPayment, formatter);
-		BigDecimal new_dwnPayAmount = PennantAppUtil.unFormateAmount(this.downPayment.getValue(), formatter);
-		if (old_dwnPayAmount.compareTo(new_dwnPayAmount) != 0) {
+		BigDecimal oldDwnPayAmount = PennantAppUtil.unFormateAmount(this.oldVar_downPayment, formatter);
+		BigDecimal newDwnPayAmount = PennantAppUtil.unFormateAmount(this.downPayment.getValue(), formatter);
+		if (oldDwnPayAmount.compareTo(newDwnPayAmount) != 0) {
 			return true;
 		}
 
-		BigDecimal old_finAssetAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAssetValue, formatter);
-		BigDecimal new_finAssetAmount = PennantAppUtil.unFormateAmount(this.finAssetValue.getValue(), formatter);
-		if (old_finAssetAmount.compareTo(new_finAssetAmount) != 0) {
+		BigDecimal oldFinAssetAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAssetValue, formatter);
+		BigDecimal newFinAssetAmount = PennantAppUtil.unFormateAmount(this.finAssetValue.getValue(), formatter);
+		if (oldFinAssetAmount.compareTo(newFinAssetAmount) != 0) {
 			return true;
 		}
 
@@ -3884,9 +3884,9 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 
-		BigDecimal old_finRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount,formatter);
-		BigDecimal new_finRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
-		if (old_finRepayAmount.compareTo(new_finRepayAmount) != 0) {
+		BigDecimal oldFinRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount,formatter);
+		BigDecimal newFinRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
+		if (oldFinRepayAmount.compareTo(newFinRepayAmount) != 0) {
 			return true;
 		}
 
@@ -4079,9 +4079,9 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 
-		BigDecimal old_finAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal new_finAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
-		if (old_finAmount.compareTo(new_finAmount) != 0) {
+		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
+		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			return true;
 		}
 
@@ -4170,10 +4170,9 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 
-		BigDecimal old_finRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount, formatter);
-		BigDecimal new_finRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
-
-		if (old_finRepayAmount.compareTo(new_finRepayAmount) != 0) {
+		BigDecimal oldFinRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount, formatter);
+		BigDecimal newFinRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
+		if (oldFinRepayAmount.compareTo(newFinRepayAmount) != 0) {
 			return true;
 		}
 		if (this.oldVar_repayFrq != this.repayFrq.getValue()) {
@@ -4194,9 +4193,9 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 
-		BigDecimal old_dwnPayAmount = PennantAppUtil.unFormateAmount(this.oldVar_downPayment, formatter);
-		BigDecimal new_dwnPayAmount = PennantAppUtil.unFormateAmount(this.downPayment.getValue(), formatter);
-		if (old_dwnPayAmount.compareTo(new_dwnPayAmount) != 0) {
+		BigDecimal oldDwnPayAmount = PennantAppUtil.unFormateAmount(this.oldVar_downPayment, formatter);
+		BigDecimal newDwnPayAmount = PennantAppUtil.unFormateAmount(this.downPayment.getValue(), formatter);
+		if (oldDwnPayAmount.compareTo(newDwnPayAmount) != 0) {
 			return true;
 		}
 
@@ -12438,8 +12437,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			String schMthd, String pftDays, String finRef, Date grcEndDate) {
 		logger.debug("Entering");
 
-		Groupbox gb_commonDetails = new Groupbox();
-		gb_commonDetails.setStyle("border-style: none;");
+		Groupbox gbCommonDetails = new Groupbox();
+		gbCommonDetails.setStyle("border-style: none;");
 		Grid commonDetailGrid = new Grid();
 		Columns cols = new Columns();
 		commonDetailGrid.appendChild(cols);
@@ -12458,7 +12457,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		Rows commonDetailRows = new Rows();
 		commonDetailGrid.appendChild(cols);
 		commonDetailGrid.appendChild(commonDetailRows);
-		commonDetailGrid.setParent(gb_commonDetails);
+		commonDetailGrid.setParent(gbCommonDetails);
 
 		Row row = new Row();
 		Label label_FinType = new Label(
@@ -12478,12 +12477,12 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		commonDetailRows.appendChild(row);
 
 		row = new Row();
-		Label label_FinScheduleMethod = new Label(
+		Label labelFinScheduleMethod = new Label(
 				Labels.getLabel("label_FinanceMainDialog_FinScheduleMethod.value"));
 		this.finSchMethodValue = new Label();
 		this.finSchMethodValue.setStyle("font-weight:bold");
 		this.finSchMethodValue.setValue(schMthd);
-		label_FinScheduleMethod.setParent(row);
+		labelFinScheduleMethod.setParent(row);
 		this.finSchMethodValue.setParent(row);
 		Label label_FinProfitDaysBasis = new Label(
 				Labels.getLabel("label_FinanceMainDialog_ProfitDaysBasis.value"));
@@ -12495,12 +12494,12 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		commonDetailRows.appendChild(row);
 
 		row = new Row();
-		Label label_FinReference = new Label(
+		Label labelFinReference = new Label(
 				Labels.getLabel("label_FinanceMainDialog_FinReference.value"));
 		this.finReferenceValue = new Label();
 		this.finReferenceValue.setStyle("font-weight:bold");
 		this.finReferenceValue.setValue(finRef);
-		label_FinReference.setParent(row);
+		labelFinReference.setParent(row);
 		this.finReferenceValue.setParent(row);
 		Label label_FinGracePeriodEndDate = new Label(
 				Labels.getLabel("label_FinanceMainDialog_FinGracePeriodEndDate.value"));
@@ -12515,7 +12514,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		commonDetailRows.appendChild(row);
 
 		logger.debug("Leaving");
-		return gb_commonDetails;
+		return gbCommonDetails;
 	}
 
 	/**
@@ -14066,8 +14065,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return contributorsList;
 	}
 
-	public void setOldVar_ContributorList(List<FinContributorDetail> oldVar_ContributorList) {
-		this.oldVar_ContributorList = oldVar_ContributorList;
+	public void setOldVar_ContributorList(List<FinContributorDetail> oldVarContributorList) {
+		this.oldVar_ContributorList = oldVarContributorList;
 	}
 	public List<FinContributorDetail> getOldVar_ContributorList() {
 		return oldVar_ContributorList;
@@ -14083,8 +14082,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public List<FinBillingDetail> getOldVar_BillingList() {
 		return oldVar_BillingList;
 	}
-	public void setOldVar_BillingList(List<FinBillingDetail> oldVar_BillingList) {
-		this.oldVar_BillingList = oldVar_BillingList;
+	public void setOldVar_BillingList(List<FinBillingDetail> oldVarBillingList) {
+		this.oldVar_BillingList = oldVarBillingList;
 	}
 
 	public FinanceMainListCtrl getFinanceMainListCtrl() {
@@ -14136,8 +14135,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return documentDetailsList;
 	}
 
-	public void setOldVar_DocumentDetailsList(List<DocumentDetails> oldVar_DocumentDetailsList) {
-		this.oldVar_DocumentDetailsList = oldVar_DocumentDetailsList;
+	public void setOldVar_DocumentDetailsList(List<DocumentDetails> oldVarDocumentDetailsList) {
+		this.oldVar_DocumentDetailsList = oldVarDocumentDetailsList;
 	}
 	public List<DocumentDetails> getOldVar_DocumentDetailsList() {
 		return oldVar_DocumentDetailsList;
@@ -14553,39 +14552,39 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return (PennantApplicationUtil.amountFormate(amount, getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 	}
 	
-	private AgreementDetail getCustomerAggrementData(long Custid){
+	private AgreementDetail getCustomerAggrementData(long custId){
 		//AgreementDetail Data
 		JdbcSearchObject<AgreementDetail> jdbcSearchObject = new JdbcSearchObject<AgreementDetail>(AgreementDetail.class);
 		jdbcSearchObject.addTabelName("CustomerAgreementDetail_View");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custId);
 		List<AgreementDetail> agreementDetails = getPagedListService().getBySearchObject(jdbcSearchObject);
 		if (agreementDetails != null && agreementDetails.size() > 0) {
 			return agreementDetails.get(0);
 		}
 		return null;
 	}
-	private List<CustomerIncome> getCustomerIncomeDetails(long Custid,String incomeExpense){
+	private List<CustomerIncome> getCustomerIncomeDetails(long custid,String incomeExpense){
 		//Customer Income and Expense  Data
 		JdbcSearchObject<CustomerIncome> jdbcSearchObject = new JdbcSearchObject<CustomerIncome>(CustomerIncome.class);
 		jdbcSearchObject.addTabelName("CustomerIncomes_AView");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custid);
 		if (!StringUtils.trimToEmpty(incomeExpense).equals("")) {
 			jdbcSearchObject.addFilterEqual("IncomeExpense", incomeExpense);
 		}
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
-	private List<CustomerEmploymentDetail> getCustomerEmpDetails(long Custid){
+	private List<CustomerEmploymentDetail> getCustomerEmpDetails(long custid){
 		//Customer Employment  Data
 		JdbcSearchObject<CustomerEmploymentDetail> jdbcSearchObject = new JdbcSearchObject<CustomerEmploymentDetail>(CustomerEmploymentDetail.class);
 		jdbcSearchObject.addTabelName("CustomerEmpDetails_AView");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custid);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
-	private List<FinanceSummary> getFinanceDetailsByCustomer(long Custid){
+	private List<FinanceSummary> getFinanceDetailsByCustomer(long custid){
 		//Customer FinanceDetails
 		JdbcSearchObject<FinanceSummary> jdbcSearchObject = new JdbcSearchObject<FinanceSummary>(FinanceSummary.class);
 		jdbcSearchObject.addTabelName("CustFinanceExposure_View");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custid);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
 	/*private List<FinCustCreditReview> getCreditRvwDetailsByCustomer(long Custid,long CategoryId){
@@ -14648,8 +14647,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 	}
 
 	public void setOldVar_JountAccountDetailList(
-			List<JointAccountDetail> oldVar_JountAccountDetailList) {
-		this.oldVar_JointAccountDetailList = oldVar_JountAccountDetailList;
+			List<JointAccountDetail> oldVarJountAccountDetailList) {
+		this.oldVar_JointAccountDetailList = oldVarJountAccountDetailList;
 	}
 
 	public List<JointAccountDetail> getJountAccountDetailList() {
@@ -14674,8 +14673,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 	}
 
 	public void setOldVar_GuarantorDetailList(
-			List<GuarantorDetail> oldVar_GuarantorDetailList) {
-		this.oldVar_GuarantorDetailList = oldVar_GuarantorDetailList;
+			List<GuarantorDetail> oldVarGuarantorDetailList) {
+		this.oldVar_GuarantorDetailList = oldVarGuarantorDetailList;
 	}
 
 	public Map<String, DocumentDetails> getDocDetailMap() {

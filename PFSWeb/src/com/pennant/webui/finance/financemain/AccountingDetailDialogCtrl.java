@@ -720,16 +720,16 @@ public class AccountingDetailDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> i
 		return disbDrSum;
 	}
 
-	public void setLabel_AccountingDisbCrVal(Label label_AccountingDisbCrVal) {
-		this.label_AccountingDisbCrVal = label_AccountingDisbCrVal;
+	public void setLabel_AccountingDisbCrVal(Label labelAccountingDisbCrVal) {
+		this.label_AccountingDisbCrVal = labelAccountingDisbCrVal;
 	}
 
 	public Label getLabel_AccountingDisbCrVal() {
 		return label_AccountingDisbCrVal;
 	}
 
-	public void setLabel_AccountingDisbDrVal(Label label_AccountingDisbDrVal) {
-		this.label_AccountingDisbDrVal = label_AccountingDisbDrVal;
+	public void setLabel_AccountingDisbDrVal(Label labelAccountingDisbDrVal) {
+		this.label_AccountingDisbDrVal = labelAccountingDisbDrVal;
 	}
 
 	public Label getLabel_AccountingDisbDrVal() {

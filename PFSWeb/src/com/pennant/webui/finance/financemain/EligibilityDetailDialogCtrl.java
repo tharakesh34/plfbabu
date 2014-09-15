@@ -323,17 +323,17 @@ public class EligibilityDetailDialogCtrl extends GFCBaseListCtrl<FinanceEligibil
 
 				//Can Override
 				lc = new Listcell();
-				Checkbox cb_override = new Checkbox();
-				cb_override.setDisabled(true);
+				Checkbox cbOverride = new Checkbox();
+				cbOverride.setDisabled(true);
 
 				if(detail.isCanOverride()){
-					cb_override.setChecked(true);
+					cbOverride.setChecked(true);
 					overridePerc = String.valueOf(detail.getOverridePerc());
 				}else{
-					cb_override.setChecked(false);
+					cbOverride.setChecked(false);
 					overridePerc = "";
 				}
-				lc.appendChild(cb_override);
+				lc.appendChild(cbOverride);
 				lc.setParent(item);
 
 				//Override Value

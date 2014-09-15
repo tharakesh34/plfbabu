@@ -1189,8 +1189,8 @@ public class ContributorDetailsDialogCtrl extends GFCBaseListCtrl<FinContributor
 		return contributorsList;
 	}
 
-	public void setOldVar_ContributorList(List<FinContributorDetail> oldVar_ContributorList) {
-		this.oldVar_ContributorList = oldVar_ContributorList;
+	public void setOldVar_ContributorList(List<FinContributorDetail> oldVarContributorList) {
+		this.oldVar_ContributorList = oldVarContributorList;
 	}
 	public List<FinContributorDetail> getOldVar_ContributorList() {
 		return oldVar_ContributorList;

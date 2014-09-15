@@ -581,8 +581,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseListCtrl<JointAccountDe
 	public List<JointAccountDetail> getOldVar_JountAccountDetailList() {
 		return oldVar_JountAccountDetailList;
 	}
-	public void setOldVar_JountAccountDetailList(List<JointAccountDetail> oldVar_JountAccountDetailList) {
-		this.oldVar_JountAccountDetailList = oldVar_JountAccountDetailList;
+	public void setOldVar_JountAccountDetailList(List<JointAccountDetail> oldVarJountAccountDetailList) {
+		this.oldVar_JountAccountDetailList = oldVarJountAccountDetailList;
 	}
 
 	public List<JointAccountDetail> getJountAccountDetailList() {
@@ -602,8 +602,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseListCtrl<JointAccountDe
 	public List<GuarantorDetail> getOldVar_GuarantorDetailList() {
 		return oldVar_GuarantorDetailList;
 	}
-	public void setOldVar_GuarantorDetailList(List<GuarantorDetail> oldVar_GuarantorDetailList) {
-		this.oldVar_GuarantorDetailList = oldVar_GuarantorDetailList;
+	public void setOldVar_GuarantorDetailList(List<GuarantorDetail> oldVarGuarantorDetailList) {
+		this.oldVar_GuarantorDetailList = oldVarGuarantorDetailList;
 	}
 
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {

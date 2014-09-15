@@ -760,10 +760,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustCIF = this.sortOperator_custCIF.getSelectedItem();
+			final Listitem itemCustCIF = this.sortOperator_custCIF.getSelectedItem();
 
-			if (item_CustCIF != null) {
-				final int searchOpId = ((SearchOperators) item_CustCIF.getAttribute("data")).getSearchOperatorId();
+			if (itemCustCIF != null) {
+				final int searchOpId = ((SearchOperators) itemCustCIF.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -782,10 +782,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		if (StringUtils.isNotEmpty(this.finReference.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinReference = this.sortOperator_finReference.getSelectedItem();
+			final Listitem itemFinReference = this.sortOperator_finReference.getSelectedItem();
 
-			if (item_FinReference != null) {
-				final int searchOpId = ((SearchOperators) item_FinReference.getAttribute("data")).getSearchOperatorId();
+			if (itemFinReference != null) {
+				final int searchOpId = ((SearchOperators) itemFinReference.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -804,10 +804,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		if (StringUtils.isNotEmpty(this.finType.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinType = this.sortOperator_finType.getSelectedItem();
+			final Listitem itemFinType = this.sortOperator_finType.getSelectedItem();
 
-			if (item_FinType != null) {
-				final int searchOpId = ((SearchOperators) item_FinType.getAttribute("data")).getSearchOperatorId();
+			if (itemFinType != null) {
+				final int searchOpId = ((SearchOperators) itemFinType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -826,10 +826,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		if (StringUtils.isNotEmpty(this.finCcy.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinCcy = this.sortOperator_finCcy.getSelectedItem();
+			final Listitem itemFinCcy = this.sortOperator_finCcy.getSelectedItem();
 
-			if (item_FinCcy != null) {
-				final int searchOpId = ((SearchOperators) item_FinCcy.getAttribute("data")).getSearchOperatorId();
+			if (itemFinCcy != null) {
+				final int searchOpId = ((SearchOperators) itemFinCcy.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -848,10 +848,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		if (StringUtils.isNotEmpty(this.finBranch.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinBranch = this.sortOperator_finBranch.getSelectedItem();
+			final Listitem itemFinBranch = this.sortOperator_finBranch.getSelectedItem();
 
-			if (item_FinBranch != null) {
-				final int searchOpId = ((SearchOperators) item_FinBranch.getAttribute("data")).getSearchOperatorId();
+			if (itemFinBranch != null) {
+				final int searchOpId = ((SearchOperators) itemFinBranch.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -870,10 +870,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		if (StringUtils.isNotEmpty(this.scheduleMethod.getValue())) {
 
 			// get the search operator
-			final Listitem item_ScheduleMethod = this.sortOperator_scheduleMethod.getSelectedItem();
+			final Listitem itemScheduleMethod = this.sortOperator_scheduleMethod.getSelectedItem();
 
-			if (item_ScheduleMethod != null) {
-				final int searchOpId = ((SearchOperators) item_ScheduleMethod.getAttribute("data")).getSearchOperatorId();
+			if (itemScheduleMethod != null) {
+				final int searchOpId = ((SearchOperators) itemScheduleMethod.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -892,10 +892,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		if (StringUtils.isNotEmpty(this.profitDaysBasis.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProfitDaysBasis = this.sortOperator_profitDaysBasis.getSelectedItem();
+			final Listitem itemProfitDaysBasis = this.sortOperator_profitDaysBasis.getSelectedItem();
 
-			if (item_ProfitDaysBasis != null) {
-				final int searchOpId = ((SearchOperators) item_ProfitDaysBasis.getAttribute("data")).getSearchOperatorId();
+			if (itemProfitDaysBasis != null) {
+				final int searchOpId = ((SearchOperators) itemProfitDaysBasis.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing

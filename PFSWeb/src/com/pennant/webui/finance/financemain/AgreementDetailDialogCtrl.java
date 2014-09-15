@@ -694,19 +694,19 @@ public class AgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 
 	/**
 	 * To get Customer agreement data from the view based on cif or id
-	 * @param Custid
-	 * @param Custcif
+	 * @param custid
+	 * @param custcif
 	 * @return
 	 */
-	private AgreementDetail getCustomerAggrementData(long Custid, String Custcif) {
+	private AgreementDetail getCustomerAggrementData(long custid, String custcif) {
 		logger.debug("Entering");
 		// AgreementDetail Data
 		JdbcSearchObject<AgreementDetail> jdbcSearchObject = new JdbcSearchObject<AgreementDetail>(AgreementDetail.class);
 		jdbcSearchObject.addTabelName("CustomerAgreementDetail_View");
-		if (!StringUtils.trimToEmpty(Custcif).equals("")) {
-			jdbcSearchObject.addFilterEqual("CustCIF", Custcif);
+		if (!StringUtils.trimToEmpty(custcif).equals("")) {
+			jdbcSearchObject.addFilterEqual("CustCIF", custcif);
 		} else {
-			jdbcSearchObject.addFilterEqual("CustID", Custid);
+			jdbcSearchObject.addFilterEqual("CustID", custid);
 		}
 		List<AgreementDetail> agreementDetails = getPagedListService().getBySearchObject(jdbcSearchObject);
 		if (agreementDetails != null && !agreementDetails.isEmpty()) {
@@ -717,44 +717,44 @@ public class AgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 
 	/**
 	 * To  get CustIncome And Expense
-	 * @param Custid
+	 * @param custid
 	 * @return
 	 */
-	private List<CustomerIncome> getCustIncomeAndExpense(long Custid) {
+	private List<CustomerIncome> getCustIncomeAndExpense(long custid) {
 		logger.debug("Entering");
 		// Customer Income and Expense Data
 		JdbcSearchObject<CustomerIncome> jdbcSearchObject = new JdbcSearchObject<CustomerIncome>(CustomerIncome.class);
 		jdbcSearchObject.addTabelName("CustomerIncomes_AView");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custid);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
 
 	/**
 	 * To  get Customer Employment  Details
-	 * @param Custid
+	 * @param custid
 	 * @return
 	 */
-	private List<CustomerEmploymentDetail> getCustomerEmpDetails(long Custid) {
+	private List<CustomerEmploymentDetail> getCustomerEmpDetails(long custid) {
 		logger.debug("Entering");
 		// Customer Employment Data
 		JdbcSearchObject<CustomerEmploymentDetail> jdbcSearchObject = new JdbcSearchObject<CustomerEmploymentDetail>(CustomerEmploymentDetail.class);
 		jdbcSearchObject.addTabelName("CustomerEmpDetails_AView");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custid);
 		logger.debug("Leaving");
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
 
 	/**
 	 * To  get Finance Details By Customer
-	 * @param Custid
+	 * @param custId
 	 * @return
 	 */
-	private List<FinanceSummary> getFinanceDetailsByCustomer(long Custid) {
+	private List<FinanceSummary> getFinanceDetailsByCustomer(long custId) {
 		logger.debug("Entering");
 		// Customer FinanceDetails
 		JdbcSearchObject<FinanceSummary> jdbcSearchObject = new JdbcSearchObject<FinanceSummary>(FinanceSummary.class);
 		jdbcSearchObject.addTabelName("CustFinanceExposure_View");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custId);
 		logger.debug("Leaving");
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}

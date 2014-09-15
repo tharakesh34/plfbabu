@@ -1431,7 +1431,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 		}
 	}
 	
-	private boolean isExecuted(Map<String, String> exeMap, long ScoringId) {
+	private boolean isExecuted(Map<String, String> exeMap, long scoringId) {
 		metricExecScore = BigDecimal.ZERO;
 		metricMaxScore = BigDecimal.ZERO;
 		boolean executed = false;
@@ -1445,7 +1445,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 			List<FinanceScoreDetail> scoreDetailList = getFinanceDetail().getScoreDetailListMap().get(header.getHeaderId());
 			if (scoreDetailList != null) {
 				for (FinanceScoreDetail financeScoreDetail : scoreDetailList) {
-					if (financeScoreDetail.getRuleId() == ScoringId) {
+					if (financeScoreDetail.getRuleId() == scoringId) {
 						if(exeMap.get(financeScoreDetail.getRuleCodeDesc()) == null) {
 							exeMap.put(financeScoreDetail.getRuleCodeDesc(), financeScoreDetail.getRuleCodeDesc());
 							metricMaxScore = financeScoreDetail.getMaxScore();

@@ -1509,15 +1509,15 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			tabpanel.setHeight(this.borderLayoutHeight - 100 - 20 + "px");
 			tabpanel.setParent(tabpanelsBoxIndexCenter);
 
-			Groupbox gb_AdditionalDetail = new Groupbox();
+			Groupbox gbAdditionalDetail = new Groupbox();
 			Caption caption = new Caption();
 			caption.setLabel(Labels.getLabel("finAdditionalDetails"));
-			caption.setParent(gb_AdditionalDetail);
+			caption.setParent(gbAdditionalDetail);
 			caption.setStyle("font-weight:bold;color:#FF6600;");
 			Grid addlGrid = new Grid();
 			addlGrid.setSclass("GridLayoutNoBorder");
 			addlGrid.setSizedByContent(true);
-			tabpanel.appendChild(gb_AdditionalDetail);
+			tabpanel.appendChild(gbAdditionalDetail);
 
 			Columns cols = new Columns();
 			addlGrid.appendChild(cols);
@@ -1544,7 +1544,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 			additionalDetails = new Rows();
 			addlGrid.appendChild(additionalDetails);
-			addlGrid.setParent(gb_AdditionalDetail);
+			addlGrid.setParent(gbAdditionalDetail);
 			getAdditionalDetailValidation().doPrepareAdditionalDetails(getFinanceDetail().getLovDescExtendedFieldValues(), extendedFieldDetails, 
 			getMainWindow(), additionalDetails, columnCount, isReadOnly("FinanceMainDialog_addlDetail"));
 		} 
@@ -3852,11 +3852,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 	}
 	
-	public void setDisableCbFrqs(boolean isReadOnly, Combobox CbFrq1,
-			Combobox CbFrq2, Combobox CbFrq3) {
-		readOnlyComponent(isReadOnly, CbFrq1);
-		readOnlyComponent(isReadOnly, CbFrq2);
-		readOnlyComponent(isReadOnly, CbFrq3);
+	public void setDisableCbFrqs(boolean isReadOnly, Combobox cbFrq1,
+			Combobox cbFrq2, Combobox cbFrq3) {
+		readOnlyComponent(isReadOnly, cbFrq1);
+		readOnlyComponent(isReadOnly, cbFrq2);
+		readOnlyComponent(isReadOnly, cbFrq3);
 	}
 	
 	/**
@@ -5192,15 +5192,15 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		int formatter = getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinFormetter();
 
-		BigDecimal old_finAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal new_finAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
-		if (old_finAmount.compareTo(new_finAmount) != 0) {
+		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
+		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			return true;
 		}
 
-		BigDecimal old_dwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
-		BigDecimal new_dwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
-		if (old_dwnPayBank.compareTo(new_dwnPayBank) != 0) {
+		BigDecimal oldDwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
+		BigDecimal newDwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
+		if (oldDwnPayBank.compareTo(newDwnPayBank) != 0) {
 			return true;
 		}
 
@@ -5354,9 +5354,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 
-		BigDecimal old_finRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount,formatter);
-		BigDecimal new_finRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
-		if (old_finRepayAmount.compareTo(new_finRepayAmount) != 0) {
+		BigDecimal oldFinRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount,formatter);
+		BigDecimal newFinRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
+		if (oldFinRepayAmount.compareTo(newFinRepayAmount) != 0) {
 			return true;
 		}
 
@@ -7057,40 +7057,40 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		return label_FinanceMainDialog_FinRepayPftOnFrq;
 	}
 	public void setLabel_FinanceMainDialog_FinRepayPftOnFrq(
-			Label label_FinanceMainDialog_FinRepayPftOnFrq) {
-		this.label_FinanceMainDialog_FinRepayPftOnFrq = label_FinanceMainDialog_FinRepayPftOnFrq;
+			Label labelFinanceMainDialogFinRepayPftOnFrq) {
+		this.label_FinanceMainDialog_FinRepayPftOnFrq = labelFinanceMainDialogFinRepayPftOnFrq;
 	}
 
 	public Label getLabel_FinanceMainDialog_CommitRef() {
 		return label_FinanceMainDialog_CommitRef;
 	}
 	public void setLabel_FinanceMainDialog_CommitRef(
-			Label label_FinanceMainDialog_CommitRef) {
-		this.label_FinanceMainDialog_CommitRef = label_FinanceMainDialog_CommitRef;
+			Label labelFinanceMainDialogCommitRef) {
+		this.label_FinanceMainDialog_CommitRef = labelFinanceMainDialogCommitRef;
 	}
 
 	public Label getLabel_FinanceMainDialog_DepriFrq() {
 		return label_FinanceMainDialog_DepriFrq;
 	}
 	public void setLabel_FinanceMainDialog_DepriFrq(
-			Label label_FinanceMainDialog_DepriFrq) {
-		this.label_FinanceMainDialog_DepriFrq = label_FinanceMainDialog_DepriFrq;
+			Label labelFinanceMainDialogDepriFrq) {
+		this.label_FinanceMainDialog_DepriFrq = labelFinanceMainDialogDepriFrq;
 	}
 
 	public Label getLabel_FinanceMainDialog_FrqDef() {
 		return label_FinanceMainDialog_FrqDef;
 	}
 	public void setLabel_FinanceMainDialog_FrqDef(
-			Label label_FinanceMainDialog_FrqDef) {
-		this.label_FinanceMainDialog_FrqDef = label_FinanceMainDialog_FrqDef;
+			Label labelFinanceMainDialogFrqDef) {
+		this.label_FinanceMainDialog_FrqDef = labelFinanceMainDialogFrqDef;
 	}
 
 	public Label getLabel_FinanceMainDialog_CbbApproved() {
 		return label_FinanceMainDialog_CbbApproved;
 	}
 	public void setLabel_FinanceMainDialog_CbbApproved(
-			Label label_FinanceMainDialog_CbbApproved) {
-		this.label_FinanceMainDialog_CbbApproved = label_FinanceMainDialog_CbbApproved;
+			Label labelFinanceMainDialogCbbApproved) {
+		this.label_FinanceMainDialog_CbbApproved = labelFinanceMainDialogCbbApproved;
 	}
 
 	public String getProductCode() {
@@ -7113,32 +7113,32 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	}
 
 	public void setLabel_FinanceMainDialog_AlwGrace(
-			Label label_FinanceMainDialog_AlwGrace) {
-		this.label_FinanceMainDialog_AlwGrace = label_FinanceMainDialog_AlwGrace;
+			Label labelFinanceMainDialogAlwGrace) {
+		this.label_FinanceMainDialog_AlwGrace = labelFinanceMainDialogAlwGrace;
 	}
 	
 	public Label getLabel_FinanceMainDialog_StepPolicy() {
 		return label_FinanceMainDialog_StepPolicy;
 	}
 	public void setLabel_FinanceMainDialog_StepPolicy(
-			Label label_FinanceMainDialog_StepPolicy) {
-		this.label_FinanceMainDialog_StepPolicy = label_FinanceMainDialog_StepPolicy;
+			Label labelFinanceMainDialogStepPolicy) {
+		this.label_FinanceMainDialog_StepPolicy = labelFinanceMainDialogStepPolicy;
 	}
 
 	public Label getLabel_FinanceMainDialog_numberOfSteps() {
 		return label_FinanceMainDialog_numberOfSteps;
 	}
 	public void setLabel_FinanceMainDialog_numberOfSteps(
-			Label label_FinanceMainDialog_numberOfSteps) {
-		this.label_FinanceMainDialog_numberOfSteps = label_FinanceMainDialog_numberOfSteps;
+			Label labelFinanceMainDialogNumberOfSteps) {
+		this.label_FinanceMainDialog_numberOfSteps = labelFinanceMainDialogNumberOfSteps;
 	}
 	
 	public Label getLabel_FinanceMainDialog_GraceMargin() {
 		return label_FinanceMainDialog_GraceMargin;
 	}
 	public void setLabel_FinanceMainDialog_GraceMargin(
-			Label label_FinanceMainDialog_GraceMargin) {
-		this.label_FinanceMainDialog_GraceMargin = label_FinanceMainDialog_GraceMargin;
+			Label labelFinanceMainDialogGraceMargin) {
+		this.label_FinanceMainDialog_GraceMargin = labelFinanceMainDialogGraceMargin;
 	}
 
 	public boolean isRecommendEntered() {

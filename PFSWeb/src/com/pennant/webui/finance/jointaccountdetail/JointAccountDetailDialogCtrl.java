@@ -894,7 +894,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 				listitem.setAttribute("data", primaryExposure);
 				this.listBox_JointAccountPrimary.appendChild(listitem);
 			}
-			String footer_style1 = "text-align:right; font-weight:bold;";
+			String footerStyle1 = "text-align:right; font-weight:bold;";
 
 			Listitem item = new Listitem();
 			Listcell lc = null;
@@ -906,7 +906,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 			lc = new Listcell(recordCount + "");
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -925,7 +925,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumPrimaryDetails.getCurrentExpoSureinBaseCCY(), this.sumPrimaryDetails.getCcyEditField()));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -940,7 +940,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumPrimaryDetails.getOverdueAmtBaseCCY(), this.sumPrimaryDetails.getCcyEditField()));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			item.setParent(this.listBox_JointAccountPrimary);
@@ -1001,7 +1001,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 				listitem.setAttribute("data", secondaryExposure);
 				this.listBox_JointAccountSecondary.appendChild(listitem);
 			}
-			String footer_style1 = "text-align:right; font-weight:bold;";
+			String footerStyle1 = "text-align:right; font-weight:bold;";
 
 			Listitem item = new Listitem();
 			Listcell lc = null;
@@ -1013,7 +1013,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 			lc = new Listcell(recordCount + "");
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1032,7 +1032,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumSecondaryDetails.getCurrentExpoSureinBaseCCY(), this.sumPrimaryDetails.getCcyEditField()));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1046,7 +1046,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumSecondaryDetails.getOverdueAmtBaseCCY(), this.sumSecondaryDetails.getCcyEditField()));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 			
 			lc = new Listcell();
@@ -1111,7 +1111,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 				listitem.setAttribute("data", guarantorExposure);
 				this.listBox_JointAccountGuarantor.appendChild(listitem);
 			}
-			String footer_style1 = "text-align:right; font-weight:bold;";
+			String footerStyle1 = "text-align:right; font-weight:bold;";
 
 			Listitem item = new Listitem();
 			Listcell lc = null;
@@ -1123,7 +1123,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 			lc = new Listcell(recordCount + "");
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1142,7 +1142,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumGurantorDetails.getCurrentExpoSureinBaseCCY(), this.sumGurantorDetails.getCcyEditField()));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1155,7 +1155,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 			
 			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumGurantorDetails.getOverdueAmtBaseCCY(), this.sumGurantorDetails.getCcyEditField()));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 			
 			lc = new Listcell();
@@ -1657,8 +1657,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public List<JointAccountDetail> getJountAccountDetailList() {

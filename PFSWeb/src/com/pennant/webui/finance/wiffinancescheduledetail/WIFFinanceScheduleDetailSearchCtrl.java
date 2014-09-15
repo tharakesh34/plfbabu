@@ -520,10 +520,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.finReference.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinReference = this.sortOperator_finReference.getSelectedItem();
+			final Listitem itemFinReference = this.sortOperator_finReference.getSelectedItem();
 
-			if (item_FinReference != null) {
-				final int searchOpId = ((SearchOperators) item_FinReference.getAttribute("data")).getSearchOperatorId();
+			if (itemFinReference != null) {
+				final int searchOpId = ((SearchOperators) itemFinReference.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finReference", "%" + this.finReference.getValue().toUpperCase() + "%", searchOpId));
@@ -537,10 +537,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.schDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_SchDate = this.sortOperator_schDate.getSelectedItem();
+			final Listitem itemSchDate = this.sortOperator_schDate.getSelectedItem();
 
-			if (item_SchDate != null) {
-				final int searchOpId = ((SearchOperators) item_SchDate.getAttribute("data")).getSearchOperatorId();
+			if (itemSchDate != null) {
+				final int searchOpId = ((SearchOperators) itemSchDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("schDate", "%" + this.schDate.getValue().toUpperCase() + "%", searchOpId));
@@ -554,10 +554,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.schSeq.getValue())) {
 
 			// get the search operator
-			final Listitem item_SchSeq = this.sortOperator_schSeq.getSelectedItem();
+			final Listitem itemSchSeq = this.sortOperator_schSeq.getSelectedItem();
 
-			if (item_SchSeq != null) {
-				final int searchOpId = ((SearchOperators) item_SchSeq.getAttribute("data")).getSearchOperatorId();
+			if (itemSchSeq != null) {
+				final int searchOpId = ((SearchOperators) itemSchSeq.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("schSeq", "%" + this.schSeq.getValue().toUpperCase() + "%", searchOpId));
@@ -569,10 +569,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_PftOnSchDate = this.sortOperator_pftOnSchDate.getSelectedItem();
+		final Listitem itemPftOnSchDate = this.sortOperator_pftOnSchDate.getSelectedItem();
 
-		if (item_PftOnSchDate != null) {
-			final int searchOpId = ((SearchOperators) item_PftOnSchDate.getAttribute("data")).getSearchOperatorId();
+		if (itemPftOnSchDate != null) {
+			final int searchOpId = ((SearchOperators) itemPftOnSchDate.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -586,10 +586,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_CpzOnSchDate = this.sortOperator_cpzOnSchDate.getSelectedItem();
+		final Listitem itemCpzOnSchDate = this.sortOperator_cpzOnSchDate.getSelectedItem();
 
-		if (item_CpzOnSchDate != null) {
-			final int searchOpId = ((SearchOperators) item_CpzOnSchDate.getAttribute("data")).getSearchOperatorId();
+		if (itemCpzOnSchDate != null) {
+			final int searchOpId = ((SearchOperators) itemCpzOnSchDate.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -603,10 +603,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_RepayOnSchDate = this.sortOperator_repayOnSchDate.getSelectedItem();
+		final Listitem itemRepayOnSchDate = this.sortOperator_repayOnSchDate.getSelectedItem();
 
-		if (item_RepayOnSchDate != null) {
-			final int searchOpId = ((SearchOperators) item_RepayOnSchDate.getAttribute("data")).getSearchOperatorId();
+		if (itemRepayOnSchDate != null) {
+			final int searchOpId = ((SearchOperators) itemRepayOnSchDate.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -620,10 +620,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_RvwOnSchDate = this.sortOperator_rvwOnSchDate.getSelectedItem();
+		final Listitem itemRvwOnSchDate = this.sortOperator_rvwOnSchDate.getSelectedItem();
 
-		if (item_RvwOnSchDate != null) {
-			final int searchOpId = ((SearchOperators) item_RvwOnSchDate.getAttribute("data")).getSearchOperatorId();
+		if (itemRvwOnSchDate != null) {
+			final int searchOpId = ((SearchOperators) itemRvwOnSchDate.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -637,10 +637,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_DisbOnSchDate = this.sortOperator_disbOnSchDate.getSelectedItem();
+		final Listitem itemDisbOnSchDate = this.sortOperator_disbOnSchDate.getSelectedItem();
 
-		if (item_DisbOnSchDate != null) {
-			final int searchOpId = ((SearchOperators) item_DisbOnSchDate.getAttribute("data")).getSearchOperatorId();
+		if (itemDisbOnSchDate != null) {
+			final int searchOpId = ((SearchOperators) itemDisbOnSchDate.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -654,10 +654,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_DownpaymentOnSchDate = this.sortOperator_downpaymentOnSchDate.getSelectedItem();
+		final Listitem itemDownpaymentOnSchDate = this.sortOperator_downpaymentOnSchDate.getSelectedItem();
 
-		if (item_DownpaymentOnSchDate != null) {
-			final int searchOpId = ((SearchOperators) item_DownpaymentOnSchDate.getAttribute("data")).getSearchOperatorId();
+		if (itemDownpaymentOnSchDate != null) {
+			final int searchOpId = ((SearchOperators) itemDownpaymentOnSchDate.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -673,10 +673,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.balanceForPftCal.getValue())) {
 
 			// get the search operator
-			final Listitem item_BalanceForPftCal = this.sortOperator_balanceForPftCal.getSelectedItem();
+			final Listitem itemBalanceForPftCal = this.sortOperator_balanceForPftCal.getSelectedItem();
 
-			if (item_BalanceForPftCal != null) {
-				final int searchOpId = ((SearchOperators) item_BalanceForPftCal.getAttribute("data")).getSearchOperatorId();
+			if (itemBalanceForPftCal != null) {
+				final int searchOpId = ((SearchOperators) itemBalanceForPftCal.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("balanceForPftCal", "%" + this.balanceForPftCal.getValue().toUpperCase() + "%", searchOpId));
@@ -690,10 +690,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.baseRate.getValue())) {
 
 			// get the search operator
-			final Listitem item_BaseRate = this.sortOperator_baseRate.getSelectedItem();
+			final Listitem itemBaseRate = this.sortOperator_baseRate.getSelectedItem();
 
-			if (item_BaseRate != null) {
-				final int searchOpId = ((SearchOperators) item_BaseRate.getAttribute("data")).getSearchOperatorId();
+			if (itemBaseRate != null) {
+				final int searchOpId = ((SearchOperators) itemBaseRate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("baseRate", "%" + this.baseRate.getValue().toUpperCase() + "%", searchOpId));
@@ -707,10 +707,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.splRate.getValue())) {
 
 			// get the search operator
-			final Listitem item_SplRate = this.sortOperator_splRate.getSelectedItem();
+			final Listitem itemSplRate = this.sortOperator_splRate.getSelectedItem();
 
-			if (item_SplRate != null) {
-				final int searchOpId = ((SearchOperators) item_SplRate.getAttribute("data")).getSearchOperatorId();
+			if (itemSplRate != null) {
+				final int searchOpId = ((SearchOperators) itemSplRate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("splRate", "%" + this.splRate.getValue().toUpperCase() + "%", searchOpId));
@@ -724,10 +724,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.actRate.getValue())) {
 
 			// get the search operator
-			final Listitem item_ActRate = this.sortOperator_actRate.getSelectedItem();
+			final Listitem itemActRate = this.sortOperator_actRate.getSelectedItem();
 
-			if (item_ActRate != null) {
-				final int searchOpId = ((SearchOperators) item_ActRate.getAttribute("data")).getSearchOperatorId();
+			if (itemActRate != null) {
+				final int searchOpId = ((SearchOperators) itemActRate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("actRate", "%" + this.actRate.getValue().toUpperCase() + "%", searchOpId));
@@ -741,10 +741,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.adjRate.getValue())) {
 
 			// get the search operator
-			final Listitem item_AdjRate = this.sortOperator_adjRate.getSelectedItem();
+			final Listitem itemAdjRate = this.sortOperator_adjRate.getSelectedItem();
 
-			if (item_AdjRate != null) {
-				final int searchOpId = ((SearchOperators) item_AdjRate.getAttribute("data")).getSearchOperatorId();
+			if (itemAdjRate != null) {
+				final int searchOpId = ((SearchOperators) itemAdjRate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("adjRate", "%" + this.adjRate.getValue().toUpperCase() + "%", searchOpId));
@@ -758,10 +758,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.noOfDays.getValue())) {
 
 			// get the search operator
-			final Listitem item_NoOfDays = this.sortOperator_noOfDays.getSelectedItem();
+			final Listitem itemNoOfDays = this.sortOperator_noOfDays.getSelectedItem();
 
-			if (item_NoOfDays != null) {
-				final int searchOpId = ((SearchOperators) item_NoOfDays.getAttribute("data")).getSearchOperatorId();
+			if (itemNoOfDays != null) {
+				final int searchOpId = ((SearchOperators) itemNoOfDays.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("noOfDays", "%" + this.noOfDays.getValue().toUpperCase() + "%", searchOpId));
@@ -775,10 +775,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.dayFactor.getValue())) {
 
 			// get the search operator
-			final Listitem item_DayFactor = this.sortOperator_dayFactor.getSelectedItem();
+			final Listitem itemDayFactor = this.sortOperator_dayFactor.getSelectedItem();
 
-			if (item_DayFactor != null) {
-				final int searchOpId = ((SearchOperators) item_DayFactor.getAttribute("data")).getSearchOperatorId();
+			if (itemDayFactor != null) {
+				final int searchOpId = ((SearchOperators) itemDayFactor.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dayFactor", "%" + this.dayFactor.getValue().toUpperCase() + "%", searchOpId));
@@ -792,10 +792,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.profitCalc.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProfitCalc = this.sortOperator_profitCalc.getSelectedItem();
+			final Listitem itemProfitCalc = this.sortOperator_profitCalc.getSelectedItem();
 
-			if (item_ProfitCalc != null) {
-				final int searchOpId = ((SearchOperators) item_ProfitCalc.getAttribute("data")).getSearchOperatorId();
+			if (itemProfitCalc != null) {
+				final int searchOpId = ((SearchOperators) itemProfitCalc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("profitCalc", "%" + this.profitCalc.getValue().toUpperCase() + "%", searchOpId));
@@ -809,10 +809,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.profitSchd.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProfitSchd = this.sortOperator_profitSchd.getSelectedItem();
+			final Listitem itemProfitSchd = this.sortOperator_profitSchd.getSelectedItem();
 
-			if (item_ProfitSchd != null) {
-				final int searchOpId = ((SearchOperators) item_ProfitSchd.getAttribute("data")).getSearchOperatorId();
+			if (itemProfitSchd != null) {
+				final int searchOpId = ((SearchOperators) itemProfitSchd.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("profitSchd", "%" + this.profitSchd.getValue().toUpperCase() + "%", searchOpId));
@@ -826,10 +826,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.principalSchd.getValue())) {
 
 			// get the search operator
-			final Listitem item_PrincipalSchd = this.sortOperator_principalSchd.getSelectedItem();
+			final Listitem itemPrincipalSchd = this.sortOperator_principalSchd.getSelectedItem();
 
-			if (item_PrincipalSchd != null) {
-				final int searchOpId = ((SearchOperators) item_PrincipalSchd.getAttribute("data")).getSearchOperatorId();
+			if (itemPrincipalSchd != null) {
+				final int searchOpId = ((SearchOperators) itemPrincipalSchd.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("principalSchd", "%" + this.principalSchd.getValue().toUpperCase() + "%", searchOpId));
@@ -843,10 +843,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.repayAmount.getValue())) {
 
 			// get the search operator
-			final Listitem item_RepayAmount = this.sortOperator_repayAmount.getSelectedItem();
+			final Listitem itemRepayAmount = this.sortOperator_repayAmount.getSelectedItem();
 
-			if (item_RepayAmount != null) {
-				final int searchOpId = ((SearchOperators) item_RepayAmount.getAttribute("data")).getSearchOperatorId();
+			if (itemRepayAmount != null) {
+				final int searchOpId = ((SearchOperators) itemRepayAmount.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("repayAmount", "%" + this.repayAmount.getValue().toUpperCase() + "%", searchOpId));
@@ -860,10 +860,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.profitBalance.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProfitBalance = this.sortOperator_profitBalance.getSelectedItem();
+			final Listitem itemProfitBalance = this.sortOperator_profitBalance.getSelectedItem();
 
-			if (item_ProfitBalance != null) {
-				final int searchOpId = ((SearchOperators) item_ProfitBalance.getAttribute("data")).getSearchOperatorId();
+			if (itemProfitBalance != null) {
+				final int searchOpId = ((SearchOperators) itemProfitBalance.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("profitBalance", "%" + this.profitBalance.getValue().toUpperCase() + "%", searchOpId));
@@ -877,10 +877,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.disbAmount.getValue())) {
 
 			// get the search operator
-			final Listitem item_DisbAmount = this.sortOperator_disbAmount.getSelectedItem();
+			final Listitem itemDisbAmount = this.sortOperator_disbAmount.getSelectedItem();
 
-			if (item_DisbAmount != null) {
-				final int searchOpId = ((SearchOperators) item_DisbAmount.getAttribute("data")).getSearchOperatorId();
+			if (itemDisbAmount != null) {
+				final int searchOpId = ((SearchOperators) itemDisbAmount.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("disbAmount", "%" + this.disbAmount.getValue().toUpperCase() + "%", searchOpId));
@@ -894,10 +894,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.downPaymentAmount.getValue())) {
 
 			// get the search operator
-			final Listitem item_DownPaymentAmount = this.sortOperator_downPaymentAmount.getSelectedItem();
+			final Listitem itemDownPaymentAmount = this.sortOperator_downPaymentAmount.getSelectedItem();
 
-			if (item_DownPaymentAmount != null) {
-				final int searchOpId = ((SearchOperators) item_DownPaymentAmount.getAttribute("data")).getSearchOperatorId();
+			if (itemDownPaymentAmount != null) {
+				final int searchOpId = ((SearchOperators) itemDownPaymentAmount.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("downPaymentAmount", "%" + this.downPaymentAmount.getValue().toUpperCase() + "%", searchOpId));
@@ -911,10 +911,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.cpzAmount.getValue())) {
 
 			// get the search operator
-			final Listitem item_CpzAmount = this.sortOperator_cpzAmount.getSelectedItem();
+			final Listitem itemCpzAmount = this.sortOperator_cpzAmount.getSelectedItem();
 
-			if (item_CpzAmount != null) {
-				final int searchOpId = ((SearchOperators) item_CpzAmount.getAttribute("data")).getSearchOperatorId();
+			if (itemCpzAmount != null) {
+				final int searchOpId = ((SearchOperators) itemCpzAmount.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("cpzAmount", "%" + this.cpzAmount.getValue().toUpperCase() + "%", searchOpId));
@@ -928,10 +928,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.diffProfitSchd.getValue())) {
 
 			// get the search operator
-			final Listitem item_DiffProfitSchd = this.sortOperator_diffProfitSchd.getSelectedItem();
+			final Listitem itemDiffProfitSchd = this.sortOperator_diffProfitSchd.getSelectedItem();
 
-			if (item_DiffProfitSchd != null) {
-				final int searchOpId = ((SearchOperators) item_DiffProfitSchd.getAttribute("data")).getSearchOperatorId();
+			if (itemDiffProfitSchd != null) {
+				final int searchOpId = ((SearchOperators) itemDiffProfitSchd.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("diffProfitSchd", "%" + this.diffProfitSchd.getValue().toUpperCase() + "%", searchOpId));
@@ -945,10 +945,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.dIffPrincipalSchd.getValue())) {
 
 			// get the search operator
-			final Listitem item_DIffPrincipalSchd = this.sortOperator_dIffPrincipalSchd.getSelectedItem();
+			final Listitem itemDIffPrincipalSchd = this.sortOperator_dIffPrincipalSchd.getSelectedItem();
 
-			if (item_DIffPrincipalSchd != null) {
-				final int searchOpId = ((SearchOperators) item_DIffPrincipalSchd.getAttribute("data")).getSearchOperatorId();
+			if (itemDIffPrincipalSchd != null) {
+				final int searchOpId = ((SearchOperators) itemDIffPrincipalSchd.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dIffPrincipalSchd", "%" + this.dIffPrincipalSchd.getValue().toUpperCase() + "%", searchOpId));
@@ -962,10 +962,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.closingBalance.getValue())) {
 
 			// get the search operator
-			final Listitem item_ClosingBalance = this.sortOperator_closingBalance.getSelectedItem();
+			final Listitem itemClosingBalance = this.sortOperator_closingBalance.getSelectedItem();
 
-			if (item_ClosingBalance != null) {
-				final int searchOpId = ((SearchOperators) item_ClosingBalance.getAttribute("data")).getSearchOperatorId();
+			if (itemClosingBalance != null) {
+				final int searchOpId = ((SearchOperators) itemClosingBalance.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("closingBalance", "%" + this.closingBalance.getValue().toUpperCase() + "%", searchOpId));
@@ -979,10 +979,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.profitFraction.getValue())) {
 
 			// get the search operator
-			final Listitem item_ProfitFraction = this.sortOperator_profitFraction.getSelectedItem();
+			final Listitem itemProfitFraction = this.sortOperator_profitFraction.getSelectedItem();
 
-			if (item_ProfitFraction != null) {
-				final int searchOpId = ((SearchOperators) item_ProfitFraction.getAttribute("data")).getSearchOperatorId();
+			if (itemProfitFraction != null) {
+				final int searchOpId = ((SearchOperators) itemProfitFraction.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("profitFraction", "%" + this.profitFraction.getValue().toUpperCase() + "%", searchOpId));
@@ -996,10 +996,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.prvRepayAmount.getValue())) {
 
 			// get the search operator
-			final Listitem item_PrvRepayAmount = this.sortOperator_prvRepayAmount.getSelectedItem();
+			final Listitem itemPrvRepayAmount = this.sortOperator_prvRepayAmount.getSelectedItem();
 
-			if (item_PrvRepayAmount != null) {
-				final int searchOpId = ((SearchOperators) item_PrvRepayAmount.getAttribute("data")).getSearchOperatorId();
+			if (itemPrvRepayAmount != null) {
+				final int searchOpId = ((SearchOperators) itemPrvRepayAmount.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("prvRepayAmount", "%" + this.prvRepayAmount.getValue().toUpperCase() + "%", searchOpId));
@@ -1013,10 +1013,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.deffProfitBal.getValue())) {
 
 			// get the search operator
-			final Listitem item_DeffProfitBal = this.sortOperator_deffProfitBal.getSelectedItem();
+			final Listitem itemDeffProfitBal = this.sortOperator_deffProfitBal.getSelectedItem();
 
-			if (item_DeffProfitBal != null) {
-				final int searchOpId = ((SearchOperators) item_DeffProfitBal.getAttribute("data")).getSearchOperatorId();
+			if (itemDeffProfitBal != null) {
+				final int searchOpId = ((SearchOperators) itemDeffProfitBal.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("deffProfitBal", "%" + this.deffProfitBal.getValue().toUpperCase() + "%", searchOpId));
@@ -1030,10 +1030,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.diffPrincipalBal.getValue())) {
 
 			// get the search operator
-			final Listitem item_DiffPrincipalBal = this.sortOperator_diffPrincipalBal.getSelectedItem();
+			final Listitem itemDiffPrincipalBal = this.sortOperator_diffPrincipalBal.getSelectedItem();
 
-			if (item_DiffPrincipalBal != null) {
-				final int searchOpId = ((SearchOperators) item_DiffPrincipalBal.getAttribute("data")).getSearchOperatorId();
+			if (itemDiffPrincipalBal != null) {
+				final int searchOpId = ((SearchOperators) itemDiffPrincipalBal.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("diffPrincipalBal", "%" + this.diffPrincipalBal.getValue().toUpperCase() + "%", searchOpId));
@@ -1047,10 +1047,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.schdPriPaid.getValue())) {
 
 			// get the search operator
-			final Listitem item_SchdPriPaid = this.sortOperator_schdPriPaid.getSelectedItem();
+			final Listitem itemSchdPriPaid = this.sortOperator_schdPriPaid.getSelectedItem();
 
-			if (item_SchdPriPaid != null) {
-				final int searchOpId = ((SearchOperators) item_SchdPriPaid.getAttribute("data")).getSearchOperatorId();
+			if (itemSchdPriPaid != null) {
+				final int searchOpId = ((SearchOperators) itemSchdPriPaid.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("schdPriPaid", "%" + this.schdPriPaid.getValue().toUpperCase() + "%", searchOpId));
@@ -1062,10 +1062,10 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_isSchdPftPaid = this.sortOperator_isSchdPftPaid.getSelectedItem();
+		final Listitem itemIsSchdPftPaid = this.sortOperator_isSchdPftPaid.getSelectedItem();
 
-		if (item_isSchdPftPaid != null) {
-			final int searchOpId = ((SearchOperators) item_isSchdPftPaid.getAttribute("data")).getSearchOperatorId();
+		if (itemIsSchdPftPaid != null) {
+			final int searchOpId = ((SearchOperators) itemIsSchdPftPaid.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -1080,9 +1080,9 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -1101,9 +1101,9 @@ public class WIFFinanceScheduleDetailSearchCtrl extends GFCBaseCtrl implements S
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));
