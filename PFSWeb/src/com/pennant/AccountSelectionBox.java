@@ -141,8 +141,7 @@ public class AccountSelectionBox extends Hbox {
 
 		//Button
 		button = new Button();
-		//button.setSclass("cssBtnSearch");
-		button.setStyle("height:20px; width:23px; padding:0px;");
+		button.setSclass("cssBtnSearch");
 		button.setImage("/images/icons/LOVSearch.png");
 		button.addForward("onClick", this, "onButtonClick");
 		hbox.appendChild(button);

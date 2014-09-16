@@ -130,10 +130,8 @@ public class ExtendedCombobox extends Hbox {
 		
 		//Button
 		button = new Button();
-		//button.setSclass("cssBtnSearch");
-		button.setStyle("height:20px; width:23px; padding:0px;");
+		button.setSclass("cssBtnSearch");
 		button.setImage("/images/icons/LOVSearch.png");
-		button.setHeight("20px");
 		button.addForward("onClick", this, "onButtonClick");
 		hbox.appendChild(button);
 		this.appendChild(hbox);
