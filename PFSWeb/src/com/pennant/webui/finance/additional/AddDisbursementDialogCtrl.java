@@ -422,6 +422,7 @@ public class AddDisbursementDialogCtrl  extends GFCBaseCtrl implements Serializa
 		//Show Error Details in Schedule Maintainance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			getFinScheduleData().getErrorDetails().clear();
 		}else{
 			getFinScheduleData().setSchduleGenerated(true);
 			if(getScheduleDetailDialogCtrl()!=null){

@@ -45,6 +45,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  * @author dwolverton
  */
+@SuppressWarnings("static-access")
 public class JdbcSearchProcessor  {
 	private final static Logger logger = Logger.getLogger(JdbcSearchProcessor.class);
 
@@ -87,9 +88,9 @@ public class JdbcSearchProcessor  {
 	 * 
 	 * @see ISearch
 	 */
-	@SuppressWarnings({ "unchecked", "static-access", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List search(DataSource dataSource, Class<?> searchClass, ISearch search) throws DataAccessException {
-		if (search == null || (searchClass == null && StringUtils.trimToEmpty(search.getTabelName()).equals(""))){//TODO to discuss with Vasu
+		if (search == null || (searchClass == null && StringUtils.trimToEmpty(search.getTabelName()).equals(""))){
 			return null;
 		}
 
@@ -214,11 +215,10 @@ public class JdbcSearchProcessor  {
 	 * 
 	 * @see ISearch
 	 */
-	@SuppressWarnings("static-access")
 	public int count(DataSource dataSource, Class<?> searchClass, ISearch search) {
 		
 		int count;
-		if (searchClass == null || search == null){
+		if (search == null || (searchClass == null && StringUtils.trimToEmpty(search.getTabelName()).equals(""))) {
 			return 0;
 		}
 
@@ -272,8 +272,7 @@ public class JdbcSearchProcessor  {
 			}
 			// Add direct where clause sent by client
 			if (search.getWhereClause() != null) {
-				
-						selectQuery.addCondition(new CustomCondition(search.getWhereClause()));
+				selectQuery.addCondition(new CustomCondition(search.getWhereClause()));
 			}
 		}
  

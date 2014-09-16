@@ -1,12 +1,15 @@
 package com.pennant.app.eod.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -31,6 +34,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.ExecutionStatus;
+import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -178,12 +182,98 @@ public class AmortizationServiceImpl implements AmortizationService {
 			
 			if(isMonthEndTsfd && ("N".equals(isDummy))){
 				
+				//Setting Accrue Transfered Amount Values reset to ZERO
+				getFinanceProfitDetailDAO().resetAcrTsfdInSusp();
+				
+				java.sql.Date monthStartDate = DateUtility.getDBDate(DateUtility.getMonthStartDate(valueDate).toString());
+				java.sql.Date monthLastDate = DateUtility.getDBDate(DateUtility.getMonthEndDate(valueDate).toString());
+				
+				//Executing Query to prepare Accrual Transfered of this month
+				statement = connection.prepareStatement(getSuspAcrTsfdRefDetail());
+				statement.setDate(1, monthStartDate);
+				statement.setDate(2, monthLastDate);
+				resultSet = statement.executeQuery();
+				
+				//Preparing List of Data for Accrue Transfered Amount with in Suspense status
+				Map<String,BigDecimal> dataMap = new HashMap<String, BigDecimal>();
+				
+				String pastFinRef = "";
+				BigDecimal pastAcrTsfd = BigDecimal.ZERO;
+				
+				while (resultSet.next()) {
+					
+					finReference = resultSet.getString("FinReference");
+					if(!finReference.equals(pastFinRef)){
+						pastFinRef = finReference;
+						pastAcrTsfd = BigDecimal.ZERO;
+					}
+					
+					Date rpySchDate = resultSet.getDate("RpySchDate");
+					Date curSchDate = resultSet.getDate("CurSchDate");
+					Date postDate = resultSet.getDate("PostDate");
+					BigDecimal pftPaid = resultSet.getBigDecimal("PftPaid");
+					
+					if(rpySchDate.compareTo(curSchDate) == 0){
+						
+						Date prvSchDate = resultSet.getDate("PrvSchDate");
+						Date suspDate = resultSet.getDate("SuspDate");
+						
+						BigDecimal totalPft = resultSet.getBigDecimal("TotalPft");
+						BigDecimal pastAccrued = (totalPft.divide(new BigDecimal(DateUtility.getDaysBetween(curSchDate, prvSchDate)), 0, RoundingMode.HALF_DOWN))
+								.multiply(new BigDecimal(DateUtility.getDaysBetween(prvSchDate, suspDate)));
+						
+						if(pastAccrued.compareTo(pastAcrTsfd.add(pftPaid)) >= 0){
+							pastAcrTsfd = pastAcrTsfd.add(pftPaid);
+							pftPaid = BigDecimal.ZERO;
+						}else{
+							pftPaid = pftPaid.subtract(pastAccrued.subtract(pastAcrTsfd));
+							pastAcrTsfd = pastAccrued;
+						}
+					}
+					
+					if(postDate.compareTo(monthEndDate) <= 0 && postDate.compareTo(monthStartDate) >= 0){
+						if(dataMap.containsKey(finReference)){
+							pftPaid = pftPaid.add(dataMap.get(finReference));
+							dataMap.remove(finReference);
+						}
+						dataMap.put(finReference, pftPaid);
+					}
+				}
+				
+				//Update Accrue Transfered amount this month which are in Suspense status
+				if(dataMap != null && !dataMap.isEmpty()){
+					
+					List<AccountHoldStatus> list = new ArrayList<AccountHoldStatus>();
+					List<String> finRefList = new ArrayList<String>(dataMap.keySet());
+					for (int i = 0; i < finRefList.size(); i++) {
+	                    AccountHoldStatus status = new AccountHoldStatus();
+	                    status.setAccount(finRefList.get(i));
+	                    status.setCurODAmount(dataMap.get(finRefList.get(i)));
+	                    
+	                    list.add(status);
+	                    
+	                    if(list.size() == 500){
+	                    	getFinanceProfitDetailDAO().updateAcrTsfdInSusp(list);
+	                    	list.clear();
+	                    }
+                    }
+					finRefList = null;
+					if(list.size() > 0){
+						getFinanceProfitDetailDAO().updateAcrTsfdInSusp(list);
+						list = null;
+					}
+				}
+				dataMap = null;
+				
 				//Adding Monthly Accrual Profit Transfers and Depreciation Values
 				getFinanceProfitDetailDAO().saveAccumulates(valueDate);
 
 				//Update Transfered Month End Accrual Amount
 				statement = connection.prepareStatement(updateAccrueTsfdQuery(type));
+				statement.setDate(1, monthStartDate);
+				statement.setDate(2, monthLastDate);
 				statement.executeUpdate();
+				
 			}
 			
 		}catch (Exception e) {
@@ -413,7 +503,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 		sqlQuery.append(" SELECT F.FinReference, P.AcrTillLBD, P.TdPftAmortizedSusp, " );
 		sqlQuery.append(" P.AmzTillLBD, P.FirstODDate, P.LastODDate FROM FinanceMain F ");
 		sqlQuery.append(" INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference ");
-		sqlQuery.append(" WHERE P.FinIsActive = '1'");
+		sqlQuery.append(" WHERE F.FinIsActive = '1'");
 		//selQuery.append(" AND MaturityDate >= '"+  dateValueDate +"'");
 		sqlQuery.append(" AND F.FinStartDate <=? ");
 		return sqlQuery.toString();
@@ -425,11 +515,39 @@ public class AmortizationServiceImpl implements AmortizationService {
 	 * @return<String> sqlQuery
 	 */
 	private String updateAccrueTsfdQuery(String type) {
+		
 		StringBuilder sqlQuery = new StringBuilder();
 		sqlQuery.append(" Update FinPftDetails" );
 		sqlQuery.append(StringUtils.trimToEmpty(type));
-		sqlQuery.append(" SET PrvPftAccrueTsfd = PftAccrueTsfd , PftAccrueTsfd = TotalPftPaid + TdPftAccrued, SuspPftAccrueTsfd = TdPftAccrueSusp  " );
+		sqlQuery.append(" SET PrvPftAccrueTsfd = PftAccrueTsfd ,  SuspPftAccrueTsfd = TdPftAccrueSusp  , ");
+		sqlQuery.append(" PftAccrueTsfd = CASE WHEN PftInSusp ='1' THEN (AcrTsfdInSusp +PftAccrueTsfd) ELSE (TotalPftPaid + TdPftAccrued) END ");
+		sqlQuery.append(" where FinIsActive = 1 OR (FinIsActive = 0 AND LatestRpyDate >= ? AND LatestRpyDate <= ? )  ");
 		//sqlQuery.append(" WHERE FinIsActive = 0 AND ISNULL(ClosingStatus,'') = 'M' AND PftAccrueTsfd != TotalPftPaid " );
+		return sqlQuery.toString();
+	}
+	
+	/**
+	 * Method for Update Accrual Transfered Amount
+	 * 
+	 * @return<String> sqlQuery
+	 */
+	private String getSuspAcrTsfdRefDetail() {
+		
+		StringBuilder sqlQuery = new StringBuilder();
+		sqlQuery.append(" Select T.FinReference, T.SuspDate, T.PrvSchDate, T.CurSchDate, T1.FinPostDate AS PostDate, ");
+		sqlQuery.append(" T1.FinSchdDate AS RpySchDate, T1.FinSchdPftPaid AS PftPaid, (T2.ProfitSchd+T2.DefProfitSchd) AS TotalPft ");
+		sqlQuery.append(" FROM (Select T1.FinReference, Convert(DateTime,DATEADD(dd,-(DAY(CustStsChgDate)-1),CustStsChgDate))SuspDate, ");
+		sqlQuery.append(" MAX(ISNULL(T3.SchDate,T1.FinStartDate)) PrvSchDate,MIN(T5.SchDate)CurSchDate ");
+		sqlQuery.append(" FROM FinpftDetails T1 INNER JOIN Customers T2 ON T1.CustId=T2.CustID LEFT JOIN ");
+		sqlQuery.append(" FinScheduleDetails T3 ON T3.FinReference=T1.FinReference and ");
+		sqlQuery.append(" T3.SchDate < Convert(DateTime,DATEADD(dd,-(DAY(CustStsChgDate)-1),CustStsChgDate)) LEFT JOIN ");
+		sqlQuery.append(" FinScheduleDetails T5 ON T5.FinReference=T1.FinReference and  ");
+		sqlQuery.append(" T5.SchDate >= Convert(DateTime,DATEADD(dd,-(DAY(CustStsChgDate)-1),CustStsChgDate)) ");
+		sqlQuery.append(" Where PftInSusp= '1'  and FinIsActive= '1' and MaturityDate > Convert(DateTime,DATEADD(dd,-(DAY(CustStsChgDate)-1),CustStsChgDate)) ");
+		sqlQuery.append(" Group By T1.FinReference,T2.CustStsChgDate) T INNER JOIN FinRepayDetails T1 ON T.FinReference=T1.FinReference ");
+		sqlQuery.append(" Inner Join FinScheduleDetails T2 ON T2.FinReference=T1.FinReference and T2.SchDate=T1.FinSchdDate ");
+		sqlQuery.append(" where T1.FinSchdDate>= CurSchDate AND T1.FinReference IN (Select FinReference from FinRepayDetails ");
+		sqlQuery.append(" where FinPostDate >= ? and FinPostDate <= ?) " );
 		return sqlQuery.toString();
 	}
 	
@@ -442,7 +560,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 		StringBuilder sqlQuery = new StringBuilder();
 		sqlQuery.append(" SELECT count(F.FinReference) FROM FinanceMain F ");
 		sqlQuery.append(" INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference ");
-		sqlQuery.append(" WHERE P.FinIsActive = '1'");
+		sqlQuery.append(" WHERE F.FinIsActive = '1'");
 		//selQuery.append(" AND MaturityDate >= '"+  dateValueDate +"'");
 		sqlQuery.append(" AND F.FinStartDate <=? ");
 		return sqlQuery.toString();

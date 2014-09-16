@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennant.backend.util.PennantConstants;
 
 public class FinLogEntryDetailDAOImpl implements FinLogEntryDetailDAO {
 
@@ -71,11 +72,14 @@ public class FinLogEntryDetailDAOImpl implements FinLogEntryDetailDAO {
 		FinLogEntryDetail finLogEntryDetail = new FinLogEntryDetail();
 		finLogEntryDetail.setFinReference(finReference);
 		finLogEntryDetail.setPostDate(postDate);
+		finLogEntryDetail.setEventAction(PennantConstants.SCH_REPAY);
 		
 		
-		StringBuilder selectSql = new StringBuilder(" Select FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted ");
-		selectSql.append(" From FinLogEntryDetail");
-		selectSql.append(" Where FinReference =:FinReference AND PostDate >:PostDate AND ReversalCompleted = 0 ");
+		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted ");
+		selectSql.append(" From FinLogEntryDetail T1 ");
+		selectSql.append(" Where T1.FinReference =:FinReference AND T1.PostDate >=:PostDate AND T1.ReversalCompleted = 0 " );
+		selectSql.append(" AND T1.EventAction != :EventAction AND LogKey > ISNULL((select MAX(T2.LogKey) FROM FinLogEntryDetail T2 ");
+		selectSql.append(" WHERE T1.FinReference = T2.FinReference AND T2.ReversalCompleted = 0  AND T2.EventAction=:EventAction ),0)");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finLogEntryDetail);

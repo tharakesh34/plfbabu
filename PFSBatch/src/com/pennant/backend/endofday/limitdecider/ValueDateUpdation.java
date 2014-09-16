@@ -89,6 +89,16 @@ public class ValueDateUpdation implements Tasklet {
 			//Value Date Updation 
 			SystemParameterDetails.setParmDetails("APP_VALUEDATE", DateUtility.addDays(dateValueDate, 1).toString());
 			
+			//PURGING_PROCESS Value Updation Based On Month End
+			Date monthEndDate  = DateUtility.getMonthEndDate(dateValueDate);
+			String isMonthEnd = DateUtility.addDays(dateValueDate, 1).compareTo(monthEndDate) == 0 ? "Y" : "N";
+			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
+			sqlStatement.setString(1,  isMonthEnd);
+			sqlStatement.setString(2,  "PURGING_PROCESS");
+			sqlStatement.executeUpdate();
+			
+			SystemParameterDetails.setParmDetails("PURGING_PROCESS", isMonthEnd);
+			
 		} catch (SQLException e) {
 			logger.error(e);
 			try {

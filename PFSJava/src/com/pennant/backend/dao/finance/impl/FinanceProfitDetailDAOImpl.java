@@ -60,6 +60,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.MonthlyAccumulateDetail;
 
@@ -93,7 +94,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
 		finProfitDetails.setFinReference(finReference);
 	    
-		StringBuilder selectSql = new StringBuilder("Select FinReference, CustId, FinBranch, FinType, LastMdfDate," );
+		StringBuilder selectSql = new StringBuilder("Select FinReference, CustId, FinBranch, FinType, LastMdfDate, FinIsActive, " );
 		selectSql.append(" TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv," );
 		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid," );
 		selectSql.append(" TdSchdPftBal, TdPftAccrued, TdPftAccrueSusp, TdPftAmortized, TdPftAmortizedSusp," );
@@ -493,15 +494,43 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		accumulateDetail.setMonthStartDate(DateUtility.getMonthStartDate(valueDate));
 
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO MonthlyAccumulateDetail ");
-		insertSql.append(" Select FinReference, :MonthEndDate AS  MonthEndDate, (TotalPftPaid+TdPftAccrued) AS PftAccrued, " );
-		insertSql.append(" (TotalPftPaid + TdPftAccrued - PftAccrueTsfd) AS PftTsfd , SuspPftAccrueTsfd AS SuspPftAccrued, " );
-		insertSql.append(" (SuspPftAccrueTsfd - TdPftAccrueSusp) AS SuspPftTsfd, AccumulatedDepPri, DepreciatePri " );
+		insertSql.append(" Select FinReference, :MonthEndDate AS  MonthEndDate,  (TotalPftPaid+TdPftAccrued) AS PftAccrued, ");
+		insertSql.append(" CASE WHEN PftInSusp = '1' THEN AcrTsfdInSusp ELSE (TotalPftPaid + TdPftAccrued - PftAccrueTsfd) END  AS PftTsfd , ");
+		insertSql.append(" SuspPftAccrueTsfd AS SuspPftAccrued, (SuspPftAccrueTsfd - TdPftAccrueSusp) AS SuspPftTsfd, AccumulatedDepPri, DepreciatePri ");
 		insertSql.append(" FROM FinPftDetails where FinIsActive = 1 OR (FinIsActive = 0 AND LatestRpyDate >= :MonthStartDate AND LatestRpyDate <= :MonthEndDate ) ");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accumulateDetail);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
+    }
+	
+	/**
+	 * Method for Updation of Repayment Account ID on Finance Basic Details Maintenance
+	 */
+	@Override
+    public void resetAcrTsfdInSusp() {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
+		updateSql.append(" Set AcrTsfdInSusp = 0 Where AcrTsfdInSusp != 0");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.namedParameterJdbcTemplate.getJdbcOperations().update(updateSql.toString());
+		logger.debug("Leaving"); 
+    }
+
+	@Override
+    public void updateAcrTsfdInSusp(List<AccountHoldStatus> list) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
+		updateSql.append(" Set AcrTsfdInSusp = :CurODAmount Where FinReference = :Account");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		logger.debug("Leaving"); 
     }
 	
 }

@@ -1121,7 +1121,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			for (int i = 1; i < schdList.size(); i++) {
 
 				FinanceScheduleDetail curSchd = schdList.get(i);
-				if(!curSchd.isRepayOnSchDate()){
+				if(!(curSchd.isRepayOnSchDate() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))){
 					continue;
 				}
 
@@ -2765,6 +2766,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 			String limitType = "";
 			
+			BigDecimal finAmount =  financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
+			BigDecimal downpaybank = financeDetail.getFinScheduleData().getFinanceMain().getDownPayBank();						
+			BigDecimal downpaySuppl = financeDetail.getFinScheduleData().getFinanceMain().getDownPaySupl();
+			finAmount = finAmount.subtract(downpaybank==null?BigDecimal.ZERO:downpaybank).subtract(downpaySuppl==null?BigDecimal.ZERO:downpaySuppl);
+			
 			for (CustomerLimit limit : customerLimitList) {
 				if(!limit.getCustCountry().equals("")){
 					limitType = "Country ( " + limit.getCustCountry() + " - " + limit.getCustCountryDesc() + " )";
@@ -2782,8 +2788,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					logger.debug("Leaving");
 					return financeDetail;
 				}
-
-				BigDecimal finAmount =  financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
+				
 					
 				Currency lCurrency = null;
 				if (!StringUtils.trimToEmpty(limit.getLimitCurrency()).equals(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy())) {
@@ -2811,7 +2816,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						}else if(excessPerc.compareTo(new BigDecimal(10)) > 0 && excessPerc.compareTo(new BigDecimal(20)) <= 0){
 							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_BETWEEN_10_20", new String[]{limitType,limit.getLimitCategoryDesc()}));
 						}else{
-							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_GREATER_THAN_20", new String[]{limitType,limit.getLimitCategoryDesc()}));
+							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_EXCESS_BETWEEN_10_20);
 						}
 					}
 					logger.debug("Leaving");

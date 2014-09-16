@@ -311,7 +311,8 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		if (amountCodes.getRpPri().compareTo(BigDecimal.ZERO) > 0 || isStsChanged || isStsRsnChanged) {
 			getFinanceMainDAO().updateRepaymentAmount(financeMain.getFinReference(), financeMain.getFinAmount().add(
-					financeMain.getFeeChargeAmt() == null? BigDecimal.ZERO : financeMain.getFeeChargeAmt()), 
+					financeMain.getFeeChargeAmt() == null? BigDecimal.ZERO : financeMain.getFeeChargeAmt())
+					.subtract(financeMain.getDownPayment() == null ? BigDecimal.ZERO : financeMain.getDownPayment()), 
 					financeMain.getFinRepaymentAmount(), curFinStatus, finStsReason ,false);
 		}
 		

@@ -559,7 +559,8 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 				financeMain.setFinIsActive(true);
 				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().subtract(totalPriAmount));
 				getFinanceMainDAO().updateRepaymentAmount(finReference, financeMain.getFinAmount().add(
-						financeMain.getFeeChargeAmt() == null? BigDecimal.ZERO : financeMain.getFeeChargeAmt()), 
+						financeMain.getFeeChargeAmt() == null? BigDecimal.ZERO : financeMain.getFeeChargeAmt()).
+						subtract(financeMain.getDownPayment() == null? BigDecimal.ZERO : financeMain.getDownPayment()), 
 						financeMain.getFinRepaymentAmount(), curFinStatus, PennantConstants.FINSTSRSN_MANUAL,true);
 
 				//Finance Status Details insertion, if status modified then change to High Risk Level

@@ -233,7 +233,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 					BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",1, null,false);
 
 		} else {
-			if (getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() 
+			if (getFinanceScheduleDetail().isPftOnSchDate() && !(getFinanceScheduleDetail().isRepayOnSchDate() || getFinanceScheduleDetail().isDeferedPay() ||
+				(getFinanceScheduleDetail().isPftOnSchDate() && getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
 					&& !getFinanceScheduleDetail().isDisbOnSchDate()) {
 				// if rate change allowed then set the record editable.
 				if (getFinanceScheduleDetail().isRvwOnSchDate() && 
@@ -351,7 +352,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 			}
 			
-			if (getFinanceScheduleDetail().isRepayOnSchDate()) {
+			if (getFinanceScheduleDetail().isRepayOnSchDate() || getFinanceScheduleDetail().isDeferedPay() ||
+					(getFinanceScheduleDetail().isPftOnSchDate() && getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 				isRate = false;
 				showZeroEndBal = true;
 				isGrcBaseRate = false;
@@ -1029,7 +1031,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 				
 			}
 			
-			if (aScheduleDetail.isPftOnSchDate() && !aScheduleDetail.isRepayOnSchDate()) {
+			if (aScheduleDetail.isPftOnSchDate() && !(aScheduleDetail.isRepayOnSchDate() || aScheduleDetail.isDeferedPay() ||
+					(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 				if(aScheduleDetail.getProfitCalc().compareTo(BigDecimal.ZERO) > 0){
 					data = new FinanceScheduleReportData();	
 
@@ -1077,7 +1080,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 				reportList.add(data);
 				count = 2;
 			}
-			if (aScheduleDetail.isRepayOnSchDate()) {
+			if (aScheduleDetail.isRepayOnSchDate() || aScheduleDetail.isDeferedPay() || 
+					(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 				if(!(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0)) {
 					data = new FinanceScheduleReportData();	
 					
@@ -1478,7 +1482,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 			FinanceScheduleDetail curSchd = aFinScheduleData.getFinanceScheduleDetails().get(i);
 
-			if (curSchd.isRepayOnSchDate()) {
+			if (curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || 
+					(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 				
 				if(i == size-1){
 					lastRec = true;

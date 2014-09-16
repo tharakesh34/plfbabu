@@ -6379,7 +6379,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			if(main.isAllowGrcPeriod()){
 				if(detail.getSchDate().compareTo(main.getGrcPeriodEndDate()) <= 0){
 					if(grcpftDate == null && detail.isPftOnSchDate()){
-						this.nextGrcPftDate.setText("");
+						this.nextGrcPftDate.setValue(detail.getSchDate());
 						this.nextGrcPftDate_two.setValue(detail.getSchDate());
 						this.oldVar_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
 						grcpftDate = detail.getSchDate();
@@ -6390,17 +6390,18 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			
 			if(detail.getSchDate().compareTo(main.getGrcPeriodEndDate()) > 0){
 				if(!pftchecked && detail.isPftOnSchDate()){
-					this.nextRepayPftDate.setText("");
+					this.nextRepayPftDate.setValue(detail.getSchDate());
 					this.nextRepayPftDate_two.setValue(detail.getSchDate());
 					pftchecked = true;
 				}
-				if(!repaychecked && detail.isRepayOnSchDate()){
-					this.nextRepayDate.setText("");
+				if(!repaychecked && (detail.isRepayOnSchDate() || detail.isDeferedPay() ||
+						(detail.isPftOnSchDate() && detail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))){
+					this.nextRepayDate.setValue(detail.getSchDate());
 					this.nextRepayDate_two.setValue(detail.getSchDate());
 					repaychecked= true;
 				}
 				if(!rvwchecked && detail.isRvwOnSchDate()){
-					this.nextRepayRvwDate.setText("");
+					this.nextRepayRvwDate.setValue(detail.getSchDate());
 					this.nextRepayRvwDate_two.setValue(detail.getSchDate());
 					rvwchecked = true;
 				}
@@ -7314,6 +7315,15 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 								Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayCpzDate.value"),
 								PennantAppUtil.formateDate(this.nextRepayCpzDate_two.getValue(), "") }, new String[] {}));
 					}
+				}
+			}
+			
+			if(this.finRepayPftOnFrq.isChecked()){
+				String errorCode = FrequencyUtil.validateFrequencies(this.repayPftFrq.getValue(), this.repayFrq.getValue());
+				if(!StringUtils.trimToEmpty(errorCode).equals("")){
+					errorList.add(new ErrorDetails("Frequency", "E0042", new String[] {
+							Labels.getLabel("label_MurabahaFinanceMainDialog_RepayPftFrq.value"),
+							Labels.getLabel("label_MurabahaFinanceMainDialog_RepayFrq.value")}, new String[] {}));
 				}
 			}
 

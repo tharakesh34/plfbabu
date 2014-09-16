@@ -242,7 +242,9 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				//Not Allowed for Repayment
-				if (!curSchd.isRepayOnSchDate() ) {
+				if (!(curSchd.isRepayOnSchDate() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) 
+						&& !curSchd.isDeferedPay()) {
 					continue;
 				}
 
@@ -369,6 +371,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//Show Error Details in Schedule Maintenance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			getFinScheduleData().getErrorDetails().clear();
 		}else{
 			getFinScheduleData().setSchduleGenerated(true);
 			if(getScheduleDetailDialogCtrl()!=null){
@@ -574,7 +577,9 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				
 				//Not Allowed for Repayment
-				if (!curSchd.isRepayOnSchDate() ) {
+				if (!(curSchd.isRepayOnSchDate() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) 
+						&& !curSchd.isDeferedPay()) {
 					continue;
 				}
 

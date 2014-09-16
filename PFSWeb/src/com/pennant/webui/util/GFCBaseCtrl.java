@@ -958,7 +958,11 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 
 		int accessType = 1;
 		if(isWorkFlowEnabled()){
-			accessType = userWorkspace.getAccessType(rightName);	
+			//accessType = userWorkspace.getAccessType(rightName);
+			//TODO Temporary Fix to be changed Later
+			if (isReadOnly(rightName)) {
+				accessType=0;
+			};	
 		}
 		if (accessType == -1) {
 			readOnlyComponent(true, extendedCombobox);
@@ -1068,7 +1072,11 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 		
 		int accessType = 1;
 		if(isWorkFlowEnabled()){
-			accessType = userWorkspace.getAccessType(rightName);	
+			//accessType = userWorkspace.getAccessType(rightName);
+			//TODO Temporary Fix to be changed Later
+			if (isReadOnly(rightName)) {
+				accessType=0;
+			}	
 		}
 		if (accessType == -1) {
 			readOnlyComponent(true, queryBuilder);

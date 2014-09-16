@@ -113,6 +113,8 @@ public class DepreciationPostings implements Tasklet {
 			sqlStatement.setDate(4, DateUtility.getDBDate(DateUtility.getMonthStartDate(dateValueDate).toString()));
 			sqlStatement.setDate(5, DateUtility.getDBDate(dateValueDate.toString()));
 			resultSet = sqlStatement.executeQuery();
+		
+			long linkedTranId = Long.MIN_VALUE;
 			
 			while (resultSet.next()) {
 
@@ -151,19 +153,20 @@ public class DepreciationPostings implements Tasklet {
 				dataSet.setNewRecord(false);
 
 				//Postings Process
-				List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, true,
-						resultSet.getBoolean("AllowRIAInvestment"),"Y", dateAppDate, false, Long.MIN_VALUE);
-				
-				if(odObjDetails!=null && !odObjDetails.isEmpty()) {
-					if((Boolean)odObjDetails .get(0)) {
+				List<Object> returnList = getPostingsPreparationUtil().processDepreciatePostings(dataSet, amountCodes, 
+						resultSet.getBoolean("AllowRIAInvestment"),dateAppDate , linkedTranId);
+
+				if(returnList!=null && !returnList.isEmpty()) {
+					if((Boolean)returnList .get(0)) {
 						postings++;
+						linkedTranId = (Long) returnList.get(1);
 					}
 				}
 				processed = resultSet.getRow();
 				BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
 				BatchUtil.setExecution(context,  "INFO", getInfo());
 				
-				odObjDetails = null;
+				returnList = null;
 			}
 			
 			BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
@@ -223,7 +226,7 @@ public class DepreciationPostings implements Tasklet {
 		selQuery.append(" T1.FinStartDate , T1.MaturityDate ,T1.FinAccount, T1.FinCustPftAccount , " );
 		selQuery.append(" (SELECT COUNT(T2.FinReference) FROM FinScheduleDetails AS T2 WHERE " );
 		selQuery.append(" T1.Finreference =T2.finreference " );
-		selQuery.append(" AND T2.RepayonSchdate='1' and T2.DefSchdDate <= ?)  AS ElapsedTerms, " );
+		selQuery.append(" AND (T2.RepayonSchdate='1' OR T2.DeferedPay= '1' OR (T2.PftOnSchDate = '1' AND T2.RepayAmount > 0)) and T2.DefSchdDate <= ?)  AS ElapsedTerms, " );
 		selQuery.append(" T3.AllowRIAInvestment , T4.AccumulatedDepPri , T4.DepreciatePri, T4.TotalPriPaid " );
 		selQuery.append(" FROM FinanceMain AS T1 INNER JOIN RMTFinanceTypes AS T3 ON T1.FinType=T3.FinType " );
 		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference  " );

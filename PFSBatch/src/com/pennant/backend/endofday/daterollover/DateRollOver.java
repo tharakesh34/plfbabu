@@ -198,7 +198,11 @@ public class DateRollOver implements Tasklet {
 							(DateUtility.compare(DateUtility.getDBDate(resultSet.getString("NextRepayDate")),dateValueDate) == 0)) {
 						
 						dateLastRepay = dateNextRepay;
-						dateNextRepay = getNextSchDate(connection, finReference, dateLastRepay, "RepayOnSchDate");
+						if(resultSet.getBoolean("FinRepayPftOnFrq")){
+							dateNextRepay = getNextRpyPftSchDate(connection, finReference, dateLastRepay, "RepayOnSchDate");
+						}else{
+							dateNextRepay = getNextSchDate(connection, finReference, dateLastRepay, "RepayOnSchDate");
+						}
 						if (dateNextRepay == null) {
 							dateNextRepay = maturityDate;
 						}
@@ -296,7 +300,7 @@ public class DateRollOver implements Tasklet {
 	private String prepareSelectQuery() {
 		
 		StringBuilder selQuery = new StringBuilder(" SELECT FinReference, CustID, FinBranch, GrcPftFrq, NextGrcPftDate, AllowGrcPeriod, ");
-		selQuery.append(" DepreciationFrq, NextDepDate, AllowGrcPftRvw, GrcPftRvwFrq, NextGrcPftRvwDate, ");
+		selQuery.append(" FinRepayPftOnFrq, DepreciationFrq, NextDepDate, AllowGrcPftRvw, GrcPftRvwFrq, NextGrcPftRvwDate, ");
 		selQuery.append(" AllowGrcCpz, GrcCpzFrq, AllowGrcRepay, NextGrcCpzDate, ");
 		selQuery.append(" RepayFrq, NextRepayDate, NextRepayDate, NextRepayPftDate, ");
 		selQuery.append(" AllowRepayRvw, RepayRvwFrq, NextRepayRvwDate, RepayCpzFrq, NextRepayCpzDate, ");
@@ -330,6 +334,36 @@ public class DateRollOver implements Tasklet {
 		StringBuilder selDateQuery = new StringBuilder(" SELECT TOP 1 SchDate FROM FinScheduleDetails");
 		selDateQuery.append(" WHERE FinReference = '" + finReference + "' ");
 		selDateQuery.append(" AND " + columnName.trim() + " = '1' ");
+		selDateQuery.append(" AND SchDate > '" + dateParam + "' ORDER BY SCHDATE ");
+		PreparedStatement dateSqlStmt = con.prepareStatement(selDateQuery.toString());
+		ResultSet dateResultSet = dateSqlStmt.executeQuery();
+		while (dateResultSet.next()) {
+			nextDate = DateUtility.getDBDate(dateResultSet.getString("SchDate"));
+			break;
+		}
+		
+		dateSqlStmt.close();
+		dateResultSet.close();
+		return nextDate;
+		
+	}
+	
+	/**
+	 * Method for Setting Repay Date on Repayment Period for Different Profit and Repayment Frequencies.
+	 * @param con
+	 * @param finReference
+	 * @param dateParam
+	 * @param columnName
+	 * @return
+	 * @throws SQLException
+	 */
+	private Date getNextRpyPftSchDate(Connection con, String finReference,
+			Date dateParam, String columnName) throws SQLException {
+		
+		Date nextDate = null;
+		StringBuilder selDateQuery = new StringBuilder(" SELECT TOP 1 SchDate FROM FinScheduleDetails");
+		selDateQuery.append(" WHERE FinReference = '" + finReference + "' ");
+		selDateQuery.append(" AND (" + columnName.trim() + " = '1' OR (DeferedPay = '1') OR (PftOnSchDate = '1' AND RepayAmount > 0)) ");
 		selDateQuery.append(" AND SchDate > '" + dateParam + "' ORDER BY SCHDATE ");
 		PreparedStatement dateSqlStmt = con.prepareStatement(selDateQuery.toString());
 		ResultSet dateResultSet = dateSqlStmt.executeQuery();

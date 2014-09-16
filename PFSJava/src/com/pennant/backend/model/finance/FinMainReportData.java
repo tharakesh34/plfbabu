@@ -881,7 +881,8 @@ public class FinMainReportData implements Serializable{
 		
 		reportData.setFinCcy(financeMain.getFinCcy() + "-" + financeMain.getLovDescFinCcyName());
 		reportData.setProfitDaysBasis(financeMain.getLovDescProfitDaysBasisName());
-		reportData.setCustCIF(financeMain.getLovDescCustCIF()+"-"+financeMain.getLovDescCustShrtName());
+		//###Release PFFV1.0.6 - Changed the customer short name to Full Name
+		reportData.setCustCIF(financeMain.getLovDescCustCIF()+"-"+financeMain.getLovDescCustFName());
 		reportData.setFinBranch(financeMain.getFinBranch() + "-" + financeMain.getLovDescFinBranchName());
 		reportData.setFinStartDate(PennantApplicationUtil.formateDate(financeMain.getFinStartDate(), PennantConstants.dateFormate));
 		reportData.setFinContractDate(PennantApplicationUtil.formateDate(financeMain.getFinContractDate(), PennantConstants.dateFormate));
@@ -902,7 +903,7 @@ public class FinMainReportData implements Serializable{
 			reportData.setApplyDifferment("TRUE");
 		}
 		reportData.setFrqDefferments(String.valueOf(financeMain.getFrqDefferments()));
-		reportData.setFinPurpose(financeMain.getFinPurpose()+"-"+financeMain.getLovDescFinPurposeName());
+		reportData.setFinPurpose(financeMain.getFinPurpose()+"-"+StringUtils.trimToEmpty(financeMain.getLovDescFinPurposeName()));
 		reportData.setFinCommitRef(financeMain.getFinCommitmentRef());
 		reportData.setDepreciationFrq(FrequencyUtil.getFrequencyDetail(financeMain.getDepreciationFrq()).getFrequencyDescription());
 		reportData.setOverdueDays(financeMain.getFinStatus() +"/"+financeSummary.getFinCurODDays());

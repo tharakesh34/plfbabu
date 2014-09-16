@@ -21,19 +21,19 @@
 						<toolbar align="start" sclass="toolbar-start">
 							<button id="btnNew" 
 								visible="false" tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
 							<button id="btnEdit" 
 								visible="false" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
 							<button id="btnDelete"  visible="false"
 								 tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
 							<button id="btnSave" 
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
 							<button id="btnCancel" 
 								visible="false" tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
 							<button id="btnNotes" 
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" />
 						</toolbar>
@@ -42,29 +42,32 @@
 						<toolbar align="center"
 							sclass="toolbar-center">
 							<button id="btnPreview" 
-								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal"
+								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal,btnPrint"
 								label="PREVIEW" />
 							<button id="btnProceed" 
-								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal"
+								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal,btnPrint"
 								label="PROCEED" />
 							<button id="btnRecal"  visible="false"
-								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal"
+								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal,btnPrint"
 								label="Recalculate" />
+							<button id="btnPrint" height="24px" visible="false"
+								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal,btnPrint"
+								label="Print" />
 						</toolbar>
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
 							<button id="btnRefresh" 
 								visible="false" label="${c:l('label_Refresh')}"
-								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose"
+								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnPrint"
 								tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 							<button id="btnHelp" 
 								label="${c:l('label_Help')}"
-								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose"
+								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnPrint"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 							<button id="btnClose" 
 								label="${c:l('label_Close')}"
-								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose"
+								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnPrint"
 								tooltiptext="${c:l('btnClose.tooltiptext')}" />
 						</toolbar>
 					</hbox>
@@ -191,6 +194,10 @@
 							</rows>
 						</grid>
 					</groupbox>
+					   <hbox>
+					   <space spacing="375px"/>
+					   <label id="deffermentMessage" value="Selected Finances Are Not Consider For Differement" style="color:red;font-style:bold;font-size:15px"/>
+					   </hbox>
 					<tabbox>
 						<tabs>
 							<tab label="Query" id="tab_Query"

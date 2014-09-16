@@ -402,6 +402,7 @@ public class ChequePrintingDialogCtrl  extends GFCBaseListCtrl<FinanceScheduleDe
 	public void fillSchFromDates(Combobox dateCombobox,
 			List<FinanceScheduleDetail> financeScheduleDetails) {
 		logger.debug("Entering");
+		
 		this.startDate.getItems().clear();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
@@ -411,24 +412,27 @@ public class ChequePrintingDialogCtrl  extends GFCBaseListCtrl<FinanceScheduleDe
 		if (financeScheduleDetails != null) {
 			int count = 1;
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				BigDecimal schedulePaid = financeScheduleDetails.get(i).getSchdPftPaid().add(financeScheduleDetails.get(i).getSchdPriPaid());
-				if (financeScheduleDetails.get(i).isRepayOnSchDate() && 
-						schedulePaid.compareTo(financeScheduleDetails.get(i).getRepayAmount()) != 0 &&
-						financeScheduleDetails.get(i).getRepayAmount().compareTo(BigDecimal.ZERO)>0 ) {
-					repayDetailMap.put(count, financeScheduleDetails.get(i).getRepayAmount());
+				
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				BigDecimal schedulePaid = curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid());
+				if ((curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || 
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) && 
+						schedulePaid.compareTo(curSchd.getRepayAmount()) != 0 &&
+								curSchd.getRepayAmount().compareTo(BigDecimal.ZERO)>0 ) {
+					
+					repayDetailMap.put(count, curSchd.getRepayAmount());
 					comboitem = new Comboitem();
 					comboitem.setAttribute("index", count);
 					count++;
 					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate)+" "+financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setAttribute("fromSpecifier",financeScheduleDetails.get(i).getSpecifier());
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
+							curSchd.getSchDate(),
+							PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
+					comboitem.setAttribute("fromSpecifier",curSchd.getSpecifier());
+					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
 					if (getFinanceScheduleDetail() != null) {
 						dateCombobox.appendChild(comboitem);
-						if(financeScheduleDetails.get(i).getSchDate()
-								.compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+						if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
 							dateCombobox.setSelectedItem(comboitem);
 						}
 					}

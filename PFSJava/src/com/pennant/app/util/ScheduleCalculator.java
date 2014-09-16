@@ -231,6 +231,9 @@ public class ScheduleCalculator {
 					calStart = financeMain.getGrcPeriodEndDate();
 					pftComparisionFor = CalculationConstants.REPAY;
 				}				
+				
+				//Set Total Amounts After Calculations
+				finScheduleData = setFinanceTotals(finScheduleData);
 
 				if (financeMain.isEqualRepay()) {
 					
@@ -1948,13 +1951,13 @@ public class ScheduleCalculator {
 	 * =================================================================================================================
 	 */
 
-	private FinScheduleData procAddTerm(FinScheduleData finScheduleData, int noOfTerms,
+	private FinScheduleData procAddTerm(FinScheduleData orgFinScheduleData, int noOfTerms,
 	        String schdMethod) {
 		logger.debug("Entering");
 
-		FinScheduleData orgFinScheduleData = null;
+		FinScheduleData finScheduleData = null;
 		Cloner cloner = new Cloner();
-		orgFinScheduleData = cloner.deepClone(finScheduleData);
+		finScheduleData = cloner.deepClone(orgFinScheduleData);
 
 		isFirstAdjSet = false;
 		isLastAdjSet = false;
@@ -1977,6 +1980,7 @@ public class ScheduleCalculator {
 			finScheduleData = addOneTerm(finScheduleData, lastDateLimit, schdMethod, true);
 
 			if (finScheduleData.getErrorDetails().size() > 0) {
+				orgFinScheduleData.getErrorDetails().addAll(finScheduleData.getErrorDetails());
 				return orgFinScheduleData;
 			}
 		}
@@ -2328,7 +2332,7 @@ public class ScheduleCalculator {
 
 		if (nextSchdDate.after(lastDateLimit)) {
 			// Through Error
-			finScheduleData.setErrorDetail(new ErrorDetails("SCH30","ADD/ADJ TERMS", new String[] { " " }));
+			finScheduleData.setErrorDetail(new ErrorDetails("SCH30","ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS", new String[] { " " }));
 			return finScheduleData;
 		}
 
@@ -3094,6 +3098,7 @@ public class ScheduleCalculator {
 			equalRepayCal(finScheduleData, isCalFlat);
 		}
 
+		//Set Total Amounts After Calculations
 		finScheduleData = setFinanceTotals(finScheduleData);
 
 		logger.debug("Leaving");
@@ -4118,9 +4123,7 @@ public class ScheduleCalculator {
 				RepayInstruction curInstruction = finScheduleData.getRepayInstructions().get(i);
 
 				if (curInstruction.getRepayDate().after(fromDate)) {
-					if(riSize == 1){
-						schdMethod = curInstruction.getRepaySchdMethod();
-					}
+					schdMethod = curInstruction.getRepaySchdMethod();
 					break;
 				}
 
@@ -4459,7 +4462,7 @@ public class ScheduleCalculator {
 
 		if (newSchdDate.after(lastDateLimit)) {
 			// Through Error
-			finScheduleData.setErrorDetail(new ErrorDetails("SCH30","ADD/ADJ TERMS", new String[] { " " }));
+			finScheduleData.setErrorDetail(new ErrorDetails("SCH30","ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS", new String[] { " " }));
 			return finScheduleData;
 		}
 

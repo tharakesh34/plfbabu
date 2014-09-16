@@ -48,13 +48,41 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
-	<bean id="placeholderProperties"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:jdbc.properties" />
+	<bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+		<constructor-arg ref="configurationEncryptor" />
+		<property name="locations">
+			<list>
+				<value>file:C:\PFF\PFSConfigurations\jdbc.properties</value>
+				<value>file:C:\PFF\PFSConfigurations\mail.properties</value>
+			</list>
+		</property>
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="order" value="1" />
 	</bean>
+	
+	 <!--                                                                      -->
+	 <!-- Configuration for encryptor, based on environment variables.         -->
+	 <!--                                                                      -->
+	 <!-- In this example, the encryption password will be read from an        -->
+	 <!-- environment variable called "APP_ENCRYPTION_PASSWORD" which, once    --> 
+	 <!-- the application has been started, could be safely unset.             -->
+	 <!--                                                                      -->
+     <bean id="environmentVariablesConfiguration"
+	     class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+	   <property name="algorithm" value="PBEWithMD5AndDES" />
+	   <property name="passwordEnvName" value="APP_ENCRYPTION_PASSWORD" />
+	 </bean>
+	  
+	 <!--                                                                      -->
+	 <!-- The will be the encryptor used for decrypting configuration values.  -->
+	 <!--                                                                      -->
+	 
+	 <bean id="configurationEncryptor"
+	     class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+	   <property name="config" ref="environmentVariablesConfiguration" />
+	 </bean>
+	 
 	
 	<bean id="logAdvice" class="org.springframework.batch.common.LogAdvice" />
 	

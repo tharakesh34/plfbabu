@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.additional;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -294,6 +295,7 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//Show Error Details in Schedule Maintainance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			getFinScheduleData().getErrorDetails().clear();
 		}else{
 			getFinScheduleData().setSchduleGenerated(true);
 			if(getScheduleDetailDialogCtrl()!=null){
@@ -468,17 +470,18 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 		dateCombobox.setSelectedItem(comboitem);
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				if (financeScheduleDetails.get(i).isRepayOnSchDate() &&
-						!financeScheduleDetails.get(i).getSpecifier().equals(CalculationConstants.MATURITY)) {
+				
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				
+				if ((curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || 
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) &&
+						!curSchd.getSpecifier().equals(CalculationConstants.MATURITY)) {
 					comboitem = new Comboitem();
-					comboitem.setLabel(PennantAppUtil.formateDate(
-							financeScheduleDetails.get(i).getSchDate(),
-							PennantConstants.dateFormate));
-					comboitem.setValue(financeScheduleDetails.get(i).getSchDate());
+					comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(),	PennantConstants.dateFormate));
+					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
 					if (getFinanceScheduleDetail() != null
-							&& financeScheduleDetails.get(i).getSchDate()
-							.equals(getFinanceScheduleDetail().getSchDate())) {
+							&& curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {
 						dateCombobox.setSelectedItem(comboitem);
 					}
 				}

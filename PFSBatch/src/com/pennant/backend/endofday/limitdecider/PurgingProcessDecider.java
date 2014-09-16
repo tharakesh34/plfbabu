@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  FrequencyCodeTypes.java													*                           
+ * FileName    		:  PurgingProcessDecider.java													*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -40,21 +40,39 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.app.constants;
+package com.pennant.backend.endofday.limitdecider;
 
-public class FrequencyCodeTypes {
+
+
+
+import org.apache.log4j.Logger;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.job.flow.FlowExecutionStatus;
+import org.springframework.batch.core.job.flow.JobExecutionDecider;
+
+import com.pennant.app.util.SystemParameterDetails;
+
+public class PurgingProcessDecider implements JobExecutionDecider {
 	
-	public static final String FRQ_YEARLY ="Y";
-	public static final String FRQ_HALF_YEARLY ="H";
-	public static final String FRQ_QUARTERLY ="Q";
-	public static final String FRQ_MONTHLY ="M";
-	public static final String FRQ_FORTNIGHTLY ="F";
-	public static final String FRQ_WEEKLY ="W";
-	public static final String FRQ_DAILY ="D";
+	private Logger logger = Logger.getLogger(PurgingProcessDecider.class);
 
-	//Valid Frequencies Error Codes
-	public static final String INVALID_DATE ="D";
-	public static final String INVALID_MONTH ="M";
-	public static final String INVALID_CODE ="C";
+
+	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
+		logger.debug("Entering");
+		try{
+			if(SystemParameterDetails.getSystemParameterValue("PURGING_PROCESS").toString().equalsIgnoreCase("Y")){
+				return new FlowExecutionStatus("YES");
+			}else{
+				return new FlowExecutionStatus("NO");
+			}
+		}catch(Exception e){
+			logger.error(e);
+			e.printStackTrace();
+		}
+		logger.debug("Leaving");
+		return new FlowExecutionStatus("NO");
+
+	} 
 	
 }

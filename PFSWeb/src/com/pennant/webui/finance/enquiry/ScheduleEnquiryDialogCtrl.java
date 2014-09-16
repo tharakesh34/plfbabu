@@ -434,29 +434,35 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 		ChartSetElement chartSetElement;
 		if(listScheduleDetail!=null){
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				if(listScheduleDetail.get(i).isRepayOnSchDate()){
-					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(listScheduleDetail.get(i).getSchDate()
+				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
+				if(curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
+					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(curSchd.getSchDate()
 							,PennantConstants.dateFormat),"RepayAmount",
-							PennantAppUtil.formateAmount(listScheduleDetail.get(i).getRepayAmount(), formatter)
+							PennantAppUtil.formateAmount(curSchd.getRepayAmount(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 			}
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				if(listScheduleDetail.get(i).isRepayOnSchDate()){
-					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(listScheduleDetail.get(i).getSchDate()
+				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
+				if(curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || 
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
+					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(curSchd.getSchDate()
 							,PennantConstants.dateFormat),"PrincipalSchd",PennantAppUtil.formateAmount(
-									listScheduleDetail.get(i).getPrincipalSchd(), formatter)
+									curSchd.getPrincipalSchd(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 
 			}
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				if(listScheduleDetail.get(i).isRepayOnSchDate()){
-					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(listScheduleDetail.get(i).getSchDate()
+				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
+				if(curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
+					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(curSchd.getSchDate()
 							,PennantConstants.dateFormat),"ProfitSchd",PennantAppUtil.formateAmount(
-									listScheduleDetail.get(i).getProfitSchd(),formatter)
+									curSchd.getProfitSchd(),formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 

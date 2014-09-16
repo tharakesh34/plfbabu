@@ -130,7 +130,7 @@ public class PostingsInterfaceServiceCoreDBImpl implements PostingsInterfaceServ
 	@Override
     public List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> list, Date valueDate,
             String postBranch, long linkedTranId, String createNow, String isDummy)
-            throws Exception {
+            throws AccountNotFoundException {
 	    // TODO Auto-generated method stub
 	    return null;
     }

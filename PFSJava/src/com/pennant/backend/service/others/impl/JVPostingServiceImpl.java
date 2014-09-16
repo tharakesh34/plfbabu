@@ -390,7 +390,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			Collections.sort(dbList,new EntryComparator());
 			long linkedTranId = Long.MIN_VALUE;
 			try {
-				List<ReturnDataSet> list = PostingsPreparationUtil.processEntryList(dbList, jVPosting.getBranch());
+				List<ReturnDataSet> list = PostingsPreparationUtil.processEntryList(dbList, jVPosting);
 				if (list != null && list.size() > 0) {
 					ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 					for (int i = 0; i < list.size(); i++) {
@@ -488,7 +488,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private class EntryComparator implements Comparator<JVPostingEntry>{
 	    @Override
 	    public int compare(JVPostingEntry e1, JVPostingEntry e2) {
-	        if(e1.getTxnReference() < e2.getTxnReference()){
+	        if(e1.getTxnReference() > e2.getTxnReference()){
 	            return 1;
 	        } else {
 	            return -1;

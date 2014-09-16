@@ -666,7 +666,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 							totGrcTerms = totGrcTerms + 1;
 						}
 					}else{
-						if(aScheduleDetail.isRepayOnSchDate()){
+						if(aScheduleDetail.isRepayOnSchDate() || aScheduleDetail.isDeferedPay() ||
+								(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
+							totRepayTerms = totRepayTerms + 1;
+						}else if(aFinSchData.getFinanceMain().isFinRepayPftOnFrq() && 
+								(aScheduleDetail.isRepayOnSchDate() || aScheduleDetail.isPftOnSchDate())){
 							totRepayTerms = totRepayTerms + 1;
 						}
 					}
@@ -682,7 +686,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 					}
 				}
 
-				if (aScheduleDetail.isRepayOnSchDate()) {
+				if (aScheduleDetail.isRepayOnSchDate() ||
+						(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					if ((aScheduleDetail.getSpecifier().equals(CalculationConstants.GRACE) && 
 							aFinSchData.getFinanceMain().getScheduleMethod().equals(CalculationConstants.PFT))
 							|| (!aFinSchData.getFinanceMain().getScheduleMethod().equals(CalculationConstants.PFT))) {
@@ -765,6 +770,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			
 			if (getFinanceMainDialogCtrl() != null) {
 				try {
+					
+					this.schdl_noOfTerms.setValue(String.valueOf(totGrcTerms + totRepayTerms));
+					
 					@SuppressWarnings("rawtypes")
 					Class[] paramType = {FinScheduleData.class , Integer.class, Integer.class};
 					Object[] stringParameter = {aFinSchData, totGrcTerms, totRepayTerms};

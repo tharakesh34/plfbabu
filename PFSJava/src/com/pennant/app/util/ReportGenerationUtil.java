@@ -61,7 +61,9 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.util.PennantConstants;
 
 public class ReportGenerationUtil implements Serializable {
@@ -148,6 +150,13 @@ public class ReportGenerationUtil implements Serializable {
 				parameters.put("productLogo",SystemParameterDetails.getSystemParameterValue("REPORTS_PRODUCT_LOGO_PATH").toString());
 	        }
 
+			if(reportName.equals("FINENQ_BulkDifferemmentDetails")){
+				String recalType=((BulkProcessHeader)object).getReCalType();
+				if(recalType.equals(CalculationConstants.RPYCHG_ADJMDT) || recalType.equals(CalculationConstants.RPYCHG_ADDTERM)){
+					parameters.put("recalTypeSubParm","T");
+				}
+			}
+			
 			byte[] buf = null;
 			logger.debug("Entering JasperRunManager");
 			buf =JasperRunManager.runReportToPdf(reportSrc, parameters,	mainDS);

@@ -1584,7 +1584,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		searchObj.addTabelName("Rules");
 		
 		if(allowedevent.contains("REPAY")){
-			searchObj.addFilterIn("RuleModule", new Object[]{"FEES","REFUND"});
+			searchObj.addFilterIn("RuleModule", new String[]{"FEES","REFUND"});
 		}else{
 			searchObj.addFilterEqual("RuleModule", "FEES");
 		}
@@ -1594,7 +1594,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 				allowedevent = "ADDDBS";
 			}
 			if(allowedevent.contains("REPAY")){
-				searchObj.addFilterIn("RuleEvent", new Object[]{allowedevent,""});
+				searchObj.addFilterIn("RuleEvent", new String[]{allowedevent,""});
 			}else{
 				searchObj.addFilterEqual("RuleEvent",allowedevent);
 			}

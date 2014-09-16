@@ -1019,7 +1019,8 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 				AECommitment aeCommitment = new AECommitment();
 				aeCommitment.setCMTAMT(commitment.getCmtAmount());
 				aeCommitment.setCHGAMT(commitment.getCmtCharges());
-				aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),finMain.getFinAmount()));
+				aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),
+						finMain.getFinAmount().subtract(finMain.getDownPayment() == null ? BigDecimal.ZERO : finMain.getDownPayment())));
 				aeCommitment.setRPPRI(BigDecimal.ZERO);
 
 				getFinanceDetail().setCmtDataSetList(getEngineExecution().getCommitmentExecResults(aeCommitment, commitment, "CMTDISB", "N", null));
@@ -1523,6 +1524,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 				return true;
 			}
 		} else if (DateUtility.compare(this.oldVar_maturityDate, this.maturityDate_two.getValue()) != 0) {
+			return true;
+		}
+		if (this.oldVar_finRepayPftOnFrq != this.finRepayPftOnFrq.isChecked()) {
 			return true;
 		}
 

@@ -400,13 +400,15 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
-					continue;
-				}
-
-				//Principal Paid (Partial/Full)
-				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					this.cbRateChangeFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					includedPrvSchTerm = false;
 					continue;
 				}
 
@@ -654,6 +656,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//Show Error Details in Schedule Maintainance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			getFinScheduleData().getErrorDetails().clear();
 		}else{
 			getFinScheduleData().setSchduleGenerated(true);
 

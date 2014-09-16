@@ -361,20 +361,20 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 		availCustomer.setTolerance((this.tolerance.longValue() == 0 ? "000" : this.tolerance.longValue() )+" % "+
 				PennantApplicationUtil.amountFormate(PennantApplicationUtil.unFormateAmount(this.toleranceVal.getValue(), ccyformatt), ccyformatt));
 		
-		//Preparation of Commitment Details
-		List<AvailCommitment> commitments = getCommitmentDetails();
-		List<Object> list = new ArrayList<Object>();
-		list.add(commitments);
-		
 		//Core Bank Interface Call for Customer Account Details
 		AvailCustomerDetail detail = new AvailCustomerDetail();
 		detail.setCustCIF(this.lovDescCustCIF.getValue());
 		detail.setAcUnclsRequired(false);
+		List<Object> list = new ArrayList<Object>();
 		
 		try {
 			
 			BigDecimal newExposure = this.custAmount.getValue() == null ?  BigDecimal.ZERO : PennantApplicationUtil.unFormateAmount(this.custAmount.getValue(),ccyformatt);
 			detail = getCustomerInterfaceService().fetchAvailCustDetails(detail, newExposure, this.custDftCcy.getValue());
+			
+			//Preparation of Commitment Details
+			List<AvailCommitment> commitments = getCommitmentDetails(detail.getAvailLimit());
+			list.add(commitments);
 			
 			//Tolerance Value Reset
 			if(detail.getAvailLimit() != null){
@@ -491,9 +491,18 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Leaving");
 	}
 	
-	private List<AvailCommitment> getCommitmentDetails(){
+	private List<AvailCommitment> getCommitmentDetails(AvailLimit availLimit){
 		logger.debug("Entering");
 		List<AvailCommitment> commitments = new ArrayList<AvailCommitment>();
+		String ccy = "";
+		int ccyFormatter = 0;
+		if(availLimit == null){
+			ccy = this.custDftCcy.getValue();
+			ccyFormatter = ccyformatt;
+		}else{
+			ccy = availLimit.getLimitCcy();
+			ccyFormatter = availLimit.getLimitCcyEdit();
+		}
 		if(this.gb_cmtDetails.isVisible() && this.listBoxCmtDetails.getItemCount() > 0){
 			
 			List<Listitem> items = this.listBoxCmtDetails.getItems();
@@ -586,9 +595,17 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 							new BigDecimal(Math.pow(10,3 - availFinance.getCcyEditField())));
 					finCmt.setFinAmtBHD(PennantApplicationUtil.amountFormate(finamtBHD,3));
 					
+					
+					String outStandBHD = CalculationUtil.getConvertedAmountASString(availFinance.getFinCcy(), ccy, new BigDecimal(availFinance.getOutStandingBal())); 
+					finCmt.setOutStandingBal(outStandBHD);
+					
+					/*BigDecimal finamtBHD = (new BigDecimal(availFinance.getDrawnPrinciple()).multiply(availFinance.getCcySpotRate())).multiply(
+							new BigDecimal(Math.pow(10,3 - availFinance.getCcyEditField())));
+					finCmt.setFinAmtBHD(PennantApplicationUtil.amountFormate(finamtBHD,3));
+					
 					BigDecimal outStandBHD = (new BigDecimal(availFinance.getOutStandingBal()).multiply(availFinance.getCcySpotRate())).multiply(
 							new BigDecimal(Math.pow(10,3 - availFinance.getCcyEditField())));
-					finCmt.setOutStandingBal(PennantApplicationUtil.amountFormate(outStandBHD,3));
+					finCmt.setOutStandingBal(PennantApplicationUtil.amountFormate(outStandBHD,3));*/
 					finCmt.setLastRepay(availFinance.getLastRepay() == null? "" : DateUtility.formatDate(DateUtility.getUtilDate(availFinance.getLastRepay(),PennantConstants.DBDateTimeFormat1),PennantConstants.dateFormate));
 					finCmt.setMaturityDate(DateUtility.formatDate(DateUtility.getUtilDate(availFinance.getMaturityDate(),PennantConstants.DBDateTimeFormat1),PennantConstants.dateFormate));
 					finCmt.setProfitRate(availFinance.getProfitRate());
@@ -596,9 +613,9 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 					finCmt.setStatus(availFinance.getStatus());
 					finCmt.setFinDivision(availFinance.getFinDivision());
 					finCmt.setFinDivisionDesc(availFinance.getFinDivisionDesc());
-					
+					finCmt.setLimitCcy(ccy);
 					totEqvAmt = totEqvAmt.add(finamtBHD);
-					totOSAmt = totOSAmt.add(outStandBHD);
+					totOSAmt = totOSAmt.add(new BigDecimal(outStandBHD.replace(",", "")));
 					
 					cmtAdded = true;
 					commitments.add(finCmt);
@@ -613,7 +630,7 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 					
 					finCmt.setFinReference("Total");
 					finCmt.setFinAmtBHD(PennantApplicationUtil.amountFormate(totEqvAmt,3));
-					finCmt.setOutStandingBal(PennantApplicationUtil.amountFormate(totOSAmt,3));
+					finCmt.setOutStandingBal(PennantApplicationUtil.amountFormate(PennantApplicationUtil.unFormateAmount(totOSAmt, ccyFormatter),ccyFormatter));
 					commitments.add(finCmt);
 				}
 			}

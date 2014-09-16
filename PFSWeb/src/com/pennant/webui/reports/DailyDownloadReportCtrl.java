@@ -63,12 +63,15 @@ import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.fill.JRAbstractLRUVirtualizer;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
@@ -329,6 +332,28 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 				JRAbstractLRUVirtualizer virtualizer =new JRSwapFileVirtualizer(maxSize,swapFile, true);
 				reportArgumentsMap.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
 				 
+				if(StringUtils.trimToEmpty(reportName).equals("TakafulPremium")){
+					if(bulkReportProc){
+						JasperPrint jasperPrint = JasperFillManager.fillReport(reportSrc, reportArgumentsMap, con);
+						
+						String outputFileName = zipFolderPath +"\\"+ reportName+".pdf";
+						File outputFile = new File(outputFileName);
+						//If File Already exist in Folder Delete it for Regeneration with New Data
+						if(outputFile.exists()){
+							outputFile.delete();
+						}		
+						JRPdfExporter pdfExporter = new JRPdfExporter();
+						pdfExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+						pdfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outputFileName);   
+						pdfExporter.exportReport();
+						outputFile = null;
+					}else{	
+						byte[] buf = null;
+						buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap,con);
+						Filedownload.save(new AMedia(reportName, "pdf", "application/pdf", buf));
+					}
+				}else{
+				
 				ByteArrayOutputStream outputStream = null;
 				
 				//String printfileName = JasperFillManager.fillReportToFile(reportSrc, reportArgumentsMap, con);
@@ -338,10 +363,11 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 				if(virtualizer!=null){
 					virtualizer.setReadOnly(true);
 				}
+				
 
 				JRXlsExporter excelExporter = new JRXlsExporter();
 				excelExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-				
+
 				//excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME,printfileName); 
 				excelExporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);  
 				excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);  
@@ -374,10 +400,11 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 				
 				excelExporter = null;
 				jasperPrint = null;
+				}
 				if(virtualizer!=null){
 					virtualizer.cleanup();
 				}
-
+					
 			}else{
 				PTMessageUtils.showErrorMessage(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
 			}

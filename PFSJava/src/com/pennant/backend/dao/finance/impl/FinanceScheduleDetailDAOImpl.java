@@ -744,8 +744,8 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		
 		StringBuilder selectSql = new StringBuilder("Select T1.FinReference, MIN(T1.SchDate) AS schdFromDate, MAX(T1.SchDate) AS schdToDate ");
 		selectSql.append("FROM FinScheduleDetails T1 INNER JOIN  FinanceMain T2 ON T1.FinReference = T2.FinReference ");
-		selectSql.append(" where T1.SchDate <> T2.MaturityDate ");
-		selectSql.append(" AND T1.FinReference IN( :FinReference ) AND ( T1.SchDate >= " );
+		selectSql.append(" WHERE ");
+		selectSql.append(" T1.FinReference IN( :FinReference ) AND ( T1.SchDate >= " );
 		selectSql.append("'"+schdFromdate+"'");
 		if(schdTodate != null){
 		selectSql.append(" AND T1.SchDate <= " );
@@ -1163,7 +1163,8 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		StringBuilder selectSql = new StringBuilder();		
 		selectSql.append("  select min(SchDate) from FinScheduleDetails");
-		selectSql.append(" where FinReference = :FinReference and RepayOnSchDate = '1' ");
+		selectSql.append(" where FinReference = :FinReference AND ");
+		selectSql.append(" (RepayOnSchDate = '1' OR DeferedPay = '1' OR (PftOnSchDate = '1' AND RepayAmount > 0)) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
@@ -1174,7 +1175,8 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		if(firstRepayDate == null) {
 			selectSql = new StringBuilder();		
 			selectSql.append("  select min(SchDate) from FinScheduleDetails_TEMP");
-			selectSql.append(" where FinReference = :FinReference and RepayOnSchDate = '1' ");
+			selectSql.append(" where FinReference = :FinReference AND ");
+			selectSql.append(" (RepayOnSchDate = '1' OR DeferedPay = '1' OR (PftOnSchDate = '1' AND RepayAmount > 0)) ");
 
 			firstRepayDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),beanParameters, Date.class);
 		}

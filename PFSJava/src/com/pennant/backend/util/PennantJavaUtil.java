@@ -678,6 +678,9 @@ public class PennantJavaUtil {
 			put("ChangeFrequency", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
 					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
 			
+			put("ChangeGestation", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
+					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+			
 			put("FairValueRevaluation", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
 					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
 			
@@ -760,8 +763,8 @@ public class PennantJavaUtil {
  			
  			put("GuarantorDetail",new ModuleMapping(new GuarantorDetail(0), new String[]{"FinGuarantorsDetails", "FinGuarantorsDetails_AView"}, new String[] {"GuarantorId","BankCustomer"} , null, "MSTGRP1",300));
  			put("JointAccountDetail",new ModuleMapping(new JointAccountDetail(0), new String[]{"FinJointAccountDetails", "FinJointAccountDetails_AView"}, new String[] {"JointAccountId","CustCIF"} , null, "MSTGRP1",300));
- 			put("BulkProcessHeader",new ModuleMapping(new BulkProcessHeader(0), new String[]{"BulkProcessHeader", "BulkProcessDetails"}, new String[] {"BulkProcessID","FromDate"} , null, "MSTGRP1",300));
- 			put("BulkProcessDetails",new ModuleMapping(new BulkProcessDetails(0), new String[]{"BulkProcessDetails", "BulkProcessHeader"}, new String[] {"BulkProcessID","FinReference"} , null, "MSTGRP1",300));
+ 			put("BulkProcessHeader",new ModuleMapping(new BulkProcessHeader(0), new String[]{"BulkProcessHeader", "BulkProcessDetails"}, new String[] {"BulkProcessID","FromDate"} , null, "FIN_RATECHANGE",300));
+ 			put("BulkProcessDetails",new ModuleMapping(new BulkProcessDetails(0), new String[]{"BulkProcessDetails", "BulkProcessHeader"}, new String[] {"BulkProcessID","FinReference"} , null, "FIN_RATECHANGE",300));
 
  			
 			/*---------- Static Parameters ---------*/
@@ -1010,8 +1013,8 @@ public class PennantJavaUtil {
 			put("Commitment",new ModuleMapping(new Commitment(""), new String[]{"Commitments", "Commitments_AView"}, new String[] {"CmtReference","CmtTitle","CmtExpDate"} , null, "FACILITY_COMMITMENT",600));
 			put("CommitmentMovement",new ModuleMapping(new CommitmentMovement(""), new String[]{"CommitmentMovements", ""}, new String[] {"CmtReference","FinReference"} , null, "MSTGRP1",300));
 			 
-			put("JVPosting",new ModuleMapping(new JVPosting(""), new String[]{"JVPostings", "JVPostings_AView"}, new String[] {"BatchReference","Batch"} , null, "MSTGRP1",300));
-			put("JVPostingEntry",new ModuleMapping(new JVPostingEntry(""), new String[]{"JVPostingEntry", "JVPostingEntry_AView"}, new String[] {"BatchReference","Account"} , null, "MSTGRP1",300));
+			put("JVPosting",new ModuleMapping(new JVPosting(""), new String[]{"JVPostings", "JVPostings_AView"}, new String[] {"BatchReference","Batch"} , null, "FIN_RATECHANGE",300));
+			put("JVPostingEntry",new ModuleMapping(new JVPostingEntry(""), new String[]{"JVPostingEntry", "JVPostingEntry_AView"}, new String[] {"BatchReference","Account"} , null, "FIN_RATECHANGE",300));
 			put("SharesDetail", new ModuleMapping(new SharesDetail(""), new String[] { "LMTSharesDetail", "LMTSharesDetail_AView" },  new String[] { "loanRefNumber", "companyName" }, null, "MSTGRP1", 300));
 			put("ContractorAssetDetail", new ModuleMapping(new ContractorAssetDetail(""), new String[] { "FinContractorAssetDetails", "FinContractorAssetDetails_AView" },  new String[] { "FinReference", "ContractorId" }, null, "MSTGRP1", 300));
 			put("InvestmentFinHeader",new ModuleMapping(new InvestmentFinHeader(""), new String[]{"InvestmentFinHeader", "InvestmentFinHeader_AView"}, new String[] {"InvestmentRef", "TotPrinAmt"} , null, "TSR_FIN_PROCESS",300));

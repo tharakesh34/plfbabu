@@ -191,7 +191,8 @@ public class AEAmounts implements Serializable {
 			curSchd = schdDetails.get(i);
 			dateCurRecord = curSchd.getSchDate();
 
-			if (!isFirstRepaySet && curSchd.isRepayOnSchDate()) {
+			if (!isFirstRepaySet && (curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+					(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 				aeAmountCodes.setFirstRepayAmt(curSchd.getPrincipalSchd()
 				        .add(curSchd.getProfitSchd()).add(curSchd.getDefPrincipalSchd())
 				        .add(curSchd.getDefProfitSchd()));
@@ -465,7 +466,8 @@ public class AEAmounts implements Serializable {
 
 		
 		//REPAYMENT Records
-		if (curSchd.isRepayOnSchDate()) {
+		if (curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+				(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 			
 			//Total Terms Calculation
 			aeAmountCodes.setTtlTerms(aeAmountCodes.getTtlTerms() + 1);

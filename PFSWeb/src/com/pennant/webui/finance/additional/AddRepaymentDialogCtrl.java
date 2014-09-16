@@ -547,7 +547,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 					continue;	
 				}
 				
-				if (curSchd.isRepayOnSchDate() && (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) > 0 ||
+				if ((curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) && 
+						(curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) > 0 ||
 						curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) > 0)) {
 
 					comboitem = new Comboitem();
@@ -585,7 +586,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 				
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				if (curSchd.isRepayOnSchDate()  && (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) > 0 ||
+				if ((curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))  
+						&& (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) > 0 ||
 						curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) > 0)) {
 					
 					comboitem = new Comboitem();
@@ -832,6 +834,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		//Show Error Details in Schedule Maintenance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			getFinScheduleData().getErrorDetails().clear();
 		}else{
 			getFinScheduleData().setSchduleGenerated(true);
 			if(getFinanceMainDialogCtrl()!=null){

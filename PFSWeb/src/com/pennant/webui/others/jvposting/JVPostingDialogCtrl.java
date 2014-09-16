@@ -999,10 +999,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		setJVPostingEntryList(aJVPostingEntryList);
 		renderJVPostingEntries(getJVPostingEntryList());
-		if(aJVPostingEntryList != null && aJVPostingEntryList.size() > 0){
-			this.listBoxJVPostingEntry.setHeight((aJVPostingEntryList.size()*25)+200+"px");
-		}
 
+		if(aJVPostingEntryList != null && aJVPostingEntryList.size() > 0){
+			this.postingBranch.setReadonly(true);
+			this.listBoxJVPostingEntry.setHeight((aJVPostingEntryList.size()*25)+200+"px");
+		}else {
+			this.postingBranch.setReadonly(false);
+		}
 		logger.debug("Leaving");
 	}
 

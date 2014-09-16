@@ -1017,6 +1017,115 @@ public class FrequencyUtil implements Serializable {
 		}
 		return mth;
 	}
+	
+	/**
+	 * Method for Validating Frequencies as Frequency 1 must be less than or Equal to Frequency 2
+	 * @param frequency1
+	 * @param frequency2
+	 * @return
+	 */
+	public static String validateFrequencies(String frequency1, String frequency2) {
+		
+		if(frequency1.equals(frequency2)){
+			return "";
+		}
+		
+		char frqCode1 = frequency1.charAt(0);
+		char frqCode2 = frequency2.charAt(0);
+		
+		int frqMnt1 = Integer.parseInt(frequency1.substring(1, 3));
+		int frqMnt2 = Integer.parseInt(frequency2.substring(1, 3));
+		
+		int frqDay1 = Integer.parseInt(frequency1.substring(3, 5));
+		int frqDay2 = Integer.parseInt(frequency2.substring(3, 5));
+		
+		if(frqCode1 == frqCode2){
+			if(frqMnt1 == frqMnt2){
+				if(frqDay1 != frqDay2){
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+			}else{
+				return FrequencyCodeTypes.INVALID_MONTH;
+			}
+		}else{
+			
+			switch (frqCode1) {
+			case 'D':
+				return "";
+			case 'W' :
+				if(frqCode2 == 'D'){
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				if((frqDay2 % 7) != frqDay1){
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+				break;
+			case 'F' :
+				if(frqCode2 == 'D' || frqCode2 == 'M'){
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				if((frqDay2 % 14) != frqDay1){
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+				break;
+			case 'M' :
+				if(frqCode2 == 'D' || frqCode2 == 'M' || frqCode2 == 'F'){
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				if(frqDay1 != frqDay2){
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+				break;
+			case 'Q' :
+				if(frqCode2 != 'Q' && frqCode2 != 'H' && frqCode2 != 'Y'){
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				if(frqCode2 == 'Q' && frqMnt1 != frqMnt2){
+					return FrequencyCodeTypes.INVALID_MONTH;
+				}else if(frqCode2 == 'H'){
+					if(frqMnt1 != (frqMnt2 % 3)){
+						return FrequencyCodeTypes.INVALID_MONTH;
+					}
+				}else if(frqCode2 == 'Y'){
+					if(frqMnt1 != (frqMnt2 % 3)){
+						return FrequencyCodeTypes.INVALID_MONTH;
+					}
+				}
+				if(frqDay1 != frqDay2){
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+				break;
+			case 'H' :
+				if(frqCode2 != 'H' && frqCode2 != 'Y'){
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				if(frqCode2 == 'H' && frqMnt1 != frqMnt2){
+					return FrequencyCodeTypes.INVALID_MONTH;
+				}else if(frqCode2 == 'Y'){
+					if(frqMnt1 != (frqMnt2 % 6)){
+						return FrequencyCodeTypes.INVALID_MONTH;
+					}
+				}
+				if(frqDay1 != frqDay2){
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+				break;
+			case 'Y' :
+				if(frqCode2 != 'Y'){
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				if(frqMnt1 != frqMnt2){
+					return FrequencyCodeTypes.INVALID_MONTH;
+				}
+				if(frqDay1 != frqDay2){
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+				break;
+			}
+		}
+		
+		return "";
+	}
 
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

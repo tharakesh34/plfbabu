@@ -985,7 +985,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 			this.paidInstlments.setValue(String.valueOf(finSummary.getPaidInstlments()));
 			this.paidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid(), finSummary.getCcyEditField()));
 			this.unPaidInstlments.setValue(String.valueOf(finSummary.getNumberOfTerms() - finSummary.getPaidInstlments()));
-			this.unPaidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalUnPaid(), finSummary.getCcyEditField()));
+			if(financeSummary != null && financeSummary.getFinODTotPenaltyBal() != null){
+				this.unPaidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalUnPaid().add(financeSummary.getFinODTotPenaltyBal()), finSummary.getCcyEditField()));
+			}else{
+				this.unPaidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalUnPaid(), finSummary.getCcyEditField()));
+			}
 		}
 		if (getFinScheduleData().getFinanceScheduleDetails() != null) {
 			this.repayGraphTab.setVisible(true);
@@ -1266,20 +1270,29 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 		ChartSetElement chartSetElement;
 		if (listScheduleDetail != null) {
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				if (listScheduleDetail.get(i).isRepayOnSchDate()) {
-					chartSetElement = new ChartSetElement(DateUtility.formatUtilDate(listScheduleDetail.get(i).getSchDate(), PennantConstants.dateFormat), "RepayAmount", PennantAppUtil.formateAmount(listScheduleDetail.get(i).getRepayAmount(), formatter).setScale(formatter, RoundingMode.HALF_UP));
+				
+				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
+				
+				if (curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
+					chartSetElement = new ChartSetElement(DateUtility.formatUtilDate(curSchd.getSchDate(), PennantConstants.dateFormat), "RepayAmount", PennantAppUtil.formateAmount(listScheduleDetail.get(i).getRepayAmount(), formatter).setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 			}
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				if (listScheduleDetail.get(i).isRepayOnSchDate()) {
-					chartSetElement = new ChartSetElement(DateUtility.formatUtilDate(listScheduleDetail.get(i).getSchDate(), PennantConstants.dateFormat), "PrincipalSchd", PennantAppUtil.formateAmount(listScheduleDetail.get(i).getPrincipalSchd(), formatter).setScale(formatter, RoundingMode.HALF_UP));
+				
+				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
+				if (curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
+					chartSetElement = new ChartSetElement(DateUtility.formatUtilDate(curSchd.getSchDate(), PennantConstants.dateFormat), "PrincipalSchd", PennantAppUtil.formateAmount(listScheduleDetail.get(i).getPrincipalSchd(), formatter).setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 			}
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				if (listScheduleDetail.get(i).isRepayOnSchDate()) {
-					chartSetElement = new ChartSetElement(DateUtility.formatUtilDate(listScheduleDetail.get(i).getSchDate(), PennantConstants.dateFormat), "ProfitSchd", PennantAppUtil.formateAmount(listScheduleDetail.get(i).getProfitSchd(), formatter).setScale(formatter, RoundingMode.HALF_UP));
+				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
+				if (curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
+					chartSetElement = new ChartSetElement(DateUtility.formatUtilDate(curSchd.getSchDate(), PennantConstants.dateFormat), "ProfitSchd", PennantAppUtil.formateAmount(listScheduleDetail.get(i).getProfitSchd(), formatter).setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 			}

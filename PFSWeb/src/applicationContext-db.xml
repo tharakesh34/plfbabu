@@ -82,12 +82,12 @@
 	 <!-- Our "configurationEncryptor" bean (which implements                  --> 
 	 <!-- org.jasypt.encryption.StringEncryptor) is set as a constructor arg.  -->
 	 <!--                                                                      -->
-	 <bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+ 	<bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
 	   <constructor-arg ref="configurationEncryptor" />
 		<property name="locations">
 		<list>
-			<value>classpath:jdbc.properties</value>
-			<value>classpath:mail.properties</value>
+			<value>file:C:\PFF\PFSConfigurations\jdbc.properties</value>
+			<value>file:C:\PFF\PFSConfigurations\mail.properties</value>
 		</list>
 	</property>
 	 </bean>
@@ -102,7 +102,7 @@
      <bean id="environmentVariablesConfiguration"
 	     class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
 	   <property name="algorithm" value="PBEWithMD5AndDES" />
-	   <property name="password" value="AIBPFF#123" />
+	   <property name="passwordEnvName" value="APP_ENCRYPTION_PASSWORD" />
 	 </bean>
 	  
 	 <!--                                                                      -->

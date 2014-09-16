@@ -214,6 +214,7 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
+	
 	<bean id="commitmentDAO"
 		class="com.pennant.backend.dao.commitment.impl.CommitmentDAOImpl"
 		parent="basisCodeDAO">
@@ -226,6 +227,7 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
+	
 	<bean id="accountInterfaceService" class="com.pennant.Interface.service.impl.AccountInterfaceServiceEquationImpl" >
    		<property name="accountDetailProcess" ref="accountDetailProcess" />
    	</bean> 
@@ -234,6 +236,15 @@
    		<property name="dailyDownloadProcess" ref="dailyDownloadProcess" />
    		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
    	</bean> 
+   	
+	<bean id="dailyDownloadInterfaceService" class="com.pennant.Interface.service.impl.DailyDownloadInterfaceServiceImpl" >
+   		<property name="coreInterfaceCall" ref="coreInterfaceCall" />
+   		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
+   	</bean> 
+   	
+   	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
    	
    	<bean id="postingsInterfaceService" class="com.pennant.Interface.service.impl.PostingsInterfaceServiceEquationImpl" >
    		<property name="accountPostingProcess" ref="accountPostingProcess" />
@@ -256,7 +267,7 @@
 
 	<bean id="accountPostingProcess" class="com.pennant.equation.service.impl.AccountPostingProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
-	</bean> 
+	</bean>
 	
 	<bean id="dateRollOverProcess" class="com.pennant.equation.service.impl.DateRollOverProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
@@ -265,7 +276,7 @@
 	<bean id="dailyDownloadProcess" class="com.pennant.equation.service.impl.DailyDownloadProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
-		
+	
 	<bean id="uploadProfitDetailProcess" class="com.pennant.equation.service.impl.UploadProfitDetailProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
@@ -1014,6 +1025,15 @@
 		<property name="uploadFinPftDetailService" ref="uploadFinPftDetailService" />
 	</bean>
 	
+	<bean id="uploadFinPftDetailService" class="com.pennant.app.eod.service.impl.UploadFinPftDetailServiceImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="uploadFinProfitDetailsProcess" ref="uploadFinProfitDetailsProcess" />
+	</bean> 
+	
+	<bean id="uploadFinProfitDetailsProcess" class="com.pennant.equation.process.UploadFinProfitDetailsProcess">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+	
 	<bean id="amortizationService" class="com.pennant.app.eod.service.impl.AmortizationServiceImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -1141,6 +1161,9 @@
 	<bean id="dataPurgingProcess" class="com.pennant.eod.util.DataPurgingProcess">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	 <!--  Purging Process Decider -->
+	<bean id="purgingProcessDecider" class="com.pennant.backend.endofday.limitdecider.PurgingProcessDecider"/>
 
 
 	<bean id="PFSJobParametersIncrementer" class="com.pennant.backend.endofday.jobparameter.PFSJobParametersIncrementer"/>

@@ -611,11 +611,16 @@ Serializable {
 				!StringUtils.trimToEmpty(this.account.getValue()).equals(this.oldVar_account)){
 			String accountNumber = PennantApplicationUtil
 					.unFormatAccountNumber(this.account.getValue());
-			if(!accountNumber.substring(0, 4).equals(getjVPosting().getBranch())){
+
+			if((getjVPosting().getBranch().equals(PennantConstants.IBD_Branch) && !accountNumber.substring(0, 4).equals(PennantConstants.IBD_Branch)) ||
+					(getjVPosting().getBranch().equals("1100") && !accountNumber.substring(0, 4).equals("1100")) || //TODO-Check Branch "1100"
+					(!getjVPosting().getBranch().equals(PennantConstants.IBD_Branch) && accountNumber.substring(0, 4).equals(PennantConstants.IBD_Branch)) ||
+					(!getjVPosting().getBranch().equals("1100") && accountNumber.substring(0, 4).equals("1100"))){  //TODO-Check Branch "1100"
 				PTMessageUtils.showErrorMessage(Labels.getLabel("label_JVPostingEntryDialog_Invalid_AcBranch.value", new String[]{getjVPosting().getBranch()}));
 				this.account.setValue("");
 				return;
 			}
+			
 			doResetValues();
 			try {
 				accountDetail = getjVPostingService().getAccountDetails(accountNumber);

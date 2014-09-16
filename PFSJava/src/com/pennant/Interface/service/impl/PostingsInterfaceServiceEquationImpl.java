@@ -118,7 +118,7 @@ public class PostingsInterfaceServiceEquationImpl implements PostingsInterfaceSe
 	 */
 	@Override
 	public List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> setDetails, Date valueDate, String postBranch, 
-			long linkTransId, String createNow, String isDummy) throws Exception  {
+			long linkTransId, String createNow, String isDummy) throws AccountNotFoundException  {
 		logger.debug("Entering");
 
 		ReturnDataSet dataSet = null;
@@ -154,8 +154,8 @@ public class PostingsInterfaceServiceEquationImpl implements PostingsInterfaceSe
 		//Connecting to CoreBanking Interface
 		try {
 			coreBankPostingDetails = getAccountPostingProcess().doUploadAccruals(coreBankPostingDetails, valueDate, postBranch, isDummy);
-		}catch (Exception e) {
-			throw e;
+		}catch (AccountNotFoundException e) {
+			throw new AccountNotFoundException(e.getMessage());
 		}
 
 		//Fill the Account data using Core Banking Object

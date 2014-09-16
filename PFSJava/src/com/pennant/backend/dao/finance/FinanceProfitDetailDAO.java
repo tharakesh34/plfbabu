@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 
 /**
@@ -71,4 +72,6 @@ public interface FinanceProfitDetailDAO {
 	public void updateLatestRpyDetails(FinanceProfitDetail financeProfitDetail);
 	public void updateRpyAccount(String finReference, String repayAccountId);
 	public void saveAccumulates(Date valueDate);
+	public void resetAcrTsfdInSusp();
+	public void updateAcrTsfdInSusp(List<AccountHoldStatus> list);
 }

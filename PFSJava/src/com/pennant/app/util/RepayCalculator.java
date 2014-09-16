@@ -246,7 +246,8 @@ public class RepayCalculator implements Serializable {
 			}
 
 			// Skip if not a repayment
-			if (!curSchd.isDeferedPay() && !curSchd.isRepayOnSchDate()) {
+			if (!curSchd.isDeferedPay() && !(curSchd.isRepayOnSchDate() || 
+					(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 				continue;
 			}
 
@@ -350,7 +351,8 @@ public class RepayCalculator implements Serializable {
 			repayMain.setDownpayment(repayMain.getDownpayment().add(curSchd.getDownPaymentAmount()));
 
 			// REPAY SCHEDULE RECORD
-			if (curSchd.isRepayOnSchDate()) {
+			if (curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || 
+					(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 				BigDecimal balance = curSchd.getPrincipalSchd().add(curSchd.getDefPrincipalSchd())
 				        .subtract(curSchd.getSchdPriPaid()).subtract(curSchd.getDefSchdPriPaid());
 				balance = balance.add(curSchd.getProfitSchd()).add(curSchd.getDefProfitSchd())

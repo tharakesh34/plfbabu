@@ -20,6 +20,7 @@ public class AvailCommitment {
 	private String cmtTitle ="";
 	private int ccyEditField = 0;
 	private long custId = 0;
+	private String limitCcy ="";
 	
 	//TODO -- need to modify as per List 
 	private String finReference ="";
@@ -235,5 +236,12 @@ public class AvailCommitment {
 	public void setCmtExpFlag(String cmtExpFlag) {
 	    this.cmtExpFlag = cmtExpFlag;
     }
+	
+	public String getLimitCcy() {
+		return limitCcy;
+	}
+	public void setLimitCcy(String limitCcy) {
+		this.limitCcy = limitCcy;
+	}
 
 }

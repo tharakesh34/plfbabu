@@ -1148,7 +1148,8 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 						(curSchd.getDefPrincipalSchd().subtract(curSchd.getDefSchdPriPaid())).compareTo(BigDecimal.ZERO) > 0 || 
 						(curSchd.getDefProfitSchd().subtract(curSchd.getDefSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0){
 
-					if(curSchd.isRepayOnSchDate()){
+					if(curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || 
+							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
 
 						comboitem = new Comboitem();
 						comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), 
@@ -2584,6 +2585,12 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if(this.earlySettlementDate.getValue() == null){
 				this.earlySettlementDate.setValue(curBussDate);
 			}
+			
+			if(curBussDate.compareTo(this.earlySettlementDate.getValue()) > 0){
+				throw new WrongValueException(this.earlySettlementDate, Labels.getLabel("label_MIN_EarlySettlementDate", 
+						new String[]{curBussDate.toString()}));
+			}
+			
 			logger.debug("Leaving");
 			return true;
 		}
@@ -2785,19 +2792,24 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 		ChartSetElement chartSetElement;
 		if(listScheduleDetail!=null){
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				if(listScheduleDetail.get(i).isRepayOnSchDate()){
-					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(listScheduleDetail.get(i).getSchDate()
+				
+				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
+				if(curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
+					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(curSchd.getSchDate()
 							,PennantConstants.dateFormat),"RepayAmount",
-							PennantAppUtil.formateAmount(listScheduleDetail.get(i).getRepayAmount(), 
+							PennantAppUtil.formateAmount(curSchd.getRepayAmount(), 
 									scheduleData.getFinanceMain().getLovDescFinFormatter())
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 			}
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				if(listScheduleDetail.get(i).isRepayOnSchDate()){
-					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(listScheduleDetail.get(i).getSchDate()
-							,PennantConstants.dateFormat),"PrincipalSchd",PennantAppUtil.formateAmount(listScheduleDetail.get(i).getPrincipalSchd(), 
+				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
+				if(curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
+					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(curSchd.getSchDate()
+							,PennantConstants.dateFormat),"PrincipalSchd",PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(), 
 									scheduleData.getFinanceMain().getLovDescFinFormatter())
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2805,9 +2817,11 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			}
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
-				if(listScheduleDetail.get(i).isRepayOnSchDate()){
-					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(listScheduleDetail.get(i).getSchDate()
-							,PennantConstants.dateFormat),"ProfitSchd",PennantAppUtil.formateAmount(listScheduleDetail.get(i).getProfitSchd()
+				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
+				if(curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
+					chartSetElement=new ChartSetElement(DateUtility.formatUtilDate(curSchd.getSchDate()
+							,PennantConstants.dateFormat),"ProfitSchd",PennantAppUtil.formateAmount(curSchd.getProfitSchd()
 									,scheduleData.getFinanceMain().getLovDescFinFormatter())
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);

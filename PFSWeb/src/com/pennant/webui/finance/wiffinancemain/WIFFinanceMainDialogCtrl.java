@@ -3181,6 +3181,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		} else if (DateUtility.compare(this.oldVar_maturityDate, this.maturityDate_two.getValue()) != 0) {
 			return true;
 		}
+		if (this.oldVar_finRepayPftOnFrq != this.finRepayPftOnFrq.isChecked()) {
+			return true;
+		}
 
 		BigDecimal old_dwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
 		BigDecimal new_dwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
@@ -5405,44 +5408,59 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	private void resetFrqDay(Combobox combobox ,  boolean inclGrc){
+	private void resetFrqDay(Combobox combobox, boolean inclGrc){
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		
 		if(inclGrc){
-			this.cbGracePftFrqDay.setSelectedIndex(combobox.getSelectedIndex());
+			this.cbGracePftFrqDay.setSelectedIndex(getFrqDayIndex(combobox,this.gracePftFrq));
 			onSelectFrqDay(cbGracePftFrqCode, cbGracePftFrqMth, cbGracePftFrqDay, this.gracePftFrq);
 			this.nextGrcPftDate.setText("");
 
 			if(financeMain.isAllowGrcPftRvw()){
-				this.cbGracePftRvwFrqDay.setSelectedIndex(combobox.getSelectedIndex());
+				this.cbGracePftRvwFrqDay.setSelectedIndex(getFrqDayIndex(combobox,this.gracePftRvwFrq));
 				onSelectFrqDay(cbGracePftRvwFrqCode, cbGracePftRvwFrqMth, cbGracePftRvwFrqDay, this.gracePftRvwFrq);
 				this.nextGrcPftRvwDate.setText("");
 			}	
 			if(financeMain.isAllowGrcCpz()){
-				this.cbGraceCpzFrqDay.setSelectedIndex(combobox.getSelectedIndex());
+				this.cbGraceCpzFrqDay.setSelectedIndex(getFrqDayIndex(combobox,this.graceCpzFrq));
 				onSelectFrqDay(cbGraceCpzFrqCode, cbGraceCpzFrqMth, cbGraceCpzFrqDay, this.graceCpzFrq);
 				this.nextGrcPftRvwDate.setText("");
 			}	
 		}
 		
-		this.cbRepayPftFrqDay.setSelectedIndex(combobox.getSelectedIndex());
+		this.cbRepayPftFrqDay.setSelectedIndex(getFrqDayIndex(combobox,this.repayPftFrq));
 		onSelectFrqDay(cbRepayPftFrqCode, cbRepayPftFrqMth, cbRepayPftFrqDay, this.repayPftFrq);
 		this.nextRepayPftDate.setText("");
 		
-		this.cbRepayFrqDay.setSelectedIndex(combobox.getSelectedIndex());
+		this.cbRepayFrqDay.setSelectedIndex(getFrqDayIndex(combobox, this.repayFrq));
 		onSelectFrqDay(cbRepayFrqCode, cbRepayFrqMth, cbRepayFrqDay, this.repayFrq);
 		this.nextRepayDate.setText("");
  		
 		if(financeMain.isAllowRepayRvw()){
-			this.cbRepayRvwFrqDay.setSelectedIndex(combobox.getSelectedIndex());
+			this.cbRepayRvwFrqDay.setSelectedIndex(getFrqDayIndex(combobox, this.repayRvwFrq));
 			onSelectFrqDay(cbRepayRvwFrqCode, cbRepayRvwFrqMth, cbRepayRvwFrqDay, this.repayRvwFrq);
 			this.nextRepayRvwDate.setText("");
 		}	
 		if(financeMain.isAllowRepayCpz()){
-			this.cbRepayCpzFrqDay.setSelectedIndex(cbRepayPftFrqDay.getSelectedIndex());
+			this.cbRepayCpzFrqDay.setSelectedIndex(getFrqDayIndex(combobox,  this.repayCpzFrq));
 			onSelectFrqDay(cbRepayCpzFrqCode, cbRepayCpzFrqMth, cbRepayCpzFrqDay, this.repayCpzFrq);
 			this.nextRepayCpzDate.setText("");
 		}	
+	}
+	
+	private int getFrqDayIndex(Combobox combobox, Textbox textbox){
+		
+		int dayIndex = combobox.getSelectedIndex();
+		char frqCode =  (textbox.getValue()).charAt(0);
+		if(frqCode == 'D'){
+			dayIndex = 0;
+		}else if(frqCode == 'W'){
+			dayIndex = dayIndex % 7;
+		}else if(frqCode == 'F'){
+			dayIndex = dayIndex % 14;
+		}
+		
+		return dayIndex;
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -5630,7 +5648,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if(main.isAllowGrcPeriod()){
 				if(detail.getSchDate().compareTo(main.getGrcPeriodEndDate()) <= 0){
 					if(grcpftDate == null && detail.isPftOnSchDate()){
-						this.nextGrcPftDate.setText("");
+						this.nextGrcPftDate.setValue(detail.getSchDate());
 						this.nextGrcPftDate_two.setValue(detail.getSchDate());
 						this.oldVar_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
 						grcpftDate = detail.getSchDate();
@@ -5642,17 +5660,18 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if(detail.getSchDate().compareTo(main.getGrcPeriodEndDate()) > 0){
 				
 				if(!pftchecked && detail.isPftOnSchDate()){
-					this.nextRepayPftDate.setText("");
+					this.nextRepayPftDate.setValue(detail.getSchDate());
 					this.nextRepayPftDate_two.setValue(detail.getSchDate());
 					pftchecked = true;
 				}
-				if(!repaychecked && detail.isRepayOnSchDate()){
-					this.nextRepayDate.setText("");
+				if(!repaychecked && (detail.isRepayOnSchDate() || detail.isDeferedPay() || 
+						(detail.isPftOnSchDate() && detail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))){
+					this.nextRepayDate.setValue(detail.getSchDate());
 					this.nextRepayDate_two.setValue(detail.getSchDate());
 					repaychecked= true;
 				}
 				if(!rvwchecked && detail.isRvwOnSchDate()){
-					this.nextRepayRvwDate.setText("");
+					this.nextRepayRvwDate.setValue(detail.getSchDate());
 					this.nextRepayRvwDate_two.setValue(detail.getSchDate());
 					rvwchecked = true;
 				}
@@ -6041,8 +6060,20 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 							this.gracePeriodEndDate_two.getValue(), "A", false).getNextFrequencyDate());
 				}
 
-				this.numberOfTerms_two.setValue(FrequencyUtil.getTerms(this.repayFrq.getValue(), 
-						this.nextRepayDate_two.getValue(), this.maturityDate_two.getValue(), true, false).getTerms());
+				if(this.finRepayPftOnFrq.isChecked()){
+					
+					Date nextPftDate = this.nextRepayPftDate.getValue();
+					if(nextPftDate == null){
+						nextPftDate = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(), 1,
+								this.gracePeriodEndDate_two.getValue(), "A", false).getNextFrequencyDate();
+					}
+					
+					this.numberOfTerms_two.setValue(FrequencyUtil.getTerms(this.repayPftFrq.getValue(), 
+							nextPftDate, this.maturityDate_two.getValue(), true, true).getTerms());
+				}else{
+					this.numberOfTerms_two.setValue(FrequencyUtil.getTerms(this.repayFrq.getValue(), 
+							this.nextRepayDate_two.getValue(), this.maturityDate_two.getValue(), true, true).getTerms());
+				}
 			}
 		}
 		
@@ -6059,8 +6090,20 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		if (this.numberOfTerms.intValue() == 0 && this.numberOfTerms_two.intValue() == 0 && this.maturityDate_two.getValue() != null) {
-			this.numberOfTerms_two.setValue(FrequencyUtil.getTerms(this.repayFrq.getValue(),
-					this.nextRepayDate_two.getValue(), this.maturityDate_two.getValue(), true, false).getTerms());
+			if(this.finRepayPftOnFrq.isChecked()){
+				
+				Date nextPftDate = this.nextRepayPftDate.getValue();
+				if(nextPftDate == null){
+					nextPftDate = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(), 1,
+							this.gracePeriodEndDate_two.getValue(), "A", false).getNextFrequencyDate();
+				}
+				
+				this.numberOfTerms_two.setValue(FrequencyUtil.getTerms(this.repayPftFrq.getValue(),
+						nextPftDate, this.maturityDate_two.getValue(), true, true).getTerms());
+			}else{
+				this.numberOfTerms_two.setValue(FrequencyUtil.getTerms(this.repayFrq.getValue(),
+						this.nextRepayDate_two.getValue(), this.maturityDate_two.getValue(), true, true).getTerms());
+			}
 
 		} else if(this.numberOfTerms.intValue() > 0){
 			this.numberOfTerms_two.setValue(this.numberOfTerms.intValue());
@@ -6073,8 +6116,22 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (this.numberOfTerms_two.intValue() != 0  && !singleTermFinance) {
 
-			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(this.repayFrq.getValue(),
-					this.numberOfTerms_two.intValue(), this.nextRepayDate_two.getValue(), "A", true).getScheduleList();
+			List<Calendar> scheduleDateList = null;
+			
+			if(this.finRepayPftOnFrq.isChecked()){
+				
+				Date nextPftDate = this.nextRepayPftDate.getValue();
+				if(nextPftDate == null){
+					nextPftDate = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(), 1,
+							this.gracePeriodEndDate_two.getValue(), "A", false).getNextFrequencyDate();
+				}
+				
+				scheduleDateList = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(),
+						this.numberOfTerms_two.intValue(), nextPftDate, "A", true).getScheduleList();
+			}else{
+				scheduleDateList = FrequencyUtil.getNextDate(this.repayFrq.getValue(),
+						this.numberOfTerms_two.intValue(), this.nextRepayDate_two.getValue(), "A", true).getScheduleList();
+			}
 
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
@@ -6508,6 +6565,15 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				}
 			}
 			
+			if(this.finRepayPftOnFrq.isChecked()){
+				String errorCode = FrequencyUtil.validateFrequencies(this.repayPftFrq.getValue(), this.repayFrq.getValue());
+				if(!StringUtils.trimToEmpty(errorCode).equals("")){
+					errorList.add(new ErrorDetails("Frequency", "E0042", new String[] {
+							Labels.getLabel("label_WIFFinanceMainDialog_RepayPftFrq.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_RepayFrq.value")}, new String[] {}));
+				}
+			}
+
 			// Setting error list to audit header
 			auditHeader.setErrorList(ErrorUtil.getErrorDetails(errorList, getUserWorkspace().getUserLanguage()));
 			auditHeader = ErrorControl.showErrorDetails(window_WIFFinanceMainDialog, auditHeader);

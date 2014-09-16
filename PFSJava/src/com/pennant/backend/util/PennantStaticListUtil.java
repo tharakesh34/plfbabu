@@ -939,7 +939,8 @@ public class PennantStaticListUtil {
 		ArrayList<ValueLabel> operandTypesList = new ArrayList<ValueLabel>();
 		if(type.equals("JS")){
 			operandTypesList.add(new ValueLabel(PennantConstants.STATICTEXT, Labels.getLabel("STATICTEXT")));
-			operandTypesList.add(new ValueLabel(PennantConstants.GLOBALVAR, Labels.getLabel("GLOBALVAR")));
+			/** Commented Global Variables as it is not being used by AIB **/
+		//	operandTypesList.add(new ValueLabel(PennantConstants.GLOBALVAR, Labels.getLabel("GLOBALVAR")));
 			operandTypesList.add(new ValueLabel(PennantConstants.FIELDLIST, Labels.getLabel("FIELDLIST")));
 			operandTypesList.add(new ValueLabel(PennantConstants.CALCVALUE, Labels.getLabel("CALCVALUE")));
 			//		operandTypesList.add(new ValueLabel("FUNCTION", Labels.getLabel("FUNCTION")));
@@ -947,7 +948,8 @@ public class PennantStaticListUtil {
 			operandTypesList.add(new ValueLabel(PennantConstants.DBVALUE ,Labels.getLabel("DBVALUE")));
 		}else{
 			operandTypesList.add(new ValueLabel(PennantConstants.STATICTEXT, Labels.getLabel("STATICTEXT")));
-			operandTypesList.add(new ValueLabel(PennantConstants.GLOBALVAR, Labels.getLabel("GLOBALVAR")));
+			/** Commented Global Variables as it is not being used by AIB **/
+			//operandTypesList.add(new ValueLabel(PennantConstants.GLOBALVAR, Labels.getLabel("GLOBALVAR")));
 			operandTypesList.add(new ValueLabel(PennantConstants.FIELDLIST, Labels.getLabel("FIELDLIST")));
 			operandTypesList.add(new ValueLabel(PennantConstants.CALCVALUE, Labels.getLabel("CALCVALUE")));
 			//		operandTypesList.add(new ValueLabel("FUNCTION", Labels.getLabel("FUNCTION")));

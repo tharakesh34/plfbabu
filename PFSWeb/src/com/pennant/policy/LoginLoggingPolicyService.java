@@ -55,7 +55,7 @@ import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAu
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.util.PennantConstants;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.gui.service.GuiLoginLoggingPolicService;
 import com.pennant.policy.model.PolicyManager;
 import com.pennant.policy.model.UserImpl;
@@ -105,6 +105,7 @@ public class LoginLoggingPolicyService implements Serializable {
 		WebAuthenticationDetails details = null;
 		Authentication authentication = (Authentication) call.getArgs()[0];
 		Authentication result;
+		boolean IS_LDAP_AUTHENTICATION = SystemParameterDetails.getSystemParameterValue("IS_LDAP_AUTH").equals("Y")?true:false;
 		try { // ###CR_10/07/12_47### Start
 			/*
 			 * Here we are checking for Authentication provider is LDAP's and is
@@ -112,14 +113,14 @@ public class LoginLoggingPolicyService implements Serializable {
 			 * authentication .this check for when having Multiple
 			 * Authentication providers
 			 */
-			if (call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider && !PennantConstants.IS_LDAP_AUHRNTICATION) {
+			if (call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider && !IS_LDAP_AUTHENTICATION ){
 				throw new UsernameNotFoundException("LDAP Authentication  not allowed");
 			}
-			if (!(call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider) && PennantConstants.IS_LDAP_AUHRNTICATION) {
+			if (!(call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider) && IS_LDAP_AUTHENTICATION) {
 				throw new UsernameNotFoundException("DAO  Authentication  not allowed");
 			}
 			result = (Authentication) call.proceed();
-			if (PennantConstants.IS_LDAP_AUHRNTICATION) {
+			if (IS_LDAP_AUTHENTICATION) {
 				userDetails = (UserImpl) getPolicyManager().loadUserByUsername(result.getName());
 				details = (WebAuthenticationDetails) result.getDetails();
 				AbstractAuthenticationToken overRidedResult = new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
@@ -127,11 +128,11 @@ public class LoginLoggingPolicyService implements Serializable {
 				result = overRidedResult;
 			}
 		} catch (Exception e) {
-			if (call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider && PennantConstants.IS_LDAP_AUHRNTICATION) {
+			if (call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider && IS_LDAP_AUTHENTICATION) {
 				logAuthFail(authentication, e.getMessage());
 				logger.error("Login failed resason" + e.toString());
 			}
-			if (!(call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider) && !PennantConstants.IS_LDAP_AUHRNTICATION) {
+			if (!(call.getTarget() instanceof ActiveDirectoryLdapAuthenticationProvider) && !IS_LDAP_AUTHENTICATION) {
 				logAuthFail(authentication, e.getMessage());
 				logger.error("Login failed resason" + e.toString());
 			}

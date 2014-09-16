@@ -17,6 +17,6 @@ public interface PostingsInterfaceService {
 			long linkTransId, String createNow) throws AccountNotFoundException;
 
 	public List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> list, Date valueDate,
-            String postBranch, long linkedTranId, String createNow, String isDummy) throws Exception; 
+            String postBranch, long linkedTranId, String createNow, String isDummy) throws AccountNotFoundException; 
 	
 }

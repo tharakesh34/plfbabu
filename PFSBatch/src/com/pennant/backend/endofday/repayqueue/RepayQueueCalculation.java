@@ -180,7 +180,7 @@ public class RepayQueueCalculation implements Tasklet {
 		
 		StringBuilder selQuery = new StringBuilder(" SELECT count(F.FinReference) ");
 		selQuery.append(" FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference");
-		selQuery.append(" AND S.SchDate <= ? AND S.RepayOnSchDate = '1' AND F.FinIsActive = '1'");
+		selQuery.append(" AND S.SchDate <= ? AND (S.RepayOnSchDate = '1' OR S.DeferedPay= '1' OR (S.PftOnSchDate = '1' AND RepayAmount > 0)) AND F.FinIsActive = '1'");
 		selQuery.append(" AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid OR S.DefPrincipalSchd <> S.DefSchdPriPaid OR S.DefProfitSchd <> S.DefSchdPftPaid)");
 		return selQuery.toString();
 		
@@ -199,7 +199,7 @@ public class RepayQueueCalculation implements Tasklet {
 		selQuery.append(" S.SchdPftpaid, S.SchdPriPaid, (S.ProfitSchd - S.SchdPftPaid) As SchdPftBal, (S.PrincipalSchd - S.SchdPriPaid) As SchdPriBal,");
 		selQuery.append(" (S.DefPrincipalSchd - S.DefSchdPriPaid) As DefPrincipalBal, (S.DefProfitSchd - S.DefSchdPftPaid) As DefProfitbal ");
 		selQuery.append(" FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference");
-		selQuery.append(" AND S.SchDate <= ? AND S.RepayOnSchDate = '1' AND F.FinIsActive = '1' ");
+		selQuery.append(" AND S.SchDate <= ? AND  (S.RepayOnSchDate = '1' OR S.DeferedPay= '1' OR (S.PftOnSchDate = '1' AND RepayAmount > 0))  AND F.FinIsActive = '1' ");
 		selQuery.append(" AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid OR S.DefPrincipalSchd <> S.DefSchdPriPaid OR S.DefProfitSchd <> S.DefSchdPftPaid)");
 		return selQuery.toString();
 		

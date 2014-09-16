@@ -245,6 +245,7 @@ public class PennantConstants {
 	public static final String SUBSCH 				= "SubSchedule";
 	public static final String CHGPFT 				= "ChangeProfit";
 	public static final String CHGFRQ 				= "ChangeFrequency";
+	public static final String CHGGRC 				= "ChangeGestation";
 	public static final String DATEDSCHD 			= "AddDatedSchedule";
 	public static final String COMPOUND 			= "FairValueRevaluation";
 	public static final String SCH_REPAY 			= "SchdlRepayment";

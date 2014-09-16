@@ -8485,7 +8485,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 					}
 				}
 
-				if (aScheduleDetail.isRepayOnSchDate()) {
+				if (aScheduleDetail.isRepayOnSchDate() ||
+						(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					if ((aScheduleDetail.getSpecifier().equals(CalculationConstants.GRACE) && 
 							aFinSchData.getFinanceMain().getScheduleMethod().equals(CalculationConstants.PFT))
 							|| (!aFinSchData.getFinanceMain().getScheduleMethod().equals(CalculationConstants.PFT))) {
@@ -11799,7 +11800,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			aeCommitment.setCMTAMT(commitment.getCmtAmount());
 			aeCommitment.setCHGAMT(commitment.getCmtCharges());
 			aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),
-					finMain.getFinAmount()));
+					finMain.getFinAmount().subtract(finMain.getDownPayment() == null ? BigDecimal.ZERO : finMain.getDownPayment())));
 			aeCommitment.setRPPRI(BigDecimal.ZERO);
 
 			getFinanceDetail().setCmtDataSetList(getEngineExecution().getCommitmentExecResults(aeCommitment, commitment, "CMTDISB", "N", null));

@@ -57,6 +57,7 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinancePremiumDetail;
+import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -115,7 +116,7 @@ public class PostingsPreparationUtil implements Serializable {
 	        throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
 		
 		return new PostingsPreparationUtil(dataSet, amountCodes, isEODProcess, isRIAFinance, isCreateNewAccount, 
-				dateAppDate, allowCmtPostings, linkedTranId, null).getReturnList();
+				dateAppDate, allowCmtPostings, linkedTranId, null, false).getReturnList();
 	}
 	
 	/**
@@ -140,7 +141,7 @@ public class PostingsPreparationUtil implements Serializable {
 	        throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
 		
 		return new PostingsPreparationUtil(dataSet, amountCodes, isEODProcess, isRIAFinance, isCreateNewAccount, 
-				dateAppDate, allowCmtPostings, linkedTranId, feeChargeMap).getReturnList();
+				dateAppDate, allowCmtPostings, linkedTranId, feeChargeMap, false).getReturnList();
 	}
 	
 	/**
@@ -183,6 +184,29 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 	
 	/**
+	 * Method for Process Depreciation Posting Details
+	 * 
+	 * @param dataSet
+	 * @param amountCodes
+	 * @param isEODProcess
+	 * @param isCreateNewAccount
+	 * @param dateAppDate
+	 * @param movement
+	 * @param isProvPostings
+	 * @return
+	 * @throws AccountNotFoundException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	public List<Object> processDepreciatePostings(DataSet dataSet, AEAmountCodes amountCodes,
+			boolean isRIAFinance, Date dateAppDate, long linkedTranId)
+	        throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
+		
+		return new PostingsPreparationUtil(dataSet, amountCodes, true, isRIAFinance, "Y", 
+				dateAppDate, false, linkedTranId, null, true).getReturnList();
+	}
+	
+	/**
 	 * Method To Process Finance Disbursement Cancellation posting
 	 * IN PostingsPreparationUtil.java
 	 * @param finReference
@@ -198,10 +222,10 @@ public class PostingsPreparationUtil implements Serializable {
 
 	private PostingsPreparationUtil(DataSet dataSet, AEAmountCodes amountCodes,
 	        boolean isEODProcess, boolean isRIAFinance, String isCreateNewAccount,
-	        Date dateAppDate, boolean allowCmtPostings, long linkedTranId, Map<String, FeeRule> feeChargeMap) 
+	        Date dateAppDate, boolean allowCmtPostings, long linkedTranId, Map<String, FeeRule> feeChargeMap, boolean isDepreciation) 
 	        		throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
 		setReturnList(processPostings(dataSet, amountCodes, isEODProcess, isRIAFinance, isCreateNewAccount, 
-				dateAppDate, allowCmtPostings, linkedTranId, feeChargeMap));
+				dateAppDate, allowCmtPostings, linkedTranId, feeChargeMap, isDepreciation));
 	}
 	
 	private PostingsPreparationUtil(Commitment commitment, String isCreateNow,Date dateAppDate, String acSetEvent) 
@@ -225,7 +249,8 @@ public class PostingsPreparationUtil implements Serializable {
 	
 	private List<Object> processPostings(DataSet dataSet, AEAmountCodes amountCodes,
 	        boolean isEODProcess, boolean isRIAFinance, String isCreateNewAccount,
-	        Date dateAppDate, boolean allowCmtPostings, long linkedTranId, Map<String, FeeRule> feeChargeMap) throws AccountNotFoundException, IllegalAccessException, InvocationTargetException{
+	        Date dateAppDate, boolean allowCmtPostings, long linkedTranId, Map<String, FeeRule> feeChargeMap, boolean isDepreciation) 
+	        		throws AccountNotFoundException, IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering");
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
@@ -295,7 +320,7 @@ public class PostingsPreparationUtil implements Serializable {
 		}
 
 		List<Object> returnList = postingsExecProcess(list, dataSet.getFinBranch(), dateAppDate,
-		        isCreateNewAccount, isEODProcess, false, linkedTranId, amountCodes.getRpTot(),premiumDetail, finAcType);
+		        isCreateNewAccount, isEODProcess, false, linkedTranId, amountCodes.getRpTot(),premiumDetail, finAcType, isDepreciation);
 		
 		if(cmtEventExecuted && (Boolean) returnList.get(0) && amountCodes.getRpPri().compareTo(BigDecimal.ZERO) > 0){
 			getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference(), amountCodes.getRpPri().negate(),commitment.getCmtExpDate());
@@ -348,7 +373,7 @@ public class PostingsPreparationUtil implements Serializable {
 				iscmtPostings = true;
 			}
 			returnList = postingsExecProcess(list, commitment.getCmtBranch(), dateAppDate,
-					isCreateNow, false, iscmtPostings, Long.MIN_VALUE, null, null, null);
+					isCreateNow, false, iscmtPostings, Long.MIN_VALUE, null, null, null, false);
 		}else{
 			returnList.add(false);
 			returnList.add(0);
@@ -421,8 +446,8 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws AccountNotFoundException
 	 */
 	private List<Object> postingsExecProcess(List<ReturnDataSet> list, String branch,
-	        Date dateAppDate, String createNow, boolean isEODProcess, 
-	        boolean isCmtPostings, long linkedTranId, BigDecimal totalRpyAmt, FinancePremiumDetail premiumDetail, String finAcType) throws AccountNotFoundException {
+	        Date dateAppDate, String createNow, boolean isEODProcess, boolean isCmtPostings, long linkedTranId, 
+	        BigDecimal totalRpyAmt, FinancePremiumDetail premiumDetail, String finAcType, boolean isDepreciation) throws AccountNotFoundException {
 		logger.debug("Entering");
 
 		//Commitment Posting Details
@@ -467,7 +492,11 @@ public class PostingsPreparationUtil implements Serializable {
 				linkedTranId = list.get(0).getLinkedTranId();
 			}
 			
-			list = getPostingsInterfaceService().doFillPostingDetails(list, branch, linkedTranId, createNow);
+			if(!isDepreciation){
+				list = getPostingsInterfaceService().doFillPostingDetails(list, branch, linkedTranId, createNow);
+			}else{
+				list = getPostingsInterfaceService().doAccrualPosting(list, dateAppDate, branch, linkedTranId, createNow, "N");
+			}
 		}
 
 		boolean isPostingSuccess = true;
@@ -802,14 +831,14 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 	
 	
-	public static List<ReturnDataSet> processEntryList(List<JVPostingEntry> jvPostingEntryList, String branch) throws AccountNotFoundException {
+	public static List<ReturnDataSet> processEntryList(List<JVPostingEntry> jvPostingEntryList, JVPosting jVPosting) throws AccountNotFoundException {
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 		long linkedTranId = Long.MIN_VALUE;
 		ReturnDataSet returnDataSet = null;
 		for (JVPostingEntry jvPostingEntry : jvPostingEntryList) {	        
 			returnDataSet = new ReturnDataSet();
 			//Set Object Data of ReturnDataSet(s)
-			returnDataSet.setFinReference("");
+			returnDataSet.setFinReference(jVPosting.getBatch());
 			returnDataSet.setAccount(jvPostingEntry.getAccount());
 			returnDataSet.setAcCcy(jvPostingEntry.getAccCCy());
 			returnDataSet.setAccountType(jvPostingEntry.getAcType());
@@ -853,7 +882,7 @@ public class PostingsPreparationUtil implements Serializable {
 			
 			list.add(returnDataSet);
 		}
-		list = getPostingsInterfaceService().doFillPostingDetails(list, branch, linkedTranId, PennantConstants.NO);
+		list = getPostingsInterfaceService().doFillPostingDetails(list, jVPosting.getBranch(), linkedTranId, PennantConstants.NO);
 		return list;
 	}
 	

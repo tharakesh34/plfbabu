@@ -426,7 +426,8 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 					//Not Allowed for Repayment
-					if (!curSchd.isRepayOnSchDate() ) {
+					if (!(curSchd.isRepayOnSchDate() ||
+							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) ) {
 						continue;
 					}
 
@@ -604,6 +605,7 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 		//Show Error Details in Schedule Maintainance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			getFinScheduleData().getErrorDetails().clear();
 		}else{
 
 			getFinScheduleData().setSchduleGenerated(true);

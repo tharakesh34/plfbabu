@@ -920,7 +920,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				aeCommitment.setCMTAMT(commitment.getCmtAmount());
 				aeCommitment.setCHGAMT(commitment.getCmtCharges());
 				aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(financeMain.getFinCcy(), commitment.getCmtCcy(),
-						financeMain.getFinAmount()));
+						financeMain.getFinAmount().subtract(financeMain.getDownPayment() == null ? BigDecimal.ZERO : financeMain.getDownPayment())));
 				aeCommitment.setRPPRI(BigDecimal.ZERO);
 
 				list.addAll(getEngineExecution().getCommitmentExecResults(aeCommitment, commitment, "CMTDISB", "Y", null));
@@ -1051,7 +1051,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					List<Date> schDateList = new ArrayList<Date>();
 					for (int i = 0; i < schDetailList.size(); i++) {
 	                    FinanceScheduleDetail curSchd = schDetailList.get(i);
-						if(!curSchd.isRepayOnSchDate()){
+						if(!(curSchd.isRepayOnSchDate() ||
+								(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))){
 							continue;
 						}
 						if(curSchd.getSchDate().compareTo(curBDay) > 0){

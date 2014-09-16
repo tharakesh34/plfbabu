@@ -990,7 +990,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				aeCommitment.setCMTAMT(commitment.getCmtAmount());
 				aeCommitment.setCHGAMT(commitment.getCmtCharges());
 				aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),
-						finMain.getFinAmount()));
+						finMain.getFinAmount().subtract(finMain.getDownPayment() == null ? BigDecimal.ZERO : finMain.getDownPayment())));
 				aeCommitment.setRPPRI(BigDecimal.ZERO);
 
 				getFinanceDetail().setCmtDataSetList(getEngineExecution().getCommitmentExecResults(aeCommitment, commitment, "CMTDISB", "N", null));
@@ -1482,7 +1482,10 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		} else if (DateUtility.compare(this.oldVar_maturityDate, this.maturityDate_two.getValue()) != 0) {
 			return true;
 		}
-
+		if (this.oldVar_finRepayPftOnFrq != this.finRepayPftOnFrq.isChecked()) {
+			return true;
+		}
+		
 		BigDecimal oldDwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
 		BigDecimal newDwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
 		if (oldDwnPayBank.compareTo(newDwnPayBank) != 0) {

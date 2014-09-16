@@ -413,7 +413,9 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl implements Serializab
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				//Not Review Date
-				if (!curSchd.isRepayOnSchDate() && !curSchd.isDeferedPay()) {
+				if (!(curSchd.isRepayOnSchDate() ||
+						(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) 
+						&& !curSchd.isDeferedPay()) {
 					continue;
 				}
 
@@ -748,6 +750,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl implements Serializab
 		//Show Error Details in Schedule Maintenance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
 			PTMessageUtils.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			getFinScheduleData().getErrorDetails().clear();
 		}else{
 			getFinScheduleData().setSchduleGenerated(true);
 			if(getFinanceMainDialogCtrl()!=null){
@@ -777,17 +780,21 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl implements Serializab
 			List<FinanceScheduleDetail> financeScheduleDetails = getFinScheduleData().getFinanceScheduleDetails();
 			if (financeScheduleDetails != null) {
 				for (int i = 0; i < financeScheduleDetails.size(); i++) {
-					if(financeScheduleDetails.get(i).isRepayOnSchDate()){
-						if(fromDate.compareTo(financeScheduleDetails.get(i).getSchDate()) == 0){
+					
+					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+					
+					if(curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() ||
+							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
+						if(fromDate.compareTo(curSchd.getSchDate()) == 0){
 							if(fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0){
 								this.row_GrcPeriodEndDate.setVisible(true);
 								this.row_grcNextRepayDate.setVisible(true);
 							}
 							break;
 						}
-						tempStartDate = financeScheduleDetails.get(i).getSchDate();
+						tempStartDate = curSchd.getSchDate();
 
-						if(financeScheduleDetails.get(i).getSchDate().compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) > 0){
+						if(curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) > 0){
 							rpyTermsCompleted = rpyTermsCompleted+1;
 						}
 					}

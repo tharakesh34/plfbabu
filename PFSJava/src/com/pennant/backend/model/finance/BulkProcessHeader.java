@@ -28,6 +28,7 @@ public class BulkProcessHeader implements Serializable,Entity {
 	private String addTermAfter;
 	private BigDecimal newProcessedRate;
 	private String reCalType;
+	private String lovDescReCalType="";
 	private String bulkProcessFor; 
 	private String ruleType;
 	private String lovDescSqlQuery;
@@ -281,5 +282,12 @@ public class BulkProcessHeader implements Serializable,Entity {
 	public void setLovDescIsOlddataChanged(boolean lovDescIsOlddataChanged) {
     	this.lovDescIsOlddataChanged = lovDescIsOlddataChanged;
     }
+
+	public String getLovDescReCalType() {
+		return lovDescReCalType;
+	}
+	public void setLovDescReCalType(String lovDescReCalType) {
+		this.lovDescReCalType = lovDescReCalType;
+	}
 
 }

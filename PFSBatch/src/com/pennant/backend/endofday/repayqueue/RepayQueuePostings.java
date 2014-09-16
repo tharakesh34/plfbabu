@@ -134,6 +134,7 @@ public class RepayQueuePostings implements Tasklet {
 		// FETCH Finance Repayment Queues
 		Connection connection = null;
 		ResultSet resultSet = null;
+		ResultSet rs = null;
 		PreparedStatement sqlStatement = null;
 		
 		FinRepayQueue finRepayQueue = null;
@@ -163,8 +164,15 @@ public class RepayQueuePostings implements Tasklet {
 				
 				financeType = EODProperties.getFinanceType(resultSet.getString("FinType").trim());
 				
+				//Prepare Finance Main Object data with Reference to Finance Reference
+				sqlStatement = connection.prepareStatement(prepareFinanceQuery());
+				sqlStatement.setString(1, resultSet.getString("FinReference"));
+				rs = sqlStatement.executeQuery();
+				while (rs.next()) {
+					financeMain = doWriteDataToBean(financeMain, rs);
+				}
+				
 				// Prepare Finance RepayQueue Data
-				financeMain = doWriteDataToBean(financeMain, resultSet);
 				finRepayQueue = doWriteDataToBean(finRepayQueue, resultSet);
 				
 				boolean allowRIAInvestment = financeType.isAllowRIAInvestment();
@@ -390,6 +398,10 @@ public class RepayQueuePostings implements Tasklet {
 			financeMain = null;
 			finRepayQueue = null;
 			
+			if(rs != null) {
+				rs.close();
+			}
+			
 			if(resultSet!= null) {
 				resultSet.close();
 			}
@@ -429,20 +441,33 @@ public class RepayQueuePostings implements Tasklet {
 	private String prepareSelectQuery() {
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FM.GrcPeriodEndDate, FM.FinRepaymentAmount, FM.DisbAccountid, FM.RepayAccountid, FM.FinAccount, FM.FinCustPftAccount, FM.FinCommitmentRef,");
-		selectSql.append(" FM.FinCcy, FM.FinAmount, FM.FeeChargeAmt, FM.DownPayment, FM.DownPayBank, FM.DownPaySupl, FM.DownPayAccount, FM.SecurityDeposit, "); 
-		selectSql.append(" FM.FinStartDate, FM.NumberOfTerms, FM.GraceTerms,  FM.NextGrcPftDate, FM.nextRepayDate, FM.LastRepayPftDate, FM.NextRepayPftDate, ");
-		selectSql.append(" FM.LastRepayRvwDate, FM.NextRepayRvwDate, FM.FinAssetValue, FM.FinCurrAssetValue,");
-		selectSql.append(" FM.RecordType, FM.ProfitDaysBasis, FM.FeeChargeAmt, FM.FinStatus, FM.FinStsReason, FM.SecurityDeposit, FM.MaturityDate,");
-		selectSql.append(" RQ.RpyDate, RQ.FinPriority, FM.FinType, RQ.FinReference, FM.ProfitDaysBasis,");
-		selectSql.append(" RQ.Branch, RQ.CustomerID, RQ.FinRpyFor, RQ.SchdPft, RQ.SchdPri, RQ.SchdPftPaid, RQ.SchdPriPaid, RQ.SchdPftBal, RQ.SchdPriBal,");
-		selectSql.append(" RQ.SchdIsPftPaid, RQ.SchdIsPriPaid, (RQ.SchdPftBal+ RQ.SchdPriBal) AS RepayQueueBal,");
-		selectSql.append(" PD.AcrTillLBD, PD.TdPftAmortizedSusp, PD.AmzTillLBD, FM.FinRepayMethod ");
-		selectSql.append(" FROM Financemain FM ");
-		selectSql.append(" INNER JOIN FinRpyQueue RQ ON RQ.FinReference = FM.FinReference ");
-		selectSql.append(" INNER JOIN FinPftDetails PD ON PD.FinReference = FM.FinReference ");
-		selectSql.append(" WHERE RQ.RpyDate <= ? AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0) ");
-		selectSql.append(" ORDER BY RQ.RpyDate, RQ.FinPriority, RQ.FinReference, RQ.FinRpyFor ASC ");
+		selectSql.append(" SELECT RQ.FinReference, RQ.FinType, RQ.RpyDate, RQ.FinPriority, RQ.Branch, " );
+		selectSql.append(" RQ.CustomerID, RQ.FinRpyFor, RQ.SchdPft, RQ.SchdPri, RQ.SchdPftPaid, RQ.SchdPriPaid, " );
+		selectSql.append(" RQ.SchdPftBal, RQ.SchdPriBal, RQ.SchdIsPftPaid, RQ.SchdIsPriPaid, " );
+		selectSql.append(" (RQ.SchdPftBal+ RQ.SchdPriBal) AS RepayQueueBal, PD.AcrTillLBD, PD.TdPftAmortizedSusp, PD.AmzTillLBD " );
+		selectSql.append(" FROM FinRpyQueue RQ  INNER JOIN FinPftDetails PD ON PD.FinReference = RQ.FinReference " );
+		selectSql.append(" WHERE RQ.RpyDate <= ? AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0) " );
+		selectSql.append(" ORDER BY RQ.RpyDate, RQ.FinPriority, RQ.FinReference, RQ.FinRpyFor ASC " );
+		return selectSql.toString();
+	}
+	
+	/**
+	 * Method for Preparation of Select Query for Preparing resultSet
+	 * 
+	 * @param selectSql
+	 * @return
+	 */
+	private String prepareFinanceQuery() {
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FinReference, GrcPeriodEndDate, FinRepaymentAmount, DisbAccountId, RepayAccountId, " );
+		selectSql.append(" FinAccount, FinCustPftAccount, FinCommitmentRef, FinCcy, FinBranch, CustID, FinAmount, " );
+		selectSql.append(" FeeChargeAmt, DownPayment, DownPayBank, DownPaySupl, DownPayAccount, SecurityDeposit, " );
+		selectSql.append(" FinType, FinStartDate, NumberOfTerms, GraceTerms,  NextGrcPftDate, NextRepayDate, " );
+		selectSql.append(" LastRepayPftDate, NextRepayPftDate, LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, " );
+		selectSql.append(" FinCurrAssetValue, RecordType, ProfitDaysBasis, FeeChargeAmt, FinStatus, " );
+		selectSql.append(" FinStsReason, MaturityDate, FinRepayMethod  " );
+		selectSql.append(" FROM Financemain  WHERE FinReference = ? " );
 		return selectSql.toString();
 	}
 

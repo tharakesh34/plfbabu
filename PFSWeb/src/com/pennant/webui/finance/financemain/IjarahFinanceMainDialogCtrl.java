@@ -170,6 +170,11 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 	private transient BigDecimal 	oldVar_securityDeposit;
 	protected transient BigDecimal 		oldVar_downPaySupl;
 	
+	//Gestation Period End Date Modification Parameters
+	private Date org_nextGrcPftDate = null;
+	private Date org_nextGrcRvwDate = null;
+	private Date org_nextGrcCpzDate = null;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -824,10 +829,12 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		
 		//Reset Maintenance Buttons for finance modification
 		if (!moduleDefiner.equals("")){
-			this.btnValidate.setDisabled(true);
-			this.btnBuildSchedule.setDisabled(true);
-			this.btnValidate.setVisible(false);
-			this.btnBuildSchedule.setVisible(false);
+			if(!moduleDefiner.equals("ChangeGestation")){
+				this.btnValidate.setDisabled(true);
+				this.btnBuildSchedule.setDisabled(true);
+				this.btnValidate.setVisible(false);
+				this.btnBuildSchedule.setVisible(false);
+			}
 			afinanceDetail.getFinScheduleData().getFinanceMain().setCurDisbursementAmt(afinanceDetail.getFinScheduleData().getFinanceMain().getFinAmount());
 		}
 
@@ -868,6 +875,13 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 				}
 				this.row_stepFinance.setVisible(false);
 				this.row_manualSteps.setVisible(false);
+			}
+			
+			//Saving Gestation Period Next (Pft/Rvw/Cpz) Dates
+			if(moduleDefiner.equals(PennantConstants.CHGGRC)){
+				this.org_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
+				this.org_nextGrcRvwDate = this.nextGrcPftRvwDate_two.getValue();
+				this.org_nextGrcCpzDate = this.nextGrcCpzDate_two.getValue();
 			}
 
 			
@@ -1064,7 +1078,8 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 				AECommitment aeCommitment = new AECommitment();
 				aeCommitment.setCMTAMT(commitment.getCmtAmount());
 				aeCommitment.setCHGAMT(commitment.getCmtCharges());
-				aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),finMain.getFinAmount()));
+				aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),
+						finMain.getFinAmount().subtract(finMain.getDownPayment() == null ? BigDecimal.ZERO : finMain.getDownPayment())));
 				aeCommitment.setRPPRI(BigDecimal.ZERO);
 
 				getFinanceDetail().setCmtDataSetList(getEngineExecution().getCommitmentExecResults(aeCommitment, commitment, "CMTDISB", "N", null));
@@ -1599,6 +1614,9 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 				return true;
 			}
 		} else if (DateUtility.compare(this.oldVar_maturityDate, this.maturityDate_two.getValue()) != 0) {
+			return true;
+		}
+		if (this.oldVar_finRepayPftOnFrq != this.finRepayPftOnFrq.isChecked()) {
 			return true;
 		}
 
@@ -2364,6 +2382,25 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		}else if(!isReadOnly("FinanceMainDialog_amountBHD")){
 			aFinanceDetail.getFinScheduleData().setFinanceMain(getFinanceDetailService().fetchConvertedAmounts(
 					aFinanceDetail.getFinScheduleData().getFinanceMain(), false));
+		}
+		
+		//Setting Next Grace/Gestation Period Details on Gestation Maintenance
+		if(moduleDefiner.equals(PennantConstants.CHGGRC)){
+			if(org_nextGrcPftDate == null || org_nextGrcPftDate.compareTo(aFinanceMain.getGrcPeriodEndDate()) > 0){
+				org_nextGrcPftDate = aFinanceMain.getGrcPeriodEndDate();
+			}
+			if(org_nextGrcRvwDate == null || org_nextGrcRvwDate.compareTo(aFinanceMain.getGrcPeriodEndDate()) > 0){
+				org_nextGrcRvwDate = aFinanceMain.getGrcPeriodEndDate();
+			}
+			if(org_nextGrcCpzDate == null || org_nextGrcCpzDate.compareTo(aFinanceMain.getGrcPeriodEndDate()) > 0){
+				org_nextGrcCpzDate = aFinanceMain.getGrcPeriodEndDate();
+			}
+			
+			//Resetting Next Grace Dates to Object with Original Values
+			aFinanceMain.setNextGrcPftDate(org_nextGrcPftDate);
+			aFinanceMain.setNextGrcPftRvwDate(org_nextGrcRvwDate);
+			aFinanceMain.setNextGrcCpzDate(org_nextGrcCpzDate);
+			
 		}
 		
 		// save it to database

@@ -86,9 +86,11 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.QueryBuilder;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Query;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -173,6 +175,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	protected Button btnPreview; 	// autoWire
 	protected Button btnProceed; 	// autoWire
 	protected Button btnRecal; 	    // autoWire
+	protected Button btnPrint; 	    // autoWire
 	
     protected Listheader listheader_reCalStartDate; // autoWire
     protected Listheader listheader_reCalEndDate;   // autoWire
@@ -277,6 +280,12 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		doShowDialog(getBulkProcessHeader());
 		getVisibilityOfComponents(bulkProcessHeader);
 		this.btnProceed.setVisible(false);
+		
+		if(listBoxBulkrateChangeDialog != null && listBoxBulkrateChangeDialog.getItems().size() >0){
+			this.btnPrint.setVisible(true);
+		} else {
+			this.btnPrint.setVisible(false);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -307,7 +316,6 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	public void doCheckRights(){
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("BulkProcessHeader", getRole());
-
 		this.btnProceed.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnProceed"));
 		this.btnPreview.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnPreview"));
 		//this.btnRecal.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnRecal"));
@@ -315,7 +323,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnEdit"));
 		//this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnSave"));
-		this.btnCancel.setVisible(false);		
+		this.btnCancel.setVisible(false);	
 		logger.debug("Leaving");
 	}
 	
@@ -487,8 +495,8 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 			this.listheader_reCalStartDate.setVisible(true);
 			this.listheader_reCalEndDate.setVisible(true);
     	} else {
-			this.listheader_reCalStartDate.setVisible(true);
-			this.listheader_reCalEndDate.setVisible(true);
+			this.listheader_reCalStartDate.setVisible(false);
+			this.listheader_reCalEndDate.setVisible(false);
     	}
     	
 		logger.debug("Leaving");
@@ -531,32 +539,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 			aBulkProcessHeader.setAddTermAfter(this.cbAddTermAfter.getSelectedItem().getValue().toString());
 		}
 		
-		if(this.listBoxBulkrateChangeDialog.getItems() != null){
-			for(int i=0; i<this.listBoxBulkrateChangeDialog.getItems().size(); i++){
-				BulkProcessDetails selectedBulkProcessDetails = null;
-				if(this.listBoxBulkrateChangeDialog.getSelectedItems().contains(this.listBoxBulkrateChangeDialog.getItems().get(i))){
-					 selectedBulkProcessDetails = (BulkProcessDetails) this.listBoxBulkrateChangeDialog.getItems().get(i).getAttribute("data");
-					 for(BulkProcessDetails bulkProcessDetails : aBulkProcessHeader.getBulkProcessDetailsList()){
-						 if(selectedBulkProcessDetails != null && 
-							selectedBulkProcessDetails.getFinReference().equals(bulkProcessDetails.getFinReference())
-							&& selectedBulkProcessDetails.getDeferedSchdDate().compareTo(bulkProcessDetails.getDeferedSchdDate()) == 0){
-							 bulkProcessDetails.setAlwProcess(false);
-							 break;
-						 } 
-					 }
-				} else {
-					selectedBulkProcessDetails = (BulkProcessDetails) this.listBoxBulkrateChangeDialog.getItems().get(i).getAttribute("data");
-					for(BulkProcessDetails bulkProcessDetails : aBulkProcessHeader.getBulkProcessDetailsList()){
-						 if(selectedBulkProcessDetails != null && 
-							selectedBulkProcessDetails.getFinReference().equals(bulkProcessDetails.getFinReference())
-							&& selectedBulkProcessDetails.getDeferedSchdDate().compareTo(bulkProcessDetails.getDeferedSchdDate()) == 0){
-							 bulkProcessDetails.setAlwProcess(true);
-							 break;
-						 } 
-					 }
-				}
-			}
-		}
+		setFinanceForBulkdefermentProcess(aBulkProcessHeader);
 		
 		if(aBulkProcessHeader.getBulkProcessDetailsList() != null && aBulkProcessHeader.getBulkProcessDetailsList().size() > 0){
 			if (aBulkProcessHeader.isNewRecord()) {
@@ -571,6 +554,38 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		
 		logger.debug("Leaving");
 	}
+	
+   public void setFinanceForBulkdefermentProcess(BulkProcessHeader aBulkProcessHeader){
+	  logger.debug("Entering");
+	  
+	  if(this.listBoxBulkrateChangeDialog.getItems() != null){
+		 for(int i=0; i<this.listBoxBulkrateChangeDialog.getItems().size(); i++){
+			BulkProcessDetails selectedBulkProcessDetails = null;
+			 if(this.listBoxBulkrateChangeDialog.getSelectedItems().contains(this.listBoxBulkrateChangeDialog.getItems().get(i))){
+				 selectedBulkProcessDetails = (BulkProcessDetails) this.listBoxBulkrateChangeDialog.getItems().get(i).getAttribute("data");
+				 for(BulkProcessDetails bulkProcessDetails : aBulkProcessHeader.getBulkProcessDetailsList()){
+					 if(selectedBulkProcessDetails != null && 
+						selectedBulkProcessDetails.getFinReference().equals(bulkProcessDetails.getFinReference())
+						&& selectedBulkProcessDetails.getDeferedSchdDate().compareTo(bulkProcessDetails.getDeferedSchdDate()) == 0){
+						 bulkProcessDetails.setAlwProcess(false);
+						 break;
+					 } 
+				 }
+			} else {
+				selectedBulkProcessDetails = (BulkProcessDetails) this.listBoxBulkrateChangeDialog.getItems().get(i).getAttribute("data");
+				 for(BulkProcessDetails bulkProcessDetails : aBulkProcessHeader.getBulkProcessDetailsList()){
+					 if(selectedBulkProcessDetails != null && 
+						selectedBulkProcessDetails.getFinReference().equals(bulkProcessDetails.getFinReference())
+						&& selectedBulkProcessDetails.getDeferedSchdDate().compareTo(bulkProcessDetails.getDeferedSchdDate()) == 0){
+						 bulkProcessDetails.setAlwProcess(true);
+						 break;
+					 } 
+				 }
+			}
+		}
+	}
+	logger.debug("Leaving");
+}
 	
 	
 	/*
@@ -738,6 +753,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 				this.cbAddTermAfter.setSelectedIndex(0);
 				if (recalType.equals(CalculationConstants.RPYCHG_TILLMDT)) {
 					this.calToDate.setDisabled(true);
+					this.calToDate.setValue(null);
 					this.calToDate.setConstraint("");
 				} else {
 					this.calToDate.setDisabled(false);
@@ -748,6 +764,8 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 				this.recalFromDateRow.setVisible(false);
 				this.excDefDateRow.setVisible(false);
 				this.exDefDate.setChecked(false);
+				this.calFromDate.setValue(null);
+				this.calToDate.setValue(null);
 			} else {
 				this.recalFromDateRow.setVisible(false);
 				this.excDefDateRow.setVisible(false);
@@ -764,7 +782,6 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	 */
 	public void onChange$toDate(Event event) {
 		logger.debug("Entering" + event.toString());
-		setEventDatesValidation(this.toDate.getValue());
 		fillIjarahaFinances();
 		logger.debug("Leaving" + event.toString());
 	}	
@@ -1466,9 +1483,6 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 			getPagedListWrapper().initList(getBulkProcessHeader().getBulkProcessDetailsList(), this.listBoxBulkrateChangeDialog, this.pagingIjarahaFinancesList);
 			this.listBoxBulkrateChangeDialog.setItemRenderer(new BulkChangeDialoglItemRenderer(!getUserWorkspace().isAllowed("BulkProcessHeader_isDeferedItemDisabled")));
 			doReadOnly(true);
-			this.btnPreview.setVisible(false);
-			this.btnRecal.setVisible(true);
-			
 			if(getBulkProcessHeader().getBulkProcessDetailsList() == null || getBulkProcessHeader().getBulkProcessDetailsList().size() == 0){
 				try {
 					PTMessageUtils.showErrorMessage(" No Finances Founded With Schedule Term In Between "+
@@ -1483,6 +1497,14 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 				}
 				return;
 			}
+		}
+		
+		this.btnPreview.setVisible(false);
+		this.btnRecal.setVisible(true);
+		if(listBoxBulkrateChangeDialog != null && listBoxBulkrateChangeDialog.getItems().size() >0){
+			this.btnPrint.setVisible(true);
+		} else {
+			this.btnPrint.setVisible(false);
 		}
 		logger.debug("Entering");
 	}
@@ -1614,6 +1636,47 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		logger.debug("Leaving" +event.toString());
 	}
 	
+	/*
+	 * onClick Event For Print Button
+	 */
+	public void onClick$btnPrint(Event event) throws Exception{
+		logger.debug("Entering" + event.toString());
+		
+		doWriteComponentsToBean(getBulkProcessHeader());	
+		
+		if(getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLMDT)){
+			getBulkProcessHeader().setLovDescReCalType(Labels.getLabel("label_Till_Maturity"));
+		} else if(getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_ADJMDT)){
+			getBulkProcessHeader().setLovDescReCalType(Labels.getLabel("label_Adj_To_Maturity"));
+	    } else if(getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLDATE)){
+			getBulkProcessHeader().setLovDescReCalType(Labels.getLabel("label_Till_Date"));
+	    } else if(getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_ADDTERM)){
+			getBulkProcessHeader().setLovDescReCalType(Labels.getLabel("label_Add_Terms"));
+	    }
+		
+		List<BulkProcessDetails> bulkProcessDetailsRptData = new ArrayList<BulkProcessDetails>();
+		if (getBulkProcessHeader().getBulkProcessDetailsList() != null
+				&& getBulkProcessHeader().getBulkProcessDetailsList().size() > 0) {
+			for (BulkProcessDetails bulkProcessDetail : getBulkProcessHeader()
+					.getBulkProcessDetailsList()) {
+				if (bulkProcessDetail.isAlwProcess()) {
+					bulkProcessDetailsRptData.add(bulkProcessDetail);
+				}
+			}
+		}
+		
+		List<Object> list = new ArrayList<Object>();
+		list.add(bulkProcessDetailsRptData);
+		String reportName="FINENQ_BulkDifferemmentDetails";
+		SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
+		String usrName = (securityUser.getUsrFName().trim() +" "+securityUser.getUsrMName().trim()+" "+securityUser.getUsrLName()).trim();
+		
+		ReportGenerationUtil.generateReport(reportName, getBulkProcessHeader(), list, true, 1, usrName, this.window_BulkRateChangeDialog);
+	
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -1665,6 +1728,9 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 					new String[]{Labels.getLabel("label_BulkRateChangeDialog_RuleType.value")}));
 		}
 		
+		if(this.toDate.getValue() != null){
+			setEventDatesValidation(this.toDate.getValue());
+		}
 		
 		logger.debug("Leaving");
 	}
