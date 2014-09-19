@@ -2225,11 +2225,11 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 	/**
 	 * This method prepares Where condition For Selected items of list Box
 	 * @param multiSelectionListBox
-	 * @param WhereCondition
+	 * @param whereCondition
 	 * @return
 	 */
 	private StringBuffer getWhereCondFromMSelectListBox(ReportFilterFields aReportFieldsDetails 
-			, Bandbox banBox,StringBuffer WhereCondition) {
+			, Bandbox banBox,StringBuffer whereCondition) {
 		logger.debug("Entering");
 		//Forming and  Condition  like ' userEnable='1' and usrStaus='2'' 
 		StringBuffer csvValues=new StringBuffer("");
@@ -2244,9 +2244,9 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 			if(checkBox.isChecked()){
 				csvValues.append(lc.getValue()+",");
 				if(aReportFieldsDetails.getFieldType().equals(FIELDTYPE.MULTISELANDLIST.toString())){
-					addAndCondition(WhereCondition);
+					addAndCondition(whereCondition);
 					addAndCondition(tempWhereCondition);
-					WhereCondition.append(lc.getId()+"='"+lc.getValue()+"'");
+					whereCondition.append(lc.getId()+"='"+lc.getValue()+"'");
 					tempWhereCondition.append(lc.getId()+"='"+lc.getLabel()+"'");		
 				}
 			}
@@ -2260,10 +2260,10 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 		//Forming In Condition RightType in ('0','1','2')
 		if(aReportFieldsDetails.getFieldType().equals(FIELDTYPE.MULTISELINLIST.toString()) 
 				&& !(csvValues.length() == 0)){
-			addAndCondition(WhereCondition);
+			addAndCondition(whereCondition);
 			String inCondition =getINCondition(csvValues.toString());
 			String[] inCondSize = inCondition.split(",");
-			WhereCondition.append(aReportFieldsDetails.getFieldDBName()+" in "+inCondition);
+			whereCondition.append(aReportFieldsDetails.getFieldDBName()+" in "+inCondition);
 			if(inCondSize.length > 1) {
 				searchCriteriaDesc.append(aReportFieldsDetails.getFieldLabel()
 						+" is in "+StringUtils.substring(banBox.getValue(),0,banBox.getValue().length()-1)+"\n");
@@ -2279,7 +2279,7 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 			}
 		}
 		logger.debug("Leaving" );
-		return WhereCondition;
+		return whereCondition;
 	}
 
 	/**

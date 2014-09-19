@@ -90,7 +90,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timebox;
 import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
-import org.zkoss.zul.impl.InputElement;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
@@ -876,18 +875,18 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 			lovButton.setVisible(true);
 		}
 	}
-	public void  setStatusDetails(Groupbox gb_statusDetails,Groupbox groupboxWf,South south,boolean enqModule){
+	public void  setStatusDetails(Groupbox gbStatusDetails,Groupbox groupBoxWf,South south,boolean enqModule){
 		if (isWorkFlowEnabled()){
-			if(gb_statusDetails != null){
-				gb_statusDetails.setVisible(true);
+			if(gbStatusDetails != null){
+				gbStatusDetails.setVisible(true);
 			}
 			if(enqModule){
-				groupboxWf.setVisible(false);
+				groupBoxWf.setVisible(false);
 				south.setHeight("60px");
 			}
 		}else{
-			if(gb_statusDetails != null){
-				gb_statusDetails.setVisible(false);
+			if(gbStatusDetails != null){
+				gbStatusDetails.setVisible(false);
 			}
 		}
 	}

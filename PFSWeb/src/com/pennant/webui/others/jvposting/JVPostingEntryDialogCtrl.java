@@ -1948,8 +1948,8 @@ Serializable {
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setJVPostingDialogCtrl(JVPostingDialogCtrl jVPostingDialogCtrl) {
@@ -1980,8 +1980,8 @@ Serializable {
 		return old_JVPostingEntry;
 	}
 
-	public void setOld_JVPostingEntry(JVPostingEntry old_JVPostingEntry) {
-		this.old_JVPostingEntry = old_JVPostingEntry;
+	public void setOld_JVPostingEntry(JVPostingEntry oldJVPostingEntry) {
+		this.old_JVPostingEntry = oldJVPostingEntry;
 	}
 
 	public List<JVPostingEntry> getDeletedJVPostingEntryList() {

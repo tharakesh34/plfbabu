@@ -523,10 +523,9 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		if (StringUtils.isNotEmpty(this.reportName.getValue())) {
 
 			// get the search operator
-			final Listitem item_ReportName = this.sortOperator_ReportName.getSelectedItem();
-
-			if (item_ReportName != null) {
-				final int searchOpId = ((SearchOperators) item_ReportName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemReportName = this.sortOperator_ReportName.getSelectedItem();
+			if (itemReportName != null) {
+				final int searchOpId = ((SearchOperators) itemReportName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					this.searchObj.addFilter(new Filter("reportName", "%"
@@ -544,11 +543,9 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		if (StringUtils.isNotEmpty(this.reportHeading.getValue())) {
 
 			// get the search operator
-			final Listitem item_ReportHeading = this.sortOperator_ReportHeading
-			.getSelectedItem();
-
-			if (item_ReportHeading != null) {
-				final int searchOpId = ((SearchOperators) item_ReportHeading
+			final Listitem itemReportHeading = this.sortOperator_ReportHeading.getSelectedItem();
+			if (itemReportHeading != null) {
+				final int searchOpId = ((SearchOperators) itemReportHeading
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -564,10 +561,9 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		}
 
 		// get the search operator
-		final Listitem item_PromptRequired = this.sortOperator_PromptRequired.getSelectedItem();
-
-		if (item_PromptRequired != null) {
-			final int searchOpId = ((SearchOperators) item_PromptRequired.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemPromptRequired = this.sortOperator_PromptRequired.getSelectedItem();
+		if (itemPromptRequired != null) {
+			final int searchOpId = ((SearchOperators) itemPromptRequired.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -584,10 +580,9 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		if (StringUtils.isNotEmpty(this.reportJasperName.getValue())) {
 
 			// get the search operator
-			final Listitem item_ReportJasperName = this.sortOperator_ReportJasperName.getSelectedItem();
-
-			if (item_ReportJasperName != null) {
-				final int searchOpId = ((SearchOperators) item_ReportJasperName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemReportJasperName = this.sortOperator_ReportJasperName.getSelectedItem();
+			if (itemReportJasperName != null) {
+				final int searchOpId = ((SearchOperators) itemReportJasperName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					this.searchObj.addFilter(new Filter("reportJasperName", "%"
@@ -602,9 +597,9 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -626,9 +621,9 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					this.searchObj.addFilter(new Filter("recordType", "%"+ selectedValue.toUpperCase() + "%", searchOpId));

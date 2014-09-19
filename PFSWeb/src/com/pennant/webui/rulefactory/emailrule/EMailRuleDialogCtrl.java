@@ -1166,8 +1166,8 @@ public class EMailRuleDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 	public void onClick$btnValidate(Event event){
 		this.Sql_Rule.getSqlQuery(true);
@@ -1186,11 +1186,8 @@ public class EMailRuleDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	private void createSimulationWindow(String Values) throws InterruptedException {
+	private void createSimulationWindow(String values) throws InterruptedException {
 		logger.debug("Entering");
-
-		String[] Variables = Values.split(",");
-
 		this.Sql_Rule.simulateQuery(window_EMailRuleDialog);
 		logger.debug("Leaving");
 	}

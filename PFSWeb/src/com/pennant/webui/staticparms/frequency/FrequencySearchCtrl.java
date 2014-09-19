@@ -296,10 +296,9 @@ public class FrequencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.frqCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_FrqCode = this.sortOperator_frqCode.getSelectedItem();
-
-			if (item_FrqCode != null) {
-				final int searchOpId = ((SearchOperators) item_FrqCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFrqCode = this.sortOperator_frqCode.getSelectedItem();
+			if (itemFrqCode != null) {
+				final int searchOpId = ((SearchOperators) itemFrqCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("frqCode", "%" + this.frqCode.getValue().toUpperCase() + "%", searchOpId));
@@ -313,10 +312,9 @@ public class FrequencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.frqDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_FrqDesc = this.sortOperator_frqDesc.getSelectedItem();
-
-			if (item_FrqDesc != null) {
-				final int searchOpId = ((SearchOperators) item_FrqDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFrqDesc = this.sortOperator_frqDesc.getSelectedItem();
+			if (itemFrqDesc != null) {
+				final int searchOpId = ((SearchOperators) itemFrqDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("frqDesc", "%" + this.frqDesc.getValue().toUpperCase() + "%",searchOpId));
@@ -328,10 +326,9 @@ public class FrequencySearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_FrqIsActive = this.sortOperator_frqIsActive.getSelectedItem();
-
-		if (item_FrqIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_FrqIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemFrqIsActive = this.sortOperator_frqIsActive.getSelectedItem();
+		if (itemFrqIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemFrqIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -346,9 +343,9 @@ public class FrequencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"	+ this.recordStatus.getValue().toUpperCase() + "%",	searchOpId));
@@ -367,9 +364,9 @@ public class FrequencySearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

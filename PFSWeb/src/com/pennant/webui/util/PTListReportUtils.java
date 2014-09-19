@@ -124,7 +124,7 @@ public class PTListReportUtils implements Serializable {
 			List<ReportListDetail> reportData = pagedListService.getBySearchObject(searchObject);
 			header.setListDetails(reportData);
 
-			JRBeanCollectionDataSource ListDetailsDS = new JRBeanCollectionDataSource(reportData);
+			JRBeanCollectionDataSource listDetailsDS = new JRBeanCollectionDataSource(reportData);
 
 			String reportSrc;
 			if(module.equals(Labels.getLabel("label_CheckList.value"))){
@@ -152,7 +152,7 @@ public class PTListReportUtils implements Serializable {
 				File file = new File(reportSrc) ;
 				if(file.exists()){
 					byte[] buf = null;
-					buf=JasperRunManager.runReportToPdf(reportSrc,parameters,ListDetailsDS);
+					buf=JasperRunManager.runReportToPdf(reportSrc,parameters,listDetailsDS);
 					final HashMap<String, Object> map = new HashMap<String, Object>();
 					map.put("reportBuffer", buf);
 

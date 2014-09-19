@@ -285,10 +285,9 @@ public class RepaymentMethodSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.repayMethod.getValue())) {
 
 			// get the search operator
-			final Listitem item_RepayMethod = this.sortOperator_repayMethod.getSelectedItem();
-
-			if (item_RepayMethod != null) {
-				final int searchOpId = ((SearchOperators) item_RepayMethod.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRepayMethod = this.sortOperator_repayMethod.getSelectedItem();
+			if (itemRepayMethod != null) {
+				final int searchOpId = ((SearchOperators) itemRepayMethod.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("repayMethod", "%"+ this.repayMethod.getValue().toUpperCase() + "%",searchOpId));
@@ -302,10 +301,9 @@ public class RepaymentMethodSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.repayMethodDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_RepayMethodDesc = this.sortOperator_repayMethodDesc.getSelectedItem();
-
-			if (item_RepayMethodDesc != null) {
-				final int searchOpId = ((SearchOperators) item_RepayMethodDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRepayMethodDesc = this.sortOperator_repayMethodDesc.getSelectedItem();
+			if (itemRepayMethodDesc != null) {
+				final int searchOpId = ((SearchOperators) itemRepayMethodDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("repayMethodDesc", "%"+ this.repayMethodDesc.getValue().toUpperCase()+ "%", searchOpId));
@@ -318,9 +316,9 @@ public class RepaymentMethodSearchCtrl extends GFCBaseCtrl implements Serializab
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"+ this.recordStatus.getValue().toUpperCase() + "%",searchOpId));
@@ -337,9 +335,9 @@ public class RepaymentMethodSearchCtrl extends GFCBaseCtrl implements Serializab
 		}
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"+ selectedValue.toUpperCase() + "%", searchOpId));

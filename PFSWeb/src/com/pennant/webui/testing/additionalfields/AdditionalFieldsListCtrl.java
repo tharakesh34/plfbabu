@@ -231,9 +231,9 @@ public class AdditionalFieldsListCtrl extends GFCBaseListCtrl<AdditionalFields> 
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final AdditionalFields aAdditionalFields = (AdditionalFields) item.getAttribute("data");
-			final AdditionalFields AdditionalFields = getAdditionalFieldsService().getAdditionalFieldsById(aAdditionalFields.getId());
+			final AdditionalFields additionalFields = getAdditionalFieldsService().getAdditionalFieldsById(aAdditionalFields.getId());
 			
-			if(AdditionalFields==null){
+			if(additionalFields==null){
 				String[] errParm= new String[1];
 				String[] valueParm= new String[1];
 				valueParm[0]=aAdditionalFields.getId();
@@ -243,16 +243,16 @@ public class AdditionalFieldsListCtrl extends GFCBaseListCtrl<AdditionalFields> 
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			}else{
 				if(isWorkFlowEnabled()){
-					String whereCond =  " AND Code='"+ AdditionalFields.getCode()+"' AND version=" + AdditionalFields.getVersion()+" ";
+					String whereCond =  " AND Code='"+ additionalFields.getCode()+"' AND version=" + additionalFields.getVersion()+" ";
 
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "AdditionalFields", whereCond, AdditionalFields.getTaskId(), AdditionalFields.getNextTaskId());
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "AdditionalFields", whereCond, additionalFields.getTaskId(), additionalFields.getNextTaskId());
 					if (userAcces){
-						showDetailView(AdditionalFields);
+						showDetailView(additionalFields);
 					}else{
 						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
-					showDetailView(AdditionalFields);
+					showDetailView(additionalFields);
 				}
 			}	
 		}
@@ -378,8 +378,8 @@ public class AdditionalFieldsListCtrl extends GFCBaseListCtrl<AdditionalFields> 
 		logger.debug("Leaving");
 	}
 
-	public void setAdditionalFieldsService(AdditionalFieldsService AdditionalFieldsService) {
-		this.AdditionalFieldsService = AdditionalFieldsService;
+	public void setAdditionalFieldsService(AdditionalFieldsService additionalFieldsService) {
+		this.AdditionalFieldsService = additionalFieldsService;
 	}
 
 	public AdditionalFieldsService getAdditionalFieldsService() {

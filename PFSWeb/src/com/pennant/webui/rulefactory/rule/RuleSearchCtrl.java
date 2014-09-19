@@ -281,10 +281,9 @@ public class RuleSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.ruleCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_RuleCode = this.sortOperator_ruleCode.getSelectedItem();
-
-			if (item_RuleCode != null) {
-				final int searchOpId = ((SearchOperators) item_RuleCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRuleCode = this.sortOperator_ruleCode.getSelectedItem();
+			if (itemRuleCode != null) {
+				final int searchOpId = ((SearchOperators) itemRuleCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("ruleCode", "%"+ this.ruleCode.getValue().toUpperCase() + "%",
@@ -300,10 +299,10 @@ public class RuleSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.ruleCodeDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_RuleDesc = this.sortOperator_ruleCodeDesc.getSelectedItem();
+			final Listitem itemRuleDesc = this.sortOperator_ruleCodeDesc.getSelectedItem();
 
-			if (item_RuleDesc != null) {
-				final int searchOpId = ((SearchOperators) item_RuleDesc
+			if (itemRuleDesc != null) {
+				final int searchOpId = ((SearchOperators) itemRuleDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -318,9 +317,9 @@ public class RuleSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -339,9 +338,9 @@ public class RuleSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

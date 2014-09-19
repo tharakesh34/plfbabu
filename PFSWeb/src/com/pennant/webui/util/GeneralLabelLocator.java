@@ -77,27 +77,27 @@ public class GeneralLabelLocator implements LabelLocator {
 	@SuppressWarnings("deprecation")
 	public URL locate(Locale locale) throws Exception {
 
-		String menu_res_filename = "";
+		String menuResFilename = "";
 
 		if (StringUtils.isEmpty(context) || context.equalsIgnoreCase(PennantConstants.default_Language)) {
 			Sessions.getCurrent().setAttribute("px_preferred_locale", new Locale(PennantConstants.default_Language.toLowerCase(), PennantConstants.default_Language));
-			menu_res_filename = MENU_FILE_NAME + MENU_FILE_SUFFIX;
+			menuResFilename = MENU_FILE_NAME + MENU_FILE_SUFFIX;
 		}else{
 			Sessions.getCurrent().setAttribute("px_preferred_locale", new Locale(this.context.toLowerCase(), this.context.toUpperCase()));
-			menu_res_filename = MENU_FILE_NAME + "_" + context.toUpperCase() + MENU_FILE_SUFFIX;
+			menuResFilename = MENU_FILE_NAME + "_" + context.toUpperCase() + MENU_FILE_SUFFIX;
 		}
 
 		
 		
 		// real path
-		String menu_res_path = Sessions.getCurrent().getWebApp().getRealPath("/WEB-INF/" + menu_res_filename);
+		String menuResPath = Sessions.getCurrent().getWebApp().getRealPath("/WEB-INF/" + menuResFilename);
 
 		// check if the file exists
-		File fmr = new File(menu_res_path);
+		File fmr = new File(menuResPath);
 		if (!fmr.exists()){
-			System.out.println(menu_res_filename + "Not Exists");
-			menu_res_filename = MENU_FILE_NAME + MENU_FILE_SUFFIX;
-			fmr = new File(Sessions.getCurrent().getWebApp().getRealPath("/WEB-INF/" + menu_res_filename));
+			System.out.println(menuResFilename + "Not Exists");
+			menuResFilename = MENU_FILE_NAME + MENU_FILE_SUFFIX;
+			fmr = new File(Sessions.getCurrent().getWebApp().getRealPath("/WEB-INF/" + menuResFilename));
 		}
 			
 

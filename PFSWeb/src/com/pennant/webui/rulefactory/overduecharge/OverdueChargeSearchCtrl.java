@@ -324,10 +324,9 @@ public class OverdueChargeSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.oDCRuleCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_ODCRuleCode = this.sortOperator_oDCRuleCode.getSelectedItem();
-
-			if (item_ODCRuleCode != null) {
-				final int searchOpId = ((SearchOperators) item_ODCRuleCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemODCRuleCode = this.sortOperator_oDCRuleCode.getSelectedItem();
+			if (itemODCRuleCode != null) {
+				final int searchOpId = ((SearchOperators) itemODCRuleCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("oDCRuleCode", "%" + this.oDCRuleCode.getValue().toUpperCase() + "%", searchOpId));
@@ -341,10 +340,9 @@ public class OverdueChargeSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.oDCPLAccount.getValue())) {
 
 			// get the search operator
-			final Listitem item_ODCPLAccount = this.sortOperator_oDCPLAccount.getSelectedItem();
-
-			if (item_ODCPLAccount != null) {
-				final int searchOpId = ((SearchOperators) item_ODCPLAccount.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemODCPLAccount = this.sortOperator_oDCPLAccount.getSelectedItem();
+			if (itemODCPLAccount != null) {
+				final int searchOpId = ((SearchOperators) itemODCPLAccount.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("oDCPLAccount", "%" + this.oDCPLAccount.getValue().toUpperCase() + "%", searchOpId));
@@ -358,10 +356,9 @@ public class OverdueChargeSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.oDCCharityAccount.getValue())) {
 
 			// get the search operator
-			final Listitem item_ODCCharityAccount = this.sortOperator_oDCCharityAccount.getSelectedItem();
-
-			if (item_ODCCharityAccount != null) {
-				final int searchOpId = ((SearchOperators) item_ODCCharityAccount.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemODCCharityAccount = this.sortOperator_oDCCharityAccount.getSelectedItem();
+			if (itemODCCharityAccount != null) {
+				final int searchOpId = ((SearchOperators) itemODCCharityAccount.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("oDCCharityAccount", "%" + this.oDCCharityAccount.getValue().toUpperCase() + "%", searchOpId));
@@ -373,9 +370,9 @@ public class OverdueChargeSearchCtrl extends GFCBaseCtrl implements Serializable
 			}
 		}
 	  if (this.oDCPLShare.getValue()!=null) {	  
-	    final Listitem item_ODCPLShare = this.sortOperator_oDCPLShare.getSelectedItem();
-	  	if (item_ODCPLShare != null) {
-	 		final int searchOpId = ((SearchOperators) item_ODCPLShare.getAttribute("data")).getSearchOperatorId();
+	    final Listitem itemODCPLShare = this.sortOperator_oDCPLShare.getSelectedItem();
+	  	if (itemODCPLShare != null) {
+	 		final int searchOpId = ((SearchOperators) itemODCPLShare.getAttribute("data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
 	 			// do nothing
@@ -388,10 +385,9 @@ public class OverdueChargeSearchCtrl extends GFCBaseCtrl implements Serializable
 	 	}
 	  }	
 		// get the search operatorxxx
-		final Listitem item_ODCSweepCharges = this.sortOperator_oDCSweepCharges.getSelectedItem();
-
-		if (item_ODCSweepCharges != null) {
-			final int searchOpId = ((SearchOperators) item_ODCSweepCharges.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemODCSweepCharges = this.sortOperator_oDCSweepCharges.getSelectedItem();
+		if (itemODCSweepCharges != null) {
+			final int searchOpId = ((SearchOperators) itemODCSweepCharges.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -406,9 +402,9 @@ public class OverdueChargeSearchCtrl extends GFCBaseCtrl implements Serializable
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -427,9 +423,9 @@ public class OverdueChargeSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

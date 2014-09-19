@@ -286,10 +286,9 @@ public class ScheduleMethodSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.schdMethod.getValue())) {
 
 			// get the search operator
-			final Listitem item_SchdMethod = this.sortOperator_schdMethod.getSelectedItem();
-
-			if (item_SchdMethod != null) {
-				final int searchOpId = ((SearchOperators) item_SchdMethod.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSchdMethod = this.sortOperator_schdMethod.getSelectedItem();
+			if (itemSchdMethod != null) {
+				final int searchOpId = ((SearchOperators) itemSchdMethod.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("schdMethod", "%"+ this.schdMethod.getValue().toUpperCase() + "%",searchOpId));
@@ -303,10 +302,9 @@ public class ScheduleMethodSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.schdMethodDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_SchdMethodDesc = this.sortOperator_schdMethodDesc.getSelectedItem();
-
-			if (item_SchdMethodDesc != null) {
-				final int searchOpId = ((SearchOperators) item_SchdMethodDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSchdMethodDesc = this.sortOperator_schdMethodDesc.getSelectedItem();
+			if (itemSchdMethodDesc != null) {
+				final int searchOpId = ((SearchOperators) itemSchdMethodDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("schdMethodDesc", "%"+ this.schdMethodDesc.getValue().toUpperCase()+ "%", searchOpId));
@@ -319,9 +317,9 @@ public class ScheduleMethodSearchCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"+ this.recordStatus.getValue().toUpperCase() + "%",searchOpId));
@@ -338,9 +336,9 @@ public class ScheduleMethodSearchCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"+ selectedValue.toUpperCase() + "%", searchOpId));

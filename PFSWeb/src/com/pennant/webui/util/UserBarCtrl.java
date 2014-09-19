@@ -220,7 +220,7 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 		Events.postEvent("onClick", button, event);
 	}
 	
-	private String getLastLoginInfo(String UsrLogin) {
+	private String getLastLoginInfo(String usrLogin) {
 
 		StringBuilder builder = new StringBuilder("<table>");
 		Map<String, Object> inputParamMap = new LinkedHashMap<String, Object>();
@@ -229,7 +229,7 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 		outputParamMap.put("@LAST_SUCC_LOGINTIME", Types.VARCHAR);
 		outputParamMap.put("@FAILED_COUNT", Types.INTEGER);
 		outputParamMap.put("@LAST_UNSUCC_LOGINTIME", Types.VARCHAR);	
-		outputParamMap = this.menuDetailsService.getLastLoginInfo("LOGIN_DETAILS", UsrLogin, inputParamMap, outputParamMap);
+		outputParamMap = this.menuDetailsService.getLastLoginInfo("LOGIN_DETAILS", usrLogin, inputParamMap, outputParamMap);
 
 		String sucLogin = "", failLogin = "", failCount = "0";
 		for (Entry<String, Object> entry : outputParamMap.entrySet()) {
@@ -276,39 +276,39 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void set_LoginTimeText(String _LoginTimeText) {
-		this._LoginTimeText = _LoginTimeText;
+	public void set_LoginTimeText(String loginTimeText) {
+		this._LoginTimeText = loginTimeText;
 	}
 
 	public String get_LoginTimeText() {
 		return this._LoginTimeText;
 	}
 	
-	public void set_LoginDateText(String _LoginDateText) {
-		this._LoginDateText = _LoginDateText;
+	public void set_LoginDateText(String loginDateText) {
+		this._LoginDateText = loginDateText;
 	}
 	
 	public String get_LoginDateText() {
 		return this._LoginDateText;
 	}
-	public void set_UserText(String _UserText) {
-		this._UserText = _UserText;
+	public void set_UserText(String userText) {
+		this._UserText = userText;
 	}
 
 	public String get_UserText() {
 		return this._UserText;
 	}
 
-	public void set_BranchCodeText(String _BranchCodeText) {
-		this._BranchCodeText = _BranchCodeText;
+	public void set_BranchCodeText(String branchCodeText) {
+		this._BranchCodeText = branchCodeText;
 	}
 
 	public String get_BranchCodeText() {
 		return this._BranchCodeText;
 	}
 
-	public void set_DepartmentCodeText(String _DepartmentCodeText) {
-		this._DepartmentCodeText = _DepartmentCodeText;
+	public void set_DepartmentCodeText(String departmentCodeText) {
+		this._DepartmentCodeText = departmentCodeText;
 	}
 
 	public String get_DepartmentCodeText() {

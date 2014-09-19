@@ -1699,8 +1699,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setDefaultDirectory() throws Exception {
@@ -1895,8 +1895,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return window_JVPostingDialog;
 	}
 
-	public void setWindow_JVPostingDialog(Window window_JVPostingDialog) {
-		this.window_JVPostingDialog = window_JVPostingDialog;
+	public void setWindow_JVPostingDialog(Window windowJVPostingDialog) {
+		this.window_JVPostingDialog = windowJVPostingDialog;
 	}
 
 	public void setJVPostingEntryList(List<JVPostingEntry> jVPostingEntryList) {

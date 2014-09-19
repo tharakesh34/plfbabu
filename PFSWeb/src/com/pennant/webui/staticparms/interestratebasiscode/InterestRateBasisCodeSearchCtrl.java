@@ -296,10 +296,9 @@ public class InterestRateBasisCodeSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.intRateBasisCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_IntRateBasisCode = this.sortOperator_intRateBasisCode.getSelectedItem();
-
-			if (item_IntRateBasisCode != null) {
-				final int searchOpId = ((SearchOperators) item_IntRateBasisCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemIntRateBasisCode = this.sortOperator_intRateBasisCode.getSelectedItem();
+			if (itemIntRateBasisCode != null) {
+				final int searchOpId = ((SearchOperators) itemIntRateBasisCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("intRateBasisCode", "%"
@@ -314,10 +313,9 @@ public class InterestRateBasisCodeSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.intRateBasisDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_IntRateBasisDesc = this.sortOperator_intRateBasisDesc.getSelectedItem();
-
-			if (item_IntRateBasisDesc != null) {
-				final int searchOpId = ((SearchOperators) item_IntRateBasisDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemIntRateBasisDesc = this.sortOperator_intRateBasisDesc.getSelectedItem();
+			if (itemIntRateBasisDesc != null) {
+				final int searchOpId = ((SearchOperators) itemIntRateBasisDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("intRateBasisDesc", "%"
@@ -331,10 +329,9 @@ public class InterestRateBasisCodeSearchCtrl extends GFCBaseCtrl implements Seri
 			}
 		}
 		// get the search operator
-		final Listitem item_IntRateBasisIsActive = this.sortOperator_intRateBasisIsActive.getSelectedItem();
-
-		if (item_IntRateBasisIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_IntRateBasisIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemIntRateBasisIsActive = this.sortOperator_intRateBasisIsActive.getSelectedItem();
+		if (itemIntRateBasisIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemIntRateBasisIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -349,9 +346,9 @@ public class InterestRateBasisCodeSearchCtrl extends GFCBaseCtrl implements Seri
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"
@@ -370,9 +367,9 @@ public class InterestRateBasisCodeSearchCtrl extends GFCBaseCtrl implements Seri
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"

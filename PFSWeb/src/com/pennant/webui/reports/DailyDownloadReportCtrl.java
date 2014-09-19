@@ -578,8 +578,8 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 		logger.debug("Leaving");
 	}
 
-	public void appendChild(String value,String Label,boolean isSucess){
-		Label statuslabel =new Label(value +" "+ Label);
+	public void appendChild(String value,String label,boolean isSucess){
+		Label statuslabel =new Label(value +" "+ label);
 		if(isSucess){
 			statuslabel.setStyle("Color:Green");
 		}else{
