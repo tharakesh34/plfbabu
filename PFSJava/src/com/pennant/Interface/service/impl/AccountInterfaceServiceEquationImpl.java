@@ -179,7 +179,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 		if (coreBankAccountDetail!=null && coreBankAccountDetail.getAcBal()!=null) {
 			acBalance=coreBankAccountDetail.getAcBal();
 			if (coreBankAccountDetail.getAmountSign().equals("-")) {
-				acBalance=  new BigDecimal(0).subtract(coreBankAccountDetail.getAcBal());
+				acBalance=  BigDecimal.ZERO.subtract(coreBankAccountDetail.getAcBal());
             }
         }
 

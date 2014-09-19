@@ -79,7 +79,7 @@ public class NumberToEnglishWords {
 	public static String  getNumberToWords(BigInteger number) throws Exception{
 		logger.debug("Entering ");
 		String sign = "";
-		if(number.compareTo(new BigInteger("0"))<0){
+		if(number.compareTo(BigInteger.ZERO)<0){
 			sign="-";
 		}
 		if(PennantConstants.DFTNUMCONVFMT.equals("C")){

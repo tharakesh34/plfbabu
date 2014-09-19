@@ -2806,14 +2806,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_EXCESS_GREATER_THAN_20);
 						}
 					}else{
-						BigDecimal excessPerc = excessAmount.multiply(new BigDecimal(100)).divide(limit.getLimitAmount(), 0, RoundingMode.HALF_DOWN);
-						if(excessPerc.compareTo(new BigDecimal(10)) <= 0  ){
+						BigDecimal excessPerc = excessAmount.multiply(BigDecimal.valueOf(100)).divide(limit.getLimitAmount(), 0, RoundingMode.HALF_DOWN);
+						if(excessPerc.compareTo(BigDecimal.TEN) <= 0  ){
 							if(isDesc){
 								financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_LESS_THAN_10", new String[]{limitType,limit.getLimitCategoryDesc()}));
 							}else{
 								financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_EXCESS_LESS_THAN_10);
 							}
-						}else if(excessPerc.compareTo(new BigDecimal(10)) > 0 && excessPerc.compareTo(new BigDecimal(20)) <= 0){
+						}else if(excessPerc.compareTo(BigDecimal.TEN) > 0 && excessPerc.compareTo(new BigDecimal(20)) <= 0){
 							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_BETWEEN_10_20", new String[]{limitType,limit.getLimitCategoryDesc()}));
 						}else{
 							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_EXCESS_BETWEEN_10_20);
@@ -2880,7 +2880,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			return amount;
 		} else {
 			if (amount == null) {
-				amount = new BigDecimal("0");
+				amount = BigDecimal.ZERO;
 			}
 
 			if (aCurrency != null) {

@@ -50,7 +50,7 @@ public class PennantApplicationUtil {
 
 	public static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
 
-		if (value != null && value.compareTo(new BigDecimal("0")) != 0) {
+		if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {
 			DecimalFormat df = new DecimalFormat();
 			StringBuffer sb = new StringBuffer("###,###,###,###");
 			boolean negSign = false;
@@ -61,7 +61,7 @@ public class PennantApplicationUtil {
 					sb.append('0');
 				}
 
-				if (value.compareTo(new BigDecimal("0")) == -1) {
+				if (value.compareTo(BigDecimal.ZERO) == -1) {
 					negSign = true;
 					value = value.multiply(new BigDecimal("-1"));
 				}

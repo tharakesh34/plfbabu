@@ -218,7 +218,7 @@ public class CalculationUtil implements Serializable {
 	}
 
 	private static BigDecimal getIDB_ACT_ICMS(Calendar startCalendar, Calendar endCalendar) {
-		return new BigDecimal(1);
+		return BigDecimal.valueOf(1);
 	}
 
 	private static BigDecimal getIDB_ACT_ISDA(Calendar startCalendar, Calendar endCalendar) {
@@ -230,7 +230,7 @@ public class CalculationUtil implements Serializable {
 		double daysEnd = endCalendar.get(Calendar.DAY_OF_YEAR);
 
 		double fraction = ((daysLeft) / daysStartIn) + (daysEnd / daysEndIn);
-		return new BigDecimal(fraction);
+		return BigDecimal.valueOf(fraction);
 
 	}
 
@@ -239,11 +239,11 @@ public class CalculationUtil implements Serializable {
 	}
 
 	private static BigDecimal getIDB_ACT_365FIXED(Calendar startCalendar, Calendar endCalendar) {
-		return new BigDecimal(DateUtility.getDaysBetween(startCalendar, endCalendar) / 365d);
+		return BigDecimal.valueOf(DateUtility.getDaysBetween(startCalendar, endCalendar) / 365d);
 	}
 
 	private static BigDecimal getIDB_ACT_360(Calendar startCalendar, Calendar endCalendar) {
-		return new BigDecimal(DateUtility.getDaysBetween(startCalendar, endCalendar) / 360d);
+		return BigDecimal.valueOf(DateUtility.getDaysBetween(startCalendar, endCalendar) / 360d);
 	}
 
 	private static BigDecimal getIDB_ACT_365LEAP(Calendar startCalendar, Calendar endCalendar) {
@@ -260,7 +260,7 @@ public class CalculationUtil implements Serializable {
 
 		}
 
-		return new BigDecimal(DateUtility.getDaysBetween(startCalendar, endCalendar) / daysInYear);
+		return BigDecimal.valueOf(DateUtility.getDaysBetween(startCalendar, endCalendar) / daysInYear);
 	}
 
 	public static BigDecimal calInterest(Date dtStart, Date dtEnd, BigDecimal principalAmount, String strDaysBasis,
@@ -271,7 +271,7 @@ public class CalculationUtil implements Serializable {
 		MathContext mathContext = new MathContext(BigDecimal.ROUND_UP);
 		BigDecimal daysFactor = getInterestDays(dtStart, dtEnd, strDaysBasis);
 		BigDecimal interest = ((principalAmount.multiply(daysFactor, mathContext)).multiply(rate, mathContext))
-		.divide(new BigDecimal(100));
+		.divide(BigDecimal.valueOf(100));
 		return interest;
 	}
 
@@ -319,7 +319,7 @@ public class CalculationUtil implements Serializable {
 		BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);	
 		return numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
 		}else{
-			return principle.divide(new BigDecimal(noOfTerms), 10, BigDecimal.ROUND_HALF_DOWN);
+			return principle.divide(BigDecimal.valueOf(noOfTerms), 10, BigDecimal.ROUND_HALF_DOWN);
 		}
 		
 	}
@@ -327,8 +327,8 @@ public class CalculationUtil implements Serializable {
 	public static BigDecimal getConvertedAmount(Currency fromCurrency, Currency toCurrency,
 	        BigDecimal actualAmount) {
 
-		BigDecimal buyRate = new BigDecimal(0);
-		BigDecimal sellRate = new BigDecimal(0);
+		BigDecimal buyRate = BigDecimal.ZERO;
+		BigDecimal sellRate = BigDecimal.ZERO;
 
 		if (fromCurrency.isCcyIsReceprocal()) {
 			buyRate = BigDecimal.ONE.divide(fromCurrency.getCcySpotRate(), 9,
@@ -559,8 +559,8 @@ public class CalculationUtil implements Serializable {
 	}
 	
 	public static BigDecimal getExchangeRate(String fromCcy, String toCcy) {
-		BigDecimal buyRate = new BigDecimal(0);
-		BigDecimal sellRate = new BigDecimal(0);
+		BigDecimal buyRate = BigDecimal.ZERO;
+		BigDecimal sellRate = BigDecimal.ZERO;
 		//Base Currency 
 		String localCcy = SystemParameterDetails.getSystemParameterValue(PennantConstants.LOCAL_CCY).toString();
 		if(fromCcy == null ){
