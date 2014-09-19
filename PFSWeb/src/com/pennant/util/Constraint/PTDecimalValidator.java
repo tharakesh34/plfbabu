@@ -122,7 +122,7 @@ public class PTDecimalValidator implements Constraint{
 	private String getErrorMessage(Object value){
 
 		double rateValue = 0;
-		BigDecimal decimalValue= new BigDecimal(0);
+		BigDecimal decimalValue= BigDecimal.ZERO;
 		
 		if(value!=null && !StringUtils.trim(value.toString()).equals("") ){
 			

@@ -550,10 +550,10 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	    this.ccySymbol.setValue(aCurrency.getCcySymbol());
 	    this.ccyMinorCcyDesc.setValue(aCurrency.getCcyMinorCcyDesc());
 		this.ccyIsIntRounding.setChecked(aCurrency.isCcyIsIntRounding());
-	  	this.ccySpotRate.setValue(aCurrency.getCcySpotRate()==null?new BigDecimal(0):aCurrency.getCcySpotRate());
+	  	this.ccySpotRate.setValue(aCurrency.getCcySpotRate() == null ? BigDecimal.ZERO : aCurrency.getCcySpotRate());
 		this.ccyIsReceprocal.setChecked(aCurrency.isCcyIsReceprocal());
-	  	this.ccyUserRateBuy.setValue(aCurrency.getCcyUserRateBuy()==null?new BigDecimal(0):aCurrency.getCcyUserRateBuy());
-	  	this.ccyUserRateSell.setValue(aCurrency.getCcyUserRateSell()==null?new BigDecimal(0):aCurrency.getCcyUserRateSell());
+	  	this.ccyUserRateBuy.setValue(aCurrency.getCcyUserRateBuy() == null ? BigDecimal.ZERO : aCurrency.getCcyUserRateBuy());
+	  	this.ccyUserRateSell.setValue(aCurrency.getCcyUserRateSell() == null ? BigDecimal.ZERO : aCurrency.getCcyUserRateSell());
 		this.ccyIsMember.setChecked(aCurrency.isCcyIsMember());
 		this.ccyIsGroup.setChecked(aCurrency.isCcyIsGroup());
 		this.ccyIsAlwForLoans.setChecked(aCurrency.isCcyIsAlwForLoans());

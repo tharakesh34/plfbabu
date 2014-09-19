@@ -445,7 +445,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		this.bRType.setValue(aBaseRate.getBRType());
 		this.bREffDate.setValue(aBaseRate.getBREffDate());
-	  	this.bRRate.setValue(aBaseRate.getBRRate()==null?new BigDecimal(0):aBaseRate.getBRRate());
+	  	this.bRRate.setValue(aBaseRate.getBRRate() == null ? BigDecimal.ZERO : aBaseRate.getBRRate());
 	  	this.deleteRate.setChecked(aBaseRate.isDelExistingRates());
 
 	  	if (aBaseRate.isNewRecord()){

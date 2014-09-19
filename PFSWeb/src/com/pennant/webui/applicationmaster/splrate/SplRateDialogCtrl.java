@@ -461,7 +461,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		this.sRType.setValue(aSplRate.getSRType());
 		this.sREffDate.setValue(aSplRate.getSREffDate());
-		this.sRRate.setValue(aSplRate.getSRRate()==null?new BigDecimal(0):aSplRate.getSRRate());
+		this.sRRate.setValue(aSplRate.getSRRate() == null ? BigDecimal.ZERO : aSplRate.getSRRate());
 		this.deleteRate.setChecked(aSplRate.isDelExistingRates());
 
 		if (aSplRate.isNewRecord()){

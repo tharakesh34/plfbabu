@@ -2468,7 +2468,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 			// Execute the engine
 			String rule = "function Rule(){" + ruleCode + "}Rule();";
-			BigDecimal tempResult = new BigDecimal("0");
+			BigDecimal tempResult = BigDecimal.ZERO;
 			if (engine.eval(rule) != null) {
 				tempResult = new BigDecimal(engine.eval(rule).toString());
 				result = tempResult.toString();
