@@ -502,10 +502,9 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 		if (StringUtils.isNotEmpty(this.templateCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_TemplateCode = this.sortOperator_templateCode.getSelectedItem();
-
-			if (item_TemplateCode != null) {
-				final int searchOpId = ((SearchOperators) item_TemplateCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemTemplateCode = this.sortOperator_templateCode.getSelectedItem();
+			if (itemTemplateCode != null) {
+				final int searchOpId = ((SearchOperators) itemTemplateCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					this.searchObj.addFilter(new Filter("templateCode", "%" + this.templateCode.getValue().toUpperCase() + "%", searchOpId));
@@ -518,10 +517,9 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 		if (StringUtils.isNotEmpty(this.templateName.getValue())) {
 
 			// get the search operator
-			final Listitem item_TemplateName = this.sortOperator_templateName.getSelectedItem();
-
-			if (item_TemplateName != null) {
-				final int searchOpId = ((SearchOperators) item_TemplateName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemTemplateName = this.sortOperator_templateName.getSelectedItem();
+			if (itemTemplateName != null) {
+				final int searchOpId = ((SearchOperators) itemTemplateName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					this.searchObj.addFilter(new Filter("templateName", "%" + this.templateName.getValue().toUpperCase() + "%", searchOpId));
@@ -534,10 +532,9 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 		if (StringUtils.isNotEmpty(this.templateType.getValue())) {
 
 			// get the search operator
-			final Listitem item_TemplateType = this.sortOperator_templateType.getSelectedItem();
-
-			if (item_TemplateType != null) {
-				final int searchOpId = ((SearchOperators) item_TemplateType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemTemplateType = this.sortOperator_templateType.getSelectedItem();
+			if (itemTemplateType != null) {
+				final int searchOpId = ((SearchOperators) itemTemplateType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					this.searchObj.addFilter(new Filter("templateType", "%" + this.templateType.getValue().toUpperCase() + "%", searchOpId));
@@ -548,10 +545,9 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 		}
 		
 		// get the search operatorxxx
-		final Listitem item_Active = this.sortOperator_active.getSelectedItem();
-
-		if (item_Active != null) {
-			final int searchOpId = ((SearchOperators) item_Active.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemActive = this.sortOperator_active.getSelectedItem();
+		if (itemActive != null) {
+			final int searchOpId = ((SearchOperators) itemActive.getAttribute("data")).getSearchOperatorId();
 			if (searchOpId != -1) {
 				if(this.active.isChecked()){
 					this.searchObj.addFilter(new Filter("active",1, searchOpId));
@@ -563,9 +559,9 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 		
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					this.searchObj.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -582,9 +578,9 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> implemen
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 				if (searchOpId == Filter.OP_LIKE) {
 					this.searchObj.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));
 				} else if (searchOpId != -1) {

@@ -1407,7 +1407,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl implements Serializable
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	private void createSimulationWindow(String Values) throws InterruptedException {
+	private void createSimulationWindow(String values) throws InterruptedException {
 		logger.debug("Entering");
 		if(tab_ruleTemplate.isSelected() || tab_ruleTemplateDetails.isSelected()){
 			this.ruleTemplate.simulateQuery(window_NotificationsDialog);
@@ -1540,8 +1540,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl implements Serializable
 	public Notifications getNotifications() {
 		return this.notifications;
 	}
-	public void setNotifications(Notifications Notifications) {
-		this.notifications = Notifications;
+	public void setNotifications(Notifications notifications) {
+		this.notifications = notifications;
 	}
 
 	public void setNotificationsService(NotificationsService notificationsService) {
@@ -1568,8 +1568,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl implements Serializable
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public RuleService getRuleService() {

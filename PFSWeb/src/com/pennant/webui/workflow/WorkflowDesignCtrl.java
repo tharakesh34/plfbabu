@@ -91,8 +91,7 @@ import com.pennant.webui.util.PTMessageUtils;
 public class WorkflowDesignCtrl extends GFCBaseCtrl implements Serializable {
 	private static final long serialVersionUID = -1351367303946249042L;
 
-	private final static Logger logger = Logger
-			.getLogger(WorkflowDesignCtrl.class);
+	private static Logger logger = Logger.getLogger(WorkflowDesignCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
