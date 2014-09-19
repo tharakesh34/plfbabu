@@ -1073,37 +1073,37 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl implements Se
 		if (this.oldVar_emailId != this.emailId.getValue()) {
 			return true;
 		}
-		String old_bussCommenceDate = "";
-		String new_bussCommenceDate = "";
+		String oldBussCommenceDate = "";
+		String newBussCommenceDate = "";
 		if (this.oldVar_bussCommenceDate != null) {
-			old_bussCommenceDate = DateUtility.formatDate(this.oldVar_bussCommenceDate,PennantConstants.dateFormat);
+			oldBussCommenceDate = DateUtility.formatDate(this.oldVar_bussCommenceDate,PennantConstants.dateFormat);
 		}
 		if (this.bussCommenceDate.getValue() != null) {
-			new_bussCommenceDate = DateUtility.formatDate(this.bussCommenceDate.getValue(),PennantConstants.dateFormat);
+			newBussCommenceDate = DateUtility.formatDate(this.bussCommenceDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_bussCommenceDate).equals(StringUtils.trimToEmpty(new_bussCommenceDate))) {
+		if (!StringUtils.trimToEmpty(oldBussCommenceDate).equals(StringUtils.trimToEmpty(newBussCommenceDate))) {
 			return true;
 		}
-		String old_servCommenceDate = "";
-		String new_servCommenceDate = "";
+		String oldServCommenceDate = "";
+		String newServCommenceDate = "";
 		if (this.oldVar_servCommenceDate != null) {
-			old_servCommenceDate = DateUtility.formatDate(this.oldVar_servCommenceDate,PennantConstants.dateFormat);
+			oldServCommenceDate = DateUtility.formatDate(this.oldVar_servCommenceDate,PennantConstants.dateFormat);
 		}
 		if (this.servCommenceDate.getValue() != null) {
-			new_servCommenceDate = DateUtility.formatDate(this.servCommenceDate.getValue(),PennantConstants.dateFormat);
+			newServCommenceDate = DateUtility.formatDate(this.servCommenceDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_servCommenceDate).equals(StringUtils.trimToEmpty(new_servCommenceDate))) {
+		if (!StringUtils.trimToEmpty(oldServCommenceDate).equals(StringUtils.trimToEmpty(newServCommenceDate))) {
 			return true;
 		}
-		String old_bankRelationshipDate = "";
-		String new_bankRelationshipDate = "";
+		String oldBankRelationshipDate = "";
+		String newBankRelationshipDate = "";
 		if (this.oldVar_bankRelationshipDate != null) {
-			old_bankRelationshipDate = DateUtility.formatDate(this.oldVar_bankRelationshipDate,PennantConstants.dateFormat);
+			oldBankRelationshipDate = DateUtility.formatDate(this.oldVar_bankRelationshipDate,PennantConstants.dateFormat);
 		}
 		if (this.bankRelationshipDate.getValue() != null) {
-			new_bankRelationshipDate = DateUtility.formatDate(this.bankRelationshipDate.getValue(),PennantConstants.dateFormat);
+			newBankRelationshipDate = DateUtility.formatDate(this.bankRelationshipDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_bankRelationshipDate).equals(StringUtils.trimToEmpty(new_bankRelationshipDate))) {
+		if (!StringUtils.trimToEmpty(oldBankRelationshipDate).equals(StringUtils.trimToEmpty(newBankRelationshipDate))) {
 			return true;
 		}
 		if (this.oldVar_paidUpCapital != this.paidUpCapital.getValue()) {
@@ -2033,8 +2033,8 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl implements Se
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {

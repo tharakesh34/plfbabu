@@ -427,14 +427,14 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl implements Serializab
 		this.listBoxCustomerIncome.appendChild(item);
 	}
 
-	private AgreementDetail getCustomerAggrementData(long Custid, String Custcif) {
+	private AgreementDetail getCustomerAggrementData(long custID, String custCIF) {
 		// AgreementDetail Data
 		JdbcSearchObject<AgreementDetail> jdbcSearchObject = new JdbcSearchObject<AgreementDetail>(AgreementDetail.class);
 		jdbcSearchObject.addTabelName("CustomerAgreementDetail_View");
-		if (!StringUtils.trimToEmpty(Custcif).equals("")) {
-			jdbcSearchObject.addFilterEqual("CustCIF", Custcif);
+		if (!StringUtils.trimToEmpty(custCIF).equals("")) {
+			jdbcSearchObject.addFilterEqual("CustCIF", custCIF);
 		} else {
-			jdbcSearchObject.addFilterEqual("CustID", Custid);
+			jdbcSearchObject.addFilterEqual("CustID", custID);
 		}
 		List<AgreementDetail> agreementDetails = getPagedListService().getBySearchObject(jdbcSearchObject);
 		if (agreementDetails != null && agreementDetails.size() > 0) {
@@ -444,22 +444,22 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl implements Serializab
 	}
 
 
-	private List<CustomerIncome> getCustomerIncomeDetails(long Custid, String incomeExpense) {
+	private List<CustomerIncome> getCustomerIncomeDetails(long custID, String incomeExpense) {
 		// Customer Income and Expense Data
 		JdbcSearchObject<CustomerIncome> jdbcSearchObject = new JdbcSearchObject<CustomerIncome>(CustomerIncome.class);
 		jdbcSearchObject.addTabelName("CustomerIncomes_AView");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custID);
 		if (!StringUtils.trimToEmpty(incomeExpense).equals("")) {
 			jdbcSearchObject.addFilterEqual("IncomeExpense", incomeExpense);
 		}
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
 
-	private List<CustomerEmploymentDetail> getCustomerEmpDetails(long Custid) {
+	private List<CustomerEmploymentDetail> getCustomerEmpDetails(long custID) {
 		// Customer Income and Expense Data
 		JdbcSearchObject<CustomerEmploymentDetail> jdbcSearchObject = new JdbcSearchObject<CustomerEmploymentDetail>(CustomerEmploymentDetail.class);
 		jdbcSearchObject.addTabelName("CustomerEmpDetails_AView");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custID);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
 
@@ -477,11 +477,11 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl implements Serializab
 		return employer;
 	}
 
-	private List<FinanceSummary> getFinanceDetailsByCustomer(long Custid) {
+	private List<FinanceSummary> getFinanceDetailsByCustomer(long custID) {
 		// Customer FinanceDetails
 		JdbcSearchObject<FinanceSummary> jdbcSearchObject = new JdbcSearchObject<FinanceSummary>(FinanceSummary.class);
 		jdbcSearchObject.addTabelName("CustFinanceExposure_View");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custID);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
 

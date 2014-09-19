@@ -2549,15 +2549,15 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 			if (this.oldVar_custShrtNameLclLng != this.custShrtNameLclLng.getValue()) {
 				return true;
 			}
-			String old_custDOB = "";
-			String new_custDOB = "";
+			String oldCustDOB = "";
+			String newCustDOB = "";
 			if (this.oldVar_custDOB != null) {
-				old_custDOB = DateUtility.formatDate(this.oldVar_custDOB,PennantConstants.dateFormat);
+				oldCustDOB = DateUtility.formatDate(this.oldVar_custDOB,PennantConstants.dateFormat);
 			}
 			if (this.custDOB.getValue() != null) {
-				new_custDOB = DateUtility.formatDate(this.custDOB.getValue(),PennantConstants.dateFormat);
+				newCustDOB = DateUtility.formatDate(this.custDOB.getValue(),PennantConstants.dateFormat);
 			}
-			if (!StringUtils.trimToEmpty(old_custDOB).equals(StringUtils.trimToEmpty(new_custDOB))) {
+			if (!StringUtils.trimToEmpty(oldCustDOB).equals(StringUtils.trimToEmpty(newCustDOB))) {
 				return true;
 			}
 			if (this.oldVar_custPOB != this.custPOB.getValue()) {
@@ -2622,18 +2622,18 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 		if (this.oldVar_custIsClosed != this.custIsClosed.isChecked()) {
 			return true;
 		}
-		String old_custClosedOn = "";
-		String new_custClosedOn = "";
+		String oldCustClosedOn = "";
+		String newCustClosedOn = "";
 		if (this.oldVar_custClosedOn != null) {
-			old_custClosedOn = DateUtility.formatDate(this.oldVar_custClosedOn,
+			oldCustClosedOn = DateUtility.formatDate(this.oldVar_custClosedOn,
 					PennantConstants.dateFormat);
 		}
 		if (this.custClosedOn.getValue() != null) {
-			new_custClosedOn = DateUtility.formatDate(
+			newCustClosedOn = DateUtility.formatDate(
 					this.custClosedOn.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custClosedOn).equals(
-				StringUtils.trimToEmpty(new_custClosedOn))) {
+		if (!StringUtils.trimToEmpty(oldCustClosedOn).equals(
+				StringUtils.trimToEmpty(newCustClosedOn))) {
 			return true;
 		}
 		if (this.oldVar_custInactiveReason != this.custInactiveReason.getValue()) {
@@ -2691,33 +2691,33 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 			if (this.oldVar_custTradeLicenceExpiry != this.custTradeLicenceExpiry.getValue()) {
 				return true;
 			}
-			String old_custDateOfIncorporation = "";
-			String new_custDateOfIncorporation = "";
+			String oldCustDateOfIncorporation = "";
+			String newCustDateOfIncorporation = "";
 			if (this.oldVar_custDateOfIncorporation != null) {
-				old_custDateOfIncorporation = DateUtility.formatDate(
+				oldCustDateOfIncorporation = DateUtility.formatDate(
 						this.oldVar_custDateOfIncorporation,PennantConstants.dateFormat);
 			}
 			if (this.custDateOfIncorporation.getValue() != null) {
-				new_custDateOfIncorporation = DateUtility.formatDate(
+				newCustDateOfIncorporation = DateUtility.formatDate(
 						this.custDateOfIncorporation.getValue(),PennantConstants.dateFormat);
 			}
-			if (!StringUtils.trimToEmpty(old_custDateOfIncorporation).equals(
-					StringUtils.trimToEmpty(new_custDateOfIncorporation))) {
+			if (!StringUtils.trimToEmpty(oldCustDateOfIncorporation).equals(
+					StringUtils.trimToEmpty(newCustDateOfIncorporation))) {
 				return true;
 			}
 		}
-		String old_custFirstBusinessDate = "";
-		String new_custFirstBusinessDate = "";
+		String oldCustFirstBusinessDate = "";
+		String newCustFirstBusinessDate = "";
 		if (this.oldVar_custFirstBusinessDate != null) {
-			old_custFirstBusinessDate = DateUtility.formatDate(
+			oldCustFirstBusinessDate = DateUtility.formatDate(
 					this.oldVar_custFirstBusinessDate, PennantConstants.dateFormat);
 		}
 		if (this.custFirstBusinessDate.getValue() != null) {
-			new_custFirstBusinessDate = DateUtility.formatDate(
+			newCustFirstBusinessDate = DateUtility.formatDate(
 					this.custFirstBusinessDate.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custFirstBusinessDate).equals(
-				StringUtils.trimToEmpty(new_custFirstBusinessDate))) {
+		if (!StringUtils.trimToEmpty(oldCustFirstBusinessDate).equals(
+				StringUtils.trimToEmpty(newCustFirstBusinessDate))) {
 			return true;
 		}
 		
@@ -2817,74 +2817,74 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 		if (this.oldVar_custAddlVar89 != this.custAddlVar89.getValue()) {
 			return true;
 		}
-		String old_custAddlDate1 = "";
-		String new_custAddlDate1 = "";
+		String oldCustAddlDate1 = "";
+		String newCustAddlDate1 = "";
 		if (this.oldVar_custAddlDate1 != null) {
-			old_custAddlDate1 = DateUtility.formatDate(this.oldVar_custAddlDate1,
+			oldCustAddlDate1 = DateUtility.formatDate(this.oldVar_custAddlDate1,
 					PennantConstants.dateFormat);
 		}
 		if (this.custAddlDate1.getValue() != null) {
-			new_custAddlDate1 = DateUtility.formatDate(
+			newCustAddlDate1 = DateUtility.formatDate(
 					this.custAddlDate1.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custAddlDate1).equals(
-				StringUtils.trimToEmpty(new_custAddlDate1))) {
+		if (!StringUtils.trimToEmpty(oldCustAddlDate1).equals(
+				StringUtils.trimToEmpty(newCustAddlDate1))) {
 			return true;
 		}
-		String old_custAddlDate2 = "";
-		String new_custAddlDate2 = "";
+		String oldCustAddlDate2 = "";
+		String newCustAddlDate2 = "";
 		if (this.oldVar_custAddlDate2 != null) {
-			old_custAddlDate2 = DateUtility.formatDate(this.oldVar_custAddlDate2,
+			oldCustAddlDate2 = DateUtility.formatDate(this.oldVar_custAddlDate2,
 					PennantConstants.dateFormat);
 		}
 		if (this.custAddlDate2.getValue() != null) {
-			new_custAddlDate2 = DateUtility.formatDate(
+			newCustAddlDate2 = DateUtility.formatDate(
 					this.custAddlDate2.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custAddlDate2).equals(
-				StringUtils.trimToEmpty(new_custAddlDate2))) {
+		if (!StringUtils.trimToEmpty(oldCustAddlDate2).equals(
+				StringUtils.trimToEmpty(newCustAddlDate2))) {
 			return true;
 		}
-		String old_custAddlDate3 = "";
-		String new_custAddlDate3 = "";
+		String oldCustAddlDate3 = "";
+		String newCustAddlDate3 = "";
 		if (this.oldVar_custAddlDate3 != null) {
-			old_custAddlDate3 = DateUtility.formatDate(this.oldVar_custAddlDate3,
+			oldCustAddlDate3 = DateUtility.formatDate(this.oldVar_custAddlDate3,
 					PennantConstants.dateFormat);
 		}
 		if (this.custAddlDate3.getValue() != null) {
-			new_custAddlDate3 = DateUtility.formatDate(
+			newCustAddlDate3 = DateUtility.formatDate(
 					this.custAddlDate3.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custAddlDate3).equals(
-				StringUtils.trimToEmpty(new_custAddlDate3))) {
+		if (!StringUtils.trimToEmpty(oldCustAddlDate3).equals(
+				StringUtils.trimToEmpty(newCustAddlDate3))) {
 			return true;
 		}
-		String old_custAddlDate4 = "";
-		String new_custAddlDate4 = "";
+		String oldCustAddlDate4 = "";
+		String newCustAddlDate4 = "";
 		if (this.oldVar_custAddlDate4 != null) {
-			old_custAddlDate4 = DateUtility.formatDate(this.oldVar_custAddlDate4,
+			oldCustAddlDate4 = DateUtility.formatDate(this.oldVar_custAddlDate4,
 					PennantConstants.dateFormat);
 		}
 		if (this.custAddlDate4.getValue() != null) {
-			new_custAddlDate4 = DateUtility.formatDate(
+			newCustAddlDate4 = DateUtility.formatDate(
 					this.custAddlDate4.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custAddlDate4).equals(
-				StringUtils.trimToEmpty(new_custAddlDate4))) {
+		if (!StringUtils.trimToEmpty(oldCustAddlDate4).equals(
+				StringUtils.trimToEmpty(newCustAddlDate4))) {
 			return true;
 		}
-		String old_custAddlDate5 = "";
-		String new_custAddlDate5 = "";
+		String oldCustAddlDate5 = "";
+		String newCustAddlDate5 = "";
 		if (this.oldVar_custAddlDate5 != null) {
-			old_custAddlDate5 = DateUtility.formatDate(this.oldVar_custAddlDate5,
+			oldCustAddlDate5 = DateUtility.formatDate(this.oldVar_custAddlDate5,
 					PennantConstants.dateFormat);
 		}
 		if (this.custAddlDate5.getValue() != null) {
-			new_custAddlDate5 = DateUtility.formatDate(
+			newCustAddlDate5 = DateUtility.formatDate(
 					this.custAddlDate5.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custAddlDate5).equals(
-				StringUtils.trimToEmpty(new_custAddlDate5))) {
+		if (!StringUtils.trimToEmpty(oldCustAddlDate5).equals(
+				StringUtils.trimToEmpty(newCustAddlDate5))) {
 			return true;
 		}
 		if (this.oldVar_custAddlVar1 != this.custAddlVar1.getValue()) {

@@ -1690,15 +1690,15 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.oldVar_custShrtName != this.custShrtName.getValue()) {
 			return true;
 		}
-		String old_custDOB = "";
-		String new_custDOB = "";
+		String oldCustDOB = "";
+		String newCustDOB = "";
 		if (this.oldVar_custDOB != null) {
-			old_custDOB = DateUtility.formatDate(this.oldVar_custDOB, PennantConstants.dateFormat);
+			oldCustDOB = DateUtility.formatDate(this.oldVar_custDOB, PennantConstants.dateFormat);
 		}
 		if (this.custDOB.getValue() != null) {
-			new_custDOB = DateUtility.formatDate(this.custDOB.getValue(), PennantConstants.dateFormat);
+			newCustDOB = DateUtility.formatDate(this.custDOB.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custDOB).equals(StringUtils.trimToEmpty(new_custDOB))) {
+		if (!StringUtils.trimToEmpty(oldCustDOB).equals(StringUtils.trimToEmpty(newCustDOB))) {
 			return true;
 		}
 		if (this.oldVar_custSts != this.custSts.getValue()) {
@@ -2913,13 +2913,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 	}
 	
 	public BigDecimal getTotSharePerc(){
-		BigDecimal TotSharePerc = BigDecimal.ZERO;
+		BigDecimal totSharePerc = BigDecimal.ZERO;
 		for (DirectorDetail directorDetail : getDirectorList()) {
 			if(directorDetail.getSharePerc() != null){
-			TotSharePerc = TotSharePerc.add(directorDetail.getSharePerc());
+			totSharePerc = totSharePerc.add(directorDetail.getSharePerc());
 			}
 		}
-		return TotSharePerc;
+		return totSharePerc;
 	}
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -3623,8 +3623,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	// Paged List Wrapper Declarations For Customer Related List

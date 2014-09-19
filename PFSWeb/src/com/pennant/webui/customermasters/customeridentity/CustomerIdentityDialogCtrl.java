@@ -704,26 +704,26 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl implements Serializa
 		if (this.oldVar_idIssueCountry != this.idIssueCountry.getValue()) {
 			return true;
 		}
-		String old_idIssuedOn = "";
-		String new_idIssuedOn ="";
+		String oldIdIssuedOn = "";
+		String newIdIssuedOn ="";
 		if (this.oldVar_idIssuedOn!=null){
-			old_idIssuedOn=DateUtility.formatDate(this.oldVar_idIssuedOn,PennantConstants.dateFormat);
+			oldIdIssuedOn=DateUtility.formatDate(this.oldVar_idIssuedOn,PennantConstants.dateFormat);
 		}
 		if (this.idIssuedOn.getValue()!=null){
-			new_idIssuedOn=DateUtility.formatDate(this.idIssuedOn.getValue(),PennantConstants.dateFormat);
+			newIdIssuedOn=DateUtility.formatDate(this.idIssuedOn.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_idIssuedOn).equals(StringUtils.trimToEmpty(new_idIssuedOn))) {
+		if (!StringUtils.trimToEmpty(oldIdIssuedOn).equals(StringUtils.trimToEmpty(newIdIssuedOn))) {
 			return true;
 		}
-		String old_idExpiresOn = "";
-		String new_idExpiresOn ="";
+		String oldIdExpiresOn = "";
+		String newIdExpiresOn ="";
 		if (this.oldVar_idExpiresOn!=null){
-			old_idExpiresOn=DateUtility.formatDate(this.oldVar_idExpiresOn,PennantConstants.dateFormat);
+			oldIdExpiresOn=DateUtility.formatDate(this.oldVar_idExpiresOn,PennantConstants.dateFormat);
 		}
 		if (this.idExpiresOn.getValue()!=null){
-			new_idExpiresOn=DateUtility.formatDate(this.idExpiresOn.getValue(),PennantConstants.dateFormat);
+			newIdExpiresOn=DateUtility.formatDate(this.idExpiresOn.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_idExpiresOn).equals(StringUtils.trimToEmpty(new_idExpiresOn))) {
+		if (!StringUtils.trimToEmpty(oldIdExpiresOn).equals(StringUtils.trimToEmpty(newIdExpiresOn))) {
 			return true;
 		}
 		if (this.oldVar_idLocation != this.idLocation.getValue()) {
@@ -1434,8 +1434,8 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl implements Serializa
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setCustomerSelectCtrl(CustomerSelectCtrl customerSelectctrl) {

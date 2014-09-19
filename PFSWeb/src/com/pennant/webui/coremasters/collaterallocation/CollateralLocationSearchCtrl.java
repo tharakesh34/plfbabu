@@ -291,10 +291,9 @@ public class CollateralLocationSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.hZCLO.getValue())) {
 
 			// get the search operator
-			final Listitem item_HZCLO = this.sortOperator_hZCLO.getSelectedItem();
-
-			if (item_HZCLO != null) {
-				final int searchOpId = ((SearchOperators) item_HZCLO.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHZCLO = this.sortOperator_hZCLO.getSelectedItem();
+			if (itemHZCLO != null) {
+				final int searchOpId = ((SearchOperators) itemHZCLO.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hZCLO", "%" + this.hZCLO.getValue().toUpperCase() + "%", searchOpId));
@@ -308,10 +307,9 @@ public class CollateralLocationSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.hZCLC.getValue())) {
 
 			// get the search operator
-			final Listitem item_HZCLC = this.sortOperator_hZCLC.getSelectedItem();
-
-			if (item_HZCLC != null) {
-				final int searchOpId = ((SearchOperators) item_HZCLC.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHZCLC = this.sortOperator_hZCLC.getSelectedItem();
+			if (itemHZCLC != null) {
+				final int searchOpId = ((SearchOperators) itemHZCLC.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hZCLC", "%" + this.hZCLC.getValue().toUpperCase() + "%", searchOpId));
@@ -324,9 +322,9 @@ public class CollateralLocationSearchCtrl extends GFCBaseCtrl implements Seriali
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -345,9 +343,9 @@ public class CollateralLocationSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

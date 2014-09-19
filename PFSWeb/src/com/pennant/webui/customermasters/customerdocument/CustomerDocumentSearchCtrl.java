@@ -310,11 +310,9 @@ public class CustomerDocumentSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustCIF = this.sortOperator_custCIF
-					.getSelectedItem();
-
-			if (item_CustCIF != null) {
-				final int searchOpId = ((SearchOperators) item_CustCIF
+			final Listitem itemCustCIF = this.sortOperator_custCIF.getSelectedItem();
+			if (itemCustCIF != null) {
+				final int searchOpId = ((SearchOperators) itemCustCIF
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -332,10 +330,9 @@ public class CustomerDocumentSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.custDocType.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustDocType = this.sortOperator_custDocType.getSelectedItem();
-
-			if (item_CustDocType != null) {
-				final int searchOpId = ((SearchOperators) item_CustDocType
+			final Listitem itemCustDocType = this.sortOperator_custDocType.getSelectedItem();
+			if (itemCustDocType != null) {
+				final int searchOpId = ((SearchOperators) itemCustDocType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -351,11 +348,9 @@ public class CustomerDocumentSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.custDocTitle.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustDocTitle = this.sortOperator_custDocTitle
-					.getSelectedItem();
-
-			if (item_CustDocTitle != null) {
-				final int searchOpId = ((SearchOperators) item_CustDocTitle
+			final Listitem itemCustDocTitle = this.sortOperator_custDocTitle.getSelectedItem();
+			if (itemCustDocTitle != null) {
+				final int searchOpId = ((SearchOperators) itemCustDocTitle
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -371,10 +366,9 @@ public class CustomerDocumentSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.custDocSysName.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustDocSysName = this.sortOperator_custDocSysName.getSelectedItem();
-
-			if (item_CustDocSysName != null) {
-				final int searchOpId = ((SearchOperators) item_CustDocSysName
+			final Listitem itemCustDocSysName = this.sortOperator_custDocSysName.getSelectedItem();
+			if (itemCustDocSysName != null) {
+				final int searchOpId = ((SearchOperators) itemCustDocSysName
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -389,9 +383,9 @@ public class CustomerDocumentSearchCtrl extends GFCBaseCtrl implements Serializa
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -412,9 +406,9 @@ public class CustomerDocumentSearchCtrl extends GFCBaseCtrl implements Serializa
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

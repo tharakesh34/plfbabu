@@ -963,48 +963,48 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 			return true;
 		}
 
-		String old_custDocRcvdOn = "";
-		String new_custDocRcvdOn = "";
+		String oldCustDocRcvdOn = "";
+		String newCustDocRcvdOn = "";
 		if (this.oldVar_custDocRcvdOn != null) {
-			old_custDocRcvdOn = DateUtility.formatDate(
+			oldCustDocRcvdOn = DateUtility.formatDate(
 					this.oldVar_custDocRcvdOn, PennantConstants.dateFormat);
 		}
 		if (this.custDocRcvdOn.getValue() != null) {
-			new_custDocRcvdOn = DateUtility.formatDate(this.custDocRcvdOn.getValue(),
+			newCustDocRcvdOn = DateUtility.formatDate(this.custDocRcvdOn.getValue(),
 					PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custDocRcvdOn).equals(
-				StringUtils.trimToEmpty(new_custDocRcvdOn))) {
+		if (!StringUtils.trimToEmpty(oldCustDocRcvdOn).equals(
+				StringUtils.trimToEmpty(newCustDocRcvdOn))) {
 			return true;
 		}
 
-		String old_custDocExpDate = "";
-		String new_custDocExpDate = "";
+		String oldCustDocExpDate = "";
+		String newCustDocExpDate = "";
 		if (this.oldVar_custDocExpDate != null) {
-			old_custDocExpDate = DateUtility.formatDate(
+			oldCustDocExpDate = DateUtility.formatDate(
 					this.oldVar_custDocExpDate, PennantConstants.dateFormat);
 		}
 		if (this.custDocExpDate.getValue() != null) {
-			new_custDocExpDate = DateUtility.formatDate(this.custDocExpDate.getValue(),
+			newCustDocExpDate = DateUtility.formatDate(this.custDocExpDate.getValue(),
 					PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custDocExpDate).equals(
-				StringUtils.trimToEmpty(new_custDocExpDate))) {
+		if (!StringUtils.trimToEmpty(oldCustDocExpDate).equals(
+				StringUtils.trimToEmpty(newCustDocExpDate))) {
 			return true;
 		}
 
-		String old_custDocIssuedOn = "";
-		String new_custDocIssuedOn = "";
+		String oldCustDocIssuedOn = "";
+		String newCustDocIssuedOn = "";
 		if (this.oldVar_custDocIssuedOn != null) {
-			old_custDocIssuedOn = DateUtility.formatDate(
+			oldCustDocIssuedOn = DateUtility.formatDate(
 					this.oldVar_custDocIssuedOn, PennantConstants.dateFormat);
 		}
 		if (this.custDocIssuedOn.getValue() != null) {
-			new_custDocIssuedOn = DateUtility.formatDate(this.custDocIssuedOn.getValue(),
+			newCustDocIssuedOn = DateUtility.formatDate(this.custDocIssuedOn.getValue(),
 					PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custDocIssuedOn).equals(
-				StringUtils.trimToEmpty(new_custDocIssuedOn))) {
+		if (!StringUtils.trimToEmpty(oldCustDocIssuedOn).equals(
+				StringUtils.trimToEmpty(newCustDocIssuedOn))) {
 			return true;
 		}
 
@@ -1150,12 +1150,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 
 	public void getCreditApplicationRevDialog(){
 		logger.debug("Entering");
-		Window window_docDetails = creditApplicationReviewDialogCtrl.window_CreditApplicationReviewDialog;
-		Tab tab = (Tab) window_docDetails.getFellowIfAny("documentDetailsTab");
+		Window windowDocDetails = creditApplicationReviewDialogCtrl.window_CreditApplicationReviewDialog;
+		Tab tab = (Tab) windowDocDetails.getFellowIfAny("documentDetailsTab");
 		//Tab tab = (Tab) creditApplicationReviewDialogCtrl.window_CreditApplicationReviewDialog.getFellowIfAny("documentDetailsTab");
-		Tabs tabs = (Tabs) window_docDetails.getFellowIfAny("tabsIndexCenter");
-		Tabpanel tabPanel = (Tabpanel) window_docDetails.getFellowIfAny("documentsTabPanel");
-		Tabpanels tabPanels = (Tabpanels) window_docDetails.getFellowIfAny("tabpanelsBoxIndexCenter");
+		Tabs tabs = (Tabs) windowDocDetails.getFellowIfAny("tabsIndexCenter");
+		Tabpanel tabPanel = (Tabpanel) windowDocDetails.getFellowIfAny("documentsTabPanel");
+		Tabpanels tabPanels = (Tabpanels) windowDocDetails.getFellowIfAny("tabpanelsBoxIndexCenter");
 		tabPanels.removeChild(tabPanel);
 		//tab.removeChild(tabPanels);
 		tabs.removeChild(tab);
@@ -1171,7 +1171,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 		}*/
 		creditApplicationReviewDialogCtrl.window_CreditApplicationReviewDialog.removeChild(tab);
 		creditApplicationReviewDialogCtrl.appendDocumentDetailTab();
-		((Tab) window_docDetails.getFellowIfAny("documentDetailsTab")).setSelected(true);
+		((Tab) windowDocDetails.getFellowIfAny("documentDetailsTab")).setSelected(true);
 		logger.debug("Leaving");
 
 	}

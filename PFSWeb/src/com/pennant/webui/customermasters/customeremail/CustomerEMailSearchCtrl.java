@@ -293,10 +293,9 @@ public class CustomerEMailSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustCIF = this.sortOperator_custCIF.getSelectedItem();
-
-			if (item_CustCIF != null) {
-				final int searchOpId = ((SearchOperators) item_CustCIF.getAttribute(
+			final Listitem itemCustCIF = this.sortOperator_custCIF.getSelectedItem();
+			if (itemCustCIF != null) {
+				final int searchOpId = ((SearchOperators) itemCustCIF.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -312,10 +311,9 @@ public class CustomerEMailSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.custEMailTypeCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustEMailTypeCode = this.sortOperator_custEMailTypeCode.getSelectedItem();
-
-			if (item_CustEMailTypeCode != null) {
-				final int searchOpId = ((SearchOperators) item_CustEMailTypeCode.getAttribute(
+			final Listitem itemCustEMailTypeCode = this.sortOperator_custEMailTypeCode.getSelectedItem();
+			if (itemCustEMailTypeCode != null) {
+				final int searchOpId = ((SearchOperators) itemCustEMailTypeCode.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -331,10 +329,9 @@ public class CustomerEMailSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (this.custEMailPriority.getValue() != null) {
 
 			// get the search operator
-			final Listitem item_CustEMailPriority = this.sortOperator_custEMailPriority.getSelectedItem();
-
-			if (item_CustEMailPriority != null) {
-				final int searchOpId = ((SearchOperators) item_CustEMailPriority.getAttribute(
+			final Listitem itemCustEMailPriority = this.sortOperator_custEMailPriority.getSelectedItem();
+			if (itemCustEMailPriority != null) {
+				final int searchOpId = ((SearchOperators) itemCustEMailPriority.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
@@ -347,9 +344,9 @@ public class CustomerEMailSearchCtrl extends GFCBaseCtrl implements Serializable
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute(
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -370,9 +367,9 @@ public class CustomerEMailSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute(
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

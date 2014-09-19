@@ -325,10 +325,9 @@ public class CustomerAdditionalDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
 			// get the search operator
-			final Listitem item_custCIF = this.sortOperator_custCIF.getSelectedItem();
-
-			if (item_custCIF != null) {
-				final int searchOpId = ((SearchOperators) item_custCIF.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustCIF = this.sortOperator_custCIF.getSelectedItem();
+			if (itemCustCIF != null) {
+				final int searchOpId = ((SearchOperators) itemCustCIF.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("lovDescCustCIF", "%"+ this.custCIF.getValue().toUpperCase() + "%",searchOpId));
@@ -342,10 +341,9 @@ public class CustomerAdditionalDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.custAcademicLevel.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustAcademicLevel = this.sortOperator_custAcademicLevel.getSelectedItem();
-
-			if (item_CustAcademicLevel != null) {
-				final int searchOpId = ((SearchOperators) item_CustAcademicLevel.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustAcademicLevel = this.sortOperator_custAcademicLevel.getSelectedItem();
+			if (itemCustAcademicLevel != null) {
+				final int searchOpId = ((SearchOperators) itemCustAcademicLevel.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("custAcademicLevel", "%"+ this.custAcademicLevel.getValue().toUpperCase()+ "%", searchOpId));
@@ -359,10 +357,9 @@ public class CustomerAdditionalDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.academicDecipline.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcademicDecipline = this.sortOperator_academicDecipline.getSelectedItem();
-
-			if (item_AcademicDecipline != null) {
-				final int searchOpId = ((SearchOperators) item_AcademicDecipline.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcademicDecipline = this.sortOperator_academicDecipline.getSelectedItem();
+			if (itemAcademicDecipline != null) {
+				final int searchOpId = ((SearchOperators) itemAcademicDecipline.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("academicDecipline", "%"+ this.academicDecipline.getValue().toUpperCase()+ "%", searchOpId));
@@ -376,10 +373,9 @@ public class CustomerAdditionalDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (this.custRefCustID.getValue() != null) {
 
 			// get the search operator
-			final Listitem item_CustRefCustID = this.sortOperator_custRefCustID.getSelectedItem();
-
-			if (item_CustRefCustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustRefCustID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustRefCustID = this.sortOperator_custRefCustID.getSelectedItem();
+			if (itemCustRefCustID != null) {
+				final int searchOpId = ((SearchOperators) itemCustRefCustID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -391,10 +387,9 @@ public class CustomerAdditionalDetailSearchCtrl extends GFCBaseCtrl implements S
 		if (StringUtils.isNotEmpty(this.custRefStaffID.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustRefStaffID = this.sortOperator_custRefStaffID.getSelectedItem();
-
-			if (item_CustRefStaffID != null) {
-				final int searchOpId = ((SearchOperators) item_CustRefStaffID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustRefStaffID = this.sortOperator_custRefStaffID.getSelectedItem();
+			if (itemCustRefStaffID != null) {
+				final int searchOpId = ((SearchOperators) itemCustRefStaffID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("custRefStaffID", "%"+ this.custRefStaffID.getValue().toUpperCase()+ "%", searchOpId));
@@ -407,9 +402,9 @@ public class CustomerAdditionalDetailSearchCtrl extends GFCBaseCtrl implements S
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"+ this.recordStatus.getValue().toUpperCase() + "%",searchOpId));
@@ -428,9 +423,9 @@ public class CustomerAdditionalDetailSearchCtrl extends GFCBaseCtrl implements S
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"+ selectedValue.toUpperCase() + "%", searchOpId));

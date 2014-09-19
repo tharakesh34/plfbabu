@@ -561,10 +561,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.name.getValue())) {
 
 			// get the search operator
-			final Listitem item_Name = this.sortOperator_name.getSelectedItem();
-
-			if (item_Name != null) {
-				final int searchOpId = ((SearchOperators) item_Name.getAttribute(
+			final Listitem itemName = this.sortOperator_name.getSelectedItem();
+			if (itemName != null) {
+				final int searchOpId = ((SearchOperators) itemName.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -580,10 +579,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.phoneNumber.getValue())) {
 
 			// get the search operator
-			final Listitem item_PhoneNumber = this.sortOperator_phoneNumber.getSelectedItem();
-
-			if (item_PhoneNumber != null) {
-				final int searchOpId = ((SearchOperators) item_PhoneNumber.getAttribute(
+			final Listitem itemPhoneNumber = this.sortOperator_phoneNumber.getSelectedItem();
+			if (itemPhoneNumber != null) {
+				final int searchOpId = ((SearchOperators) itemPhoneNumber.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -599,10 +597,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.emailId.getValue())) {
 
 			// get the search operator
-			final Listitem item_EmailId = this.sortOperator_emailId.getSelectedItem();
-
-			if (item_EmailId != null) {
-				final int searchOpId = ((SearchOperators) item_EmailId.getAttribute(
+			final Listitem itemEmailId = this.sortOperator_emailId.getSelectedItem();
+			if (itemEmailId != null) {
+				final int searchOpId = ((SearchOperators) itemEmailId.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -616,9 +613,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 			}
 		}
 	  if (this.bussCommenceDate.getValue()!=null) {	  
-	    final Listitem item_BussCommenceDate = this.sortOperator_bussCommenceDate.getSelectedItem();
-	  	if (item_BussCommenceDate != null) {
-	 		final int searchOpId = ((SearchOperators) item_BussCommenceDate.getAttribute(
+	    final Listitem itemBussCommenceDate = this.sortOperator_bussCommenceDate.getSelectedItem();
+	  	if (itemBussCommenceDate != null) {
+	 		final int searchOpId = ((SearchOperators) itemBussCommenceDate.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -630,9 +627,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.servCommenceDate.getValue()!=null) {	  
-	    final Listitem item_ServCommenceDate = this.sortOperator_servCommenceDate.getSelectedItem();
-	  	if (item_ServCommenceDate != null) {
-	 		final int searchOpId = ((SearchOperators) item_ServCommenceDate.getAttribute("data")).getSearchOperatorId();
+	    final Listitem itemServCommenceDate = this.sortOperator_servCommenceDate.getSelectedItem();
+	  	if (itemServCommenceDate != null) {
+	 		final int searchOpId = ((SearchOperators) itemServCommenceDate.getAttribute("data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
 				// do nothing
@@ -643,9 +640,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.bankRelationshipDate.getValue()!=null) {	  
-	    final Listitem item_BankRelationshipDate = this.sortOperator_bankRelationshipDate.getSelectedItem();
-	  	if (item_BankRelationshipDate != null) {
-	 		final int searchOpId = ((SearchOperators) item_BankRelationshipDate.getAttribute(
+	    final Listitem itemBankRelationshipDate = this.sortOperator_bankRelationshipDate.getSelectedItem();
+	  	if (itemBankRelationshipDate != null) {
+	 		final int searchOpId = ((SearchOperators) itemBankRelationshipDate.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -657,9 +654,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.paidUpCapital.getValue()!=null) {	  
-	    final Listitem item_PaidUpCapital = this.sortOperator_paidUpCapital.getSelectedItem();
-	  	if (item_PaidUpCapital != null) {
-	 		final int searchOpId = ((SearchOperators) item_PaidUpCapital.getAttribute(
+	    final Listitem itemPaidUpCapital = this.sortOperator_paidUpCapital.getSelectedItem();
+	  	if (itemPaidUpCapital != null) {
+	 		final int searchOpId = ((SearchOperators) itemPaidUpCapital.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -671,9 +668,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.authorizedCapital.getValue()!=null) {	  
-	    final Listitem item_AuthorizedCapital = this.sortOperator_authorizedCapital.getSelectedItem();
-	  	if (item_AuthorizedCapital != null) {
-	 		final int searchOpId = ((SearchOperators) item_AuthorizedCapital.getAttribute(
+	    final Listitem itemAuthorizedCapital = this.sortOperator_authorizedCapital.getSelectedItem();
+	  	if (itemAuthorizedCapital != null) {
+	 		final int searchOpId = ((SearchOperators) itemAuthorizedCapital.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -685,9 +682,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.reservesAndSurPlus.getValue()!=null) {	  
-	    final Listitem item_ReservesAndSurPlus = this.sortOperator_reservesAndSurPlus.getSelectedItem();
-	  	if (item_ReservesAndSurPlus != null) {
-	 		final int searchOpId = ((SearchOperators) item_ReservesAndSurPlus.getAttribute(
+	    final Listitem itemReservesAndSurPlus = this.sortOperator_reservesAndSurPlus.getSelectedItem();
+	  	if (itemReservesAndSurPlus != null) {
+	 		final int searchOpId = ((SearchOperators) itemReservesAndSurPlus.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -699,9 +696,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.intangibleAssets.getValue()!=null) {	  
-	    final Listitem item_IntangibleAssets = this.sortOperator_intangibleAssets.getSelectedItem();
-	  	if (item_IntangibleAssets != null) {
-	 		final int searchOpId = ((SearchOperators) item_IntangibleAssets.getAttribute(
+	    final Listitem itemIntangibleAssets = this.sortOperator_intangibleAssets.getSelectedItem();
+	  	if (itemIntangibleAssets != null) {
+	 		final int searchOpId = ((SearchOperators) itemIntangibleAssets.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -713,9 +710,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.tangibleNetWorth.getValue()!=null) {	  
-	    final Listitem item_TangibleNetWorth = this.sortOperator_tangibleNetWorth.getSelectedItem();
-	  	if (item_TangibleNetWorth != null) {
-	 		final int searchOpId = ((SearchOperators) item_TangibleNetWorth.getAttribute(
+	    final Listitem itemTangibleNetWorth = this.sortOperator_tangibleNetWorth.getSelectedItem();
+	  	if (itemTangibleNetWorth != null) {
+	 		final int searchOpId = ((SearchOperators) itemTangibleNetWorth.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -727,9 +724,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.longTermLiabilities.getValue()!=null) {	  
-	    final Listitem item_LongTermLiabilities = this.sortOperator_longTermLiabilities.getSelectedItem();
-	  	if (item_LongTermLiabilities != null) {
-	 		final int searchOpId = ((SearchOperators) item_LongTermLiabilities.getAttribute(
+	    final Listitem itemLongTermLiabilities = this.sortOperator_longTermLiabilities.getSelectedItem();
+	  	if (itemLongTermLiabilities != null) {
+	 		final int searchOpId = ((SearchOperators) itemLongTermLiabilities.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -741,9 +738,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.capitalEmployed.getValue()!=null) {	  
-	    final Listitem item_CapitalEmployed = this.sortOperator_capitalEmployed.getSelectedItem();
-	  	if (item_CapitalEmployed != null) {
-	 		final int searchOpId = ((SearchOperators) item_CapitalEmployed.getAttribute(
+	    final Listitem itemCapitalEmployed = this.sortOperator_capitalEmployed.getSelectedItem();
+	  	if (itemCapitalEmployed != null) {
+	 		final int searchOpId = ((SearchOperators) itemCapitalEmployed.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -755,9 +752,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.investments.getValue()!=null) {	  
-	    final Listitem item_Investments = this.sortOperator_investments.getSelectedItem();
-	  	if (item_Investments != null) {
-	 		final int searchOpId = ((SearchOperators) item_Investments.getAttribute(
+	    final Listitem itemInvestments = this.sortOperator_investments.getSelectedItem();
+	  	if (itemInvestments != null) {
+	 		final int searchOpId = ((SearchOperators) itemInvestments.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -769,9 +766,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.nonCurrentAssets.getValue()!=null) {	  
-	    final Listitem item_NonCurrentAssets = this.sortOperator_nonCurrentAssets.getSelectedItem();
-	  	if (item_NonCurrentAssets != null) {
-	 		final int searchOpId = ((SearchOperators) item_NonCurrentAssets.getAttribute(
+	    final Listitem itemNonCurrentAssets = this.sortOperator_nonCurrentAssets.getSelectedItem();
+	  	if (itemNonCurrentAssets != null) {
+	 		final int searchOpId = ((SearchOperators) itemNonCurrentAssets.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -783,9 +780,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.netWorkingCapital.getValue()!=null) {	  
-	    final Listitem item_NetWorkingCapital = this.sortOperator_netWorkingCapital.getSelectedItem();
-	  	if (item_NetWorkingCapital != null) {
-	 		final int searchOpId = ((SearchOperators) item_NetWorkingCapital.getAttribute(
+	    final Listitem itemNetWorkingCapital = this.sortOperator_netWorkingCapital.getSelectedItem();
+	  	if (itemNetWorkingCapital != null) {
+	 		final int searchOpId = ((SearchOperators) itemNetWorkingCapital.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -797,9 +794,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.netSales.getValue()!=null) {	  
-	    final Listitem item_NetSales = this.sortOperator_netSales.getSelectedItem();
-	  	if (item_NetSales != null) {
-	 		final int searchOpId = ((SearchOperators) item_NetSales.getAttribute(
+	    final Listitem itemNetSales = this.sortOperator_netSales.getSelectedItem();
+	  	if (itemNetSales != null) {
+	 		final int searchOpId = ((SearchOperators) itemNetSales.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -811,9 +808,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.otherIncome.getValue()!=null) {	  
-	    final Listitem item_OtherIncome = this.sortOperator_otherIncome.getSelectedItem();
-	  	if (item_OtherIncome != null) {
-	 		final int searchOpId = ((SearchOperators) item_OtherIncome.getAttribute(
+	    final Listitem itemOtherIncome = this.sortOperator_otherIncome.getSelectedItem();
+	  	if (itemOtherIncome != null) {
+	 		final int searchOpId = ((SearchOperators) itemOtherIncome.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -825,9 +822,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.netProfitAfterTax.getValue()!=null) {	  
-	    final Listitem item_NetProfitAfterTax = this.sortOperator_netProfitAfterTax.getSelectedItem();
-	  	if (item_NetProfitAfterTax != null) {
-	 		final int searchOpId = ((SearchOperators) item_NetProfitAfterTax.getAttribute(
+	    final Listitem itemNetProfitAfterTax = this.sortOperator_netProfitAfterTax.getSelectedItem();
+	  	if (itemNetProfitAfterTax != null) {
+	 		final int searchOpId = ((SearchOperators) itemNetProfitAfterTax.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -839,9 +836,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.depreciation.getValue()!=null) {	  
-	    final Listitem item_Depreciation = this.sortOperator_depreciation.getSelectedItem();
-	  	if (item_Depreciation != null) {
-	 		final int searchOpId = ((SearchOperators) item_Depreciation.getAttribute(
+	    final Listitem itemDepreciation = this.sortOperator_depreciation.getSelectedItem();
+	  	if (itemDepreciation != null) {
+	 		final int searchOpId = ((SearchOperators) itemDepreciation.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -853,9 +850,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.cashAccurals.getValue()!=null) {	  
-	    final Listitem item_CashAccurals = this.sortOperator_cashAccurals.getSelectedItem();
-	  	if (item_CashAccurals != null) {
-	 		final int searchOpId = ((SearchOperators) item_CashAccurals.getAttribute(
+	    final Listitem itemCashAccurals = this.sortOperator_cashAccurals.getSelectedItem();
+	  	if (itemCashAccurals != null) {
+	 		final int searchOpId = ((SearchOperators) itemCashAccurals.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -867,9 +864,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.annualTurnover.getValue()!=null) {	  
-	    final Listitem item_AnnualTurnover = this.sortOperator_annualTurnover.getSelectedItem();
-	  	if (item_AnnualTurnover != null) {
-	 		final int searchOpId = ((SearchOperators) item_AnnualTurnover.getAttribute(
+	    final Listitem itemAnnualTurnover = this.sortOperator_annualTurnover.getSelectedItem();
+	  	if (itemAnnualTurnover != null) {
+	 		final int searchOpId = ((SearchOperators) itemAnnualTurnover.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -881,9 +878,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.returnOnCapitalEmp.getValue()!=null) {	  
-	    final Listitem item_ReturnOnCapitalEmp = this.sortOperator_returnOnCapitalEmp.getSelectedItem();
-	  	if (item_ReturnOnCapitalEmp != null) {
-	 		final int searchOpId = ((SearchOperators) item_ReturnOnCapitalEmp.getAttribute(
+	    final Listitem itemReturnOnCapitalEmp = this.sortOperator_returnOnCapitalEmp.getSelectedItem();
+	  	if (itemReturnOnCapitalEmp != null) {
+	 		final int searchOpId = ((SearchOperators) itemReturnOnCapitalEmp.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -895,9 +892,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.currentAssets.getValue()!=null) {	  
-	    final Listitem item_CurrentAssets = this.sortOperator_currentAssets.getSelectedItem();
-	  	if (item_CurrentAssets != null) {
-	 		final int searchOpId = ((SearchOperators) item_CurrentAssets.getAttribute(
+	    final Listitem itemCurrentAssets = this.sortOperator_currentAssets.getSelectedItem();
+	  	if (itemCurrentAssets != null) {
+	 		final int searchOpId = ((SearchOperators) itemCurrentAssets.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -909,9 +906,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.currentLiabilities.getValue()!=null) {	  
-	    final Listitem item_CurrentLiabilities = this.sortOperator_currentLiabilities.getSelectedItem();
-	  	if (item_CurrentLiabilities != null) {
-	 		final int searchOpId = ((SearchOperators) item_CurrentLiabilities.getAttribute(
+	    final Listitem itemCurrentLiabilities = this.sortOperator_currentLiabilities.getSelectedItem();
+	  	if (itemCurrentLiabilities != null) {
+	 		final int searchOpId = ((SearchOperators) itemCurrentLiabilities.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -923,9 +920,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.currentBookValue.getValue()!=null) {	  
-	    final Listitem item_CurrentBookValue = this.sortOperator_currentBookValue.getSelectedItem();
-	  	if (item_CurrentBookValue != null) {
-	 		final int searchOpId = ((SearchOperators) item_CurrentBookValue.getAttribute(
+	    final Listitem itemCurrentBookValue = this.sortOperator_currentBookValue.getSelectedItem();
+	  	if (itemCurrentBookValue != null) {
+	 		final int searchOpId = ((SearchOperators) itemCurrentBookValue.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -937,9 +934,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.currentMarketValue.getValue()!=null) {	  
-	    final Listitem item_CurrentMarketValue = this.sortOperator_currentMarketValue.getSelectedItem();
-	  	if (item_CurrentMarketValue != null) {
-	 		final int searchOpId = ((SearchOperators) item_CurrentMarketValue.getAttribute(
+	    final Listitem itemCurrentMarketValue = this.sortOperator_currentMarketValue.getSelectedItem();
+	  	if (itemCurrentMarketValue != null) {
+	 		final int searchOpId = ((SearchOperators) itemCurrentMarketValue.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -951,9 +948,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.promotersShare.getValue()!=null) {	  
-	    final Listitem item_PromotersShare = this.sortOperator_promotersShare.getSelectedItem();
-	  	if (item_PromotersShare != null) {
-	 		final int searchOpId = ((SearchOperators) item_PromotersShare.getAttribute(
+	    final Listitem itemPromotersShare = this.sortOperator_promotersShare.getSelectedItem();
+	  	if (itemPromotersShare != null) {
+	 		final int searchOpId = ((SearchOperators) itemPromotersShare.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -965,9 +962,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.associatesShare.getValue()!=null) {	  
-	    final Listitem item_AssociatesShare = this.sortOperator_associatesShare.getSelectedItem();
-	  	if (item_AssociatesShare != null) {
-	 		final int searchOpId = ((SearchOperators) item_AssociatesShare.getAttribute(
+	    final Listitem itemAssociatesShare = this.sortOperator_associatesShare.getSelectedItem();
+	  	if (itemAssociatesShare != null) {
+	 		final int searchOpId = ((SearchOperators) itemAssociatesShare.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -979,9 +976,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.publicShare.getValue()!=null) {	  
-	    final Listitem item_PublicShare = this.sortOperator_publicShare.getSelectedItem();
-	  	if (item_PublicShare != null) {
-	 		final int searchOpId = ((SearchOperators) item_PublicShare.getAttribute(
+	    final Listitem itemPublicShare = this.sortOperator_publicShare.getSelectedItem();
+	  	if (itemPublicShare != null) {
+	 		final int searchOpId = ((SearchOperators) itemPublicShare.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -993,9 +990,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.finInstShare.getValue()!=null) {	  
-	    final Listitem item_FinInstShare = this.sortOperator_finInstShare.getSelectedItem();
-	  	if (item_FinInstShare != null) {
-	 		final int searchOpId = ((SearchOperators) item_FinInstShare.getAttribute(
+	    final Listitem itemFinInstShare = this.sortOperator_finInstShare.getSelectedItem();
+	  	if (itemFinInstShare != null) {
+	 		final int searchOpId = ((SearchOperators) itemFinInstShare.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -1007,9 +1004,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 	  if (this.others.getValue()!=null) {	  
-	    final Listitem item_Others = this.sortOperator_others.getSelectedItem();
-	  	if (item_Others != null) {
-	 		final int searchOpId = ((SearchOperators) item_Others.getAttribute(
+	    final Listitem itemOthers = this.sortOperator_others.getSelectedItem();
+	  	if (itemOthers != null) {
+	 		final int searchOpId = ((SearchOperators) itemOthers.getAttribute(
 	 				"data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
@@ -1022,9 +1019,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 	  }	
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute(
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute(
 						"data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
@@ -1045,9 +1042,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl implements Se
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute(
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute(
 						"data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {

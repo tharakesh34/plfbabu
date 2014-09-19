@@ -310,10 +310,9 @@ public class CollateralTypeSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hWCLP.getValue())) {
 
 			// get the search operator
-			final Listitem item_HWCLP = this.sortOperator_hWCLP.getSelectedItem();
-
-			if (item_HWCLP != null) {
-				final int searchOpId = ((SearchOperators) item_HWCLP.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHWCLP = this.sortOperator_hWCLP.getSelectedItem();
+			if (itemHWCLP != null) {
+				final int searchOpId = ((SearchOperators) itemHWCLP.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hWCLP", "%" + this.hWCLP.getValue().toUpperCase() + "%", searchOpId));
@@ -327,10 +326,9 @@ public class CollateralTypeSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hWCPD.getValue())) {
 
 			// get the search operator
-			final Listitem item_HWCPD = this.sortOperator_hWCPD.getSelectedItem();
-
-			if (item_HWCPD != null) {
-				final int searchOpId = ((SearchOperators) item_HWCPD.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHWCPD = this.sortOperator_hWCPD.getSelectedItem();
+			if (itemHWCPD != null) {
+				final int searchOpId = ((SearchOperators) itemHWCPD.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hWCPD", "%" + this.hWCPD.getValue().toUpperCase() + "%", searchOpId));
@@ -342,9 +340,9 @@ public class CollateralTypeSearchCtrl extends GFCBaseCtrl implements Serializabl
 			}
 		}
 	  if (this.hWBVM.getValue()!=null) {	  
-	    final Listitem item_HWBVM = this.sortOperator_hWBVM.getSelectedItem();
-	  	if (item_HWBVM != null) {
-	 		final int searchOpId = ((SearchOperators) item_HWBVM.getAttribute("data")).getSearchOperatorId();
+	    final Listitem itemHWBVM = this.sortOperator_hWBVM.getSelectedItem();
+	  	if (itemHWBVM != null) {
+	 		final int searchOpId = ((SearchOperators) itemHWBVM.getAttribute("data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
 	 			// do nothing
@@ -359,10 +357,9 @@ public class CollateralTypeSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hWINS.getValue())) {
 
 			// get the search operator
-			final Listitem item_HWINS = this.sortOperator_hWINS.getSelectedItem();
-
-			if (item_HWINS != null) {
-				final int searchOpId = ((SearchOperators) item_HWINS.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHWINS = this.sortOperator_hWINS.getSelectedItem();
+			if (itemHWINS != null) {
+				final int searchOpId = ((SearchOperators) itemHWINS.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hWINS", "%" + this.hWINS.getValue().toUpperCase() + "%", searchOpId));
@@ -375,9 +372,9 @@ public class CollateralTypeSearchCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -396,9 +393,9 @@ public class CollateralTypeSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

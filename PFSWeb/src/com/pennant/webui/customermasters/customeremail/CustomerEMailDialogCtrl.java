@@ -1501,8 +1501,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setCustomerSelectCtrl(CustomerSelectCtrl customerSelectctrl) {

@@ -1030,8 +1030,8 @@ public class CollateralLocationDialogCtrl extends GFCBaseCtrl implements Seriali
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 	
 	

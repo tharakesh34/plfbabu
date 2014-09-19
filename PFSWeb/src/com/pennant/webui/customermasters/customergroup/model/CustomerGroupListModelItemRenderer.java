@@ -75,15 +75,15 @@ public class CustomerGroupListModelItemRenderer implements ListitemRenderer<Cust
 	  	lc = new Listcell(customerGroup.getCustGrpDesc());
 		lc.setParent(item);
 		
-		String GrpRelation  = "";
+		String grpRelation  = "";
 		if(!StringUtils.trimToEmpty(customerGroup.getCustGrpRO1()).equals("")){
 			if(!StringUtils.trimToEmpty(customerGroup.getLovDescCustGrpRO1Name()).equals("")){
-				GrpRelation = customerGroup.getCustGrpRO1()+PennantConstants.KEY_SEPERATOR+customerGroup.getLovDescCustGrpRO1Name();
+				grpRelation = customerGroup.getCustGrpRO1()+PennantConstants.KEY_SEPERATOR+customerGroup.getLovDescCustGrpRO1Name();
 			}else{
-				GrpRelation = customerGroup.getCustGrpRO1();
+				grpRelation = customerGroup.getCustGrpRO1();
 			}
 		}
-		lc = new Listcell(GrpRelation);
+		lc = new Listcell(grpRelation);
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbCustGrpIsActive = new Checkbox();
