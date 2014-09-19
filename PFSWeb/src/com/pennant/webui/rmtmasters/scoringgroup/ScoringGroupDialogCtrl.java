@@ -1864,12 +1864,12 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 						scoringMetrics.setRecordType(PennantConstants.RCD_UPD);
 					}
 				}else{
-					scoringMetrics.setLovDescMetricTotPerc(new String("0"));
+					scoringMetrics.setLovDescMetricTotPerc("0");
 				}
 			}
 		}else{
 			for(ScoringMetrics scoringMetrics:scoringMetricsList){
-				scoringMetrics.setLovDescMetricTotPerc(new String("0"));
+				scoringMetrics.setLovDescMetricTotPerc("0");
 				if(scoringMetrics.getRecordType().equals("")){
 					scoringMetrics.setRecordType(PennantConstants.RCD_UPD);
 				}

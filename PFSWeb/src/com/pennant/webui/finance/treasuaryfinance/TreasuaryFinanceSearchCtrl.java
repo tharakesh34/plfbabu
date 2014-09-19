@@ -296,7 +296,7 @@ public class TreasuaryFinanceSearchCtrl extends GFCBaseCtrl implements Serializa
 		}
 		 
 		 if(!StringUtils.trimToEmpty(this.searchObj.getWhereClause()).equals("")){
-			 so.addWhereClause(new String(this.searchObj.getWhereClause()));
+			 so.addWhereClause(this.searchObj.getWhereClause());
 			}
 
 			 so.setSorts(this.searchObj.getSorts());

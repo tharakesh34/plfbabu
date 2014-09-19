@@ -274,7 +274,7 @@ public class CollateralLocationSearchCtrl extends GFCBaseCtrl implements Seriali
 		}
 		 
 		 if(!StringUtils.trimToEmpty(this.searchObj.getWhereClause()).equals("")){
-			 so.addWhereClause(new String(this.searchObj.getWhereClause()));
+			 so.addWhereClause(this.searchObj.getWhereClause());
 			}
 
 			 so.setSorts(this.searchObj.getSorts());
