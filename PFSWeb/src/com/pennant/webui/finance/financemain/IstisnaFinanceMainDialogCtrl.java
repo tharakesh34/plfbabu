@@ -1220,15 +1220,15 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 
 		int formatter = getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinFormetter();
 
-		BigDecimal old_finAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal new_finAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
-		if (old_finAmount.compareTo(new_finAmount) != 0) {
+		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
+		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			isFeeReExecute = true;
 		}
 
-		BigDecimal old_dwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
-		BigDecimal new_dwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
-		if (old_dwnPayBank.compareTo(new_dwnPayBank) != 0) {
+		BigDecimal oldDwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
+		BigDecimal newDwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
+		if (oldDwnPayBank.compareTo(newDwnPayBank) != 0) {
 			isFeeReExecute = true;
 		}
 
@@ -1483,9 +1483,9 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 		int formatter = getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinFormetter();
 
-		BigDecimal old_securityDeposit = PennantAppUtil.unFormateAmount(this.oldVar_securityDeposit, formatter);
-		BigDecimal new_securityDeposit = PennantAppUtil.unFormateAmount(this.securityDeposit.getValue(), formatter);
-		if (old_securityDeposit.compareTo(new_securityDeposit) != 0) {
+		BigDecimal oldSecurityDeposit = PennantAppUtil.unFormateAmount(this.oldVar_securityDeposit, formatter);
+		BigDecimal newSecurityDeposit = PennantAppUtil.unFormateAmount(this.securityDeposit.getValue(), formatter);
+		if (oldSecurityDeposit.compareTo(newSecurityDeposit) != 0) {
 			return true;
 		}
 	 
@@ -1523,15 +1523,15 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			return true;
 		}
 
-		BigDecimal old_finAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal new_finAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
-		if (old_finAmount.compareTo(new_finAmount) != 0) {
+		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
+		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			return true;
 		}
 		
-		BigDecimal old_securityDeposit = PennantAppUtil.unFormateAmount(this.oldVar_securityDeposit, formatter);
-		BigDecimal new_securityDeposit = PennantAppUtil.unFormateAmount(this.securityDeposit.getValue(), formatter);
-		if (old_securityDeposit.compareTo(new_securityDeposit) != 0) {
+		BigDecimal oldSecurityDeposit = PennantAppUtil.unFormateAmount(this.oldVar_securityDeposit, formatter);
+		BigDecimal newSecurityDeposit = PennantAppUtil.unFormateAmount(this.securityDeposit.getValue(), formatter);
+		if (oldSecurityDeposit.compareTo(newSecurityDeposit) != 0) {
 			return true;
 		}
 
@@ -1646,10 +1646,9 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			return true;
 		}
 
-		BigDecimal old_finRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount, formatter);
-		BigDecimal new_finRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
-
-		if (old_finRepayAmount.compareTo(new_finRepayAmount) != 0) {
+		BigDecimal oldFinRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount, formatter);
+		BigDecimal newFinRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
+		if (oldFinRepayAmount.compareTo(newFinRepayAmount) != 0) {
 			return true;
 		}
 		if (this.oldVar_repayFrq != this.repayFrq.getValue()) {
@@ -1673,9 +1672,9 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			return true;
 		}
 
-		BigDecimal old_dwnPayment = PennantAppUtil.unFormateAmount(this.oldVar_downPayment, formatter);
+		BigDecimal oldDwnPayment = PennantAppUtil.unFormateAmount(this.oldVar_downPayment, formatter);
 		BigDecimal new_dwnPayment = PennantAppUtil.unFormateAmount(this.downPayment.getValue(), formatter);
-		if (old_dwnPayment.compareTo(new_dwnPayment) != 0) {
+		if (oldDwnPayment.compareTo(new_dwnPayment) != 0) {
 			return true;
 		}
 		

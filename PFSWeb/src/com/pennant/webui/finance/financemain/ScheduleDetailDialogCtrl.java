@@ -523,10 +523,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			BigDecimal finAmount = financeMain.getFinAmount();
 			BigDecimal downPayment = financeMain.getDownPayment();
 			
-			BigDecimal NonbankShare = downPayment.multiply(new BigDecimal(100)).divide(finAmount,2,RoundingMode.HALF_DOWN);
+			BigDecimal nonbankShare = downPayment.multiply(new BigDecimal(100)).divide(finAmount,2,RoundingMode.HALF_DOWN);
 			BigDecimal bankShare = finAmount.subtract(downPayment).multiply(new BigDecimal(100)).divide(finAmount,2,RoundingMode.HALF_DOWN);
 			
-			this.schdl_NonBankShare.setValue(PennantApplicationUtil.formatRate(NonbankShare.doubleValue(), 
+			this.schdl_NonBankShare.setValue(PennantApplicationUtil.formatRate(nonbankShare.doubleValue(), 
 					PennantConstants.rateFormate)+"%");
 			this.schdl_BankShare.setValue(PennantApplicationUtil.formatRate(bankShare.doubleValue(), 
 					PennantConstants.rateFormate)+"%");

@@ -312,10 +312,9 @@ public class SystemInternalAccountDefinitionSearchCtrl extends GFCBaseCtrl imple
 		if (StringUtils.isNotEmpty(this.sIACode.getValue())) {
 
 			// get the search operator
-			final Listitem item_SIACode = this.sortOperator_sIACode.getSelectedItem();
-
-			if (item_SIACode != null) {
-				final int searchOpId = ((SearchOperators) item_SIACode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSIACode = this.sortOperator_sIACode.getSelectedItem();
+			if (itemSIACode != null) {
+				final int searchOpId = ((SearchOperators) itemSIACode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("sIACode", "%" + this.sIACode.getValue().toUpperCase() + "%", searchOpId));
@@ -329,10 +328,9 @@ public class SystemInternalAccountDefinitionSearchCtrl extends GFCBaseCtrl imple
 		if (StringUtils.isNotEmpty(this.sIAName.getValue())) {
 
 			// get the search operator
-			final Listitem item_SIAName = this.sortOperator_sIAName.getSelectedItem();
-
-			if (item_SIAName != null) {
-				final int searchOpId = ((SearchOperators) item_SIAName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSIAName = this.sortOperator_sIAName.getSelectedItem();
+			if (itemSIAName != null) {
+				final int searchOpId = ((SearchOperators) itemSIAName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("sIAName", "%" + this.sIAName.getValue().toUpperCase() + "%", searchOpId));
@@ -346,10 +344,9 @@ public class SystemInternalAccountDefinitionSearchCtrl extends GFCBaseCtrl imple
 		if (StringUtils.isNotEmpty(this.sIAShortName.getValue())) {
 
 			// get the search operator
-			final Listitem item_SIAShortName = this.sortOperator_sIAShortName.getSelectedItem();
-
-			if (item_SIAShortName != null) {
-				final int searchOpId = ((SearchOperators) item_SIAShortName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSIAShortName = this.sortOperator_sIAShortName.getSelectedItem();
+			if (itemSIAShortName != null) {
+				final int searchOpId = ((SearchOperators) itemSIAShortName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("sIAShortName", "%" + this.sIAShortName.getValue().toUpperCase() + "%", searchOpId));
@@ -363,10 +360,9 @@ public class SystemInternalAccountDefinitionSearchCtrl extends GFCBaseCtrl imple
 		if (StringUtils.isNotEmpty(this.sIAAcType.getValue())) {
 
 			// get the search operator
-			final Listitem item_SIAAcType = this.sortOperator_sIAAcType.getSelectedItem();
-
-			if (item_SIAAcType != null) {
-				final int searchOpId = ((SearchOperators) item_SIAAcType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSIAAcType = this.sortOperator_sIAAcType.getSelectedItem();
+			if (itemSIAAcType != null) {
+				final int searchOpId = ((SearchOperators) itemSIAAcType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("sIAAcType", "%" + this.sIAAcType.getValue().toUpperCase() + "%", searchOpId));
@@ -380,10 +376,9 @@ public class SystemInternalAccountDefinitionSearchCtrl extends GFCBaseCtrl imple
 		if (StringUtils.isNotEmpty(this.sIANumber.getValue())) {
 
 			// get the search operator
-			final Listitem item_SIANumber = this.sortOperator_sIANumber.getSelectedItem();
-
-			if (item_SIANumber != null) {
-				final int searchOpId = ((SearchOperators) item_SIANumber.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSIANumber = this.sortOperator_sIANumber.getSelectedItem();
+			if (itemSIANumber != null) {
+				final int searchOpId = ((SearchOperators) itemSIANumber.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("sIANumber", "%" + this.sIANumber.getValue().toUpperCase() + "%", searchOpId));
@@ -396,9 +391,9 @@ public class SystemInternalAccountDefinitionSearchCtrl extends GFCBaseCtrl imple
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -417,9 +412,9 @@ public class SystemInternalAccountDefinitionSearchCtrl extends GFCBaseCtrl imple
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

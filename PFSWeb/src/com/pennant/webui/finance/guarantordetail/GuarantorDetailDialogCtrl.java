@@ -867,7 +867,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 				listitem.setAttribute("data", primaryExposure);
 				this.listBoxGurantorsPrimaryExposure.appendChild(listitem);
 			}
-			String footer_style1 = "text-align:right; font-weight:bold;";
+			String footerStyle1 = "text-align:right; font-weight:bold;";
 
 			Listitem item = new Listitem();
 			Listcell lc = null;
@@ -879,7 +879,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			lc = new Listcell(recordCount + "");
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -898,7 +898,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(totCurrentExposer,DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -913,7 +913,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(totOverDueAmount,DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 			item.setParent(this.listBoxGurantorsPrimaryExposure);
 			getGuarantorDetail().setPrimaryExposure(String.valueOf(totCurrentExposer));
@@ -983,7 +983,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 				listitem.setAttribute("data", secondaryExposure);
 				this.listBoxGurantorsSecoundaryExposure.appendChild(listitem);
 			}
-			String footer_style1 = "text-align:right; font-weight:bold;";
+			String footerStyle1 = "text-align:right; font-weight:bold;";
 
 			Listitem item = new Listitem();
 			Listcell lc = null;
@@ -995,7 +995,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			lc = new Listcell(recordCount + "");
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1014,7 +1014,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(totCurrentExposer,DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1028,7 +1028,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(totOverDueAmount,DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1102,7 +1102,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 				listitem.setAttribute("data", guarantorExposure);
 				this.listBoxGurantorsExposure.appendChild(listitem);
 			}
-			String footer_style1 = "text-align:right; font-weight:bold;";
+			String footerStyle1 = "text-align:right; font-weight:bold;";
 
 			Listitem item = new Listitem();
 			Listcell lc = null;
@@ -1114,7 +1114,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			lc = new Listcell(recordCount + "");
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1133,7 +1133,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(totCurrentExposer,DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1146,7 +1146,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(totOverDueAmount,DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
-			lc.setStyle(footer_style1);
+			lc.setStyle(footerStyle1);
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -1969,8 +1969,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public boolean isNewRecord() {

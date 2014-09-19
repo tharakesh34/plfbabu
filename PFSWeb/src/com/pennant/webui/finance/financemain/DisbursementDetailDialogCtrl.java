@@ -797,8 +797,8 @@ public class DisbursementDetailDialogCtrl extends GFCBaseListCtrl<FinanceDisburs
 	}
 
 	public void setOldvar_disbursementDetails(
-			List<FinanceDisbursement> oldvar_disbursementDetails) {
-		this.oldvar_disbursementDetails = oldvar_disbursementDetails;
+			List<FinanceDisbursement> oldvarDisbursementDetails) {
+		this.oldvar_disbursementDetails = oldvarDisbursementDetails;
 	}
 
 	public List<FinanceDisbursement> getOldvar_disbursementDetails() {
@@ -819,8 +819,8 @@ public class DisbursementDetailDialogCtrl extends GFCBaseListCtrl<FinanceDisburs
 	}
 
 	public void setOldvar_contractorAssetDetails(
-			List<ContractorAssetDetail> oldvar_contractorAssetDetails) {
-		this.oldvar_contractorAssetDetails = oldvar_contractorAssetDetails;
+			List<ContractorAssetDetail> oldvarContractorAssetDetails) {
+		this.oldvar_contractorAssetDetails = oldvarContractorAssetDetails;
 	}
 
 }

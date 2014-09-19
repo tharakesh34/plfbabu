@@ -1076,21 +1076,21 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 		int formatter = getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinFormetter();
 
-		BigDecimal old_finAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal new_finAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
-		if (old_finAmount.compareTo(new_finAmount) != 0) {
+		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
+		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			isFeeReExecute = true;
 		}
 
-		BigDecimal old_dwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
-		BigDecimal new_dwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
-		if (old_dwnPayBank.compareTo(new_dwnPayBank) != 0) {
+		BigDecimal oldDwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
+		BigDecimal newDwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
+		if (oldDwnPayBank.compareTo(newDwnPayBank) != 0) {
 			isFeeReExecute = true;
 		}
 
-		BigDecimal old_dwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
-		BigDecimal new_dwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getValue(), formatter);
-		if (old_dwnPaySupl.compareTo(new_dwnPaySupl) != 0) {
+		BigDecimal oldDwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
+		BigDecimal newDwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getValue(), formatter);
+		if (oldDwnPaySupl.compareTo(newDwnPaySupl) != 0) {
 			isFeeReExecute = true;
 		}
 
@@ -1355,9 +1355,9 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 		int formatter = getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinFormetter();
 
-		BigDecimal old_dwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
-		BigDecimal new_dwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getValue(), formatter);
-		if (old_dwnPaySupl.compareTo(new_dwnPaySupl) != 0) {
+		BigDecimal oldDwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
+		BigDecimal newDwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getValue(), formatter);
+		if (oldDwnPaySupl.compareTo(newDwnPaySupl) != 0) {
 			return true;
 		}
 		logger.debug("Leaving");
@@ -1397,9 +1397,9 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			return true;
 		}
 
-		BigDecimal old_finAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
-		BigDecimal new_finAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
-		if (old_finAmount.compareTo(new_finAmount) != 0) {
+		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
+		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
+		if (oldFinAmount.compareTo(newFinAmount) != 0) {
 			return true;
 		}
 
@@ -1514,10 +1514,9 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			return true;
 		}
 
-		BigDecimal old_finRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount, formatter);
-		BigDecimal new_finRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
-
-		if (old_finRepayAmount.compareTo(new_finRepayAmount) != 0) {
+		BigDecimal oldFinRepayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finRepaymentAmount, formatter);
+		BigDecimal newFinRepayAmount = PennantAppUtil.unFormateAmount(this.finRepaymentAmount.getValue(), formatter);
+		if (oldFinRepayAmount.compareTo(newFinRepayAmount) != 0) {
 			return true;
 		}
 		if (this.oldVar_repayFrq != this.repayFrq.getValue()) {
@@ -1541,15 +1540,15 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			return true;
 		}
 
-		BigDecimal old_dwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
-		BigDecimal new_dwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
-		if (old_dwnPayBank.compareTo(new_dwnPayBank) != 0) {
+		BigDecimal oldDwnPayBank = PennantAppUtil.unFormateAmount(this.oldVar_downPayBank, formatter);
+		BigDecimal newDwnPayBank = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
+		if (oldDwnPayBank.compareTo(newDwnPayBank) != 0) {
 			return true;
 		}
 		
-		BigDecimal old_dwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
-		BigDecimal new_dwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getValue(), formatter);
-		if (old_dwnPaySupl.compareTo(new_dwnPaySupl) != 0) {
+		BigDecimal oldDwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
+		BigDecimal newDwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getValue(), formatter);
+		if (oldDwnPaySupl.compareTo(newDwnPaySupl) != 0) {
 			return true;
 		}
 

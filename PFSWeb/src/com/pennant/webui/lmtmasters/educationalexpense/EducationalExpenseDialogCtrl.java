@@ -805,15 +805,15 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 		if (this.oldVar_eduExpAmount != this.eduExpAmount.getValue()) {
 			return true;
 		}
-		String old_eduExpDate = "";
-		String new_eduExpDate ="";
+		String oldEduExpDate = "";
+		String newEduExpDate ="";
 		if (this.oldVar_eduExpDate!=null){
-			old_eduExpDate=DateUtility.formatDate(this.oldVar_eduExpDate,PennantConstants.dateFormat);
+			oldEduExpDate=DateUtility.formatDate(this.oldVar_eduExpDate,PennantConstants.dateFormat);
 		}
 		if (this.eduExpDate.getValue()!=null){
-			new_eduExpDate=DateUtility.formatDate(this.eduExpDate.getValue(),PennantConstants.dateFormat);
+			newEduExpDate=DateUtility.formatDate(this.eduExpDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_eduExpDate).equals(StringUtils.trimToEmpty(new_eduExpDate))) {
+		if (!StringUtils.trimToEmpty(oldEduExpDate).equals(StringUtils.trimToEmpty(newEduExpDate))) {
 			return true;
 		}
 		logger.debug("Leaving"); 
@@ -1140,7 +1140,7 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 }

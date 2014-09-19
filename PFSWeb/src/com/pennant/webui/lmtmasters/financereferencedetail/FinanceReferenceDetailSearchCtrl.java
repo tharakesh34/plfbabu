@@ -320,10 +320,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 		if (StringUtils.isNotEmpty(this.finRefDetailId.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinRefDetailId = this.sortOperator_finRefDetailId.getSelectedItem();
-
-			if (item_FinRefDetailId != null) {
-				final int searchOpId = ((SearchOperators) item_FinRefDetailId.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFinRefDetailId = this.sortOperator_finRefDetailId.getSelectedItem();
+			if (itemFinRefDetailId != null) {
+				final int searchOpId = ((SearchOperators) itemFinRefDetailId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finRefDetailId", "%" + this.finRefDetailId.getValue().toUpperCase() + "%", searchOpId));
@@ -337,10 +336,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 		if (StringUtils.isNotEmpty(this.finType.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinType = this.sortOperator_finType.getSelectedItem();
-
-			if (item_FinType != null) {
-				final int searchOpId = ((SearchOperators) item_FinType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFinType = this.sortOperator_finType.getSelectedItem();
+			if (itemFinType != null) {
+				final int searchOpId = ((SearchOperators) itemFinType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finType", "%" + this.finType.getValue().toUpperCase() + "%", searchOpId));
@@ -354,10 +352,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 		if (StringUtils.isNotEmpty(this.finRefType.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinRefType = this.sortOperator_finRefType.getSelectedItem();
-
-			if (item_FinRefType != null) {
-				final int searchOpId = ((SearchOperators) item_FinRefType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFinRefType = this.sortOperator_finRefType.getSelectedItem();
+			if (itemFinRefType != null) {
+				final int searchOpId = ((SearchOperators) itemFinRefType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finRefType", "%" + this.finRefType.getValue().toUpperCase() + "%", searchOpId));
@@ -371,10 +368,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 		if (StringUtils.isNotEmpty(this.finRefId.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinRefId = this.sortOperator_finRefId.getSelectedItem();
-
-			if (item_FinRefId != null) {
-				final int searchOpId = ((SearchOperators) item_FinRefId.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFinRefId = this.sortOperator_finRefId.getSelectedItem();
+			if (itemFinRefId != null) {
+				final int searchOpId = ((SearchOperators) itemFinRefId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finRefId", "%" + this.finRefId.getValue().toUpperCase() + "%", searchOpId));
@@ -386,10 +382,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 			}
 		}
 		// get the search operator 
-		final Listitem item_IsActive = this.sortOperator_isActive.getSelectedItem();
-
-		if (item_IsActive != null) {
-			final int searchOpId = ((SearchOperators) item_IsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemIsActive = this.sortOperator_isActive.getSelectedItem();
+		if (itemIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemIsActive.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -406,7 +401,6 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 
 			// get the search operator
 			final Listitem item_ShowInStage = this.sortOperator_showInStage.getSelectedItem();
-
 			if (item_ShowInStage != null) {
 				final int searchOpId = ((SearchOperators) item_ShowInStage.getAttribute("data")).getSearchOperatorId();
 

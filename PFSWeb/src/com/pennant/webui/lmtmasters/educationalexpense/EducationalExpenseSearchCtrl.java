@@ -293,10 +293,9 @@ public class EducationalExpenseSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.eduExpDetailId.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduExpDetailId = this.sortOperator_eduExpDetailId.getSelectedItem();
-
-			if (item_EduExpDetailId != null) {
-				final int searchOpId = ((SearchOperators) item_EduExpDetailId.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemEduExpDetailId = this.sortOperator_eduExpDetailId.getSelectedItem();
+			if (itemEduExpDetailId != null) {
+				final int searchOpId = ((SearchOperators) itemEduExpDetailId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("eduExpDetailId", "%" + this.eduExpDetailId.getValue().toUpperCase() + "%", searchOpId));
@@ -310,10 +309,9 @@ public class EducationalExpenseSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.eduLoanId.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduLoanId = this.sortOperator_eduLoanId.getSelectedItem();
-
-			if (item_EduLoanId != null) {
-				final int searchOpId = ((SearchOperators) item_EduLoanId.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemEduLoanId = this.sortOperator_eduLoanId.getSelectedItem();
+			if (itemEduLoanId != null) {
+				final int searchOpId = ((SearchOperators) itemEduLoanId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("eduLoanId", "%" + this.eduLoanId.getValue().toUpperCase() + "%", searchOpId));
@@ -327,10 +325,9 @@ public class EducationalExpenseSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.eduExpDetail.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduExpDetail = this.sortOperator_eduExpDetail.getSelectedItem();
-
-			if (item_EduExpDetail != null) {
-				final int searchOpId = ((SearchOperators) item_EduExpDetail.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemEduExpDetail = this.sortOperator_eduExpDetail.getSelectedItem();
+			if (itemEduExpDetail != null) {
+				final int searchOpId = ((SearchOperators) itemEduExpDetail.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("eduExpDetail", "%" + this.eduExpDetail.getValue().toUpperCase() + "%", searchOpId));
@@ -344,10 +341,9 @@ public class EducationalExpenseSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.eduExpAmount.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduExpAmount = this.sortOperator_eduExpAmount.getSelectedItem();
-
-			if (item_EduExpAmount != null) {
-				final int searchOpId = ((SearchOperators) item_EduExpAmount.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemEduExpAmount = this.sortOperator_eduExpAmount.getSelectedItem();
+			if (itemEduExpAmount != null) {
+				final int searchOpId = ((SearchOperators) itemEduExpAmount.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("eduExpAmount", "%" + this.eduExpAmount.getValue().toUpperCase() + "%", searchOpId));
@@ -361,10 +357,9 @@ public class EducationalExpenseSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.eduExpDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduExpDate = this.sortOperator_eduExpDate.getSelectedItem();
-
-			if (item_EduExpDate != null) {
-				final int searchOpId = ((SearchOperators) item_EduExpDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemEduExpDate = this.sortOperator_eduExpDate.getSelectedItem();
+			if (itemEduExpDate != null) {
+				final int searchOpId = ((SearchOperators) itemEduExpDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("eduExpDate", "%" + this.eduExpDate.getValue().toUpperCase() + "%", searchOpId));
@@ -377,9 +372,9 @@ public class EducationalExpenseSearchCtrl extends GFCBaseCtrl implements Seriali
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -398,9 +393,9 @@ public class EducationalExpenseSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

@@ -12461,19 +12461,18 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		commonDetailGrid.setParent(gbCommonDetails);
 
 		Row row = new Row();
-		Label label_FinType = new Label(
+		Label labelFinType = new Label(
 				Labels.getLabel("label_FinanceMainDialog_FinType.value"));
 		this.finTypeValue = new Label();
 		this.finTypeValue.setStyle("font-weight:bold");
 		this.finTypeValue.setValue(finType);
-		label_FinType.setParent(row);
+		labelFinType.setParent(row);
 		this.finTypeValue.setParent(row);
-		Label label_FinCcy = new Label(
-				Labels.getLabel("label_FinanceMainDialog_FinCcy.value"));
+		Label labelFinCcy = new Label(Labels.getLabel("label_FinanceMainDialog_FinCcy.value"));
 		this.finCcyValue = new Label();
 		this.finCcyValue.setStyle("font-weight:bold");
 		this.finCcyValue.setValue(finCcy);
-		label_FinCcy.setParent(row);
+		labelFinCcy.setParent(row);
 		this.finCcyValue.setParent(row);
 		commonDetailRows.appendChild(row);
 
@@ -12485,12 +12484,12 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finSchMethodValue.setValue(schMthd);
 		labelFinScheduleMethod.setParent(row);
 		this.finSchMethodValue.setParent(row);
-		Label label_FinProfitDaysBasis = new Label(
+		Label labelFinProfitDaysBasis = new Label(
 				Labels.getLabel("label_FinanceMainDialog_ProfitDaysBasis.value"));
 		this.finProfitDaysBasis = new Label();
 		this.finProfitDaysBasis.setStyle("font-weight:bold");
 		this.finProfitDaysBasis.setValue(pftDays);
-		label_FinProfitDaysBasis.setParent(row);
+		labelFinProfitDaysBasis.setParent(row);
 		this.finProfitDaysBasis.setParent(row);
 		commonDetailRows.appendChild(row);
 
@@ -12502,7 +12501,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finReferenceValue.setValue(finRef);
 		labelFinReference.setParent(row);
 		this.finReferenceValue.setParent(row);
-		Label label_FinGracePeriodEndDate = new Label(
+		Label labelFinGracePeriodEndDate = new Label(
 				Labels.getLabel("label_FinanceMainDialog_FinGracePeriodEndDate.value"));
 		this.finSchGracePeriodEndDate = new Label();
 		this.finSchGracePeriodEndDate.setStyle("font-weight:bold");
@@ -12510,7 +12509,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			finSchGracePeriodEndDate.setValue(DateUtility.formatUtilDate(
 					grcEndDate, PennantConstants.dateFormate));
 		}
-		label_FinGracePeriodEndDate.setParent(row);
+		labelFinGracePeriodEndDate.setParent(row);
 		this.finSchGracePeriodEndDate.setParent(row);
 		commonDetailRows.appendChild(row);
 
@@ -14146,8 +14145,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public CommitmentService getCommitmentService() {

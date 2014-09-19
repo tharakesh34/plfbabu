@@ -313,8 +313,8 @@ public class FinSharesDetailListCtrl extends GFCBaseCtrl implements Serializable
 		this.sharesDetail = SharesDetail;
 	}
 
-	public void setSharesDetailService(SharesDetailService SharesDetailService) {
-		this.sharesDetailService = SharesDetailService;
+	public void setSharesDetailService(SharesDetailService sharesDetailService) {
+		this.sharesDetailService = sharesDetailService;
 	}
 
 	public SharesDetailService getSharesDetailService() {
@@ -390,13 +390,13 @@ public class FinSharesDetailListCtrl extends GFCBaseCtrl implements Serializable
 		}
 	}
 
-	public void doFillSharesDetails(List<SharesDetail> SharesDetails) {
+	public void doFillSharesDetails(List<SharesDetail> sharesDetails) {
 		this.listBoxSharesDetail.getItems().clear();
-		if (SharesDetails != null) {
+		if (sharesDetails != null) {
 			totface = BigDecimal.ZERO;
 			totMarket = BigDecimal.ZERO;
-			setSharesDetailLists(SharesDetails);
-			for (SharesDetail SharesDetail : SharesDetails) {
+			setSharesDetailLists(sharesDetails);
+			for (SharesDetail SharesDetail : sharesDetails) {
 				Listitem item = new Listitem();
 				Listcell lc;
 				lc = new Listcell(SharesDetail.getCompanyName());

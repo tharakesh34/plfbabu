@@ -321,10 +321,9 @@ public class CarLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.loanRefNumber.getValue())) {
 
 			// get the search operator
-			final Listitem item_LoanRefNumber = this.sortOperator_loanRefNumber.getSelectedItem();
-
-			if (item_LoanRefNumber != null) {
-				final int searchOpId = ((SearchOperators) item_LoanRefNumber
+			final Listitem itemLoanRefNumber = this.sortOperator_loanRefNumber.getSelectedItem();
+			if (itemLoanRefNumber != null) {
+				final int searchOpId = ((SearchOperators) itemLoanRefNumber
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -341,10 +340,9 @@ public class CarLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.carLoanFor.getValue())) {
 
 			// get the search operator
-			final Listitem item_CarLoanFor = this.sortOperator_carLoanFor.getSelectedItem();
-
-			if (item_CarLoanFor != null) {
-				final int searchOpId = ((SearchOperators) item_CarLoanFor
+			final Listitem itemCarLoanFor = this.sortOperator_carLoanFor.getSelectedItem();
+			if (itemCarLoanFor != null) {
+				final int searchOpId = ((SearchOperators) itemCarLoanFor
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -360,10 +358,9 @@ public class CarLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.carVersion.getValue())) {
 
 			// get the search operator
-			final Listitem item_CarVersion = this.sortOperator_carVersion.getSelectedItem();
-
-			if (item_CarVersion != null) {
-				final int searchOpId = ((SearchOperators) item_CarVersion
+			final Listitem itemCarVersion = this.sortOperator_carVersion.getSelectedItem();
+			if (itemCarVersion != null) {
+				final int searchOpId = ((SearchOperators) itemCarVersion
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -379,10 +376,9 @@ public class CarLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.carMakeYear.getValue())) {
 
 			// get the search operator
-			final Listitem item_CarMakeYear = this.sortOperator_carMakeYear.getSelectedItem();
-
-			if (item_CarMakeYear != null) {
-				final int searchOpId = ((SearchOperators) item_CarMakeYear
+			final Listitem itemCarMakeYear = this.sortOperator_carMakeYear.getSelectedItem();
+			if (itemCarMakeYear != null) {
+				final int searchOpId = ((SearchOperators) itemCarMakeYear
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -398,10 +394,9 @@ public class CarLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.carDealer.getValue())) {
 
 			// get the search operator
-			final Listitem item_CarDealer = this.sortOperator_carDealer.getSelectedItem();
-
-			if (item_CarDealer != null) {
-				final int searchOpId = ((SearchOperators) item_CarDealer
+			final Listitem itemCarDealer = this.sortOperator_carDealer.getSelectedItem();
+			if (itemCarDealer != null) {
+				final int searchOpId = ((SearchOperators) itemCarDealer
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -416,9 +411,9 @@ public class CarLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializable
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
@@ -439,9 +434,9 @@ public class CarLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {

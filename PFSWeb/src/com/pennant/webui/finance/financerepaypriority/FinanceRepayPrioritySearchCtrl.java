@@ -292,10 +292,9 @@ public class FinanceRepayPrioritySearchCtrl extends GFCBaseCtrl implements Seria
 		if (StringUtils.isNotEmpty(this.finType.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinType = this.sortOperator_finType.getSelectedItem();
-
-			if (item_FinType != null) {
-				final int searchOpId = ((SearchOperators) item_FinType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFinType = this.sortOperator_finType.getSelectedItem();
+			if (itemFinType != null) {
+				final int searchOpId = ((SearchOperators) itemFinType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finType", "%" + this.finType.getValue().toUpperCase() + "%", searchOpId));
@@ -307,9 +306,9 @@ public class FinanceRepayPrioritySearchCtrl extends GFCBaseCtrl implements Seria
 			}
 		}
 	  if (this.finPriority.getValue()!=null) {	  
-	    final Listitem item_FinPriority = this.sortOperator_finPriority.getSelectedItem();
-	  	if (item_FinPriority != null) {
-	 		final int searchOpId = ((SearchOperators) item_FinPriority.getAttribute("data")).getSearchOperatorId();
+	    final Listitem itemFinPriority = this.sortOperator_finPriority.getSelectedItem();
+	  	if (itemFinPriority != null) {
+	 		final int searchOpId = ((SearchOperators) itemFinPriority.getAttribute("data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
 	 			// do nothing
@@ -325,9 +324,9 @@ public class FinanceRepayPrioritySearchCtrl extends GFCBaseCtrl implements Seria
 	  }	
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -346,9 +345,9 @@ public class FinanceRepayPrioritySearchCtrl extends GFCBaseCtrl implements Seria
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

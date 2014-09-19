@@ -1249,8 +1249,8 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseListCtrl<FacilityR
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void onClick$btnNotes(Event event) throws Exception {
@@ -1445,8 +1445,8 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseListCtrl<FacilityR
 		for (int i = 0; i < referenceDetails.size(); i++) {
 			FacilityReferenceDetail oldFinrefDet = referenceDetails.get(i);
 			Listitem item = (Listitem) listbox.getItems().get(i);
-			FacilityReferenceDetail NewFinrefDet = (FacilityReferenceDetail) item.getAttribute("data");
-			if (oldFinrefDet.getRecordType() != NewFinrefDet.getRecordType()) {
+			FacilityReferenceDetail newFinrefDet = (FacilityReferenceDetail) item.getAttribute("data");
+			if (oldFinrefDet.getRecordType() != newFinrefDet.getRecordType()) {
 				return true;
 			}
 		}

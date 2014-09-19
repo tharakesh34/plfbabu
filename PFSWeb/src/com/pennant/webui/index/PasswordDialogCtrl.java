@@ -185,8 +185,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl implements Serializable  {
 			getsecurityUserService().changePassword(auditHeader);
 			Executions.sendRedirect("/j_spring_logout");
 
-		}catch(DataAccessException Error){
-			showMessage(Error);
+		}catch(DataAccessException error){
+			showMessage(error);
 		}
 
 	}

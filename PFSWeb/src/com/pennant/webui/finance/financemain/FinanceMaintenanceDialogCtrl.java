@@ -1299,9 +1299,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 		int formatter = getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinFormetter();
 
-		BigDecimal old_dwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
-		BigDecimal new_dwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getValue(), formatter);
-		if (old_dwnPaySupl.compareTo(new_dwnPaySupl) != 0) {
+		BigDecimal oldDwnPaySupl = PennantAppUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
+		BigDecimal newDwnPaySupl = PennantAppUtil.unFormateAmount(this.downPaySupl.getValue(), formatter);
+		if (oldDwnPaySupl.compareTo(newDwnPaySupl) != 0) {
 			return true;
 		}
 		logger.debug("Leaving");

@@ -388,7 +388,7 @@ public class WelcomeCtrl extends GFCBaseListCtrl<DashBoard> implements Serializa
 	private Map<String, DashboardPosition> getCurrentDashBordPositions() {
 
 		DashboardPosition dashboardPosition;
-		Panel p_children;
+		Panel pChildren;
 		Portalchildren ptc;
 		dashboardpositionsMap.clear();
 		currentDashBords.clear();
@@ -396,14 +396,14 @@ public class WelcomeCtrl extends GFCBaseListCtrl<DashBoard> implements Serializa
 
 			ptc = (Portalchildren) dashBoardsPortalLayout.getChildren().get(i);
 			for (int j = 0; j < ptc.getChildren().size(); j++) {
-				p_children = (Panel) ptc.getChildren().get(j);
+				pChildren = (Panel) ptc.getChildren().get(j);
 				dashboardPosition = new DashboardPosition();
 				dashboardPosition.setUsrId(getUserWorkspace().getUserDetails().getSecurityUser().getUsrID());
-				dashboardPosition.setDashboardRef(p_children.getId());
+				dashboardPosition.setDashboardRef(pChildren.getId());
 				dashboardPosition.setDashboardCol(i);
 				dashboardPosition.setDashboardRow(j);
-				dashboardpositionsMap.put(p_children.getId(), dashboardPosition);
-				currentDashBords.put(p_children.getId(), p_children.isMaximized());
+				dashboardpositionsMap.put(pChildren.getId(), dashboardPosition);
+				currentDashBords.put(pChildren.getId(), pChildren.isMaximized());
 			}
 		}
 		return dashboardpositionsMap;
