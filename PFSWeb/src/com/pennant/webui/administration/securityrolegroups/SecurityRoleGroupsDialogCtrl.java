@@ -257,19 +257,19 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseListCtrl<SecurityGroup>
 		if(this.listbox_UnAssignedGroups.getSelectedCount()!=0){	
 
 			Listitem li=new Listitem();             //To read List Item
-			Set SeletedSet= new HashSet();           //To get Selected Items
-			SeletedSet=this.listbox_UnAssignedGroups.getSelectedItems();
-			List list=new ArrayList(SeletedSet);
+			Set seletedSet= new HashSet();           //To get Selected Items
+			seletedSet=this.listbox_UnAssignedGroups.getSelectedItems();
+			List list=new ArrayList(seletedSet);
 			Iterator it=list.iterator();
 			while(it.hasNext()){
 				li=(Listitem)it.next();		
 				final SecurityGroup aSecGroup= (SecurityGroup)li.getAttribute("data");
 				Listcell slecteditem=new Listcell();
 				Listcell slecteditemDesc=new Listcell();					
-				List SelectedRowValues=new ArrayList();//TO get each row Details
-				SelectedRowValues=li.getChildren();			
-				slecteditem=(Listcell)SelectedRowValues.get(0);						
-				slecteditemDesc=(Listcell)SelectedRowValues.get(1);	
+				List selectedRowValues=new ArrayList();//TO get each row Details
+				selectedRowValues=li.getChildren();			
+				slecteditem=(Listcell)selectedRowValues.get(0);						
+				slecteditemDesc=(Listcell)selectedRowValues.get(1);	
 				tempUnAsgnGroupsMap.remove(Long.valueOf(aSecGroup.getGrpID()));
 				getNewAssignedMap().put(Long.valueOf(aSecGroup.getGrpID()),aSecGroup);
 				doFillListbox(this.listbox_AssignedGroups,slecteditem.getLabel()
@@ -293,19 +293,19 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseListCtrl<SecurityGroup>
 		if(this.listbox_AssignedGroups.getSelectedCount()!=0){	
 
 			Listitem li=new Listitem();              //To read List Item
-			Set SeletedSet= new HashSet();           //To get Selected Items
-			SeletedSet=this.listbox_AssignedGroups.getSelectedItems();
-			List list=new ArrayList(SeletedSet);
+			Set seletedSet= new HashSet();           //To get Selected Items
+			seletedSet=this.listbox_AssignedGroups.getSelectedItems();
+			List list=new ArrayList(seletedSet);
 			Iterator it=list.iterator();
 			while(it.hasNext()){
 				li=(Listitem)it.next();		
 				final SecurityGroup aSecGroup= (SecurityGroup)li.getAttribute("data");
 				Listcell slecteditem=new Listcell();
 				Listcell slecteditemDesc=new Listcell();					
-				List SelectedRowValues=new ArrayList();//TO get each row Details
-				SelectedRowValues=li.getChildren();			
-				slecteditem=(Listcell)SelectedRowValues.get(0);						
-				slecteditemDesc=(Listcell)SelectedRowValues.get(1);	
+				List selectedRowValues=new ArrayList();//TO get each row Details
+				selectedRowValues=li.getChildren();			
+				slecteditem=(Listcell)selectedRowValues.get(0);						
+				slecteditemDesc=(Listcell)selectedRowValues.get(1);	
 				tempUnAsgnGroupsMap.put(Long.valueOf(aSecGroup.getGrpID()), aSecGroup);
 				getNewAssignedMap().remove(Long.valueOf(aSecGroup.getGrpID()));
 				doFillListbox(this.listbox_UnAssignedGroups,slecteditem.getLabel()
@@ -329,19 +329,19 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseListCtrl<SecurityGroup>
 		if(this.listbox_AssignedGroups.getSelectedCount()!=0){	
 
 			Listitem li=new Listitem();             //To read List Item
-			Set SeletedSet= new HashSet();           //To get Selected Items
-			SeletedSet=this.listbox_AssignedGroups.getSelectedItems();
-			List list=new ArrayList(SeletedSet);
+			Set seletedSet= new HashSet();           //To get Selected Items
+			seletedSet=this.listbox_AssignedGroups.getSelectedItems();
+			List list=new ArrayList(seletedSet);
 			Iterator it=list.iterator();
 			while(it.hasNext()){
 				li=(Listitem)it.next();		
 				final SecurityGroup aSecGroup= (SecurityGroup)li.getAttribute("data");
 				Listcell slecteditem=new Listcell();
 				Listcell slecteditemDesc=new Listcell();					
-				List SelectedRowValues=new ArrayList();//TO get each row Details
-				SelectedRowValues=li.getChildren();			
-				slecteditem=(Listcell)SelectedRowValues.get(0);						
-				slecteditemDesc=(Listcell)SelectedRowValues.get(1);	
+				List selectedRowValues=new ArrayList();//TO get each row Details
+				selectedRowValues=li.getChildren();			
+				slecteditem=(Listcell)selectedRowValues.get(0);						
+				slecteditemDesc=(Listcell)selectedRowValues.get(1);	
 				tempUnAsgnGroupsMap.put(Long.valueOf(aSecGroup.getGrpID()), aSecGroup);
 				getNewAssignedMap().remove(Long.valueOf(aSecGroup.getGrpID()));
 				doFillListbox(this.listbox_UnAssignedGroups,slecteditem.getLabel()
@@ -482,19 +482,19 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseListCtrl<SecurityGroup>
 	 * This method Renders the listBox 
 	 * @param listbox
 	 * @param value1
-	 * @param Value2
+	 * @param value2
 	 * @param SecurityRole
 	 */
-	private void doFillListbox(Listbox listbox,String value1,String Value2,SecurityGroup SecurityGroup){
+	private void doFillListbox(Listbox listbox,String value1,String value2,SecurityGroup securityGroup){
 		Listitem item=new Listitem(); //To Create List item
 		Listcell lc;
 		lc=new Listcell();	
 		lc.setLabel(value1);
 		lc.setParent(item);
 		lc = new Listcell();
-		lc.setLabel(Value2);
+		lc.setLabel(value2);
 		lc.setParent(item);	
-		item.setAttribute("data", SecurityGroup);
+		item.setAttribute("data", securityGroup);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityGroupItemDoubleClicked");
 		listbox.appendChild(item);
 	} 

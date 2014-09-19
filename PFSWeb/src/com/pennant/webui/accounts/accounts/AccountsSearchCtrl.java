@@ -538,10 +538,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.accountId.getValue())) {
 
 			// get the search operator
-			final Listitem item_AccountId = this.sortOperator_accountId.getSelectedItem();
-
-			if (item_AccountId != null) {
-				final int searchOpId = ((SearchOperators) item_AccountId.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAccountId = this.sortOperator_accountId.getSelectedItem();
+			if (itemAccountId != null) {
+				final int searchOpId = ((SearchOperators) itemAccountId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("accountId", "%" + this.accountId.getValue().toUpperCase() + "%", searchOpId));
@@ -555,10 +554,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.acCcy.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcCcy = this.sortOperator_acCcy.getSelectedItem();
-
-			if (item_AcCcy != null) {
-				final int searchOpId = ((SearchOperators) item_AcCcy.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcCcy = this.sortOperator_acCcy.getSelectedItem();
+			if (itemAcCcy != null) {
+				final int searchOpId = ((SearchOperators) itemAcCcy.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("acCcy", "%" + this.acCcy.getValue().toUpperCase() + "%", searchOpId));
@@ -572,10 +570,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.acType.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcType = this.sortOperator_acType.getSelectedItem();
-
-			if (item_AcType != null) {
-				final int searchOpId = ((SearchOperators) item_AcType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcType = this.sortOperator_acType.getSelectedItem();
+			if (itemAcType != null) {
+				final int searchOpId = ((SearchOperators) itemAcType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("acType", "%" + this.acType.getValue().toUpperCase() + "%", searchOpId));
@@ -589,10 +586,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.acBranch.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcBranch = this.sortOperator_acBranch.getSelectedItem();
-
-			if (item_AcBranch != null) {
-				final int searchOpId = ((SearchOperators) item_AcBranch.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcBranch = this.sortOperator_acBranch.getSelectedItem();
+			if (itemAcBranch != null) {
+				final int searchOpId = ((SearchOperators) itemAcBranch.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("acBranch", "%" + this.acBranch.getValue().toUpperCase() + "%", searchOpId));
@@ -604,9 +600,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		if (this.acCustCIF.getValue()!=null) {	  
-			final Listitem item_AcCustId = this.sortOperator_acCustCIF.getSelectedItem();
-			if (item_AcCustId != null) {
-				final int searchOpId = ((SearchOperators) item_AcCustId.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcCustId = this.sortOperator_acCustCIF.getSelectedItem();
+			if (itemAcCustId != null) {
+				final int searchOpId = ((SearchOperators) itemAcCustId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -623,10 +619,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.acFullName.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcFullName = this.sortOperator_acFullName.getSelectedItem();
-
-			if (item_AcFullName != null) {
-				final int searchOpId = ((SearchOperators) item_AcFullName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcFullName = this.sortOperator_acFullName.getSelectedItem();
+			if (itemAcFullName != null) {
+				final int searchOpId = ((SearchOperators) itemAcFullName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("acFullName", "%" + this.acFullName.getValue().toUpperCase() + "%", searchOpId));
@@ -640,10 +635,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.acShortName.getValue())) {
 
 			// get the search operator
-			final Listitem item_AcShortName = this.sortOperator_acShortName.getSelectedItem();
-
-			if (item_AcShortName != null) {
-				final int searchOpId = ((SearchOperators) item_AcShortName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcShortName = this.sortOperator_acShortName.getSelectedItem();
+			if (itemAcShortName != null) {
+				final int searchOpId = ((SearchOperators) itemAcShortName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("acShortName", "%" + this.acShortName.getValue().toUpperCase() + "%", searchOpId));
@@ -659,11 +653,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 				&& (!StringUtils.equals(this.acPurpose.getSelectedItem().getLabel()
 						,Labels.getLabel("common.Select")))) {
 			// get the search operator
-			final Listitem item_AcPurpose = this.sortOperator_acPurpose.getSelectedItem();
-
-
-			if (item_AcPurpose != null) {
-				final int searchOpId = ((SearchOperators) item_AcPurpose.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcPurpose = this.sortOperator_acPurpose.getSelectedItem();
+			if (itemAcPurpose != null) {
+				final int searchOpId = ((SearchOperators) itemAcPurpose.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -679,10 +671,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_InternalAc = this.sortOperator_internalAc.getSelectedItem();
-
-		if (item_InternalAc != null) {
-			final int searchOpId = ((SearchOperators) item_InternalAc.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemInternalAc = this.sortOperator_internalAc.getSelectedItem();
+		if (itemInternalAc != null) {
+			final int searchOpId = ((SearchOperators) itemInternalAc.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -696,10 +687,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_CustSysAc = this.sortOperator_custSysAc.getSelectedItem();
-
-		if (item_CustSysAc != null) {
-			final int searchOpId = ((SearchOperators) item_CustSysAc.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemCustSysAc = this.sortOperator_custSysAc.getSelectedItem();
+		if (itemCustSysAc != null) {
+			final int searchOpId = ((SearchOperators) itemCustSysAc.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -713,9 +703,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		if (this.acPrvDayBal.getValue()!=null) {	  
-			final Listitem item_AcPrvDayBal = this.sortOperator_acPrvDayBal.getSelectedItem();
-			if (item_AcPrvDayBal != null) {
-				final int searchOpId = ((SearchOperators) item_AcPrvDayBal.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcPrvDayBal = this.sortOperator_acPrvDayBal.getSelectedItem();
+			if (itemAcPrvDayBal != null) {
+				final int searchOpId = ((SearchOperators) itemAcPrvDayBal.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -730,9 +720,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}	
 		if (this.acTodayDr.getValue()!=null) {	  
-			final Listitem item_AcTodayDr = this.sortOperator_acTodayDr.getSelectedItem();
-			if (item_AcTodayDr != null) {
-				final int searchOpId = ((SearchOperators) item_AcTodayDr.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcTodayDr = this.sortOperator_acTodayDr.getSelectedItem();
+			if (itemAcTodayDr != null) {
+				final int searchOpId = ((SearchOperators) itemAcTodayDr.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -747,9 +737,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}	
 		if (this.acTodayCr.getValue()!=null) {	  
-			final Listitem item_AcTodayCr = this.sortOperator_acTodayCr.getSelectedItem();
-			if (item_AcTodayCr != null) {
-				final int searchOpId = ((SearchOperators) item_AcTodayCr.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcTodayCr = this.sortOperator_acTodayCr.getSelectedItem();
+			if (itemAcTodayCr != null) {
+				final int searchOpId = ((SearchOperators) itemAcTodayCr.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -764,9 +754,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}	
 		if (this.acTodayNet.getValue()!=null) {	  
-			final Listitem item_AcTodayNet = this.sortOperator_acTodayNet.getSelectedItem();
-			if (item_AcTodayNet != null) {
-				final int searchOpId = ((SearchOperators) item_AcTodayNet.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcTodayNet = this.sortOperator_acTodayNet.getSelectedItem();
+			if (itemAcTodayNet != null) {
+				final int searchOpId = ((SearchOperators) itemAcTodayNet.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -781,9 +771,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}	
 		if (this.acAccrualBal.getValue()!=null) {	  
-			final Listitem item_AcAccrualBal = this.sortOperator_acAccrualBal.getSelectedItem();
-			if (item_AcAccrualBal != null) {
-				final int searchOpId = ((SearchOperators) item_AcAccrualBal.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcAccrualBal = this.sortOperator_acAccrualBal.getSelectedItem();
+			if (itemAcAccrualBal != null) {
+				final int searchOpId = ((SearchOperators) itemAcAccrualBal.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -798,9 +788,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}	
 		if (this.acTodayBal.getValue()!=null) {	  
-			final Listitem item_AcTodayBal = this.sortOperator_acTodayBal.getSelectedItem();
-			if (item_AcTodayBal != null) {
-				final int searchOpId = ((SearchOperators) item_AcTodayBal.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcTodayBal = this.sortOperator_acTodayBal.getSelectedItem();
+			if (itemAcTodayBal != null) {
+				final int searchOpId = ((SearchOperators) itemAcTodayBal.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -815,9 +805,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}	
 		if (this.acOpenDate.getValue()!=null) {	  
-			final Listitem item_AcOpenDate = this.sortOperator_acOpenDate.getSelectedItem();
-			if (item_AcOpenDate != null) {
-				final int searchOpId = ((SearchOperators) item_AcOpenDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcOpenDate = this.sortOperator_acOpenDate.getSelectedItem();
+			if (itemAcOpenDate != null) {
+				final int searchOpId = ((SearchOperators) itemAcOpenDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -832,9 +822,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}	
 		if (this.acLastCustTrnDate.getValue()!=null) {	  
-			final Listitem item_AcLastCustTrnDate = this.sortOperator_acLastCustTrnDate.getSelectedItem();
-			if (item_AcLastCustTrnDate != null) {
-				final int searchOpId = ((SearchOperators) item_AcLastCustTrnDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcLastCustTrnDate = this.sortOperator_acLastCustTrnDate.getSelectedItem();
+			if (itemAcLastCustTrnDate != null) {
+				final int searchOpId = ((SearchOperators) itemAcLastCustTrnDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -849,9 +839,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}	
 		if (this.acLastSysTrnDate.getValue()!=null) {	  
-			final Listitem item_AcLastSysTrnDate = this.sortOperator_acLastSysTrnDate.getSelectedItem();
-			if (item_AcLastSysTrnDate != null) {
-				final int searchOpId = ((SearchOperators) item_AcLastSysTrnDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAcLastSysTrnDate = this.sortOperator_acLastSysTrnDate.getSelectedItem();
+			if (itemAcLastSysTrnDate != null) {
+				final int searchOpId = ((SearchOperators) itemAcLastSysTrnDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -866,10 +856,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}	
 		// get the search operator
-		final Listitem item_AcInactive = this.sortOperator_acActive.getSelectedItem();
-
-		if (item_AcInactive != null) {
-			final int searchOpId = ((SearchOperators) item_AcInactive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemAcInactive = this.sortOperator_acActive.getSelectedItem();
+		if (itemAcInactive != null) {
+			final int searchOpId = ((SearchOperators) itemAcInactive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -883,10 +872,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_AcBlocked = this.sortOperator_acBlocked.getSelectedItem();
-
-		if (item_AcBlocked != null) {
-			final int searchOpId = ((SearchOperators) item_AcBlocked.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemAcBlocked = this.sortOperator_acBlocked.getSelectedItem();
+		if (itemAcBlocked != null) {
+			final int searchOpId = ((SearchOperators) itemAcBlocked.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -900,10 +888,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_AcClosed = this.sortOperator_acClosed.getSelectedItem();
-
-		if (item_AcClosed != null) {
-			final int searchOpId = ((SearchOperators) item_AcClosed.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemAcClosed = this.sortOperator_acClosed.getSelectedItem();
+		if (itemAcClosed != null) {
+			final int searchOpId = ((SearchOperators) itemAcClosed.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -919,10 +906,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.hostAcNumber.getValue())) {
 
 			// get the search operator
-			final Listitem item_HostAcNumber = this.sortOperator_hostAcNumber.getSelectedItem();
-
-			if (item_HostAcNumber != null) {
-				final int searchOpId = ((SearchOperators) item_HostAcNumber.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHostAcNumber = this.sortOperator_hostAcNumber.getSelectedItem();
+			if (itemHostAcNumber != null) {
+				final int searchOpId = ((SearchOperators) itemHostAcNumber.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hostAcNumber", "%" + this.hostAcNumber.getValue().toUpperCase() + "%", searchOpId));
@@ -935,9 +921,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -956,9 +942,9 @@ public class AccountsSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

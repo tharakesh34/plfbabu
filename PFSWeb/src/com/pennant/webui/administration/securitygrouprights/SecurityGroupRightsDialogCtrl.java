@@ -232,10 +232,10 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseListCtrl<SecurityRight
 		if(this.listbox_UnAssignedRights.getSelectedCount()!=0){	
 
 			Listitem li=new Listitem();                          //To read List Item
-			Set SeletedSet= new HashSet();                       //To get Selected Items
-			SeletedSet=this.listbox_UnAssignedRights.getSelectedItems();
-			List list=new ArrayList(SeletedSet);	//Converting Set to ArrayList to Make Concurrent operations	
-			System.out.println(SeletedSet.size());
+			Set seletedSet= new HashSet();                       //To get Selected Items
+			seletedSet=this.listbox_UnAssignedRights.getSelectedItems();
+			List list=new ArrayList(seletedSet);	//Converting Set to ArrayList to Make Concurrent operations	
+			System.out.println(seletedSet.size());
 			Iterator iterator=list.iterator();
 			while(iterator.hasNext()){
 				li=(Listitem) iterator.next();
@@ -266,19 +266,19 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseListCtrl<SecurityRight
 		if(this.listbox_AssignedRights.getSelectedCount()!=0){	
 			// To Remove Selected item from the List Box 
 			Listitem li=new Listitem();        //To read List Item
-			Set SeletedSet= new HashSet();          //To get Selected Items
-			SeletedSet=this.listbox_AssignedRights.getSelectedItems();
-			List list=new ArrayList(SeletedSet);	  //Converting Set to ArrayList to Make Concurrent operations	
-			System.out.println(SeletedSet.size());
+			Set seletedSet= new HashSet();          //To get Selected Items
+			seletedSet=this.listbox_AssignedRights.getSelectedItems();
+			List list=new ArrayList(seletedSet);	  //Converting Set to ArrayList to Make Concurrent operations	
+			System.out.println(seletedSet.size());
 			java.util.Iterator iterator=list.iterator();
 			while(iterator.hasNext()){				
 				li=(Listitem)iterator.next();
 				final SecurityRight aSecRight= (SecurityRight)li.getAttribute("data");
 				System.out.println(li.getLabel());
 				Listcell slecteditem=new Listcell();
-				List SelectedRowValues=new ArrayList();        //TO get each row Details
-				SelectedRowValues=li.getChildren();			
-				slecteditem=(Listcell)SelectedRowValues.get(0);	
+				List selectedRowValues=new ArrayList();        //TO get each row Details
+				selectedRowValues=li.getChildren();			
+				slecteditem=(Listcell)selectedRowValues.get(0);	
 				tempUnAsgnRightsMap.put(String.valueOf(aSecRight.getRightID()), aSecRight);
 				getNewAssignedMap().remove(Long.valueOf(aSecRight.getRightID()));
 				doFillListbox(this.listbox_UnAssignedRights,slecteditem.getLabel(),aSecRight);	
@@ -300,19 +300,19 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseListCtrl<SecurityRight
 		if(this.listbox_AssignedRights.getSelectedCount()!=0){	
 			//////// To Remove Selected item from the List Box 
 			Listitem li=new Listitem();//To read List Item
-			Set SeletedSet= new HashSet();//To get Selected Items
-			SeletedSet=this.listbox_AssignedRights.getSelectedItems();
-			List list=new ArrayList(SeletedSet);	//Converting Set to ArrayList to Make Concurrent operations	
-			System.out.println(SeletedSet.size());
+			Set seletedSet= new HashSet();//To get Selected Items
+			seletedSet=this.listbox_AssignedRights.getSelectedItems();
+			List list=new ArrayList(seletedSet);	//Converting Set to ArrayList to Make Concurrent operations	
+			System.out.println(seletedSet.size());
 			java.util.Iterator it=list.iterator();
 			while(it.hasNext()){				
 				li=(Listitem)it.next();
 				final SecurityRight aSecRight= (SecurityRight)li.getAttribute("data");
 				System.out.println(li.getLabel());
 				Listcell slecteditem=new Listcell();
-				List SelectedRowValues=new ArrayList();//TO get each row Details
-				SelectedRowValues=li.getChildren();			
-				slecteditem=(Listcell)SelectedRowValues.get(0);		
+				List selectedRowValues=new ArrayList();//TO get each row Details
+				selectedRowValues=li.getChildren();			
+				slecteditem=(Listcell)selectedRowValues.get(0);		
 				tempUnAsgnRightsMap.put(String.valueOf(aSecRight.getRightID()), aSecRight);
 				getNewAssignedMap().remove(Long.valueOf(aSecRight.getRightID()));
 				doFillListbox(this.listbox_UnAssignedRights,slecteditem.getLabel(),aSecRight);

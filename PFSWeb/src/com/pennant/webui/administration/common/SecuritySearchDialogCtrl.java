@@ -214,10 +214,9 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (StringUtils.isNotEmpty(this.name.getValue())) {
 			// get the search operator
-			final Listitem item_Name = this.sortOperator_Name.getSelectedItem();
-
-			if (item_Name != null ) {
-				final int searchOpId = ((SearchOperators) item_Name.getAttribute("data"))
+			final Listitem itemName = this.sortOperator_Name.getSelectedItem();
+			if (itemName != null ) {
+				final int searchOpId = ((SearchOperators) itemName.getAttribute("data"))
 				.getSearchOperatorId();
 			
 				if(object instanceof SecurityUserRolesDailogCtrl){
@@ -231,7 +230,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 					
  				}else{
 				if (searchOpId == Filter.OP_EQUAL) {
-					filters[0] =new Integer(item_Name.getIndex());
+					filters[0] =new Integer(itemName.getIndex());
 					for (Object key : tempDataMap.keySet()) {
 						if( StringUtils.equalsIgnoreCase((String) key
 								,this.name.getValue().trim())){
@@ -239,7 +238,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 						}
 					}
 				}else if (searchOpId == Filter.OP_NOT_EQUAL) {
-					filters[0] =new Integer(item_Name.getIndex());
+					filters[0] =new Integer(itemName.getIndex());
 					for (Object key : tempDataMap.keySet()) {
 						if(!StringUtils.containsIgnoreCase((String) key
 								,this.name.getValue().trim())){
@@ -247,7 +246,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 						}
 					}
 				}else if (searchOpId == Filter.OP_LIKE) {
-					filters[0] =new Integer(item_Name.getIndex());
+					filters[0] =new Integer(itemName.getIndex());
 					for (Object key : tempDataMap.keySet()) {
 						if( StringUtils.containsIgnoreCase((String) key
 								, this.name.getValue().trim())){

@@ -1018,27 +1018,27 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 
 			changed = true;
 		}
-		String old_SignonFrom = "";
-		String new_SignonFrom ="";
+		String oldSignonFrom = "";
+		String newSignonFrom ="";
 		if (this.oldVar_usrCanSignonFrom!=null){
-			old_SignonFrom=DateUtility.formatDate(this.oldVar_usrCanSignonFrom,PennantConstants.timeFormat);
+			oldSignonFrom=DateUtility.formatDate(this.oldVar_usrCanSignonFrom,PennantConstants.timeFormat);
 		}
 		if (this.usrCanSignonFrom.getValue()!=null){
-			new_SignonFrom=DateUtility.formatDate(this.usrCanSignonFrom.getValue(),PennantConstants.timeFormat);
+			newSignonFrom=DateUtility.formatDate(this.usrCanSignonFrom.getValue(),PennantConstants.timeFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_SignonFrom).equals(StringUtils.trimToEmpty(new_SignonFrom))) {
+		if (!StringUtils.trimToEmpty(oldSignonFrom).equals(StringUtils.trimToEmpty(newSignonFrom))) {
 			return true;
 		}
 
-		String old_fromDate = "";
-		String new_fromDate ="";
+		String oldFromDate = "";
+		String newFromDate ="";
 		if (this.oldVar_usrCanSignonTo!=null){
-			old_fromDate=DateUtility.formatDate(this.oldVar_usrCanSignonTo,PennantConstants.timeFormat);
+			oldFromDate=DateUtility.formatDate(this.oldVar_usrCanSignonTo,PennantConstants.timeFormat);
 		}
 		if (this.usrCanSignonTo.getValue()!=null){
-			new_fromDate=DateUtility.formatDate(this.usrCanSignonTo.getValue(),PennantConstants.timeFormat);
+			newFromDate=DateUtility.formatDate(this.usrCanSignonTo.getValue(),PennantConstants.timeFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_fromDate).equals(StringUtils.trimToEmpty(new_fromDate))) {
+		if (!StringUtils.trimToEmpty(oldFromDate).equals(StringUtils.trimToEmpty(newFromDate))) {
 			return true;
 		}
 		if (this.oldVar_usrCanOverrideLimits != this.usrCanOverrideLimits.isChecked()) {
@@ -2137,17 +2137,17 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		//if(!isNewRecord()){
 		//Below loop is to check deleted branchs from existing branchs 
 		  for (SecurityUserDivBranch asecurityUserDivBranch : getBefImgUsrDivBranchsList()) {
-				boolean Recordexists = false;
+				boolean recordExists = false;
 				for (SecurityUserDivBranch securityUserDivBranch2 : selectedUsrDivBranchsList) {
 					if(securityUserDivBranch2.getUserDivision().equals(asecurityUserDivBranch.getUserDivision()) && 
 							securityUserDivBranch2.getUserBranch().equals(asecurityUserDivBranch.getUserBranch())){
-						Recordexists = true;
+						recordExists = true;
 						securityUserDivBranch2.setNewRecord(true);
 						securityUserDivBranch2.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 						newSecUsrDivBranchsList.add(securityUserDivBranch2);
 					}
 				}
-				if(!Recordexists && !isNewRecord()){
+				if(!recordExists && !isNewRecord()){
 					asecurityUserDivBranch.setNewRecord(false);
 					asecurityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 					newSecUsrDivBranchsList.add(asecurityUserDivBranch);
@@ -2155,14 +2155,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			}
 		//Below loop is to check newly added branchs to existing branchs
 			for (SecurityUserDivBranch asecurityUserDivBranch : selectedUsrDivBranchsList) {
-				boolean Recordexists = false;
+				boolean recordExists = false;
 				for (SecurityUserDivBranch securityUserDivBranch2 : newSecUsrDivBranchsList) {
 					if(securityUserDivBranch2.getUserDivision().equals(asecurityUserDivBranch.getUserDivision()) && 
 							securityUserDivBranch2.getUserBranch().equals(asecurityUserDivBranch.getUserBranch())){
-						Recordexists = true;
+						recordExists = true;
 					}
 				}
-				if(!Recordexists && !isNewRecord()){
+				if(!recordExists && !isNewRecord()){
 					asecurityUserDivBranch.setNewRecord(true);
 					asecurityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					newSecUsrDivBranchsList.add(asecurityUserDivBranch);
@@ -2250,8 +2250,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public SecurityUserDivBranch getSecurityUserDivBranch() {

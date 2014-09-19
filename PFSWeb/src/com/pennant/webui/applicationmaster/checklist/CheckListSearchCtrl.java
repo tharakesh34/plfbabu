@@ -327,9 +327,9 @@ public class CheckListSearchCtrl extends GFCBaseCtrl implements Serializable {
 		
 		
 	  if (this.checkListId.getValue()!=null) {	  
-	    final Listitem item_CheckListId = this.sortOperator_checkListId.getSelectedItem();
-	  	if (item_CheckListId != null) {
-	 		final int searchOpId = ((SearchOperators) item_CheckListId.getAttribute("data")).getSearchOperatorId();
+	    final Listitem itemCheckListId = this.sortOperator_checkListId.getSelectedItem();
+	  	if (itemCheckListId != null) {
+	 		final int searchOpId = ((SearchOperators) itemCheckListId.getAttribute("data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
 	 			// do nothing
@@ -346,10 +346,9 @@ public class CheckListSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.checkListDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_CheckListDesc = this.sortOperator_checkListDesc.getSelectedItem();
-
-			if (item_CheckListDesc != null) {
-				final int searchOpId = ((SearchOperators) item_CheckListDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCheckListDesc = this.sortOperator_checkListDesc.getSelectedItem();
+			if (itemCheckListDesc != null) {
+				final int searchOpId = ((SearchOperators) itemCheckListDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("checkListDesc", "%" + this.checkListDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -361,9 +360,9 @@ public class CheckListSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 	  if (this.checkMinCount.getValue()!=null) {	  
-	    final Listitem item_CheckMinCount = this.sortOperator_checkMinCount.getSelectedItem();
-	  	if (item_CheckMinCount != null) {
-	 		final int searchOpId = ((SearchOperators) item_CheckMinCount.getAttribute("data")).getSearchOperatorId();
+	    final Listitem itemCheckMinCount = this.sortOperator_checkMinCount.getSelectedItem();
+	  	if (itemCheckMinCount != null) {
+	 		final int searchOpId = ((SearchOperators) itemCheckMinCount.getAttribute("data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
 	 			// do nothing
@@ -378,9 +377,9 @@ public class CheckListSearchCtrl extends GFCBaseCtrl implements Serializable {
 	 	}
 	  }	
 	  if (this.checkMaxCount.getValue()!=null) {	  
-	    final Listitem item_CheckMaxCount = this.sortOperator_checkMaxCount.getSelectedItem();
-	  	if (item_CheckMaxCount != null) {
-	 		final int searchOpId = ((SearchOperators) item_CheckMaxCount.getAttribute("data")).getSearchOperatorId();
+	    final Listitem itemCheckMaxCount = this.sortOperator_checkMaxCount.getSelectedItem();
+	  	if (itemCheckMaxCount != null) {
+	 		final int searchOpId = ((SearchOperators) itemCheckMaxCount.getAttribute("data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
 	 			// do nothing
@@ -395,10 +394,9 @@ public class CheckListSearchCtrl extends GFCBaseCtrl implements Serializable {
 	 	}
 	  }	
 		// get the search operatorxxx
-		final Listitem item_Remarks = this.sortOperator_remarks.getSelectedItem();
-
-		if (item_Remarks != null) {
-			final int searchOpId = ((SearchOperators) item_Remarks.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemRemarks = this.sortOperator_remarks.getSelectedItem();
+		if (itemRemarks != null) {
+			final int searchOpId = ((SearchOperators) itemRemarks.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -412,10 +410,9 @@ public class CheckListSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_Active = this.sortOperator_active.getSelectedItem();
-
-		if (item_Active != null) {
-			final int searchOpId = ((SearchOperators) item_Active.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemActive = this.sortOperator_active.getSelectedItem();
+		if (itemActive != null) {
+			final int searchOpId = ((SearchOperators) itemActive.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -430,9 +427,9 @@ public class CheckListSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -451,9 +448,9 @@ public class CheckListSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

@@ -308,11 +308,9 @@ public class BaseRateCodeSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.bRType.getValue())) {
 
 			// get the search operator
-			final Listitem item_BRType = this.sortOperator_bRType
-					.getSelectedItem();
-
-			if (item_BRType != null) {
-				final int searchOpId = ((SearchOperators) item_BRType
+			final Listitem itemBRType = this.sortOperator_bRType.getSelectedItem();
+			if (itemBRType != null) {
+				final int searchOpId = ((SearchOperators) itemBRType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -329,11 +327,9 @@ public class BaseRateCodeSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.bRTypeDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_BRTypeDesc = this.sortOperator_bRTypeDesc
-					.getSelectedItem();
-
-			if (item_BRTypeDesc != null) {
-				final int searchOpId = ((SearchOperators) item_BRTypeDesc
+			final Listitem itemBRTypeDesc = this.sortOperator_bRTypeDesc.getSelectedItem();
+			if (itemBRTypeDesc != null) {
+				final int searchOpId = ((SearchOperators) itemBRTypeDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -349,10 +345,9 @@ public class BaseRateCodeSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -374,10 +369,9 @@ public class BaseRateCodeSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

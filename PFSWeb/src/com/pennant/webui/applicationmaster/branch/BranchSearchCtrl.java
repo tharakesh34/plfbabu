@@ -413,11 +413,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchCode = this.sortOperator_branchCode
-					.getSelectedItem();
-
-			if (item_BranchCode != null) {
-				final int searchOpId = ((SearchOperators) item_BranchCode
+			final Listitem itemBranchCode = this.sortOperator_branchCode.getSelectedItem();
+			if (itemBranchCode != null) {
+				final int searchOpId = ((SearchOperators) itemBranchCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -434,11 +432,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchDesc = this.sortOperator_branchDesc
-					.getSelectedItem();
-
-			if (item_BranchDesc != null) {
-				final int searchOpId = ((SearchOperators) item_BranchDesc
+			final Listitem itemBranchDesc = this.sortOperator_branchDesc.getSelectedItem();
+			if (itemBranchDesc != null) {
+				final int searchOpId = ((SearchOperators) itemBranchDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -455,11 +451,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchCity.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchCity = this.sortOperator_branchCity
-					.getSelectedItem();
-
-			if (item_BranchCity != null) {
-				final int searchOpId = ((SearchOperators) item_BranchCity
+			final Listitem itemBranchCity = this.sortOperator_branchCity.getSelectedItem();
+			if (itemBranchCity != null) {
+				final int searchOpId = ((SearchOperators) itemBranchCity
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -476,11 +470,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchProvince.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchProvince = this.sortOperator_branchProvince
-					.getSelectedItem();
-
-			if (item_BranchProvince != null) {
-				final int searchOpId = ((SearchOperators) item_BranchProvince
+			final Listitem itemBranchProvince = this.sortOperator_branchProvince.getSelectedItem();
+			if (itemBranchProvince != null) {
+				final int searchOpId = ((SearchOperators) itemBranchProvince
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -498,11 +490,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchCountry.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchCountry = this.sortOperator_branchCountry
-					.getSelectedItem();
-
-			if (item_BranchCountry != null) {
-				final int searchOpId = ((SearchOperators) item_BranchCountry
+			final Listitem itemBranchCountry = this.sortOperator_branchCountry.getSelectedItem();
+			if (itemBranchCountry != null) {
+				final int searchOpId = ((SearchOperators) itemBranchCountry
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -520,11 +510,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchSwiftBankCde.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchSwiftBankCde = this.sortOperator_branchSwiftBankCde
-					.getSelectedItem();
-
-			if (item_BranchSwiftBankCde != null) {
-				final int searchOpId = ((SearchOperators) item_BranchSwiftBankCde
+			final Listitem itemBranchSwiftBankCde = this.sortOperator_branchSwiftBankCde.getSelectedItem();
+			if (itemBranchSwiftBankCde != null) {
+				final int searchOpId = ((SearchOperators) itemBranchSwiftBankCde
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -542,11 +530,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchSwiftCountry.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchSwiftCountry = this.sortOperator_branchSwiftCountry
-					.getSelectedItem();
-
-			if (item_BranchSwiftCountry != null) {
-				final int searchOpId = ((SearchOperators) item_BranchSwiftCountry
+			final Listitem itemBranchSwiftCountry = this.sortOperator_branchSwiftCountry.getSelectedItem();
+			if (itemBranchSwiftCountry != null) {
+				final int searchOpId = ((SearchOperators) itemBranchSwiftCountry
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -564,11 +550,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchSwiftLocCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchSwiftLocCode = this.sortOperator_branchSwiftLocCode
-					.getSelectedItem();
-
-			if (item_BranchSwiftLocCode != null) {
-				final int searchOpId = ((SearchOperators) item_BranchSwiftLocCode
+			final Listitem itemBranchSwiftLocCode = this.sortOperator_branchSwiftLocCode.getSelectedItem();
+			if (itemBranchSwiftLocCode != null) {
+				final int searchOpId = ((SearchOperators) itemBranchSwiftLocCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -586,11 +570,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchSwiftBrnCde.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchSwiftBrnCde = this.sortOperator_branchSwiftBrnCde
-					.getSelectedItem();
-
-			if (item_BranchSwiftBrnCde != null) {
-				final int searchOpId = ((SearchOperators) item_BranchSwiftBrnCde
+			final Listitem itemBranchSwiftBrnCde = this.sortOperator_branchSwiftBrnCde.getSelectedItem();
+			if (itemBranchSwiftBrnCde != null) {
+				final int searchOpId = ((SearchOperators) itemBranchSwiftBrnCde
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -608,11 +590,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.branchSortCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_BranchSortCode = this.sortOperator_branchSortCode
-					.getSelectedItem();
-
-			if (item_BranchSortCode != null) {
-				final int searchOpId = ((SearchOperators) item_BranchSortCode
+			final Listitem itemBranchSortCode = this.sortOperator_branchSortCode.getSelectedItem();
+			if (itemBranchSortCode != null) {
+				final int searchOpId = ((SearchOperators) itemBranchSortCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -628,11 +608,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_BranchIsActive = this.sortOperator_branchIsActive
-				.getSelectedItem();
-
-		if (item_BranchIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_BranchIsActive
+		final Listitem itemBranchIsActive = this.sortOperator_branchIsActive.getSelectedItem();
+		if (itemBranchIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemBranchIsActive
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -648,10 +626,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -673,10 +650,9 @@ public class BranchSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

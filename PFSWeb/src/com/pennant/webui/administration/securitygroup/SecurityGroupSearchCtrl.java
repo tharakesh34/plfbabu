@@ -300,10 +300,9 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (this.grpID.getValue()!=null) {
 
 			// get the search operator
-			final Listitem item_GrpID = this.sortOperator_grpID.getSelectedItem();
-
-			if (item_GrpID != null) {
-				final int searchOpId = ((SearchOperators) item_GrpID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemGrpID = this.sortOperator_grpID.getSelectedItem();
+			if (itemGrpID != null) {
+				final int searchOpId = ((SearchOperators) itemGrpID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("grpID", "%" + this.grpID.getValue(), searchOpId));
@@ -317,10 +316,9 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.grpCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_GrpCode = this.sortOperator_grpCode.getSelectedItem();
-
-			if (item_GrpCode != null) {
-				final int searchOpId = ((SearchOperators) item_GrpCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemGrpCode = this.sortOperator_grpCode.getSelectedItem();
+			if (itemGrpCode != null) {
+				final int searchOpId = ((SearchOperators) itemGrpCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("grpCode", "%" + this.grpCode.getValue().toUpperCase() + "%", searchOpId));
@@ -334,10 +332,9 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl implements Serializable
 		if (StringUtils.isNotEmpty(this.grpDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_GrpDesc = this.sortOperator_grpDesc.getSelectedItem();
-
-			if (item_GrpDesc != null) {
-				final int searchOpId = ((SearchOperators) item_GrpDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemGrpDesc = this.sortOperator_grpDesc.getSelectedItem();
+			if (itemGrpDesc != null) {
+				final int searchOpId = ((SearchOperators) itemGrpDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("grpDesc", "%" + this.grpDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -350,9 +347,9 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl implements Serializable
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						  .getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -372,9 +369,9 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl implements Serializable
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

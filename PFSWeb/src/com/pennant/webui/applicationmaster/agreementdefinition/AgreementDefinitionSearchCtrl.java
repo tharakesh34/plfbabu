@@ -334,10 +334,9 @@ public class AgreementDefinitionSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.aggCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_AggCode = this.sortOperator_aggCode.getSelectedItem();
-
-			if (item_AggCode != null) {
-				final int searchOpId = ((SearchOperators) item_AggCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAggCode = this.sortOperator_aggCode.getSelectedItem();
+			if (itemAggCode != null) {
+				final int searchOpId = ((SearchOperators) itemAggCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("aggCode", "%" + this.aggCode.getValue().toUpperCase() + "%", searchOpId));
@@ -351,10 +350,9 @@ public class AgreementDefinitionSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.aggName.getValue())) {
 
 			// get the search operator
-			final Listitem item_AggName = this.sortOperator_aggName.getSelectedItem();
-
-			if (item_AggName != null) {
-				final int searchOpId = ((SearchOperators) item_AggName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAggName = this.sortOperator_aggName.getSelectedItem();
+			if (itemAggName != null) {
+				final int searchOpId = ((SearchOperators) itemAggName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("aggName", "%" + this.aggName.getValue().toUpperCase() + "%", searchOpId));
@@ -368,10 +366,9 @@ public class AgreementDefinitionSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.aggDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_AggDesc = this.sortOperator_aggDesc.getSelectedItem();
-
-			if (item_AggDesc != null) {
-				final int searchOpId = ((SearchOperators) item_AggDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAggDesc = this.sortOperator_aggDesc.getSelectedItem();
+			if (itemAggDesc != null) {
+				final int searchOpId = ((SearchOperators) itemAggDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("aggDesc", "%" + this.aggDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -385,10 +382,9 @@ public class AgreementDefinitionSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.aggReportName.getValue())) {
 
 			// get the search operator
-			final Listitem item_AggReportName = this.sortOperator_aggReportName.getSelectedItem();
-
-			if (item_AggReportName != null) {
-				final int searchOpId = ((SearchOperators) item_AggReportName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAggReportName = this.sortOperator_aggReportName.getSelectedItem();
+			if (itemAggReportName != null) {
+				final int searchOpId = ((SearchOperators) itemAggReportName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("aggReportName", "%" + this.aggReportName.getValue().toUpperCase() + "%", searchOpId));
@@ -402,10 +398,9 @@ public class AgreementDefinitionSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.aggReportPath.getValue())) {
 
 			// get the search operator
-			final Listitem item_AggReportPath = this.sortOperator_aggReportPath.getSelectedItem();
-
-			if (item_AggReportPath != null) {
-				final int searchOpId = ((SearchOperators) item_AggReportPath.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAggReportPath = this.sortOperator_aggReportPath.getSelectedItem();
+			if (itemAggReportPath != null) {
+				final int searchOpId = ((SearchOperators) itemAggReportPath.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("aggReportPath", "%" + this.aggReportPath.getValue().toUpperCase() + "%", searchOpId));
@@ -417,10 +412,9 @@ public class AgreementDefinitionSearchCtrl extends GFCBaseCtrl implements Serial
 			}
 		}
 		// get the search operator
-		final Listitem item_AggIsActive = this.sortOperator_aggIsActive.getSelectedItem();
-
-		if (item_AggIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_AggIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemAggIsActive = this.sortOperator_aggIsActive.getSelectedItem();
+		if (itemAggIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemAggIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -435,9 +429,9 @@ public class AgreementDefinitionSearchCtrl extends GFCBaseCtrl implements Serial
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -456,9 +450,9 @@ public class AgreementDefinitionSearchCtrl extends GFCBaseCtrl implements Serial
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

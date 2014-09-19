@@ -1120,15 +1120,15 @@ public class SecurityUserRolesDailogCtrl extends GFCBaseListCtrl<SecurityRole> i
 		this.listbox_SecurityGroupRights.setVisible(true);
 		this.listbox_SecurityGroupRights.getItems().clear();
 		final Listitem item = this.listbox_SecurityRoleGroups.getSelectedItem();
-		SecurityRoleGroups SecurityRoleGroups = new SecurityRoleGroups();
+		SecurityRoleGroups securityRoleGroups = new SecurityRoleGroups();
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			SecurityRoleGroups = (SecurityRoleGroups) item.getAttribute("data");
+			securityRoleGroups = (SecurityRoleGroups) item.getAttribute("data");
 		}
-		this.panel_SecurityGroupRights.setTitle(Labels.getLabel("listbox_SecurityUserRoleGroupRights.value") + " - "+ SecurityRoleGroups.getLovDescGrpCode());
+		this.panel_SecurityGroupRights.setTitle(Labels.getLabel("listbox_SecurityUserRoleGroupRights.value") + " - "+ securityRoleGroups.getLovDescGrpCode());
 
 		SecurityGroup secGroups=new SecurityGroup();
-		secGroups.setGrpID(SecurityRoleGroups.getGrpID());
+		secGroups.setGrpID(securityRoleGroups.getGrpID());
 		List<SecurityGroupRights> grpRightsList=getSecurityUserRolesService().getGroupRightsByGrpId(secGroups);
 		
 		if(grpRightsList.size() > 0){
@@ -1368,8 +1368,8 @@ public class SecurityUserRolesDailogCtrl extends GFCBaseListCtrl<SecurityRole> i
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	@SuppressWarnings("unchecked")

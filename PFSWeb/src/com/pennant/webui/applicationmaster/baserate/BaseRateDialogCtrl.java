@@ -639,16 +639,16 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 
-	  	String old_bREffDate = "";
-	  	String new_bREffDate ="";
+	  	String oldBREffDate = "";
+	  	String newBREffDate ="";
 		if (this.oldVar_bREffDate!=null){
-			old_bREffDate=DateUtility.formatDate(this.oldVar_bREffDate,PennantConstants.dateFormat);
+			oldBREffDate=DateUtility.formatDate(this.oldVar_bREffDate,PennantConstants.dateFormat);
 		}
 		if (this.bREffDate.getValue()!=null){
-			new_bREffDate=DateUtility.formatDate(this.bREffDate.getValue(),PennantConstants.dateFormat);
+			newBREffDate=DateUtility.formatDate(this.bREffDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_bREffDate).equals(
-				StringUtils.trimToEmpty(new_bREffDate))) {
+		if (!StringUtils.trimToEmpty(oldBREffDate).equals(
+				StringUtils.trimToEmpty(newBREffDate))) {
 			return true;
 		}
 		if (this.oldVar_bRRate != this.bRRate.getValue()) {
@@ -1286,8 +1286,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 }

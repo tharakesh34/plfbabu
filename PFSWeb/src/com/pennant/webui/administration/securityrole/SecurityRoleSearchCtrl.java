@@ -342,10 +342,9 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (this.roleID.getValue()!= null) {
 
 			// get the search operator
-			final Listitem item_RoleID = this.sortOperator_roleID.getSelectedItem();
-
-			if (item_RoleID != null) {
-				final int searchOpId = ((SearchOperators) item_RoleID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRoleID = this.sortOperator_roleID.getSelectedItem();
+			if (itemRoleID != null) {
+				final int searchOpId = ((SearchOperators) itemRoleID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("roleID", "%" + this.roleID.getValue() + "%", searchOpId));
@@ -360,10 +359,9 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl implements Serializable 
 				&& (!StringUtils.equals(this.roleApp.getSelectedItem().getLabel(), Labels.getLabel("common.Select")))) {
 
 			// get the search operator
-			final Listitem item_RoleApp = this.sortOperator_roleApp.getSelectedItem();
-
-			if (item_RoleApp != null) {
-				final int searchOpId = ((SearchOperators) item_RoleApp.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRoleApp = this.sortOperator_roleApp.getSelectedItem();
+			if (itemRoleApp != null) {
+				final int searchOpId = ((SearchOperators) itemRoleApp.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("roleApp", "%" + this.roleApp.getSelectedItem().getValue(),searchOpId));
@@ -377,10 +375,9 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.roleCd.getValue())) {
 
 			// get the search operator
-			final Listitem item_RoleCd = this.sortOperator_roleCd.getSelectedItem();
-
-			if (item_RoleCd != null) {
-				final int searchOpId = ((SearchOperators) item_RoleCd.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRoleCd = this.sortOperator_roleCd.getSelectedItem();
+			if (itemRoleCd != null) {
+				final int searchOpId = ((SearchOperators) itemRoleCd.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("roleCd", "%" + this.roleCd.getValue().toUpperCase() + "%", searchOpId));
@@ -394,10 +391,9 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.roleDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_RoleDesc = this.sortOperator_roleDesc.getSelectedItem();
-
-			if (item_RoleDesc != null) {
-				final int searchOpId = ((SearchOperators) item_RoleDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRoleDesc = this.sortOperator_roleDesc.getSelectedItem();
+			if (itemRoleDesc != null) {
+				final int searchOpId = ((SearchOperators) itemRoleDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("roleDesc", "%"	+ this.roleDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -411,10 +407,9 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.roleCategory.getValue())) {
 
 			// get the search operator
-			final Listitem item_RoleCategory = this.sortOperator_roleCategory.getSelectedItem();
-
-			if (item_RoleCategory != null) {
-				final int searchOpId = ((SearchOperators) item_RoleCategory.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRoleCategory = this.sortOperator_roleCategory.getSelectedItem();
+			if (itemRoleCategory != null) {
+				final int searchOpId = ((SearchOperators) itemRoleCategory.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("roleCategory", "%" + this.roleCategory.getValue().toUpperCase() + "%", searchOpId));
@@ -427,9 +422,9 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"	+ this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -448,9 +443,9 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl implements Serializable 
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

@@ -135,6 +135,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	
 
 	// not auto wired variables
+	@SuppressWarnings("unused")
 	private String aggImage=null;
 	private AgreementDefinition agreementDefinition; // overHanded per parameter
 	private AgreementDefinition prvAgreementDefinition; // overHanded per parameter
@@ -1448,9 +1449,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
-
 
 }

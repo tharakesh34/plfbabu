@@ -232,8 +232,8 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final SecurityRole aSecurityRole = (SecurityRole) item.getAttribute("data");
-			final SecurityRole SecurityRole = getSecurityRoleService().getSecurityRoleById(aSecurityRole.getId());
-			if(SecurityRole==null){
+			final SecurityRole securityRole = getSecurityRoleService().getSecurityRoleById(aSecurityRole.getId());
+			if(securityRole==null){
 				String[] errorParm= new String[3];
 				errorParm[0]=PennantJavaUtil.getLabel("label_RoleID") + ":"+ aSecurityRole.getRoleID();
 				errorParm[1] = PennantJavaUtil.getLabel("label_RoleCode") + ":"+ aSecurityRole.getRoleCd();
@@ -246,17 +246,17 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 						, errorParm,valueParm), getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			}else{
-				String whereCond =  " AND RoleID="+ SecurityRole.getRoleID()+" AND version=" + SecurityRole.getVersion()+" ";
+				String whereCond =  " AND RoleID="+ securityRole.getRoleID()+" AND version=" + securityRole.getVersion()+" ";
 
 				if(isWorkFlowEnabled()){
-					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "SecurityRole", whereCond, SecurityRole.getTaskId(), SecurityRole.getNextTaskId());
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "SecurityRole", whereCond, securityRole.getTaskId(), securityRole.getNextTaskId());
 					if (userAcces){
-						showDetailView(SecurityRole);
+						showDetailView(securityRole);
 					}else{
 						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
-					showDetailView(SecurityRole);
+					showDetailView(securityRole);
 				}
 			}
 		}
