@@ -437,7 +437,7 @@ public class FinGenGoodsLoanDetailListCtrl extends GFCBaseCtrl implements Serial
 		int idNumber = 0;
 		if(getGoodsDetailLists() != null && !getGoodsDetailLists().isEmpty()){
 			for (GenGoodsLoanDetail genGoodsLoanDetail : getGoodsDetailLists()) {
-				int tempId = new Integer(genGoodsLoanDetail.getItemNumber());
+				int tempId = Integer.valueOf(genGoodsLoanDetail.getItemNumber());
 				if(tempId > idNumber){
 					idNumber = tempId;
 				}

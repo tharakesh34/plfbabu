@@ -560,7 +560,7 @@ public class FinGoodsLoanDetailListCtrl extends GFCBaseCtrl implements Serializa
 		int idNumber = 0;
 		if(getGoodsDetailLists() != null && !getGoodsDetailLists().isEmpty()){
 			for (GoodsLoanDetail goodsLoanDetail : getGoodsDetailLists()) {
-				int tempId = new Integer(goodsLoanDetail.getItemNumber());
+				int tempId = Integer.valueOf(goodsLoanDetail.getItemNumber());
 				if(tempId > idNumber){
 					idNumber = tempId;
 				}
