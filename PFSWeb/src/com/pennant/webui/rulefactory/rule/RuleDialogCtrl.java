@@ -708,7 +708,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			wve.add(we);
 		}
 		try {
-			aRule.setWaiverPerc(this.waiverPercentage.getValue()== 	null? new BigDecimal(0):this.waiverPercentage.getValue());
+			aRule.setWaiverPerc(this.waiverPercentage.getValue() == null? BigDecimal.ZERO : this.waiverPercentage.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -730,7 +730,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// we don't create a new Sector() in the frontEnd.
 		// we get it from the backEnd.
 		final Sector aSector = getSectorService().getNewSector();
-		aSector.setSectorLimit(new BigDecimal(0)); // initialization
+		aSector.setSectorLimit(BigDecimal.ZERO); // initialization
 		aSector.setNewRecord(true);
 		setSector(aSector);
 		doClear(); // clear all components

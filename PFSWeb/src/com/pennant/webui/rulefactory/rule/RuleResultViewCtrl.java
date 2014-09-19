@@ -138,7 +138,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl implements Serializable {
 
 				// Execute the engine
 				String rule="function Rule(){Result = "+ amountRuleFormula +"}Rule();";
-				BigDecimal tempResult=new BigDecimal("0");		
+				BigDecimal tempResult= BigDecimal.ZERO;		
 				String result="0";		
 
 				if (engine.eval(rule)!=null) {
@@ -241,7 +241,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl implements Serializable {
 			if (this.notificationsRuleResultDialogCtrl != null){
 				rule="function Rule(){ Result = "+ this.notificationsRuleResultDialogCtrl.formula.getValue() +"}Rule();";
 			}
-			BigDecimal tempResult=new BigDecimal("0");		
+			BigDecimal tempResult= BigDecimal.ZERO;		
 			String result="0";		
 
 			if (engine.eval(rule)!=null) {

@@ -182,7 +182,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 	private transient List<HolidayDetail> holidayList = new ArrayList<HolidayDetail>();
 
 	private transient String old_holidayCode = "";
-	private transient BigDecimal old_holidayYear = new BigDecimal(0);
+	private transient BigDecimal old_holidayYear = BigDecimal.ZERO;
 	private transient List<HolidayDetail> oldVar_holidayDetailList = new ArrayList<HolidayDetail>();
 	int listRows;
 
@@ -424,7 +424,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 	public void onSelect$holidayType(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		if (holidayType.getSelectedItem().getValue().toString().equals("P")) {
-			holidayYear.setValue(new BigDecimal(0));
+			holidayYear.setValue(BigDecimal.ZERO);
 			holidayYear.setReadonly(true);
 			h_Map = null;
 			doFillHolidayDetails();
@@ -490,7 +490,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 
 		if (!holidayCode.getValue().equals("")
 				&& holidayYear.getValue() != null
-				&& !holidayYear.getValue().equals(new BigDecimal(0))) {
+				&& !holidayYear.getValue().equals(BigDecimal.ZERO)) {
 			btnNew_HolidayDet.setVisible(true);
 		} else {
 			btnNew_HolidayDet.setVisible(false);
@@ -513,7 +513,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 		}
 		if (!holidayCode.getValue().equals("")
 				&& holidayYear.getValue() != null
-				&& !holidayYear.getValue().equals(new BigDecimal(0))
+				&& !holidayYear.getValue().equals(BigDecimal.ZERO)
 				&& Integer.toString(holidayYear.getValue().intValue()).length() == 4
 				&& holidayType.getSelectedItem().getValue().toString()
 						.equals("N") && !(holidayType.getSelectedIndex() < 0)) {
@@ -714,7 +714,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 				&& aHolidayMaster.getHolidayType().equalsIgnoreCase("P")) {
 
 			if (aHolidayMaster.isNewRecord()) {
-				aHolidayMaster.setHolidayYear(new BigDecimal(0));
+				aHolidayMaster.setHolidayYear(BigDecimal.ZERO);
 			}
 
 			aHolidayMaster.setHolidayCodeDesc("Perminent Holidays");

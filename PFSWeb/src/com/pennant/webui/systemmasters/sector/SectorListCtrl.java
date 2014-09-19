@@ -308,7 +308,7 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 		// create a new Sector object, We GET it from the backEnd.
 		final Sector aSector = getSectorService().getNewSector();
 
-		aSector.setSectorLimit(new BigDecimal(0)); // initialize
+		aSector.setSectorLimit(BigDecimal.ZERO); // initialize
 		showDetailView(aSector);
 		logger.debug("Leaving" + event.toString());
 	}

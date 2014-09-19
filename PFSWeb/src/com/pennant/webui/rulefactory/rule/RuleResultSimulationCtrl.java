@@ -261,7 +261,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl implements Serializabl
 			
 			// Execute the engine
 			String rule="function Rule(){"+ amountRule +"}Rule();";
-			BigDecimal tempResult=new BigDecimal("0");		
+			BigDecimal tempResult = BigDecimal.ZERO;		
 			String result="0";		
 
 			if (engine.eval(rule)!=null) {

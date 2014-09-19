@@ -303,7 +303,7 @@ public class IndustryListCtrl extends GFCBaseListCtrl<Industry> implements Seria
 
 		// create a new Industry object, We GET it from the back end.
 		final Industry aIndustry = getIndustryService().getNewIndustry();
-		aIndustry.setIndustryLimit(new BigDecimal(0)); // initialization
+		aIndustry.setIndustryLimit(BigDecimal.ZERO); // initialization
 		showDetailView(aIndustry);
 		logger.debug("Leaving" + event.toString());
 	}

@@ -788,7 +788,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// we don't create a new Industry() in the front end.
 		// we get it from the back end.
 		final Industry aIndustry = getIndustryService().getNewIndustry();
-		aIndustry.setIndustryLimit(new BigDecimal(0)); // initialization
+		aIndustry.setIndustryLimit(BigDecimal.ZERO); // initialization
 		aIndustry.setNewRecord(true);
 		setIndustry(aIndustry);
 		doClear(); // clear all components
