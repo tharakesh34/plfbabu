@@ -984,26 +984,26 @@ public class GenGoodsLoanDetailDialogListCtrl extends GFCBaseCtrl implements Ser
 		if (this.oldVar_Addtional4 != this.addtional4.intValue()) {
 			return  true;
 		}
-		String old_Addtional5 = "";
-		String new_Addtional5 ="";
+		String oldAddtional5 = "";
+		String newAddtional5 ="";
 		if (this.oldVar_Addtional5!=null){
-			old_Addtional5=DateUtility.formatDate(this.oldVar_Addtional5,PennantConstants.dateFormat);
+			oldAddtional5=DateUtility.formatDate(this.oldVar_Addtional5,PennantConstants.dateFormat);
 		}
 		if (this.addtional5.getValue()!=null){
-			new_Addtional5=DateUtility.formatDate(this.addtional5.getValue(),PennantConstants.dateFormat);
+			newAddtional5=DateUtility.formatDate(this.addtional5.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_Addtional5).equals(StringUtils.trimToEmpty(new_Addtional5))) {
+		if (!StringUtils.trimToEmpty(oldAddtional5).equals(StringUtils.trimToEmpty(newAddtional5))) {
 			return true;
 		}
-		String old_Addtional6 = "";
-		String new_Addtional6 ="";
+		String oldAddtional6 = "";
+		String newAddtional6 ="";
 		if (this.oldVar_Addtional6!=null){
-			old_Addtional6=DateUtility.formatDate(this.oldVar_Addtional6,PennantConstants.dateFormat);
+			oldAddtional6=DateUtility.formatDate(this.oldVar_Addtional6,PennantConstants.dateFormat);
 		}
 		if (this.addtional6.getValue()!=null){
-			new_Addtional6=DateUtility.formatDate(this.addtional6.getValue(),PennantConstants.dateFormat);
+			newAddtional6=DateUtility.formatDate(this.addtional6.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_Addtional6).equals(StringUtils.trimToEmpty(new_Addtional6))) {
+		if (!StringUtils.trimToEmpty(oldAddtional6).equals(StringUtils.trimToEmpty(newAddtional6))) {
 			return true;
 		}
 		if (this.oldVar_Addtional7 != this.addtional7.getValue()) {
@@ -1519,8 +1519,8 @@ public class GenGoodsLoanDetailDialogListCtrl extends GFCBaseCtrl implements Ser
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setNewRecord(boolean newRecord) {

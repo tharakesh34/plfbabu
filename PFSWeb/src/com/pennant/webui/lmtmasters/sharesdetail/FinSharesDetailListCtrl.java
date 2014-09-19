@@ -309,8 +309,8 @@ public class FinSharesDetailListCtrl extends GFCBaseCtrl implements Serializable
 		return this.sharesDetail;
 	}
 
-	public void setSharesDetail(SharesDetail SharesDetail) {
-		this.sharesDetail = SharesDetail;
+	public void setSharesDetail(SharesDetail sharesDetail) {
+		this.sharesDetail = sharesDetail;
 	}
 
 	public void setSharesDetailService(SharesDetailService sharesDetailService) {

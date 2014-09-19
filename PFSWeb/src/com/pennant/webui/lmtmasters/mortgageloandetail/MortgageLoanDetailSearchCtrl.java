@@ -419,10 +419,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgLoanId.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgLoanId = this.sortOperator_mortgLoanId.getSelectedItem();
-
-			if (item_MortgLoanId != null) {
-				final int searchOpId = ((SearchOperators) item_MortgLoanId.getAttribute(
+			final Listitem itemMortgLoanId = this.sortOperator_mortgLoanId.getSelectedItem();
+			if (itemMortgLoanId != null) {
+				final int searchOpId = ((SearchOperators) itemMortgLoanId.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -438,10 +437,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.loanRefNumber.getValue())) {
 
 			// get the search operator
-			final Listitem item_LoanRefNumber = this.sortOperator_loanRefNumber.getSelectedItem();
-
-			if (item_LoanRefNumber != null) {
-				final int searchOpId = ((SearchOperators) item_LoanRefNumber.getAttribute(
+			final Listitem itemLoanRefNumber = this.sortOperator_loanRefNumber.getSelectedItem();
+			if (itemLoanRefNumber != null) {
+				final int searchOpId = ((SearchOperators) itemLoanRefNumber.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -455,10 +453,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 			}
 		}
 		// get the search operator
-		final Listitem item_LoanRefType = this.sortOperator_loanRefType.getSelectedItem();
-
-		if (item_LoanRefType != null) {
-			final int searchOpId = ((SearchOperators) item_LoanRefType.getAttribute(
+		final Listitem itemLoanRefType = this.sortOperator_loanRefType.getSelectedItem();
+		if (itemLoanRefType != null) {
+			final int searchOpId = ((SearchOperators) itemLoanRefType.getAttribute(
 					"data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
@@ -475,10 +472,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgProperty.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgProperty = this.sortOperator_mortgProperty.getSelectedItem();
-
-			if (item_MortgProperty != null) {
-				final int searchOpId = ((SearchOperators) item_MortgProperty.getAttribute(
+			final Listitem itemMortgProperty = this.sortOperator_mortgProperty.getSelectedItem();
+			if (itemMortgProperty != null) {
+				final int searchOpId = ((SearchOperators) itemMortgProperty.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -494,10 +490,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgCurrentValue.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgCurrentValue = this.sortOperator_mortgCurrentValue.getSelectedItem();
-
-			if (item_MortgCurrentValue != null) {
-				final int searchOpId = ((SearchOperators) item_MortgCurrentValue.getAttribute(
+			final Listitem itemMortgCurrentValue = this.sortOperator_mortgCurrentValue.getSelectedItem();
+			if (itemMortgCurrentValue != null) {
+				final int searchOpId = ((SearchOperators) itemMortgCurrentValue.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -514,10 +509,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgPurposeOfLoan.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgPurposeOfLoan = this.sortOperator_mortgPurposeOfLoan.getSelectedItem();
-
-			if (item_MortgPurposeOfLoan != null) {
-				final int searchOpId = ((SearchOperators) item_MortgPurposeOfLoan.getAttribute(
+			final Listitem itemMortgPurposeOfLoan = this.sortOperator_mortgPurposeOfLoan.getSelectedItem();
+			if (itemMortgPurposeOfLoan != null) {
+				final int searchOpId = ((SearchOperators) itemMortgPurposeOfLoan.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -534,10 +528,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgPropertyRelation.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgPropertyRelation = this.sortOperator_mortgPropertyRelation.getSelectedItem();
-
-			if (item_MortgPropertyRelation != null) {
-				final int searchOpId = ((SearchOperators) item_MortgPropertyRelation.getAttribute(
+			final Listitem itemMortgPropertyRelation = this.sortOperator_mortgPropertyRelation.getSelectedItem();
+			if (itemMortgPropertyRelation != null) {
+				final int searchOpId = ((SearchOperators) itemMortgPropertyRelation.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -554,10 +547,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgOwnership.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgOwnership = this.sortOperator_mortgOwnership.getSelectedItem();
-
-			if (item_MortgOwnership != null) {
-				final int searchOpId = ((SearchOperators) item_MortgOwnership.getAttribute(
+			final Listitem itemMortgOwnership = this.sortOperator_mortgOwnership.getSelectedItem();
+			if (itemMortgOwnership != null) {
+				final int searchOpId = ((SearchOperators) itemMortgOwnership.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -573,10 +565,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrHNbr.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrHNbr = this.sortOperator_mortgAddrHNbr.getSelectedItem();
-
-			if (item_MortgAddrHNbr != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrHNbr.getAttribute(
+			final Listitem itemMortgAddrHNbr = this.sortOperator_mortgAddrHNbr.getSelectedItem();
+			if (itemMortgAddrHNbr != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrHNbr.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -592,10 +583,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrFlatNbr.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrFlatNbr = this.sortOperator_mortgAddrFlatNbr.getSelectedItem();
-
-			if (item_MortgAddrFlatNbr != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrFlatNbr.getAttribute(
+			final Listitem itemMortgAddrFlatNbr = this.sortOperator_mortgAddrFlatNbr.getSelectedItem();
+			if (itemMortgAddrFlatNbr != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrFlatNbr.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -612,10 +602,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrStreet.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrStreet = this.sortOperator_mortgAddrStreet.getSelectedItem();
-
-			if (item_MortgAddrStreet != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrStreet.getAttribute(
+			final Listitem itemMortgAddrStreet = this.sortOperator_mortgAddrStreet.getSelectedItem();
+			if (itemMortgAddrStreet != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrStreet.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -631,10 +620,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrLane1.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrLane1 = this.sortOperator_mortgAddrLane1.getSelectedItem();
-
-			if (item_MortgAddrLane1 != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrLane1.getAttribute(
+			final Listitem itemMortgAddrLane1 = this.sortOperator_mortgAddrLane1.getSelectedItem();
+			if (itemMortgAddrLane1 != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrLane1.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -650,10 +638,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrLane2.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrLane2 = this.sortOperator_mortgAddrLane2.getSelectedItem();
-
-			if (item_MortgAddrLane2 != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrLane2.getAttribute(
+			final Listitem itemMortgAddrLane2 = this.sortOperator_mortgAddrLane2.getSelectedItem();
+			if (itemMortgAddrLane2 != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrLane2.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -669,10 +656,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrPOBox.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrPOBox = this.sortOperator_mortgAddrPOBox.getSelectedItem();
-
-			if (item_MortgAddrPOBox != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrPOBox.getAttribute(
+			final Listitem itemMortgAddrPOBox = this.sortOperator_mortgAddrPOBox.getSelectedItem();
+			if (itemMortgAddrPOBox != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrPOBox.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -688,10 +674,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrCountry.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrCountry = this.sortOperator_mortgAddrCountry.getSelectedItem();
-
-			if (item_MortgAddrCountry != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrCountry.getAttribute(
+			final Listitem itemMortgAddrCountry = this.sortOperator_mortgAddrCountry.getSelectedItem();
+			if (itemMortgAddrCountry != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrCountry.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -707,10 +692,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrProvince.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrProvince = this.sortOperator_mortgAddrProvince.getSelectedItem();
-
-			if (item_MortgAddrProvince != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrProvince.getAttribute(
+			final Listitem itemMortgAddrProvince = this.sortOperator_mortgAddrProvince.getSelectedItem();
+			if (itemMortgAddrProvince != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrProvince.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -727,10 +711,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrCity.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrCity = this.sortOperator_mortgAddrCity.getSelectedItem();
-
-			if (item_MortgAddrCity != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrCity.getAttribute(
+			final Listitem itemMortgAddrCity = this.sortOperator_mortgAddrCity.getSelectedItem();
+			if (itemMortgAddrCity != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrCity.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -746,10 +729,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrZIP.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrZIP = this.sortOperator_mortgAddrZIP.getSelectedItem();
-
-			if (item_MortgAddrZIP != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrZIP.getAttribute(
+			final Listitem itemMortgAddrZIP = this.sortOperator_mortgAddrZIP.getSelectedItem();
+			if (itemMortgAddrZIP != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrZIP.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -765,10 +747,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.mortgAddrPhone.getValue())) {
 
 			// get the search operator
-			final Listitem item_MortgAddrPhone = this.sortOperator_mortgAddrPhone.getSelectedItem();
-
-			if (item_MortgAddrPhone != null) {
-				final int searchOpId = ((SearchOperators) item_MortgAddrPhone.getAttribute(
+			final Listitem itemMortgAddrPhone = this.sortOperator_mortgAddrPhone.getSelectedItem();
+			if (itemMortgAddrPhone != null) {
+				final int searchOpId = ((SearchOperators) itemMortgAddrPhone.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -783,9 +764,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute(
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute(
 						"data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
@@ -806,9 +787,9 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute(
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute(
 						"data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {

@@ -316,11 +316,9 @@ public class HomeLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.loanRefNumber.getValue())) {
 
 			// get the search operator
-			final Listitem item_LoanRefNumber = this.sortOperator_loanRefNumber
-					.getSelectedItem();
-
-			if (item_LoanRefNumber != null) {
-				final int searchOpId = ((SearchOperators) item_LoanRefNumber
+			final Listitem itemLoanRefNumber = this.sortOperator_loanRefNumber.getSelectedItem();
+			if (itemLoanRefNumber != null) {
+				final int searchOpId = ((SearchOperators) itemLoanRefNumber
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -336,11 +334,9 @@ public class HomeLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 			}
 		}
 		// get the search operator
-		final Listitem item_LoanRefType = this.sortOperator_loanRefType
-				.getSelectedItem();
-
-		if (item_LoanRefType != null) {
-			final int searchOpId = ((SearchOperators) item_LoanRefType
+		final Listitem itemLoanRefType = this.sortOperator_loanRefType.getSelectedItem();
+		if (itemLoanRefType != null) {
+			final int searchOpId = ((SearchOperators) itemLoanRefType
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -357,11 +353,9 @@ public class HomeLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.homeDetails.getValue())) {
 
 			// get the search operator
-			final Listitem item_HomeDetails = this.sortOperator_homeDetails
-					.getSelectedItem();
-
-			if (item_HomeDetails != null) {
-				final int searchOpId = ((SearchOperators) item_HomeDetails
+			final Listitem itemHomeDetails = this.sortOperator_homeDetails.getSelectedItem();
+			if (itemHomeDetails != null) {
+				final int searchOpId = ((SearchOperators) itemHomeDetails
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -379,11 +373,9 @@ public class HomeLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.homeBuilderName.getValue())) {
 
 			// get the search operator
-			final Listitem item_HomeBuilderName = this.sortOperator_homeBuilderName
-					.getSelectedItem();
-
-			if (item_HomeBuilderName != null) {
-				final int searchOpId = ((SearchOperators) item_HomeBuilderName
+			final Listitem itemHomeBuilderName = this.sortOperator_homeBuilderName.getSelectedItem();
+			if (itemHomeBuilderName != null) {
+				final int searchOpId = ((SearchOperators) itemHomeBuilderName
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -401,11 +393,9 @@ public class HomeLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.homeCostPerFlat.getValue())) {
 
 			// get the search operator
-			final Listitem item_HomeCostPerFlat = this.sortOperator_homeCostPerFlat
-					.getSelectedItem();
-
-			if (item_HomeCostPerFlat != null) {
-				final int searchOpId = ((SearchOperators) item_HomeCostPerFlat
+			final Listitem itemHomeCostPerFlat = this.sortOperator_homeCostPerFlat.getSelectedItem();
+			if (itemHomeCostPerFlat != null) {
+				final int searchOpId = ((SearchOperators) itemHomeCostPerFlat
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -423,10 +413,9 @@ public class HomeLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -450,10 +439,9 @@ public class HomeLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

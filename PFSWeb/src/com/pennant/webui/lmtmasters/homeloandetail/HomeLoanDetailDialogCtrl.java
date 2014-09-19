@@ -1098,18 +1098,18 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.oldVar_homeCostOfConstruction != this.homeCostOfConstruction.getValue()) {
 			return true;
 		}
-		String old_homeDateOfPocession = "";
-		String new_homeDateOfPocession = "";
+		String oldHomeDateOfPocession = "";
+		String newHomeDateOfPocession = "";
 		if (this.oldVar_homeDateOfPocession != null) {
-			old_homeDateOfPocession = DateUtility.formatDate(
+			oldHomeDateOfPocession = DateUtility.formatDate(
 					this.oldVar_homeDateOfPocession,PennantConstants.dateFormat);
 		}
 		if (this.homeDateOfPocession.getValue() != null) {
-			new_homeDateOfPocession = DateUtility.formatDate(
+			newHomeDateOfPocession = DateUtility.formatDate(
 					this.homeDateOfPocession.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_homeDateOfPocession).equals(
-				StringUtils.trimToEmpty(new_homeDateOfPocession))) {
+		if (!StringUtils.trimToEmpty(oldHomeDateOfPocession).equals(
+				StringUtils.trimToEmpty(newHomeDateOfPocession))) {
 			return true;
 		}
 		if (this.oldVar_homeAreaOfLand != this.homeAreaOfLand.getValue()) {
@@ -2059,8 +2059,8 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setOverideMap(
