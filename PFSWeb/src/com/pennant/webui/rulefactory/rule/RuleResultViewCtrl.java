@@ -155,7 +155,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl implements Serializable {
 				this.btn_Stimulate.setVisible(false);
 				// make result row visible and set value
 				this.result_row.setVisible(true);
-				this.result_label.setValue(result.toString());
+				this.result_label.setValue(result);
 			}
 			this.window_RuleResultValues.doModal(); // open the dialog in
 		} catch (Exception e) {
@@ -258,7 +258,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl implements Serializable {
 
 			// make result row visible and set value
 			this.result_row.setVisible(true);
-			this.result_label.setValue(result.toString());
+			this.result_label.setValue(result);
 		} catch (final WrongValueException e) {
 			logger.error(e);
 			throw e;

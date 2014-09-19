@@ -2678,8 +2678,8 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 		}
 		for (int i = 0; i < selectionTypeArray.length; i++) {
 			item = new Comboitem();
-			item.setLabel(selectionTypeArray[i].toString());
-			item.setValue(selectionTypeArray[i].toString());
+			item.setLabel(selectionTypeArray[i]);
+			item.setValue(selectionTypeArray[i]);
 			combo.appendChild(item);
 		}
 		combo.addForward("onChange", window_RuleDialog, "onComboSelected", combo);

@@ -546,7 +546,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseListCtrl<Customer
 					}
 				}	
 
-				if(result.toString().equals("NaN")){
+				if(result.equals("NaN")){
 					result="0";	
 				}
 				eligibilityRule.setElgAmount(new BigDecimal(result));

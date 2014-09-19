@@ -289,14 +289,14 @@ public class AdditionalDetailValidation implements Serializable {
 					for (int j = 0; j < staticList.length; j++) {
 
 						comboitem = new Comboitem();
-						comboitem.setValue(staticList[j].toString());
-						comboitem.setLabel(staticList[j].toString());
+						comboitem.setValue(staticList[j]);
+						comboitem.setLabel(staticList[j]);
 						combobox.appendChild(comboitem);
 
 						if(lovDescExtendedFieldValues.containsKey(detail.getFieldName()) && 
 								lovDescExtendedFieldValues.get(detail.getFieldName()) != null &&
 								StringUtils.trimToEmpty(lovDescExtendedFieldValues.get(detail.getFieldName()).toString()).equals(
-										staticList[j].toString())){
+										staticList[j])){
 							combobox.setSelectedItem(comboitem);
 						}
 					}
