@@ -664,7 +664,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 				isShareHolderChecked(aDirectorDetail.isShareholder());
 				isDirectorChecked(aDirectorDetail.isDirector());
 		}
-		if(aDirectorDetail.getSharePerc() != null && aDirectorDetail.getSharePerc().intValue() != new Integer(0)){
+		if(aDirectorDetail.getSharePerc() != null && aDirectorDetail.getSharePerc().intValue() != Integer.valueOf(0)){
 			this.shareholder.setChecked(true);
 		}
 		if(!StringUtils.trimToEmpty(aDirectorDetail.getDesignation()).equals("")){

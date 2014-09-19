@@ -258,8 +258,8 @@ public class StepDetailDialogCtrl extends GFCBaseListCtrl<StepPolicyHeader> impl
 					}else if(stepPolicy.getTenorSplitPerc().compareTo(BigDecimal.ZERO) > 0){
 						
 						BigDecimal terms =stepPolicy.getTenorSplitPerc().multiply( new BigDecimal(totalTerms)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-						sumInstallments = sumInstallments + new Integer(terms.toString());
-						stepPolicy.setInstallments(new Integer(terms.toString()));
+						sumInstallments = sumInstallments + Integer.valueOf(terms.toString());
+						stepPolicy.setInstallments(Integer.valueOf(terms.toString()));
 						if(i == (finStepPolicyList.size()-1)){
 							if(sumInstallments != totalTerms){
 								stepPolicy.setInstallments(stepPolicy.getInstallments() + totalTerms - sumInstallments);

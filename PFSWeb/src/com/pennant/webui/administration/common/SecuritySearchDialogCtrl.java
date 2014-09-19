@@ -208,7 +208,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doSearch() throws Exception {
 		logger.debug("Entering ");
 		List<Object>  searchResultlist=new ArrayList<Object>();
-		filters[0]=new Integer(-1);
+		filters[0]=Integer.valueOf(-1);
 		filters[1]="";
 		Object searchResult[] =new Object[2];
 
@@ -230,7 +230,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 					
  				}else{
 				if (searchOpId == Filter.OP_EQUAL) {
-					filters[0] =new Integer(itemName.getIndex());
+					filters[0] = Integer.valueOf(itemName.getIndex());
 					for (Object key : tempDataMap.keySet()) {
 						if( StringUtils.equalsIgnoreCase((String) key
 								,this.name.getValue().trim())){
@@ -238,7 +238,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 						}
 					}
 				}else if (searchOpId == Filter.OP_NOT_EQUAL) {
-					filters[0] =new Integer(itemName.getIndex());
+					filters[0] = Integer.valueOf(itemName.getIndex());
 					for (Object key : tempDataMap.keySet()) {
 						if(!StringUtils.containsIgnoreCase((String) key
 								,this.name.getValue().trim())){
@@ -246,7 +246,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl implements Serializabl
 						}
 					}
 				}else if (searchOpId == Filter.OP_LIKE) {
-					filters[0] =new Integer(itemName.getIndex());
+					filters[0] =Integer.valueOf(itemName.getIndex());
 					for (Object key : tempDataMap.keySet()) {
 						if( StringUtils.containsIgnoreCase((String) key
 								, this.name.getValue().trim())){
