@@ -167,7 +167,7 @@ public class PasswordEncoderImpl implements Serializable {
 	public byte[] getHash(String password, byte[] salt)
 	throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		logger.debug("Entering ");
-		final int ITERATION_NUMBER = 1000;
+		final int iterationNumber = 1000;
 
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");
 		digest.reset();
@@ -175,7 +175,7 @@ public class PasswordEncoderImpl implements Serializable {
 		byte[] input = null;
 		input = digest.digest(password.getBytes("UTF-8"));
 
-		for (int i = 0; i < ITERATION_NUMBER; i++) {
+		for (int i = 0; i < iterationNumber; i++) {
 			digest.reset();
 			input = digest.digest(input);
 		}

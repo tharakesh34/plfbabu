@@ -2465,8 +2465,8 @@ public class ExtFinanceUploadService {
 		return old_finMain;
 	}
 
-	public void setOld_finMain(FinanceMain old_finMain) {
-		this.old_finMain = old_finMain;
+	public void setOld_finMain(FinanceMain oldFinMain) {
+		this.old_finMain = oldFinMain;
 	}
 
 	public boolean isError() {

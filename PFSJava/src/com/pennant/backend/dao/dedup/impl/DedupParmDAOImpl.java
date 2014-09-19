@@ -407,10 +407,10 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 	 * @param userLanguage (String)
 	 * @return ErrorDetails
 	 */
-	private ErrorDetails  getError(String errorId, String QueryCode, String userLanguage){
+	private ErrorDetails  getError(String errorId, String queryCode, String userLanguage){
 		String[][] parms = new String[2][2];
 
-		parms[1][0] = QueryCode;
+		parms[1][0] = queryCode;
 		parms[0][0] = PennantJavaUtil.getLabel("label_QueryCode") + ":" + parms[1][0];
 
 		return ErrorUtil.getErrorDetail(new ErrorDetails(
