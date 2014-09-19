@@ -859,10 +859,10 @@ public class SearchUtil {
 		hash = hash * 31 + (search.getFilters() == null ? 0 : search.getFilters().hashCode());
 		hash = hash * 31 + (search.getSorts() == null ? 0 : search.getSorts().hashCode());
 		hash = hash * 31 + (search.isDisjunction() ? 1 : 0);
-		hash = hash * 31 + (new Integer(search.getResultMode()).hashCode());
-		hash = hash * 31 + (new Integer(search.getFirstResult()).hashCode());
-		hash = hash * 31 + (new Integer(search.getPage()).hashCode());
-		hash = hash * 31 + (new Integer(search.getMaxResults()).hashCode());
+		hash = hash * 31 + (Integer.valueOf(search.getResultMode()).hashCode());
+		hash = hash * 31 + (Integer.valueOf(search.getFirstResult()).hashCode());
+		hash = hash * 31 + (Integer.valueOf(search.getPage()).hashCode());
+		hash = hash * 31 + (Integer.valueOf(search.getMaxResults()).hashCode());
 
 		return hash;
 	}

@@ -78,15 +78,15 @@ public class InternalUtil {
 				Number num = (Number) value;
 
 				if (type.equals(Double.class)) {
-					return new Double(num.doubleValue());
+					return Double.valueOf(num.doubleValue());
 				} else if (type.equals(Float.class)) {
-					return new Float(num.floatValue());
+					return Float.valueOf(num.floatValue());
 				} else if (type.equals(Long.class)) {
-					return new Long(num.longValue());
+					return Long.valueOf(num.longValue());
 				} else if (type.equals(Integer.class)) {
-					return new Integer(num.intValue());
+					return Integer.valueOf(num.intValue());
 				} else if (type.equals(Short.class)) {
-					return new Short(num.shortValue());
+					return Short.valueOf(num.shortValue());
 				} else {
 					try {
 						return type.getConstructor(String.class).newInstance(value.toString());

@@ -182,8 +182,9 @@ public final class DateUtility {
 		}
 		GregorianCalendar gc1 = convert(date1);
 		GregorianCalendar gc2 = convert(date2);
-		if (gc1.get(Calendar.YEAR) == gc2.get(Calendar.YEAR))
+		if (gc1.get(Calendar.YEAR) == gc2.get(Calendar.YEAR)) {
 			return Math.abs(gc1.get(Calendar.DAY_OF_YEAR) - gc2.get(Calendar.DAY_OF_YEAR));
+		}
 		long time1 = date1.getTime();
 		long time2 = date2.getTime();
 		long days = (time1 - time2) / (1000 * 60 * 60 * 24);
@@ -218,11 +219,11 @@ public final class DateUtility {
 		gc2 = new GregorianCalendar(getYear(date2), getMonth(date2) - 1, getDay(date2));
 		if (gc1.after(gc2)){
 			return 1;
-		}
-		if (gc1.before(gc2)){
+		} else if (gc1.before(gc2)){
 			return -1;
+		} else {
+			return 0;
 		}
-		return 0;
 	}
 
 	/**
