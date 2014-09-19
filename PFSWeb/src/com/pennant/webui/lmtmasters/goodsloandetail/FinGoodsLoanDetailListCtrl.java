@@ -599,7 +599,7 @@ public class FinGoodsLoanDetailListCtrl extends GFCBaseCtrl implements Serializa
 	public void fillGoodLoanDEtails(List<GoodsLoanDetail> goodsLoanDetails) {
 		this.listBoxGoodsLoanDetail.getItems().clear();
 		if (goodsLoanDetails != null) {
-			totCost = new BigDecimal(0);
+			totCost = BigDecimal.ZERO;
 			setGoodsDetailLists(goodsLoanDetails);
 			for (GoodsLoanDetail goodsLoanDetail : goodsLoanDetails) {
 				Listitem item = new Listitem();

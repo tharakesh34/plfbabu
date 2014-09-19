@@ -1046,7 +1046,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl implements Serializabl
 			getScoringGroupDialogCtrl().getScoringGroup().setLovDescTotNFScorPoints(totMetricScoringPoints.longValue());
 		}
 		
-		if(totMetricScoringPoints.compareTo(new BigDecimal(0))!=0 ){
+		if(totMetricScoringPoints.compareTo(BigDecimal.ZERO)!=0 ){
 			for(ScoringMetrics scoringMetrics:scoringMetricsList){
 
 				if(!(scoringMetrics.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)

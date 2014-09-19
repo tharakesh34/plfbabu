@@ -124,7 +124,7 @@ public class FinGenGoodsLoanDetailListCtrl extends GFCBaseCtrl implements Serial
 	public int borderLayoutHeight = 0;
 	private int ccyFormat = 0;
 	private transient boolean recSave = false;
-	BigDecimal totCost = new BigDecimal(0);
+	BigDecimal totCost = BigDecimal.ZERO;
 	private FinanceMain main = null;
 	private String roleCode = "";
 	private boolean isEnquiry = false;
@@ -492,8 +492,8 @@ public class FinGenGoodsLoanDetailListCtrl extends GFCBaseCtrl implements Serial
 		Listcell lc;
 		Listgroup group;
 		if (goodsmap != null && goodsmap.size()>0) {
-			totCost = new BigDecimal(0);
-			BigDecimal subtot=new BigDecimal(0);
+			totCost = BigDecimal.ZERO;
+			BigDecimal subtot= BigDecimal.ZERO;
 			for (String category : goodsmap.keySet()) {
 				List<GenGoodsLoanDetail> list = goodsmap.get(category);
 				if (list!=null && list.size()>0) {
@@ -501,7 +501,7 @@ public class FinGenGoodsLoanDetailListCtrl extends GFCBaseCtrl implements Serial
 					lc = new Listcell(category);
 					lc.setParent(group);
 					this.listBoxGenGoodsLoanDetail.appendChild(group);
-					subtot=new BigDecimal(0);
+					subtot= BigDecimal.ZERO;
 					for (GenGoodsLoanDetail goodsLoanDetail : list) {
 						item = new Listitem();
 						lc = new Listcell("");//goodsLoanDetail.getLovDescSellerID()

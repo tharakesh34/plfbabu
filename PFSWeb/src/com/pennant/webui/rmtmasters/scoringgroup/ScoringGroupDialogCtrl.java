@@ -1839,7 +1839,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseListCtrl<ScoringGroup> implem
 			getScoringGroup().setLovDescTotNFScorPoints(totMetricScoringPoints.longValue());
 		}
 	
-		if(totMetricScoringPoints.compareTo(new BigDecimal(0))!=0 ){
+		if(totMetricScoringPoints.compareTo(BigDecimal.ZERO)!=0 ){
 			
 			BigDecimal  totalPerc = BigDecimal.ZERO;
 			for (int i = 0; i < scoringMetricsList.size(); i++) {

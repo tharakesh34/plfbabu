@@ -668,8 +668,8 @@ Serializable {
 
 	private void doResetValues() {
 		logger.debug("Entering");
-		this.exchange_Converted_txnAmount.setValue(new BigDecimal(0));
-		this.exchangeRate.setValue(new BigDecimal(0));
+		this.exchange_Converted_txnAmount.setValue(BigDecimal.ZERO);
+		this.exchangeRate.setValue(BigDecimal.ZERO);
 	}
 
 	public void onChange$txnCode(Event event) {

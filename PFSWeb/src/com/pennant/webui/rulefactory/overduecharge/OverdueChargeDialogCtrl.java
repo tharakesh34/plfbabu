@@ -488,7 +488,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 		this.oDCCharityAccount.setValue(aOverdueCharge.getODCCharityAccount());
 		this.oDCPLSubHead.setValue(aOverdueCharge.getoDCPLSubHead());
 		this.oDCCharitySubHead.setValue(aOverdueCharge.getoDCCharitySubHead());
-		this.oDCPLShare.setValue(aOverdueCharge.getODCPLShare()==null?new BigDecimal(0):aOverdueCharge.getODCPLShare());
+		this.oDCPLShare.setValue(aOverdueCharge.getODCPLShare()==null?BigDecimal.ZERO : aOverdueCharge.getODCPLShare());
 		this.oDCSweepCharges.setChecked(aOverdueCharge.isODCSweepCharges());
 		this.oDCRuleDescription.setValue(aOverdueCharge.getoDCRuleDescription());
 		for (int i = 0; i < aOverdueCharge.getChargeDetailEntries().size(); i++) {
@@ -1426,7 +1426,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 			lc.setParent(item);
 
 			lc = new Listcell();
-			lc.appendChild(decimalbox(overdueChargeDetail.getoDCAmount()==null?new BigDecimal(0):
+			lc.appendChild(decimalbox(overdueChargeDetail.getoDCAmount() == null ? BigDecimal.ZERO:
 				overdueChargeDetail.getoDCAmount(),readonly,overdueChargeDetail.getoDCType()));
 			lc.setParent(item);
 
@@ -1439,7 +1439,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 			lc.setParent(item);
 
 			lc = new Listcell();
-			lc.appendChild(decimalbox(overdueChargeDetail.getoDCMaxWaiver()==null?new BigDecimal(0):
+			lc.appendChild(decimalbox(overdueChargeDetail.getoDCMaxWaiver() == null ? BigDecimal.ZERO:
 				overdueChargeDetail.getoDCMaxWaiver(),!overdueChargeDetail.isoDCAllowWaiver(),"maxWaiver"));
 			lc.setParent(item);
 
@@ -1533,18 +1533,18 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 		Decimalbox waiverPercDB = (Decimalbox) ((Listcell) ((Listcell) allowWaiverCB.getParent()).getNextSibling()).getFirstChild();
 
 		calOnCombo.setSelectedIndex(0);
-		CalAmtDecimal.setValue(new BigDecimal(0));
+		CalAmtDecimal.setValue(BigDecimal.ZERO);
 		CalAmtDecimal.setReadonly(false);
 		graceDaysBox.setValue(0);
 		graceDaysBox.setReadonly(false);
 		allowWaiverCB.setChecked(false);
 		allowWaiverCB.setDisabled(false);
-		waiverPercDB.setValue(new BigDecimal(0));
+		waiverPercDB.setValue(BigDecimal.ZERO);
 		waiverPercDB.setReadonly(true);
 
 		if (component.getSelectedIndex() == 0) {
 			calOnCombo.setDisabled(true);
-			CalAmtDecimal.setValue(new BigDecimal(0));
+			CalAmtDecimal.setValue(BigDecimal.ZERO);
 			CalAmtDecimal.setReadonly(true);
 			graceDaysBox.setReadonly(true);
 			allowWaiverCB.setDisabled(true);
@@ -1581,7 +1581,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 		Decimalbox decimalbox = (Decimalbox) ((Listcell) ((Listcell) checkbox.getParent()).getNextSibling()).getFirstChild();
 		if (!checkbox.isChecked()) {
 			decimalbox.setDisabled(true);
-			decimalbox.setValue(new BigDecimal(0));
+			decimalbox.setValue(BigDecimal.ZERO);
 		} else {
 			decimalbox.setDisabled(isReadOnly("OverdueChargeDialog_listBoxOverdue"));
 			decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(2));
@@ -1703,7 +1703,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 						throw new WrongValueException(graceDaysIB,"Grace Days Must Be Entered");
 					}
 
-					if(waiverCB.isChecked() && (waiverPerc.getValue()== null || waiverPerc.getValue().compareTo(new BigDecimal(0)) == 0)){
+					if(waiverCB.isChecked() && (waiverPerc.getValue()== null || waiverPerc.getValue().compareTo(BigDecimal.ZERO) == 0)){
 						throw new WrongValueException(waiverPerc,"Calucated Amount Must be greater than 0");
 					}
 					if(waiverPerc.getValue().compareTo(new BigDecimal(100)) > 0){

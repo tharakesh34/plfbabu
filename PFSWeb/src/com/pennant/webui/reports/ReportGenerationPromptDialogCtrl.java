@@ -1827,7 +1827,7 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 				if(aReportFilterField.getFieldType().contains("RANGE")){
 					Decimalbox toDecimalbox = (Decimalbox) decimalbox.getNextSibling().getNextSibling();
 					if(isClearComponents){
-						toDecimalbox.setValue(new BigDecimal(0));
+						toDecimalbox.setValue(BigDecimal.ZERO);
 						toDecimalbox.setText("");
 
 					}else{

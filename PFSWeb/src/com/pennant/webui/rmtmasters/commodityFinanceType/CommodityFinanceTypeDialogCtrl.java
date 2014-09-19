@@ -651,7 +651,7 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 				aFinanceType.setFinMaxAmount(PennantAppUtil.unFormateAmount(
 						this.finMaxAmount.getValue(), getFinanceType().getLovDescFinFormetter()));
 			} else {
-				aFinanceType.setFinMaxAmount(new BigDecimal(0));
+				aFinanceType.setFinMaxAmount(BigDecimal.ZERO);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -661,7 +661,7 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 				aFinanceType.setFinMinAmount(PennantAppUtil.unFormateAmount(
 						this.finMinAmount.getValue(), getFinanceType().getLovDescFinFormetter()));
 			} else {
-				aFinanceType.setFinMinAmount(new BigDecimal(0));
+				aFinanceType.setFinMinAmount(BigDecimal.ZERO);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1796,7 +1796,7 @@ public class CommodityFinanceTypeDialogCtrl extends GFCBaseCtrl implements Seria
 	 * @throws WrongValueException */
 	private void mustBeHigher(Decimalbox maxvalue, Decimalbox minvalue, String maxlabel, String minlabel) {
 		if ((maxvalue.getValue() != null) && (minvalue.getValue() != null)
-				&& (maxvalue.getValue().compareTo(new BigDecimal(0)) != 0)) {
+				&& (maxvalue.getValue().compareTo(BigDecimal.ZERO) != 0)) {
 			if (maxvalue.getValue().compareTo(minvalue.getValue()) != 1) {
 				throw new WrongValueException(maxvalue, Labels.getLabel("FIELD_IS_GREATER",
 						new String[] { Labels.getLabel(maxlabel), Labels.getLabel(minlabel) }));
