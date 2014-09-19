@@ -304,10 +304,9 @@ public class CorpRelationCodeSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.corpRelationCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CorpRelationCode = this.sortOperator_corpRelationCode.getSelectedItem();
-
-			if (item_CorpRelationCode != null) {
-				final int searchOpId = ((SearchOperators) item_CorpRelationCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCorpRelationCode = this.sortOperator_corpRelationCode.getSelectedItem();
+			if (itemCorpRelationCode != null) {
+				final int searchOpId = ((SearchOperators) itemCorpRelationCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("corpRelationCode", "%" + this.corpRelationCode.getValue().toUpperCase() + "%", searchOpId));
@@ -321,10 +320,9 @@ public class CorpRelationCodeSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.corpRelationDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_CorpRelationDesc = this.sortOperator_corpRelationDesc.getSelectedItem();
-
-			if (item_CorpRelationDesc != null) {
-				final int searchOpId = ((SearchOperators) item_CorpRelationDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCorpRelationDesc = this.sortOperator_corpRelationDesc.getSelectedItem();
+			if (itemCorpRelationDesc != null) {
+				final int searchOpId = ((SearchOperators) itemCorpRelationDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("corpRelationDesc", "%"	+ this.corpRelationDesc.getValue().toUpperCase()+ "%", searchOpId));
@@ -336,10 +334,9 @@ public class CorpRelationCodeSearchCtrl extends GFCBaseCtrl implements Serializa
 			}
 		}
 		// get the search operator
-		final Listitem item_CorpRelationIsActive = this.sortOperator_corpRelationIsActive.getSelectedItem();
-
-		if (item_CorpRelationIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_CorpRelationIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemCorpRelationIsActive = this.sortOperator_corpRelationIsActive.getSelectedItem();
+		if (itemCorpRelationIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemCorpRelationIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -354,9 +351,9 @@ public class CorpRelationCodeSearchCtrl extends GFCBaseCtrl implements Serializa
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"	+ this.recordStatus.getValue().toUpperCase() + "%",searchOpId));
@@ -375,9 +372,9 @@ public class CorpRelationCodeSearchCtrl extends GFCBaseCtrl implements Serializa
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

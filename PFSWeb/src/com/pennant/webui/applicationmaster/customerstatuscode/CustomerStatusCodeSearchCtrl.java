@@ -304,10 +304,9 @@ public class CustomerStatusCodeSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.custStsCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustStsCode = this.sortOperator_custStsCode.getSelectedItem();
-
-			if (item_CustStsCode != null) {
-				final int searchOpId = ((SearchOperators) item_CustStsCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustStsCode = this.sortOperator_custStsCode.getSelectedItem();
+			if (itemCustStsCode != null) {
+				final int searchOpId = ((SearchOperators) itemCustStsCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("custStsCode", "%" + this.custStsCode.getValue().toUpperCase() + "%", searchOpId));
@@ -321,10 +320,9 @@ public class CustomerStatusCodeSearchCtrl extends GFCBaseCtrl implements Seriali
 		if (StringUtils.isNotEmpty(this.custStsDescription.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustStsDescription = this.sortOperator_custStsDescription.getSelectedItem();
-
-			if (item_CustStsDescription != null) {
-				final int searchOpId = ((SearchOperators) item_CustStsDescription.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustStsDescription = this.sortOperator_custStsDescription.getSelectedItem();
+			if (itemCustStsDescription != null) {
+				final int searchOpId = ((SearchOperators) itemCustStsDescription.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("custStsDescription", "%" + this.custStsDescription.getValue().toUpperCase()+ "%", searchOpId));
@@ -336,10 +334,9 @@ public class CustomerStatusCodeSearchCtrl extends GFCBaseCtrl implements Seriali
 			}
 		}
 		// get the search operator
-		final Listitem item_CustStsIsActive = this.sortOperator_custStsIsActive.getSelectedItem();
-
-		if (item_CustStsIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_CustStsIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemCustStsIsActive = this.sortOperator_custStsIsActive.getSelectedItem();
+		if (itemCustStsIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemCustStsIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -354,9 +351,9 @@ public class CustomerStatusCodeSearchCtrl extends GFCBaseCtrl implements Seriali
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -375,9 +372,9 @@ public class CustomerStatusCodeSearchCtrl extends GFCBaseCtrl implements Seriali
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

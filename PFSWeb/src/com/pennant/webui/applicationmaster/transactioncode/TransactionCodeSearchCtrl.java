@@ -321,10 +321,9 @@ public class TransactionCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.tranCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_TranCode = this.sortOperator_tranCode.getSelectedItem();
-
-			if (item_TranCode != null) {
-				final int searchOpId = ((SearchOperators) item_TranCode.getAttribute("data")).
+			final Listitem itemTranCode = this.sortOperator_tranCode.getSelectedItem();
+			if (itemTranCode != null) {
+				final int searchOpId = ((SearchOperators) itemTranCode.getAttribute("data")).
 													getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -340,10 +339,9 @@ public class TransactionCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.tranDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_TranDesc = this.sortOperator_tranDesc.getSelectedItem();
-
-			if (item_TranDesc != null) {
-				final int searchOpId = ((SearchOperators) item_TranDesc.getAttribute("data")).
+			final Listitem itemTranDesc = this.sortOperator_tranDesc.getSelectedItem();
+			if (itemTranDesc != null) {
+				final int searchOpId = ((SearchOperators) itemTranDesc.getAttribute("data")).
 														getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -359,10 +357,9 @@ public class TransactionCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.tranType.getValue())) {
 
 			// get the search operator
-			final Listitem item_TranType = this.sortOperator_tranType.getSelectedItem();
-
-			if (item_TranType != null) {
-				final int searchOpId = ((SearchOperators) item_TranType.getAttribute("data")).
+			final Listitem itemTranType = this.sortOperator_tranType.getSelectedItem();
+			if (itemTranType != null) {
+				final int searchOpId = ((SearchOperators) itemTranType.getAttribute("data")).
 											getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -376,10 +373,9 @@ public class TransactionCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 			}
 		}
 		// get the search operator
-		final Listitem item_TranIsActive = this.sortOperator_tranIsActive.getSelectedItem();
-
-		if (item_TranIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_TranIsActive.getAttribute("data")).
+		final Listitem itemTranIsActive = this.sortOperator_tranIsActive.getSelectedItem();
+		if (itemTranIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemTranIsActive.getAttribute("data")).
 														getSearchOperatorId();
 			
 			if (searchOpId == -1) {
@@ -395,9 +391,9 @@ public class TransactionCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).
 																getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
@@ -418,9 +414,9 @@ public class TransactionCodeSearchCtrl extends GFCBaseCtrl implements Serializab
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).
 														getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {

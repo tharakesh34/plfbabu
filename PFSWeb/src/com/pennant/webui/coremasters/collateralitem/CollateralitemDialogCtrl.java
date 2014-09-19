@@ -1169,40 +1169,40 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.oldVar_hYCPI != this.hYCPI.isChecked()) {
 			return true;
 		}
-		String old_hYCXD = "";
-		String new_hYCXD ="";
+		String oldHYCXD = "";
+		String newHYCXD ="";
 		if (this.oldVar_hYCXD!=null){
-			old_hYCXD=DateUtility.formatDate(this.oldVar_hYCXD,PennantConstants.dateFormat);
+			oldHYCXD=DateUtility.formatDate(this.oldVar_hYCXD,PennantConstants.dateFormat);
 		}
 		if (this.hYCXD.getValue()!=null){
-			new_hYCXD=DateUtility.formatDate(this.hYCXD.getValue(),PennantConstants.dateFormat);
+			newHYCXD=DateUtility.formatDate(this.hYCXD.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_hYCXD).equals(StringUtils.trimToEmpty(new_hYCXD))) {
+		if (!StringUtils.trimToEmpty(oldHYCXD).equals(StringUtils.trimToEmpty(newHYCXD))) {
 			return true;
 		}
-		String old_hYLRD = "";
-		String new_hYLRD ="";
+		String oldHYLRD = "";
+		String newHYLRD ="";
 		if (this.oldVar_hYLRD!=null){
-			old_hYLRD=DateUtility.formatDate(this.oldVar_hYLRD,PennantConstants.dateFormat);
+			oldHYLRD=DateUtility.formatDate(this.oldVar_hYLRD,PennantConstants.dateFormat);
 		}
 		if (this.hYLRD.getValue()!=null){
-			new_hYLRD=DateUtility.formatDate(this.hYLRD.getValue(),PennantConstants.dateFormat);
+			newHYLRD=DateUtility.formatDate(this.hYLRD.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_hYLRD).equals(StringUtils.trimToEmpty(new_hYLRD))) {
+		if (!StringUtils.trimToEmpty(oldHYLRD).equals(StringUtils.trimToEmpty(newHYLRD))) {
 			return true;
 		}
 		if (this.oldVar_hYFRQ != this.hYFRQ.getValue()) {
 			return true;
 		}
-		String old_hYNRD = "";
-		String new_hYNRD ="";
+		String oldHYNRD = "";
+		String newHYNRD ="";
 		if (this.oldVar_hYNRD!=null){
-			old_hYNRD=DateUtility.formatDate(this.oldVar_hYNRD,PennantConstants.dateFormat);
+			oldHYNRD=DateUtility.formatDate(this.oldVar_hYNRD,PennantConstants.dateFormat);
 		}
 		if (this.hYNRD.getValue()!=null){
-			new_hYNRD=DateUtility.formatDate(this.hYNRD.getValue(),PennantConstants.dateFormat);
+			newHYNRD=DateUtility.formatDate(this.hYNRD.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_hYNRD).equals(StringUtils.trimToEmpty(new_hYNRD))) {
+		if (!StringUtils.trimToEmpty(oldHYNRD).equals(StringUtils.trimToEmpty(newHYNRD))) {
 			return true;
 		}
 		if (this.oldVar_hYNOU != this.hYNOU.getValue()) {
@@ -1232,15 +1232,15 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.oldVar_hYISV != this.hYISV.getValue()) {
 			return true;
 		}
-		String old_hYIXD = "";
-		String new_hYIXD ="";
+		String oldHYIXD = "";
+		String newHYIXD ="";
 		if (this.oldVar_hYIXD!=null){
-			old_hYIXD=DateUtility.formatDate(this.oldVar_hYIXD,PennantConstants.dateFormat);
+			oldHYIXD=DateUtility.formatDate(this.oldVar_hYIXD,PennantConstants.dateFormat);
 		}
 		if (this.hYIXD.getValue()!=null){
-			new_hYIXD=DateUtility.formatDate(this.hYIXD.getValue(),PennantConstants.dateFormat);
+			newHYIXD=DateUtility.formatDate(this.hYIXD.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_hYIXD).equals(StringUtils.trimToEmpty(new_hYIXD))) {
+		if (!StringUtils.trimToEmpty(oldHYIXD).equals(StringUtils.trimToEmpty(newHYIXD))) {
 			return true;
 		}
 		if (this.oldVar_hYNR1 != this.hYNR1.getValue()) {

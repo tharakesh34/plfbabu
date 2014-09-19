@@ -1,5 +1,6 @@
 package com.pennant.webui.batch.admin;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -25,6 +27,9 @@ import org.zkoss.zul.Image;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Space;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
@@ -275,6 +280,7 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 		conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Information"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
 
 		if (conf == MultiLineMessageBox.YES) {
+			closeOtherTabs();
 			PFSBatchAdmin.getInstance();
 			
 			this.btnStartJob.setDisabled(true);
@@ -376,13 +382,13 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 							batchStatus.appendChild(status);
 							batchStatus.appendChild(new Space());
 
-							Image img_fail = new Image("/images/icons/ErrorFile.png");
-							img_fail.setStyle("cursor:hand;cursor:pointer");
-							ComponentsCtrl.applyForward(img_fail, "onClick = onClickError");
+							Image imgFail = new Image("/images/icons/ErrorFile.png");
+							imgFail.setStyle("cursor:hand;cursor:pointer");
+							ComponentsCtrl.applyForward(imgFail, "onClick = onClickError");
 
 							batchStatus.setAttribute("data", stepExecution);
 							batchStatus.appendChild(new Space());
-							batchStatus.appendChild(img_fail);
+							batchStatus.appendChild(imgFail);
 							
 							this.lable_current_step.setValue("");
 						}
@@ -673,4 +679,24 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 		
 	}
 
+private void closeOtherTabs() {
+		
+		final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");  
+		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter").getFellow("tabBoxIndexCenter");
+		Tabs tabs = tabbox.getTabs();
+		List<Component> childs = new ArrayList<Component>(tabs.getChildren());
+		
+		for (Component component : childs) {
+			if ( component instanceof Tab) {
+				Tab tab= (Tab) component;
+				if (tab.getId().equals("tab_Home") || tab.getId().equals(tabbox.getSelectedTab().getId().toString())) {
+					continue;
+				}
+				
+				tab.close();
+			}
+			
+		}
+	}
+	
 }

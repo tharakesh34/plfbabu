@@ -485,7 +485,7 @@ public class QueryListCtrl extends GFCBaseListCtrl<Query> implements Serializabl
 	 * @param Query (aQuery)
 	 * @throws Exception
 	 */
-	private void showDetailView(Query aQuery,boolean SubQuery) throws Exception {
+	private void showDetailView(Query aQuery,boolean isSubQuery) throws Exception {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them
@@ -507,7 +507,7 @@ public class QueryListCtrl extends GFCBaseListCtrl<Query> implements Serializabl
 		 * dialog when we do a delete, edit or insert a Query.
 		 */
 		map.put("queryListCtrl", this);
-		map.put("subquery", SubQuery);
+		map.put("subquery", isSubQuery);
 
 		// call the zul-file with the parameters packed in a map
 		try {

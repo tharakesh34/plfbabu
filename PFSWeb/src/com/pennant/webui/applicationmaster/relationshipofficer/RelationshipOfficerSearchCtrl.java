@@ -308,10 +308,9 @@ public class RelationshipOfficerSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.rOfficerCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_ROfficerCode = this.sortOperator_rOfficerCode.getSelectedItem();
-
-			if (item_ROfficerCode != null) {
-				final int searchOpId = ((SearchOperators) item_ROfficerCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemROfficerCode = this.sortOperator_rOfficerCode.getSelectedItem();
+			if (itemROfficerCode != null) {
+				final int searchOpId = ((SearchOperators) itemROfficerCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("rOfficerCode", "%" + this.rOfficerCode.getValue().toUpperCase() + "%",	searchOpId));
@@ -325,10 +324,9 @@ public class RelationshipOfficerSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.rOfficerDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_ROfficerDesc = this.sortOperator_rOfficerDesc.getSelectedItem();
-
-			if (item_ROfficerDesc != null) {
-				final int searchOpId = ((SearchOperators) item_ROfficerDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemROfficerDesc = this.sortOperator_rOfficerDesc.getSelectedItem();
+			if (itemROfficerDesc != null) {
+				final int searchOpId = ((SearchOperators) itemROfficerDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("rOfficerDesc", "%" + this.rOfficerDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -342,10 +340,9 @@ public class RelationshipOfficerSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.rOfficerDeptCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_ROfficerDeptCode = this.sortOperator_rOfficerDeptCode.getSelectedItem();
-
-			if (item_ROfficerDeptCode != null) {
-				final int searchOpId = ((SearchOperators) item_ROfficerDeptCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemROfficerDeptCode = this.sortOperator_rOfficerDeptCode.getSelectedItem();
+			if (itemROfficerDeptCode != null) {
+				final int searchOpId = ((SearchOperators) itemROfficerDeptCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("rOfficerDeptCode", "%" + this.rOfficerDeptCode.getValue().toUpperCase() + "%", searchOpId));
@@ -357,10 +354,9 @@ public class RelationshipOfficerSearchCtrl extends GFCBaseCtrl implements Serial
 			}
 		}
 		// get the search operator
-		final Listitem item_ROfficerIsActive = this.sortOperator_rOfficerIsActive.getSelectedItem();
-
-		if (item_ROfficerIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_ROfficerIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemROfficerIsActive = this.sortOperator_rOfficerIsActive.getSelectedItem();
+		if (itemROfficerIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemROfficerIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -375,9 +371,9 @@ public class RelationshipOfficerSearchCtrl extends GFCBaseCtrl implements Serial
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -396,9 +392,9 @@ public class RelationshipOfficerSearchCtrl extends GFCBaseCtrl implements Serial
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

@@ -301,10 +301,9 @@ public class InterestRateTypeSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.intRateTypeCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_IntRateTypeCode = this.sortOperator_intRateTypeCode.getSelectedItem();
-
-			if (item_IntRateTypeCode != null) {
-				final int searchOpId = ((SearchOperators) item_IntRateTypeCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemIntRateTypeCode = this.sortOperator_intRateTypeCode.getSelectedItem();
+			if (itemIntRateTypeCode != null) {
+				final int searchOpId = ((SearchOperators) itemIntRateTypeCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("intRateTypeCode", "%"
@@ -319,10 +318,9 @@ public class InterestRateTypeSearchCtrl extends GFCBaseCtrl implements Serializa
 		if (StringUtils.isNotEmpty(this.intRateTypeDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_IntRateTypeDesc = this.sortOperator_intRateTypeDesc.getSelectedItem();
-
-			if (item_IntRateTypeDesc != null) {
-				final int searchOpId = ((SearchOperators) item_IntRateTypeDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemIntRateTypeDesc = this.sortOperator_intRateTypeDesc.getSelectedItem();
+			if (itemIntRateTypeDesc != null) {
+				final int searchOpId = ((SearchOperators) itemIntRateTypeDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("intRateTypeDesc", "%"
@@ -335,10 +333,9 @@ public class InterestRateTypeSearchCtrl extends GFCBaseCtrl implements Serializa
 			}
 		}
 		// get the search operator
-		final Listitem item_IntRateTypeIsActive = this.sortOperator_intRateTypeIsActive.getSelectedItem();
-
-		if (item_IntRateTypeIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_IntRateTypeIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemIntRateTypeIsActive = this.sortOperator_intRateTypeIsActive.getSelectedItem();
+		if (itemIntRateTypeIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemIntRateTypeIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -353,9 +350,9 @@ public class InterestRateTypeSearchCtrl extends GFCBaseCtrl implements Serializa
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"
@@ -374,9 +371,9 @@ public class InterestRateTypeSearchCtrl extends GFCBaseCtrl implements Serializa
 		}
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"+ selectedValue.toUpperCase() + "%", searchOpId));

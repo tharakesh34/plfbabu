@@ -320,11 +320,9 @@ public class SplRateCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.sRType.getValue())) {
 
 			// get the search operator
-			final Listitem item_SRType = this.sortOperator_sRType
-					.getSelectedItem();
-
-			if (item_SRType != null) {
-				final int searchOpId = ((SearchOperators) item_SRType
+			final Listitem itemSRType = this.sortOperator_sRType.getSelectedItem();
+			if (itemSRType != null) {
+				final int searchOpId = ((SearchOperators) itemSRType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -342,11 +340,9 @@ public class SplRateCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.sRTypeDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_SRTypeDesc = this.sortOperator_sRTypeDesc
-					.getSelectedItem();
-
-			if (item_SRTypeDesc != null) {
-				final int searchOpId = ((SearchOperators) item_SRTypeDesc
+			final Listitem itemSRTypeDesc = this.sortOperator_sRTypeDesc.getSelectedItem();
+			if (itemSRTypeDesc != null) {
+				final int searchOpId = ((SearchOperators) itemSRTypeDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -361,11 +357,9 @@ public class SplRateCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_SRIsActive = this.sortOperator_sRIsActive
-				.getSelectedItem();
-
-		if (item_SRIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_SRIsActive
+		final Listitem itemSRIsActive = this.sortOperator_sRIsActive.getSelectedItem();
+		if (itemSRIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemSRIsActive
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -381,10 +375,9 @@ public class SplRateCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-					.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -407,10 +400,9 @@ public class SplRateCodeSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-					.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

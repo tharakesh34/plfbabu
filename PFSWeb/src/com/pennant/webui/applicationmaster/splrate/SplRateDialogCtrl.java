@@ -669,15 +669,15 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 			return true;
 		}
 		
-		String old_sREffDate = "";
-	  	String new_sREffDate ="";
+		String oldSREffDate = "";
+	  	String newSREffDate ="";
 		if (this.oldVar_sREffDate!=null){
-			old_sREffDate=DateUtility.formatDate(this.oldVar_sREffDate,PennantConstants.dateFormat);
+			oldSREffDate=DateUtility.formatDate(this.oldVar_sREffDate,PennantConstants.dateFormat);
 		}
 		if (this.sREffDate.getValue()!=null){
-			new_sREffDate=DateUtility.formatDate(this.sREffDate.getValue(),PennantConstants.dateFormat);
+			newSREffDate=DateUtility.formatDate(this.sREffDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_sREffDate).equals(StringUtils.trimToEmpty(new_sREffDate))) {
+		if (!StringUtils.trimToEmpty(oldSREffDate).equals(StringUtils.trimToEmpty(newSREffDate))) {
 			return true;
 		}
 		if (this.oldVar_sRRate != this.sRRate.getValue()) {
@@ -1280,8 +1280,8 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 }

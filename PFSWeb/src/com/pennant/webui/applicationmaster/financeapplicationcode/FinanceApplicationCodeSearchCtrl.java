@@ -303,10 +303,9 @@ public class FinanceApplicationCodeSearchCtrl extends GFCBaseCtrl implements Ser
 		if (StringUtils.isNotEmpty(this.finAppType.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinAppType = this.sortOperator_finAppType.getSelectedItem();
-
-			if (item_FinAppType != null) {
-				final int searchOpId = ((SearchOperators) item_FinAppType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFinAppType = this.sortOperator_finAppType.getSelectedItem();
+			if (itemFinAppType != null) {
+				final int searchOpId = ((SearchOperators) itemFinAppType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finAppType", "%" + this.finAppType.getValue().toUpperCase() + "%",	searchOpId));
@@ -320,10 +319,9 @@ public class FinanceApplicationCodeSearchCtrl extends GFCBaseCtrl implements Ser
 		if (StringUtils.isNotEmpty(this.finAppDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinAppDesc = this.sortOperator_finAppDesc.getSelectedItem();
-
-			if (item_FinAppDesc != null) {
-				final int searchOpId = ((SearchOperators) item_FinAppDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFinAppDesc = this.sortOperator_finAppDesc.getSelectedItem();
+			if (itemFinAppDesc != null) {
+				final int searchOpId = ((SearchOperators) itemFinAppDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finAppDesc", "%" + this.finAppDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -335,10 +333,9 @@ public class FinanceApplicationCodeSearchCtrl extends GFCBaseCtrl implements Ser
 			}
 		}
 		// get the search operator
-		final Listitem item_FinAppIsActive = this.sortOperator_finAppIsActive.getSelectedItem();
-
-		if (item_FinAppIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_FinAppIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemFinAppIsActive = this.sortOperator_finAppIsActive.getSelectedItem();
+		if (itemFinAppIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemFinAppIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -352,9 +349,9 @@ public class FinanceApplicationCodeSearchCtrl extends GFCBaseCtrl implements Ser
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"	+ this.recordStatus.getValue().toUpperCase() + "%",	searchOpId));
@@ -373,9 +370,9 @@ public class FinanceApplicationCodeSearchCtrl extends GFCBaseCtrl implements Ser
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

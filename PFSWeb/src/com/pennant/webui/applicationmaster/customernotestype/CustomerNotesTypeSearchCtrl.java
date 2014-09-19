@@ -323,10 +323,9 @@ public class CustomerNotesTypeSearchCtrl extends GFCBaseCtrl implements Serializ
 		if (StringUtils.isNotEmpty(this.custNotesTypeCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustNotesTypeCode = this.sortOperator_custNotesTypeCode.getSelectedItem();
-
-			if (item_CustNotesTypeCode != null) {
-				final int searchOpId = ((SearchOperators) item_CustNotesTypeCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustNotesTypeCode = this.sortOperator_custNotesTypeCode.getSelectedItem();
+			if (itemCustNotesTypeCode != null) {
+				final int searchOpId = ((SearchOperators) itemCustNotesTypeCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("custNotesTypeCode", "%" + this.custNotesTypeCode.getValue().toUpperCase() + "%", searchOpId));
@@ -340,10 +339,9 @@ public class CustomerNotesTypeSearchCtrl extends GFCBaseCtrl implements Serializ
 		if (StringUtils.isNotEmpty(this.custNotesTypeDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustNotesTypeDesc = this.sortOperator_custNotesTypeDesc.getSelectedItem();
-
-			if (item_CustNotesTypeDesc != null) {
-				final int searchOpId = ((SearchOperators) item_CustNotesTypeDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustNotesTypeDesc = this.sortOperator_custNotesTypeDesc.getSelectedItem();
+			if (itemCustNotesTypeDesc != null) {
+				final int searchOpId = ((SearchOperators) itemCustNotesTypeDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("custNotesTypeDesc", "%" + this.custNotesTypeDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -355,10 +353,9 @@ public class CustomerNotesTypeSearchCtrl extends GFCBaseCtrl implements Serializ
 			}
 		}
 		// get the search operator
-		final Listitem item_CustNotesTypeIsPerminent = this.sortOperator_custNotesTypeIsPerminent.getSelectedItem();
-
-		if (item_CustNotesTypeIsPerminent != null) {
-			final int searchOpId = ((SearchOperators) item_CustNotesTypeIsPerminent.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemCustNotesTypeIsPerminent = this.sortOperator_custNotesTypeIsPerminent.getSelectedItem();
+		if (itemCustNotesTypeIsPerminent != null) {
+			final int searchOpId = ((SearchOperators) itemCustNotesTypeIsPerminent.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -372,10 +369,9 @@ public class CustomerNotesTypeSearchCtrl extends GFCBaseCtrl implements Serializ
 			}
 		}
 		// get the search operator
-		final Listitem item_CustNotesTypeIsActive = this.sortOperator_custNotesTypeIsActive.getSelectedItem();
-
-		if (item_CustNotesTypeIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_CustNotesTypeIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemCustNotesTypeIsActive = this.sortOperator_custNotesTypeIsActive.getSelectedItem();
+		if (itemCustNotesTypeIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemCustNotesTypeIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -391,10 +387,9 @@ public class CustomerNotesTypeSearchCtrl extends GFCBaseCtrl implements Serializ
 		if (StringUtils.isNotEmpty(this.custNotesTypeArchiveFrq.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustNotesTypeArchiveFrq = this.sortOperator_custNotesTypeArchiveFrq.getSelectedItem();
-
-			if (item_CustNotesTypeArchiveFrq != null) {
-				final int searchOpId = ((SearchOperators) item_CustNotesTypeArchiveFrq.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustNotesTypeArchiveFrq = this.sortOperator_custNotesTypeArchiveFrq.getSelectedItem();
+			if (itemCustNotesTypeArchiveFrq != null) {
+				final int searchOpId = ((SearchOperators) itemCustNotesTypeArchiveFrq.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("custNotesTypeArchiveFrq", "%" 
@@ -408,9 +403,9 @@ public class CustomerNotesTypeSearchCtrl extends GFCBaseCtrl implements Serializ
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"	+ this.recordStatus.getValue().toUpperCase() + "%",	searchOpId));
@@ -429,9 +424,9 @@ public class CustomerNotesTypeSearchCtrl extends GFCBaseCtrl implements Serializ
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

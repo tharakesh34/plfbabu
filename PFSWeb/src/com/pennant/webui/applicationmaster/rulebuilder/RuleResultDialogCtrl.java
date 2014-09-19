@@ -370,13 +370,12 @@ public class RuleResultDialogCtrl extends GFCBaseListCtrl<JavaScriptBuilder> imp
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	private void createSimulationWindow(String Values) throws InterruptedException {
+	private void createSimulationWindow(String values) throws InterruptedException {
 		logger.debug("Entering");
 
-		String[] Variables = Values.split(",");
-
+		String[] variables = values.split(",");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("Variables", Variables);
+		map.put("Variables", variables);
 		map.put("ruleResultDialogCtrl", this);
 
 		// call the ZUL-file with the parameters packed in a map

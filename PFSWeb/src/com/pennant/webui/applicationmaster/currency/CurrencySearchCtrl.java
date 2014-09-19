@@ -411,11 +411,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.ccyCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CcyCode = this.sortOperator_ccyCode
-			.getSelectedItem();
-
-			if (item_CcyCode != null) {
-				final int searchOpId = ((SearchOperators) item_CcyCode
+			final Listitem itemCcyCode = this.sortOperator_ccyCode.getSelectedItem();
+			if (itemCcyCode != null) {
+				final int searchOpId = ((SearchOperators) itemCcyCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -432,11 +430,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.ccyNumber.intValue() != 0) {
 
 			// get the search operator
-			final Listitem item_CcyNumber = this.sortOperator_ccyNumber
-			.getSelectedItem();
-
-			if (item_CcyNumber != null) {
-				final int searchOpId = ((SearchOperators) item_CcyNumber
+			final Listitem itemCcyNumber = this.sortOperator_ccyNumber.getSelectedItem();
+			if (itemCcyNumber != null) {
+				final int searchOpId = ((SearchOperators) itemCcyNumber
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
@@ -450,12 +446,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.ccyDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_CcyDesc = this.sortOperator_ccyDesc
-			.getSelectedItem();
-
-			if (item_CcyDesc != null) {
-				final int searchOpId = ((SearchOperators) item_CcyDesc
-						.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCcyDesc = this.sortOperator_ccyDesc.getSelectedItem();
+			if (itemCcyDesc != null) {
+				final int searchOpId = ((SearchOperators) itemCcyDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("ccyDesc", "%"
@@ -471,11 +464,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.ccySwiftCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CcySwiftCode = this.sortOperator_ccySwiftCode
-			.getSelectedItem();
-
-			if (item_CcySwiftCode != null) {
-				final int searchOpId = ((SearchOperators) item_CcySwiftCode
+			final Listitem itemCcySwiftCode = this.sortOperator_ccySwiftCode.getSelectedItem();
+			if (itemCcySwiftCode != null) {
+				final int searchOpId = ((SearchOperators) itemCcySwiftCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -492,11 +483,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.ccySymbol.getValue())) {
 
 			// get the search operator
-			final Listitem item_CcySymbol = this.sortOperator_ccySymbol
-			.getSelectedItem();
-
-			if (item_CcySymbol != null) {
-				final int searchOpId = ((SearchOperators) item_CcySymbol
+			final Listitem itemCcySymbol = this.sortOperator_ccySymbol.getSelectedItem();
+			if (itemCcySymbol != null) {
+				final int searchOpId = ((SearchOperators) itemCcySymbol
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -513,11 +502,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.ccyMinorCcyDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_CcyMinorCcyDesc = this.sortOperator_ccyMinorCcyDesc
-			.getSelectedItem();
-
-			if (item_CcyMinorCcyDesc != null) {
-				final int searchOpId = ((SearchOperators) item_CcyMinorCcyDesc
+			final Listitem itemCcyMinorCcyDesc = this.sortOperator_ccyMinorCcyDesc.getSelectedItem();
+			if (itemCcyMinorCcyDesc != null) {
+				final int searchOpId = ((SearchOperators) itemCcyMinorCcyDesc
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -532,11 +519,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_CcyIsAlwForLoans = this.sortOperator_ccyIsAlwForLoans
-		.getSelectedItem();
-
-		if (item_CcyIsAlwForLoans != null) {
-			final int searchOpId = ((SearchOperators) item_CcyIsAlwForLoans
+		final Listitem itemCcyIsAlwForLoans = this.sortOperator_ccyIsAlwForLoans.getSelectedItem();
+		if (itemCcyIsAlwForLoans != null) {
+			final int searchOpId = ((SearchOperators) itemCcyIsAlwForLoans
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -551,11 +536,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_CcyIsAlwForDepo = this.sortOperator_ccyIsAlwForDepo
-		.getSelectedItem();
-
-		if (item_CcyIsAlwForDepo != null) {
-			final int searchOpId = ((SearchOperators) item_CcyIsAlwForDepo
+		final Listitem itemCcyIsAlwForDepo = this.sortOperator_ccyIsAlwForDepo.getSelectedItem();
+		if (itemCcyIsAlwForDepo != null) {
+			final int searchOpId = ((SearchOperators) itemCcyIsAlwForDepo
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -570,11 +553,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_CcyIsAlwForAc = this.sortOperator_ccyIsAlwForAc
-		.getSelectedItem();
-
-		if (item_CcyIsAlwForAc != null) {
-			final int searchOpId = ((SearchOperators) item_CcyIsAlwForAc
+		final Listitem itemCcyIsAlwForAc = this.sortOperator_ccyIsAlwForAc.getSelectedItem();
+		if (itemCcyIsAlwForAc != null) {
+			final int searchOpId = ((SearchOperators) itemCcyIsAlwForAc
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -589,11 +570,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operator
-		final Listitem item_CcyIsActive = this.sortOperator_ccyIsActive
-		.getSelectedItem();
-
-		if (item_CcyIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_CcyIsActive
+		final Listitem itemCcyIsActive = this.sortOperator_ccyIsActive.getSelectedItem();
+		if (itemCcyIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemCcyIsActive
 					.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -609,10 +588,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus
-			.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -634,10 +612,9 @@ public class CurrencySearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType
-			.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

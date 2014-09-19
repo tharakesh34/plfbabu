@@ -304,10 +304,9 @@ public class RejectDetailSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.rejectCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_RejectCode = this.sortOperator_rejectCode.getSelectedItem();
-
-			if (item_RejectCode != null) {
-				final int searchOpId = ((SearchOperators) item_RejectCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRejectCode = this.sortOperator_rejectCode.getSelectedItem();
+			if (itemRejectCode != null) {
+				final int searchOpId = ((SearchOperators) itemRejectCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("rejectCode", "%"
@@ -322,10 +321,9 @@ public class RejectDetailSearchCtrl extends GFCBaseCtrl implements Serializable 
 		if (StringUtils.isNotEmpty(this.rejectDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_RejectDesc = this.sortOperator_rejectDesc.getSelectedItem();
-
-			if (item_RejectDesc != null) {
-				final int searchOpId = ((SearchOperators) item_RejectDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRejectDesc = this.sortOperator_rejectDesc.getSelectedItem();
+			if (itemRejectDesc != null) {
+				final int searchOpId = ((SearchOperators) itemRejectDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("rejectDesc", "%"
@@ -338,10 +336,9 @@ public class RejectDetailSearchCtrl extends GFCBaseCtrl implements Serializable 
 			}
 		}
 		// get the search operator
-		final Listitem item_RejectIsActive = this.sortOperator_rejectIsActive.getSelectedItem();
-
-		if (item_RejectIsActive != null) {
-			final int searchOpId = ((SearchOperators) item_RejectIsActive.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemRejectIsActive = this.sortOperator_rejectIsActive.getSelectedItem();
+		if (itemRejectIsActive != null) {
+			final int searchOpId = ((SearchOperators) itemRejectIsActive.getAttribute("data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
 				// do nothing
@@ -356,9 +353,9 @@ public class RejectDetailSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%"
@@ -376,9 +373,9 @@ public class RejectDetailSearchCtrl extends GFCBaseCtrl implements Serializable 
 		}
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType != null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType != null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%"

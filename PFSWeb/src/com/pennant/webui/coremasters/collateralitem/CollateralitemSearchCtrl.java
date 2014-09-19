@@ -372,10 +372,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYCUS.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYCUS = this.sortOperator_hYCUS.getSelectedItem();
-
-			if (item_HYCUS != null) {
-				final int searchOpId = ((SearchOperators) item_HYCUS.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYCUS = this.sortOperator_hYCUS.getSelectedItem();
+			if (itemHYCUS != null) {
+				final int searchOpId = ((SearchOperators) itemHYCUS.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYCUS", "%" + this.hYCUS.getValue().toUpperCase() + "%", searchOpId));
@@ -389,10 +388,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYCLC.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYCLC = this.sortOperator_hYCLC.getSelectedItem();
-
-			if (item_HYCLC != null) {
-				final int searchOpId = ((SearchOperators) item_HYCLC.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYCLC = this.sortOperator_hYCLC.getSelectedItem();
+			if (itemHYCLC != null) {
+				final int searchOpId = ((SearchOperators) itemHYCLC.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYCLC", "%" + this.hYCLC.getValue().toUpperCase() + "%", searchOpId));
@@ -406,10 +404,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYDLP.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYDLP = this.sortOperator_hYDLP.getSelectedItem();
-
-			if (item_HYDLP != null) {
-				final int searchOpId = ((SearchOperators) item_HYDLP.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYDLP = this.sortOperator_hYDLP.getSelectedItem();
+			if (itemHYDLP != null) {
+				final int searchOpId = ((SearchOperators) itemHYDLP.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYDLP", "%" + this.hYDLP.getValue().toUpperCase() + "%", searchOpId));
@@ -423,10 +420,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYDLR.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYDLR = this.sortOperator_hYDLR.getSelectedItem();
-
-			if (item_HYDLR != null) {
-				final int searchOpId = ((SearchOperators) item_HYDLR.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYDLR = this.sortOperator_hYDLR.getSelectedItem();
+			if (itemHYDLR != null) {
+				final int searchOpId = ((SearchOperators) itemHYDLR.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYDLR", "%" + this.hYDLR.getValue().toUpperCase() + "%", searchOpId));
@@ -440,10 +436,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYDBNM.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYDBNM = this.sortOperator_hYDBNM.getSelectedItem();
-
-			if (item_HYDBNM != null) {
-				final int searchOpId = ((SearchOperators) item_HYDBNM.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYDBNM = this.sortOperator_hYDBNM.getSelectedItem();
+			if (itemHYDBNM != null) {
+				final int searchOpId = ((SearchOperators) itemHYDBNM.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYDBNM", "%" + this.hYDBNM.getValue().toUpperCase() + "%", searchOpId));
@@ -457,10 +452,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYAB.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYAB = this.sortOperator_hYAB.getSelectedItem();
-
-			if (item_HYAB != null) {
-				final int searchOpId = ((SearchOperators) item_HYAB.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYAB = this.sortOperator_hYAB.getSelectedItem();
+			if (itemHYAB != null) {
+				final int searchOpId = ((SearchOperators) itemHYAB.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYAB", "%" + this.hYAB.getValue().toUpperCase() + "%", searchOpId));
@@ -474,10 +468,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYAN.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYAN = this.sortOperator_hYAN.getSelectedItem();
-
-			if (item_HYAN != null) {
-				final int searchOpId = ((SearchOperators) item_HYAN.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYAN = this.sortOperator_hYAN.getSelectedItem();
+			if (itemHYAN != null) {
+				final int searchOpId = ((SearchOperators) itemHYAN.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYAN", "%" + this.hYAN.getValue().toUpperCase() + "%", searchOpId));
@@ -491,10 +484,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYAS.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYAS = this.sortOperator_hYAS.getSelectedItem();
-
-			if (item_HYAS != null) {
-				final int searchOpId = ((SearchOperators) item_HYAS.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYAS = this.sortOperator_hYAS.getSelectedItem();
+			if (itemHYAS != null) {
+				final int searchOpId = ((SearchOperators) itemHYAS.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYAS", "%" + this.hYAS.getValue().toUpperCase() + "%", searchOpId));
@@ -508,10 +500,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYCLP.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYCLP = this.sortOperator_hYCLP.getSelectedItem();
-
-			if (item_HYCLP != null) {
-				final int searchOpId = ((SearchOperators) item_HYCLP.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYCLP = this.sortOperator_hYCLP.getSelectedItem();
+			if (itemHYCLP != null) {
+				final int searchOpId = ((SearchOperators) itemHYCLP.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYCLP", "%" + this.hYCLP.getValue().toUpperCase() + "%", searchOpId));
@@ -525,10 +516,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYCLR.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYCLR = this.sortOperator_hYCLR.getSelectedItem();
-
-			if (item_HYCLR != null) {
-				final int searchOpId = ((SearchOperators) item_HYCLR.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYCLR = this.sortOperator_hYCLR.getSelectedItem();
+			if (itemHYCLR != null) {
+				final int searchOpId = ((SearchOperators) itemHYCLR.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYCLR", "%" + this.hYCLR.getValue().toUpperCase() + "%", searchOpId));
@@ -542,10 +532,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.hYCLO.getValue())) {
 
 			// get the search operator
-			final Listitem item_HYCLO = this.sortOperator_hYCLO.getSelectedItem();
-
-			if (item_HYCLO != null) {
-				final int searchOpId = ((SearchOperators) item_HYCLO.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemHYCLO = this.sortOperator_hYCLO.getSelectedItem();
+			if (itemHYCLO != null) {
+				final int searchOpId = ((SearchOperators) itemHYCLO.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("hYCLO", "%" + this.hYCLO.getValue().toUpperCase() + "%", searchOpId));
@@ -558,9 +547,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -579,9 +568,9 @@ public class CollateralitemSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));
