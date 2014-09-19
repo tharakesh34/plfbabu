@@ -410,10 +410,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerCode = this.sortOperator_brokerCode.getSelectedItem();
+			final Listitem itemBrokerCode = this.sortOperator_brokerCode.getSelectedItem();
 
-			if (item_BrokerCode != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerCode.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerCode != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerCode", "%" + this.brokerCode.getValue().toUpperCase() + "%", searchOpId));
@@ -427,10 +427,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerCustID.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerCustID = this.sortOperator_brokerCustID.getSelectedItem();
+			final Listitem itemBrokerCustID = this.sortOperator_brokerCustID.getSelectedItem();
 
-			if (item_BrokerCustID != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerCustID.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerCustID != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerCustID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerCustID", "%" + this.brokerCustID.getValue().toUpperCase() + "%", searchOpId));
@@ -445,10 +445,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerCIF.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerCIF = this.sortOperator_brokerCIF.getSelectedItem();
+			final Listitem itemBrokerCIF = this.sortOperator_brokerCIF.getSelectedItem();
 
-			if (item_BrokerCIF != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerCIF.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerCIF != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerCIF.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("lovDescBrokerCIF", "%" + this.brokerCIF.getValue().toUpperCase() + "%", searchOpId));
@@ -462,10 +462,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (this.brokerFrom.getValue()!=null) {
 
 			// get the search operator
-			final Listitem item_BrokerFrom = this.sortOperator_brokerFrom.getSelectedItem();
+			final Listitem itemBrokerFrom = this.sortOperator_brokerFrom.getSelectedItem();
 
-			if (item_BrokerFrom != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerFrom.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerFrom != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerFrom.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -479,10 +479,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrHNbr.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrHNbr = this.sortOperator_brokerAddrHNbr.getSelectedItem();
+			final Listitem itemBrokerAddrHNbr = this.sortOperator_brokerAddrHNbr.getSelectedItem();
 
-			if (item_BrokerAddrHNbr != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrHNbr.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrHNbr != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrHNbr.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrHNbr", "%" + this.brokerAddrHNbr.getValue().toUpperCase() + "%", searchOpId));
@@ -496,10 +496,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrFlatNbr.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrFlatNbr = this.sortOperator_brokerAddrFlatNbr.getSelectedItem();
+			final Listitem itemBrokerAddrFlatNbr = this.sortOperator_brokerAddrFlatNbr.getSelectedItem();
 
-			if (item_BrokerAddrFlatNbr != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrFlatNbr.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrFlatNbr != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrFlatNbr.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrFlatNbr", "%" + this.brokerAddrFlatNbr.getValue().toUpperCase() + "%", searchOpId));
@@ -513,10 +513,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrStreet.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrStreet = this.sortOperator_brokerAddrStreet.getSelectedItem();
+			final Listitem itemBrokerAddrStreet = this.sortOperator_brokerAddrStreet.getSelectedItem();
 
-			if (item_BrokerAddrStreet != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrStreet.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrStreet != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrStreet.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrStreet", "%" + this.brokerAddrStreet.getValue().toUpperCase() + "%", searchOpId));
@@ -530,10 +530,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrLane1.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrLane1 = this.sortOperator_brokerAddrLane1.getSelectedItem();
+			final Listitem itemBrokerAddrLane1 = this.sortOperator_brokerAddrLane1.getSelectedItem();
 
-			if (item_BrokerAddrLane1 != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrLane1.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrLane1 != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrLane1.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrLane1", "%" + this.brokerAddrLane1.getValue().toUpperCase() + "%", searchOpId));
@@ -547,10 +547,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrLane2.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrLane2 = this.sortOperator_brokerAddrLane2.getSelectedItem();
+			final Listitem itemBrokerAddrLane2 = this.sortOperator_brokerAddrLane2.getSelectedItem();
 
-			if (item_BrokerAddrLane2 != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrLane2.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrLane2 != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrLane2.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrLane2", "%" + this.brokerAddrLane2.getValue().toUpperCase() + "%", searchOpId));
@@ -564,10 +564,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrPOBox.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrPOBox = this.sortOperator_brokerAddrPOBox.getSelectedItem();
+			final Listitem itemBrokerAddrPOBox = this.sortOperator_brokerAddrPOBox.getSelectedItem();
 
-			if (item_BrokerAddrPOBox != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrPOBox.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrPOBox != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrPOBox.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrPOBox", "%" + this.brokerAddrPOBox.getValue().toUpperCase() + "%", searchOpId));
@@ -581,10 +581,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrCountry.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrCountry = this.sortOperator_brokerAddrCountry.getSelectedItem();
+			final Listitem itemBrokerAddrCountry = this.sortOperator_brokerAddrCountry.getSelectedItem();
 
-			if (item_BrokerAddrCountry != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrCountry.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrCountry != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrCountry.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrCountry", "%" + this.brokerAddrCountry.getValue().toUpperCase() + "%", searchOpId));
@@ -598,10 +598,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrProvince.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrProvince = this.sortOperator_brokerAddrProvince.getSelectedItem();
+			final Listitem itemBrokerAddrProvince = this.sortOperator_brokerAddrProvince.getSelectedItem();
 
-			if (item_BrokerAddrProvince != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrProvince.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrProvince != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrProvince.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrProvince", "%" + this.brokerAddrProvince.getValue().toUpperCase() + "%", searchOpId));
@@ -615,10 +615,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrCity.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrCity = this.sortOperator_brokerAddrCity.getSelectedItem();
+			final Listitem itemBrokerAddrCity = this.sortOperator_brokerAddrCity.getSelectedItem();
 
-			if (item_BrokerAddrCity != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrCity.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrCity != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrCity.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrCity", "%" + this.brokerAddrCity.getValue().toUpperCase() + "%", searchOpId));
@@ -632,10 +632,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrZIP.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrZIP = this.sortOperator_brokerAddrZIP.getSelectedItem();
+			final Listitem itemBrokerAddrZIP = this.sortOperator_brokerAddrZIP.getSelectedItem();
 
-			if (item_BrokerAddrZIP != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrZIP.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrZIP != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrZIP.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrZIP", "%" + this.brokerAddrZIP.getValue().toUpperCase() + "%", searchOpId));
@@ -649,10 +649,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrPhone.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrPhone = this.sortOperator_brokerAddrPhone.getSelectedItem();
+			final Listitem itemBrokerAddrPhone = this.sortOperator_brokerAddrPhone.getSelectedItem();
 
-			if (item_BrokerAddrPhone != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrPhone.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrPhone != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrPhone.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrPhone", "%" + this.brokerAddrPhone.getValue().toUpperCase() + "%", searchOpId));
@@ -666,10 +666,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerAddrFax.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerAddrFax = this.sortOperator_brokerAddrFax.getSelectedItem();
+			final Listitem itemBrokerAddrFax = this.sortOperator_brokerAddrFax.getSelectedItem();
 
-			if (item_BrokerAddrFax != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerAddrFax.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerAddrFax != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerAddrFax.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerAddrFax", "%" + this.brokerAddrFax.getValue().toUpperCase() + "%", searchOpId));
@@ -683,10 +683,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.brokerEmail.getValue())) {
 
 			// get the search operator
-			final Listitem item_BrokerEmail = this.sortOperator_brokerEmail.getSelectedItem();
+			final Listitem itemBrokerEmail = this.sortOperator_brokerEmail.getSelectedItem();
 
-			if (item_BrokerEmail != null) {
-				final int searchOpId = ((SearchOperators) item_BrokerEmail.getAttribute("data")).getSearchOperatorId();
+			if (itemBrokerEmail != null) {
+				final int searchOpId = ((SearchOperators) itemBrokerEmail.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("brokerEmail", "%" + this.brokerEmail.getValue().toUpperCase() + "%", searchOpId));
@@ -700,10 +700,10 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		if (StringUtils.isNotEmpty(this.agreementRef.getValue())) {
 
 			// get the search operator
-			final Listitem item_AgreementRef = this.sortOperator_agreementRef.getSelectedItem();
+			final Listitem itemAgreementRef = this.sortOperator_agreementRef.getSelectedItem();
 
-			if (item_AgreementRef != null) {
-				final int searchOpId = ((SearchOperators) item_AgreementRef.getAttribute("data")).getSearchOperatorId();
+			if (itemAgreementRef != null) {
+				final int searchOpId = ((SearchOperators) itemAgreementRef.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("agreementRef", "%" + this.agreementRef.getValue().toUpperCase() + "%", searchOpId));
@@ -716,9 +716,9 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -737,9 +737,9 @@ public class CommodityBrokerDetailSearchCtrl extends GFCBaseCtrl implements Seri
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

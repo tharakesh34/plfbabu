@@ -321,10 +321,9 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.phoneCustCIF.getValue())) {
 
 			// get the search operator
-			final Listitem item_PhoneCustCIF = this.sortOperator_phoneCustCIF.getSelectedItem();
-
-			if (item_PhoneCustCIF != null) {
-				final int searchOpId = ((SearchOperators) item_PhoneCustCIF.getAttribute(
+			final Listitem itemPhoneCustCIF = this.sortOperator_phoneCustCIF.getSelectedItem();
+			if (itemPhoneCustCIF != null) {
+				final int searchOpId = ((SearchOperators) itemPhoneCustCIF.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -340,10 +339,9 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.phoneTypeCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_PhoneTypeCode = this.sortOperator_phoneTypeCode.getSelectedItem();
-
-			if (item_PhoneTypeCode != null) {
-				final int searchOpId = ((SearchOperators) item_PhoneTypeCode.getAttribute(
+			final Listitem itemPhoneTypeCode = this.sortOperator_phoneTypeCode.getSelectedItem();
+			if (itemPhoneTypeCode != null) {
+				final int searchOpId = ((SearchOperators) itemPhoneTypeCode.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -359,10 +357,9 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.phoneCountryCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_PhoneCountryCode = this.sortOperator_phoneCountryCode.getSelectedItem();
-
-			if (item_PhoneCountryCode != null) {
-				final int searchOpId = ((SearchOperators) item_PhoneCountryCode.getAttribute(
+			final Listitem itemPhoneCountryCode = this.sortOperator_phoneCountryCode.getSelectedItem();
+			if (itemPhoneCountryCode != null) {
+				final int searchOpId = ((SearchOperators) itemPhoneCountryCode.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -378,10 +375,9 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.phoneAreaCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_PhoneAreaCode = this.sortOperator_phoneAreaCode.getSelectedItem();
-
-			if (item_PhoneAreaCode != null) {
-				final int searchOpId = ((SearchOperators) item_PhoneAreaCode.getAttribute(
+			final Listitem itemPhoneAreaCode = this.sortOperator_phoneAreaCode.getSelectedItem();
+			if (itemPhoneAreaCode != null) {
+				final int searchOpId = ((SearchOperators) itemPhoneAreaCode.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -397,10 +393,9 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 		if (StringUtils.isNotEmpty(this.phoneNumber.getValue())) {
 
 			// get the search operator
-			final Listitem item_PhoneNumber = this.sortOperator_phoneNumber.getSelectedItem();
-
-			if (item_PhoneNumber != null) {
-				final int searchOpId = ((SearchOperators) item_PhoneNumber.getAttribute(
+			final Listitem itemPhoneNumber = this.sortOperator_phoneNumber.getSelectedItem();
+			if (itemPhoneNumber != null) {
+				final int searchOpId = ((SearchOperators) itemPhoneNumber.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -415,9 +410,9 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute(
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute(
 						"data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
@@ -438,9 +433,9 @@ public class CustomerPhoneNumberSearchCtrl extends GFCBaseCtrl implements Serial
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute(
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute(
 						"data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {

@@ -297,10 +297,10 @@ public class CommodityDetailSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.commodityCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CommodityCode = this.sortOperator_commodityCode.getSelectedItem();
+			final Listitem itemCommodityCode = this.sortOperator_commodityCode.getSelectedItem();
 
-			if (item_CommodityCode != null) {
-				final int searchOpId = ((SearchOperators) item_CommodityCode.getAttribute("data"))
+			if (itemCommodityCode != null) {
+				final int searchOpId = ((SearchOperators) itemCommodityCode.getAttribute("data"))
 				.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -316,10 +316,10 @@ public class CommodityDetailSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.commodityName.getValue())) {
 
 			// get the search operator
-			final Listitem item_CommodityName = this.sortOperator_commodityName.getSelectedItem();
+			final Listitem itemCommodityName = this.sortOperator_commodityName.getSelectedItem();
 
-			if (item_CommodityName != null) {
-				final int searchOpId = ((SearchOperators) item_CommodityName.getAttribute("data")).getSearchOperatorId();
+			if (itemCommodityName != null) {
+				final int searchOpId = ((SearchOperators) itemCommodityName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("commodityName", "%" + this.commodityName.getValue().toUpperCase()
@@ -334,10 +334,10 @@ public class CommodityDetailSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.commodityUnitCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CommodityUnitCode = this.sortOperator_commodityUnitCode.getSelectedItem();
+			final Listitem itemCommodityUnitCode = this.sortOperator_commodityUnitCode.getSelectedItem();
 
-			if (item_CommodityUnitCode != null) {
-				final int searchOpId = ((SearchOperators) item_CommodityUnitCode.getAttribute("data")).getSearchOperatorId();
+			if (itemCommodityUnitCode != null) {
+				final int searchOpId = ((SearchOperators) itemCommodityUnitCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("commodityUnitCode", "%" + this.commodityUnitCode.getValue().toUpperCase() 
@@ -352,10 +352,10 @@ public class CommodityDetailSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.commodityUnitName.getValue())) {
 
 			// get the search operator
-			final Listitem item_CommodityUnitName = this.sortOperator_commodityUnitName.getSelectedItem();
+			final Listitem itemCommodityUnitName = this.sortOperator_commodityUnitName.getSelectedItem();
 
-			if (item_CommodityUnitName != null) {
-				final int searchOpId = ((SearchOperators) item_CommodityUnitName.getAttribute("data")).getSearchOperatorId();
+			if (itemCommodityUnitName != null) {
+				final int searchOpId = ((SearchOperators) itemCommodityUnitName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("commodityUnitName", "%" + this.commodityUnitName.getValue().toUpperCase() 
@@ -369,9 +369,9 @@ public class CommodityDetailSearchCtrl extends GFCBaseCtrl implements Serializab
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() 
@@ -391,9 +391,9 @@ public class CommodityDetailSearchCtrl extends GFCBaseCtrl implements Serializab
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

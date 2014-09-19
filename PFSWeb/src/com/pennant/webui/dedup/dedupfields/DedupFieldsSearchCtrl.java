@@ -269,10 +269,9 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.fieldName.getValue())) {
 
 			// get the search operator
-			final Listitem item_FieldName = this.sortOperator_fieldName.getSelectedItem();
-
-			if (item_FieldName != null) {
-				final int searchOpId = ((SearchOperators) item_FieldName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFieldName = this.sortOperator_fieldName.getSelectedItem();
+			if (itemFieldName != null) {
+				final int searchOpId = ((SearchOperators) itemFieldName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("fieldName", "%" + this.fieldName.getValue().toUpperCase() + "%", searchOpId));
@@ -286,10 +285,9 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.fieldControl.getValue())) {
 
 			// get the search operator
-			final Listitem item_FieldControl = this.sortOperator_fieldControl.getSelectedItem();
-
-			if (item_FieldControl != null) {
-				final int searchOpId = ((SearchOperators) item_FieldControl.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFieldControl = this.sortOperator_fieldControl.getSelectedItem();
+			if (itemFieldControl != null) {
+				final int searchOpId = ((SearchOperators) itemFieldControl.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("fieldControl", "%" + this.fieldControl.getValue().toUpperCase() + "%", searchOpId));
@@ -302,9 +300,9 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -323,9 +321,9 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

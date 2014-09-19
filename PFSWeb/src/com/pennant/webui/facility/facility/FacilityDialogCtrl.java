@@ -1345,15 +1345,15 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (!StringUtils.trimToEmpty(this.oldVar_CustID).equals(StringUtils.trimToEmpty(this.custID.getValue()))) {
 			return true;
 		}
-		String old_StartDate = "";
-		String new_StartDate = "";
+		String oldStartDate = "";
+		String newStartDate = "";
 		if (this.oldVar_StartDate != null) {
-			old_StartDate = DateUtility.formatDate(this.oldVar_StartDate, PennantConstants.dateFormat);
+			oldStartDate = DateUtility.formatDate(this.oldVar_StartDate, PennantConstants.dateFormat);
 		}
 		if (this.startDate.getValue() != null) {
-			new_StartDate = DateUtility.formatDate(this.startDate.getValue(), PennantConstants.dateFormat);
+			newStartDate = DateUtility.formatDate(this.startDate.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_StartDate).equals(StringUtils.trimToEmpty(new_StartDate))) {
+		if (!StringUtils.trimToEmpty(oldStartDate).equals(StringUtils.trimToEmpty(newStartDate))) {
 			return true;
 		}
 		if (!StringUtils.trimToEmpty(this.oldVar_PresentingUnit).equals(StringUtils.trimToEmpty(this.presentingUnit.getValue()))) {
@@ -1362,29 +1362,29 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (!StringUtils.trimToEmpty(this.oldVar_CountryOfDomicile).equals(StringUtils.trimToEmpty(this.countryOfDomicile.getValue()))) {
 			return true;
 		}
-		String old_DeadLine = "";
-		String new_DeadLine = "";
+		String oldDeadLine = "";
+		String newDeadLine = "";
 		if (this.oldVar_DeadLine != null) {
-			old_DeadLine = DateUtility.formatDate(this.oldVar_DeadLine, PennantConstants.dateFormat);
+			oldDeadLine = DateUtility.formatDate(this.oldVar_DeadLine, PennantConstants.dateFormat);
 		}
 		if (this.deadLine.getValue() != null) {
-			new_DeadLine = DateUtility.formatDate(this.deadLine.getValue(), PennantConstants.dateFormat);
+			newDeadLine = DateUtility.formatDate(this.deadLine.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_DeadLine).equals(StringUtils.trimToEmpty(new_DeadLine))) {
+		if (!StringUtils.trimToEmpty(oldDeadLine).equals(StringUtils.trimToEmpty(newDeadLine))) {
 			return true;
 		}
 		if (!StringUtils.trimToEmpty(this.oldVar_CountryOfRisk).equals(StringUtils.trimToEmpty(this.countryOfRisk.getValue()))) {
 			return true;
 		}
-		String old_EstablishedDate = "";
-		String new_EstablishedDate = "";
+		String oldEstablishedDate = "";
+		String newEstablishedDate = "";
 		if (this.oldVar_EstablishedDate != null) {
-			old_EstablishedDate = DateUtility.formatDate(this.oldVar_EstablishedDate, PennantConstants.dateFormat);
+			oldEstablishedDate = DateUtility.formatDate(this.oldVar_EstablishedDate, PennantConstants.dateFormat);
 		}
 		if (this.establishedDate.getValue() != null) {
-			new_EstablishedDate = DateUtility.formatDate(this.establishedDate.getValue(), PennantConstants.dateFormat);
+			newEstablishedDate = DateUtility.formatDate(this.establishedDate.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_EstablishedDate).equals(StringUtils.trimToEmpty(new_EstablishedDate))) {
+		if (!StringUtils.trimToEmpty(oldEstablishedDate).equals(StringUtils.trimToEmpty(newEstablishedDate))) {
 			return true;
 		}
 		if (!StringUtils.trimToEmpty(this.oldVar_NatureOfBusiness).equals(StringUtils.trimToEmpty(this.natureOfBusiness.getValue()))) {
@@ -1405,15 +1405,15 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (!StringUtils.trimToEmpty(this.oldVar_CustomerGroup).equals(StringUtils.trimToEmpty(this.customerGroup.getValue()))) {
 			return true;
 		}
-		String old_NextReviewDate = "";
-		String new_NextReviewDate = "";
+		String oldNextReviewDate = "";
+		String newNextReviewDate = "";
 		if (this.oldVar_NextReviewDate != null) {
-			old_NextReviewDate = DateUtility.formatDate(this.oldVar_NextReviewDate, PennantConstants.dateFormat);
+			oldNextReviewDate = DateUtility.formatDate(this.oldVar_NextReviewDate, PennantConstants.dateFormat);
 		}
 		if (this.nextReviewDate.getValue() != null) {
-			new_NextReviewDate = DateUtility.formatDate(this.nextReviewDate.getValue(), PennantConstants.dateFormat);
+			newNextReviewDate = DateUtility.formatDate(this.nextReviewDate.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_NextReviewDate).equals(StringUtils.trimToEmpty(new_NextReviewDate))) {
+		if (!StringUtils.trimToEmpty(oldNextReviewDate).equals(StringUtils.trimToEmpty(newNextReviewDate))) {
 			return true;
 		}
 		if (this.oldVar_customerBackGround != this.customerBackGround.getValue()) {
@@ -2747,11 +2747,11 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving");
 	}
 	
-	private List<FacilityDetail> getDedupList(String cafreference,long Custid){
+	private List<FacilityDetail> getDedupList(String cafReference,long custID){
 		JdbcSearchObject<FacilityDetail> jdbcSearchObject=new JdbcSearchObject<FacilityDetail>(FacilityDetail.class);
 		jdbcSearchObject.addTabelName("FacilityDetails_Temp");
-		jdbcSearchObject.addFilterNotEqual("CAFReference", cafreference);
-		jdbcSearchObject.addFilterEqual("custID", Custid);
+		jdbcSearchObject.addFilterNotEqual("CAFReference", cafReference);
+		jdbcSearchObject.addFilterEqual("custID", custID);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
 	

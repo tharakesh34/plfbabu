@@ -215,7 +215,6 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseListCtrl<FinCredit
 	// on the values are edited since the last init.
 	private transient String  		oldVar_subCategoryCode;
 	private transient String  		oldVar_subCategoryDesc;
-	private transient String  		oldVar_subCategoryItemType;
 	private transient String  		oldVar_itemRule;
 	private transient boolean  		oldVar_isCreditCCY;
 	private transient int  		    oldVar_calcSeque;
@@ -465,7 +464,6 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseListCtrl<FinCredit
 	 */
 	public void onUser$btnSave2(ForwardEvent event) throws InterruptedException {
 		logger.debug(event.toString());
-		boolean noerrors = false;
 		// object containing errors and variables
 		Object[] data = (Object[]) event.getOrigin().getData();
 		if (validateFormula(data)) {
@@ -1591,8 +1589,8 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseListCtrl<FinCredit
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 	
 	
@@ -1654,13 +1652,12 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseListCtrl<FinCredit
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	private void createSimulationWindow(String Values) throws InterruptedException {
+	private void createSimulationWindow(String values) throws InterruptedException {
 		logger.debug("Entering");
 
-		String[] Variables = Values.split(",");
-
+		String[] variables = values.split(",");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("Variables", Variables);
+		map.put("Variables", variables);
 		//map.put("ruleResultDialogCtrl", this);
 		map.put("finCreditRevSubCategoryDialogCtrl", this);
 

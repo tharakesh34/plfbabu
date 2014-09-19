@@ -683,18 +683,18 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		
 	}
 	
-	private int doChangeDateOperator(Listbox listbox,int oldOperator,Datebox datebox_one,Datebox datebox_two){
+	private int doChangeDateOperator(Listbox listbox,int oldOperator,Datebox dateboxOne,Datebox dateboxTwo){
 		
 		final Listitem item = listbox.getSelectedItem();
 		final int searchOpId = ((SearchOperators) item.getAttribute("data")).getSearchOperatorId();
 
 		if(oldOperator == Filter.OP_BETWEEN && searchOpId != Filter.OP_BETWEEN){
-			datebox_one.setText("");
-			datebox_two.setText("");
+			dateboxOne.setText("");
+			dateboxTwo.setText("");
 		}else{
 			if(oldOperator != Filter.OP_BETWEEN && searchOpId == Filter.OP_BETWEEN){
-				datebox_one.setText("");
-				datebox_two.setText("");
+				dateboxOne.setText("");
+				dateboxTwo.setText("");
 			}
 		}
 		return searchOpId;
@@ -761,10 +761,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
 
 			// get the search operator
-			final Listitem item_CustID = this.sortOperator_custCIF.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustID = this.sortOperator_custCIF.getSelectedItem();
+			if (itemCustID != null) {
+				final int searchOpId = ((SearchOperators) itemCustID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -783,10 +782,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		if (!StringUtils.trimToEmpty(this.branchCode.getValue()).equals("")) {
 
 			// get the search operator
-			final Listitem item_CustID = this.sortOperator_Branch.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustID = this.sortOperator_Branch.getSelectedItem();
+			if (itemCustID != null) {
+				final int searchOpId = ((SearchOperators) itemCustID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -806,10 +804,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		if (this.startDate_one.getValue() != null || this.startDate_two.getValue() != null) {
 
 			// get the search operator
-			final Listitem item_StartDate = this.sortOperator_StartDate.getSelectedItem();
-
-			if (item_StartDate != null) {
-				final int searchOpId = ((SearchOperators) item_StartDate
+			final Listitem itemStartDate = this.sortOperator_StartDate.getSelectedItem();
+			if (itemStartDate != null) {
+				final int searchOpId = ((SearchOperators) itemStartDate
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
@@ -833,10 +830,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		if (this.maturityDate_one.getValue() != null || this.maturityDate_two.getValue() != null) {
 			
 			// get the search operator
-			final Listitem item_StartDate = this.sortOperator_MaturityDate.getSelectedItem();
-			
-			if (item_StartDate != null) {
-				final int searchOpId = ((SearchOperators) item_StartDate
+			final Listitem itemStartDate = this.sortOperator_MaturityDate.getSelectedItem();
+			if (itemStartDate != null) {
+				final int searchOpId = ((SearchOperators) itemStartDate
 						.getAttribute("data")).getSearchOperatorId();
 				
 				if (searchOpId == -1) {
@@ -860,10 +856,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		if (!StringUtils.trimToEmpty(this.finRef.getValue()).equals("")) {
 
 			// get the search operator
-			final Listitem item_CustID = this.sortOperator_FinRef.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustID = this.sortOperator_FinRef.getSelectedItem();
+			if (itemCustID != null) {
+				final int searchOpId = ((SearchOperators) itemCustID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -883,10 +878,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
 
 			// get the search operator
-			final Listitem item_CustID = this.sortOperator_FinType.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustID = this.sortOperator_FinType.getSelectedItem();
+			if (itemCustID != null) {
+				final int searchOpId = ((SearchOperators) itemCustID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -905,10 +899,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		if (!StringUtils.trimToEmpty(this.finProduct.getValue()).equals("")) {
 
 			// get the search operator
-			final Listitem item_CustID = this.sortOperator_FinProduct.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustID = this.sortOperator_FinProduct.getSelectedItem();
+			if (itemCustID != null) {
+				final int searchOpId = ((SearchOperators) itemCustID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing
@@ -926,10 +919,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 		}
 		if (!StringUtils.trimToEmpty(this.finCcy.getValue()).equals("")) {
 			// get the search operator
-			final Listitem item_CustID = this.sortOperator_FinCcy.getSelectedItem();
-
-			if (item_CustID != null) {
-				final int searchOpId = ((SearchOperators) item_CustID.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCustID = this.sortOperator_FinCcy.getSelectedItem();
+			if (itemCustID != null) {
+				final int searchOpId = ((SearchOperators) itemCustID.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == -1) {
 					// do nothing

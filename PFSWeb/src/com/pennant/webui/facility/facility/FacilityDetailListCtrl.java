@@ -321,11 +321,11 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> impl
 		logger.debug("Leaving");
 	}
 
-	private void prepareData(long Custid) {
+	private void prepareData(long custID) {
 		logger.debug("Entering");
 		JdbcSearchObject<FinanceSummary> jdbcSearchObject = new JdbcSearchObject<FinanceSummary>(FinanceSummary.class);
 		jdbcSearchObject.addTabelName("FacilityCommitmentDetail_View");
-		jdbcSearchObject.addFilterEqual("CustID", Custid);
+		jdbcSearchObject.addFilterEqual("CustID", custID);
 		List<FinanceSummary> existFinances = getPagedListWrapper().getPagedListService().getBySearchObject(jdbcSearchObject);
 		if (existFinances != null && !existFinances.isEmpty()) {
 			prepareRenderer(existFinances);
@@ -661,8 +661,8 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> impl
 	}
 	
 	@SuppressWarnings("unused")
-	private String getTenor(Date Start,Date maturity){
-		int months = DateUtility.getMonthsBetween(Start,maturity );
+	private String getTenor(Date startDate,Date maturityDate){
+		int months = DateUtility.getMonthsBetween(startDate,maturityDate );
 		int years = months / 12;
 		int remaining=months % 12;
 		return getTenorDesc(years,remaining);

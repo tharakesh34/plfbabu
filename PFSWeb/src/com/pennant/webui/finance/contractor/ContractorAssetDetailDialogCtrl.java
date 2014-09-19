@@ -1202,8 +1202,8 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseListCtrl<ContractorA
 		this.newContractor = newContractor;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public List<ContractorAssetDetail> getContractorAssetDetails() {

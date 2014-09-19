@@ -877,73 +877,73 @@ public class DiaryNotesDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.oldVar_frqCode != this.frqCode.getValue()) {
 			return true;
 		}
-	  	String old_firstActionDate = "";
-	  	String new_firstActionDate ="";
+	  	String oldFirstActionDate = "";
+	  	String newFirstActionDate ="";
 		if (this.oldVar_firstActionDate!=null){
-			old_firstActionDate=DateUtility.formatDate(this.oldVar_firstActionDate,PennantConstants.dateFormat);
+			oldFirstActionDate=DateUtility.formatDate(this.oldVar_firstActionDate,PennantConstants.dateFormat);
 		}
 		if (this.firstActionDate.getValue()!=null){
-			new_firstActionDate=DateUtility.formatDate(this.firstActionDate.getValue(),PennantConstants.dateFormat);
+			newFirstActionDate=DateUtility.formatDate(this.firstActionDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_firstActionDate).equals(StringUtils.trimToEmpty(new_firstActionDate))) {
+		if (!StringUtils.trimToEmpty(oldFirstActionDate).equals(StringUtils.trimToEmpty(newFirstActionDate))) {
 			return true;
 		}
-	  	String old_nextActionDate = "";
-	  	String new_nextActionDate ="";
+	  	String oldNextActionDate = "";
+	  	String newNextActionDate ="";
 		if (this.oldVar_nextActionDate!=null){
-			old_nextActionDate=DateUtility.formatDate(this.oldVar_nextActionDate,PennantConstants.dateFormat);
+			oldNextActionDate=DateUtility.formatDate(this.oldVar_nextActionDate,PennantConstants.dateFormat);
 		}
 		if (this.nextActionDate.getValue()!=null){
-			new_nextActionDate=DateUtility.formatDate(this.nextActionDate.getValue(),PennantConstants.dateFormat);
+			newNextActionDate=DateUtility.formatDate(this.nextActionDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_nextActionDate).equals(StringUtils.trimToEmpty(new_nextActionDate))) {
+		if (!StringUtils.trimToEmpty(oldNextActionDate).equals(StringUtils.trimToEmpty(newNextActionDate))) {
 			return true;
 		}
-	  	String old_lastActionDate = "";
-	  	String new_lastActionDate ="";
+	  	String oldLastActionDate = "";
+	  	String newLastActionDate ="";
 		if (this.oldVar_lastActionDate!=null){
-			old_lastActionDate=DateUtility.formatDate(this.oldVar_lastActionDate,PennantConstants.dateFormat);
+			oldLastActionDate=DateUtility.formatDate(this.oldVar_lastActionDate,PennantConstants.dateFormat);
 		}
 		if (this.lastActionDate.getValue()!=null){
-			new_lastActionDate=DateUtility.formatDate(this.lastActionDate.getValue(),PennantConstants.dateFormat);
+			newLastActionDate=DateUtility.formatDate(this.lastActionDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_lastActionDate).equals(StringUtils.trimToEmpty(new_lastActionDate))) {
+		if (!StringUtils.trimToEmpty(oldLastActionDate).equals(StringUtils.trimToEmpty(newLastActionDate))) {
 			return true;
 		}
-	  	String old_finalActionDate = "";
-	  	String new_finalActionDate ="";
+	  	String oldFinalActionDate = "";
+	  	String newFinalActionDate ="";
 		if (this.oldVar_finalActionDate!=null){
-			old_finalActionDate=DateUtility.formatDate(this.oldVar_finalActionDate,PennantConstants.dateFormat);
+			oldFinalActionDate=DateUtility.formatDate(this.oldVar_finalActionDate,PennantConstants.dateFormat);
 		}
 		if (this.finalActionDate.getValue()!=null){
-			new_finalActionDate=DateUtility.formatDate(this.finalActionDate.getValue(),PennantConstants.dateFormat);
+			newFinalActionDate=DateUtility.formatDate(this.finalActionDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_finalActionDate).equals(StringUtils.trimToEmpty(new_finalActionDate))) {
+		if (!StringUtils.trimToEmpty(oldFinalActionDate).equals(StringUtils.trimToEmpty(newFinalActionDate))) {
 			return true;
 		}
 		if (this.oldVar_suspend != this.suspend.isChecked()) {
 			return true;
 		}
-	  	String old_suspendStartDate = "";
-	  	String new_suspendStartDate ="";
+	  	String oldSuspendStartDate = "";
+	  	String newSuspendStartDate ="";
 		if (this.oldVar_suspendStartDate!=null){
-			old_suspendStartDate=DateUtility.formatDate(this.oldVar_suspendStartDate,PennantConstants.dateFormat);
+			oldSuspendStartDate=DateUtility.formatDate(this.oldVar_suspendStartDate,PennantConstants.dateFormat);
 		}
 		if (this.suspendStartDate.getValue()!=null){
-			new_suspendStartDate=DateUtility.formatDate(this.suspendStartDate.getValue(),PennantConstants.dateFormat);
+			newSuspendStartDate=DateUtility.formatDate(this.suspendStartDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_suspendStartDate).equals(StringUtils.trimToEmpty(new_suspendStartDate))) {
+		if (!StringUtils.trimToEmpty(oldSuspendStartDate).equals(StringUtils.trimToEmpty(newSuspendStartDate))) {
 			return true;
 		}
-	  	String old_suspendEndDate = "";
-	  	String new_suspendEndDate ="";
+	  	String oldSuspendEndDate = "";
+	  	String newSuspendEndDate ="";
 		if (this.oldVar_suspendEndDate!=null){
-			old_suspendEndDate=DateUtility.formatDate(this.oldVar_suspendEndDate,PennantConstants.dateFormat);
+			oldSuspendEndDate=DateUtility.formatDate(this.oldVar_suspendEndDate,PennantConstants.dateFormat);
 		}
 		if (this.suspendEndDate.getValue()!=null){
-			new_suspendEndDate=DateUtility.formatDate(this.suspendEndDate.getValue(),PennantConstants.dateFormat);
+			newSuspendEndDate=DateUtility.formatDate(this.suspendEndDate.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_suspendEndDate).equals(StringUtils.trimToEmpty(new_suspendEndDate))) {
+		if (!StringUtils.trimToEmpty(oldSuspendEndDate).equals(StringUtils.trimToEmpty(newSuspendEndDate))) {
 			return true;
 		}
 		if (this.oldVar_recordDeleted != this.recordDeleted.isChecked()) {

@@ -408,10 +408,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.subCategoryCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_SubCategoryCode = this.sortOperator_subCategoryCode.getSelectedItem();
-
-			if (item_SubCategoryCode != null) {
-				final int searchOpId = ((SearchOperators) item_SubCategoryCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSubCategoryCode = this.sortOperator_subCategoryCode.getSelectedItem();
+			if (itemSubCategoryCode != null) {
+				final int searchOpId = ((SearchOperators) itemSubCategoryCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("subCategoryCode", "%" + this.subCategoryCode.getValue().toUpperCase() + "%", searchOpId));
@@ -423,9 +422,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 			}
 		}
 	  if (this.subCategorySeque.getValue()!=null) {	  
-	    final Listitem item_SubCategorySeque = this.sortOperator_subCategorySeque.getSelectedItem();
-	  	if (item_SubCategorySeque != null) {
-	 		final int searchOpId = ((SearchOperators) item_SubCategorySeque.getAttribute("data")).getSearchOperatorId();
+	    final Listitem itemSubCategorySeque = this.sortOperator_subCategorySeque.getSelectedItem();
+	  	if (itemSubCategorySeque != null) {
+	 		final int searchOpId = ((SearchOperators) itemSubCategorySeque.getAttribute("data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
 	 			// do nothing
@@ -440,10 +439,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.categoryId.getValue())) {
 
 			// get the search operator
-			final Listitem item_CategoryId = this.sortOperator_categoryId.getSelectedItem();
-
-			if (item_CategoryId != null) {
-				final int searchOpId = ((SearchOperators) item_CategoryId.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemCategoryId = this.sortOperator_categoryId.getSelectedItem();
+			if (itemCategoryId != null) {
+				final int searchOpId = ((SearchOperators) itemCategoryId.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("categoryId", "%" + this.categoryId.getValue().toUpperCase() + "%", searchOpId));
@@ -457,10 +455,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.subCategoryDesc.getValue())) {
 
 			// get the search operator
-			final Listitem item_SubCategoryDesc = this.sortOperator_subCategoryDesc.getSelectedItem();
-
-			if (item_SubCategoryDesc != null) {
-				final int searchOpId = ((SearchOperators) item_SubCategoryDesc.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSubCategoryDesc = this.sortOperator_subCategoryDesc.getSelectedItem();
+			if (itemSubCategoryDesc != null) {
+				final int searchOpId = ((SearchOperators) itemSubCategoryDesc.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("subCategoryDesc", "%" + this.subCategoryDesc.getValue().toUpperCase() + "%", searchOpId));
@@ -474,10 +471,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.subCategoryItemType.getValue())) {
 
 			// get the search operator
-			final Listitem item_SubCategoryItemType = this.sortOperator_subCategoryItemType.getSelectedItem();
-
-			if (item_SubCategoryItemType != null) {
-				final int searchOpId = ((SearchOperators) item_SubCategoryItemType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSubCategoryItemType = this.sortOperator_subCategoryItemType.getSelectedItem();
+			if (itemSubCategoryItemType != null) {
+				final int searchOpId = ((SearchOperators) itemSubCategoryItemType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("subCategoryItemType", "%" + this.subCategoryItemType.getValue().toUpperCase() + "%", searchOpId));
@@ -491,10 +487,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.itemsToCal.getValue())) {
 
 			// get the search operator
-			final Listitem item_ItemsToCal = this.sortOperator_itemsToCal.getSelectedItem();
-
-			if (item_ItemsToCal != null) {
-				final int searchOpId = ((SearchOperators) item_ItemsToCal.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemItemsToCal = this.sortOperator_itemsToCal.getSelectedItem();
+			if (itemItemsToCal != null) {
+				final int searchOpId = ((SearchOperators) itemItemsToCal.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("itemsToCal", "%" + this.itemsToCal.getValue().toUpperCase() + "%", searchOpId));
@@ -508,10 +503,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.itemRule.getValue())) {
 
 			// get the search operator
-			final Listitem item_ItemRule = this.sortOperator_itemRule.getSelectedItem();
-
-			if (item_ItemRule != null) {
-				final int searchOpId = ((SearchOperators) item_ItemRule.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemItemRule = this.sortOperator_itemRule.getSelectedItem();
+			if (itemItemRule != null) {
+				final int searchOpId = ((SearchOperators) itemItemRule.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("itemRule", "%" + this.itemRule.getValue().toUpperCase() + "%", searchOpId));
@@ -523,10 +517,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_isCreditCCY = this.sortOperator_isCreditCCY.getSelectedItem();
-
-		if (item_isCreditCCY != null) {
-			final int searchOpId = ((SearchOperators) item_isCreditCCY.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemIsCreditCCY = this.sortOperator_isCreditCCY.getSelectedItem();
+		if (itemIsCreditCCY != null) {
+			final int searchOpId = ((SearchOperators) itemIsCreditCCY.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -542,10 +535,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 		if (StringUtils.isNotEmpty(this.mainSubCategoryCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_mainSubCategoryCode = this.sortOperator_mainSubCategoryCode.getSelectedItem();
-
-			if (item_mainSubCategoryCode != null) {
-				final int searchOpId = ((SearchOperators) item_mainSubCategoryCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemMainSubCategoryCode = this.sortOperator_mainSubCategoryCode.getSelectedItem();
+			if (itemMainSubCategoryCode != null) {
+				final int searchOpId = ((SearchOperators) itemMainSubCategoryCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("mainSubCategoryCode", "%" + this.mainSubCategoryCode.getValue().toUpperCase() + "%", searchOpId));
@@ -557,9 +549,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 			}
 		}
 	  if (this.calcSeque.getValue()!=null) {	  
-	    final Listitem item_CalcSeque = this.sortOperator_calcSeque.getSelectedItem();
-	  	if (item_CalcSeque != null) {
-	 		final int searchOpId = ((SearchOperators) item_CalcSeque.getAttribute("data")).getSearchOperatorId();
+	    final Listitem itemCalcSeque = this.sortOperator_calcSeque.getSelectedItem();
+	  	if (itemCalcSeque != null) {
+	 		final int searchOpId = ((SearchOperators) itemCalcSeque.getAttribute("data")).getSearchOperatorId();
 	 		
 	 		if (searchOpId == -1) {
 	 			// do nothing
@@ -572,10 +564,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 	 	}
 	  }	
 		// get the search operatorxxx
-		final Listitem item_format = this.sortOperator_format.getSelectedItem();
-
-		if (item_format != null) {
-			final int searchOpId = ((SearchOperators) item_format.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemFormat = this.sortOperator_format.getSelectedItem();
+		if (itemFormat != null) {
+			final int searchOpId = ((SearchOperators) itemFormat.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -589,10 +580,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_percentCategory = this.sortOperator_percentCategory.getSelectedItem();
-
-		if (item_percentCategory != null) {
-			final int searchOpId = ((SearchOperators) item_percentCategory.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemPercentCategory = this.sortOperator_percentCategory.getSelectedItem();
+		if (itemPercentCategory != null) {
+			final int searchOpId = ((SearchOperators) itemPercentCategory.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -606,10 +596,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_grand = this.sortOperator_grand.getSelectedItem();
-
-		if (item_grand != null) {
-			final int searchOpId = ((SearchOperators) item_grand.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemGrand = this.sortOperator_grand.getSelectedItem();
+		if (itemGrand != null) {
+			final int searchOpId = ((SearchOperators) itemGrand.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -624,9 +613,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -645,9 +634,9 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl implements Se
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

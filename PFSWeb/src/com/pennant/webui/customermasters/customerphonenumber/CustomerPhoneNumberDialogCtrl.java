@@ -92,7 +92,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -1146,9 +1145,9 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 						}else if(aCustomerPhoneNumber.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
 							recordAdded=true;
 							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getCustomerPhoneNumList().size(); j++) {
-								CustomerPhoneNumber PhoneNumber =  getCustomerDialogCtrl().getCustomerDetails().getCustomerPhoneNumList().get(j);
-								if(PhoneNumber.getPhoneCustID() == aCustomerPhoneNumber.getPhoneCustID() && PhoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())){
-									customerPhoneNumbers.add(PhoneNumber);
+								CustomerPhoneNumber phoneNumber =  getCustomerDialogCtrl().getCustomerDetails().getCustomerPhoneNumList().get(j);
+								if(phoneNumber.getPhoneCustID() == aCustomerPhoneNumber.getPhoneCustID() && phoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())){
+									customerPhoneNumbers.add(phoneNumber);
 								}
 							}
 						}
@@ -1543,8 +1542,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setCustomerSelectCtrl(CustomerSelectCtrl customerSelectctrl) {

@@ -1033,15 +1033,15 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 		if (this.oldVar_pRLNameLclLng != this.pRLNameLclLng.getValue()) {
 			return true;
 		}
-		String old_pRDOB = "";
-		String new_pRDOB ="";
+		String oldPRDOB = "";
+		String newPRDOB ="";
 		if (this.oldVar_pRDOB!=null){
-			old_pRDOB=DateUtility.formatDate(this.oldVar_pRDOB,PennantConstants.dateFormat);
+			oldPRDOB=DateUtility.formatDate(this.oldVar_pRDOB,PennantConstants.dateFormat);
 		}
 		if (this.pRDOB.getValue()!=null){
-			new_pRDOB=DateUtility.formatDate(this.pRDOB.getValue(),PennantConstants.dateFormat);
+			newPRDOB=DateUtility.formatDate(this.pRDOB.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_pRDOB).equals(StringUtils.trimToEmpty(new_pRDOB))) {
+		if (!StringUtils.trimToEmpty(oldPRDOB).equals(StringUtils.trimToEmpty(newPRDOB))) {
 			return true;
 		}
 		if (this.oldVar_pRAddrHNbr != this.pRAddrHNbr.getValue()) {
@@ -2079,8 +2079,8 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setCustomerSelectCtrl(CustomerSelectCtrl customerSelectctrl) {

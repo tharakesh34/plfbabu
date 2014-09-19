@@ -1161,8 +1161,8 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	private void doSetLOVValidation() {

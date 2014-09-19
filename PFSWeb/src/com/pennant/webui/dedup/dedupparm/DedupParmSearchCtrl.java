@@ -313,11 +313,9 @@ public class DedupParmSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.queryCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_QueryCode = this.sortOperator_queryCode
-					.getSelectedItem();
-
-			if (item_QueryCode != null) {
-				final int searchOpId = ((SearchOperators) item_QueryCode
+			final Listitem itemQueryCode = this.sortOperator_queryCode.getSelectedItem();
+			if (itemQueryCode != null) {
+				final int searchOpId = ((SearchOperators) itemQueryCode
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -334,11 +332,9 @@ public class DedupParmSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.queryModule.getValue())) {
 
 			// get the search operator
-			final Listitem item_QueryModule = this.sortOperator_queryModule
-					.getSelectedItem();
-
-			if (item_QueryModule != null) {
-				final int searchOpId = ((SearchOperators) item_QueryModule
+			final Listitem itemQueryModule = this.sortOperator_queryModule.getSelectedItem();
+			if (itemQueryModule != null) {
+				final int searchOpId = ((SearchOperators) itemQueryModule
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -356,10 +352,9 @@ public class DedupParmSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.sQLQuery.getValue())) {
 
 			// get the search operator
-			final Listitem item_SQLQuery = this.sortOperator_sQLQuery.getSelectedItem();
-
-			if (item_SQLQuery != null) {
-				final int searchOpId = ((SearchOperators) item_SQLQuery
+			final Listitem itemSQLQuery = this.sortOperator_sQLQuery.getSelectedItem();
+			if (itemSQLQuery != null) {
+				final int searchOpId = ((SearchOperators) itemSQLQuery
 						.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -376,9 +371,9 @@ public class DedupParmSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus
 						.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
@@ -401,9 +396,9 @@ public class DedupParmSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType
 						.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {

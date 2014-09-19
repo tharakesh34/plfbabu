@@ -608,7 +608,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseListCtrl<Customer
 		
 		this.custCIF.clearErrorMessage();
 		
-		String oldVar_CustCIF = this.custCIF.getValue();
+		String oldVarCustCIF = this.custCIF.getValue();
 		final Customer aCustomer = (Customer) nCustomer;
 		this.custCIF.setValue(aCustomer.getCustCIF());
 		this.custID = aCustomer.getCustID();
@@ -616,7 +616,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseListCtrl<Customer
 		this.custCIFSearchObject = newSearchObject;
 		setCustomer(aCustomer);
 		
-		if(!oldVar_CustCIF.equals(this.custCIF.getValue())){
+		if(!oldVarCustCIF.equals(this.custCIF.getValue())){
 			this.rows_KeyDetails.getChildren().clear();
 			this.gb_KeyDetails.setVisible(false);
 		}

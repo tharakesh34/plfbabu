@@ -371,10 +371,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.seqNo.getValue())) {
 
 			// get the search operator
-			final Listitem item_SeqNo = this.sortOperator_seqNo.getSelectedItem();
-
-			if (item_SeqNo != null) {
-				final int searchOpId = ((SearchOperators) item_SeqNo.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSeqNo = this.sortOperator_seqNo.getSelectedItem();
+			if (itemSeqNo != null) {
+				final int searchOpId = ((SearchOperators) itemSeqNo.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("seqNo", "%" + this.seqNo.getValue().toUpperCase() + "%", searchOpId));
@@ -388,10 +387,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.dnType.getValue())) {
 
 			// get the search operator
-			final Listitem item_DnType = this.sortOperator_dnType.getSelectedItem();
-
-			if (item_DnType != null) {
-				final int searchOpId = ((SearchOperators) item_DnType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemDnType = this.sortOperator_dnType.getSelectedItem();
+			if (itemDnType != null) {
+				final int searchOpId = ((SearchOperators) itemDnType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dnType", "%" + this.dnType.getValue().toUpperCase() + "%", searchOpId));
@@ -405,10 +403,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.dnCreatedNo.getValue())) {
 
 			// get the search operator
-			final Listitem item_DnCreatedNo = this.sortOperator_dnCreatedNo.getSelectedItem();
-
-			if (item_DnCreatedNo != null) {
-				final int searchOpId = ((SearchOperators) item_DnCreatedNo.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemDnCreatedNo = this.sortOperator_dnCreatedNo.getSelectedItem();
+			if (itemDnCreatedNo != null) {
+				final int searchOpId = ((SearchOperators) itemDnCreatedNo.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dnCreatedNo", "%" + this.dnCreatedNo.getValue().toUpperCase() + "%", searchOpId));
@@ -422,10 +419,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.dnCreatedName.getValue())) {
 
 			// get the search operator
-			final Listitem item_DnCreatedName = this.sortOperator_dnCreatedName.getSelectedItem();
-
-			if (item_DnCreatedName != null) {
-				final int searchOpId = ((SearchOperators) item_DnCreatedName.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemDnCreatedName = this.sortOperator_dnCreatedName.getSelectedItem();
+			if (itemDnCreatedName != null) {
+				final int searchOpId = ((SearchOperators) itemDnCreatedName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("dnCreatedName", "%" + this.dnCreatedName.getValue().toUpperCase() + "%", searchOpId));
@@ -439,10 +435,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.frqCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_FrqCode = this.sortOperator_frqCode.getSelectedItem();
-
-			if (item_FrqCode != null) {
-				final int searchOpId = ((SearchOperators) item_FrqCode.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFrqCode = this.sortOperator_frqCode.getSelectedItem();
+			if (itemFrqCode != null) {
+				final int searchOpId = ((SearchOperators) itemFrqCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("frqCode", "%" + this.frqCode.getValue().toUpperCase() + "%", searchOpId));
@@ -456,10 +451,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.firstActionDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_FirstActionDate = this.sortOperator_firstActionDate.getSelectedItem();
-
-			if (item_FirstActionDate != null) {
-				final int searchOpId = ((SearchOperators) item_FirstActionDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFirstActionDate = this.sortOperator_firstActionDate.getSelectedItem();
+			if (itemFirstActionDate != null) {
+				final int searchOpId = ((SearchOperators) itemFirstActionDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("firstActionDate", "%" + this.firstActionDate.getValue().toUpperCase() + "%", searchOpId));
@@ -473,10 +467,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.nextActionDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_NextActionDate = this.sortOperator_nextActionDate.getSelectedItem();
-
-			if (item_NextActionDate != null) {
-				final int searchOpId = ((SearchOperators) item_NextActionDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemNextActionDate = this.sortOperator_nextActionDate.getSelectedItem();
+			if (itemNextActionDate != null) {
+				final int searchOpId = ((SearchOperators) itemNextActionDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("nextActionDate", "%" + this.nextActionDate.getValue().toUpperCase() + "%", searchOpId));
@@ -490,10 +483,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.lastActionDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_LastActionDate = this.sortOperator_lastActionDate.getSelectedItem();
-
-			if (item_LastActionDate != null) {
-				final int searchOpId = ((SearchOperators) item_LastActionDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemLastActionDate = this.sortOperator_lastActionDate.getSelectedItem();
+			if (itemLastActionDate != null) {
+				final int searchOpId = ((SearchOperators) itemLastActionDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("lastActionDate", "%" + this.lastActionDate.getValue().toUpperCase() + "%", searchOpId));
@@ -507,10 +499,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.finalActionDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_FinalActionDate = this.sortOperator_finalActionDate.getSelectedItem();
-
-			if (item_FinalActionDate != null) {
-				final int searchOpId = ((SearchOperators) item_FinalActionDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemFinalActionDate = this.sortOperator_finalActionDate.getSelectedItem();
+			if (itemFinalActionDate != null) {
+				final int searchOpId = ((SearchOperators) itemFinalActionDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("finalActionDate", "%" + this.finalActionDate.getValue().toUpperCase() + "%", searchOpId));
@@ -522,10 +513,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_Suspend = this.sortOperator_suspend.getSelectedItem();
-
-		if (item_Suspend != null) {
-			final int searchOpId = ((SearchOperators) item_Suspend.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemSuspend = this.sortOperator_suspend.getSelectedItem();
+		if (itemSuspend != null) {
+			final int searchOpId = ((SearchOperators) itemSuspend.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -541,10 +531,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.suspendStartDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_SuspendStartDate = this.sortOperator_suspendStartDate.getSelectedItem();
-
-			if (item_SuspendStartDate != null) {
-				final int searchOpId = ((SearchOperators) item_SuspendStartDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSuspendStartDate = this.sortOperator_suspendStartDate.getSelectedItem();
+			if (itemSuspendStartDate != null) {
+				final int searchOpId = ((SearchOperators) itemSuspendStartDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("suspendStartDate", "%" + this.suspendStartDate.getValue().toUpperCase() + "%", searchOpId));
@@ -558,10 +547,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.suspendEndDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_SuspendEndDate = this.sortOperator_suspendEndDate.getSelectedItem();
-
-			if (item_SuspendEndDate != null) {
-				final int searchOpId = ((SearchOperators) item_SuspendEndDate.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemSuspendEndDate = this.sortOperator_suspendEndDate.getSelectedItem();
+			if (itemSuspendEndDate != null) {
+				final int searchOpId = ((SearchOperators) itemSuspendEndDate.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("suspendEndDate", "%" + this.suspendEndDate.getValue().toUpperCase() + "%", searchOpId));
@@ -573,10 +561,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 		// get the search operatorxxx
-		final Listitem item_RecordDeleted = this.sortOperator_recordDeleted.getSelectedItem();
-
-		if (item_RecordDeleted != null) {
-			final int searchOpId = ((SearchOperators) item_RecordDeleted.getAttribute("data")).getSearchOperatorId();
+		final Listitem itemRecordDeleted = this.sortOperator_recordDeleted.getSelectedItem();
+		if (itemRecordDeleted != null) {
+			final int searchOpId = ((SearchOperators) itemRecordDeleted.getAttribute("data")).getSearchOperatorId();
 			
 			if (searchOpId == -1) {
 				// do nothing
@@ -592,10 +579,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.isNotEmpty(this.narration.getValue())) {
 
 			// get the search operator
-			final Listitem item_Narration = this.sortOperator_narration.getSelectedItem();
-
-			if (item_Narration != null) {
-				final int searchOpId = ((SearchOperators) item_Narration.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemNarration = this.sortOperator_narration.getSelectedItem();
+			if (itemNarration != null) {
+				final int searchOpId = ((SearchOperators) itemNarration.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("narration", "%" + this.narration.getValue().toUpperCase() + "%", searchOpId));
@@ -608,9 +594,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -629,9 +615,9 @@ public class DiaryNotesSearchCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

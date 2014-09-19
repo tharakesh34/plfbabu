@@ -1099,15 +1099,15 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.oldVar_dob != this.dob.getValue()) {
 			return true;
 		}
-		String old_custAddrFrom = "";
-		String new_custAddrFrom = "";
+		String oldCustAddrFrom = "";
+		String newCustAddrFrom = "";
 		if (this.oldVar_custAddrFrom != null) {
-			old_custAddrFrom = DateUtility.formatDate(this.oldVar_custAddrFrom,PennantConstants.dateFormat);
+			oldCustAddrFrom = DateUtility.formatDate(this.oldVar_custAddrFrom,PennantConstants.dateFormat);
 		}
 		if (this.custAddrFrom.getValue() != null) {
-			new_custAddrFrom = DateUtility.formatDate(this.custAddrFrom.getValue(),PennantConstants.dateFormat);
+			newCustAddrFrom = DateUtility.formatDate(this.custAddrFrom.getValue(),PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_custAddrFrom).equals(StringUtils.trimToEmpty(new_custAddrFrom))) {
+		if (!StringUtils.trimToEmpty(oldCustAddrFrom).equals(StringUtils.trimToEmpty(newCustAddrFrom))) {
 			return true;
 		}
 		logger.debug("Leaving"); 
@@ -2197,8 +2197,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 	
 	public void setCustomerSelectCtrl(CustomerSelectCtrl customerSelectctrl) {

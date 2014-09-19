@@ -352,16 +352,16 @@ public class ShowDedupListBox extends Window implements Serializable {
 		return _textbox;
 	}
 
-	public void set_textbox(Textbox _textbox) {
-		this._textbox = _textbox;
+	public void set_textbox(Textbox textbox) {
+		this._textbox = textbox;
 	}
 
 	public Paging get_paging() {
 		return _paging;
 	}
 
-	public void set_paging(Paging _paging) {
-		this._paging = _paging;
+	public void set_paging(Paging paging) {
+		this._paging = paging;
 	}
 
 	public int getPageSize() {
@@ -392,8 +392,8 @@ public class ShowDedupListBox extends Window implements Serializable {
 		return _width;
 	}
 
-	public void set_width(int _width) {
-		this._width = _width;
+	public void set_width(int width) {
+		this._width = width;
 	}
 
 	public PagedListService getPagedListService() {

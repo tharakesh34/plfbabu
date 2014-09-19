@@ -312,10 +312,9 @@ public class CustomerRatingSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustCIF = this.sortOperator_custCIF.getSelectedItem();
-
-			if (item_CustCIF != null) {
-				final int searchOpId = ((SearchOperators) item_CustCIF.getAttribute(
+			final Listitem itemCustCIF = this.sortOperator_custCIF.getSelectedItem();
+			if (itemCustCIF != null) {
+				final int searchOpId = ((SearchOperators) itemCustCIF.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -331,10 +330,9 @@ public class CustomerRatingSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.custRatingType.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustRatingType = this.sortOperator_custRatingType.getSelectedItem();
-
-			if (item_CustRatingType != null) {
-				final int searchOpId = ((SearchOperators) item_CustRatingType.getAttribute(
+			final Listitem itemCustRatingType = this.sortOperator_custRatingType.getSelectedItem();
+			if (itemCustRatingType != null) {
+				final int searchOpId = ((SearchOperators) itemCustRatingType.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -350,10 +348,9 @@ public class CustomerRatingSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.custRatingCode.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustRatingCode = this.sortOperator_custRatingCode.getSelectedItem();
-
-			if (item_CustRatingCode != null) {
-				final int searchOpId = ((SearchOperators) item_CustRatingCode.getAttribute(
+			final Listitem itemCustRatingCode = this.sortOperator_custRatingCode.getSelectedItem();
+			if (itemCustRatingCode != null) {
+				final int searchOpId = ((SearchOperators) itemCustRatingCode.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -369,10 +366,9 @@ public class CustomerRatingSearchCtrl extends GFCBaseCtrl implements Serializabl
 		if (StringUtils.isNotEmpty(this.custRating.getValue())) {
 
 			// get the search operator
-			final Listitem item_CustRating = this.sortOperator_custRating.getSelectedItem();
-
-			if (item_CustRating != null) {
-				final int searchOpId = ((SearchOperators) item_CustRating.getAttribute(
+			final Listitem itemCustRating = this.sortOperator_custRating.getSelectedItem();
+			if (itemCustRating != null) {
+				final int searchOpId = ((SearchOperators) itemCustRating.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -387,9 +383,9 @@ public class CustomerRatingSearchCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute(
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -410,9 +406,9 @@ public class CustomerRatingSearchCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute(
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
