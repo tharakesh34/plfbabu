@@ -356,8 +356,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
                     }
 				}else{
 					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
-			        auditHeader.setErrorDetails(new ErrorDetails(errorMessage.substring(0, errorMessage.indexOf("-")).trim(),
-			        		errorMessage.substring(errorMessage.indexOf("-")+1).trim(), null));
+			        auditHeader.setErrorDetails(new ErrorDetails(errorMessage.substring(0, errorMessage.indexOf('-')).trim(),
+			        		errorMessage.substring(errorMessage.indexOf('-')+1).trim(), null));
 			        return auditHeader;
 				}
 				getCommitmentDAO().save(commitment, "");
@@ -369,8 +369,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 					linkTranid = (Long) returnList.get(1);
 				}else{
 					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
-			        auditHeader.setErrorDetails(new ErrorDetails(errorMessage.substring(0, errorMessage.indexOf("-")).trim(),
-			        		errorMessage.substring(errorMessage.indexOf("-")+1).trim(), null));
+			        auditHeader.setErrorDetails(new ErrorDetails(errorMessage.substring(0, errorMessage.indexOf('-')).trim(),
+			        		errorMessage.substring(errorMessage.indexOf('-')+1).trim(), null));
 			        return auditHeader;
 				}
 				getCommitmentDAO().update(commitment, "");
