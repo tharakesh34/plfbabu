@@ -52,8 +52,8 @@
 		<constructor-arg ref="configurationEncryptor" />
 		<property name="locations">
 			<list>
-				<value>file:C:\PFF\PFSConfigurations\jdbc.properties</value>
-				<value>file:C:\PFF\PFSConfigurations\mail.properties</value>
+				<value>file:/opt/pennant/pff/conf/jdbc.properties</value>
+				<value>file:/opt/pennant/pff/conf/mail.properties</value>
 			</list>
 		</property>
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
