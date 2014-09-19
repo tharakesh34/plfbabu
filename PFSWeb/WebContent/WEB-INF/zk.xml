@@ -19,7 +19,7 @@
 			org.zkoss.zk.ui.http.SerializableUiFactory
 		</ui-factory-class>
 	</system-config>
-
+	
 	<!-- ====================================================== -->
 	<!--                 Device configurations                  -->
 	<!--          1. Type of server push                        -->
@@ -151,6 +151,10 @@
          </script>
       ]]></embed>
    </device-config>
+   
+   <system-config>
+		<id-generator-class>com.pennant.util.MyIdgenerator</id-generator-class>
+	</system-config>
   
 </zk>
 
