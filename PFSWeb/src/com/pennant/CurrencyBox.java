@@ -88,7 +88,7 @@ public class CurrencyBox extends Hbox {
 		} catch (Exception e) {
 			decimalbox.setConstraint("");
 			decimalbox.setErrorMessage("");
-			decimalbox.setValue(new BigDecimal(0));
+			decimalbox.setValue(BigDecimal.ZERO);
 			if (e instanceof WrongValueException) {
 				throw e;
 			}
@@ -101,7 +101,7 @@ public class CurrencyBox extends Hbox {
 	private void calculateNumber(String valueToConvert) throws WrongValueException, Exception {
 		logger.debug("Entering");
 		if (isValidString(valueToConvert)) {
-			BigDecimal total = new BigDecimal(0);
+			BigDecimal total = BigDecimal.ZERO;
 			//calculate Billions
 			if (StringUtils.containsIgnoreCase(valueToConvert, B)) {
 				String temp = valueToConvert.substring(0, valueToConvert.indexOf(B));
@@ -149,11 +149,11 @@ public class CurrencyBox extends Hbox {
 				//Set total value to the decimal box
 				decimalbox.setValue(total.setScale(scale));
 			} catch (ArithmeticException e) {
-				decimalbox.setValue(new BigDecimal(0).setScale(scale));
+				decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 				throw new WrongValueException(this.textbox, errormesage4 + scale);
 			}
 		} else {
-			decimalbox.setValue(new BigDecimal(0).setScale(scale));
+			decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 		}
 		logger.debug("Leaving");
 	}
