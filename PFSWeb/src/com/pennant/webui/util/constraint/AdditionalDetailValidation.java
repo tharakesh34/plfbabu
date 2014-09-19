@@ -54,7 +54,7 @@ public class AdditionalDetailValidation implements Serializable {
 
 	public void doPrepareAdditionalDetails(HashMap<String, Object> lovDescExtendedFieldValues,
 			List<ExtendedFieldDetail> extendedFieldDetailList,Window dialogWindow,
-			Rows rows_addlDetail, int columnCount, boolean isReadOnly) throws ParseException{
+			Rows rowsAddlDetail, int columnCount, boolean isReadOnly) throws ParseException{
 		
 		logger.debug("Entering");
 
@@ -398,7 +398,7 @@ public class AdditionalDetailValidation implements Serializable {
 					row.appendChild(space);
 					row.appendChild(radiogroup);
 				}
-				rows_addlDetail.appendChild(row);
+				rowsAddlDetail.appendChild(row);
 			}
 		}
 		logger.debug("Leaving");
@@ -407,9 +407,9 @@ public class AdditionalDetailValidation implements Serializable {
 	/**
 	 * Method to set validation & Save for Additional Field Details 
 	 * @param extendedFieldDetailList
-	 * @param rows_addlDetail
+	 * @param rowsAddlDetail
 	 */
-	public FinanceDetail doSaveAdditionFieldDetails(FinanceDetail financeDetail ,Rows rows_addlDetail,
+	public FinanceDetail doSaveAdditionFieldDetails(FinanceDetail financeDetail ,Rows rowsAddlDetail,
 			ArrayList<WrongValueException> wve,Tab tab,boolean isReadOnly) {
 		
 		logger.debug("Entering");
@@ -422,9 +422,9 @@ public class AdditionalDetailValidation implements Serializable {
 				for (int i = 0; i < extendedFieldDetailList.size(); i++) {
 					ExtendedFieldDetail detail = extendedFieldDetailList.get(i);
 
-					if (rows_addlDetail.getFellowIfAny("ad_"+ detail.getFieldName()) != null) {
+					if (rowsAddlDetail.getFellowIfAny("ad_"+ detail.getFieldName()) != null) {
 
-						Component component = rows_addlDetail.getFellowIfAny("ad_"+ detail.getFieldName());
+						Component component = rowsAddlDetail.getFellowIfAny("ad_"+ detail.getFieldName());
 						compList.add(component);
 
 						if (component instanceof Decimalbox) {
@@ -553,9 +553,9 @@ public class AdditionalDetailValidation implements Serializable {
 	/**
 	 * Method to set validation & Save for Additional Field Details 
 	 * @param extendedFieldDetailList
-	 * @param rows_addlDetail
+	 * @param rowsaddlDetail
 	 */
-	public boolean isAddlDetailChanged(FinanceDetail financeDetail ,Rows rows_addlDetail) {
+	public boolean isAddlDetailChanged(FinanceDetail financeDetail ,Rows rowsaddlDetail) {
 
 		logger.debug("Entering");
 		
@@ -567,9 +567,9 @@ public class AdditionalDetailValidation implements Serializable {
 				for (int i = 0; i < extendedFieldDetailList.size(); i++) {
 					ExtendedFieldDetail detail = extendedFieldDetailList.get(i);
 
-					if (rows_addlDetail.getFellowIfAny("ad_"+ detail.getFieldName()) != null) {
+					if (rowsaddlDetail.getFellowIfAny("ad_"+ detail.getFieldName()) != null) {
 
-						Component component = rows_addlDetail.getFellowIfAny("ad_"+ detail.getFieldName());
+						Component component = rowsaddlDetail.getFellowIfAny("ad_"+ detail.getFieldName());
 
 						if (component instanceof Combobox) {
 							Combobox combobox = (Combobox) component;
@@ -585,20 +585,20 @@ public class AdditionalDetailValidation implements Serializable {
 							decimalbox.setConstraint("");
 							decimalbox.setErrorMessage("");
 							BigDecimal decimalValue = null;
-							BigDecimal oldVar_decimalValue = null;
+							BigDecimal oldVarDecimalValue = null;
 							if("AMT".equals(detail.getFieldType())){
 								decimalValue = PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), detail.getFieldPrec());
-								oldVar_decimalValue = new BigDecimal(new BigInteger(
+								oldVarDecimalValue = new BigDecimal(new BigInteger(
 										StringUtils.trimToEmpty(detail.getFieldDefaultValue()).equals("")? "0" : 
 											detail.getFieldDefaultValue() ),0);
 							}else{
 								decimalValue = decimalbox.getValue();
-								oldVar_decimalValue = new BigDecimal(new BigInteger(
+								oldVarDecimalValue = new BigDecimal(new BigInteger(
 										StringUtils.trimToEmpty(detail.getFieldDefaultValue()).equals("")? "0" : 
 											detail.getFieldDefaultValue() ), detail.getFieldPrec());
 							}
 
-							if(!((lovDescExtendedFieldValues.get(detail.getFieldName())== null ? oldVar_decimalValue
+							if(!((lovDescExtendedFieldValues.get(detail.getFieldName())== null ? oldVarDecimalValue
 									:new BigDecimal(lovDescExtendedFieldValues.get(detail.getFieldName()).toString())).equals(decimalValue))){
 								logger.debug("Leaving");
 								return true;
