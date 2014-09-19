@@ -581,12 +581,12 @@ public class PennantConstants {
 	public static final String FACILITY_LOA_EXECUTIVE_COMMITTEE="EXCOM";
 	public static final String FACILITY_LOA_BOARD_OF_DIRECTORS="BOD";
 	
-	public static final BigDecimal BD_500_K = new BigDecimal(500000);
-	public static final BigDecimal USD_5_M =new BigDecimal(5000000);
-	public static final BigDecimal USD_15_M = new BigDecimal(15000000);
-	public static final BigDecimal Tenor_5_Years = new BigDecimal(5.0);
-	public static final BigDecimal Tenor_7_Years = new BigDecimal(7.0);
-	public static final BigDecimal Tenor_10_Years = new BigDecimal(10.0);
+	public static final BigDecimal BD_500_K = BigDecimal.valueOf(500000);
+	public static final BigDecimal USD_5_M = BigDecimal.valueOf(5000000);
+	public static final BigDecimal USD_15_M = BigDecimal.valueOf(15000000);
+	public static final BigDecimal Tenor_5_Years = BigDecimal.valueOf(5.0);
+	public static final BigDecimal Tenor_7_Years = BigDecimal.valueOf(7.0);
+	public static final BigDecimal Tenor_10_Years = BigDecimal.valueOf(10.0);
 	
 	// For Cheque Printing
 	public static final String CHEQUE_PRINTING_CHEQUES = "Checks";

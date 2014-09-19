@@ -2857,7 +2857,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			aFinanceMain.setAmount(finAmount.multiply(fCurrency.getCcySpotRate()));
 		}
 
-		if (aFinanceMain.getAmount().compareTo(new BigDecimal(100000.000)) > 0) {
+		if (aFinanceMain.getAmount().compareTo(BigDecimal.valueOf(100000.000)) > 0) {
 			aFinanceMain.setException(true);
 		}
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
