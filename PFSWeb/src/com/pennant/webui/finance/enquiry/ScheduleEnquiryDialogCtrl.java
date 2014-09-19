@@ -386,10 +386,10 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 	
 	public List<ChartSetElement> getReportDataForFinVsAmount(){
 
-		BigDecimal downPayment= new BigDecimal(0).setScale(formatter, RoundingMode.HALF_UP);
-		BigDecimal capitalized= new BigDecimal(0).setScale(formatter, RoundingMode.HALF_UP);;
-		BigDecimal scheduleProfit= new BigDecimal(0).setScale(formatter, RoundingMode.HALF_UP);; 
-		BigDecimal schedulePrincipal= new BigDecimal(0).setScale(formatter, RoundingMode.HALF_UP);
+		BigDecimal downPayment= BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
+		BigDecimal capitalized= BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);;
+		BigDecimal scheduleProfit= BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);; 
+		BigDecimal schedulePrincipal= BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
 		List<ChartSetElement> listChartSetElement=new ArrayList<ChartSetElement>();
 		List<FinanceScheduleDetail> listScheduleDetail= getFinScheduleData().getFinanceScheduleDetails();
 		if(listScheduleDetail!=null){

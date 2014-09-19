@@ -836,7 +836,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl implements Se
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		BigDecimal totalSharePercent = new BigDecimal(0);
+		BigDecimal totalSharePercent = BigDecimal.ZERO;
 		boolean percentageCheck = false;
 		totalSharePercent = new BigDecimal(this.promotersShare.getValue()==null?"0":this.promotersShare.getValue().toString());
 		totalSharePercent = totalSharePercent.add(new BigDecimal(this.associatesShare.getValue()==null?"0":this.associatesShare.getValue().toString()));

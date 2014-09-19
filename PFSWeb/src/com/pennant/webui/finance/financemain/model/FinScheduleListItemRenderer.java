@@ -540,8 +540,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 						if(CalculationConstants.RATE_BASIS_C.equals(aFinanceMain.getRepayRateBasis())){
 							
 							doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("listcell_flatRate.label"),
-									getFinanceScheduleDetail().getActRate(), new BigDecimal(0),
-									new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), false, isRate,
+									getFinanceScheduleDetail().getActRate(),BigDecimal.ZERO,
+									BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false, isRate,
 									showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",0, null,false);
 							
 							//Event Description Details
@@ -605,8 +605,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 					BigDecimal rate = getFinanceScheduleDetail().getCalculatedRate();
 					if(CalculationConstants.RATE_BASIS_C.equals(aFinanceMain.getRepayRateBasis())){
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("listcell_flatRate.label"),
-								getFinanceScheduleDetail().getActRate(), new BigDecimal(0),
-								new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), false, isRate,
+								getFinanceScheduleDetail().getActRate(), BigDecimal.ZERO,
+								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false, isRate,
 								showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#C71585","color_ReviewRate",0, null,false);
 						
 						//Event Description Details

@@ -245,9 +245,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	protected Listbox listBoxGurantorsPrimaryExposure;
 	protected Listbox listBoxGurantorsSecoundaryExposure;
 	protected Listbox listBoxGurantorsExposure;
-	BigDecimal totfinAmt = new BigDecimal(0);
-	BigDecimal totCurrentAmt = new BigDecimal(0);
-	BigDecimal totDueAmt = new BigDecimal(0);
+	BigDecimal totfinAmt = BigDecimal.ZERO;
+	BigDecimal totCurrentAmt = BigDecimal.ZERO;
+	BigDecimal totDueAmt = BigDecimal.ZERO;
 	long recordCount = 0;
 	String primaryCustId;
 	int ccDecimal = 0;

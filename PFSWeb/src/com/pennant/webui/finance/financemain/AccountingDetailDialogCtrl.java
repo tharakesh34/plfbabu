@@ -484,7 +484,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> i
 					lc = new Listcell(entry.getAcCcy());
 					lc.setParent(item);
 					
-					BigDecimal amt = entry.getPostAmount()!=null?entry.getPostAmount():new BigDecimal(0).setScale(0, RoundingMode.FLOOR);
+					BigDecimal amt = entry.getPostAmount()!=null?entry.getPostAmount(): BigDecimal.ZERO.setScale(0, RoundingMode.FLOOR);
 					
 					lc = new Listcell(PennantAppUtil.amountFormate(amt,formatter));
 					lc.setStyle("font-weight:bold;text-align:right;");
@@ -586,7 +586,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> i
 					lc = new Listcell(entry.getAcCcy());
 					lc.setParent(item);
 					
-					BigDecimal amt = entry.getPostAmount()!=null?entry.getPostAmount():new BigDecimal(0).setScale(0, RoundingMode.FLOOR);
+					BigDecimal amt = entry.getPostAmount()!=null?entry.getPostAmount(): BigDecimal.ZERO.setScale(0, RoundingMode.FLOOR);
 					
 					lc = new Listcell(PennantAppUtil.amountFormate(amt,formatter));
 					lc.setStyle("font-weight:bold;text-align:right;");

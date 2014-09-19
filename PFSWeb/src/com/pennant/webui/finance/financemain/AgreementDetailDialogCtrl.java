@@ -903,7 +903,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 			List<FinanceSummary> financeMains = getFinanceDetailsByCustomer(custid);
 			if (financeMains != null && !financeMains.isEmpty()) {
 				agreement.setCustomerFinances(new ArrayList<AgreementDetail.CustomerFinance>());
-				BigDecimal tot = new BigDecimal(0);
+				BigDecimal tot = BigDecimal.ZERO;
 				for (FinanceSummary financeMain : financeMains) {
 					CustomerFinance customerFinance = agreement.new CustomerFinance();
 					customerFinance.setDealDate(formatdDate(financeMain.getFinStartDate()));

@@ -1208,14 +1208,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		
 		try {
-			if (this.custTotalIncome.getValue() != new BigDecimal(0)) {
+			if (this.custTotalIncome.getValue() != BigDecimal.ZERO) {
 				aCustomer.setCustTotalIncome(PennantAppUtil.unFormateAmount(this.custTotalIncome.getValue(), ccyFormatter));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (this.custTotalExpense.getValue() != new BigDecimal(0)) {
+			if (this.custTotalExpense.getValue() != BigDecimal.ZERO) {
 				aCustomer.setCustTotalExpense(PennantAppUtil.unFormateAmount(this.custTotalExpense.getValue(), ccyFormatter));
 			}
 		} catch (WrongValueException we) {
@@ -2302,7 +2302,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.custSector.setDescription("");
 		this.custSubSector.setValue("");
 		this.custSubSector.setDescription("");
-		this.custTotalIncome.setValue(PennantAppUtil.formateAmount(new BigDecimal(0), ccyFormatter));
+		this.custTotalIncome.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, ccyFormatter));
 		this.custEmpSts.setValue("");
 		this.custEmpSts.setDescription("");
 		this.custBaseCcy.setValue("");
@@ -3275,8 +3275,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 	}
 
 	private void createIncomeGroupList(List<CustomerIncome> incomes) {
-		BigDecimal totIncome = new BigDecimal(0);
-		BigDecimal totExpense = new BigDecimal(0);
+		BigDecimal totIncome = BigDecimal.ZERO;
+		BigDecimal totExpense = BigDecimal.ZERO;
 		Map<String, List<CustomerIncome>> incomeMap = new HashMap<String, List<CustomerIncome>>();
 		Map<String, List<CustomerIncome>> expenseMap = new HashMap<String, List<CustomerIncome>>();
 		for (CustomerIncome customerIncome : incomes) {
@@ -3319,7 +3319,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getLovDescCategoryName());
 					cell.setParent(group);
 					this.listBoxCustomerIncome.appendChild(group);
-					BigDecimal total = new BigDecimal(0);
+					BigDecimal total = BigDecimal.ZERO;
 					for (CustomerIncome customerIncome : list) {
 						item = new Listitem();
 						cell = new Listcell("");
@@ -3381,7 +3381,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getLovDescCategoryName());
 					cell.setParent(group);
 					this.listBoxCustomerIncome.appendChild(group);
-					BigDecimal total = new BigDecimal(0);
+					BigDecimal total = BigDecimal.ZERO;
 					for (CustomerIncome customerIncome : list) {
 						item = new Listitem();
 						cell = new Listcell("");

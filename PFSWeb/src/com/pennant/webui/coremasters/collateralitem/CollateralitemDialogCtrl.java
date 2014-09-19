@@ -358,7 +358,7 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.hYNRD.setFormat(PennantConstants.dateFormat);
 		this.hYNOU.setMaxlength(9);
 		this.hYNOU.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.hYNOU.setValue(new BigDecimal(1));
+		this.hYNOU.setValue(BigDecimal.ONE);
 		this.hYUNP.setMaxlength(15);
 		this.hYUNP.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.hYUNP.setRoundingMode(BigDecimal.ROUND_DOWN);

@@ -37,21 +37,21 @@ public class FinanceMainValidation {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private static void doSetValidation() {
-		BigDecimal financeAmount = new BigDecimal(0);
+		BigDecimal financeAmount = BigDecimal.ZERO;
 		if (!((Decimalbox)window.getFellowIfAny("finAmount")).isReadonly()){
 			Decimalbox finAmount =  ((Decimalbox)window.getFellowIfAny("finAmount"));
 			financeAmount = new BigDecimal(finAmount.getValue()== null ? "0" : finAmount.getValue().toString());
-			if(getFinanceType().getFinMinAmount().compareTo(new BigDecimal(0))>0 &&
-					getFinanceType().getFinMaxAmount().compareTo(new BigDecimal(0))>0){
+			if(getFinanceType().getFinMinAmount().compareTo(BigDecimal.ZERO)>0 &&
+					getFinanceType().getFinMaxAmount().compareTo(BigDecimal.ZERO)>0){
 				finAmount.setConstraint(new RangeAmountValidator(getFinanceType().getFinMinAmount(), getFinanceType().getFinMaxAmount(), 
 						Labels.getLabel("label_FinanceMainQDEDialog_FinAmount.value")));
 			}
 		}
-		if(financeAmount.compareTo(new BigDecimal(0))>0){
+		if(financeAmount.compareTo(BigDecimal.ZERO)>0){
 			if (!((Decimalbox)window.getFellowIfAny("downPayment")).isReadonly() && !((Decimalbox)window.getFellowIfAny("downPayment")).isDisabled()){
 				Decimalbox downPayment =  ((Decimalbox)window.getFellowIfAny("downPayment"));
 				if(getFinanceType().getFinMinDownPayAmount().doubleValue() >0){
-					downPayment.setConstraint(new RangeAmountValidator(financeAmount.equals(new BigDecimal(0)) ? new BigDecimal(0):
+					downPayment.setConstraint(new RangeAmountValidator(financeAmount.equals(BigDecimal.ZERO) ? BigDecimal.ZERO:
 						financeAmount.divide(getFinanceType().getFinMinDownPayAmount()),
 						financeAmount, Labels.getLabel("label_FinanceMainQDEDialog_DownPayment.value")));
 				}else{
