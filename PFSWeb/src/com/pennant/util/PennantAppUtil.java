@@ -1050,7 +1050,7 @@ public class PennantAppUtil {
 		for (int i = 0; i < queryfileds.length; i++) {
 			String temp=queryfileds[i];
 			if (temp.contains(":")) {
-				fields[i] = new Field(temp.substring(0,temp.indexOf(":")));
+				fields[i] = new Field(temp.substring(0,temp.indexOf(':')));
 			}else{
 				fields[i] = new Field(temp);
 			}
