@@ -861,7 +861,7 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScor
 				continue;
 			}
 			if (codevalue[i] != null && codevalue[i].contains(";")) {
-				String code = codevalue[i].substring(codevalue[i].indexOf("=") + 1, codevalue[i].indexOf(";"));
+				String code = codevalue[i].substring(codevalue[i].indexOf('=') + 1, codevalue[i].indexOf(';'));
 				if (code.contains("'")) {
 					code = code.replace("'", "");
 				}

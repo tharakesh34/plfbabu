@@ -10637,8 +10637,8 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 				continue;
 			}
 			if (codevalue[i].contains(";")) {
-				String code = codevalue[i].substring(codevalue[i].indexOf("=") + 1,
-						codevalue[i].indexOf(";"));
+				String code = codevalue[i].substring(codevalue[i].indexOf('=') + 1,
+						codevalue[i].indexOf(';'));
 				if (code.contains("'")) {
 					code=code.replace("'", "");
 				}
