@@ -1245,8 +1245,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void onClick$btnNotes(Event event) throws Exception {
@@ -1441,8 +1441,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		for (int i = 0; i < referenceDetails.size(); i++) {
 			FinanceReferenceDetail oldFinrefDet = referenceDetails.get(i);
 			Listitem item = (Listitem) listbox.getItems().get(i);
-			FinanceReferenceDetail NewFinrefDet = (FinanceReferenceDetail) item.getAttribute("data");
-			if (oldFinrefDet.getRecordType() != NewFinrefDet.getRecordType()) {
+			FinanceReferenceDetail newFinrefDet = (FinanceReferenceDetail) item.getAttribute("data");
+			if (oldFinrefDet.getRecordType() != newFinrefDet.getRecordType()) {
 				return true;
 			}
 		}

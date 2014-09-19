@@ -1633,35 +1633,35 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.oldVar_CmtAvailable != this.cmtAvailable.doubleValue()) {
 			return true;
 		}
-		String old_CmtPromisedDate = "";
-		String new_CmtPromisedDate = "";
+		String oldCmtPromisedDate = "";
+		String newCmtPromisedDate = "";
 		if (this.oldVar_CmtPromisedDate != null) {
-			old_CmtPromisedDate = DateUtility.formatDate(this.oldVar_CmtPromisedDate, PennantConstants.dateFormat);
+			oldCmtPromisedDate = DateUtility.formatDate(this.oldVar_CmtPromisedDate, PennantConstants.dateFormat);
 		}
 		if (this.cmtPromisedDate.getValue() != null) {
-			new_CmtPromisedDate = DateUtility.formatDate(this.cmtPromisedDate.getValue(), PennantConstants.dateFormat);
+			newCmtPromisedDate = DateUtility.formatDate(this.cmtPromisedDate.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_CmtPromisedDate).equals(StringUtils.trimToEmpty(new_CmtPromisedDate))) {
+		if (!StringUtils.trimToEmpty(oldCmtPromisedDate).equals(StringUtils.trimToEmpty(newCmtPromisedDate))) {
 			return true;
 		}
-		String old_CmtStartDate = "";
-		String new_CmtStartDate = "";
+		String oldCmtStartDate = "";
+		String newCmtStartDate = "";
 		if (this.oldVar_CmtStartDate != null) {
-			old_CmtStartDate = DateUtility.formatDate(this.oldVar_CmtStartDate, PennantConstants.dateFormat);
+			oldCmtStartDate = DateUtility.formatDate(this.oldVar_CmtStartDate, PennantConstants.dateFormat);
 		}
 		if (this.cmtStartDate.getValue() != null) {
-			new_CmtStartDate = DateUtility.formatDate(this.cmtStartDate.getValue(), PennantConstants.dateFormat);
+			newCmtStartDate = DateUtility.formatDate(this.cmtStartDate.getValue(), PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_CmtStartDate).equals(StringUtils.trimToEmpty(new_CmtStartDate))) {
+		if (!StringUtils.trimToEmpty(oldCmtStartDate).equals(StringUtils.trimToEmpty(newCmtStartDate))) {
 			return true;
 		}
-		String old_CmtExpDate = "";
-		String new_CmtExpDate = "";
+		String oldCmtExpDate = "";
+		String newCmtExpDate = "";
 		if (this.oldVar_CmtExpDate != null) {
-			old_CmtExpDate = DateUtility.formatDate(this.oldVar_CmtExpDate, PennantConstants.dateFormat);
+			oldCmtExpDate = DateUtility.formatDate(this.oldVar_CmtExpDate, PennantConstants.dateFormat);
 		}
 		if (this.cmtExpDate.getValue() != null) {
-			new_CmtExpDate = DateUtility.formatDate(this.cmtExpDate.getValue(), PennantConstants.dateFormat);
+			newCmtExpDate = DateUtility.formatDate(this.cmtExpDate.getValue(), PennantConstants.dateFormat);
 		}
 		if (this.oldVar_CmtCharges != this.cmtCharges.doubleValue()) {
 			return true;
@@ -1676,7 +1676,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.oldVar_cmtNonperformingStatus != this.cmtNonperformingStatus.isChecked()) {
 			return true;
 		}
-		if (!StringUtils.trimToEmpty(old_CmtExpDate).equals(StringUtils.trimToEmpty(new_CmtExpDate))) {
+		if (!StringUtils.trimToEmpty(oldCmtExpDate).equals(StringUtils.trimToEmpty(newCmtExpDate))) {
 			return true;
 		}
 
@@ -2308,8 +2308,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return notes_Entered;
 	}
 
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public CommitmentDAO getCommitmentDAO() {

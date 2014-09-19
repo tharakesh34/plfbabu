@@ -1296,8 +1296,8 @@ public class QueryBuilder extends Groupbox {
 
 				component = treeCell.getFellowIfAny(uUID+"_rightOperand");
 
-				Combobox Operator= (Combobox) treeCell.getFellowIfAny(treeCell.getId()+"_operator");
-				if((Operator.getSelectedItem().getLabel().equals(Labels.getLabel("IN_LABEL")))||(Operator.getSelectedItem().getLabel().equals(Labels.getLabel("NOTIN_LABEL")))){
+				Combobox aOperator= (Combobox) treeCell.getFellowIfAny(treeCell.getId()+"_operator");
+				if((aOperator.getSelectedItem().getLabel().equals(Labels.getLabel("IN_LABEL")))||(aOperator.getSelectedItem().getLabel().equals(Labels.getLabel("NOTIN_LABEL")))){
 					value=getRightOperandValue(component);
 				}
 				else{
@@ -1537,10 +1537,10 @@ public class QueryBuilder extends Groupbox {
 
 	public void simulateQuery() throws InterruptedException{
 		if(!this.editable){					//TODO FIX ME 
-			String query_Temp = this.sqlQuery;
+			String queryTemp = this.sqlQuery;
 			validateQuery();
 			createResultWindow();
-			this.sqlQuery = query_Temp;
+			this.sqlQuery = queryTemp;
 		}else{
 			validateQuery();
 			createResultWindow();

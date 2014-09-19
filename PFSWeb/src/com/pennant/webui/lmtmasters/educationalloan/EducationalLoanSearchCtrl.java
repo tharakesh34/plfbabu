@@ -371,10 +371,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduLoanId.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduLoanId = this.sortOperator_eduLoanId.getSelectedItem();
-
-			if (item_EduLoanId != null) {
-				final int searchOpId = ((SearchOperators) item_EduLoanId.getAttribute(
+			final Listitem itemEduLoanId = this.sortOperator_eduLoanId.getSelectedItem();
+			if (itemEduLoanId != null) {
+				final int searchOpId = ((SearchOperators) itemEduLoanId.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -389,10 +388,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.loanRefNumber.getValue())) {
 
 			// get the search operator
-			final Listitem item_LoanRefNumber = this.sortOperator_loanRefNumber.getSelectedItem();
-
-			if (item_LoanRefNumber != null) {
-				final int searchOpId = ((SearchOperators) item_LoanRefNumber.getAttribute(
+			final Listitem itemLoanRefNumber = this.sortOperator_loanRefNumber.getSelectedItem();
+			if (itemLoanRefNumber != null) {
+				final int searchOpId = ((SearchOperators) itemLoanRefNumber.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -406,10 +404,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 			}
 		}
 		// get the search operator
-		final Listitem item_LoanRefType = this.sortOperator_loanRefType.getSelectedItem();
-
-		if (item_LoanRefType != null) {
-			final int searchOpId = ((SearchOperators) item_LoanRefType.getAttribute(
+		final Listitem itemLoanRefType = this.sortOperator_loanRefType.getSelectedItem();
+		if (itemLoanRefType != null) {
+			final int searchOpId = ((SearchOperators) itemLoanRefType.getAttribute(
 					"data")).getSearchOperatorId();
 
 			if (searchOpId == -1) {
@@ -426,10 +423,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduCourse.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduCourse = this.sortOperator_eduCourse.getSelectedItem();
-
-			if (item_EduCourse != null) {
-				final int searchOpId = ((SearchOperators) item_EduCourse.getAttribute(
+			final Listitem itemEduCourse = this.sortOperator_eduCourse.getSelectedItem();
+			if (itemEduCourse != null) {
+				final int searchOpId = ((SearchOperators) itemEduCourse.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -445,10 +441,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduSpecialization.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduSpecialization = this.sortOperator_eduSpecialization.getSelectedItem();
-
-			if (item_EduSpecialization != null) {
-				final int searchOpId = ((SearchOperators) item_EduSpecialization.getAttribute(
+			final Listitem itemEduSpecialization = this.sortOperator_eduSpecialization.getSelectedItem();
+			if (itemEduSpecialization != null) {
+				final int searchOpId = ((SearchOperators) itemEduSpecialization.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -465,10 +460,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduCourseType.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduCourseType = this.sortOperator_eduCourseType.getSelectedItem();
-
-			if (item_EduCourseType != null) {
-				final int searchOpId = ((SearchOperators) item_EduCourseType.getAttribute(
+			final Listitem itemEduCourseType = this.sortOperator_eduCourseType.getSelectedItem();
+			if (itemEduCourseType != null) {
+				final int searchOpId = ((SearchOperators) itemEduCourseType.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -484,10 +478,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduCourseFrom.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduCourseFrom = this.sortOperator_eduCourseFrom.getSelectedItem();
-
-			if (item_EduCourseFrom != null) {
-				final int searchOpId = ((SearchOperators) item_EduCourseFrom.getAttribute(
+			final Listitem itemEduCourseFrom = this.sortOperator_eduCourseFrom.getSelectedItem();
+			if (itemEduCourseFrom != null) {
+				final int searchOpId = ((SearchOperators) itemEduCourseFrom.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -503,10 +496,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduCourseFromBranch.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduCourseFromBranch = this.sortOperator_eduCourseFromBranch.getSelectedItem();
-
-			if (item_EduCourseFromBranch != null) {
-				final int searchOpId = ((SearchOperators) item_EduCourseFromBranch.getAttribute(
+			final Listitem itemEduCourseFromBranch = this.sortOperator_eduCourseFromBranch.getSelectedItem();
+			if (itemEduCourseFromBranch != null) {
+				final int searchOpId = ((SearchOperators) itemEduCourseFromBranch.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -523,10 +515,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduAffiliatedTo.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduAffiliatedTo = this.sortOperator_eduAffiliatedTo.getSelectedItem();
-
-			if (item_EduAffiliatedTo != null) {
-				final int searchOpId = ((SearchOperators) item_EduAffiliatedTo.getAttribute(
+			final Listitem itemEduAffiliatedTo = this.sortOperator_eduAffiliatedTo.getSelectedItem();
+			if (itemEduAffiliatedTo != null) {
+				final int searchOpId = ((SearchOperators) itemEduAffiliatedTo.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -542,10 +533,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduCommenceDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduCommenceDate = this.sortOperator_eduCommenceDate.getSelectedItem();
-
-			if (item_EduCommenceDate != null) {
-				final int searchOpId = ((SearchOperators) item_EduCommenceDate.getAttribute(
+			final Listitem itemEduCommenceDate = this.sortOperator_eduCommenceDate.getSelectedItem();
+			if (itemEduCommenceDate != null) {
+				final int searchOpId = ((SearchOperators) itemEduCommenceDate.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -561,10 +551,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduCompletionDate.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduCompletionDate = this.sortOperator_eduCompletionDate.getSelectedItem();
-
-			if (item_EduCompletionDate != null) {
-				final int searchOpId = ((SearchOperators) item_EduCompletionDate.getAttribute(
+			final Listitem itemEduCompletionDate = this.sortOperator_eduCompletionDate.getSelectedItem();
+			if (itemEduCompletionDate != null) {
+				final int searchOpId = ((SearchOperators) itemEduCompletionDate.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -581,10 +570,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduExpectedIncome.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduExpectedIncome = this.sortOperator_eduExpectedIncome.getSelectedItem();
-
-			if (item_EduExpectedIncome != null) {
-				final int searchOpId = ((SearchOperators) item_EduExpectedIncome.getAttribute(
+			final Listitem itemEduExpectedIncome = this.sortOperator_eduExpectedIncome.getSelectedItem();
+			if (itemEduExpectedIncome != null) {
+				final int searchOpId = ((SearchOperators) itemEduExpectedIncome.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -601,10 +589,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		if (StringUtils.isNotEmpty(this.eduLoanFromBranch.getValue())) {
 
 			// get the search operator
-			final Listitem item_EduLoanFromBranch = this.sortOperator_eduLoanFromBranch.getSelectedItem();
-
-			if (item_EduLoanFromBranch != null) {
-				final int searchOpId = ((SearchOperators) item_EduLoanFromBranch.getAttribute(
+			final Listitem itemEduLoanFromBranch = this.sortOperator_eduLoanFromBranch.getSelectedItem();
+			if (itemEduLoanFromBranch != null) {
+				final int searchOpId = ((SearchOperators) itemEduLoanFromBranch.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -620,9 +607,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute(
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -643,9 +630,9 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute(
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute(
 						"data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {

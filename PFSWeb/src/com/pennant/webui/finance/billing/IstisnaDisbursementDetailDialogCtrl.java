@@ -145,7 +145,6 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl implements 
 	private DisbursementDetailDialogCtrl  disbursementDetailDialogCtrl;
 	protected JdbcSearchObject<FinanceDisbursement> newSearchObject ;
 	private  int formatter = 0;
-	private String currency = "";
 	private Date startDate = null;
 	private Date grcEndDate = null;
 	private boolean isEnq = false;	
@@ -191,10 +190,6 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl implements 
 		} else {
 			setFinanceDisbursement(null);
 		}
-		
-		if (args.containsKey("currency")) {
-			this.currency = (String) args.get("currency");
-		} 
 		
 		if (args.containsKey("isEnq")) {
 			this.isEnq = (Boolean) args.get("isEnq");

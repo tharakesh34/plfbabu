@@ -400,9 +400,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 		if (StringUtils.isNotEmpty(this.showInStage.getValue())) {
 
 			// get the search operator
-			final Listitem item_ShowInStage = this.sortOperator_showInStage.getSelectedItem();
-			if (item_ShowInStage != null) {
-				final int searchOpId = ((SearchOperators) item_ShowInStage.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemShowInStage = this.sortOperator_showInStage.getSelectedItem();
+			if (itemShowInStage != null) {
+				final int searchOpId = ((SearchOperators) itemShowInStage.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("showInStage", "%" + this.showInStage.getValue().toUpperCase() + "%", searchOpId));
@@ -416,10 +416,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 		if (StringUtils.isNotEmpty(this.mandInputInStage.getValue())) {
 
 			// get the search operator
-			final Listitem item_MandInputInStage = this.sortOperator_mandInputInStage.getSelectedItem();
-
-			if (item_MandInputInStage != null) {
-				final int searchOpId = ((SearchOperators) item_MandInputInStage.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemMandInputInStage = this.sortOperator_mandInputInStage.getSelectedItem();
+			if (itemMandInputInStage != null) {
+				final int searchOpId = ((SearchOperators) itemMandInputInStage.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("mandInputInStage", "%" + this.mandInputInStage.getValue().toUpperCase() + "%", searchOpId));
@@ -433,10 +432,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 		if (StringUtils.isNotEmpty(this.allowInputInStage.getValue())) {
 
 			// get the search operator
-			final Listitem item_AllowInputInStage = this.sortOperator_allowInputInStage.getSelectedItem();
-
-			if (item_AllowInputInStage != null) {
-				final int searchOpId = ((SearchOperators) item_AllowInputInStage.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemAllowInputInStage = this.sortOperator_allowInputInStage.getSelectedItem();
+			if (itemAllowInputInStage != null) {
+				final int searchOpId = ((SearchOperators) itemAllowInputInStage.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("allowInputInStage", "%" + this.allowInputInStage.getValue().toUpperCase() + "%", searchOpId));
@@ -449,9 +447,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 		}
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
-			final Listitem item_RecordStatus = this.sortOperator_recordStatus.getSelectedItem();
-			if (item_RecordStatus != null) {
-				final int searchOpId = ((SearchOperators) item_RecordStatus.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
+			if (itemRecordStatus != null) {
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
@@ -470,9 +468,9 @@ public class FinanceReferenceDetailSearchCtrl extends GFCBaseCtrl implements Ser
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
-			final Listitem item_RecordType = this.sortOperator_recordType.getSelectedItem();
-			if (item_RecordType!= null) {
-				final int searchOpId = ((SearchOperators) item_RecordType.getAttribute("data")).getSearchOperatorId();
+			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
+			if (itemRecordType!= null) {
+				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 	
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));

@@ -451,9 +451,9 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseListCtrl<Finance
 		presentAnswersMap = new HashMap<String, CheckListDetail>();
 		selectedAnsCountMap = new HashMap<Long, Long>();
 		// To get Selected Items
-		Set SeletedSet = this.listBox_CheckList.getSelectedItems(); 
-		if (SeletedSet != null) {
-			for (Object object : SeletedSet) {
+		Set seletedSet = this.listBox_CheckList.getSelectedItems(); 
+		if (seletedSet != null) {
+			for (Object object : seletedSet) {
 				if (object instanceof Listitem && !(object instanceof Listgroup)) {
 					Listitem listitem = (Listitem) object;
 					Listcell listCell = (Listcell) listitem.getChildren().get(2);

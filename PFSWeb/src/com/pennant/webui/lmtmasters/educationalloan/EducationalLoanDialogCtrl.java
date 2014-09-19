@@ -978,31 +978,31 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 		if (this.oldVar_eduAffiliatedTo != this.eduAffiliatedTo.getValue()) {
 			return true;
 		}
-		String old_eduCommenceDate = "";
-		String new_eduCommenceDate ="";
+		String oldEduCommenceDate = "";
+		String newEduCommenceDate ="";
 		if (this.oldVar_eduCommenceDate!=null){
-			old_eduCommenceDate=DateUtility.formatDate(this.oldVar_eduCommenceDate,PennantConstants.dateFormat);
+			oldEduCommenceDate=DateUtility.formatDate(this.oldVar_eduCommenceDate,PennantConstants.dateFormat);
 		}
 		if (this.eduCommenceDate.getValue()!=null){
-			new_eduCommenceDate=DateUtility.formatDate(this.eduCommenceDate.getValue(),
+			newEduCommenceDate=DateUtility.formatDate(this.eduCommenceDate.getValue(),
 					PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_eduCommenceDate).equals(StringUtils.trimToEmpty(
-				new_eduCommenceDate))) {
+		if (!StringUtils.trimToEmpty(oldEduCommenceDate).equals(StringUtils.trimToEmpty(
+				newEduCommenceDate))) {
 			return true;
 		}
-		String old_eduCompletionDate = "";
-		String new_eduCompletionDate ="";
+		String oldEduCompletionDate = "";
+		String newEduCompletionDate ="";
 		if (this.oldVar_eduCompletionDate!=null){
-			old_eduCompletionDate=DateUtility.formatDate(this.oldVar_eduCompletionDate,
+			oldEduCompletionDate=DateUtility.formatDate(this.oldVar_eduCompletionDate,
 					PennantConstants.dateFormat);
 		}
 		if (this.eduCompletionDate.getValue()!=null){
-			new_eduCompletionDate=DateUtility.formatDate(this.eduCompletionDate.getValue(),
+			newEduCompletionDate=DateUtility.formatDate(this.eduCompletionDate.getValue(),
 					PennantConstants.dateFormat);
 		}
-		if (!StringUtils.trimToEmpty(old_eduCompletionDate).equals(StringUtils.trimToEmpty(
-				new_eduCompletionDate))) {
+		if (!StringUtils.trimToEmpty(oldEduCompletionDate).equals(StringUtils.trimToEmpty(
+				newEduCompletionDate))) {
 			return true;
 		}
 		if (this.oldVar_eduExpectedIncome != this.eduExpectedIncome.getValue()) {
@@ -1665,8 +1665,8 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-	public void setNotes_Entered(boolean notes_Entered) {
-		this.notes_Entered = notes_Entered;
+	public void setNotes_Entered(boolean notesEntered) {
+		this.notes_Entered = notesEntered;
 	}
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
