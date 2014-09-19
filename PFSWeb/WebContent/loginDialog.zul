@@ -21,56 +21,47 @@
 					<div align="left" style="margin-top:300px;">
 						<h:form action="j_spring_security_check"
 							method="post">
-							<grid width="400px" style="border:none;background:white;">
+							<grid style="border:none;background:white;">
 								<columns>
 									<column width="200px" />
 									<column width="200px" align="right" />
 								</columns>
 								<rows>
-									<row spans="2"  />
-									<row spans="2" align="right"
-										if="${not empty param.login_error}">
-										<label id="msg_Error"
-											value="${c:l('label_LoginDialog_Error.value')}"
-											style="color:red" />
+									<row>
+										<cell colspan="2"></cell>
+									</row>
+									<row spans="2" align="right" if="${not empty param.login_error}">
+										<label id="msg_Error" value="${c:l('label_LoginDialog_Error.value')}" style="color:red" />
 									</row>
 									<row>
-										<textbox id="txtbox_Username1"
-											width="180px" height="24px"
-											style="display:none;" />
+										<textbox id="txtbox_Username1" width="180px" height="24px" style="display:none;" />
 									</row>
 									<row align="left">
-										<label
-											id="label_LoginDialog_user"
-											value="${c:l('label_LoginDialog_user.value')}"
-											style="margin-left:65px;font-weight:bold;" />
-										<textbox id="txtbox_Username" sclass="z-textbox-loginUser"
-											name="j_username" width="150px" 
-											height="24px" style="margin-right:60px" />
+										<label id="label_LoginDialog_user" value="${c:l('label_LoginDialog_user.value')}" style="margin-left:65px;font-weight:bold;" />
+										<textbox id="txtbox_Username" sclass="z-textbox-loginUser" name="j_username" width="180px"  height="24px" style="margin-right:60px" />
 									</row>
 									<row>
-										<textbox type="password"
-											id="txtbox_Password1" width="180px" height="24px"
-											style="display:none;" />
+										<textbox type="password" id="txtbox_Password1" width="180px" height="24px" style="display:none;" />
 									</row>
 									<row align="left">
-										<label
-											id="label_LoginDialog_pwd"
-											value=" ${c:l('label_LoginDialog_pwd.value')}" 
-											style="margin-left:65px;font-weight:bold;" />
-										<textbox type="password" sclass="z-textbox-loginPassword" 
-											id="txtbox_Password" name="j_password" width="150px" height="24px"
-											style="margin-right:60px;" />
+										<label id="label_LoginDialog_pwd" value=" ${c:l('label_LoginDialog_pwd.value')}"  style="margin-left:65px;font-weight:bold;" />
+										<textbox type="password" sclass="z-textbox-loginPassword" id="txtbox_Password" name="j_password" width="180px" height="24px" style="margin-right:60px;" />
 									</row>
-									<row spans="2" height="12px" />
-									<row spans="2">
-										<div align="center">
-											<hbox align = "center">
-												<space width="150px"></space>
-												<button type="submit" id="btnLogin" label="Login" />
-												<button type="reset" id="btnReset" label="Reset" />
-											</hbox>
-										</div>
+									<row> 
+										<cell colspan="2"></cell>
+									</row>
+									<row> 
+										<cell colspan="2"></cell>
+									</row>
+									<row>
+										<cell colspan="2">
+											<div align="center">
+												<hbox pack="start">
+													<button type="submit" id="btnLogin" label="Login" width="90px"/>													
+													<button type="reset" id="btnReset" label="Reset" width="90px"/>
+												</hbox>
+											</div>
+										</cell>
 									</row>
 								</rows>
 							</grid>

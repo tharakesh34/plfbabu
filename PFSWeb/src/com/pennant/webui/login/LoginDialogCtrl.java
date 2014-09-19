@@ -95,7 +95,7 @@ public class LoginDialogCtrl extends WindowBaseCtrl implements Serializable {
 
 	public void onCreate$loginwin(Event event) throws Exception {
 		logger.debug("Entering ");
-		doOnCreateCommon(this.loginwin); // do the autowire
+		//doOnCreateCommon(this.loginwin); // do the autowire
 		this.txtbox_Username.setMaxlength(50);
 		this.txtbox_Password.setMaxlength(15);
 		this.txtbox_Username.focus(); // set the focus on UserName

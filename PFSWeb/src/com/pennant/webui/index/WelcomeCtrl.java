@@ -491,6 +491,7 @@ public class WelcomeCtrl extends GFCBaseListCtrl<DashBoard> implements Serializa
 			twoColumnBtn.setDisabled(true);
 			threeColumnBtn.setDisabled(false);
 			
+			firstPortalChildColumn.setStyle("padding-right:1px");
 			break ;
 
 		case 3:	
@@ -505,6 +506,9 @@ public class WelcomeCtrl extends GFCBaseListCtrl<DashBoard> implements Serializa
 			singleColumnBtn.setDisabled(false);
 			twoColumnBtn.setDisabled(false);
 			threeColumnBtn.setDisabled(true);
+			
+			firstPortalChildColumn.setStyle("padding-right:1px");
+			secondPortalChildColumn.setStyle("padding-right:1px");
 			break ;
 		}		
 	}

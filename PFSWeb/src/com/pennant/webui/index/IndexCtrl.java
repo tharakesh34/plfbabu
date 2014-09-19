@@ -214,7 +214,6 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 	/**
 	 * Creates the MainMenu as TreeMenu as default. <br>
 	 */
-	@SuppressWarnings("deprecation")
 	private void createMainTreeMenu() {
 
 		// get an instance of the borderlayout defined in the index.zul-file
@@ -222,7 +221,6 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 
 		// get an instance of the searched west layout area
 		final West west = bl.getWest();
-		west.setFlex(true);
 		// clear the center child comps
 		west.getChildren().clear();
 

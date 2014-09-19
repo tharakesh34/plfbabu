@@ -49,6 +49,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -60,6 +61,7 @@ import org.zkoss.zk.ui.ComponentNotFoundException;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.event.CreateEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -127,6 +129,7 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 	
 	private transient MenuDetailsService menuDetailsService;
 	private HashMap<String, MenuDetails> hasMenuDetails;
+	private String homePageDisplayed = "NO";
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Component Events ++++++++++++++++ //
@@ -142,7 +145,14 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 	 */
 	public void onCreate$mainMenuWindow(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
-		doOnCreateCommon(getMainMenuWindow(), event); // wire vars
+		CreateEvent ce = (CreateEvent) ((ForwardEvent) event).getOrigin();
+		@SuppressWarnings("unchecked")
+		final Map<String, Object> args = (Map<String, Object>) ce.getArg();
+
+		if (args.containsKey("HomePageDisplayed")) {
+			homePageDisplayed = (String) args.get("HomePageDisplayed");
+		}
+		//doOnCreateCommon(getMainMenuWindow(), event); // wire vars
 		createMenu();
 		logger.debug("Leaving " + event.toString());
 	}
@@ -160,7 +170,7 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 
 		// Hbox for the expand/collapse buttons
 		final Hbox hbox = new Hbox();
-		hbox.setStyle("backgound-color: " + bgColorInner);
+		hbox.setStyle("backgound-color: " + bgColorInner+";" +"margin:4px;");
 		hbox.setParent(gb);
 
 		image = new Image("/images/icons/open4.png");
@@ -212,7 +222,7 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 
 		Separator separator = createSeparator(false);
 		separator.setWidth("98%");
-		separator.setStyle("background-color:"+bgColor+";background-image:none; height:1px;margin:10px 0px;");
+		separator.setStyle("background-color:"+bgColor+";background-image:none; height:1px;margin:10px 0px; margin:4px");
 		separator.setBar(true);
 		separator.setParent(gb);
 
@@ -238,26 +248,29 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 		sep1.setBar(false);
 		sep1.setParent(gb);
 		doCollapseExpandAll(getMainMenuWindow(), false);
+		
 		/* as standard, call the welcome page */
-		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-		UserImpl userDetails = (UserImpl) currentUser.getPrincipal();		
+		if ("NO".equals(homePageDisplayed)) {
+			Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+			UserImpl userDetails = (UserImpl) currentUser.getPrincipal();		
 
-		SecurityUser secUser = userDetails.getSecurityUser();
+			SecurityUser secUser = userDetails.getSecurityUser();
 
-		if(secUser.getUsrAcExpDt()==null){
-			showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
-		}
-		if(secUser.getUsrAcExpDt()!=null){
-			if(secUser.getUsrAcExpDt().before(new Date(System.currentTimeMillis()))){
-				Window win = (Window)Executions.createComponents( "/WEB-INF/pages/PasswordReset/changePwd.zul", null , null ) ;
-				win.setTitle(Labels.getLabel("label_ChangePassword"));
-				win.setWidth("98%");
-				win.setHeight("98%");
-				win.doModal();
-			}
-			else{
+			if(secUser.getUsrAcExpDt()==null){
 				showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
-			}}
+			}
+			if(secUser.getUsrAcExpDt()!=null){
+				if(secUser.getUsrAcExpDt().before(new Date(System.currentTimeMillis()))){
+					Window win = (Window)Executions.createComponents( "/WEB-INF/pages/PasswordReset/changePwd.zul", null , null ) ;
+					win.setTitle(Labels.getLabel("label_ChangePassword"));
+					win.setWidth("98%");
+					win.setHeight("98%");
+					win.doModal();
+				}
+				else{
+					showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
+				}}
+		}
 		logger.debug("Leaving ");
 
 	}
@@ -275,7 +288,6 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 		logger.debug("Entering ");
 
 		final Separator sep = new Separator();
-		sep.setStyle("backgound-color: " + bgColorInner);
 		sep.setBar(withBar);
 		logger.debug("Leaving ");
 		return sep;
@@ -343,7 +355,6 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 				tab.addEventListener(Events.ON_CLOSE, new EventListener<Event>() {
 					public void onEvent(Event event) throws UiException {
 						String pageName = event.getTarget().getId().replace("tab_", "");
-						@SuppressWarnings("deprecation")
 						UserWorkspace workspace= UserWorkspace.getInstance();
 						workspace.deAlocateAuthorities(pageName);
 					}
@@ -521,10 +532,9 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	@SuppressWarnings("deprecation")
 	private boolean isAllowed(String menuId){
 		logger.debug("Entering ");
-		UserWorkspace workspace= UserWorkspace.getInstance();
+		UserWorkspace workspace = UserWorkspace.getInstance();
 		if (workspace.getHasMenuRights().get(menuId)==null){
 			return false;
 		}else if (workspace.getHasMenuRights().get(menuId).equals("")){
@@ -564,10 +574,7 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 
 	private void menuDetaiils(){
 		logger.debug("Entering ");
-
-		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-		@SuppressWarnings("unused")
-		UserImpl userDetails = (UserImpl) currentUser.getPrincipal();
+		
 		List<MenuDetails> menuList =  getMenuDetailsService().getMenuDetailsByApp(PennantConstants.applicationCode);
 		if (menuList.size()>0){
 			this.hasMenuDetails = new HashMap<String, MenuDetails>();

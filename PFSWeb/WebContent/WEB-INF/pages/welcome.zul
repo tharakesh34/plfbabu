@@ -6,30 +6,22 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-
-	<window id="window_Welcome" border="none" apply="${welcomeCtrl}"
-		width="100%" height="100%" sizable="false">
+	<window id="window_Welcome" border="none" apply="${welcomeCtrl}" width="100%" height="100%" sizable="false" contentStyle="padding:0px;">
 		<timer id="refreshTimer" repeats="true" />
 		<borderlayout id="borderlayoutWelcome">
 			<north border="none" size="15%">
 				<vlayout>
 					<radiogroup id="columnSelect">
 						<hbox width="100%" widths="70%, 30%">
-							<groupbox id="first" closable="true"
-								mold="3d">
+							<groupbox id="first" closable="true" mold="3d">
 								<caption label="Widgets" />
-								<hlayout valign="middle"
-									style="padding:4px;">
-									<label value="New Widget : "
-										style="font-weight:bold;" />
-									<combobox id="cbDashBordsList"
-										readonly="true" />
+								<hlayout valign="middle" style="padding:4px;">
+									<label value="New Widget : " style="font-weight:bold;" />
+									<combobox id="cbDashBordsList" readonly="true" />
 									<space width="2px"></space>
-									<image
-										src="/images/icons/arrow.png" />
+									<image src="/images/icons/arrow.png" />
 									<space width="8px"></space>
-									<hlayout
-										style="vertical-align:middle">
+									<hlayout style="vertical-align:middle">
 										<radio selected="true" />
 										<image
 											src="/images/icons/layout-l.png" />
@@ -74,11 +66,10 @@
 				</vlayout>
 			</north>
 			<center border="none" autoscroll="true">
-				<portallayout id="dashBoardsPortalLayout"
-					maximizedMode="whole" style="padding:1px;">
+				<portallayout id="dashBoardsPortalLayout" maximizedMode="whole">
 					<portalchildren id="firstPortalChildColumn" />
-					<portalchildren id="secondPortalChildColumn" />
-					<portalchildren id="thirdPortalChildColumn" />
+					<portalchildren id="secondPortalChildColumn"/>
+					<portalchildren id="thirdPortalChildColumn"/>
 				</portallayout>
 			</center>
 			<south border="none"></south>

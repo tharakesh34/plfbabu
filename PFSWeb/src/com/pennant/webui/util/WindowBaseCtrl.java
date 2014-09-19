@@ -48,12 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Components;
-import org.zkoss.zk.ui.event.CreateEvent;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.ext.AfterCompose;
-import org.zkoss.zkplus.databind.AnnotateDataBinder;
+import org.zkoss.zk.ui.util.ConventionWires;
 import org.zkoss.zul.Window;
 
 /**
@@ -64,21 +60,21 @@ import org.zkoss.zul.Window;
 public abstract class WindowBaseCtrl extends Window implements AfterCompose, Serializable {
 
 	private static final long serialVersionUID = -2179229704315045689L;
-	protected transient AnnotateDataBinder binder;
+	//protected transient AnnotateDataBinder binder;
 
 	protected transient Map<String, Object> args;
 
-	public void doOnCreateCommon(Window w) throws Exception {
+	/*public void doOnCreateCommon(Window w) throws Exception {
 		binder = new AnnotateDataBinder(w);
 		binder.loadAll();
-	}
+	}*/
 
-	@SuppressWarnings("unchecked")
-	public void doOnCreateCommon(Window w, Event fe) throws Exception {
+	
+/*	public void doOnCreateCommon(Window w, Event fe) throws Exception {
 		doOnCreateCommon(w);
 		CreateEvent ce = (CreateEvent) ((ForwardEvent) fe).getOrigin();
 		args = (Map<String, Object>) ce.getArg();//Upgraded to ZK-6.5.1.1 Added casting to Map
-	}
+	}*/
 
 	public WindowBaseCtrl() {
 		super();
@@ -100,10 +96,10 @@ public abstract class WindowBaseCtrl extends Window implements AfterCompose, Ser
 	 * @param main
 	 * @param child
 	 */
-	@SuppressWarnings("deprecation")
+	
 	private void processRecursive(Window main, Window child) {
-		Components.wireVariables(main, child);
-		Components.addForwards(main, this);
+		ConventionWires.wireVariables(main, child);
+		ConventionWires.addForwards(main, this);
 		List<Component> winList = child.getChildren();
 		for (Component window : winList) {
 			if (window instanceof Window) {
