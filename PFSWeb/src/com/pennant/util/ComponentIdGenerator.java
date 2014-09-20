@@ -8,7 +8,6 @@ import org.zkoss.zk.ui.metainfo.Property;
 import org.zkoss.zk.ui.sys.IdGenerator;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Grid;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
@@ -65,18 +64,22 @@ public class ComponentIdGenerator implements IdGenerator {
 		// Derive based on parent
 		Component parent = comp.getParent();
 
-		if (parent != null && !(comp instanceof Grid)) {
-			String pUuid = parent.getUuid();
-
+		if (parent != null) {
 			if (isCustomComponent(parent)) {
-				return comp.getClass().getSimpleName() + "_" + pUuid;
+				uuid.append(comp.getClass().getSimpleName()).append("_")
+						.append(parent.getUuid());
+
+				return uuid.toString();
 			}
 
 			if (isCustomChild(comp)) {
 				Component g = parent.getParent();
 
 				if (g != null && isCustomComponent(g)) {
-					return comp.getClass().getSimpleName() + "_" + pUuid;
+					uuid.append(comp.getClass().getSimpleName()).append("_")
+							.append(parent.getUuid());
+
+					return uuid.toString();
 				}
 			}
 		}
