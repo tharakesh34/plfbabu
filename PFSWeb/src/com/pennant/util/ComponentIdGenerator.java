@@ -52,7 +52,9 @@ public class ComponentIdGenerator implements IdGenerator {
 		if (compInfo != null) {
 			for (Property property : compInfo.getProperties()) {
 				if ("id".equals(property.getName())) {
-					uuid.append(pageName).append("_");
+					if (isInputComponent(compInfo)) {
+						uuid.append(pageName).append("_");
+					}
 					uuid.append(property.getRawValue()).append("_");
 					uuid.append(index);
 
@@ -131,6 +133,16 @@ public class ComponentIdGenerator implements IdGenerator {
 		} else if (component instanceof Listitem) {
 			return true;
 		} else if (component instanceof Listcell) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean isInputComponent(ComponentInfo info) {
+		String components = "textbox|button|text|uppercasebox|listbox|checkbox|radiogroup|radio|decimalbox|extendedcombobox|accountSelectionBox|currencyBox";
+
+		if (info.getTag() != null && components.indexOf(info.getTag()) >= 0) {
 			return true;
 		}
 
