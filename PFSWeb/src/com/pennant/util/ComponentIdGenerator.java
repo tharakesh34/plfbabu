@@ -24,7 +24,7 @@ public class ComponentIdGenerator implements IdGenerator {
 		int index = Integer.parseInt(number);
 		index++;
 
-		desktop.setAttribute("Id_Num", index);
+		desktop.setAttribute("Id_Num", String.valueOf(index));
 
 		// Get the page file name
 		String pageName = "";
