@@ -6,10 +6,21 @@ import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.metainfo.ComponentInfo;
 import org.zkoss.zk.ui.metainfo.Property;
 import org.zkoss.zk.ui.sys.IdGenerator;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Textbox;
+
+import com.pennant.AccountSelectionBox;
+import com.pennant.CurrencyBox;
+import com.pennant.ExtendedCombobox;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennant.webui.util.searchdialogs.ExtendedStaticListBox;
 
 public class ComponentIdGenerator implements IdGenerator {
 	private static final String PREFIX = "zk_comp_";
-	private static final String COMP_SET = "";
 
 	@Override
 	public String nextComponentUuid(Desktop desktop, Component comp,
@@ -51,8 +62,27 @@ public class ComponentIdGenerator implements IdGenerator {
 			}
 		}
 
+		// Derive based on parent
+		Component parent = comp.getParent();
+
+		if (parent != null && !(comp instanceof Grid)) {
+			String pUuid = parent.getUuid();
+
+			if (isCustomComponent(parent)) {
+				return comp.getClass().getSimpleName() + "_" + pUuid;
+			}
+
+			if (isCustomChild(comp)) {
+				Component g = parent.getParent();
+
+				if (g != null && isCustomComponent(g)) {
+					return comp.getClass().getSimpleName() + "_" + pUuid;
+				}
+			}
+		}
+
 		if (uuid.length() == 0) {
-			uuid.append(PREFIX);
+			return PREFIX + index;
 		}
 
 		return null;
@@ -70,5 +100,37 @@ public class ComponentIdGenerator implements IdGenerator {
 		}
 
 		return null;
+	}
+
+	private boolean isCustomComponent(Component component) {
+		if (component instanceof ExtendedCombobox) {
+			return true;
+		} else if (component instanceof ExtendedSearchListBox) {
+			return true;
+		} else if (component instanceof ExtendedStaticListBox) {
+			return true;
+		} else if (component instanceof AccountSelectionBox) {
+			return true;
+		} else if (component instanceof CurrencyBox) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean isCustomChild(Component component) {
+		if (component instanceof Textbox) {
+			return true;
+		} else if (component instanceof Button) {
+			return true;
+		} else if (component instanceof Decimalbox) {
+			return true;
+		} else if (component instanceof Listitem) {
+			return true;
+		} else if (component instanceof Listcell) {
+			return true;
+		}
+
+		return false;
 	}
 }
