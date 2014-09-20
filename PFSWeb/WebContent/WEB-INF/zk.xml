@@ -153,7 +153,7 @@
    </device-config>
    
    <system-config>
-		<id-generator-class>com.pennant.util.MyIdgenerator</id-generator-class>
+		<id-generator-class>com.pennant.util.ComponentIdGenerator</id-generator-class>
 	</system-config>
   
 </zk>
