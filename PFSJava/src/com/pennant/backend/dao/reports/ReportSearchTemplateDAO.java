@@ -48,8 +48,8 @@ import com.pennant.backend.model.reports.ReportSearchTemplate;
 
 public interface ReportSearchTemplateDAO {
 
-	public void save(ReportSearchTemplate reportSearchTemplate);
-	public List<ReportSearchTemplate>    	getReportSearchTemplateByReportId(long  reportID,long usrID);
-	public int getRecordCountByTemplateName(long reportId,long usrId,String templateName);
-	public void delete(long reportId,long usrId,String templateName);
+	void save(ReportSearchTemplate reportSearchTemplate);
+	List<ReportSearchTemplate>    	getReportSearchTemplateByReportId(long  reportID,long usrID);
+	int getRecordCountByTemplateName(long reportId,long usrId,String templateName);
+	void delete(long reportId,long usrId,String templateName);
 }

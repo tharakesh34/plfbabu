@@ -48,14 +48,14 @@ import com.pennant.backend.model.rmtmasters.ScoringSlab;
 
 public interface ScoringSlabDAO {
 
-	public ScoringSlab getScoringSlab();
-	public ScoringSlab getNewScoringSlab();
-	public ScoringSlab getScoringSlabById(long id,String type);
-	public void update(ScoringSlab scoringSlab,String type);
-	public void delete(ScoringSlab scoringSlab,String type);
-	public void delete(long scoreGroupId,String type);
-	public long save(ScoringSlab scoringSlab,String type);
-	public void initialize(ScoringSlab scoringSlab);
-	public void refresh(ScoringSlab entity);
-	public List<ScoringSlab> getScoringSlabsByScoreGrpId(final long scoreGrpId, String type);
+	 ScoringSlab getScoringSlab();
+	 ScoringSlab getNewScoringSlab();
+	 ScoringSlab getScoringSlabById(long id,String type);
+	 void update(ScoringSlab scoringSlab,String type);
+	 void delete(ScoringSlab scoringSlab,String type);
+	 void delete(long scoreGroupId,String type);
+	 long save(ScoringSlab scoringSlab,String type);
+	 void initialize(ScoringSlab scoringSlab);
+	 void refresh(ScoringSlab entity);
+	 List<ScoringSlab> getScoringSlabsByScoreGrpId(final long scoreGrpId, String type);
 }

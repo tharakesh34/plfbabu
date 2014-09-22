@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.AddressType;
  */
 public interface AddressTypeDAO {
 
-	public AddressType getAddressType();
-	public AddressType getNewAddressType();
-	public AddressType getAddressTypeById(String id,String type);
-	public void update(AddressType addressType,String type);
-	public void delete(AddressType addressType,String type);
-	public String save(AddressType addressType,String type);
-	public void initialize(AddressType addressType);
-	public void refresh(AddressType entity);
+	AddressType getAddressType();
+	AddressType getNewAddressType();
+	AddressType getAddressTypeById(String id,String type);
+	void update(AddressType addressType,String type);
+	void delete(AddressType addressType,String type);
+	String save(AddressType addressType,String type);
+	void initialize(AddressType addressType);
+	void refresh(AddressType entity);
 }

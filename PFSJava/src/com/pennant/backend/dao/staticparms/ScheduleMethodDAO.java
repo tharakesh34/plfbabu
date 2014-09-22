@@ -46,12 +46,12 @@ import com.pennant.backend.model.staticparms.ScheduleMethod;
 
 public interface ScheduleMethodDAO {
 
-	public ScheduleMethod getScheduleMethod();
-	public ScheduleMethod getNewScheduleMethod();
-	public ScheduleMethod getScheduleMethodById(String id,String type);
-	public void update(ScheduleMethod scheduleMethod,String type);
-	public void delete(ScheduleMethod scheduleMethod,String type);
-	public String save(ScheduleMethod scheduleMethod,String type);
-	public void initialize(ScheduleMethod scheduleMethod);
-	public void refresh(ScheduleMethod entity);
+	ScheduleMethod getScheduleMethod();
+	ScheduleMethod getNewScheduleMethod();
+	ScheduleMethod getScheduleMethodById(String id,String type);
+	void update(ScheduleMethod scheduleMethod,String type);
+	void delete(ScheduleMethod scheduleMethod,String type);
+	String save(ScheduleMethod scheduleMethod,String type);
+	void initialize(ScheduleMethod scheduleMethod);
+	void refresh(ScheduleMethod entity);
 }

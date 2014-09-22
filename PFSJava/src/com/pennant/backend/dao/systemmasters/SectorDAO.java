@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Sector;
  */
 public interface SectorDAO {
 
-	public Sector getSector();
-	public Sector getNewSector();
-	public Sector getSectorById(String id,String type);
-	public void update(Sector sector,String type);
-	public void delete(Sector sector,String type);
-	public String save(Sector sector,String type);
-	public void initialize(Sector sector);
-	public void refresh(Sector entity);
+	Sector getSector();
+	Sector getNewSector();
+	Sector getSectorById(String id,String type);
+	void update(Sector sector,String type);
+	void delete(Sector sector,String type);
+	String save(Sector sector,String type);
+	void initialize(Sector sector);
+	void refresh(Sector entity);
 }

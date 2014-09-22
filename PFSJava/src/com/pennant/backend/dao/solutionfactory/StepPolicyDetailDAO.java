@@ -55,15 +55,14 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
  */
 public interface StepPolicyDetailDAO {
 
-	public StepPolicyDetail getStepPolicyDetail();
-	public StepPolicyDetail getNewStepPolicyDetail();
-	public StepPolicyDetail getStepPolicyDetailByID(StepPolicyDetail stepPolicyDetail, String type); 
-	public List<StepPolicyDetail> getStepPolicyDetailListByID(final String id, String type); 
-	public void update(StepPolicyDetail stepPolicyDetail, String type);
-	public String save(StepPolicyDetail stepPolicyDetail, String type);
-	public void delete(StepPolicyDetail stepPolicyDetail, String type);
-	public void deleteByPolicyCode(String finType, String type); 
-	public void initialize(StepPolicyDetail stepPolicyDetail);
-	public void refresh(StepPolicyDetail entity);
-
+	StepPolicyDetail getStepPolicyDetail();
+	StepPolicyDetail getNewStepPolicyDetail();
+	StepPolicyDetail getStepPolicyDetailByID(StepPolicyDetail stepPolicyDetail, String type); 
+	List<StepPolicyDetail> getStepPolicyDetailListByID(final String id, String type); 
+	void update(StepPolicyDetail stepPolicyDetail, String type);
+	String save(StepPolicyDetail stepPolicyDetail, String type);
+	void delete(StepPolicyDetail stepPolicyDetail, String type);
+	void deleteByPolicyCode(String finType, String type); 
+	void initialize(StepPolicyDetail stepPolicyDetail);
+	void refresh(StepPolicyDetail entity);
 }

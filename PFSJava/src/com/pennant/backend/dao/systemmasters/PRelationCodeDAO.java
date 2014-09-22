@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.PRelationCode;
  */
 public interface PRelationCodeDAO {
 
-	public PRelationCode getPRelationCode();
-	public PRelationCode getNewPRelationCode();
-	public PRelationCode getPRelationCodeById(String id,String type);
-	public void update(PRelationCode pRelationCode,String type);
-	public void delete(PRelationCode pRelationCode,String type);
-	public String save(PRelationCode pRelationCode,String type);
-	public void initialize(PRelationCode pRelationCode);
-	public void refresh(PRelationCode entity);
+	PRelationCode getPRelationCode();
+	PRelationCode getNewPRelationCode();
+	PRelationCode getPRelationCodeById(String id,String type);
+	void update(PRelationCode pRelationCode,String type);
+	void delete(PRelationCode pRelationCode,String type);
+	String save(PRelationCode pRelationCode,String type);
+	void initialize(PRelationCode pRelationCode);
+	void refresh(PRelationCode entity);
 }

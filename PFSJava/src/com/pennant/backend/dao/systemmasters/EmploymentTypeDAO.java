@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.EmploymentType;
  */
 public interface EmploymentTypeDAO {
 
-	public EmploymentType getEmploymentType();
-	public EmploymentType getNewEmploymentType();
-	public EmploymentType getEmploymentTypeById(String id,String type);
-	public void update(EmploymentType employmentType,String type);
-	public void delete(EmploymentType employmentType,String type);
-	public String save(EmploymentType employmentType,String type);
-	public void initialize(EmploymentType employmentType);
-	public void refresh(EmploymentType entity);
+	EmploymentType getEmploymentType();
+	EmploymentType getNewEmploymentType();
+	EmploymentType getEmploymentTypeById(String id,String type);
+	void update(EmploymentType employmentType,String type);
+	void delete(EmploymentType employmentType,String type);
+	String save(EmploymentType employmentType,String type);
+	void initialize(EmploymentType employmentType);
+	void refresh(EmploymentType entity);
 }

@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.GroupStatusCode;
  */
 public interface GroupStatusCodeDAO {
 
-	public GroupStatusCode getGroupStatusCode();
-	public GroupStatusCode getNewGroupStatusCode();
-	public GroupStatusCode getGroupStatusCodeById(String id,String type);
-	public void update(GroupStatusCode groupStatusCode,String type);
-	public void delete(GroupStatusCode groupStatusCode,String type);
-	public String save(GroupStatusCode groupStatusCode,String type);
-	public void initialize(GroupStatusCode groupStatusCode);
-	public void refresh(GroupStatusCode entity);
+	GroupStatusCode getGroupStatusCode();
+	GroupStatusCode getNewGroupStatusCode();
+	GroupStatusCode getGroupStatusCodeById(String id,String type);
+	void update(GroupStatusCode groupStatusCode,String type);
+	void delete(GroupStatusCode groupStatusCode,String type);
+	String save(GroupStatusCode groupStatusCode,String type);
+	void initialize(GroupStatusCode groupStatusCode);
+	void refresh(GroupStatusCode entity);
 }

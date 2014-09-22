@@ -50,14 +50,14 @@ import com.pennant.backend.model.smtmasters.WeekendMaster;
  */
 public interface WeekendMasterDAO {
 
-	public WeekendMaster getWeekendMaster();
-	public WeekendMaster getNewWeekendMaster();
-	public WeekendMaster getWeekendMasterByID(String id,String type);
-	public void update(WeekendMaster weekendMaster,String type);
-	public void delete(WeekendMaster weekendMaster,String type);
-	public String save(WeekendMaster weekendMaster,String type);
-	public void initialize(WeekendMaster weekendMaster);
-	public void refresh(WeekendMaster entity);
-	//public ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
-	public WeekendMaster getWeekendMasterByCode(String weekendCode);
+	WeekendMaster getWeekendMaster();
+	WeekendMaster getNewWeekendMaster();
+	WeekendMaster getWeekendMasterByID(String id,String type);
+	void update(WeekendMaster weekendMaster,String type);
+	void delete(WeekendMaster weekendMaster,String type);
+	String save(WeekendMaster weekendMaster,String type);
+	void initialize(WeekendMaster weekendMaster);
+	void refresh(WeekendMaster entity);
+	//ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
+	WeekendMaster getWeekendMasterByCode(String weekendCode);
 }

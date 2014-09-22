@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.NationalityCode;
  */
 public interface NationalityCodeDAO {
 
-	public NationalityCode getNationalityCode();
-	public NationalityCode getNewNationalityCode();
-	public NationalityCode getNationalityCodeById(String id,String type);
-	public void update(NationalityCode nationalityCodes,String type);
-	public void delete(NationalityCode nationalityCodes,String type);
-	public String save(NationalityCode nationalityCodes,String type);
-	public void initialize(NationalityCode nationalityCodes);
-	public void refresh(NationalityCode entity);
+	NationalityCode getNationalityCode();
+	NationalityCode getNewNationalityCode();
+	NationalityCode getNationalityCodeById(String id,String type);
+	void update(NationalityCode nationalityCodes,String type);
+	void delete(NationalityCode nationalityCodes,String type);
+	String save(NationalityCode nationalityCodes,String type);
+	void initialize(NationalityCode nationalityCodes);
+	void refresh(NationalityCode entity);
 }

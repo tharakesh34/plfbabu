@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Country;
  */
 public interface CountryDAO {
 
-	public Country getCountry();
-	public Country getNewCountry();
-	public Country getCountryById(String id,String type);
-	public void update(Country country,String type);
-	public void delete(Country country,String type);
-	public String save(Country country,String type);
-	public void initialize(Country country);
-	public void refresh(Country entity);
+	Country getCountry();
+	Country getNewCountry();
+	Country getCountryById(String id,String type);
+	void update(Country country,String type);
+	void delete(Country country,String type);
+	String save(Country country,String type);
+	void initialize(Country country);
+	void refresh(Country entity);
 }

@@ -50,6 +50,6 @@ import com.pennant.backend.model.rulefactory.FinanceAccountNumber;
  */
 public interface FinanceAccountNumberDAO {
 
-	public FinanceAccountNumber getFinanceAccountNumber(FinanceAccountNumber financeAccountNumber);
-	public void save(FinanceAccountNumber financeAccountNumber);
+	FinanceAccountNumber getFinanceAccountNumber(FinanceAccountNumber financeAccountNumber);
+	void save(FinanceAccountNumber financeAccountNumber);
 }

@@ -50,13 +50,13 @@ import com.pennant.backend.model.rmtmasters.BasicFinanceType;
  */
 public interface BasicFinanceTypeDAO {
 
-	public BasicFinanceType getBasicFinanceType();
-	public BasicFinanceType getNewBasicFinanceType();
-	public BasicFinanceType getBasicFinanceTypeById(String id,String type);
-	public void update(BasicFinanceType basicFinanceType,String type);
-	public void delete(BasicFinanceType basicFinanceType,String type);
-	public String save(BasicFinanceType basicFinanceType,String type);
-	public void initialize(BasicFinanceType basicFinanceType);
-	public void refresh(BasicFinanceType entity);
+	 BasicFinanceType getBasicFinanceType();
+	 BasicFinanceType getNewBasicFinanceType();
+	 BasicFinanceType getBasicFinanceTypeById(String id,String type);
+	 void update(BasicFinanceType basicFinanceType,String type);
+	 void delete(BasicFinanceType basicFinanceType,String type);
+	 String save(BasicFinanceType basicFinanceType,String type);
+	 void initialize(BasicFinanceType basicFinanceType);
+	 void refresh(BasicFinanceType entity);
 
 }

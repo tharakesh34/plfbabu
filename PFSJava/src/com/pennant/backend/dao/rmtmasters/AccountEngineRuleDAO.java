@@ -52,15 +52,15 @@ import com.pennant.backend.model.rmtmasters.AccountEngineRule;
  */
 public interface AccountEngineRuleDAO {
 
-	public AccountEngineRule getAccountEngineRule();
-	public AccountEngineRule getNewAccountEngineRule();
-	public AccountEngineRule getAccountEngineRuleById(long id,String type);
-	public void update(AccountEngineRule accountEngineRule,String type);
-	public void delete(AccountEngineRule accountEngineRule,String type);
-	public long save(AccountEngineRule accountEngineRule,String type);
-	public void initialize(AccountEngineRule accountEngineRule);
-	public void refresh(AccountEngineRule entity);
-	public AccountEngineRule getAccountEngineRuleBySysDflt(AccountEngineRule accountEngineRule,String type,boolean idExists);
-	List<AccountEngineRule> getListAERuleBySysDflt(String type);
+	 AccountEngineRule getAccountEngineRule();
+	 AccountEngineRule getNewAccountEngineRule();
+	 AccountEngineRule getAccountEngineRuleById(long id,String type);
+	 void update(AccountEngineRule accountEngineRule,String type);
+	 void delete(AccountEngineRule accountEngineRule,String type);
+	 long save(AccountEngineRule accountEngineRule,String type);
+	 void initialize(AccountEngineRule accountEngineRule);
+	 void refresh(AccountEngineRule entity);
+	 AccountEngineRule getAccountEngineRuleBySysDflt(AccountEngineRule accountEngineRule,String type,boolean idExists);
+	 List<AccountEngineRule> getListAERuleBySysDflt(String type);
 
 }

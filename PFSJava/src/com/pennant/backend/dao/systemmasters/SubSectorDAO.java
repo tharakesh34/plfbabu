@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.SubSector;
  */
 public interface SubSectorDAO {
 
-	public SubSector getSubSector();
-	public SubSector getNewSubSector();
-	public SubSector getSubSectorById(String id,String subSectorCode ,String type);
-	public void update(SubSector subSector,String type);
-	public void delete(SubSector subSector,String type);
-	public void save(SubSector subSector,String type);
-	public void initialize(SubSector subSector);
-	public void refresh(SubSector entity);
+	SubSector getSubSector();
+	SubSector getNewSubSector();
+	SubSector getSubSectorById(String id,String subSectorCode ,String type);
+	void update(SubSector subSector,String type);
+	void delete(SubSector subSector,String type);
+	void save(SubSector subSector,String type);
+	void initialize(SubSector subSector);
+	void refresh(SubSector entity);
 }

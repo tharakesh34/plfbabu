@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.DispatchMode;
  */
 public interface DispatchModeDAO {
 
-	public DispatchMode getDispatchMode();
-	public DispatchMode getNewDispatchMode();
-	public DispatchMode getDispatchModeById(String id,String type);
-	public void update(DispatchMode dispatchMode,String type);
-	public void delete(DispatchMode dispatchMode,String type);
-	public String save(DispatchMode dispatchMode,String type);
-	public void initialize(DispatchMode dispatchMode);
-	public void refresh(DispatchMode entity);
+	DispatchMode getDispatchMode();
+	DispatchMode getNewDispatchMode();
+	DispatchMode getDispatchModeById(String id,String type);
+	void update(DispatchMode dispatchMode,String type);
+	void delete(DispatchMode dispatchMode,String type);
+	String save(DispatchMode dispatchMode,String type);
+	void initialize(DispatchMode dispatchMode);
+	void refresh(DispatchMode entity);
 }

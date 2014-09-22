@@ -50,12 +50,12 @@ import com.pennant.backend.model.staticparms.Language;
  */
 public interface LanguageDAO {
 
-	public Language getLanguage();
-	public Language getNewLanguage();
-	public Language getLanguageById(String id,String type);
-	public void update(Language language,String type);
-	public void delete(Language language,String type);
-	public String save(Language language,String type);
-	public void initialize(Language language);
-	public void refresh(Language entity);
+	Language getLanguage();
+	Language getNewLanguage();
+	Language getLanguageById(String id,String type);
+	void update(Language language,String type);
+	void delete(Language language,String type);
+	String save(Language language,String type);
+	void initialize(Language language);
+	void refresh(Language entity);
 }

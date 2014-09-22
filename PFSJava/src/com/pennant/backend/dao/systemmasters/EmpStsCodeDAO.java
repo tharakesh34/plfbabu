@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.EmpStsCode;
  */
 public interface EmpStsCodeDAO {
 
-	public EmpStsCode getEmpStsCode();
-	public EmpStsCode getNewEmpStsCode();
-	public EmpStsCode getEmpStsCodeById(String id,String type);
-	public void update(EmpStsCode empStsCode,String type);
-	public void delete(EmpStsCode empStsCode,String type);
-	public String save(EmpStsCode empStsCode,String type);
-	public void initialize(EmpStsCode empStsCode);
-	public void refresh(EmpStsCode entity);
+	EmpStsCode getEmpStsCode();
+	EmpStsCode getNewEmpStsCode();
+	EmpStsCode getEmpStsCodeById(String id,String type);
+	void update(EmpStsCode empStsCode,String type);
+	void delete(EmpStsCode empStsCode,String type);
+	String save(EmpStsCode empStsCode,String type);
+	void initialize(EmpStsCode empStsCode);
+	void refresh(EmpStsCode entity);
 }

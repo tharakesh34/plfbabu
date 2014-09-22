@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Designation;
  */
 public interface DesignationDAO {
 
-	public Designation getDesignation();
-	public Designation getNewDesignation();
-	public Designation getDesignationById(String id,String type);
-	public void update(Designation designation,String type);
-	public void delete(Designation designation,String type);
-	public String save(Designation designation,String type);
-	public void initialize(Designation designation);
-	public void refresh(Designation entity);
+	Designation getDesignation();
+	Designation getNewDesignation();
+	Designation getDesignationById(String id,String type);
+	void update(Designation designation,String type);
+	void delete(Designation designation,String type);
+	String save(Designation designation,String type);
+	void initialize(Designation designation);
+	void refresh(Designation entity);
 }

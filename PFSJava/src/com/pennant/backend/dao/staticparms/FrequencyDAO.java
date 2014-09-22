@@ -50,13 +50,12 @@ import com.pennant.backend.model.staticparms.Frequency;
  */
 public interface FrequencyDAO {
 
-	public Frequency getFrequency();
-	public Frequency getNewFrequency();
-	public Frequency getFrequencyById(String id,String type);
-	public void update(Frequency frequency,String type);
-	public void delete(Frequency frequency,String type);
-	public String save(Frequency frequency,String type);
-	public void initialize(Frequency frequency);
-	public void refresh(Frequency entity);
-	
+	Frequency getFrequency();
+	Frequency getNewFrequency();
+	Frequency getFrequencyById(String id,String type);
+	void update(Frequency frequency,String type);
+	void delete(Frequency frequency,String type);
+	String save(Frequency frequency,String type);
+	void initialize(Frequency frequency);
+	void refresh(Frequency entity);
 }

@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Profession;
  */
 public interface ProfessionDAO {
 
-	public Profession getProfession();
-	public Profession getNewProfession();
-	public Profession getProfessionById(String id,String type);
-	public void update(Profession profession,String type);
-	public void delete(Profession profession,String type);
-	public String save(Profession profession,String type);
-	public void initialize(Profession profession);
-	public void refresh(Profession entity);
+	Profession getProfession();
+	Profession getNewProfession();
+	Profession getProfessionById(String id,String type);
+	void update(Profession profession,String type);
+	void delete(Profession profession,String type);
+	String save(Profession profession,String type);
+	void initialize(Profession profession);
+	void refresh(Profession entity);
 }

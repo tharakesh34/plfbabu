@@ -50,13 +50,13 @@ import com.pennant.backend.model.rmtmasters.CustomerType;
  */
 public interface CustomerTypeDAO {
 
-	public CustomerType getCustomerType();
-	public CustomerType getNewCustomerType();
-	public CustomerType getCustomerTypeById(String id,String type);
-	public void update(CustomerType customerType,String type);
-	public void delete(CustomerType customerType,String type);
-	public String save(CustomerType customerType,String type);
-	public void initialize(CustomerType customerType);
-	public void refresh(CustomerType entity);
+	CustomerType getCustomerType();
+	CustomerType getNewCustomerType();
+	CustomerType getCustomerTypeById(String id,String type);
+	void update(CustomerType customerType,String type);
+	void delete(CustomerType customerType,String type);
+	String save(CustomerType customerType,String type);
+	void initialize(CustomerType customerType);
+	void refresh(CustomerType entity);
 
 }

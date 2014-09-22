@@ -49,18 +49,18 @@ import com.pennant.backend.model.rmtmasters.ProductFinanceType;
 
 public interface ProductFinanceTypeDAO {
 
-	public ProductFinanceType getProductFinanceType();
-	public ProductFinanceType getNewProductFinanceType();
-	public ProductFinanceType getProductFinanceTypeById(long id, String type);
-	public void update(ProductFinanceType productFinanceType, String type);
-	public void delete(ProductFinanceType productFinanceType, String type);
-	public long save(ProductFinanceType productFinanceType, String type);
-	public void initialize(ProductFinanceType productFinanceType);
-	public void refresh(ProductFinanceType entity);
-	public List<ProductFinanceType> getFinanceType(String productCode,
+	 ProductFinanceType getProductFinanceType();
+	 ProductFinanceType getNewProductFinanceType();
+	 ProductFinanceType getProductFinanceTypeById(long id, String type);
+	 void update(ProductFinanceType productFinanceType, String type);
+	 void delete(ProductFinanceType productFinanceType, String type);
+	 long save(ProductFinanceType productFinanceType, String type);
+	 void initialize(ProductFinanceType productFinanceType);
+	 void refresh(ProductFinanceType entity);
+	 List<ProductFinanceType> getFinanceType(String productCode,
 			boolean selected, String type);
-	public boolean checkFinanceType(String fintype,String type);
-	public void deleteByProductCode(String productCode, String type);
+	 boolean checkFinanceType(String fintype,String type);
+	 void deleteByProductCode(String productCode, String type);
 	
 		
 }

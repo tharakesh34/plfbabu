@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.EMailType;
  */
 public interface EMailTypeDAO {
 
-	public EMailType getEMailType();
-	public EMailType getNewEMailType();
-	public EMailType getEMailTypeById(String id,String type);
-	public void update(EMailType eMailType,String type);
-	public void delete(EMailType eMailType,String type);
-	public String save(EMailType eMailType,String type);
-	public void initialize(EMailType eMailType);
-	public void refresh(EMailType entity);
+	EMailType getEMailType();
+	EMailType getNewEMailType();
+	EMailType getEMailTypeById(String id,String type);
+	void update(EMailType eMailType,String type);
+	void delete(EMailType eMailType,String type);
+	String save(EMailType eMailType,String type);
+	void initialize(EMailType eMailType);
+	void refresh(EMailType entity);
 }

@@ -49,65 +49,39 @@ import com.pennant.backend.model.others.JVPostingEntry;
 
 public interface JVPostingEntryDAO {
 
-	public JVPostingEntry getNewJVPostingEntry();
-
-	public JVPostingEntry getJVPostingEntryById(long id, long txnReference,
+	JVPostingEntry getNewJVPostingEntry();
+	JVPostingEntry getJVPostingEntryById(long id, long txnReference,
 			long acEntryRef, String type);
-
-	public JVPostingEntry getJVPostingEntryById(long batchRef,
+	JVPostingEntry getJVPostingEntryById(long batchRef,
 	        long txnReference, String account, String txnEntry, BigDecimal txnAmount, String type);
-
-	public void update(JVPostingEntry jVPostingEntry, String type);
-
-	public void delete(JVPostingEntry jVPostingEntry, String type);
-
-	public long save(JVPostingEntry jVPostingEntry, String type);
-
-	public void saveJVPostingEntryList(List<JVPostingEntry> aJVPostingEntryList, String type);
-
-	public void initialize(JVPostingEntry jVPostingEntry);
-
-	public void refresh(JVPostingEntry entity);
-
-	public void deleteByID(JVPostingEntry jVPostingEntry, String tableType);
-
-	public List<JVPostingEntry> getJVPostingEntryListById(long id, String type);
-
-	public List<JVPostingEntry> getFailureJVPostingEntryListById(long id, String type);
-	
-	public List<JVPostingEntry> getDistinctJVPostingEntryListById(JVPostingEntry jVPostingEntry,
+	void update(JVPostingEntry jVPostingEntry, String type);
+	void delete(JVPostingEntry jVPostingEntry, String type);
+	long save(JVPostingEntry jVPostingEntry, String type);
+	void saveJVPostingEntryList(List<JVPostingEntry> aJVPostingEntryList, String type);
+	void initialize(JVPostingEntry jVPostingEntry);
+	void refresh(JVPostingEntry entity);
+	void deleteByID(JVPostingEntry jVPostingEntry, String tableType);
+	List<JVPostingEntry> getJVPostingEntryListById(long id, String type);
+	List<JVPostingEntry> getFailureJVPostingEntryListById(long id, String type);
+	List<JVPostingEntry> getDistinctJVPostingEntryListById(JVPostingEntry jVPostingEntry,
 	        String type);
-
-	public List<JVPostingEntry> getDistinctJVPostingEntryValidationStatusById(JVPostingEntry jVPostingEntry,
+	List<JVPostingEntry> getDistinctJVPostingEntryValidationStatusById(JVPostingEntry jVPostingEntry,
 	        String type);
-
-	public List<JVPostingEntry> getDistinctJVPostingEntryPostingStatusById(JVPostingEntry jVPostingEntry,
+	List<JVPostingEntry> getDistinctJVPostingEntryPostingStatusById(JVPostingEntry jVPostingEntry,
 			String type);
-	
-	public List<JVPostingEntry> getDeletedJVPostingEntryListById(long batchRef,
+	List<JVPostingEntry> getDeletedJVPostingEntryListById(long batchRef,
 	        String type);
-
-	public void updateValidationStatus(JVPostingEntry jVPostingEntry, String type);
-
-	public void updateListValidationStatus(List<JVPostingEntry> aJVPostingEntryList, String type, boolean isAccountWise);
-
-	public void updatePostingStatus(JVPostingEntry jVPostingEntry, String type);
-
-	public void updateListPostingStatus(List<JVPostingEntry> aJVPostingEntryList, String type, boolean isTxnRefWise);
-	
-	public void updateWorkFlowDetails(JVPostingEntry jVPostingEntry, String type);
-
-	public void updateDeletedDetails(JVPostingEntry jVPostingEntry, String type);
-
+	void updateValidationStatus(JVPostingEntry jVPostingEntry, String type);
+	void updateListValidationStatus(List<JVPostingEntry> aJVPostingEntryList, String type, boolean isAccountWise);
+	void updatePostingStatus(JVPostingEntry jVPostingEntry, String type);
+	void updateListPostingStatus(List<JVPostingEntry> aJVPostingEntryList, String type, boolean isTxnRefWise);
+	void updateWorkFlowDetails(JVPostingEntry jVPostingEntry, String type);
+	void updateDeletedDetails(JVPostingEntry jVPostingEntry, String type);
 	// TODO
-	public void updateDeleteFlag(JVPostingEntry jVPostingEntry, String type);
-
-	public int getMaxSeqNumForCurrentDay(JVPostingEntry jVPostingEntry);
-
-	public void upDateSeqNoForCurrentDayBatch(JVPostingEntry jVPostingEntry);
-	
-	public void updateDelteEntryDetails(JVPostingEntry jVPostingEntry, String type);
-
-	public void deleteIAEntries(long batchReference);
+	void updateDeleteFlag(JVPostingEntry jVPostingEntry, String type);
+	int getMaxSeqNumForCurrentDay(JVPostingEntry jVPostingEntry);
+	void upDateSeqNoForCurrentDayBatch(JVPostingEntry jVPostingEntry);
+	void updateDelteEntryDetails(JVPostingEntry jVPostingEntry, String type);
+	void deleteIAEntries(long batchReference);
 	
 }

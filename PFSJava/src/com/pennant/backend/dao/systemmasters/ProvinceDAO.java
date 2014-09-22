@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Province;
  */
 public interface ProvinceDAO {
 
-	public Province getProvince();
-	public Province getNewProvince();
-	public Province getProvinceById(String cPCountry, String cPProvince,String type);
-	public void update(Province province,String type);
-	public void delete(Province province,String type);
-	public void save(Province province,String type);
-	public void initialize(Province province);
-	public void refresh(Province entity);
+	Province getProvince();
+	Province getNewProvince();
+	Province getProvinceById(String cPCountry, String cPProvince,String type);
+	void update(Province province,String type);
+	void delete(Province province,String type);
+	void save(Province province,String type);
+	void initialize(Province province);
+	void refresh(Province entity);
 }

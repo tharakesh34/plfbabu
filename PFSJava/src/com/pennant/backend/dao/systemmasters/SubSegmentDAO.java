@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.SubSegment;
  */
 public interface SubSegmentDAO {
 
-	public SubSegment getSubSegment();
-	public SubSegment getNewSubSegment();
-	public SubSegment getSubSegmentById(String id,String subSegmentCode,String type);
-	public void update(SubSegment subSegment,String type);
-	public void delete(SubSegment subSegment,String type);
-	public void save(SubSegment subSegment,String type);
-	public void initialize(SubSegment subSegment);
-	public void refresh(SubSegment entity);
+	SubSegment getSubSegment();
+	SubSegment getNewSubSegment();
+	SubSegment getSubSegmentById(String id,String subSegmentCode,String type);
+	void update(SubSegment subSegment,String type);
+	void delete(SubSegment subSegment,String type);
+	void save(SubSegment subSegment,String type);
+	void initialize(SubSegment subSegment);
+	void refresh(SubSegment entity);
 }

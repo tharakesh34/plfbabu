@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Salutation;
  */
 public interface SalutationDAO {
 
-	public Salutation getSalutation();
-	public Salutation getNewSalutation();
-	public Salutation getSalutationById(String id,String type);
-	public void update(Salutation salutation,String type);
-	public void delete(Salutation salutation,String type);
-	public String save(Salutation salutation,String type);
-	public void initialize(Salutation salutation);
-	public void refresh(Salutation entity);
+	Salutation getSalutation();
+	Salutation getNewSalutation();
+	Salutation getSalutationById(String id,String type);
+	void update(Salutation salutation,String type);
+	void delete(Salutation salutation,String type);
+	String save(Salutation salutation,String type);
+	void initialize(Salutation salutation);
+	void refresh(Salutation entity);
 }

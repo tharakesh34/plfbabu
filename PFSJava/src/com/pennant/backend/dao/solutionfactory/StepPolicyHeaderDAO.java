@@ -53,13 +53,12 @@ import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
  */
 public interface StepPolicyHeaderDAO {
 
-	public StepPolicyHeader getStepPolicyHeader();
-	public StepPolicyHeader getNewStepPolicyHeader();
-	public StepPolicyHeader getStepPolicyHeaderByID(String id, String type);
-	public void update(StepPolicyHeader stepPolicyHeader, String type);
-	public void delete(StepPolicyHeader stepPolicyHeader, String type);
-	public String save(StepPolicyHeader stepPolicyHeader, String type);
-	public void initialize(StepPolicyHeader stepPolicyHeader);
-	public void refresh(StepPolicyHeader entity);
-
+	StepPolicyHeader getStepPolicyHeader();
+	StepPolicyHeader getNewStepPolicyHeader();
+	StepPolicyHeader getStepPolicyHeaderByID(String id, String type);
+	void update(StepPolicyHeader stepPolicyHeader, String type);
+	void delete(StepPolicyHeader stepPolicyHeader, String type);
+	String save(StepPolicyHeader stepPolicyHeader, String type);
+	void initialize(StepPolicyHeader stepPolicyHeader);
+	void refresh(StepPolicyHeader entity);
 }

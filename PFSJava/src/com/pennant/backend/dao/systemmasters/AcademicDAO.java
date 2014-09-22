@@ -51,13 +51,13 @@ import com.pennant.backend.model.systemmasters.Academic;
  */
 public interface AcademicDAO {
 
-	public Academic getAcademic();
-	public Academic getNewAcademic();
-	public Academic getAcademicById(long academicID,String type);
-	public void update(Academic academic,String type);
-	public void delete(Academic academic,String type);
-	public long save(Academic academic,String type);
-	public void initialize(Academic academic);
-	public void refresh(Academic entity);
-	public Academic getAcademic(String academicLevel, String academicDecipline,String type);
+	Academic getAcademic();
+	Academic getNewAcademic();
+	Academic getAcademicById(long academicID,String type);
+	void update(Academic academic,String type);
+	void delete(Academic academic,String type);
+	long save(Academic academic,String type);
+	void initialize(Academic academic);
+	void refresh(Academic entity);
+	Academic getAcademic(String academicLevel, String academicDecipline,String type);
 }

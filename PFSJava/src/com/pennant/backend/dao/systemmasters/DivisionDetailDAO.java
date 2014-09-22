@@ -46,12 +46,12 @@ import com.pennant.backend.model.systemmasters.DivisionDetail;
 
 public interface DivisionDetailDAO {
 
-	public DivisionDetail getDivisionDetail();
-	public DivisionDetail getNewDivisionDetail();
-	public DivisionDetail getDivisionDetailById(String id,String type);
-	public void update(DivisionDetail divisionDetail,String type);
-	public void delete(DivisionDetail divisionDetail,String type);
-	public String save(DivisionDetail divisionDetail,String type);
-	public void initialize(DivisionDetail divisionDetail);
-	public void refresh(DivisionDetail entity);
+	DivisionDetail getDivisionDetail();
+	DivisionDetail getNewDivisionDetail();
+	DivisionDetail getDivisionDetailById(String id,String type);
+	void update(DivisionDetail divisionDetail,String type);
+	void delete(DivisionDetail divisionDetail,String type);
+	String save(DivisionDetail divisionDetail,String type);
+	void initialize(DivisionDetail divisionDetail);
+	void refresh(DivisionDetail entity);
 }

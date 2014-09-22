@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.GeneralDepartment;
  */
 public interface GeneralDepartmentDAO {
 
-	public GeneralDepartment getGeneralDepartment();
-	public GeneralDepartment getNewGeneralDepartment();
-	public GeneralDepartment getGeneralDepartmentById(String id,String type);
-	public void update(GeneralDepartment generalDepartment,String type);
-	public void delete(GeneralDepartment generalDepartment,String type);
-	public String save(GeneralDepartment generalDepartment,String type);
-	public void initialize(GeneralDepartment generalDepartment);
-	public void refresh(GeneralDepartment entity);
+	GeneralDepartment getGeneralDepartment();
+	GeneralDepartment getNewGeneralDepartment();
+	GeneralDepartment getGeneralDepartmentById(String id,String type);
+	void update(GeneralDepartment generalDepartment,String type);
+	void delete(GeneralDepartment generalDepartment,String type);
+	String save(GeneralDepartment generalDepartment,String type);
+	void initialize(GeneralDepartment generalDepartment);
+	void refresh(GeneralDepartment entity);
 }

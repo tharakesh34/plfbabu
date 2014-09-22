@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.IdentityDetails;
  */
 public interface IdentityDetailsDAO {
 
-	public IdentityDetails getIdentityDetails();
-	public IdentityDetails getNewIdentityDetails();
-	public IdentityDetails getIdentityDetailsById(String id,String type);
-	public void update(IdentityDetails identityDetails,String type);
-	public void delete(IdentityDetails identityDetails,String type);
-	public String save(IdentityDetails identityDetails,String type);
-	public void initialize(IdentityDetails identityDetails);
-	public void refresh(IdentityDetails entity);
+	IdentityDetails getIdentityDetails();
+	IdentityDetails getNewIdentityDetails();
+	IdentityDetails getIdentityDetailsById(String id,String type);
+	void update(IdentityDetails identityDetails,String type);
+	void delete(IdentityDetails identityDetails,String type);
+	String save(IdentityDetails identityDetails,String type);
+	void initialize(IdentityDetails identityDetails);
+	void refresh(IdentityDetails entity);
 }

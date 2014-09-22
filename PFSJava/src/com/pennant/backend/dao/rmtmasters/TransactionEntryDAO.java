@@ -49,24 +49,24 @@ import com.pennant.backend.model.rulefactory.Rule;
 
 public interface TransactionEntryDAO {
 
-	public TransactionEntry getTransactionEntry();
-	public TransactionEntry getNewTransactionEntry();
-	public TransactionEntry getTransactionEntryById(long id,int transOrder,String type);
-	public void update(TransactionEntry transactionEntry,String type);
-	public void delete(TransactionEntry transactionEntry,String type);
-	public long save(TransactionEntry transactionEntry,String type);
-	public void initialize(TransactionEntry transactionEntry);
-	public void refresh(TransactionEntry entity);
-	public List<TransactionEntry> getListTransactionEntryById(final long id, String type,boolean postingProcess);
-	public List<Rule> getListFeeChargeRules(final long id, String ruleEvent, String type, int seqOrder);
-	public void deleteByAccountingSetId(long accountSetid, String tableType);
-	public List<TransactionEntry> getListFeeTransEntryById(long id, String type);
-	public List<TransactionEntry> getODTransactionEntries();
-	public List<TransactionEntry> getTransactionEntryList(String oDRuleCode);
-	public void updateTransactionEntryList(List<TransactionEntry> entries);
-	public List<TransactionEntry> getListTransactionEntryByRefType(String finType, int refType, String roleCode, 
+	 TransactionEntry getTransactionEntry();
+	 TransactionEntry getNewTransactionEntry();
+	 TransactionEntry getTransactionEntryById(long id,int transOrder,String type);
+	 void update(TransactionEntry transactionEntry,String type);
+	 void delete(TransactionEntry transactionEntry,String type);
+	 long save(TransactionEntry transactionEntry,String type);
+	 void initialize(TransactionEntry transactionEntry);
+	 void refresh(TransactionEntry entity);
+	 List<TransactionEntry> getListTransactionEntryById(final long id, String type,boolean postingProcess);
+	 List<Rule> getListFeeChargeRules(final long id, String ruleEvent, String type, int seqOrder);
+	 void deleteByAccountingSetId(long accountSetid, String tableType);
+	 List<TransactionEntry> getListFeeTransEntryById(long id, String type);
+	 List<TransactionEntry> getODTransactionEntries();
+	 List<TransactionEntry> getTransactionEntryList(String oDRuleCode);
+	 void updateTransactionEntryList(List<TransactionEntry> entries);
+	 List<TransactionEntry> getListTransactionEntryByRefType(String finType, int refType, String roleCode, 
 			String type,boolean postingProcess);
-	public List<TransactionEntry> getListTranEntryForBatch(long accSetid, String type);
-	public List<Long> getAccountSetIds();
-	public List<String> getListFeeCodes(long accountSetId);
+	 List<TransactionEntry> getListTranEntryForBatch(long accSetid, String type);
+	 List<Long> getAccountSetIds();
+	 List<String> getListFeeCodes(long accountSetId);
 }

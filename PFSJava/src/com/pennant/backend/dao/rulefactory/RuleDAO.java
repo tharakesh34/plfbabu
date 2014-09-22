@@ -58,27 +58,24 @@ import com.pennant.backend.model.rulefactory.RuleModule;
  */
 public interface RuleDAO {
 
-	public Rule getRule();
-	public Rule getNewRule();
-	public Rule getRuleByID(String code,String module,String event,String type);
-	public void update(Rule rule,String type);
-	public void delete(Rule rule,String type);
-	public long save(Rule rule,String type);
-	public void initialize(Rule rule);
-	public void refresh(Rule entity);
-	public List<BMTRBFldDetails> getFieldList(String module, String event);
-	public List<BMTRBFldCriterias> getOperatorsList();
-	public List<RuleModule> getRuleModules(String module);
-	public List<Rule> getRuleByModuleAndEvent(String module, String event, String type);
-	
-	public List<Rule> getRulesByGroupId(long groupId,String ruleModule, String ruleEvent, String type);
-	public List<Rule> getRulesByGroupIdList(long groupId, String categoryType, String type);
-	
-	public List<NFScoreRuleDetail> getNFRulesByGroupId(long id, String categoryType, String type);
-	public List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId, String type);
-	public List<Rule> getRulesByFinScoreGroup(List<Long> groupIds, String categoryType, String type);
-	public List<NFScoreRuleDetail> getNFRulesByNFScoreGroup(List<Long> groupIds, String type);
-	public String getAmountRule(String id, String module, String event);
-	public List<ValueLabel> getSubHeadAmountRule();
-	
+	Rule getRule();
+	Rule getNewRule();
+	Rule getRuleByID(String code,String module,String event,String type);
+	void update(Rule rule,String type);
+	void delete(Rule rule,String type);
+	long save(Rule rule,String type);
+	void initialize(Rule rule);
+	void refresh(Rule entity);
+	List<BMTRBFldDetails> getFieldList(String module, String event);
+	List<BMTRBFldCriterias> getOperatorsList();
+	List<RuleModule> getRuleModules(String module);
+	List<Rule> getRuleByModuleAndEvent(String module, String event, String type);
+	List<Rule> getRulesByGroupId(long groupId,String ruleModule, String ruleEvent, String type);
+	List<Rule> getRulesByGroupIdList(long groupId, String categoryType, String type);
+	List<NFScoreRuleDetail> getNFRulesByGroupId(long id, String categoryType, String type);
+	List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId, String type);
+	List<Rule> getRulesByFinScoreGroup(List<Long> groupIds, String categoryType, String type);
+	List<NFScoreRuleDetail> getNFRulesByNFScoreGroup(List<Long> groupIds, String type);
+	String getAmountRule(String id, String module, String event);
+	List<ValueLabel> getSubHeadAmountRule();
   }

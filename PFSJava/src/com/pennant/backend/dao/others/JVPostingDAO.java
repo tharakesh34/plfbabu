@@ -46,29 +46,17 @@ import com.pennant.backend.model.others.JVPosting;
 
 public interface JVPostingDAO {
 
-	public JVPosting getJVPosting();
-
-	public JVPosting getNewJVPosting();
-
-	public JVPosting getJVPostingById(long id, String type);
-
-	public JVPosting getJVPostingByFileName(String fileName);
-
-	public void update(JVPosting jVPosting, String type);
-
-	public void updateHeaderDetails(JVPosting jVPosting, String type);
-
-	public void updateValidationStatus(JVPosting jVPosting, String type);
-
-	public void updateBatchPostingStatus(JVPosting jVPosting, String type);
-	
-	public void delete(JVPosting jVPosting, String type);
-
-	public long save(JVPosting jVPosting, String type);
-
-	public void initialize(JVPosting jVPosting);
-
-	public void refresh(JVPosting entity);
-
-	public long getMaxSeqNum(JVPosting jvPosting);
+	JVPosting getJVPosting();
+	JVPosting getNewJVPosting();
+	JVPosting getJVPostingById(long id, String type);
+	JVPosting getJVPostingByFileName(String fileName);
+	void update(JVPosting jVPosting, String type);
+	void updateHeaderDetails(JVPosting jVPosting, String type);
+	void updateValidationStatus(JVPosting jVPosting, String type);
+	void updateBatchPostingStatus(JVPosting jVPosting, String type);
+	void delete(JVPosting jVPosting, String type);
+	long save(JVPosting jVPosting, String type);
+	void initialize(JVPosting jVPosting);
+	void refresh(JVPosting entity);
+	long getMaxSeqNum(JVPosting jvPosting);
 }

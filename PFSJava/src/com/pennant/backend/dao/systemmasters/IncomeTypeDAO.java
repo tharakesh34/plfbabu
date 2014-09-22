@@ -52,13 +52,13 @@ import com.pennant.backend.model.systemmasters.IncomeType;
  */
 public interface IncomeTypeDAO {
 
-	public IncomeType getIncomeType();
-	public IncomeType getNewIncomeType();
+	IncomeType getIncomeType();
+	IncomeType getNewIncomeType();
 	IncomeType getIncomeTypeById(String id, String incomeExpense, String category, String type);
-	public void update(IncomeType incomeType,String type);
-	public void delete(IncomeType incomeType,String type);
-	public String save(IncomeType incomeType,String type);
-	public void initialize(IncomeType incomeType);
-	public void refresh(IncomeType entity);
+	void update(IncomeType incomeType,String type);
+	void delete(IncomeType incomeType,String type);
+	String save(IncomeType incomeType,String type);
+	void initialize(IncomeType incomeType);
+	void refresh(IncomeType entity);
 	List<IncomeType> getIncomeTypeList();
 }

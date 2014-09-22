@@ -48,15 +48,15 @@ import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 
 public interface ScoringMetricsDAO {
 
-	public ScoringMetrics getScoringMetrics();
-	public ScoringMetrics getNewScoringMetrics();
-	public ScoringMetrics getScoringMetricsById(String id,String type);
-	public void update(ScoringMetrics scoringMetrics,String type);
-	public void delete(ScoringMetrics scoringMetrics,String type);
-	public String save(ScoringMetrics scoringMetrics,String type);
-	public void initialize(ScoringMetrics scoringMetrics);
-	public void refresh(ScoringMetrics scoringMetrics);
-	public List<ScoringMetrics> getScoringMetricsByScoreGrpId(final long scoreGrpId, String categoryType, String type);
-	public void delete(long scoreGroupId , String type);
+	ScoringMetrics getScoringMetrics();
+	ScoringMetrics getNewScoringMetrics();
+	ScoringMetrics getScoringMetricsById(String id,String type);
+	void update(ScoringMetrics scoringMetrics,String type);
+	void delete(ScoringMetrics scoringMetrics,String type);
+	String save(ScoringMetrics scoringMetrics,String type);
+	void initialize(ScoringMetrics scoringMetrics);
+	void refresh(ScoringMetrics scoringMetrics);
+	List<ScoringMetrics> getScoringMetricsByScoreGrpId(final long scoreGrpId, String categoryType, String type);
+	void delete(long scoreGroupId , String type);
 	
 }

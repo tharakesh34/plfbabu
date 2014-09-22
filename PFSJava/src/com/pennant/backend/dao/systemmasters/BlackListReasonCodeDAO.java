@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.BlackListReasonCode;
  */
 public interface BlackListReasonCodeDAO {
 
-	public BlackListReasonCode getBlackListReasonCode();
-	public BlackListReasonCode getNewBlackListReasonCode();
-	public BlackListReasonCode getBlackListReasonCodeById(String id,String type);
-	public void update(BlackListReasonCode blackListReasonCode,String type);
-	public void delete(BlackListReasonCode blackListReasonCode,String type);
-	public String save(BlackListReasonCode blackListReasonCode,String type);
-	public void initialize(BlackListReasonCode blackListReasonCode);
-	public void refresh(BlackListReasonCode entity);
+	BlackListReasonCode getBlackListReasonCode();
+	BlackListReasonCode getNewBlackListReasonCode();
+	BlackListReasonCode getBlackListReasonCodeById(String id,String type);
+	void update(BlackListReasonCode blackListReasonCode,String type);
+	void delete(BlackListReasonCode blackListReasonCode,String type);
+	String save(BlackListReasonCode blackListReasonCode,String type);
+	void initialize(BlackListReasonCode blackListReasonCode);
+	void refresh(BlackListReasonCode entity);
 }

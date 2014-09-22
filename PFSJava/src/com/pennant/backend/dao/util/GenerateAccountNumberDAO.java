@@ -52,7 +52,7 @@ import com.pennant.app.model.SeqAccountNumber;
  */
 public interface GenerateAccountNumberDAO {
 
-	public SeqAccountNumber getSeqAccountNumber(SeqAccountNumber seqAccountNumber,boolean isReadOnly);
-	public void update(SeqAccountNumber seqAccountNumber);
-	public void save(SeqAccountNumber seqAccountNumber);
+	SeqAccountNumber getSeqAccountNumber(SeqAccountNumber seqAccountNumber,boolean isReadOnly);
+	void update(SeqAccountNumber seqAccountNumber);
+	void save(SeqAccountNumber seqAccountNumber);
 }

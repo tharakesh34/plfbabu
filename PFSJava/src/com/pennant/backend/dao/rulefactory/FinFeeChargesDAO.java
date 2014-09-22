@@ -48,8 +48,9 @@ import java.util.List;
 import com.pennant.backend.model.rulefactory.FeeRule;
 
 public interface FinFeeChargesDAO {
-	public List<FeeRule> getFeeChargesByFinRef(String finReference, boolean isWIF, String tableType);
-	public List<FeeRule> getFeeChargesByFeeCode(String feeCode, String tableType);
-	public FeeRule getFeeChargesByFinRefAndFee(String finReference, String feeCode, String tableType);
-	public boolean updateFeeChargesByFinRefAndFee(FeeRule feeRule, String tableType);
+
+	List<FeeRule> getFeeChargesByFinRef(String finReference, boolean isWIF, String tableType);
+	List<FeeRule> getFeeChargesByFeeCode(String feeCode, String tableType);
+	FeeRule getFeeChargesByFinRefAndFee(String finReference, String feeCode, String tableType);
+	boolean updateFeeChargesByFinRefAndFee(FeeRule feeRule, String tableType);
 }

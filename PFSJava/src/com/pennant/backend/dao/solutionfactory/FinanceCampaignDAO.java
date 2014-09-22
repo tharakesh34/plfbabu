@@ -46,12 +46,12 @@ import com.pennant.backend.model.solutionfactory.FinanceCampaign;
 
 public interface FinanceCampaignDAO {
 
-	public FinanceCampaign getFinanceCampaign();
-	public FinanceCampaign getNewFinanceCampaign();
-	public FinanceCampaign getFinanceCampaignById(String id,String type);
-	public void update(FinanceCampaign financeCampaign,String type);
-	public void delete(FinanceCampaign financeCampaign,String type);
-	public String save(FinanceCampaign financeCampaign,String type);
-	public void initialize(FinanceCampaign financeCampaign);
-	public void refresh(FinanceCampaign entity);
+	FinanceCampaign getFinanceCampaign();
+	FinanceCampaign getNewFinanceCampaign();
+	FinanceCampaign getFinanceCampaignById(String id,String type);
+	void update(FinanceCampaign financeCampaign,String type);
+	void delete(FinanceCampaign financeCampaign,String type);
+	String save(FinanceCampaign financeCampaign,String type);
+	void initialize(FinanceCampaign financeCampaign);
+	void refresh(FinanceCampaign entity);
 }

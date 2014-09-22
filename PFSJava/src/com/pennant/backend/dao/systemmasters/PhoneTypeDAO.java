@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.PhoneType;
  */
 public interface PhoneTypeDAO {
 
-	public PhoneType getPhoneType();
-	public PhoneType getNewPhoneType();
-	public PhoneType getPhoneTypeById(String id,String type);
-	public void update(PhoneType phoneType,String type);
-	public void delete(PhoneType phoneType,String type);
-	public String save(PhoneType phoneType,String type);
-	public void initialize(PhoneType phoneType);
-	public void refresh(PhoneType entity);
+	PhoneType getPhoneType();
+	PhoneType getNewPhoneType();
+	PhoneType getPhoneTypeById(String id,String type);
+	void update(PhoneType phoneType,String type);
+	void delete(PhoneType phoneType,String type);
+	String save(PhoneType phoneType,String type);
+	void initialize(PhoneType phoneType);
+	void refresh(PhoneType entity);
 }

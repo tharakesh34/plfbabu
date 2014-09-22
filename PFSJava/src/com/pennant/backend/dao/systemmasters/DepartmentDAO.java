@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Department;
  */
 public interface DepartmentDAO {
 
-	public Department getDepartment();
-	public Department getNewDepartment();
-	public Department getDepartmentById(String id,String type);
-	public void update(Department department,String type);
-	public void delete(Department department,String type);
-	public String save(Department department,String type);
-	public void initialize(Department department);
-	public void refresh(Department entity);
+	Department getDepartment();
+	Department getNewDepartment();
+	Department getDepartmentById(String id,String type);
+	void update(Department department,String type);
+	void delete(Department department,String type);
+	String save(Department department,String type);
+	void initialize(Department department);
+	void refresh(Department entity);
 }

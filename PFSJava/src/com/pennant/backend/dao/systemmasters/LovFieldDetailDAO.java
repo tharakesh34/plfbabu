@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
  */
 public interface LovFieldDetailDAO {
 
-	public LovFieldDetail getLovFieldDetail();
-	public LovFieldDetail getNewLovFieldDetail();
-	public LovFieldDetail getLovFieldDetailById(long id,String type);
-	public void update(LovFieldDetail lovFieldDetail,String type);
-	public void delete(LovFieldDetail lovFieldDetail,String type);
-	public long save(LovFieldDetail lovFieldDetail,String type);
-	public void initialize(LovFieldDetail lovFieldDetail);
-	public void refresh(LovFieldDetail entity);
+	LovFieldDetail getLovFieldDetail();
+	LovFieldDetail getNewLovFieldDetail();
+	LovFieldDetail getLovFieldDetailById(long id,String type);
+	void update(LovFieldDetail lovFieldDetail,String type);
+	void delete(LovFieldDetail lovFieldDetail,String type);
+	long save(LovFieldDetail lovFieldDetail,String type);
+	void initialize(LovFieldDetail lovFieldDetail);
+	void refresh(LovFieldDetail entity);
 }

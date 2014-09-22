@@ -46,12 +46,12 @@ import com.pennant.backend.model.staticparms.LovFieldCode;
 
 public interface LovFieldCodeDAO {
 
-	public LovFieldCode getLovFieldCode();
-	public LovFieldCode getNewLovFieldCode();
-	public LovFieldCode getLovFieldCodeById(String id,String type);
-	public void update(LovFieldCode lovFieldCode,String type);
-	public void delete(LovFieldCode lovFieldCode,String type);
-	public String save(LovFieldCode lovFieldCode,String type);
-	public void initialize(LovFieldCode lovFieldCode);
-	public void refresh(LovFieldCode entity);
+	LovFieldCode getLovFieldCode();
+	LovFieldCode getNewLovFieldCode();
+	LovFieldCode getLovFieldCodeById(String id,String type);
+	void update(LovFieldCode lovFieldCode,String type);
+	void delete(LovFieldCode lovFieldCode,String type);
+	String save(LovFieldCode lovFieldCode,String type);
+	void initialize(LovFieldCode lovFieldCode);
+	void refresh(LovFieldCode entity);
 }

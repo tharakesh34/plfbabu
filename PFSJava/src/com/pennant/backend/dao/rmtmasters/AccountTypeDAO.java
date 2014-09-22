@@ -53,13 +53,13 @@ import com.pennant.backend.model.rmtmasters.AccountType;
  */
 public interface AccountTypeDAO {
 
-	public AccountType getAccountType();
-	public AccountType getNewAccountType();
-	public AccountType getAccountTypeById(String id,String type);
-	public void update(AccountType accountType,String type);
-	public void delete(AccountType accountType,String type);
-	public String save(AccountType accountType,String type);
-	public void initialize(AccountType accountType);
-	public void refresh(AccountType entity);
-	public List<ValueLabel> getAccountTypeDesc(List<String> acTypeList);
+	 AccountType getAccountType();
+	 AccountType getNewAccountType();
+	 AccountType getAccountTypeById(String id,String type);
+	 void update(AccountType accountType,String type);
+	 void delete(AccountType accountType,String type);
+	 String save(AccountType accountType,String type);
+	 void initialize(AccountType accountType);
+	 void refresh(AccountType entity);
+	 List<ValueLabel> getAccountTypeDesc(List<String> acTypeList);
 }

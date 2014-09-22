@@ -50,12 +50,12 @@ import com.pennant.backend.model.staticparms.InterestRateBasisCode;
  */
 public interface InterestRateBasisCodeDAO {
 
-	public InterestRateBasisCode getInterestRateBasisCode();
-	public InterestRateBasisCode getNewInterestRateBasisCode();
-	public InterestRateBasisCode getInterestRateBasisCodeById(String id,String type);
-	public void update(InterestRateBasisCode interestRateBasisCode,String type);
-	public void delete(InterestRateBasisCode interestRateBasisCode,String type);
-	public String save(InterestRateBasisCode interestRateBasisCode,String type);
-	public void initialize(InterestRateBasisCode interestRateBasisCode);
-	public void refresh(InterestRateBasisCode entity);
+	InterestRateBasisCode getInterestRateBasisCode();
+	InterestRateBasisCode getNewInterestRateBasisCode();
+	InterestRateBasisCode getInterestRateBasisCodeById(String id,String type);
+	void update(InterestRateBasisCode interestRateBasisCode,String type);
+	void delete(InterestRateBasisCode interestRateBasisCode,String type);
+	String save(InterestRateBasisCode interestRateBasisCode,String type);
+	void initialize(InterestRateBasisCode interestRateBasisCode);
+	void refresh(InterestRateBasisCode entity);
 }

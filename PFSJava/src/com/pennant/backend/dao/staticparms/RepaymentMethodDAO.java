@@ -46,12 +46,12 @@ import com.pennant.backend.model.staticparms.RepaymentMethod;
 
 public interface RepaymentMethodDAO {
 
-	public RepaymentMethod getRepaymentMethod();
-	public RepaymentMethod getNewRepaymentMethod();
-	public RepaymentMethod getRepaymentMethodById(String id,String type);
-	public void update(RepaymentMethod repaymentMethod,String type);
-	public void delete(RepaymentMethod repaymentMethod,String type);
-	public String save(RepaymentMethod repaymentMethod,String type);
-	public void initialize(RepaymentMethod repaymentMethod);
-	public void refresh(RepaymentMethod entity);
+	RepaymentMethod getRepaymentMethod();
+	RepaymentMethod getNewRepaymentMethod();
+	RepaymentMethod getRepaymentMethodById(String id,String type);
+	void update(RepaymentMethod repaymentMethod,String type);
+	void delete(RepaymentMethod repaymentMethod,String type);
+	String save(RepaymentMethod repaymentMethod,String type);
+	void initialize(RepaymentMethod repaymentMethod);
+	void refresh(RepaymentMethod entity);
 }

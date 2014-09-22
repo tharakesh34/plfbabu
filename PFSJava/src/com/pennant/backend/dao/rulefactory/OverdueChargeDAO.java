@@ -50,12 +50,12 @@ import com.pennant.backend.model.rulefactory.OverdueCharge;
  */
 public interface OverdueChargeDAO {
 	
-	public OverdueCharge getOverdueCharge();
-	public OverdueCharge getNewOverdueCharge();
-	public OverdueCharge getOverdueChargeById(String id,String type);
-	public void update(OverdueCharge overdueCharge,String type);
-	public void delete(OverdueCharge overdueCharge,String type);
-	public String save(OverdueCharge overdueCharge,String type);
-	public void initialize(OverdueCharge overdueCharge);
-	public void refresh(OverdueCharge entity);
+	OverdueCharge getOverdueCharge();
+	OverdueCharge getNewOverdueCharge();
+	OverdueCharge getOverdueChargeById(String id,String type);
+	void update(OverdueCharge overdueCharge,String type);
+	void delete(OverdueCharge overdueCharge,String type);
+	String save(OverdueCharge overdueCharge,String type);
+	void initialize(OverdueCharge overdueCharge);
+	void refresh(OverdueCharge entity);
 }

@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Gender;
  */
 public interface GenderDAO {
 
-	public Gender getGender();
-	public Gender getNewGender();
-	public Gender getGenderById(String id,String type);
-	public void update(Gender gender,String type);
-	public void delete(Gender gender,String type);
-	public String save(Gender gender,String type);
-	public void initialize(Gender gender);
-	public void refresh(Gender entity);
+	Gender getGender();
+	Gender getNewGender();
+	Gender getGenderById(String id,String type);
+	void update(Gender gender,String type);
+	void delete(Gender gender,String type);
+	String save(Gender gender,String type);
+	void initialize(Gender gender);
+	void refresh(Gender entity);
 }

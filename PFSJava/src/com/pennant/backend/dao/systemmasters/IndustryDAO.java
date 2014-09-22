@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Industry;
  */
 public interface IndustryDAO {
 
-	public Industry getIndustry();
-	public Industry getNewIndustry();
-	public Industry getIndustryById(String id,String type);
-	public void update(Industry industry,String type);
-	public void delete(Industry industry,String type);
-	public void save(Industry industry,String type);
-	public void initialize(Industry industry);
-	public void refresh(Industry entity);
+	Industry getIndustry();
+	Industry getNewIndustry();
+	Industry getIndustryById(String id,String type);
+	void update(Industry industry,String type);
+	void delete(Industry industry,String type);
+	void save(Industry industry,String type);
+	void initialize(Industry industry);
+	void refresh(Industry entity);
 }

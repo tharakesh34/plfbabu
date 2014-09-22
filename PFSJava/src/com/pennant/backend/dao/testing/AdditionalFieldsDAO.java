@@ -46,12 +46,12 @@ import com.pennant.backend.model.testing.AdditionalFields;
 
 public interface AdditionalFieldsDAO {
 
-	public AdditionalFields getAdditionalFields();
-	public AdditionalFields getNewAdditionalFields();
-	public AdditionalFields getAdditionalFieldsById(String id,String type);
-	public void update(AdditionalFields additionalFields,String type);
-	public void delete(AdditionalFields additionalFields,String type);
-	public String save(AdditionalFields additionalFields,String type);
-	public void initialize(AdditionalFields additionalFields);
-	public void refresh(AdditionalFields entity);
+	AdditionalFields getAdditionalFields();
+	AdditionalFields getNewAdditionalFields();
+	AdditionalFields getAdditionalFieldsById(String id,String type);
+	void update(AdditionalFields additionalFields,String type);
+	void delete(AdditionalFields additionalFields,String type);
+	String save(AdditionalFields additionalFields,String type);
+	void initialize(AdditionalFields additionalFields);
+	void refresh(AdditionalFields entity);
 }

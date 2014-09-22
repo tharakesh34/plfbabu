@@ -54,15 +54,15 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccount;
  */
 public interface FinTypeAccountDAO {
 
-	public FinTypeAccount getFinTypeAccount();
-	public FinTypeAccount getNewFinTypeAccount();
-	public FinTypeAccount getFinTypeAccountByID(FinTypeAccount finTypeAccount, String type); 
-	public List<FinTypeAccount> getFinTypeAccountListByID(final String id, String type); 
-	public void update(FinTypeAccount finTypeAccount, String type);
-	public String save(FinTypeAccount finTypeAccount, String type);
-	public void delete(FinTypeAccount finTypeAccount, String type);
-	public void deleteByFinType(String finType, String type); 
-	public void initialize(FinTypeAccount finTypeAccount);
-	public void refresh(FinTypeAccount entity);
+	FinTypeAccount getFinTypeAccount();
+	FinTypeAccount getNewFinTypeAccount();
+	FinTypeAccount getFinTypeAccountByID(FinTypeAccount finTypeAccount, String type); 
+	List<FinTypeAccount> getFinTypeAccountListByID(final String id, String type); 
+	void update(FinTypeAccount finTypeAccount, String type);
+	String save(FinTypeAccount finTypeAccount, String type);
+	void delete(FinTypeAccount finTypeAccount, String type);
+	void deleteByFinType(String finType, String type); 
+	void initialize(FinTypeAccount finTypeAccount);
+	void refresh(FinTypeAccount entity);
 
 }

@@ -6,14 +6,13 @@ import com.pennant.backend.model.testing.AdditionalFieldValues;
 
 public interface AdditionalFieldValuesDAO {
 	
-	public AdditionalFieldValues getAdditionalFieldValues();
-	public AdditionalFieldValues getNewAdditionalFieldValues();
-	public AdditionalFieldValues getAdditionalFieldValuesById(String id,String type);
-	public void update(AdditionalFieldValues additionalFieldValues,String type);
-	public void delete(AdditionalFieldValues additionalFieldValues,String type);
-	public String save(AdditionalFieldValues additionalFieldValues,String type);
-	public void initialize(AdditionalFieldValues additionalFieldValues);
-	public void refresh(AdditionalFieldValues entity);
-	public List<AdditionalFieldValues> getAddfeldList(String module, String type);
-
+	AdditionalFieldValues getAdditionalFieldValues();
+	AdditionalFieldValues getNewAdditionalFieldValues();
+	AdditionalFieldValues getAdditionalFieldValuesById(String id,String type);
+	void update(AdditionalFieldValues additionalFieldValues,String type);
+	void delete(AdditionalFieldValues additionalFieldValues,String type);
+	String save(AdditionalFieldValues additionalFieldValues,String type);
+	void initialize(AdditionalFieldValues additionalFieldValues);
+	void refresh(AdditionalFieldValues entity);
+	List<AdditionalFieldValues> getAddfeldList(String module, String type);
 }

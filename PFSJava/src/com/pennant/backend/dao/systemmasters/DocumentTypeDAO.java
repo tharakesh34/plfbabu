@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.DocumentType;
  */
 public interface DocumentTypeDAO {
 
-	public DocumentType getDocumentType();
-	public DocumentType getNewDocumentType();
-	public DocumentType getDocumentTypeById(String id,String type);
-	public void update(DocumentType documentType,String type);
-	public void delete(DocumentType documentType,String type);
-	public String save(DocumentType documentType,String type);
-	public void initialize(DocumentType documentType);
-	public void refresh(DocumentType entity);
+	DocumentType getDocumentType();
+	DocumentType getNewDocumentType();
+	DocumentType getDocumentTypeById(String id,String type);
+	void update(DocumentType documentType,String type);
+	void delete(DocumentType documentType,String type);
+	String save(DocumentType documentType,String type);
+	void initialize(DocumentType documentType);
+	void refresh(DocumentType entity);
 }

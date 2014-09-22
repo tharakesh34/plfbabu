@@ -54,16 +54,16 @@ import com.pennant.backend.model.reports.ReportConfiguration;
  */
 public interface ReportConfigurationDAO {
 
-	public ReportConfiguration getReportConfiguration();
-	public ReportConfiguration getNewReportConfiguration();
-	public ReportConfiguration getReportConfigurationById(long id,String type);
-	public void update(ReportConfiguration reportConfiguration,String type);
-	public void delete(ReportConfiguration reportConfiguration,String type);
-	public long save(ReportConfiguration reportConfiguration,String type);
-	public void initialize(ReportConfiguration reportConfiguration);
-	public void refresh(ReportConfiguration entity);
+	ReportConfiguration getReportConfiguration();
+	ReportConfiguration getNewReportConfiguration();
+	ReportConfiguration getReportConfigurationById(long id,String type);
+	void update(ReportConfiguration reportConfiguration,String type);
+	void delete(ReportConfiguration reportConfiguration,String type);
+	long save(ReportConfiguration reportConfiguration,String type);
+	void initialize(ReportConfiguration reportConfiguration);
+	void refresh(ReportConfiguration entity);
 	
 	//Month End Report Details
-	public List<ValueLabel> getMonthEndReportGrpCodes();
+	List<ValueLabel> getMonthEndReportGrpCodes();
 	List<ValueLabel> getReportListByGrpCode(String groupCode);
 }

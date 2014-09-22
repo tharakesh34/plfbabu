@@ -50,12 +50,12 @@ import com.pennant.backend.model.rmtmasters.PenaltyCode;
  */
 public interface PenaltyCodeDAO {
 
-	public PenaltyCode getPenaltyCode();
-	public PenaltyCode getNewPenaltyCode();
-	public PenaltyCode getPenaltyCodeById(String id,String type);
-	public void update(PenaltyCode penaltyCode,String type);
-	public void delete(PenaltyCode penaltyCode,String type);
-	public String save(PenaltyCode penaltyCode,String type);
-	public void initialize(PenaltyCode penaltyCode);
-	public void refresh(PenaltyCode entity);
+	 PenaltyCode getPenaltyCode();
+	 PenaltyCode getNewPenaltyCode();
+	 PenaltyCode getPenaltyCodeById(String id,String type);
+	 void update(PenaltyCode penaltyCode,String type);
+	 void delete(PenaltyCode penaltyCode,String type);
+	 String save(PenaltyCode penaltyCode,String type);
+	 void initialize(PenaltyCode penaltyCode);
+	 void refresh(PenaltyCode entity);
 }

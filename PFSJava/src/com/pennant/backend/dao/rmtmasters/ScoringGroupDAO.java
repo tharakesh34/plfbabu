@@ -46,12 +46,12 @@ import com.pennant.backend.model.rmtmasters.ScoringGroup;
 
 public interface ScoringGroupDAO {
 
-	public ScoringGroup getScoringGroup();
-	public ScoringGroup getNewScoringGroup();
-	public ScoringGroup getScoringGroupById(long id,String type);
-	public void update(ScoringGroup scoringGroup,String type);
-	public void delete(ScoringGroup scoringGroup,String type);
-	public long save(ScoringGroup scoringGroup,String type);
-	public void initialize(ScoringGroup scoringGroup);
-	public void refresh(ScoringGroup entity);
+	 ScoringGroup getScoringGroup();
+	 ScoringGroup getNewScoringGroup();
+	 ScoringGroup getScoringGroupById(long id,String type);
+	 void update(ScoringGroup scoringGroup,String type);
+	 void delete(ScoringGroup scoringGroup,String type);
+	 long save(ScoringGroup scoringGroup,String type);
+	 void initialize(ScoringGroup scoringGroup);
+	 void refresh(ScoringGroup entity);
 }

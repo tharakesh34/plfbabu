@@ -50,13 +50,12 @@ import com.pennant.backend.model.systemmasters.City;
  */
 public interface CityDAO {
 
-	public City getCity();
-	public City getNewCity();
-	public City getCityById(String pCCountry,String pCProvince,String pCCity,String type);
-	public void update(City city,String type);
-	public void delete(City city,String type);
-	public void save(City city,String type);
-	public void initialize(City city);
-	public void refresh(City entity);
-
+	City getCity();
+	City getNewCity();
+	City getCityById(String pCCountry,String pCProvince,String pCCity,String type);
+	void update(City city,String type);
+	void delete(City city,String type);
+	void save(City city,String type);
+	void initialize(City city);
+	void refresh(City entity);
 }

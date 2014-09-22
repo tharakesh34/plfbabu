@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.MaritalStatusCode;
  */
 public interface MaritalStatusCodeDAO {
 
-	public MaritalStatusCode getMaritalStatusCode();
-	public MaritalStatusCode getNewMaritalStatusCode();
-	public MaritalStatusCode getMaritalStatusCodeById(String id,String type);
-	public void update(MaritalStatusCode maritalStatusCode,String type);
-	public void delete(MaritalStatusCode maritalStatusCode,String type);
-	public String save(MaritalStatusCode maritalStatusCode,String type);
-	public void initialize(MaritalStatusCode maritalStatusCode);
-	public void refresh(MaritalStatusCode entity);
+	MaritalStatusCode getMaritalStatusCode();
+	MaritalStatusCode getNewMaritalStatusCode();
+	MaritalStatusCode getMaritalStatusCodeById(String id,String type);
+	void update(MaritalStatusCode maritalStatusCode,String type);
+	void delete(MaritalStatusCode maritalStatusCode,String type);
+	String save(MaritalStatusCode maritalStatusCode,String type);
+	void initialize(MaritalStatusCode maritalStatusCode);
+	void refresh(MaritalStatusCode entity);
 }

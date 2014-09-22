@@ -56,19 +56,19 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
  */
 public interface PostingsDAO {
 	
-	public List<ReturnDataSet> getPostingsByFinReference(String id,String type);
-	public long saveHeader(ReturnDataSet rule, String status,String type);
-	public void saveBatch(List<ReturnDataSet> dataSetList, String type,boolean isEODPostings);
-	public long getLinkedTransId(ReturnDataSet dataSet);
-	public List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId);
-	public void saveEODBatch(List<ReturnDataSet> dataSetList, String type, String isDummy);
-	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal);
-	public FinanceSummary getTotalFeeCharges(FinanceSummary summary);
-	public void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType);
-	public List<FeeRule> getFeeChargesByFinRef(String financeReference, boolean isWIF, String tableType);
-	public void deleteChargesBatch(String finrefrence,boolean isWIF,  String tableType);
-	public void updateBatch(List<ReturnDataSet> dataSetList, String type);
-	public void deleteAll(String type);
-	public FeeRule getTakafulFee(String finReference, String type);
-	public BigDecimal getPostAmtByTranIdandEvent(String finReference, String finEvent, long linkedTranId);
+	List<ReturnDataSet> getPostingsByFinReference(String id,String type);
+	long saveHeader(ReturnDataSet rule, String status,String type);
+	void saveBatch(List<ReturnDataSet> dataSetList, String type,boolean isEODPostings);
+	long getLinkedTransId(ReturnDataSet dataSet);
+	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId);
+	void saveEODBatch(List<ReturnDataSet> dataSetList, String type, String isDummy);
+	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal);
+	FinanceSummary getTotalFeeCharges(FinanceSummary summary);
+	void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType);
+	List<FeeRule> getFeeChargesByFinRef(String financeReference, boolean isWIF, String tableType);
+	void deleteChargesBatch(String finrefrence,boolean isWIF,  String tableType);
+	void updateBatch(List<ReturnDataSet> dataSetList, String type);
+	void deleteAll(String type);
+	FeeRule getTakafulFee(String finReference, String type);
+	BigDecimal getPostAmtByTranIdandEvent(String finReference, String finEvent, long linkedTranId);
 }

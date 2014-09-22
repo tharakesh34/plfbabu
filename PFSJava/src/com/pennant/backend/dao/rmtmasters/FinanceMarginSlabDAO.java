@@ -48,14 +48,14 @@ import com.pennant.backend.model.rmtmasters.FinanceMarginSlab;
 
 public interface FinanceMarginSlabDAO {
 
-	public FinanceMarginSlab getFinanceMarginSlab();
-	public FinanceMarginSlab getNewFinanceMarginSlab();
-	public FinanceMarginSlab getFinanceMarginSlabById(String id,String type);
-	public void update(FinanceMarginSlab financeMarginSlab,String type);
-	public void delete(FinanceMarginSlab financeMarginSlab,String type);
-	public String save(FinanceMarginSlab financeMarginSlab,String type);
-	public void initialize(FinanceMarginSlab financeMarginSlab);
-	public void refresh(FinanceMarginSlab entity);
-	public List<FinanceMarginSlab> getFinanceMarginSlabByFinType(final String finType, String type);
-	public void deleteAll(FinanceMarginSlab financeMarginSlab,String type);
+	FinanceMarginSlab getFinanceMarginSlab();
+	FinanceMarginSlab getNewFinanceMarginSlab();
+	FinanceMarginSlab getFinanceMarginSlabById(String id,String type);
+	void update(FinanceMarginSlab financeMarginSlab,String type);
+	void delete(FinanceMarginSlab financeMarginSlab,String type);
+	String save(FinanceMarginSlab financeMarginSlab,String type);
+	void initialize(FinanceMarginSlab financeMarginSlab);
+	void refresh(FinanceMarginSlab entity);
+	List<FinanceMarginSlab> getFinanceMarginSlabByFinType(final String finType, String type);
+	void deleteAll(FinanceMarginSlab financeMarginSlab,String type);
 }

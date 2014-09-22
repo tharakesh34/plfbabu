@@ -53,18 +53,18 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
  */
 public interface FinanceTypeDAO {
 
-	public FinanceType getFinanceType();
-	public FinanceType getNewFinanceType();
-	public FinanceType getFinanceTypeByID(String id, String type);
-	public FinanceType getFinanceTypeByFinType(String finType);
-	public void update(FinanceType financeType, String type);
-	public void delete(FinanceType financeType, String type);
-	public String save(FinanceType financeType, String type);
-	public void initialize(FinanceType financeType);
-	public void refresh(FinanceType entity);
-	public FinanceType getCommodityFinanceType();
-	public FinanceType getNewCommodityFinanceType();
-	public boolean checkRIAFinance(String finType);
-	public List<FinanceType> getFinTypeDetailForBatch();
+	FinanceType getFinanceType();
+	FinanceType getNewFinanceType();
+	FinanceType getFinanceTypeByID(String id, String type);
+	FinanceType getFinanceTypeByFinType(String finType);
+	void update(FinanceType financeType, String type);
+	void delete(FinanceType financeType, String type);
+	String save(FinanceType financeType, String type);
+	void initialize(FinanceType financeType);
+	void refresh(FinanceType entity);
+	FinanceType getCommodityFinanceType();
+	FinanceType getNewCommodityFinanceType();
+	boolean checkRIAFinance(String finType);
+	List<FinanceType> getFinTypeDetailForBatch();
 
 }

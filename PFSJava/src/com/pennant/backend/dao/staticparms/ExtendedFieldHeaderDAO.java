@@ -46,14 +46,13 @@ import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 
 public interface ExtendedFieldHeaderDAO {
 
-	public ExtendedFieldHeader getExtendedFieldHeader();
-	public ExtendedFieldHeader getNewExtendedFieldHeader();
-	public ExtendedFieldHeader getExtendedFieldHeaderById(long id,String type);
-	public void update(ExtendedFieldHeader extendedFieldHeader,String type);
-	public void delete(ExtendedFieldHeader extendedFieldHeader,String type);
-	public long save(ExtendedFieldHeader extendedFieldHeader,String type);
-	public void initialize(ExtendedFieldHeader extendedFieldHeader);
-	public void refresh(ExtendedFieldHeader entity);
-	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName, String subModuleName, String type);
-	
+	ExtendedFieldHeader getExtendedFieldHeader();
+	ExtendedFieldHeader getNewExtendedFieldHeader();
+	ExtendedFieldHeader getExtendedFieldHeaderById(long id,String type);
+	void update(ExtendedFieldHeader extendedFieldHeader,String type);
+	void delete(ExtendedFieldHeader extendedFieldHeader,String type);
+	long save(ExtendedFieldHeader extendedFieldHeader,String type);
+	void initialize(ExtendedFieldHeader extendedFieldHeader);
+	void refresh(ExtendedFieldHeader entity);
+	ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName, String subModuleName, String type);
 }

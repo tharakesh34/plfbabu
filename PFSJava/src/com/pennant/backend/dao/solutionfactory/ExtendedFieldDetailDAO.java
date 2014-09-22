@@ -50,24 +50,22 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 
 public interface ExtendedFieldDetailDAO {
 
-	public ExtendedFieldDetail getExtendedFieldDetail();
-	public ExtendedFieldDetail getNewExtendedFieldDetail();
-	public ExtendedFieldDetail getExtendedFieldDetailById(long id,String name,String type);
-	public void update(ExtendedFieldDetail extendedFieldDetail,String type);
-	public void delete(ExtendedFieldDetail extendedFieldDetail,String type);
-	public long save(ExtendedFieldDetail extendedFieldDetail,String type);
-	public void initialize(ExtendedFieldDetail extendedFieldDetail);
-	public void refresh(ExtendedFieldDetail entity);
-	public List<ExtendedFieldDetail> getExtendedFieldDetailById(long id, String type);
-	public List<ExtendedFieldDetail> getExtendedFieldNameById(long id, String type);
-	public void deleteByExtendedFields(final long id,String type);
-	
-	public void alter(ExtendedFieldDetail extendedFieldDetail,String type,boolean dropCol, boolean reCreateCol);
-	public Map<String, Object> retrive(String tableName, String id, String type);
-	public void saveAdditional(final String id,HashMap<String, Object> mappedValues, String type,String tableName);
-	public void updateAdditional(HashMap<String, ?> mappedValues, final String id, String type,String tableName);
-	public void deleteAdditional(final String id, String type,String tableName);
-	public List<ExtendedFieldDetail> getExtendedFieldDetailBySubModule(String subModule, String type);
-	public boolean isExist(String tableName, String id, String type);
-	
+	ExtendedFieldDetail getExtendedFieldDetail();
+	ExtendedFieldDetail getNewExtendedFieldDetail();
+	ExtendedFieldDetail getExtendedFieldDetailById(long id,String name,String type);
+	void update(ExtendedFieldDetail extendedFieldDetail,String type);
+	void delete(ExtendedFieldDetail extendedFieldDetail,String type);
+	long save(ExtendedFieldDetail extendedFieldDetail,String type);
+	void initialize(ExtendedFieldDetail extendedFieldDetail);
+	void refresh(ExtendedFieldDetail entity);
+	List<ExtendedFieldDetail> getExtendedFieldDetailById(long id, String type);
+	List<ExtendedFieldDetail> getExtendedFieldNameById(long id, String type);
+	void deleteByExtendedFields(final long id,String type);
+	void alter(ExtendedFieldDetail extendedFieldDetail,String type,boolean dropCol, boolean reCreateCol);
+	Map<String, Object> retrive(String tableName, String id, String type);
+	void saveAdditional(final String id,HashMap<String, Object> mappedValues, String type,String tableName);
+	void updateAdditional(HashMap<String, ?> mappedValues, final String id, String type,String tableName);
+	void deleteAdditional(final String id, String type,String tableName);
+	List<ExtendedFieldDetail> getExtendedFieldDetailBySubModule(String subModule, String type);
+	boolean isExist(String tableName, String id, String type);
 }

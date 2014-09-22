@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.Segment;
  */
 public interface SegmentDAO {
 
-	public Segment getSegment();
-	public Segment getNewSegment();
-	public Segment getSegmentById(String id,String type);
-	public void update(Segment segment,String type);
-	public void delete(Segment segment,String type);
-	public String save(Segment segment,String type);
-	public void initialize(Segment segment);
-	public void refresh(Segment entity);
+	Segment getSegment();
+	Segment getNewSegment();
+	Segment getSegmentById(String id,String type);
+	void update(Segment segment,String type);
+	void delete(Segment segment,String type);
+	String save(Segment segment,String type);
+	void initialize(Segment segment);
+	void refresh(Segment entity);
 }

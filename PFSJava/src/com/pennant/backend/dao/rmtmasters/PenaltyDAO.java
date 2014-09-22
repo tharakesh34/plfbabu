@@ -50,12 +50,12 @@ import com.pennant.backend.model.rmtmasters.Penalty;
  */
 public interface PenaltyDAO {
 
-	public Penalty getPenalty();
-	public Penalty getNewPenalty();
-	public Penalty getPenaltyById(String id,String type);
-	public void update(Penalty penalty,String type);
-	public void delete(Penalty penalty,String type);
-	public String save(Penalty penalty,String type);
-	public void initialize(Penalty penalty);
-	public void refresh(Penalty entity);
+	 Penalty getPenalty();
+	 Penalty getNewPenalty();
+	 Penalty getPenaltyById(String id,String type);
+	 void update(Penalty penalty,String type);
+	 void delete(Penalty penalty,String type);
+	 String save(Penalty penalty,String type);
+	 void initialize(Penalty penalty);
+	 void refresh(Penalty entity);
 }

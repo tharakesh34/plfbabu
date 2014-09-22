@@ -50,12 +50,12 @@ import com.pennant.backend.model.systemmasters.GeneralDesignation;
  */
 public interface GeneralDesignationDAO {
 
-	public GeneralDesignation getGeneralDesignation();
-	public GeneralDesignation getNewGeneralDesignation();
-	public GeneralDesignation getGeneralDesignationById(String id,String type);
-	public void update(GeneralDesignation generalDesignation,String type);
-	public void delete(GeneralDesignation generalDesignation,String type);
-	public String save(GeneralDesignation generalDesignation,String type);
-	public void initialize(GeneralDesignation generalDesignation);
-	public void refresh(GeneralDesignation entity);
+	GeneralDesignation getGeneralDesignation();
+	GeneralDesignation getNewGeneralDesignation();
+	GeneralDesignation getGeneralDesignationById(String id,String type);
+	void update(GeneralDesignation generalDesignation,String type);
+	void delete(GeneralDesignation generalDesignation,String type);
+	String save(GeneralDesignation generalDesignation,String type);
+	void initialize(GeneralDesignation generalDesignation);
+	void refresh(GeneralDesignation entity);
 }

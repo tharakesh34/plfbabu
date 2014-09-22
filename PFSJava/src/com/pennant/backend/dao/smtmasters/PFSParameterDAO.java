@@ -53,15 +53,14 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
  */
 public interface PFSParameterDAO {
 
-	public PFSParameter getPFSParameter();
-	public PFSParameter getNewPFSParameter();
-	public PFSParameter getPFSParameterById(String id,String type);
-	public void update(PFSParameter pFSParameter,String type);
-	public void delete(PFSParameter pFSParameter,String type);
-	public String save(PFSParameter pFSParameter,String type);
-	public void initialize(PFSParameter pFSParameter);
-	public void refresh(PFSParameter entity);
-	public List<PFSParameter> getAllPFSParameter(); 
-	public List<GlobalVariable> getGlobaVariables();
-	
+	PFSParameter getPFSParameter();
+	PFSParameter getNewPFSParameter();
+	PFSParameter getPFSParameterById(String id,String type);
+	void update(PFSParameter pFSParameter,String type);
+	void delete(PFSParameter pFSParameter,String type);
+	String save(PFSParameter pFSParameter,String type);
+	void initialize(PFSParameter pFSParameter);
+	void refresh(PFSParameter entity);
+	List<PFSParameter> getAllPFSParameter(); 
+	List<GlobalVariable> getGlobaVariables();
 }

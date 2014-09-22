@@ -46,12 +46,12 @@ import com.pennant.backend.model.systemmasters.EmployerDetail;
 
 public interface EmployerDetailDAO {
 
-	public EmployerDetail getEmployerDetail();
-	public EmployerDetail getNewEmployerDetail();
-	public EmployerDetail getEmployerDetailById(long id,String type);
-	public void update(EmployerDetail employerDetail,String type);
-	public void delete(EmployerDetail employerDetail,String type);
-	public long save(EmployerDetail employerDetail,String type);
-	public void initialize(EmployerDetail employerDetail);
-	public void refresh(EmployerDetail entity);
+	EmployerDetail getEmployerDetail();
+	EmployerDetail getNewEmployerDetail();
+	EmployerDetail getEmployerDetailById(long id,String type);
+	void update(EmployerDetail employerDetail,String type);
+	void delete(EmployerDetail employerDetail,String type);
+	long save(EmployerDetail employerDetail,String type);
+	void initialize(EmployerDetail employerDetail);
+	void refresh(EmployerDetail entity);
 }

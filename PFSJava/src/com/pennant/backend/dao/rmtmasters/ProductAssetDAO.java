@@ -54,14 +54,14 @@ import com.pennant.backend.model.rmtmasters.ProductAsset;
  */
 public interface ProductAssetDAO {
 
-	public ProductAsset getProductAsset();
-	public ProductAsset getNewProductAsset();
-	public ProductAsset getProductAssetById(long id,String type);
-	public void update(ProductAsset productAsset,String type);
-	public void delete(ProductAsset productAsset,String type);
-	public void deleteByProduct(ProductAsset productAsset,String type);
-	public long save(ProductAsset productAsset,String type);
-	public void initialize(ProductAsset productAsset);
-	public void refresh(ProductAsset entity);
-	public List<ProductAsset> getProductAssetByProdCode(final String prodCode,String type);
+	 ProductAsset getProductAsset();
+	 ProductAsset getNewProductAsset();
+	 ProductAsset getProductAssetById(long id,String type);
+	 void update(ProductAsset productAsset,String type);
+	 void delete(ProductAsset productAsset,String type);
+	 void deleteByProduct(ProductAsset productAsset,String type);
+	 long save(ProductAsset productAsset,String type);
+	 void initialize(ProductAsset productAsset);
+	 void refresh(ProductAsset entity);
+	 List<ProductAsset> getProductAssetByProdCode(final String prodCode,String type);
 }

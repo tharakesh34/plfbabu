@@ -46,12 +46,12 @@ import com.pennant.backend.model.reports.ReportList;
 
 public interface ReportListDAO {
 
-	public ReportList getReportList();
-	public ReportList getNewReportList();
-	public ReportList getReportListById(String id,String type);
-	public void update(ReportList reportList,String type);
-	public void delete(ReportList reportList,String type);
-	public String save(ReportList reportList,String type);
-	public void initialize(ReportList reportList);
-	public void refresh(ReportList entity);
+	ReportList getReportList();
+	ReportList getNewReportList();
+	ReportList getReportListById(String id,String type);
+	void update(ReportList reportList,String type);
+	void delete(ReportList reportList,String type);
+	String save(ReportList reportList,String type);
+	void initialize(ReportList reportList);
+	void refresh(ReportList entity);
 }
