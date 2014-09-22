@@ -46,13 +46,12 @@ import com.pennant.backend.model.finance.FinBillingHeader;
 
 public interface FinBillingHeaderDAO {
 
-	public FinBillingHeader getFinBillingHeader();
-	public FinBillingHeader getNewFinBillingHeader();
-	public FinBillingHeader getFinBillingHeaderById(String id,String type);
-	public void update(FinBillingHeader billingHeader,String type);
-	public void delete(String finReference,String type);
-	public String save(FinBillingHeader billingHeader,String type);
-	public void initialize(FinBillingHeader billingHeader);
-	public void refresh(FinBillingHeader entity);
-
+	FinBillingHeader getFinBillingHeader();
+	FinBillingHeader getNewFinBillingHeader();
+	FinBillingHeader getFinBillingHeaderById(String id,String type);
+	void update(FinBillingHeader billingHeader,String type);
+	void delete(String finReference,String type);
+	String save(FinBillingHeader billingHeader,String type);
+	void initialize(FinBillingHeader billingHeader);
+	void refresh(FinBillingHeader entity);
 }

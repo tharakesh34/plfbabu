@@ -54,15 +54,15 @@ import com.pennant.backend.model.finance.FinBillingDetail;
  */
 public interface FinBillingDetailDAO {
 
-	public FinBillingDetail getFinBillingDetail();
-	public FinBillingDetail getNewFinBillingDetail();
-	public FinBillingDetail getFinBillingDetailByID(String finReference,Date progClaimDate,String type);
-	public List<FinBillingDetail> getFinBillingDetailByFinRef(final String id,String type);
-	public void update(FinBillingDetail  billingDetail,String type);
-	public void updateClaim(FinBillingDetail  billingDetail,String type);
-	public void delete(FinBillingDetail billingDetail,String type);
-	public void save(FinBillingDetail billingDetail,String type);
-	public void initialize(FinBillingDetail type);
-	public void refresh(FinBillingDetail entity);
-	public void deleteByFinRef(final String finReference,String type);
+	FinBillingDetail getFinBillingDetail();
+	FinBillingDetail getNewFinBillingDetail();
+	FinBillingDetail getFinBillingDetailByID(String finReference,Date progClaimDate,String type);
+	List<FinBillingDetail> getFinBillingDetailByFinRef(final String id,String type);
+	void update(FinBillingDetail  billingDetail,String type);
+	void updateClaim(FinBillingDetail  billingDetail,String type);
+	void delete(FinBillingDetail billingDetail,String type);
+	void save(FinBillingDetail billingDetail,String type);
+	void initialize(FinBillingDetail type);
+	void refresh(FinBillingDetail entity);
+	void deleteByFinRef(final String finReference,String type);
 }

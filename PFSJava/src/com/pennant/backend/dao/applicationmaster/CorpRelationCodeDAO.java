@@ -50,19 +50,12 @@ import com.pennant.backend.model.applicationmaster.CorpRelationCode;
  */
 public interface CorpRelationCodeDAO {
 
-	public CorpRelationCode getCorpRelationCode();
-
-	public CorpRelationCode getNewCorpRelationCode();
-
-	public CorpRelationCode getCorpRelationCodeById(String id, String type);
-
-	public void update(CorpRelationCode corpRelationCode, String type);
-
-	public void delete(CorpRelationCode corpRelationCode, String type);
-
-	public String save(CorpRelationCode corpRelationCode, String type);
-
-	public void initialize(CorpRelationCode corpRelationCode);
-
-	public void refresh(CorpRelationCode entity);
+	CorpRelationCode getCorpRelationCode();
+	CorpRelationCode getNewCorpRelationCode();
+	CorpRelationCode getCorpRelationCodeById(String id, String type);
+	void update(CorpRelationCode corpRelationCode, String type);
+	void delete(CorpRelationCode corpRelationCode, String type);
+	String save(CorpRelationCode corpRelationCode, String type);
+	void initialize(CorpRelationCode corpRelationCode);
+	void refresh(CorpRelationCode entity);
 }

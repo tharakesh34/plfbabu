@@ -49,20 +49,12 @@ import com.pennant.backend.model.applicationmaster.Branch;
  */
 public interface BranchDAO {
 
-	public Branch getBranch();
-
-	public Branch getNewBranch();
-
-	public Branch getBranchById(String id, String type);
-
-	public void update(Branch branch, String type);
-
-	public void delete(Branch branch, String type);
-
-	public String save(Branch branch, String type);
-
-	public void initialize(Branch branch);
-
-	public void refresh(Branch entity);
-
+	Branch getBranch();
+	Branch getNewBranch();
+	Branch getBranchById(String id, String type);
+	void update(Branch branch, String type);
+	void delete(Branch branch, String type);
+	String save(Branch branch, String type);
+	void initialize(Branch branch);
+	void refresh(Branch entity);
 }

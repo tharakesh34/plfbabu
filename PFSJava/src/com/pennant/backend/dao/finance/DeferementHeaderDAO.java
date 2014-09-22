@@ -46,12 +46,12 @@ import com.pennant.backend.model.finance.DeferementHeader;
 
 public interface DeferementHeaderDAO {
 
-	public DeferementHeader getDeferementHeader();
-	public DeferementHeader getNewDeferementHeader();
-	public DeferementHeader getDeferementHeaderById(String id,String type);
-	public void update(DeferementHeader deferementHeader,String type);
-	public void delete(DeferementHeader deferementHeader,String type);
-	public String save(DeferementHeader deferementHeader,String type);
-	public void initialize(DeferementHeader deferementHeader);
-	public void refresh(DeferementHeader entity);
+	DeferementHeader getDeferementHeader();
+	DeferementHeader getNewDeferementHeader();
+	DeferementHeader getDeferementHeaderById(String id,String type);
+	void update(DeferementHeader deferementHeader,String type);
+	void delete(DeferementHeader deferementHeader,String type);
+	String save(DeferementHeader deferementHeader,String type);
+	void initialize(DeferementHeader deferementHeader);
+	void refresh(DeferementHeader entity);
 }

@@ -46,19 +46,12 @@ import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 
 public interface RelationshipOfficerDAO {
 
-	public RelationshipOfficer getRelationshipOfficer();
-
-	public RelationshipOfficer getNewRelationshipOfficer();
-
-	public RelationshipOfficer getRelationshipOfficerById(String id, String type);
-
-	public void update(RelationshipOfficer relationshipOfficer, String type);
-
-	public void delete(RelationshipOfficer relationshipOfficer, String type);
-
-	public String save(RelationshipOfficer relationshipOfficer, String type);
-
-	public void initialize(RelationshipOfficer relationshipOfficer);
-
-	public void refresh(RelationshipOfficer entity);
+	RelationshipOfficer getRelationshipOfficer();
+	RelationshipOfficer getNewRelationshipOfficer();
+	RelationshipOfficer getRelationshipOfficerById(String id, String type);
+	void update(RelationshipOfficer relationshipOfficer, String type);
+	void delete(RelationshipOfficer relationshipOfficer, String type);
+	String save(RelationshipOfficer relationshipOfficer, String type);
+	void initialize(RelationshipOfficer relationshipOfficer);
+	void refresh(RelationshipOfficer entity);
 }

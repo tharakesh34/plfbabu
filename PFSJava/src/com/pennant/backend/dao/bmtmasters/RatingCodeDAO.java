@@ -51,12 +51,12 @@ import com.pennant.backend.model.bmtmasters.RatingCode;
  */
 public interface RatingCodeDAO {
 
-	public RatingCode getRatingCode();
-	public RatingCode getNewRatingCode();
-	public RatingCode getRatingCodeById(String ratingType, String ratingCode,String type);
-	public void update(RatingCode ratingCode, String type);
-	public void delete(RatingCode ratingCode, String type);
-	public String save(RatingCode ratingCode, String type);
-	public void initialize(RatingCode ratingCode);
-	public void refresh(RatingCode entity);
+	RatingCode getRatingCode();
+	RatingCode getNewRatingCode();
+	RatingCode getRatingCodeById(String ratingType, String ratingCode,String type);
+	void update(RatingCode ratingCode, String type);
+	void delete(RatingCode ratingCode, String type);
+	String save(RatingCode ratingCode, String type);
+	void initialize(RatingCode ratingCode);
+	void refresh(RatingCode entity);
 }

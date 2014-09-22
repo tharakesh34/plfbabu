@@ -6,19 +6,20 @@ import java.util.List;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 
 public interface BulkProcessDetailsDAO {
-	public BulkProcessDetails getBulkProcessDetails();
-	public BulkProcessDetails getNewBulkProcessDetails();
-	public BulkProcessDetails getBulkProcessDetailsById(long bulkProcessId, String finReference, Date deferedSchdDate, String type);
-	public void update(BulkProcessDetails bulkProcessDetails,String type);
-	public void delete(BulkProcessDetails bulkProcessDetails,String type);
-	public void deleteBulkProcessDetailsById(long  bulkProcessId,String type);
-	public long save(BulkProcessDetails bulkProcessDetails,String type);
-	public void initialize(BulkProcessDetails bulkProcessDetails);
-	public void refresh(BulkProcessDetails entity);
-	public BulkProcessDetails getBulkProcessDetails(long bulkProcessId, String finReference,String type);
-	public List<BulkProcessDetails> getBulkProcessDetailsListById(long bulkProcessId, String type);
-	public List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
-    public List<BulkProcessDetails> getBulkDefermentFinList(Date fromDate, Date toDate, String whereClause);
-	public void saveList(List<BulkProcessDetails> bulkProcessDetails, String type);
-	public void updateList(List<BulkProcessDetails> bulkProcessDetails, String type);
+	
+	BulkProcessDetails getBulkProcessDetails();
+	BulkProcessDetails getNewBulkProcessDetails();
+	BulkProcessDetails getBulkProcessDetailsById(long bulkProcessId, String finReference, Date deferedSchdDate, String type);
+	void update(BulkProcessDetails bulkProcessDetails,String type);
+	void delete(BulkProcessDetails bulkProcessDetails,String type);
+	void deleteBulkProcessDetailsById(long  bulkProcessId,String type);
+	long save(BulkProcessDetails bulkProcessDetails,String type);
+	void initialize(BulkProcessDetails bulkProcessDetails);
+	void refresh(BulkProcessDetails entity);
+	BulkProcessDetails getBulkProcessDetails(long bulkProcessId, String finReference,String type);
+	List<BulkProcessDetails> getBulkProcessDetailsListById(long bulkProcessId, String type);
+	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
+    List<BulkProcessDetails> getBulkDefermentFinList(Date fromDate, Date toDate, String whereClause);
+	void saveList(List<BulkProcessDetails> bulkProcessDetails, String type);
+	void updateList(List<BulkProcessDetails> bulkProcessDetails, String type);
 }

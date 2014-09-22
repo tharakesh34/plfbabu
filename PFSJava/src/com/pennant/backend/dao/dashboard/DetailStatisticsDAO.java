@@ -12,11 +12,9 @@ public interface DetailStatisticsDAO {
 
 	List<DetailStatistics> getAuditDetails() ;
 	List<DetailStatistics> getDetailStatisticsList(DetailStatistics detailStatistics);
-	
 	void updateDetailStaticAudit(DetailStatistics detailStatistics) throws DataAccessException;
 	void updateCompleteStatus(DetailStatistics detailStatistics) throws DataAccessException;
 	void save(DetailStatistics detailStatistics) throws DataAccessException;
 	DetailStatistics getAuditDetail(DetailStatistics detailStatistics)  throws DataAccessException;
-	public List<ChartSetElement> getLabelAndValues(DashboardConfiguration aDashboardConfiguration);
-	
+	List<ChartSetElement> getLabelAndValues(DashboardConfiguration aDashboardConfiguration);
 }

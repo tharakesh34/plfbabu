@@ -47,13 +47,13 @@ import com.pennant.backend.model.financemanagement.ProvisionMovement;
 
 public interface ProvisionDAO {
 
-	public Provision getProvision();
-	public Provision getNewProvision();
-	public Provision getProvisionById(String id,String type);
-	public void update(Provision provision,String type);
-	public void delete(Provision provision,String type);
-	public String save(Provision provision,String type);
-	public void initialize(Provision provision);
-	public void refresh(Provision entity);
-	public void updateProvAmt(ProvisionMovement provisionMovement, String type);
+	Provision getProvision();
+	Provision getNewProvision();
+	Provision getProvisionById(String id,String type);
+	void update(Provision provision,String type);
+	void delete(Provision provision,String type);
+	String save(Provision provision,String type);
+	void initialize(Provision provision);
+	void refresh(Provision entity);
+	void updateProvAmt(ProvisionMovement provisionMovement, String type);
 }

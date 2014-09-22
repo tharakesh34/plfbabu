@@ -48,14 +48,14 @@ import com.pennant.backend.model.lmtmasters.SharesDetail;
 
 public interface SharesDetailDAO {
 
-	public SharesDetail getSharesDetail();
-	public SharesDetail getNewSharesDetail();
-	public SharesDetail getSharesDetailById(final String id, String companyName, String type);
-	public void update(SharesDetail sharesDetail,String type);
-	public void delete(SharesDetail sharesDetail,String type);
-	public String save(SharesDetail sharesDetail,String type);
-	public void initialize(SharesDetail sharesDetail);
-	public void refresh(SharesDetail entity);
-	public List<SharesDetail> getSharesDetailDetailByFinRef(String id, String type);
-	public void deleteByFinRef(String finReference, String tableType);
+	SharesDetail getSharesDetail();
+	SharesDetail getNewSharesDetail();
+	SharesDetail getSharesDetailById(final String id, String companyName, String type);
+	void update(SharesDetail sharesDetail,String type);
+	void delete(SharesDetail sharesDetail,String type);
+	String save(SharesDetail sharesDetail,String type);
+	void initialize(SharesDetail sharesDetail);
+	void refresh(SharesDetail entity);
+	List<SharesDetail> getSharesDetailDetailByFinRef(String id, String type);
+	void deleteByFinRef(String finReference, String tableType);
 }

@@ -49,9 +49,7 @@ import com.pennant.backend.model.ErrorDetails;
 public interface ErrorDetailsDAO {
 
 	ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
-	
 	ErrorDetails getErrorDetail (String errorField,String errorId,
 			String errorLanguage,String[] parameters);
-	
 	List<ErrorDetails> getErrorDetail(String errorLanguage,String errorCodeList);
 } 

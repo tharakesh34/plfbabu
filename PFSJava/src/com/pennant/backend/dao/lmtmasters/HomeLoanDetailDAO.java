@@ -52,13 +52,13 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
  */
 public interface HomeLoanDetailDAO {
 
-	public HomeLoanDetail getHomeLoanDetail();
-	public HomeLoanDetail getNewHomeLoanDetail();
-	public HomeLoanDetail getHomeLoanDetailByID(String id,String type);
-	public void update(HomeLoanDetail homeLoanDetail,String type);
-	public void delete(HomeLoanDetail homeLoanDetail,String type);
-	public String save(HomeLoanDetail homeLoanDetail,String type);
-	public void initialize(HomeLoanDetail homeLoanDetail);
-	public void refresh(HomeLoanDetail entity);
-	public List<LovFieldDetail> getHomeConstructionStage();
+	HomeLoanDetail getHomeLoanDetail();
+	HomeLoanDetail getNewHomeLoanDetail();
+	HomeLoanDetail getHomeLoanDetailByID(String id,String type);
+	void update(HomeLoanDetail homeLoanDetail,String type);
+	void delete(HomeLoanDetail homeLoanDetail,String type);
+	String save(HomeLoanDetail homeLoanDetail,String type);
+	void initialize(HomeLoanDetail homeLoanDetail);
+	void refresh(HomeLoanDetail entity);
+	List<LovFieldDetail> getHomeConstructionStage();
 }

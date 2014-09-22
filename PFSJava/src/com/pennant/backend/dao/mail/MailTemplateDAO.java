@@ -48,13 +48,13 @@ import com.pennant.backend.model.mail.MailTemplate;
 
 public interface MailTemplateDAO {
 
-	public MailTemplate getMailTemplate();
-	public MailTemplate getNewMailTemplate();
-	public MailTemplate getMailTemplateById(long id,String templateFor, String type);
-	public void update(MailTemplate mailTemplate,String type);
-	public void delete(MailTemplate mailTemplate,String type);
-	public long save(MailTemplate mailTemplate,String type);
-	public void initialize(MailTemplate mailTemplate);
-	public void refresh(MailTemplate entity);
-	public List<MailTemplate> getMailTemplates();
+	MailTemplate getMailTemplate();
+	MailTemplate getNewMailTemplate();
+	MailTemplate getMailTemplateById(long id,String templateFor, String type);
+	void update(MailTemplate mailTemplate,String type);
+	void delete(MailTemplate mailTemplate,String type);
+	long save(MailTemplate mailTemplate,String type);
+	void initialize(MailTemplate mailTemplate);
+	void refresh(MailTemplate entity);
+	List<MailTemplate> getMailTemplates();
 }

@@ -46,19 +46,12 @@ import com.pennant.backend.model.bmtmasters.CheckList;
 
 public interface CheckListDAO {
 
-	public CheckList getCheckList();
-
-	public CheckList getNewCheckList();
-
-	public CheckList getCheckListById(long id, String type);
-
-	public void update(CheckList checkList, String type);
-
-	public void delete(CheckList checkList, String type);
-
-	public long save(CheckList checkList, String type);
-
-	public void initialize(CheckList checkList);
-
-	public void refresh(CheckList entity);
+	CheckList getCheckList();
+	CheckList getNewCheckList();
+	CheckList getCheckListById(long id, String type);
+	void update(CheckList checkList, String type);
+	void delete(CheckList checkList, String type);
+	long save(CheckList checkList, String type);
+	void initialize(CheckList checkList);
+	void refresh(CheckList entity);
 }

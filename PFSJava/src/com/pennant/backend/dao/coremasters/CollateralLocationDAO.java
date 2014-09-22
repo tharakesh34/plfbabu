@@ -46,12 +46,12 @@ import com.pennant.backend.model.coremasters.CollateralLocation;
 
 public interface CollateralLocationDAO {
 
-	public CollateralLocation getCollateralLocation();
-	public CollateralLocation getNewCollateralLocation();
-	public CollateralLocation getCollateralLocationById(String id,String type);
-	public void update(CollateralLocation collateralLocation,String type);
-	public void delete(CollateralLocation collateralLocation,String type);
-	public String save(CollateralLocation collateralLocation,String type);
-	public void initialize(CollateralLocation collateralLocation);
-	public void refresh(CollateralLocation entity);
+	CollateralLocation getCollateralLocation();
+	CollateralLocation getNewCollateralLocation();
+	CollateralLocation getCollateralLocationById(String id,String type);
+	void update(CollateralLocation collateralLocation,String type);
+	void delete(CollateralLocation collateralLocation,String type);
+	String save(CollateralLocation collateralLocation,String type);
+	void initialize(CollateralLocation collateralLocation);
+	void refresh(CollateralLocation entity);
 }

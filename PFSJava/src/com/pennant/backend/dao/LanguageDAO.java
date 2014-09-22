@@ -48,9 +48,7 @@ import com.pennant.backend.model.staticparms.Language;
 
 public interface LanguageDAO {
 
-	public List<Language> getAllLanguages();
-
-	public Language getLanguageById(int lanID);
-
-	public Language getLanguageByLocale(String lanLocale);
+	List<Language> getAllLanguages();
+	Language getLanguageById(int lanID);
+	Language getLanguageByLocale(String lanLocale);
 }

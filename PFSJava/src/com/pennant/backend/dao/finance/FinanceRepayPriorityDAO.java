@@ -49,14 +49,14 @@ import com.pennant.backend.model.finance.FinanceRepayPriority;
 
 public interface FinanceRepayPriorityDAO {
 
-	public FinanceRepayPriority getFinanceRepayPriority();
-	public FinanceRepayPriority getNewFinanceRepayPriority();
-	public FinanceRepayPriority getFinanceRepayPriorityById(String id,String type);
-	public void update(FinanceRepayPriority financeRepayPriority,String type);
-	public void delete(FinanceRepayPriority financeRepayPriority,String type);
-	public String save(FinanceRepayPriority financeRepayPriority,String type);
-	public void initialize(FinanceRepayPriority financeRepayPriority);
-	public void refresh(FinanceRepayPriority entity);
-	public List<ValueLabel> getFinanceRepayPriorities();
-	public List<FinanceRepayPriority> getFinanceRpyPriorByPriority(int priority, String type);
+	FinanceRepayPriority getFinanceRepayPriority();
+	FinanceRepayPriority getNewFinanceRepayPriority();
+	FinanceRepayPriority getFinanceRepayPriorityById(String id,String type);
+	void update(FinanceRepayPriority financeRepayPriority,String type);
+	void delete(FinanceRepayPriority financeRepayPriority,String type);
+	String save(FinanceRepayPriority financeRepayPriority,String type);
+	void initialize(FinanceRepayPriority financeRepayPriority);
+	void refresh(FinanceRepayPriority entity);
+	List<ValueLabel> getFinanceRepayPriorities();
+	List<FinanceRepayPriority> getFinanceRpyPriorByPriority(int priority, String type);
 }

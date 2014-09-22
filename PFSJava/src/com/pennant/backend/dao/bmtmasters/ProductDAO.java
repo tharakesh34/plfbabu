@@ -51,13 +51,12 @@ import com.pennant.backend.model.bmtmasters.Product;
  */
 public interface ProductDAO {
 
-	public Product getProduct();
-	public Product getNewProduct();
-	public Product getProductByID(String id,String code,String type);
-	public void update(Product product,String type);
-	public void delete(Product product,String type);
-	public String save(Product product,String type);
-	public void initialize(Product product);
-	public void refresh(Product entity);
-
+	Product getProduct();
+	Product getNewProduct();
+	Product getProductByID(String id,String code,String type);
+	void update(Product product,String type);
+	void delete(Product product,String type);
+	String save(Product product,String type);
+	void initialize(Product product);
+	void refresh(Product entity);
 }

@@ -46,12 +46,12 @@ import com.pennant.backend.model.finance.commodity.CommodityDetail;
 
 public interface CommodityDetailDAO {
 
-	public CommodityDetail getCommodityDetail();
-	public CommodityDetail getNewCommodityDetail();
-	public CommodityDetail getCommodityDetailById(CommodityDetail commodityDetail,String type);
-	public void update(CommodityDetail commodityDetail,String type);
-	public void delete(CommodityDetail commodityDetail,String type);
-	public String save(CommodityDetail commodityDetail,String type);
-	public void initialize(CommodityDetail commodityDetail);
-	public void refresh(CommodityDetail entity);
+	CommodityDetail getCommodityDetail();
+	CommodityDetail getNewCommodityDetail();
+	CommodityDetail getCommodityDetailById(CommodityDetail commodityDetail,String type);
+	void update(CommodityDetail commodityDetail,String type);
+	void delete(CommodityDetail commodityDetail,String type);
+	String save(CommodityDetail commodityDetail,String type);
+	void initialize(CommodityDetail commodityDetail);
+	void refresh(CommodityDetail entity);
 }

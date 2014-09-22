@@ -46,12 +46,12 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 
 public interface FinanceWorkFlowDAO {
 
-	public FinanceWorkFlow getFinanceWorkFlow();
-	public FinanceWorkFlow getNewFinanceWorkFlow();
-	public FinanceWorkFlow getFinanceWorkFlowById(String id,String type);
-	public void update(FinanceWorkFlow financeWorkFlow,String type);
-	public void delete(FinanceWorkFlow financeWorkFlow,String type);
-	public String save(FinanceWorkFlow financeWorkFlow,String type);
-	public void initialize(FinanceWorkFlow financeWorkFlow);
-	public void refresh(FinanceWorkFlow entity);
+	FinanceWorkFlow getFinanceWorkFlow();
+	FinanceWorkFlow getNewFinanceWorkFlow();
+	FinanceWorkFlow getFinanceWorkFlowById(String id,String type);
+	void update(FinanceWorkFlow financeWorkFlow,String type);
+	void delete(FinanceWorkFlow financeWorkFlow,String type);
+	String save(FinanceWorkFlow financeWorkFlow,String type);
+	void initialize(FinanceWorkFlow financeWorkFlow);
+	void refresh(FinanceWorkFlow entity);
 }

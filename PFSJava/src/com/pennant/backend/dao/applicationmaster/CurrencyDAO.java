@@ -53,30 +53,17 @@ import com.pennant.backend.model.applicationmaster.Currency;
  */
 public interface CurrencyDAO {
 
-	public Currency getCurrency();
-
-	public Currency getNewCurrency();
-
-	public Currency getCurrencyById(String id, String type);
-
-	public void update(Currency currency, String type);
-
-	public void delete(Currency currency, String type);
-
-	public String save(Currency currency, String type);
-
-	public void initialize(Currency currency);
-
-	public void refresh(Currency entity);
-
-	public boolean getUniqueCurrencyByID(Currency currency, boolean ccyNum, boolean swiftCode);
-
-	public String getCurrencyById(String id);
-
-	public List<ValueLabel> getCcyCodesByFinRef();
-
-	public Currency getCurrencyByCode(String id);
-
-	public List<Currency> getCurrencyList(List<String> asList);
-
+	Currency getCurrency();
+	Currency getNewCurrency();
+	Currency getCurrencyById(String id, String type);
+	void update(Currency currency, String type);
+	void delete(Currency currency, String type);
+	String save(Currency currency, String type);
+	void initialize(Currency currency);
+	void refresh(Currency entity);
+	boolean getUniqueCurrencyByID(Currency currency, boolean ccyNum, boolean swiftCode);
+	String getCurrencyById(String id);
+	List<ValueLabel> getCcyCodesByFinRef();
+	Currency getCurrencyByCode(String id);
+	List<Currency> getCurrencyList(List<String> asList);
 }

@@ -9,23 +9,24 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 
 
 public interface CreditApplicationReviewDAO {
-	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCode(String creditRevCode);
-	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId);
-	public FinCreditReviewDetails getCreditReviewDetails();
-	public FinCreditReviewDetails getNewCreditReviewDetails();
-	public FinCreditReviewDetails getCreditReviewDetailsById(long id,String type);
-	public void update(FinCreditReviewDetails creditReviewDetails,String type);
-	public void delete(FinCreditReviewDetails creditReviewDetails,String type);
-	public long save(FinCreditReviewDetails creditReviewDetails,String type);
-	public void initialize(FinCreditReviewDetails creditReviewDetails);
-	public void refresh(FinCreditReviewDetails entity);
-	public FinCreditRevType getFinCreditRevByRevCode(String creditRevCode);
-	public int isCreditSummaryExists(long custID,String auditYear, int auditPeriod);
-	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryIdAndCalcSeq(long categoryId);
-	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId, String subCategoryItemType);
-	public int getCreditReviewAuditPeriodByAuditYear(final long customerId, final String auditYear, int auditPeriod, 
+	
+	List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCode(String creditRevCode);
+	List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId);
+	FinCreditReviewDetails getCreditReviewDetails();
+	FinCreditReviewDetails getNewCreditReviewDetails();
+	FinCreditReviewDetails getCreditReviewDetailsById(long id,String type);
+	void update(FinCreditReviewDetails creditReviewDetails,String type);
+	void delete(FinCreditReviewDetails creditReviewDetails,String type);
+	long save(FinCreditReviewDetails creditReviewDetails,String type);
+	void initialize(FinCreditReviewDetails creditReviewDetails);
+	void refresh(FinCreditReviewDetails entity);
+	FinCreditRevType getFinCreditRevByRevCode(String creditRevCode);
+	int isCreditSummaryExists(long custID,String auditYear, int auditPeriod);
+	List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryIdAndCalcSeq(long categoryId);
+	List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId, String subCategoryItemType);
+	int getCreditReviewAuditPeriodByAuditYear(final long customerId, final String auditYear, int auditPeriod, 
 			boolean isEnquiry, String type);
-	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByMainCategory(String category);
-	public FinCreditReviewDetails getCreditReviewDetailsByCustIdAndYear(final long customerId, String auditYear, String type);
-	public String getMaxAuditYearByCustomerId(long customerId, String type);
+	List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByMainCategory(String category);
+	FinCreditReviewDetails getCreditReviewDetailsByCustIdAndYear(final long customerId, String auditYear, String type);
+	String getMaxAuditYearByCustomerId(long customerId, String type);
 }

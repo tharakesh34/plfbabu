@@ -49,8 +49,7 @@ import com.pennant.backend.model.MenuDetails;
 
 public interface MenuDetailsDAO {
 	
-	public List<MenuDetails> getMenuDetailsByApp(String appCode);
-
-	public Map<String, Object> getLastLoginInfo(String procedureName, String usrLogin, Map<String, Object> inputParamMap, Map<String, Object> outputParamMap);
+	List<MenuDetails> getMenuDetailsByApp(String appCode);
+	Map<String, Object> getLastLoginInfo(String procedureName, String usrLogin, Map<String, Object> inputParamMap, Map<String, Object> outputParamMap);
 
 }

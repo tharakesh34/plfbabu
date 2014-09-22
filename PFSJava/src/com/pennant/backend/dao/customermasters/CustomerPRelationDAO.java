@@ -50,16 +50,16 @@ import com.pennant.backend.model.customermasters.CustomerPRelation;
  * DAO methods declaration for the <b>CustomerPRelation model</b> class.<br>
  * 
  */
-public interface CustomerPRelationDAO {
+ public interface CustomerPRelationDAO {
 
-	public CustomerPRelation getCustomerPRelation();
-	public CustomerPRelation getNewCustomerPRelation();
-	public CustomerPRelation getCustomerPRelationByID(long pRCustID,int pRCustPRSNo,String type);
-	public List<CustomerPRelation> getCustomerPRelationByCustomer(final long id,String type);
-	public void update(CustomerPRelation customerPRelation,String type);
-	public void delete(CustomerPRelation customerPRelation,String type);
-	public long save(CustomerPRelation customerPRelation,String type);
-	public void initialize(CustomerPRelation customerPRelation);
-	public void refresh(CustomerPRelation entity);
-	public void deleteByCustomer(final long id,String type);
+	 CustomerPRelation getCustomerPRelation();
+	 CustomerPRelation getNewCustomerPRelation();
+	 CustomerPRelation getCustomerPRelationByID(long pRCustID,int pRCustPRSNo,String type);
+	 List<CustomerPRelation> getCustomerPRelationByCustomer(final long id,String type);
+	 void update(CustomerPRelation customerPRelation,String type);
+	 void delete(CustomerPRelation customerPRelation,String type);
+	 long save(CustomerPRelation customerPRelation,String type);
+	 void initialize(CustomerPRelation customerPRelation);
+	 void refresh(CustomerPRelation entity);
+	 void deleteByCustomer(final long id,String type);
 }

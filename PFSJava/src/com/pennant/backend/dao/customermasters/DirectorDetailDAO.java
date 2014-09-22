@@ -52,15 +52,15 @@ import com.pennant.backend.model.customermasters.DirectorDetail;
  */
 public interface DirectorDetailDAO {
 
-	public DirectorDetail getDirectorDetail();
-	public DirectorDetail getNewDirectorDetail();
-	public DirectorDetail getDirectorDetailById(final long id,final long custID,String type);
-	public void update(DirectorDetail directorDetail,String type);
-	public void delete(DirectorDetail directorDetail,String type);
-	public long save(DirectorDetail directorDetail,String type);
-	public void initialize(DirectorDetail directorDetail);
-	public void refresh(DirectorDetail entity);
-	public List<DirectorDetail> getCustomerDirectorByCustomer(long id, String type);
-	public void delete(long custID, String tableType);
+	 DirectorDetail getDirectorDetail();
+	 DirectorDetail getNewDirectorDetail();
+	 DirectorDetail getDirectorDetailById(final long id,final long custID,String type);
+	 void update(DirectorDetail directorDetail,String type);
+	 void delete(DirectorDetail directorDetail,String type);
+	 long save(DirectorDetail directorDetail,String type);
+	 void initialize(DirectorDetail directorDetail);
+	 void refresh(DirectorDetail entity);
+	 List<DirectorDetail> getCustomerDirectorByCustomer(long id, String type);
+	 void delete(long custID, String tableType);
 	
 }

@@ -52,27 +52,16 @@ import com.pennant.backend.model.applicationmaster.SplRate;
  */
 public interface SplRateDAO {
 
-	public SplRate getSplRate();
-
-	public SplRate getNewSplRate();
-
-	public SplRate getSplRateById(String id, Date date, String type);
-
-	public void update(SplRate splRate, String type);
-
-	public void delete(SplRate splRate, String type);
-
-	public void save(SplRate splRate, String type);
-
-	public void initialize(SplRate splRate);
-
-	public void refresh(SplRate entity);
-
-	public SplRate getSplRateByID(final String id, Date date);
-
-	public List<SplRate> getSRListByMdfDate(Date date, String type);
-
-	public boolean getSplRateListById(String sRType, Date sREffDate, String type);
-
-	public void deleteByEffDate(SplRate splRate, String type);
+	SplRate getSplRate();
+	SplRate getNewSplRate();
+	SplRate getSplRateById(String id, Date date, String type);
+	void update(SplRate splRate, String type);
+	void delete(SplRate splRate, String type);
+	void save(SplRate splRate, String type);
+	void initialize(SplRate splRate);
+	void refresh(SplRate entity);
+	SplRate getSplRateByID(final String id, Date date);
+	List<SplRate> getSRListByMdfDate(Date date, String type);
+	boolean getSplRateListById(String sRType, Date sREffDate, String type);
+	void deleteByEffDate(SplRate splRate, String type);
 }

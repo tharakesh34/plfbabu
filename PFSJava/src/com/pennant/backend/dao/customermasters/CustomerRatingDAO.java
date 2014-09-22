@@ -52,16 +52,16 @@ import com.pennant.backend.model.customermasters.CustomerRating;
  */
 public interface CustomerRatingDAO {
 
-	public CustomerRating getCustomerRating();
-	public CustomerRating getNewCustomerRating();
-	public CustomerRating getCustomerRatingByID(long id,String ratingType,String type);
-	public List<CustomerRating> getCustomerRatingByCustomer(final long id,String type);
-	public void update(CustomerRating customerRating,String type);
-	public void delete(CustomerRating customerRating,String type);
-	public long save(CustomerRating customerRating,String type);
-	public void initialize(CustomerRating customerRating);
-	public void refresh(CustomerRating entity);
-	public void deleteByCustomer(final long customerId,String type);
-	public List<CustomerRating> getCustomerRatingByCustId(long id, String type);
+	 CustomerRating getCustomerRating();
+	 CustomerRating getNewCustomerRating();
+	 CustomerRating getCustomerRatingByID(long id,String ratingType,String type);
+	 List<CustomerRating> getCustomerRatingByCustomer(final long id,String type);
+	 void update(CustomerRating customerRating,String type);
+	 void delete(CustomerRating customerRating,String type);
+	 long save(CustomerRating customerRating,String type);
+	 void initialize(CustomerRating customerRating);
+	 void refresh(CustomerRating entity);
+	 void deleteByCustomer(final long customerId,String type);
+	 List<CustomerRating> getCustomerRatingByCustId(long id, String type);
 	
 }

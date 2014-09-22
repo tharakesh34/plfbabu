@@ -54,29 +54,17 @@ import com.pennant.backend.model.administration.SecurityUserRoles;
 
 public interface  SecurityUserRolesDAO {
 
-	public SecurityUserRoles getSecurityUserRoles();
-	
-	public List<SecurityUserRoles> getSecUserRolesByUsrID(SecurityUser secUser,String type);
-	
-	public void delete(SecurityUserRoles securityUserRoles,String type);
-	
-	public void deleteById(final long usrID,String type);
-	
-	public long save(SecurityUserRoles securityUserRoles,String type);
-	
-	public int  getRoleIdCount(long roleId);
-	
-	public List<SecurityRole> getRolesByUserId(long userId,boolean assigned);
-	
-	public SecurityUserRoles getUserRolesByUsrAndRoleIds(long userId,long roleID);
-	
-	public int getUserIdCount(long userId);
-	
-	public SecurityUserRoles getNewSecurityUserRoles();
-	
-	public void update(SecurityUserRoles securityUserRoles,String type);
-	
-	public  List<String> getUsrMailsByRoleCd(String roleCode);
-
-	public  List<String> getUsrMailsByRoleIds(String roleCode);
+	SecurityUserRoles getSecurityUserRoles();
+	List<SecurityUserRoles> getSecUserRolesByUsrID(SecurityUser secUser,String type);
+	void delete(SecurityUserRoles securityUserRoles,String type);
+	void deleteById(final long usrID,String type);
+	long save(SecurityUserRoles securityUserRoles,String type);
+	int  getRoleIdCount(long roleId);
+	List<SecurityRole> getRolesByUserId(long userId,boolean assigned);
+	SecurityUserRoles getUserRolesByUsrAndRoleIds(long userId,long roleID);
+	int getUserIdCount(long userId);
+	SecurityUserRoles getNewSecurityUserRoles();
+	void update(SecurityUserRoles securityUserRoles,String type);
+	List<String> getUsrMailsByRoleCd(String roleCode);
+	List<String> getUsrMailsByRoleIds(String roleCode);
 }

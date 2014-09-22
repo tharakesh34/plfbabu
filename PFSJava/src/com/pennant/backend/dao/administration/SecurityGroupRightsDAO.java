@@ -50,21 +50,13 @@ import com.pennant.backend.model.administration.SecurityRight;
 
 public interface SecurityGroupRightsDAO {
 
-	public List<SecurityGroupRights> getSecurityGroupRightsByGrpId(SecurityGroup securityGroup);
-
-	public SecurityGroupRights getGroupRightsByGrpAndRightIds(long grpId, long rightId);
-
-	public void save(SecurityGroupRights securityGroupRights);
-
-	public void delete(SecurityGroupRights securityGroupRights);
-
-	public int getGroupIdCount(long groupId);
-
-	public int getRightIdCount(long rightID);
-
-	public List<SecurityRight> getRightsByGroupId(long grpID, boolean isAssigned);
-
-	public SecurityGroupRights getSecurityGroupRights();
-
-	public List<SecurityGroupRights> getSecurityGroupRightsByGrpId(long grpId);
+	List<SecurityGroupRights> getSecurityGroupRightsByGrpId(SecurityGroup securityGroup);
+	SecurityGroupRights getGroupRightsByGrpAndRightIds(long grpId, long rightId);
+	void save(SecurityGroupRights securityGroupRights);
+	void delete(SecurityGroupRights securityGroupRights);
+	int getGroupIdCount(long groupId);
+	int getRightIdCount(long rightID);
+	List<SecurityRight> getRightsByGroupId(long grpID, boolean isAssigned);
+	SecurityGroupRights getSecurityGroupRights();
+	List<SecurityGroupRights> getSecurityGroupRightsByGrpId(long grpId);
 }

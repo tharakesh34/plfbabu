@@ -48,13 +48,13 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 
 public interface WIFFinanceDisbursementDAO {
 
-	public FinanceDisbursement getWIFFinanceDisbursement();
-	public FinanceDisbursement getNewWIFFinanceDisbursement();
-	public FinanceDisbursement getWIFFinanceDisbursementById(String id,String type);
-	public void update(FinanceDisbursement wIFFinanceDisbursement,String type);
-	public void delete(FinanceDisbursement wIFFinanceDisbursement,String type);
-	public String save(FinanceDisbursement wIFFinanceDisbursement,String type);
-	public void initialize(FinanceDisbursement wIFFinanceDisbursement);
-	public void refresh(FinanceDisbursement entity);
-	public List<FinanceDisbursement> getWIFFinanceDisbursementDetails(String id, String type);
+	FinanceDisbursement getWIFFinanceDisbursement();
+	FinanceDisbursement getNewWIFFinanceDisbursement();
+	FinanceDisbursement getWIFFinanceDisbursementById(String id,String type);
+	void update(FinanceDisbursement wIFFinanceDisbursement,String type);
+	void delete(FinanceDisbursement wIFFinanceDisbursement,String type);
+	String save(FinanceDisbursement wIFFinanceDisbursement,String type);
+	void initialize(FinanceDisbursement wIFFinanceDisbursement);
+	void refresh(FinanceDisbursement entity);
+	List<FinanceDisbursement> getWIFFinanceDisbursementDetails(String id, String type);
 }

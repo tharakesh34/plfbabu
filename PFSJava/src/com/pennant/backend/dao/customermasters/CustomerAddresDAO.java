@@ -51,14 +51,14 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
  */
 public interface CustomerAddresDAO {
 
-	public CustomerAddres getCustomerAddres();
-	public CustomerAddres getNewCustomerAddres();
-	public CustomerAddres getCustomerAddresById(long id,String addType,String type);
-	public List<CustomerAddres> getCustomerAddresByCustomer(final long id,String type);
-	public void update(CustomerAddres customerAddres,String type);
-	public void delete(CustomerAddres customerAddres,String type);
-	public long save(CustomerAddres customerAddres,String type);
-	public void initialize(CustomerAddres customerAddres);
-	public void refresh(CustomerAddres entity);
-	public void deleteByCustomer(final long id,String type);
+	 CustomerAddres getCustomerAddres();
+	 CustomerAddres getNewCustomerAddres();
+	 CustomerAddres getCustomerAddresById(long id,String addType,String type);
+	 List<CustomerAddres> getCustomerAddresByCustomer(final long id,String type);
+	 void update(CustomerAddres customerAddres,String type);
+	 void delete(CustomerAddres customerAddres,String type);
+	 long save(CustomerAddres customerAddres,String type);
+	 void initialize(CustomerAddres customerAddres);
+	 void refresh(CustomerAddres entity);
+	 void deleteByCustomer(final long id,String type);
 }

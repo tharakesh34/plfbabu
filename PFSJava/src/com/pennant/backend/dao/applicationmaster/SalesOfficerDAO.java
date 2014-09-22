@@ -46,19 +46,12 @@ import com.pennant.backend.model.applicationmaster.SalesOfficer;
 
 public interface SalesOfficerDAO {
 
-	public SalesOfficer getSalesOfficer();
-
-	public SalesOfficer getNewSalesOfficer();
-
-	public SalesOfficer getSalesOfficerById(String id, String type);
-
-	public void update(SalesOfficer salesOfficer, String type);
-
-	public void delete(SalesOfficer salesOfficer, String type);
-
-	public String save(SalesOfficer salesOfficer, String type);
-
-	public void initialize(SalesOfficer salesOfficer);
-
-	public void refresh(SalesOfficer entity);
+	SalesOfficer getSalesOfficer();
+	SalesOfficer getNewSalesOfficer();
+	SalesOfficer getSalesOfficerById(String id, String type);
+	void update(SalesOfficer salesOfficer, String type);
+	void delete(SalesOfficer salesOfficer, String type);
+	String save(SalesOfficer salesOfficer, String type);
+	void initialize(SalesOfficer salesOfficer);
+	void refresh(SalesOfficer entity);
 }

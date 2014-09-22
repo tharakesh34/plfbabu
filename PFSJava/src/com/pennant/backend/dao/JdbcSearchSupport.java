@@ -52,10 +52,8 @@ public interface JdbcSearchSupport {
 
 	int count(Class<?> searchClass, ISearch search);
 	int count(ISearch search);
-
 	<T> List<T> search(Class<T> searchClass, ISearch search);
 	<T> List<T> search(ISearch search);
-
 	<T> SearchResult<T> searchAndCount(Class<T> searchClass, ISearch search);
 	<T> SearchResult<T> searchAndCount(ISearch search);
 }

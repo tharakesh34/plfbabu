@@ -49,19 +49,12 @@ import com.pennant.backend.model.applicationmaster.RejectDetail;
  */
 public interface RejectDetailDAO {
 
-	public RejectDetail getRejectDetail();
-
-	public RejectDetail getNewRejectDetail();
-
-	public RejectDetail getRejectDetailById(String id, String type);
-
-	public void update(RejectDetail rejectDetail, String type);
-
-	public void delete(RejectDetail rejectDetail, String type);
-
-	public String save(RejectDetail rejectDetail, String type);
-
-	public void initialize(RejectDetail rejectDetail);
-
-	public void refresh(RejectDetail entity);
+	RejectDetail getRejectDetail();
+	RejectDetail getNewRejectDetail();
+	RejectDetail getRejectDetailById(String id, String type);
+	void update(RejectDetail rejectDetail, String type);
+	void delete(RejectDetail rejectDetail, String type);
+	String save(RejectDetail rejectDetail, String type);
+	void initialize(RejectDetail rejectDetail);
+	void refresh(RejectDetail entity);
 }

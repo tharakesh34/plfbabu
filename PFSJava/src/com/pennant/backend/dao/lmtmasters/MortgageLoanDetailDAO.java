@@ -49,12 +49,12 @@ import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
  */
 public interface MortgageLoanDetailDAO {
 
-	public MortgageLoanDetail getMortgageLoanDetail();
-	public MortgageLoanDetail getNewMortgageLoanDetail();
-	public MortgageLoanDetail getMortgageLoanDetailById(String id,String type);
-	public void update(MortgageLoanDetail mortgageLoanDetail,String type);
-	public void delete(MortgageLoanDetail mortgageLoanDetail,String type);
-	public String save(MortgageLoanDetail mortgageLoanDetail,String type);
-	public void initialize(MortgageLoanDetail mortgageLoanDetail);
-	public void refresh(MortgageLoanDetail entity);
+	MortgageLoanDetail getMortgageLoanDetail();
+	MortgageLoanDetail getNewMortgageLoanDetail();
+	MortgageLoanDetail getMortgageLoanDetailById(String id,String type);
+	void update(MortgageLoanDetail mortgageLoanDetail,String type);
+	void delete(MortgageLoanDetail mortgageLoanDetail,String type);
+	String save(MortgageLoanDetail mortgageLoanDetail,String type);
+	void initialize(MortgageLoanDetail mortgageLoanDetail);
+	void refresh(MortgageLoanDetail entity);
 }

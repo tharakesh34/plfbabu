@@ -46,19 +46,12 @@ import com.pennant.backend.model.amtmasters.ExpenseType;
 
 public interface ExpenseTypeDAO {
 
-	public ExpenseType getExpenseType();
-
-	public ExpenseType getNewExpenseType();
-
-	public ExpenseType getExpenseTypeById(long id, String type);
-
-	public void update(ExpenseType expenseType, String type);
-
-	public void delete(ExpenseType expenseType, String type);
-
-	public long save(ExpenseType expenseType, String type);
-
-	public void initialize(ExpenseType expenseType);
-
-	public void refresh(ExpenseType entity);
+	ExpenseType getExpenseType();
+	ExpenseType getNewExpenseType();
+	ExpenseType getExpenseTypeById(long id, String type);
+	void update(ExpenseType expenseType, String type);
+	void delete(ExpenseType expenseType, String type);
+	long save(ExpenseType expenseType, String type);
+	void initialize(ExpenseType expenseType);
+	void refresh(ExpenseType entity);
 }

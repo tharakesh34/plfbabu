@@ -58,39 +58,37 @@ import com.pennant.backend.model.reports.AvailFinance;
 
 public interface FinanceMainDAO {
 
-	public FinanceMain getFinanceMain(boolean isWIF);
-	public FinanceMain getNewFinanceMain(boolean isWIF);
-	public FinanceMain getFinanceMainById(String id,String type,boolean isWIF);
-	public void update(FinanceMain financeMain,String type,boolean isWIF);
-	public void delete(FinanceMain financeMain,String type,boolean isWIF);
-	public String save(FinanceMain financeMain,String type,boolean isWIF);
-	public void initialize(FinanceMain financeMain);
-	public void refresh(FinanceMain entity);
-	public boolean isFinReferenceExists(String id, String type, boolean isWIF);
-	public void listUpdate(ArrayList<FinanceMain> financeMain, String type);
-	public List<String> getFinanceMainListByBatch(Date curBD, Date nextBD, String type);
-	public  List<BigDecimal> getActualPftBal(String finReference,String type);
-	public void updateRepaymentAmount(String finReference, BigDecimal finAmount, BigDecimal repaymentAmount, 
+	FinanceMain getFinanceMain(boolean isWIF);
+	FinanceMain getNewFinanceMain(boolean isWIF);
+	FinanceMain getFinanceMainById(String id,String type,boolean isWIF);
+	void update(FinanceMain financeMain,String type,boolean isWIF);
+	void delete(FinanceMain financeMain,String type,boolean isWIF);
+	String save(FinanceMain financeMain,String type,boolean isWIF);
+	void initialize(FinanceMain financeMain);
+	void refresh(FinanceMain entity);
+	boolean isFinReferenceExists(String id, String type, boolean isWIF);
+	void listUpdate(ArrayList<FinanceMain> financeMain, String type);
+	List<String> getFinanceMainListByBatch(Date curBD, Date nextBD, String type);
+	 List<BigDecimal> getActualPftBal(String finReference,String type);
+	void updateRepaymentAmount(String finReference, BigDecimal finAmount, BigDecimal repaymentAmount, 
 			String finStatus, String finStsReason, boolean isCancelProc);
-	public List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
-	public void updateCustCIF(long custID, String finReference);
-	public void updateFinBlackListStatus(String finReference);
-	public List<String> getFinanceReferenceList();
-	public FinanceSummary getFinanceProfitDetails(String finRef);
-	public List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
-	public List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
- 	public CustomerFinanceDetail getCustomerFinanceMainById(String id,String type);
-	public List<AuditTransaction> getFinTransactionsList(String id, boolean approvedFinance);
- 	public boolean checkFirstTaskOwnerAccess(String productCode, long usrLogin);
-	public Boolean saveRejectFinanceDetails(FinanceMain financeMain);
-	//public void updateInvestmentFinance(FinanceMain financeMain,String type);
-//	public String saveInvestmentFinance1(FinanceMain financeMain, String type);
-	public List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId);
-	public void updateFinanceERR(String finReference, Date lastRepayDate, Date lastRepayPftDate, BigDecimal effectiveRate, String type);
-	public FinanceMain getFinanceMainForBatch(String finReference);
-	public FinanceMain getFinanceMainForPftCalc(String finReference);
-	public FinanceMain getFinanceMainForRpyCancel(String id);
+	List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
+	void updateCustCIF(long custID, String finReference);
+	void updateFinBlackListStatus(String finReference);
+	List<String> getFinanceReferenceList();
+	FinanceSummary getFinanceProfitDetails(String finRef);
+	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
+	List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
+ 	CustomerFinanceDetail getCustomerFinanceMainById(String id,String type);
+	List<AuditTransaction> getFinTransactionsList(String id, boolean approvedFinance);
+ 	boolean checkFirstTaskOwnerAccess(String productCode, long usrLogin);
+	Boolean saveRejectFinanceDetails(FinanceMain financeMain);
+	//void updateInvestmentFinance(FinanceMain financeMain,String type);
+//	String saveInvestmentFinance1(FinanceMain financeMain, String type);
+	List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId);
+	void updateFinanceERR(String finReference, Date lastRepayDate, Date lastRepayPftDate, BigDecimal effectiveRate, String type);
+	FinanceMain getFinanceMainForBatch(String finReference);
+	FinanceMain getFinanceMainForPftCalc(String finReference);
+	FinanceMain getFinanceMainForRpyCancel(String id);
 	void updateFinAccounts(String finReference, String finAccount);
-
-
 }

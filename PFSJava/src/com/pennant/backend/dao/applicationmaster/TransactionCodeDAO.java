@@ -49,19 +49,12 @@ import com.pennant.backend.model.applicationmaster.TransactionCode;
  */
 public interface TransactionCodeDAO {
 
-	public TransactionCode getTransactionCode();
-
-	public TransactionCode getNewTransactionCode();
-
-	public TransactionCode getTransactionCodeById(String id, String type);
-
-	public void update(TransactionCode transactionCode, String type);
-
-	public void delete(TransactionCode transactionCode, String type);
-
-	public String save(TransactionCode transactionCode, String type);
-
-	public void initialize(TransactionCode transactionCode);
-
-	public void refresh(TransactionCode entity);
+	TransactionCode getTransactionCode();
+	TransactionCode getNewTransactionCode();
+	TransactionCode getTransactionCodeById(String id, String type);
+	void update(TransactionCode transactionCode, String type);
+	void delete(TransactionCode transactionCode, String type);
+	String save(TransactionCode transactionCode, String type);
+	void initialize(TransactionCode transactionCode);
+	void refresh(TransactionCode entity);
 }

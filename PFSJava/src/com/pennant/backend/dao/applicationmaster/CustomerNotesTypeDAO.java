@@ -49,19 +49,12 @@ import com.pennant.backend.model.applicationmaster.CustomerNotesType;
  */
 public interface CustomerNotesTypeDAO {
 
-	public CustomerNotesType getCustomerNotesType();
-
-	public CustomerNotesType getNewCustomerNotesType();
-
-	public CustomerNotesType getCustomerNotesTypeById(String id, String type);
-
-	public void update(CustomerNotesType customerNotesType, String type);
-
-	public void delete(CustomerNotesType customerNotesType, String type);
-
-	public String save(CustomerNotesType customerNotesType, String type);
-
-	public void initialize(CustomerNotesType customerNotesType);
-
-	public void refresh(CustomerNotesType entity);
+	CustomerNotesType getCustomerNotesType();
+	CustomerNotesType getNewCustomerNotesType();
+	CustomerNotesType getCustomerNotesTypeById(String id, String type);
+	void update(CustomerNotesType customerNotesType, String type);
+	void delete(CustomerNotesType customerNotesType, String type);
+	String save(CustomerNotesType customerNotesType, String type);
+	void initialize(CustomerNotesType customerNotesType);
+	void refresh(CustomerNotesType entity);
 }

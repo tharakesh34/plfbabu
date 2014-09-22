@@ -48,14 +48,14 @@ import com.pennant.backend.model.lmtmasters.CommidityLoanDetail;
 
 public interface CommidityLoanDetailDAO {
 
-	public CommidityLoanDetail getCommidityLoanDetail();
-	public CommidityLoanDetail getNewCommidityLoanDetail();
-	public CommidityLoanDetail getCommidityLoanDetailById(final String id,String itemType, String type);
-	public void update(CommidityLoanDetail commidityLoanDetailDAO,String type);
-	public void delete(CommidityLoanDetail commidityLoanDetailDAO,String type);
-	public String save(CommidityLoanDetail commidityLoanDetailDAO,String type);
-	public void initialize(CommidityLoanDetail commidityLoanDetailDAO);
-	public void refresh(CommidityLoanDetail entity);
-	public List<CommidityLoanDetail> getCommidityLoanDetailByFinRef(String id, String type);
-	public void deleteByFinRef(String finReference, String tableType);
+	CommidityLoanDetail getCommidityLoanDetail();
+	CommidityLoanDetail getNewCommidityLoanDetail();
+	CommidityLoanDetail getCommidityLoanDetailById(final String id,String itemType, String type);
+	void update(CommidityLoanDetail commidityLoanDetailDAO,String type);
+	void delete(CommidityLoanDetail commidityLoanDetailDAO,String type);
+	String save(CommidityLoanDetail commidityLoanDetailDAO,String type);
+	void initialize(CommidityLoanDetail commidityLoanDetailDAO);
+	void refresh(CommidityLoanDetail entity);
+	List<CommidityLoanDetail> getCommidityLoanDetailByFinRef(String id, String type);
+	void deleteByFinRef(String finReference, String tableType);
 }

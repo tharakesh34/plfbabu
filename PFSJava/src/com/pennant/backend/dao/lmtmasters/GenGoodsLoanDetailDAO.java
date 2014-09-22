@@ -48,14 +48,14 @@ import com.pennant.backend.model.lmtmasters.GenGoodsLoanDetail;
 
 public interface GenGoodsLoanDetailDAO {
 
-	public GenGoodsLoanDetail getGenGoodsLoanDetail();
-	public GenGoodsLoanDetail getNewGenGoodsLoanDetail();
-	public GenGoodsLoanDetail getGenGoodsLoanDetailById(final String id,String itemType, String type);
-	public void update(GenGoodsLoanDetail goodsLoanDetail,String type);
-	public void delete(GenGoodsLoanDetail goodsLoanDetail,String type);
-	public String save(GenGoodsLoanDetail goodsLoanDetail,String type);
-	public void initialize(GenGoodsLoanDetail goodsLoanDetail);
-	public void refresh(GenGoodsLoanDetail entity);
-	public List<GenGoodsLoanDetail> getGenGoodsLoanDetailByFinRef(String id, String type);
-	public void deleteByFinRef(String finReference, String tableType);
+	GenGoodsLoanDetail getGenGoodsLoanDetail();
+	GenGoodsLoanDetail getNewGenGoodsLoanDetail();
+	GenGoodsLoanDetail getGenGoodsLoanDetailById(final String id,String itemType, String type);
+	void update(GenGoodsLoanDetail goodsLoanDetail,String type);
+	void delete(GenGoodsLoanDetail goodsLoanDetail,String type);
+	String save(GenGoodsLoanDetail goodsLoanDetail,String type);
+	void initialize(GenGoodsLoanDetail goodsLoanDetail);
+	void refresh(GenGoodsLoanDetail entity);
+	List<GenGoodsLoanDetail> getGenGoodsLoanDetailByFinRef(String id, String type);
+	void deleteByFinRef(String finReference, String tableType);
 }

@@ -48,14 +48,14 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 
 public interface FinanceCheckListReferenceDAO {
 
-	public FinanceCheckListReference getFinanceCheckListReference();
-	public FinanceCheckListReference getNewFinanceCheckListReference();
-	public FinanceCheckListReference getFinanceCheckListReferenceById(final String id,long questionId,long answerId , String type);
-	public void update(FinanceCheckListReference financeCheckListReference,String type);
-	public void delete(FinanceCheckListReference financeCheckListReference,String type);
-	public String save(FinanceCheckListReference financeCheckListReference,String type);
-	public void initialize(FinanceCheckListReference financeCheckListReference);
-	public void refresh(FinanceCheckListReference entity);
-	public List<FinanceCheckListReference> getCheckListByFinRef(final String id, String showinStageCheckListIds, String type);
-	public void delete(String  finReference,String type) ;
+	FinanceCheckListReference getFinanceCheckListReference();
+	FinanceCheckListReference getNewFinanceCheckListReference();
+	FinanceCheckListReference getFinanceCheckListReferenceById(final String id,long questionId,long answerId , String type);
+	void update(FinanceCheckListReference financeCheckListReference,String type);
+	void delete(FinanceCheckListReference financeCheckListReference,String type);
+	String save(FinanceCheckListReference financeCheckListReference,String type);
+	void initialize(FinanceCheckListReference financeCheckListReference);
+	void refresh(FinanceCheckListReference entity);
+	List<FinanceCheckListReference> getCheckListByFinRef(final String id, String showinStageCheckListIds, String type);
+	void delete(String  finReference,String type) ;
 }

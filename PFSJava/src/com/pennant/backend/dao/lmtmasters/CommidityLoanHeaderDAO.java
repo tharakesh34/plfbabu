@@ -46,12 +46,12 @@ import com.pennant.backend.model.lmtmasters.CommidityLoanHeader;
 
 public interface CommidityLoanHeaderDAO {
 
-	public CommidityLoanHeader getCommidityLoanHeader();
-	public CommidityLoanHeader getNewCommidityLoanHeader();
-	public CommidityLoanHeader getCommidityLoanHeaderById(final String id ,String type);
-	public void update(CommidityLoanHeader commidityLoanHeader,String type);
-	public int delete(CommidityLoanHeader commidityLoanHeader,String type);
-	public String save(CommidityLoanHeader commidityLoanHeader,String type);
-	public void initialize(CommidityLoanHeader commidityLoanHeader);
-	public void refresh(CommidityLoanHeader entity);
+	CommidityLoanHeader getCommidityLoanHeader();
+	CommidityLoanHeader getNewCommidityLoanHeader();
+	CommidityLoanHeader getCommidityLoanHeaderById(final String id ,String type);
+	void update(CommidityLoanHeader commidityLoanHeader,String type);
+	int delete(CommidityLoanHeader commidityLoanHeader,String type);
+	String save(CommidityLoanHeader commidityLoanHeader,String type);
+	void initialize(CommidityLoanHeader commidityLoanHeader);
+	void refresh(CommidityLoanHeader entity);
 }

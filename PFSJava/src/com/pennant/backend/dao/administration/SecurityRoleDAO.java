@@ -49,24 +49,14 @@ import com.pennant.backend.model.administration.SecurityRole;
 
 public interface SecurityRoleDAO {
 
-	public SecurityRole getSecurityRole();
-
-	public SecurityRole getNewSecurityRole();
-
-	public SecurityRole getSecurityRoleById(long id, String type);
-
-	public void update(SecurityRole secRole, String type);
-
-	public void delete(SecurityRole secRole, String type);
-
-	public long save(SecurityRole secRole, String type);
-
-	public void initialize(SecurityRole secRole);
-
-	public void refresh(SecurityRole entity);
-
-	public SecurityRole getSecurityRoleByRoleCd(final String roleCd, String type);
-	
-	public List<SecurityRole> getApprovedSecurityRole();
-	
+	SecurityRole getSecurityRole();
+	SecurityRole getNewSecurityRole();
+	SecurityRole getSecurityRoleById(long id, String type);
+	void update(SecurityRole secRole, String type);
+	void delete(SecurityRole secRole, String type);
+	long save(SecurityRole secRole, String type);
+	void initialize(SecurityRole secRole);
+	void refresh(SecurityRole entity);
+	SecurityRole getSecurityRoleByRoleCd(final String roleCd, String type);
+	List<SecurityRole> getApprovedSecurityRole();
 }

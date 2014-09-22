@@ -49,12 +49,12 @@ import com.pennant.backend.model.lmtmasters.EducationalLoan;
  */
 public interface EducationalLoanDAO {
 
-	public EducationalLoan getEducationalLoan();
-	public EducationalLoan getNewEducationalLoan();
-	public EducationalLoan getEducationalLoanByID(String loanRef,String type);
-	public void update(EducationalLoan educationalLoan,String type);
-	public void delete(EducationalLoan educationalLoan,String type);
-	public String save(EducationalLoan educationalLoan,String type);
-	public void initialize(EducationalLoan educationalLoan);
-	public void refresh(EducationalLoan entity);
+	EducationalLoan getEducationalLoan();
+	EducationalLoan getNewEducationalLoan();
+	EducationalLoan getEducationalLoanByID(String loanRef,String type);
+	void update(EducationalLoan educationalLoan,String type);
+	void delete(EducationalLoan educationalLoan,String type);
+	String save(EducationalLoan educationalLoan,String type);
+	void initialize(EducationalLoan educationalLoan);
+	void refresh(EducationalLoan entity);
 }

@@ -6,8 +6,9 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 
 public interface FinLogEntryDetailDAO {
-	public long save(FinLogEntryDetail entryDetail);
-	public List<FinLogEntryDetail> getFinLogEntryDetailList(String finReference , Date postDate);
-	public FinLogEntryDetail getFinLogEntryDetail(String finReference, String event, Date postDate);
-	public void updateLogEntryStatus(FinLogEntryDetail finLogEntryDetail);
+	
+	long save(FinLogEntryDetail entryDetail);
+	List<FinLogEntryDetail> getFinLogEntryDetailList(String finReference , Date postDate);
+	FinLogEntryDetail getFinLogEntryDetail(String finReference, String event, Date postDate);
+	void updateLogEntryStatus(FinLogEntryDetail finLogEntryDetail);
 }

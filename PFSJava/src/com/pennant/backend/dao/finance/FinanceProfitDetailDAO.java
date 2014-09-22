@@ -56,22 +56,22 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
  */
 public interface FinanceProfitDetailDAO {
 
-	public FinanceProfitDetail getFinProfitDetailsById(String finReference);
-	public void update(FinanceProfitDetail finProfitDetails, boolean isRpyProcess);
-	public void update(List<FinanceProfitDetail> finProfitDetails, String type);
-	public String save(FinanceProfitDetail finProfitDetails, String type);
-	public void save(List<FinanceProfitDetail> finProfitDetails, String type);
-	public BigDecimal getAccrueAmount(String finReference);
-	public void updateBatchList(List<FinanceProfitDetail> finProfitDetails, String type);
-	public FinanceProfitDetail getFinProfitDetailsByRef(String finReference);
-	public FinanceProfitDetail getFinPftDetailForBatch(String finReference);
-	public void updateCpzDetail(List<FinanceProfitDetail> pftDetailsList, String type);
-	public void refreshTemp();
-	public FinanceProfitDetail getProfitDetailForWriteOff(String finReference);
-	public FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
-	public void updateLatestRpyDetails(FinanceProfitDetail financeProfitDetail);
-	public void updateRpyAccount(String finReference, String repayAccountId);
-	public void saveAccumulates(Date valueDate);
-	public void resetAcrTsfdInSusp();
-	public void updateAcrTsfdInSusp(List<AccountHoldStatus> list);
+	FinanceProfitDetail getFinProfitDetailsById(String finReference);
+	void update(FinanceProfitDetail finProfitDetails, boolean isRpyProcess);
+	void update(List<FinanceProfitDetail> finProfitDetails, String type);
+	String save(FinanceProfitDetail finProfitDetails, String type);
+	void save(List<FinanceProfitDetail> finProfitDetails, String type);
+	BigDecimal getAccrueAmount(String finReference);
+	void updateBatchList(List<FinanceProfitDetail> finProfitDetails, String type);
+	FinanceProfitDetail getFinProfitDetailsByRef(String finReference);
+	FinanceProfitDetail getFinPftDetailForBatch(String finReference);
+	void updateCpzDetail(List<FinanceProfitDetail> pftDetailsList, String type);
+	void refreshTemp();
+	FinanceProfitDetail getProfitDetailForWriteOff(String finReference);
+	FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
+	void updateLatestRpyDetails(FinanceProfitDetail financeProfitDetail);
+	void updateRpyAccount(String finReference, String repayAccountId);
+	void saveAccumulates(Date valueDate);
+	void resetAcrTsfdInSusp();
+	void updateAcrTsfdInSusp(List<AccountHoldStatus> list);
 }

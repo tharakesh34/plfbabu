@@ -46,22 +46,13 @@ import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 
 public interface AgreementDefinitionDAO {
 
-	public AgreementDefinition getAgreementDefinition();
-
-	public AgreementDefinition getNewAgreementDefinition();
-
-	public AgreementDefinition getAgreementDefinitionByCode(String aggCode, String type);
-
-	public AgreementDefinition getAgreementDefinitionById(long id, String type);
-
-	public void update(AgreementDefinition agreementDefinition, String type);
-
-	public void delete(AgreementDefinition agreementDefinition, String type);
-
-	public long save(AgreementDefinition agreementDefinition, String type);
-
-	public void initialize(AgreementDefinition agreementDefinition);
-
-	public void refresh(AgreementDefinition entity);
-	
+	AgreementDefinition getAgreementDefinition();
+	AgreementDefinition getNewAgreementDefinition();
+	AgreementDefinition getAgreementDefinitionByCode(String aggCode, String type);
+	AgreementDefinition getAgreementDefinitionById(long id, String type);
+	void update(AgreementDefinition agreementDefinition, String type);
+	void delete(AgreementDefinition agreementDefinition, String type);
+	long save(AgreementDefinition agreementDefinition, String type);
+	void initialize(AgreementDefinition agreementDefinition);
+	void refresh(AgreementDefinition entity);
 }

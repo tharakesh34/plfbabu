@@ -46,6 +46,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface AuditHeaderDAO {
 
-		public AuditHeader getNewAuditHeader();
-		public long addAudit(AuditHeader auditHeader);
+		AuditHeader getNewAuditHeader();
+		long addAudit(AuditHeader auditHeader);
 }

@@ -50,12 +50,12 @@ import com.pennant.backend.model.bmtmasters.RatingType;
  */
 public interface RatingTypeDAO {
 
-	public RatingType getRatingType();
-	public RatingType getNewRatingType();
-	public RatingType getRatingTypeById(String id,String type);
-	public void update(RatingType ratingType,String type);
-	public void delete(RatingType ratingType,String type);
-	public String save(RatingType ratingType,String type);
-	public void initialize(RatingType ratingType);
-	public void refresh(RatingType entity);
+	RatingType getRatingType();
+	RatingType getNewRatingType();
+	RatingType getRatingTypeById(String id,String type);
+	void update(RatingType ratingType,String type);
+	void delete(RatingType ratingType,String type);
+	String save(RatingType ratingType,String type);
+	void initialize(RatingType ratingType);
+	void refresh(RatingType entity);
 }

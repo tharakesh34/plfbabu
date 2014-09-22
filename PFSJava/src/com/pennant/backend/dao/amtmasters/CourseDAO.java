@@ -46,19 +46,12 @@ import com.pennant.backend.model.amtmasters.Course;
 
 public interface CourseDAO {
 
-	public Course getCourse();
-
-	public Course getNewCourse();
-
-	public Course getCourseById(String id, String type);
-
-	public void update(Course course, String type);
-
-	public void delete(Course course, String type);
-
-	public String save(Course course, String type);
-
-	public void initialize(Course course);
-
-	public void refresh(Course entity);
+	Course getCourse();
+	Course getNewCourse();
+	Course getCourseById(String id, String type);
+	void update(Course course, String type);
+	void delete(Course course, String type);
+	String save(Course course, String type);
+	void initialize(Course course);
+	void refresh(Course entity);
 }

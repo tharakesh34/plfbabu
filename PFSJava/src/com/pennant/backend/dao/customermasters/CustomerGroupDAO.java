@@ -46,13 +46,13 @@ import com.pennant.backend.model.customermasters.CustomerGroup;
 
 public interface CustomerGroupDAO {
 
-	public CustomerGroup getCustomerGroup();
-	public CustomerGroup getNewCustomerGroup();
-	public CustomerGroup getCustomerGroupByID(long id,String type);
-	public void update(CustomerGroup customerGroup,String type);
-	public void delete(CustomerGroup customerGroup,String type);
-	public long save(CustomerGroup customerGroup,String type);
-	public void initialize(CustomerGroup customerGroup);
-	public void refresh(CustomerGroup entity);
-	public CustomerGroup getCustomerGroupByCode(String id, String type);
+	 CustomerGroup getCustomerGroup();
+	 CustomerGroup getNewCustomerGroup();
+	 CustomerGroup getCustomerGroupByID(long id,String type);
+	 void update(CustomerGroup customerGroup,String type);
+	 void delete(CustomerGroup customerGroup,String type);
+	 long save(CustomerGroup customerGroup,String type);
+	 void initialize(CustomerGroup customerGroup);
+	 void refresh(CustomerGroup entity);
+	 CustomerGroup getCustomerGroupByCode(String id, String type);
 }

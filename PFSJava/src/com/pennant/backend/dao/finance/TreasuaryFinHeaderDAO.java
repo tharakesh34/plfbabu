@@ -50,16 +50,16 @@ import com.pennant.backend.model.finance.InvestmentFinHeader;
 
 public interface TreasuaryFinHeaderDAO {
 
-	public InvestmentFinHeader getTreasuaryFinHeader();
-	public InvestmentFinHeader getNewTreasuaryFinHeader();
-	public InvestmentFinHeader getTreasuaryFinHeaderById(String id,String type);
-	public InvestmentFinHeader getTreasuaryFinHeader(String finReference, String tableType);
-	public void update(InvestmentFinHeader treasuaryFinance,String type);
-	public void delete(InvestmentFinHeader treasuaryFinance,String type);
-	public String save(InvestmentFinHeader treasuaryFinance,String type);
-	public void initialize(InvestmentFinHeader treasuaryFinance);
-	public void refresh(InvestmentFinHeader entity);
-	public List<FinanceMain> getInvestmentDealList(InvestmentFinHeader investmentFinHeader, String tableType);
-	public FinanceMain getInvestmentDealById(FinanceMain financeMain, String tableType);
-	public void updateDealsStatus(String investmentReference);
+	InvestmentFinHeader getTreasuaryFinHeader();
+	InvestmentFinHeader getNewTreasuaryFinHeader();
+	InvestmentFinHeader getTreasuaryFinHeaderById(String id,String type);
+	InvestmentFinHeader getTreasuaryFinHeader(String finReference, String tableType);
+	void update(InvestmentFinHeader treasuaryFinance,String type);
+	void delete(InvestmentFinHeader treasuaryFinance,String type);
+	String save(InvestmentFinHeader treasuaryFinance,String type);
+	void initialize(InvestmentFinHeader treasuaryFinance);
+	void refresh(InvestmentFinHeader entity);
+	List<FinanceMain> getInvestmentDealList(InvestmentFinHeader investmentFinHeader, String tableType);
+	FinanceMain getInvestmentDealById(FinanceMain financeMain, String tableType);
+	void updateDealsStatus(String investmentReference);
 }

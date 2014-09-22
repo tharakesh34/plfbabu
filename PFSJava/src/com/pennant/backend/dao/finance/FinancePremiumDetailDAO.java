@@ -53,11 +53,10 @@ import com.pennant.backend.model.finance.FinancePremiumDetail;
  */
 public interface FinancePremiumDetailDAO {
 
-	public FinancePremiumDetail getFinPremiumDetailsById(String finReference, String type);
-	public void update(FinancePremiumDetail premiumDetail, String type);
-	public String save(FinancePremiumDetail premiumDetail, String type);
-	public void delete(FinancePremiumDetail premiumDetail, String type);
-	public void updateAccruedAmount(FinancePremiumDetail premiumDetail);
-	public BigDecimal getFairValueAmount(String finReference, String type);
-	
+	FinancePremiumDetail getFinPremiumDetailsById(String finReference, String type);
+	void update(FinancePremiumDetail premiumDetail, String type);
+	String save(FinancePremiumDetail premiumDetail, String type);
+	void delete(FinancePremiumDetail premiumDetail, String type);
+	void updateAccruedAmount(FinancePremiumDetail premiumDetail);
+	BigDecimal getFairValueAmount(String finReference, String type);
 }

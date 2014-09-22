@@ -46,19 +46,12 @@ import com.pennant.backend.model.amtmasters.OwnerShipType;
 
 public interface OwnerShipTypeDAO {
 
-	public OwnerShipType getOwnerShipType();
-
-	public OwnerShipType getNewOwnerShipType();
-
-	public OwnerShipType getOwnerShipTypeById(long id, String type);
-
-	public void update(OwnerShipType ownerShipType, String type);
-
-	public void delete(OwnerShipType ownerShipType, String type);
-
-	public long save(OwnerShipType ownerShipType, String type);
-
-	public void initialize(OwnerShipType ownerShipType);
-
-	public void refresh(OwnerShipType entity);
+	OwnerShipType getOwnerShipType();
+	OwnerShipType getNewOwnerShipType();
+	OwnerShipType getOwnerShipTypeById(long id, String type);
+	void update(OwnerShipType ownerShipType, String type);
+	void delete(OwnerShipType ownerShipType, String type);
+	long save(OwnerShipType ownerShipType, String type);
+	void initialize(OwnerShipType ownerShipType);
+	void refresh(OwnerShipType entity);
 }

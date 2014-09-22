@@ -46,19 +46,12 @@ import com.pennant.backend.model.amtmasters.PropertyRelationType;
 
 public interface PropertyRelationTypeDAO {
 
-	public PropertyRelationType getPropertyRelationType();
-
-	public PropertyRelationType getNewPropertyRelationType();
-
-	public PropertyRelationType getPropertyRelationTypeById(long id, String type);
-
-	public void update(PropertyRelationType propertyRelationType, String type);
-
-	public void delete(PropertyRelationType propertyRelationType, String type);
-
-	public long save(PropertyRelationType propertyRelationType, String type);
-
-	public void initialize(PropertyRelationType propertyRelationType);
-
-	public void refresh(PropertyRelationType entity);
+	PropertyRelationType getPropertyRelationType();
+	PropertyRelationType getNewPropertyRelationType();
+	PropertyRelationType getPropertyRelationTypeById(long id, String type);
+	void update(PropertyRelationType propertyRelationType, String type);
+	void delete(PropertyRelationType propertyRelationType, String type);
+	long save(PropertyRelationType propertyRelationType, String type);
+	void initialize(PropertyRelationType propertyRelationType);
+	void refresh(PropertyRelationType entity);
 }

@@ -49,48 +49,27 @@ import com.pennant.backend.model.administration.SecurityUser;
 
 public interface SecurityRightDAO {
 
-	public SecurityRight getSecurityRight();
-
-	public SecurityRight getNewSecurityRight();
-
-	public SecurityRight getSecurityRightByID(long id, String type);
-
-	public List<SecurityRight> getAllRights(int type);
-
-	public List<SecurityRight> getAllRights();
-
-	public int getCountAllSecurityRights();
-
-	public SecurityRight getRightById(Long rightID);
-
-	public List<SecurityRight> getRightsByUser(SecurityUser user);
-
-	public List<SecurityRight> getAllRights(List<Integer> aListOfRightTyps);
-
-	public List<SecurityRight> getRightsLikeRightName(String aRightName);
-
-	public List<SecurityRight> getRightsLikeRightNameAndType(String aRightName, int aRightType);
-
-	public List<SecurityRight> getRightsLikeRightNameAndTypes(String aRightName,
+	SecurityRight getSecurityRight();
+	SecurityRight getNewSecurityRight();
+	SecurityRight getSecurityRightByID(long id, String type);
+	List<SecurityRight> getAllRights(int type);
+	List<SecurityRight> getAllRights();
+	int getCountAllSecurityRights();
+	SecurityRight getRightById(Long rightID);
+	List<SecurityRight> getRightsByUser(SecurityUser user);
+	List<SecurityRight> getAllRights(List<Integer> aListOfRightTyps);
+	List<SecurityRight> getRightsLikeRightName(String aRightName);
+	List<SecurityRight> getRightsLikeRightNameAndType(String aRightName, int aRightType);
+	List<SecurityRight> getRightsLikeRightNameAndTypes(String aRightName,
 	        List<Integer> listOfRightTyps);
-
-	public void update(SecurityRight secRight, String type);
-
-	public void delete(SecurityRight secRight, String type);
-
-	public long save(SecurityRight secRight, String type);
-
-	public List<SecurityRight> getMenuRightsByUser(SecurityUser user);
-
-	public List<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName);
-
-	public List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName);
-
-	public void initialize(SecurityRight secRight);
-
-	public void refresh(SecurityRight entity);
-
-	public SecurityRight getSecurityRightByRightName(final String rightName, String type);
-
-	public List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles);
+	void update(SecurityRight secRight, String type);
+	void delete(SecurityRight secRight, String type);
+	long save(SecurityRight secRight, String type);
+	List<SecurityRight> getMenuRightsByUser(SecurityUser user);
+	List<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName);
+	List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName);
+	void initialize(SecurityRight secRight);
+	void refresh(SecurityRight entity);
+	SecurityRight getSecurityRightByRightName(final String rightName, String type);
+	List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles);
 }

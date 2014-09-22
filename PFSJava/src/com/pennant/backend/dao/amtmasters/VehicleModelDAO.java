@@ -46,20 +46,12 @@ import com.pennant.backend.model.amtmasters.VehicleModel;
 
 public interface VehicleModelDAO {
 
-	public VehicleModel getVehicleModel();
-
-	public VehicleModel getNewVehicleModel();
-
-	public VehicleModel getVehicleModelById(long id, String type);
-
-	public void update(VehicleModel vehicleModel, String type);
-
-	public void delete(VehicleModel vehicleModel, String type);
-
-	public long save(VehicleModel vehicleModel, String type);
-
-	public void initialize(VehicleModel vehicleModel);
-
-	public void refresh(VehicleModel entity);
-
+	VehicleModel getVehicleModel();
+	VehicleModel getNewVehicleModel();
+	VehicleModel getVehicleModelById(long id, String type);
+	void update(VehicleModel vehicleModel, String type);
+	void delete(VehicleModel vehicleModel, String type);
+	long save(VehicleModel vehicleModel, String type);
+	void initialize(VehicleModel vehicleModel);
+	void refresh(VehicleModel entity);
 }

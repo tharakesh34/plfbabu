@@ -48,18 +48,18 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 
 public interface FinanceReferenceDetailDAO {
 
-	public FinanceReferenceDetail getFinanceReferenceDetail();
-	public FinanceReferenceDetail getNewFinanceReferenceDetail();
-	public FinanceReferenceDetail getFinanceReferenceDetailById(long id,String type);
-	public void update(FinanceReferenceDetail financeReferenceDetail,String type);
-	public void delete(FinanceReferenceDetail financeReferenceDetail,String type);
-	public long save(FinanceReferenceDetail financeReferenceDetail,String type);
-	public void initialize(FinanceReferenceDetail financeReferenceDetail);
-	public void refresh(FinanceReferenceDetail entity);
-	public List<FinanceReferenceDetail> getFinanceReferenceDetail(String financeType,String roleCode, String type);
-	public List<FinanceReferenceDetail> getFinRefDetByRoleAndFinType(String financeType,
+	FinanceReferenceDetail getFinanceReferenceDetail();
+	FinanceReferenceDetail getNewFinanceReferenceDetail();
+	FinanceReferenceDetail getFinanceReferenceDetailById(long id,String type);
+	void update(FinanceReferenceDetail financeReferenceDetail,String type);
+	void delete(FinanceReferenceDetail financeReferenceDetail,String type);
+	long save(FinanceReferenceDetail financeReferenceDetail,String type);
+	void initialize(FinanceReferenceDetail financeReferenceDetail);
+	void refresh(FinanceReferenceDetail entity);
+	List<FinanceReferenceDetail> getFinanceReferenceDetail(String financeType,String roleCode, String type);
+	List<FinanceReferenceDetail> getFinRefDetByRoleAndFinType(String financeType,
 			String mandInputInStage, List<String> groupIds, String type);
-	public void deleteByFinType(String finType, String type);
-	public List<Long> getMailTemplatesByFinType(String financeType, String roleCode);
-	public List<FinanceReferenceDetail> getAgreementListByCode(String aggCodes);
+	void deleteByFinType(String finType, String type);
+	List<Long> getMailTemplatesByFinType(String financeType, String roleCode);
+	List<FinanceReferenceDetail> getAgreementListByCode(String aggCodes);
 }

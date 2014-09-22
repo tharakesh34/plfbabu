@@ -46,12 +46,12 @@ import com.pennant.backend.model.bmtmasters.Question;
 
 public interface QuestionDAO {
 
-	public Question getQuestion();
-	public Question getNewQuestion();
-	public Question getQuestionById(long id,String type);
-	public void update(Question question,String type);
-	public void delete(Question question,String type);
-	public long save(Question question,String type);
-	public void initialize(Question question);
-	public void refresh(Question entity);
+	Question getQuestion();
+	Question getNewQuestion();
+	Question getQuestionById(long id,String type);
+	void update(Question question,String type);
+	void delete(Question question,String type);
+	long save(Question question,String type);
+	void initialize(Question question);
+	void refresh(Question entity);
 }

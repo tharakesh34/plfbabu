@@ -49,19 +49,12 @@ import com.pennant.backend.model.applicationmaster.CustomerCategory;
  */
 public interface CustomerCategoryDAO {
 
-	public CustomerCategory getCustomerCategory();
-
-	public CustomerCategory getNewCustomerCategory();
-
-	public CustomerCategory getCustomerCategoryById(String id, String type);
-
-	public void update(CustomerCategory customerCategory, String type);
-
-	public void delete(CustomerCategory customerCategory, String type);
-
-	public String save(CustomerCategory customerCategory, String type);
-
-	public void initialize(CustomerCategory customerCategory);
-
-	public void refresh(CustomerCategory entity);
+	CustomerCategory getCustomerCategory();
+	CustomerCategory getNewCustomerCategory();
+	CustomerCategory getCustomerCategoryById(String id, String type);
+	void update(CustomerCategory customerCategory, String type);
+	void delete(CustomerCategory customerCategory, String type);
+	String save(CustomerCategory customerCategory, String type);
+	void initialize(CustomerCategory customerCategory);
+	void refresh(CustomerCategory entity);
 }

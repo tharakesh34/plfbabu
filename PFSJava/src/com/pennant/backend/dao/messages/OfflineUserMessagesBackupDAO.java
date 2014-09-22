@@ -13,8 +13,8 @@ import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
  *
  */
 public interface OfflineUserMessagesBackupDAO {
-	public void save(List<OfflineUsersMessagesBackup> offlineusrmsgBkpList);
-	public void delete(String toUsrId);
+	void save(List<OfflineUsersMessagesBackup> offlineusrmsgBkpList);
+	void delete(String toUsrId);
 	List<OfflineUsersMessagesBackup> getMessagesBackupByUserId(String toUsrId);
 	
 }

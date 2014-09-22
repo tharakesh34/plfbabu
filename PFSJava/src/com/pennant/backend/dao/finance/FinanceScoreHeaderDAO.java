@@ -7,14 +7,12 @@ import com.pennant.backend.model.finance.FinanceScoreHeader;
 
 public interface FinanceScoreHeaderDAO {
 	
-	public List<FinanceScoreHeader> getFinScoreHeaderList(String finReference, String type);
-	public long saveHeader(FinanceScoreHeader scoreHeader, String type);
-	public void deleteHeader(FinanceScoreHeader scoreHeader, String type);
-	public void deleteHeaderList(String finReferecne, String type);
-	
-	public List<FinanceScoreDetail> getFinScoreDetailList(List<Long> headerIds, String type);
-	public void saveDetailList(List<FinanceScoreDetail> scoreDetails, String type);
-	public void deleteDetailList(List<FinanceScoreDetail> scoreDetails, String type);
-	public void deleteDetailList(String finReferecne, String type);
-
+	List<FinanceScoreHeader> getFinScoreHeaderList(String finReference, String type);
+	long saveHeader(FinanceScoreHeader scoreHeader, String type);
+	void deleteHeader(FinanceScoreHeader scoreHeader, String type);
+	void deleteHeaderList(String finReferecne, String type);
+	List<FinanceScoreDetail> getFinScoreDetailList(List<Long> headerIds, String type);
+	void saveDetailList(List<FinanceScoreDetail> scoreDetails, String type);
+	void deleteDetailList(List<FinanceScoreDetail> scoreDetails, String type);
+	void deleteDetailList(String finReferecne, String type);
 }

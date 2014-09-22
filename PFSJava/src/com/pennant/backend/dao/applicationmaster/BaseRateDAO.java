@@ -52,28 +52,16 @@ import com.pennant.backend.model.applicationmaster.BaseRate;
  */
 public interface BaseRateDAO {
 
-	public BaseRate getBaseRate();
-
-	public BaseRate getNewBaseRate();
-
-	public BaseRate getBaseRateById(String bRType, Date bREffDate, String type);
-
-	public void update(BaseRate baseRate, String type);
-
-	public void delete(BaseRate baseRate, String type);
-
-	public void save(BaseRate baseRate, String type);
-
-	public void initialize(BaseRate baseRate);
-
-	public void refresh(BaseRate entity);
-
-	public BaseRate getBaseRateByType(final String bRType, Date bREffDate);
-
-	public boolean getBaseRateListById(String bRType, Date bREffDate, String type);
-
-	public List<BaseRate> getBSRListByMdfDate(Date bREffDate, String type);
-
-	public void deleteByEffDate(BaseRate baseRate, String type);
-
+	BaseRate getBaseRate();
+	BaseRate getNewBaseRate();
+	BaseRate getBaseRateById(String bRType, Date bREffDate, String type);
+	void update(BaseRate baseRate, String type);
+	void delete(BaseRate baseRate, String type);
+	void save(BaseRate baseRate, String type);
+	void initialize(BaseRate baseRate);
+	void refresh(BaseRate entity);
+	BaseRate getBaseRateByType(final String bRType, Date bREffDate);
+	boolean getBaseRateListById(String bRType, Date bREffDate, String type);
+	List<BaseRate> getBSRListByMdfDate(Date bREffDate, String type);
+	void deleteByEffDate(BaseRate baseRate, String type);
 }

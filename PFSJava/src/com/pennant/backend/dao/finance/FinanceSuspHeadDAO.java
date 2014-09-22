@@ -52,19 +52,18 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 
 public interface FinanceSuspHeadDAO {
 
-	public FinanceSuspHead getFinanceSuspHead();
-	public FinanceSuspHead getNewFinanceSuspHead();
-	public FinanceSuspHead getFinanceSuspHeadById(String finReference,String type);
-	public String save(FinanceSuspHead financeSuspHead, String type);
-	public void update(FinanceSuspHead financeSuspHead, String type);
-	public String saveSuspenseDetails(FinanceSuspDetails suspDetails, String type);
-	public List<FinanceSuspDetails> getFinanceSuspDetailsListById(String finReference);
-	public void initialize(FinanceSuspHead suspHead);
-	public void refresh(FinanceSuspHead suspHead);
-	public List<String> getSuspFinanceList();
-	public void delete(FinanceSuspHead financeSuspHead, String string);
-	public List<FinStatusDetail> getCustSuspDate(List<Long> custIdList);
-	public Date getCustSuspDate(long custId);
-	public void updateSuspFlag(String finReference);
-	 
+	FinanceSuspHead getFinanceSuspHead();
+	FinanceSuspHead getNewFinanceSuspHead();
+	FinanceSuspHead getFinanceSuspHeadById(String finReference,String type);
+	String save(FinanceSuspHead financeSuspHead, String type);
+	void update(FinanceSuspHead financeSuspHead, String type);
+	String saveSuspenseDetails(FinanceSuspDetails suspDetails, String type);
+	List<FinanceSuspDetails> getFinanceSuspDetailsListById(String finReference);
+	void initialize(FinanceSuspHead suspHead);
+	void refresh(FinanceSuspHead suspHead);
+	List<String> getSuspFinanceList();
+	void delete(FinanceSuspHead financeSuspHead, String string);
+	List<FinStatusDetail> getCustSuspDate(List<Long> custIdList);
+	Date getCustSuspDate(long custId);
+	void updateSuspFlag(String finReference);
 }

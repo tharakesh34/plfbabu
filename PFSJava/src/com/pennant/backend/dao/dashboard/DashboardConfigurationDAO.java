@@ -52,19 +52,17 @@ import com.pennant.fusioncharts.ChartSetElement;
 
 public interface DashboardConfigurationDAO {
 
- 	public DashboardConfiguration getNewDashboardDetail();
-	public DashboardConfiguration getDashboardDetailByID(String id,String type);
-	public void update(DashboardConfiguration dashboardConfiguration,String type);
-	public void delete(DashboardConfiguration dashboardConfiguration,String type);
-	public String save(DashboardConfiguration dashboardConfiguration,String type);
-	public void initialize(DashboardConfiguration dashboardConfiguration);
-	public void refresh(DashboardConfiguration entity);
-	public ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
-
- 	public List<DashboardPosition> getDashboardPositionsByUser(long userId);
-  	public void SavePositions(DashboardPosition dashboardPosition); 
-	public void delete(long userId);
-	public List<ChartSetElement> getLabelAndValues(DashboardConfiguration dashboardDetail);
-	public List<DashboardConfiguration> getDashboardConfigurations(long userId);
- 
+ 	DashboardConfiguration getNewDashboardDetail();
+	DashboardConfiguration getDashboardDetailByID(String id,String type);
+	void update(DashboardConfiguration dashboardConfiguration,String type);
+	void delete(DashboardConfiguration dashboardConfiguration,String type);
+	String save(DashboardConfiguration dashboardConfiguration,String type);
+	void initialize(DashboardConfiguration dashboardConfiguration);
+	void refresh(DashboardConfiguration entity);
+	ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
+ 	List<DashboardPosition> getDashboardPositionsByUser(long userId);
+  	void SavePositions(DashboardPosition dashboardPosition); 
+	void delete(long userId);
+	List<ChartSetElement> getLabelAndValues(DashboardConfiguration dashboardDetail);
+	List<DashboardConfiguration> getDashboardConfigurations(long userId);
 }

@@ -46,13 +46,13 @@ import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
 
 public interface CustomerAdditionalDetailDAO {
 
-	public CustomerAdditionalDetail getCustomerAdditionalDetail();
-	public CustomerAdditionalDetail getNewCustomerAdditionalDetail();
-	public CustomerAdditionalDetail getCustomerAdditionalDetailById(long id,String type);
-	public void update(CustomerAdditionalDetail customerAdditionalDetail,String type);
-	public void delete(CustomerAdditionalDetail customerAdditionalDetail,String type);
-	public long save(CustomerAdditionalDetail customerAdditionalDetail,String type);
-	public void initialize(CustomerAdditionalDetail customerAdditionalDetail);
-	public void refresh(CustomerAdditionalDetail entity);
+	 CustomerAdditionalDetail getCustomerAdditionalDetail();
+	 CustomerAdditionalDetail getNewCustomerAdditionalDetail();
+	 CustomerAdditionalDetail getCustomerAdditionalDetailById(long id,String type);
+	 void update(CustomerAdditionalDetail customerAdditionalDetail,String type);
+	 void delete(CustomerAdditionalDetail customerAdditionalDetail,String type);
+	 long save(CustomerAdditionalDetail customerAdditionalDetail,String type);
+	 void initialize(CustomerAdditionalDetail customerAdditionalDetail);
+	 void refresh(CustomerAdditionalDetail entity);
 	
 }

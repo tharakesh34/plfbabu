@@ -50,19 +50,18 @@ import com.pennant.backend.model.diarynotes.DiaryNotes;
 
 public interface DiaryNotesDAO {
 
-	public DiaryNotes getDiaryNotes();
-	public DiaryNotes getNewDiaryNotes();
-	public DiaryNotes getDiaryNotesById(long id,String type);
-	public void update(DiaryNotes diaryNotes,String type);
-	public void delete(DiaryNotes diaryNotes,String type);
-	public long save(DiaryNotes diaryNotes,String type);
-	public void initialize(DiaryNotes diaryNotes);
-	public void refresh(DiaryNotes entity);
+	DiaryNotes getDiaryNotes();
+	DiaryNotes getNewDiaryNotes();
+	DiaryNotes getDiaryNotesById(long id,String type);
+	void update(DiaryNotes diaryNotes,String type);
+	void delete(DiaryNotes diaryNotes,String type);
+	long save(DiaryNotes diaryNotes,String type);
+	void initialize(DiaryNotes diaryNotes);
+	void refresh(DiaryNotes entity);
 	@SuppressWarnings("rawtypes")
-	public List getDiaryNoteRecord();
-	public void updateForScheduled(DiaryNotes diaryNotes);
-	public void updateForSuspend();
-	public void updateForDelete();
-	public ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
-
+	List getDiaryNoteRecord();
+	void updateForScheduled(DiaryNotes diaryNotes);
+	void updateForSuspend();
+	void updateForDelete();
+	ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
 }

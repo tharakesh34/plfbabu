@@ -49,27 +49,16 @@ import com.pennant.backend.model.finance.FinAgreementDetail;
 
 public interface FinAgreementDetailDAO {
 
-	public FinAgreementDetail getFinAgreementDetail();
-
-	public FinAgreementDetail getNewFinAgreementDetail();
-
-	public void initialize(FinAgreementDetail agreementDetail);
-
-	public void refresh(FinAgreementDetail agreementDetail);
-
-	public FinAgreementDetail getFinAgreementDetailById(String finReference, long agrId, String type);
-
-	public long save(FinAgreementDetail finAgreementDetail, String type);
-
-	public void update(FinAgreementDetail finAgreementDetail, String type);
-	
-	public List<FinAgreementDetail> getFinAgreementDetailList(String finReference,String finType,
+	FinAgreementDetail getFinAgreementDetail();
+	FinAgreementDetail getNewFinAgreementDetail();
+	void initialize(FinAgreementDetail agreementDetail);
+	void refresh(FinAgreementDetail agreementDetail);
+	FinAgreementDetail getFinAgreementDetailById(String finReference, long agrId, String type);
+	long save(FinAgreementDetail finAgreementDetail, String type);
+	void update(FinAgreementDetail finAgreementDetail, String type);
+	List<FinAgreementDetail> getFinAgreementDetailList(String finReference,String finType,
 			boolean isAgrsExist, String agrIds, String type);
-
-	public void delete(FinAgreementDetail agreementDetail, String type);
-
-	public void deleteByFinRef(String finReference, String type);
-
-	public List<FinAgreementDetail> getFinAgrByFinRef(String finReference, String type);
-	
+	void delete(FinAgreementDetail agreementDetail, String type);
+	void deleteByFinRef(String finReference, String type);
+	List<FinAgreementDetail> getFinAgrByFinRef(String finReference, String type);
 }

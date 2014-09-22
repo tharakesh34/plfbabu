@@ -48,13 +48,13 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public interface WIFFinanceScheduleDetailDAO {
 
-	public FinanceScheduleDetail getWIFFinanceScheduleDetail();
-	public FinanceScheduleDetail getNewWIFFinanceScheduleDetail();
-	public FinanceScheduleDetail getWIFFinanceScheduleDetailById(String id,String type);
-	public void update(FinanceScheduleDetail wIFFinanceScheduleDetail,String type);
-	public void delete(FinanceScheduleDetail wIFFinanceScheduleDetail,String type);
-	public String save(FinanceScheduleDetail wIFFinanceScheduleDetail,String type);
-	public void initialize(FinanceScheduleDetail wIFFinanceScheduleDetail);
-	public void refresh(FinanceScheduleDetail entity);
-	public List<FinanceScheduleDetail> getWIFFinScheduleDetails(String id, String type);
+	FinanceScheduleDetail getWIFFinanceScheduleDetail();
+	FinanceScheduleDetail getNewWIFFinanceScheduleDetail();
+	FinanceScheduleDetail getWIFFinanceScheduleDetailById(String id,String type);
+	void update(FinanceScheduleDetail wIFFinanceScheduleDetail,String type);
+	void delete(FinanceScheduleDetail wIFFinanceScheduleDetail,String type);
+	String save(FinanceScheduleDetail wIFFinanceScheduleDetail,String type);
+	void initialize(FinanceScheduleDetail wIFFinanceScheduleDetail);
+	void refresh(FinanceScheduleDetail entity);
+	List<FinanceScheduleDetail> getWIFFinScheduleDetails(String id, String type);
 }

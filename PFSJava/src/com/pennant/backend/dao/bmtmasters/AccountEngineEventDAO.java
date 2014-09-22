@@ -50,12 +50,12 @@ import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
  */
 public interface AccountEngineEventDAO {
 
-	public AccountEngineEvent getAccountEngineEvent();
-	public AccountEngineEvent getNewAccountEngineEvent();
-	public AccountEngineEvent getAccountEngineEventById(String id,String type);
-	public void update(AccountEngineEvent accountEngineEvent,String type);
-	public void delete(AccountEngineEvent accountEngineEvent,String type);
-	public String save(AccountEngineEvent accountEngineEvent,String type);
-	public void initialize(AccountEngineEvent accountEngineEvent);
-	public void refresh(AccountEngineEvent entity);
+	AccountEngineEvent getAccountEngineEvent();
+	AccountEngineEvent getNewAccountEngineEvent();
+	AccountEngineEvent getAccountEngineEventById(String id,String type);
+	void update(AccountEngineEvent accountEngineEvent,String type);
+	void delete(AccountEngineEvent accountEngineEvent,String type);
+	String save(AccountEngineEvent accountEngineEvent,String type);
+	void initialize(AccountEngineEvent accountEngineEvent);
+	void refresh(AccountEngineEvent entity);
 }

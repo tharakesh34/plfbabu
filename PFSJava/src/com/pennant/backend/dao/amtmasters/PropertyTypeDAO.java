@@ -46,19 +46,12 @@ import com.pennant.backend.model.amtmasters.PropertyType;
 
 public interface PropertyTypeDAO {
 
-	public PropertyType getPropertyType();
-
-	public PropertyType getNewPropertyType();
-
-	public PropertyType getPropertyTypeById(long id, String type);
-
-	public void update(PropertyType propertyType, String type);
-
-	public void delete(PropertyType propertyType, String type);
-
-	public long save(PropertyType propertyType, String type);
-
-	public void initialize(PropertyType propertyType);
-
-	public void refresh(PropertyType entity);
+	PropertyType getPropertyType();
+	PropertyType getNewPropertyType();
+	PropertyType getPropertyTypeById(long id, String type);
+	void update(PropertyType propertyType, String type);
+	void delete(PropertyType propertyType, String type);
+	long save(PropertyType propertyType, String type);
+	void initialize(PropertyType propertyType);
+	void refresh(PropertyType entity);
 }

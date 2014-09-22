@@ -45,15 +45,15 @@ package com.pennant.backend.dao.facility;
 import com.pennant.backend.model.facility.Facility;
 
 public interface FacilityDAO {
-	public Facility getFacility();
-	public Facility getNewFacility();
 	
-	public Facility getFacilityById(String id,String type);
-	public void update(Facility facility,String type);
-	public void delete(Facility facility,String type);
-	public String save(Facility facility,String type);
-	public void initialize(Facility facility);
-	public void refresh(Facility entity);
-	public boolean checkFirstTaskOwnerAccess(long loginUsrID);
-	public Facility getLatestFacilityByCustID(long custID, String type);
+	Facility getFacility();
+	Facility getNewFacility();
+	Facility getFacilityById(String id,String type);
+	void update(Facility facility,String type);
+	void delete(Facility facility,String type);
+	String save(Facility facility,String type);
+	void initialize(Facility facility);
+	void refresh(Facility entity);
+	boolean checkFirstTaskOwnerAccess(long loginUsrID);
+	Facility getLatestFacilityByCustID(long custID, String type);
 }

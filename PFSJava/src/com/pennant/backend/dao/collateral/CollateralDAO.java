@@ -48,14 +48,14 @@ import com.pennant.backend.model.collateral.Collateral;
 
 public interface CollateralDAO {
 
-	public Collateral getCollateral();
-	public Collateral getNewCollateral();
-	public Collateral getCollateralById(String caf,String ref,String type);
-	public void update(Collateral collateral,String type);
-	public void delete(Collateral collateral,String type);
-	public long save(Collateral collateral,String type);
-	public void initialize(Collateral collateral);
-	public void refresh(Collateral entity);
-	public List<Collateral> getCollateralsByCAF(String cafReference, String type);
-	public void deleteByCAF(String cafReference, String type);
+	Collateral getCollateral();
+	Collateral getNewCollateral();
+	Collateral getCollateralById(String caf,String ref,String type);
+	void update(Collateral collateral,String type);
+	void delete(Collateral collateral,String type);
+	long save(Collateral collateral,String type);
+	void initialize(Collateral collateral);
+	void refresh(Collateral entity);
+	List<Collateral> getCollateralsByCAF(String cafReference, String type);
+	void deleteByCAF(String cafReference, String type);
 }

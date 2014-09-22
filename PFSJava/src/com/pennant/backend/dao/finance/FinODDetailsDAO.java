@@ -55,25 +55,25 @@ import com.pennant.backend.model.finance.FinODDetails;
  */
 public interface FinODDetailsDAO {
 	
-	public FinODDetails getFinODDetailsById(String finReference, Date schdDate, String overDueFor, String type);
-	public void update(FinODDetails finOdDetails);
-	public void save(FinODDetails finOdDetails);
-	public int getFinOverDueCntInPast(String finReference,boolean instCond);
-	public int getPendingOverDuePayment(String finReference);
-	public void updateTotals(FinODDetails detail);
-	public void resetTotals(FinODDetails detail);
-	public int getFinODDays(String finReference, String type);
-	public FinODDetails getFinODSummary(String finReference, String type);
-	public int getFinCurSchdODDays(String finReference, Date finODSchdDate, String finODFor);
-	public Long checkCustPastDue(long custID);
-	public void updateBatch(FinODDetails finOdDetails);
-	public FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate, String overDueFor);
-	public List<AccountHoldStatus> getFinODAmtByRepayAc(Date dateValuedate);
-	public void saveHoldAccountStatus(List<AccountHoldStatus> returnAcList);
-	public List<FinODDetails> getFinODDetailsByFinReference(String finReference, String type);
-	public void saveODDeferHistory(String finReference, List<Date> pastdueDefDateList);
-	public void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
-	public int getMaxODDaysOnDeferSchd(String finReference, List<Date> pastdueDefDateList);
-	public FinODDetails getMaxDaysFinODDetails(String finReference);
-	public List<Date> getMismatchODDates(String finReference, List<Date> schDateList);
+	FinODDetails getFinODDetailsById(String finReference, Date schdDate, String overDueFor, String type);
+	void update(FinODDetails finOdDetails);
+	void save(FinODDetails finOdDetails);
+	int getFinOverDueCntInPast(String finReference,boolean instCond);
+	int getPendingOverDuePayment(String finReference);
+	void updateTotals(FinODDetails detail);
+	void resetTotals(FinODDetails detail);
+	int getFinODDays(String finReference, String type);
+	FinODDetails getFinODSummary(String finReference, String type);
+	int getFinCurSchdODDays(String finReference, Date finODSchdDate, String finODFor);
+	Long checkCustPastDue(long custID);
+	void updateBatch(FinODDetails finOdDetails);
+	FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate, String overDueFor);
+	List<AccountHoldStatus> getFinODAmtByRepayAc(Date dateValuedate);
+	void saveHoldAccountStatus(List<AccountHoldStatus> returnAcList);
+	List<FinODDetails> getFinODDetailsByFinReference(String finReference, String type);
+	void saveODDeferHistory(String finReference, List<Date> pastdueDefDateList);
+	void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
+	int getMaxODDaysOnDeferSchd(String finReference, List<Date> pastdueDefDateList);
+	FinODDetails getMaxDaysFinODDetails(String finReference);
+	List<Date> getMismatchODDates(String finReference, List<Date> schDateList);
 }

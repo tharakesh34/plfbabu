@@ -48,17 +48,17 @@ import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
 
 public interface FacilityReferenceDetailDAO {
 
-	public FacilityReferenceDetail getFacilityReferenceDetail();
-	public FacilityReferenceDetail getNewFacilityReferenceDetail();
-	public FacilityReferenceDetail getFacilityReferenceDetailById(long id,String type);
-	public void update(FacilityReferenceDetail facilityReferenceDetail,String type);
-	public void delete(FacilityReferenceDetail facilityReferenceDetail,String type);
-	public long save(FacilityReferenceDetail facilityReferenceDetail,String type);
-	public void initialize(FacilityReferenceDetail facilityReferenceDetail);
-	public void refresh(FacilityReferenceDetail entity);
-	public List<FacilityReferenceDetail> getFacilityReferenceDetail(String financeType,String roleCode, String type);
-	public List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(String financeType,
+	FacilityReferenceDetail getFacilityReferenceDetail();
+	FacilityReferenceDetail getNewFacilityReferenceDetail();
+	FacilityReferenceDetail getFacilityReferenceDetailById(long id,String type);
+	void update(FacilityReferenceDetail facilityReferenceDetail,String type);
+	void delete(FacilityReferenceDetail facilityReferenceDetail,String type);
+	long save(FacilityReferenceDetail facilityReferenceDetail,String type);
+	void initialize(FacilityReferenceDetail facilityReferenceDetail);
+	void refresh(FacilityReferenceDetail entity);
+	List<FacilityReferenceDetail> getFacilityReferenceDetail(String financeType,String roleCode, String type);
+	List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(String financeType,
 			String mandInputInStage, List<String> groupIds, String type);
-	public void deleteByFinType(String finType, String type);
-	public List<FacilityReferenceDetail> getFacilityReferenceDetailById(String finType);
+	void deleteByFinType(String finType, String type);
+	List<FacilityReferenceDetail> getFacilityReferenceDetailById(String finType);
 }

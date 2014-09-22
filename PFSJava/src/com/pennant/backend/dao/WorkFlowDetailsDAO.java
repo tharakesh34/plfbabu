@@ -48,22 +48,13 @@ import com.pennant.backend.model.WorkFlowDetails;
 
 public interface  WorkFlowDetailsDAO {
 
-	public WorkFlowDetails getWorkFlowDetails();
-
-	public WorkFlowDetails getNewWorkFlowDetails();
-
-	public void initialize(WorkFlowDetails workFlowDetails);
-
-	public void refresh(WorkFlowDetails workFlowDetails);
-
-	public WorkFlowDetails getWorkFlowDetailsByID(long id);
-
-	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType);
-
-	public long save(WorkFlowDetails workFlowDetails);
-
-	public void update(WorkFlowDetails workFlowDetails);
-
-	public List<WorkFlowDetails> getActiveWorkFlowDetails();
-	
+	WorkFlowDetails getWorkFlowDetails();
+	WorkFlowDetails getNewWorkFlowDetails();
+	void initialize(WorkFlowDetails workFlowDetails);
+	void refresh(WorkFlowDetails workFlowDetails);
+	WorkFlowDetails getWorkFlowDetailsByID(long id);
+	WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType);
+	long save(WorkFlowDetails workFlowDetails);
+	void update(WorkFlowDetails workFlowDetails);
+	List<WorkFlowDetails> getActiveWorkFlowDetails();
 }

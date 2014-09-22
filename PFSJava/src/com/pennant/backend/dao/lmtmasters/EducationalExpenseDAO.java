@@ -48,14 +48,14 @@ import com.pennant.backend.model.lmtmasters.EducationalExpense;
 
 public interface EducationalExpenseDAO {
 
-	public EducationalExpense getEducationalExpense();
-	public EducationalExpense getNewEducationalExpense();
-	public EducationalExpense getEducationalExpenseByID(String loanRefNumber,long id,String type);
-	public void update(EducationalExpense educationalExpense,String type);
-	public void delete(EducationalExpense educationalExpense,String type);
-	public void delete(String  loanRefNumber,String type);
-	public long save(EducationalExpense educationalExpense,String type);
-	public void initialize(EducationalExpense educationalExpense);
-	public void refresh(EducationalExpense entity);
+	EducationalExpense getEducationalExpense();
+	EducationalExpense getNewEducationalExpense();
+	EducationalExpense getEducationalExpenseByID(String loanRefNumber,long id,String type);
+	void update(EducationalExpense educationalExpense,String type);
+	void delete(EducationalExpense educationalExpense,String type);
+	void delete(String  loanRefNumber,String type);
+	long save(EducationalExpense educationalExpense,String type);
+	void initialize(EducationalExpense educationalExpense);
+	void refresh(EducationalExpense entity);
 	List<EducationalExpense> getEducationalExpenseByEduLoanId(String loanRefNumber, String type);
 }

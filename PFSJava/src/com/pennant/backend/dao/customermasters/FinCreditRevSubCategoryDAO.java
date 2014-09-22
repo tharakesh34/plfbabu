@@ -48,13 +48,13 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 
 public interface FinCreditRevSubCategoryDAO {
 
-	public FinCreditRevSubCategory getFinCreditRevSubCategory();
-	public FinCreditRevSubCategory getNewFinCreditRevSubCategory();
-	public FinCreditRevSubCategory getFinCreditRevSubCategoryById(String id,String type);
-	public void update(FinCreditRevSubCategory finCreditRevSubCategory,String type);
-	public void delete(FinCreditRevSubCategory finCreditRevSubCategory,String type);
-	public String save(FinCreditRevSubCategory finCreditRevSubCategory,String type);
-	public void initialize(FinCreditRevSubCategory finCreditRevSubCategory);
-	public void refresh(FinCreditRevSubCategory entity);
-	public boolean updateSubCategories(List<FinCreditRevSubCategory> finCreditRevSubCategoryList);
+	 FinCreditRevSubCategory getFinCreditRevSubCategory();
+	 FinCreditRevSubCategory getNewFinCreditRevSubCategory();
+	 FinCreditRevSubCategory getFinCreditRevSubCategoryById(String id,String type);
+	 void update(FinCreditRevSubCategory finCreditRevSubCategory,String type);
+	 void delete(FinCreditRevSubCategory finCreditRevSubCategory,String type);
+	 String save(FinCreditRevSubCategory finCreditRevSubCategory,String type);
+	 void initialize(FinCreditRevSubCategory finCreditRevSubCategory);
+	 void refresh(FinCreditRevSubCategory entity);
+	 boolean updateSubCategories(List<FinCreditRevSubCategory> finCreditRevSubCategoryList);
 }

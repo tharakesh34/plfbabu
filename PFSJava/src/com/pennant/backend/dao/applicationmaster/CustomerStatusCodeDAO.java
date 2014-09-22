@@ -50,26 +50,15 @@ import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
  */
 public interface CustomerStatusCodeDAO {
 
-	public CustomerStatusCode getCustomerStatusCode();
-
-	public CustomerStatusCode getNewCustomerStatusCode();
-
-	public CustomerStatusCode getCustomerStatusCodeById(String id, String type);
-	
-	public void update(CustomerStatusCode customerStatusCode, String type);
-
-	public void delete(CustomerStatusCode customerStatusCode, String type);
-
-	public String save(CustomerStatusCode customerStatusCode, String type);
-
-	public void initialize(CustomerStatusCode customerStatusCode);
-
-	public void refresh(CustomerStatusCode entity);
-	
-	public boolean getFinanceSuspendStatus(int curODDays);
-
-	public String getFinanceStatus(String finReference, boolean isCurFinSts);
-
-	public CustomerStatusCode getCustStatusByMinDueDays(String type);
-	
+	CustomerStatusCode getCustomerStatusCode();
+	CustomerStatusCode getNewCustomerStatusCode();
+	CustomerStatusCode getCustomerStatusCodeById(String id, String type);
+	void update(CustomerStatusCode customerStatusCode, String type);
+	void delete(CustomerStatusCode customerStatusCode, String type);
+	String save(CustomerStatusCode customerStatusCode, String type);
+	void initialize(CustomerStatusCode customerStatusCode);
+	void refresh(CustomerStatusCode entity);
+	boolean getFinanceSuspendStatus(int curODDays);
+	String getFinanceStatus(String finReference, boolean isCurFinSts);
+	CustomerStatusCode getCustStatusByMinDueDays(String type);
 }

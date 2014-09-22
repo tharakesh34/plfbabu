@@ -46,13 +46,13 @@ import com.pennant.backend.model.amtmasters.Authorization;
 
 public interface AuthorizationDAO {
 
-	public Authorization getAuthorization();
-	public Authorization getNewAuthorization();
-	public Authorization getAuthorizationById(long id,String type);
-	public void update(Authorization authorization,String type);
-	public void delete(Authorization authorization,String type);
-	public long save(Authorization authorization,String type);
-	public void initialize(Authorization authorization);
-	public void refresh(Authorization entity);
-	public Authorization getAuthorization(long authUserId,String authType,String type);
+	Authorization getAuthorization();
+	Authorization getNewAuthorization();
+	Authorization getAuthorizationById(long id,String type);
+	void update(Authorization authorization,String type);
+	void delete(Authorization authorization,String type);
+	long save(Authorization authorization,String type);
+	void initialize(Authorization authorization);
+	void refresh(Authorization entity);
+	Authorization getAuthorization(long authUserId,String authType,String type);
 }

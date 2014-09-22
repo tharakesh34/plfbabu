@@ -53,18 +53,18 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
  */
 public interface CustomerDocumentDAO {
 
-	public CustomerDocument getCustomerDocument();
-	public CustomerDocument getNewCustomerDocument();
-	public CustomerDocument getCustomerDocumentById(long id,String docType,String type);
-	public List<CustomerDocument> getCustomerDocumentByCustomer(final long id,String type);
-	public void update(CustomerDocument customerDocument,String type);
-	public void delete(CustomerDocument customerDocument,String type);
-	public void deleteByCustomer(long custId,String type);
-	public long save(CustomerDocument customerDocument,String type);
-	public void initialize(CustomerDocument customerDocument);
-	public void refresh(CustomerDocument entity);
-	public DocumentDetails getCustDocByCustAndDocType(final long custId, String docType,String view);
-	public List<DocumentDetails> getCustDocByCustId(long custId, String type);
-	public List<DocumentDetails> getCustDocListByDocTypes(long custId, List<String> docTypeList, String type);
-	public List<CustomerDocument> getCustomerDocumentByCustomerId(final long custId);
+	 CustomerDocument getCustomerDocument();
+	 CustomerDocument getNewCustomerDocument();
+	 CustomerDocument getCustomerDocumentById(long id,String docType,String type);
+	 List<CustomerDocument> getCustomerDocumentByCustomer(final long id,String type);
+	 void update(CustomerDocument customerDocument,String type);
+	 void delete(CustomerDocument customerDocument,String type);
+	 void deleteByCustomer(long custId,String type);
+	 long save(CustomerDocument customerDocument,String type);
+	 void initialize(CustomerDocument customerDocument);
+	 void refresh(CustomerDocument entity);
+	 DocumentDetails getCustDocByCustAndDocType(final long custId, String docType,String view);
+	 List<DocumentDetails> getCustDocByCustId(long custId, String type);
+	 List<DocumentDetails> getCustDocListByDocTypes(long custId, List<String> docTypeList, String type);
+	 List<CustomerDocument> getCustomerDocumentByCustomerId(final long custId);
 }

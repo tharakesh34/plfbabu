@@ -15,5 +15,5 @@ public interface DetailStatisticsHeaderDAO {
 	boolean isExists(DetailStatisticsHeader detailStatisticsHeader);
 	void update(DetailStatisticsHeader statisticsHeader, boolean decrease)throws DataAccessException;
 	List<DetailStatisticsHeader> getDetailStatisticsHeaderGroupByRole();
-	public List<DetailStatisticsHeader> getDetailStsHeaderGroupByModule(String roles);
+	List<DetailStatisticsHeader> getDetailStsHeaderGroupByModule(String roles);
 }

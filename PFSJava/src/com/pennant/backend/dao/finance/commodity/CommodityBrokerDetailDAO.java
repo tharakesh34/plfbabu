@@ -46,12 +46,12 @@ import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 
 public interface CommodityBrokerDetailDAO {
 
-	public CommodityBrokerDetail getCommodityBrokerDetail();
-	public CommodityBrokerDetail getNewCommodityBrokerDetail();
-	public CommodityBrokerDetail getCommodityBrokerDetailById(String id,String type);
-	public void update(CommodityBrokerDetail commodityBrokerDetail,String type);
-	public void delete(CommodityBrokerDetail commodityBrokerDetail,String type);
-	public String save(CommodityBrokerDetail commodityBrokerDetail,String type);
-	public void initialize(CommodityBrokerDetail commodityBrokerDetail);
-	public void refresh(CommodityBrokerDetail entity);
+	CommodityBrokerDetail getCommodityBrokerDetail();
+	CommodityBrokerDetail getNewCommodityBrokerDetail();
+	CommodityBrokerDetail getCommodityBrokerDetailById(String id,String type);
+	void update(CommodityBrokerDetail commodityBrokerDetail,String type);
+	void delete(CommodityBrokerDetail commodityBrokerDetail,String type);
+	String save(CommodityBrokerDetail commodityBrokerDetail,String type);
+	void initialize(CommodityBrokerDetail commodityBrokerDetail);
+	void refresh(CommodityBrokerDetail entity);
 }

@@ -52,15 +52,15 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
  */
 public interface CustomerPhoneNumberDAO {
 
-	public CustomerPhoneNumber getCustomerPhoneNumber();
-	public CustomerPhoneNumber getNewCustomerPhoneNumber();
-	public CustomerPhoneNumber getCustomerPhoneNumberByID(long id,String typeCode,String type);
-	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(final long id,String type);
-	public void update(CustomerPhoneNumber customerPhoneNumber,String type);
-	public void delete(CustomerPhoneNumber customerPhoneNumber,String type);
-	public long save(CustomerPhoneNumber customerPhoneNumber,String type);
-	public void initialize(CustomerPhoneNumber customerPhoneNumber);
-	public void refresh(CustomerPhoneNumber entity);
-	public void deleteByCustomer(final long id,String type);
-	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id,String type, String phoneType);
+	 CustomerPhoneNumber getCustomerPhoneNumber();
+	 CustomerPhoneNumber getNewCustomerPhoneNumber();
+	 CustomerPhoneNumber getCustomerPhoneNumberByID(long id,String typeCode,String type);
+	 List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(final long id,String type);
+	 void update(CustomerPhoneNumber customerPhoneNumber,String type);
+	 void delete(CustomerPhoneNumber customerPhoneNumber,String type);
+	 long save(CustomerPhoneNumber customerPhoneNumber,String type);
+	 void initialize(CustomerPhoneNumber customerPhoneNumber);
+	 void refresh(CustomerPhoneNumber entity);
+	 void deleteByCustomer(final long id,String type);
+	 List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id,String type, String phoneType);
 }

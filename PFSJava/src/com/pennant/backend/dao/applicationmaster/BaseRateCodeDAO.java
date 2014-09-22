@@ -49,20 +49,12 @@ import com.pennant.backend.model.applicationmaster.BaseRateCode;
  */
 public interface BaseRateCodeDAO {
 
-	public BaseRateCode getBaseRateCode();
-
-	public BaseRateCode getNewBaseRateCode();
-
-	public BaseRateCode getBaseRateCodeById(String id, String type);
-
-	public void update(BaseRateCode baseRateCode, String type);
-
-	public void delete(BaseRateCode baseRateCode, String type);
-
-	public String save(BaseRateCode baseRateCode, String type);
-
-	public void initialize(BaseRateCode baseRateCode);
-
-	public void refresh(BaseRateCode entity);
-
+	BaseRateCode getBaseRateCode();
+	BaseRateCode getNewBaseRateCode();
+	BaseRateCode getBaseRateCodeById(String id, String type);
+	void update(BaseRateCode baseRateCode, String type);
+	void delete(BaseRateCode baseRateCode, String type);
+	String save(BaseRateCode baseRateCode, String type);
+	void initialize(BaseRateCode baseRateCode);
+	void refresh(BaseRateCode entity);
 }

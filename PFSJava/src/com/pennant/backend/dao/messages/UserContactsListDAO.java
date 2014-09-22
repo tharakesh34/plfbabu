@@ -11,9 +11,9 @@ import com.pennant.backend.model.messages.UserContactsList;
  *
  */
 public interface UserContactsListDAO {
-	public void save(UserContactsList userContactsList);
-	public void delete(String usrID,String type) ;
-	public UserContactsList getUserContactsList(String toUsrId,String type);
+	void save(UserContactsList userContactsList);
+	void delete(String usrID,String type) ;
+	UserContactsList getUserContactsList(String toUsrId,String type);
 	void update(UserContactsList userContactsList);
 	
 }

@@ -46,19 +46,12 @@ import com.pennant.backend.model.amtmasters.PropertyDetail;
 
 public interface PropertyDetailDAO {
 
-	public PropertyDetail getPropertyDetail();
-
-	public PropertyDetail getNewPropertyDetail();
-
-	public PropertyDetail getPropertyDetailById(long id, String type);
-
-	public void update(PropertyDetail propertyDetail, String type);
-
-	public void delete(PropertyDetail propertyDetail, String type);
-
-	public long save(PropertyDetail propertyDetail, String type);
-
-	public void initialize(PropertyDetail propertyDetail);
-
-	public void refresh(PropertyDetail entity);
+	PropertyDetail getPropertyDetail();
+	PropertyDetail getNewPropertyDetail();
+	PropertyDetail getPropertyDetailById(long id, String type);
+	void update(PropertyDetail propertyDetail, String type);
+	void delete(PropertyDetail propertyDetail, String type);
+	long save(PropertyDetail propertyDetail, String type);
+	void initialize(PropertyDetail propertyDetail);
+	void refresh(PropertyDetail entity);
 }

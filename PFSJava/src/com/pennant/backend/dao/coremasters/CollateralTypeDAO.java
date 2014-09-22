@@ -46,12 +46,12 @@ import com.pennant.backend.model.coremasters.CollateralType;
 
 public interface CollateralTypeDAO {
 
-	public CollateralType getCollateralType();
-	public CollateralType getNewCollateralType();
-	public CollateralType getCollateralTypeById(String id,String type);
-	public void update(CollateralType collateralType,String type);
-	public void delete(CollateralType collateralType,String type);
-	public String save(CollateralType collateralType,String type);
-	public void initialize(CollateralType collateralType);
-	public void refresh(CollateralType entity);
+	CollateralType getCollateralType();
+	CollateralType getNewCollateralType();
+	CollateralType getCollateralTypeById(String id,String type);
+	void update(CollateralType collateralType,String type);
+	void delete(CollateralType collateralType,String type);
+	String save(CollateralType collateralType,String type);
+	void initialize(CollateralType collateralType);
+	void refresh(CollateralType entity);
 }

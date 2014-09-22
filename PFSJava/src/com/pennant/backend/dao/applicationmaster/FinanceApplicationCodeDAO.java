@@ -50,19 +50,12 @@ import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
  */
 public interface FinanceApplicationCodeDAO {
 
-	public FinanceApplicationCode getFinanceApplicationCode();
-
-	public FinanceApplicationCode getNewFinanceApplicationCode();
-
-	public FinanceApplicationCode getFinanceApplicationCodeById(String id, String type);
-
-	public void update(FinanceApplicationCode financeApplicationCode, String type);
-
-	public void delete(FinanceApplicationCode financeApplicationCode, String type);
-
-	public String save(FinanceApplicationCode financeApplicationCode, String type);
-
-	public void initialize(FinanceApplicationCode financeApplicationCode);
-
-	public void refresh(FinanceApplicationCode entity);
+	FinanceApplicationCode getFinanceApplicationCode();
+	FinanceApplicationCode getNewFinanceApplicationCode();
+	FinanceApplicationCode getFinanceApplicationCodeById(String id, String type);
+	void update(FinanceApplicationCode financeApplicationCode, String type);
+	void delete(FinanceApplicationCode financeApplicationCode, String type);
+	String save(FinanceApplicationCode financeApplicationCode, String type);
+	void initialize(FinanceApplicationCode financeApplicationCode);
+	void refresh(FinanceApplicationCode entity);
 }

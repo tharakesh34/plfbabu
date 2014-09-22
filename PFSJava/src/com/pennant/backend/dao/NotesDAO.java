@@ -49,24 +49,16 @@ import com.pennant.backend.model.Notes;
 
 public interface NotesDAO {
 
-	public Notes getNewNotes();
-
-	public List<Notes> getNotesByID(Notes notes);
-
-	public List<Notes> getNotesList(Notes notes, boolean isNotes);
-	public List<Notes> getNotesListAsc(Notes notes, boolean isNotes);
-	public List<Notes> getNotesListAsc(Notes notes);
-	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes);
-
-	public void update(Notes notes);
-
-	public void save(Notes notes);
-
-	public void delete(Notes notes);
-
-	public void initialize(Notes notes);
-
-	public void refresh(Notes entity);
-
-	public void deleteAllNotes(Notes notes);
+	Notes getNewNotes();
+	List<Notes> getNotesByID(Notes notes);
+	List<Notes> getNotesList(Notes notes, boolean isNotes);
+	List<Notes> getNotesListAsc(Notes notes, boolean isNotes);
+	List<Notes> getNotesListAsc(Notes notes);
+	List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes);
+	void update(Notes notes);
+	void save(Notes notes);
+	void delete(Notes notes);
+	void initialize(Notes notes);
+	void refresh(Notes entity);
+	void deleteAllNotes(Notes notes);
 }

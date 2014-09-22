@@ -48,14 +48,14 @@ import com.pennant.backend.model.collateral.FacilityDetail;
 
 public interface FacilityDetailDAO {
 
-	public FacilityDetail getFacilityDetail();
-	public FacilityDetail getNewFacilityDetail();
-	public FacilityDetail getFacilityDetailById(final String facref, String type);
-	public void update(FacilityDetail facilityDetail,String type);
-	public void delete(FacilityDetail facilityDetail,String type);
-	public String save(FacilityDetail facilityDetail,String type);
-	public void initialize(FacilityDetail facilityDetail);
-	public void refresh(FacilityDetail entity);
-	public List<FacilityDetail> getFacilityDetailsByCAF(String cafReference, String string);
-	public void deleteByCAF(String cafReference, String tableType);
+	FacilityDetail getFacilityDetail();
+	FacilityDetail getNewFacilityDetail();
+	FacilityDetail getFacilityDetailById(final String facref, String type);
+	void update(FacilityDetail facilityDetail,String type);
+	void delete(FacilityDetail facilityDetail,String type);
+	String save(FacilityDetail facilityDetail,String type);
+	void initialize(FacilityDetail facilityDetail);
+	void refresh(FacilityDetail entity);
+	List<FacilityDetail> getFacilityDetailsByCAF(String cafReference, String string);
+	void deleteByCAF(String cafReference, String tableType);
 }

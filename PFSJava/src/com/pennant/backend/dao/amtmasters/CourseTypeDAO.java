@@ -46,19 +46,12 @@ import com.pennant.backend.model.amtmasters.CourseType;
 
 public interface CourseTypeDAO {
 
-	public CourseType getCourseType();
-
-	public CourseType getNewCourseType();
-
-	public CourseType getCourseTypeById(String id, String type);
-
-	public void update(CourseType courseType, String type);
-
-	public void delete(CourseType courseType, String type);
-
-	public String save(CourseType courseType, String type);
-
-	public void initialize(CourseType courseType);
-
-	public void refresh(CourseType entity);
+	CourseType getCourseType();
+	CourseType getNewCourseType();
+	CourseType getCourseTypeById(String id, String type);
+	void update(CourseType courseType, String type);
+	void delete(CourseType courseType, String type);
+	String save(CourseType courseType, String type);
+	void initialize(CourseType courseType);
+	void refresh(CourseType entity);
 }

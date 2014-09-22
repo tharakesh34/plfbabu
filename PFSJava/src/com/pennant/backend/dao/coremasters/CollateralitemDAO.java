@@ -46,12 +46,12 @@ import com.pennant.backend.model.coremasters.Collateralitem;
 
 public interface CollateralitemDAO {
 
-	public Collateralitem getCollateralitem();
-	public Collateralitem getNewCollateralitem();
-	public Collateralitem getCollateralitemById(String id,String type);
-	public void update(Collateralitem collateralitem,String type);
-	public void delete(Collateralitem collateralitem,String type);
-	public String save(Collateralitem collateralitem,String type);
-	public void initialize(Collateralitem collateralitem);
-	public void refresh(Collateralitem entity);
+	Collateralitem getCollateralitem();
+	Collateralitem getNewCollateralitem();
+	Collateralitem getCollateralitemById(String id,String type);
+	void update(Collateralitem collateralitem,String type);
+	void delete(Collateralitem collateralitem,String type);
+	String save(Collateralitem collateralitem,String type);
+	void initialize(Collateralitem collateralitem);
+	void refresh(Collateralitem entity);
 }

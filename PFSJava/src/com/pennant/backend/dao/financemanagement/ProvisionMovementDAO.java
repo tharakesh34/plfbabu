@@ -49,13 +49,13 @@ import com.pennant.backend.model.financemanagement.ProvisionMovement;
 
 public interface ProvisionMovementDAO {
 
-	public ProvisionMovement getProvisionMovement();
-	public ProvisionMovement getNewProvisionMovement();
-	public ProvisionMovement getProvisionMovementById(String id, Date movementDate ,String type);
-	public List<ProvisionMovement> getProvisionMovementListById(String id ,String type);
-	public void update(ProvisionMovement provisionMovement,String type);
-	public void delete(ProvisionMovement provisionMovement,String type);
-	public String save(ProvisionMovement provisionMovement,String type);
-	public void initialize(ProvisionMovement provisionMovement);
-	public void refresh(ProvisionMovement entity);
+	ProvisionMovement getProvisionMovement();
+	ProvisionMovement getNewProvisionMovement();
+	ProvisionMovement getProvisionMovementById(String id, Date movementDate ,String type);
+	List<ProvisionMovement> getProvisionMovementListById(String id ,String type);
+	void update(ProvisionMovement provisionMovement,String type);
+	void delete(ProvisionMovement provisionMovement,String type);
+	String save(ProvisionMovement provisionMovement,String type);
+	void initialize(ProvisionMovement provisionMovement);
+	void refresh(ProvisionMovement entity);
 }

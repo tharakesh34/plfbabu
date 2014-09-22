@@ -48,14 +48,14 @@ import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 
 public interface ContractorAssetDetailDAO {
 
-	public ContractorAssetDetail getContractorAssetDetail();
-	public ContractorAssetDetail getNewContractorAssetDetail();
-	public ContractorAssetDetail getContractorAssetDetailById(String finReference, long contractorId, String type);
-	public List<ContractorAssetDetail> getContractorDetailDetailByFinRef(String id, String type);
-	public void update(ContractorAssetDetail contractorAssetDetail,String type);
-	public void delete(ContractorAssetDetail contractorAssetDetail,String type);
-	public String save(ContractorAssetDetail contractorAssetDetail,String type);
-	public void initialize(ContractorAssetDetail contractorAssetDetail);
-	public void refresh(ContractorAssetDetail entity);
-	public void deleteByFinRef(String finReference, String type);
+	ContractorAssetDetail getContractorAssetDetail();
+	ContractorAssetDetail getNewContractorAssetDetail();
+	ContractorAssetDetail getContractorAssetDetailById(String finReference, long contractorId, String type);
+	List<ContractorAssetDetail> getContractorDetailDetailByFinRef(String id, String type);
+	void update(ContractorAssetDetail contractorAssetDetail,String type);
+	void delete(ContractorAssetDetail contractorAssetDetail,String type);
+	String save(ContractorAssetDetail contractorAssetDetail,String type);
+	void initialize(ContractorAssetDetail contractorAssetDetail);
+	void refresh(ContractorAssetDetail entity);
+	void deleteByFinRef(String finReference, String type);
 }

@@ -52,14 +52,14 @@ import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
  */
 public interface CustomerBalanceSheetDAO {
 
-	public CustomerBalanceSheet getCustomerBalanceSheet();
-	public CustomerBalanceSheet getNewCustomerBalanceSheet();
-	public CustomerBalanceSheet getCustomerBalanceSheetById(String financialYear, long custId,String type);
-	public void update(CustomerBalanceSheet customerBalanceSheet,String type);
-	public void delete(CustomerBalanceSheet customerBalanceSheet,String type);
-	public String save(CustomerBalanceSheet customerBalanceSheet,String type);
-	public void initialize(CustomerBalanceSheet customerBalanceSheet);
-	public void refresh(CustomerBalanceSheet entity);
-	public List<CustomerBalanceSheet> getBalanceSheetsByCustomer(long id, String type);
-	public void deleteByCustomer(long custID, String tableType);
+	 CustomerBalanceSheet getCustomerBalanceSheet();
+	 CustomerBalanceSheet getNewCustomerBalanceSheet();
+	 CustomerBalanceSheet getCustomerBalanceSheetById(String financialYear, long custId,String type);
+	 void update(CustomerBalanceSheet customerBalanceSheet,String type);
+	 void delete(CustomerBalanceSheet customerBalanceSheet,String type);
+	 String save(CustomerBalanceSheet customerBalanceSheet,String type);
+	 void initialize(CustomerBalanceSheet customerBalanceSheet);
+	 void refresh(CustomerBalanceSheet entity);
+	 List<CustomerBalanceSheet> getBalanceSheetsByCustomer(long id, String type);
+	 void deleteByCustomer(long custID, String tableType);
 }

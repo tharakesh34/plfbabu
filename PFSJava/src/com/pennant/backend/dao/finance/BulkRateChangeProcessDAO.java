@@ -5,14 +5,15 @@ import java.util.Date;
 import com.pennant.backend.model.finance.BulkProcessHeader;
 
 public interface BulkRateChangeProcessDAO {
-	public BulkProcessHeader getBulkProcessHeader();
-	public BulkProcessHeader getNewBulkProcessHeader();
-	public BulkProcessHeader getBulkProcessHeaderById(long bulkProcessId,String type, String bulkProcessFor);
-	public void update(BulkProcessHeader bulkProcessHeader,String type);
-	public void delete(BulkProcessHeader bulkProcessHeader,String type);
-	public long save(BulkProcessHeader bulkProcessHeader,String type);
-	public void initialize(BulkProcessHeader bulkProcessHeader);
-	public void refresh(BulkProcessHeader entity);
-	public BulkProcessHeader getBulkProcessHeader(long bulkProcessId, Date fromDate,String type);
-	public BulkProcessHeader getBulkProcessHeaderByFromAndToDates( Date fromDate, Date toDate, String type);
+	
+	BulkProcessHeader getBulkProcessHeader();
+	BulkProcessHeader getNewBulkProcessHeader();
+	BulkProcessHeader getBulkProcessHeaderById(long bulkProcessId,String type, String bulkProcessFor);
+	void update(BulkProcessHeader bulkProcessHeader,String type);
+	void delete(BulkProcessHeader bulkProcessHeader,String type);
+	long save(BulkProcessHeader bulkProcessHeader,String type);
+	void initialize(BulkProcessHeader bulkProcessHeader);
+	void refresh(BulkProcessHeader entity);
+	BulkProcessHeader getBulkProcessHeader(long bulkProcessId, Date fromDate,String type);
+	BulkProcessHeader getBulkProcessHeaderByFromAndToDates( Date fromDate, Date toDate, String type);
 }

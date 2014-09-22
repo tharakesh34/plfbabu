@@ -49,14 +49,14 @@ import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 
 public interface SystemInternalAccountDefinitionDAO {
 
-	public SystemInternalAccountDefinition getSystemInternalAccountDefinition();
-	public SystemInternalAccountDefinition getNewSystemInternalAccountDefinition();
-	public SystemInternalAccountDefinition getSystemInternalAccountDefinitionById(String id,String type);
-	public void update(SystemInternalAccountDefinition systemInternalAccountDefinition,String type);
-	public void delete(SystemInternalAccountDefinition systemInternalAccountDefinition,String type);
-	public String save(SystemInternalAccountDefinition systemInternalAccountDefinition,String type);
-	public void initialize(SystemInternalAccountDefinition systemInternalAccountDefinition);
-	public void refresh(SystemInternalAccountDefinition entity);
-	public String getSysIntAccNum(String sIACode);
-	public List<ValueLabel> getEntrySIANumDetails();
+	SystemInternalAccountDefinition getSystemInternalAccountDefinition();
+	SystemInternalAccountDefinition getNewSystemInternalAccountDefinition();
+	SystemInternalAccountDefinition getSystemInternalAccountDefinitionById(String id,String type);
+	void update(SystemInternalAccountDefinition systemInternalAccountDefinition,String type);
+	void delete(SystemInternalAccountDefinition systemInternalAccountDefinition,String type);
+	String save(SystemInternalAccountDefinition systemInternalAccountDefinition,String type);
+	void initialize(SystemInternalAccountDefinition systemInternalAccountDefinition);
+	void refresh(SystemInternalAccountDefinition entity);
+	String getSysIntAccNum(String sIACode);
+	List<ValueLabel> getEntrySIANumDetails();
 }

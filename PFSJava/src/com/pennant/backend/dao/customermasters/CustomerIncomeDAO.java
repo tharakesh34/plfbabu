@@ -53,17 +53,17 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
  */
 public interface CustomerIncomeDAO {
 
-	public CustomerIncome getCustomerIncome();
-	public CustomerIncome getNewCustomerIncome();
-	public CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type);
-	public List<CustomerIncome> getCustomerIncomeByCustomer(final long id,boolean isWIF, String type);
-	public void update(CustomerIncome customerIncome,String type);
-	public void delete(CustomerIncome customerIncome,String type);
-	public long save(CustomerIncome customerIncome,String type);
-	public void initialize(CustomerIncome customerIncome);
-	public void refresh(CustomerIncome entity);
-	public void deleteByCustomer(final long id,String type, boolean isWIF);
-	public BigDecimal getTotalIncomeByCustomer(long custId);
-	public void saveBatch(List<CustomerIncome> customerIncome, String type, boolean isWIF);
+	 CustomerIncome getCustomerIncome();
+	 CustomerIncome getNewCustomerIncome();
+	 CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome, String type);
+	 List<CustomerIncome> getCustomerIncomeByCustomer(final long id,boolean isWIF, String type);
+	 void update(CustomerIncome customerIncome,String type);
+	 void delete(CustomerIncome customerIncome,String type);
+	 long save(CustomerIncome customerIncome,String type);
+	 void initialize(CustomerIncome customerIncome);
+	 void refresh(CustomerIncome entity);
+	 void deleteByCustomer(final long id,String type, boolean isWIF);
+	 BigDecimal getTotalIncomeByCustomer(long custId);
+	 void saveBatch(List<CustomerIncome> customerIncome, String type, boolean isWIF);
 	
 }

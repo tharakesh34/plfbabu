@@ -48,28 +48,16 @@ import com.pennant.backend.model.accounts.Accounts;
 
 public interface AccountsDAO {
 
-	public Accounts getAccounts();
-
-	public Accounts getNewAccounts();
-
-	public Accounts getAccountsById(String id, String type);
-
-	public void update(Accounts acounts, String type);
-
-	public void delete(Accounts acounts, String type);
-
-	public String save(Accounts acounts, String type);
-
-	public void initialize(Accounts acounts);
-
-	public void refresh(Accounts entity);
-
-	public List<Accounts> getAccountsByAcPurpose(String acPurpose, String type);
-
-	public void updateAccrualBalance();
-
+	Accounts getAccounts();
+	Accounts getNewAccounts();
+	Accounts getAccountsById(String id, String type);
+	void update(Accounts acounts, String type);
+	void delete(Accounts acounts, String type);
+	String save(Accounts acounts, String type);
+	void initialize(Accounts acounts);
+	void refresh(Accounts entity);
+	List<Accounts> getAccountsByAcPurpose(String acPurpose, String type);
+	void updateAccrualBalance();
 	void saveList(List<Accounts> accountList, String type);
-
 	void updateList(List<Accounts> accountList, String type);
-
 }

@@ -50,35 +50,20 @@ import com.pennant.backend.model.administration.SecurityUserDivBranch;
 
 public interface SecurityUserDAO {
 
-	public SecurityUser getSecurityUser();
-
-	public SecurityUser getNewSecurityUser();
-
-	public SecurityUser getSecurityUserById(long id, String type);
-
-	public void update(SecurityUser secUser, String type);
-
-	public void delete(SecurityUser secUser, String type);
-
-	public long save(SecurityUser secUser, String type);
-
-	public void initialize(SecurityUser secUser);
-
-	public void refresh(SecurityUser secUser);
-
-	public void changePassword(SecurityUser secUser);
-
-	public SecurityUser getSecurityUserByLogin(final String id, String type);
-	
-	public long saveDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
-	
-	public void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
-	
-	public void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
-	
-	public List<SecurityUserDivBranch> getSecUserDivBrList(long usrID,String type);
-	
-	public SecurityUserDivBranch getSecUserDivBrDetailsById(SecurityUserDivBranch securityUserDivBranch, String type);
-	
-	public void deleteBranchs(SecurityUser securityUser,String type) ;
+	SecurityUser getSecurityUser();
+	SecurityUser getNewSecurityUser();
+	SecurityUser getSecurityUserById(long id, String type);
+	void update(SecurityUser secUser, String type);
+	void delete(SecurityUser secUser, String type);
+	long save(SecurityUser secUser, String type);
+	void initialize(SecurityUser secUser);
+	void refresh(SecurityUser secUser);
+	void changePassword(SecurityUser secUser);
+	SecurityUser getSecurityUserByLogin(final String id, String type);
+	long saveDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
+	void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
+	void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
+	List<SecurityUserDivBranch> getSecUserDivBrList(long usrID,String type);
+	SecurityUserDivBranch getSecUserDivBrDetailsById(SecurityUserDivBranch securityUserDivBranch, String type);
+	void deleteBranchs(SecurityUser securityUser,String type) ;
 }

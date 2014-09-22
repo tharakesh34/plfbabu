@@ -46,12 +46,12 @@ import com.pennant.backend.model.finance.FinanceMain;
 
 public interface WIFFinanceMainDAO {
 
-	public FinanceMain getWIFFinanceMain();
-	public FinanceMain getNewWIFFinanceMain();
-	public FinanceMain getWIFFinanceMainById(String id,String type);
-	public void update(FinanceMain wIFFinanceMain,String type);
-	public void delete(FinanceMain wIFFinanceMain,String type);
-	public String save(FinanceMain wIFFinanceMain,String type);
-	public void initialize(FinanceMain wIFFinanceMain);
-	public void refresh(FinanceMain entity);
+	FinanceMain getWIFFinanceMain();
+	FinanceMain getNewWIFFinanceMain();
+	FinanceMain getWIFFinanceMainById(String id,String type);
+	void update(FinanceMain wIFFinanceMain,String type);
+	void delete(FinanceMain wIFFinanceMain,String type);
+	String save(FinanceMain wIFFinanceMain,String type);
+	void initialize(FinanceMain wIFFinanceMain);
+	void refresh(FinanceMain entity);
 }

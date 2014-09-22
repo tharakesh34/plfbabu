@@ -49,19 +49,12 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
  */
 public interface SplRateCodeDAO {
 
-	public SplRateCode getSplRateCode();
-
-	public SplRateCode getNewSplRateCode();
-
-	public SplRateCode getSplRateCodeById(String id, String type);
-
-	public void update(SplRateCode splRateCode, String type);
-
-	public void delete(SplRateCode splRateCode, String type);
-
-	public String save(SplRateCode splRateCode, String type);
-
-	public void initialize(SplRateCode splRateCode);
-
-	public void refresh(SplRateCode entity);
+	SplRateCode getSplRateCode();
+	SplRateCode getNewSplRateCode();
+	SplRateCode getSplRateCodeById(String id, String type);
+	void update(SplRateCode splRateCode, String type);
+	void delete(SplRateCode splRateCode, String type);
+	String save(SplRateCode splRateCode, String type);
+	void initialize(SplRateCode splRateCode);
+	void refresh(SplRateCode entity);
 }

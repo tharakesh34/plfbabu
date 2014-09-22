@@ -52,15 +52,14 @@ import com.pennant.backend.model.finance.FinContributorDetail;
  */
 public interface FinContributorDetailDAO {
 
-	public FinContributorDetail getFinContributorDetail();
-	public FinContributorDetail getNewFinContributorDetail();
-	public FinContributorDetail getFinContributorDetailByID(String finReference,long id,String type);
-	public List<FinContributorDetail> getFinContributorDetailByFinRef(final String id,String type);
-	public void update(FinContributorDetail contributorDetail,String type);
-	public void delete(FinContributorDetail contributorDetail,String type);
-	public long save(FinContributorDetail contributorDetail,String type);
-	public void initialize(FinContributorDetail contributorDetail);
-	public void refresh(FinContributorDetail entity);
-	public void deleteByFinRef(final String finReference,String type);
-	
+	FinContributorDetail getFinContributorDetail();
+	FinContributorDetail getNewFinContributorDetail();
+	FinContributorDetail getFinContributorDetailByID(String finReference,long id,String type);
+	List<FinContributorDetail> getFinContributorDetailByFinRef(final String id,String type);
+	void update(FinContributorDetail contributorDetail,String type);
+	void delete(FinContributorDetail contributorDetail,String type);
+	long save(FinContributorDetail contributorDetail,String type);
+	void initialize(FinContributorDetail contributorDetail);
+	void refresh(FinContributorDetail entity);
+	void deleteByFinRef(final String finReference,String type);
 }

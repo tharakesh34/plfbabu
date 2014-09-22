@@ -46,13 +46,12 @@ import com.pennant.backend.model.finance.FinContributorHeader;
 
 public interface FinContributorHeaderDAO {
 
-	public FinContributorHeader getFinContributorHeader();
-	public FinContributorHeader getNewFinContributorHeader();
-	public FinContributorHeader getFinContributorHeaderById(String id,String type);
-	public void update(FinContributorHeader finContributorHeader,String type);
-	public void delete(String finReference,String type);
-	public String save(FinContributorHeader finContributorHeader,String type);
-	public void initialize(FinContributorHeader finContributorHeader);
-	public void refresh(FinContributorHeader entity);
-
+	FinContributorHeader getFinContributorHeader();
+	FinContributorHeader getNewFinContributorHeader();
+	FinContributorHeader getFinContributorHeaderById(String id,String type);
+	void update(FinContributorHeader finContributorHeader,String type);
+	void delete(String finReference,String type);
+	String save(FinContributorHeader finContributorHeader,String type);
+	void initialize(FinContributorHeader finContributorHeader);
+	void refresh(FinContributorHeader entity);
 }

@@ -32,23 +32,20 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 
 public interface GuarantorDetailDAO {
 
-	public GuarantorDetail getGuarantorDetail();
-	public GuarantorDetail getNewGuarantorDetail();
-	public GuarantorDetail getGuarantorDetailById(long id, String type);
-	public void update(GuarantorDetail guarantorDetail, String type);
-	public void delete(GuarantorDetail guarantorDetail, String type);
-	public long save(GuarantorDetail guarantorDetail, String type);
-	public void initialize(GuarantorDetail guarantorDetail);
-	public void refresh(GuarantorDetail entity);
-	public GuarantorDetail getGuarantorDetailByRefId(String finReference, String cIF, String type);
-	public void deleteByFinRef(String finReference, String type);
-	public List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type);	
-	public List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail);
-	public List<FinanceExposure> getSecondaryExposureList(GuarantorDetail guarantorDetail);
-	public List<FinanceExposure> getGuarantorExposureList(GuarantorDetail guarantorDetail);
-	public FinanceExposure getOverDueDetails(FinanceExposure exposure);
-	public GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail);
-	
-	
-
+	GuarantorDetail getGuarantorDetail();
+	GuarantorDetail getNewGuarantorDetail();
+	GuarantorDetail getGuarantorDetailById(long id, String type);
+	void update(GuarantorDetail guarantorDetail, String type);
+	void delete(GuarantorDetail guarantorDetail, String type);
+	long save(GuarantorDetail guarantorDetail, String type);
+	void initialize(GuarantorDetail guarantorDetail);
+	void refresh(GuarantorDetail entity);
+	GuarantorDetail getGuarantorDetailByRefId(String finReference, String cIF, String type);
+	void deleteByFinRef(String finReference, String type);
+	List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type);	
+	List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail);
+	List<FinanceExposure> getSecondaryExposureList(GuarantorDetail guarantorDetail);
+	List<FinanceExposure> getGuarantorExposureList(GuarantorDetail guarantorDetail);
+	FinanceExposure getOverDueDetails(FinanceExposure exposure);
+	GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail);
 }

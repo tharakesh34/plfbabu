@@ -49,20 +49,20 @@ import com.pennant.backend.model.finance.DefermentDetail;
 
 public interface DefermentDetailDAO {
 
-	public DefermentDetail getDefermentDetail(boolean isWIF);
-	public DefermentDetail getNewDefermentDetail(boolean isWIF);
-	public DefermentDetail getDefermentDetailById(String finReference, Date schdDate,String type,boolean isWIF);
-	public void update(DefermentDetail defermentDetail,String type,boolean isWIF);
-	public void deleteByFinReference(String id,String type,boolean isWIF, long logKey);
-	public String save(DefermentDetail defermentDetail,String type,boolean isWIF);
-	public void initialize(DefermentDetail defermentDetail);
-	public void refresh(DefermentDetail entity);
-	public List<DefermentDetail> getDefermentDetails(String id, String type,boolean isWIF);
-	public List<DefermentDetail> getDefermentDetails(String id, String type,boolean isWIF, long logKey);
-	public void delete(DefermentDetail defermentDetail,String type,boolean isWIF);
-	public void saveList(List<DefermentDetail> defermentDetail, String type,boolean isWIF);
-	public int getFinReferenceCount(String finReference, Date defSchdDate, Date defRpyDate);
-	public void updateList(List<DefermentDetail> defermentDetail, String type, boolean isWIF);
-	public void updateBatch(DefermentDetail defermentDetail);
-	public DefermentDetail getDefermentDetailForBatch(String id, Date schdDate);
+	DefermentDetail getDefermentDetail(boolean isWIF);
+	DefermentDetail getNewDefermentDetail(boolean isWIF);
+	DefermentDetail getDefermentDetailById(String finReference, Date schdDate,String type,boolean isWIF);
+	void update(DefermentDetail defermentDetail,String type,boolean isWIF);
+	void deleteByFinReference(String id,String type,boolean isWIF, long logKey);
+	String save(DefermentDetail defermentDetail,String type,boolean isWIF);
+	void initialize(DefermentDetail defermentDetail);
+	void refresh(DefermentDetail entity);
+	List<DefermentDetail> getDefermentDetails(String id, String type,boolean isWIF);
+	List<DefermentDetail> getDefermentDetails(String id, String type,boolean isWIF, long logKey);
+	void delete(DefermentDetail defermentDetail,String type,boolean isWIF);
+	void saveList(List<DefermentDetail> defermentDetail, String type,boolean isWIF);
+	int getFinReferenceCount(String finReference, Date defSchdDate, Date defRpyDate);
+	void updateList(List<DefermentDetail> defermentDetail, String type, boolean isWIF);
+	void updateBatch(DefermentDetail defermentDetail);
+	DefermentDetail getDefermentDetailForBatch(String id, Date schdDate);
 }

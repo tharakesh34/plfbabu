@@ -46,20 +46,12 @@ import com.pennant.backend.model.amtmasters.VehicleManufacturer;
 
 public interface VehicleManufacturerDAO {
 
-	public VehicleManufacturer getVehicleManufacturer();
-
-	public VehicleManufacturer getNewVehicleManufacturer();
-
-	public VehicleManufacturer getVehicleManufacturerById(long id, String type);
-
-	public void update(VehicleManufacturer vehicleManufacturer, String type);
-
-	public void delete(VehicleManufacturer vehicleManufacturer, String type);
-
-	public long save(VehicleManufacturer vehicleManufacturer, String type);
-
-	public void initialize(VehicleManufacturer vehicleManufacturer);
-
-	public void refresh(VehicleManufacturer entity);
-	
+	VehicleManufacturer getVehicleManufacturer();
+	VehicleManufacturer getNewVehicleManufacturer();
+	VehicleManufacturer getVehicleManufacturerById(long id, String type);
+	void update(VehicleManufacturer vehicleManufacturer, String type);
+	void delete(VehicleManufacturer vehicleManufacturer, String type);
+	long save(VehicleManufacturer vehicleManufacturer, String type);
+	void initialize(VehicleManufacturer vehicleManufacturer);
+	void refresh(VehicleManufacturer entity);
 }

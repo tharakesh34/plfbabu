@@ -49,12 +49,12 @@ import com.pennant.backend.model.lmtmasters.CarLoanDetail;
  */
 public interface CarLoanDetailDAO {
 
-	public CarLoanDetail getCarLoanDetail();
-	public CarLoanDetail getNewCarLoanDetail();
-	public CarLoanDetail getCarLoanDetailByID(String loanRef,String type);
-	public void update(CarLoanDetail carLoanDetail,String type);
-	public void delete(CarLoanDetail carLoanDetail,String type);
-	public String save(CarLoanDetail carLoanDetail,String type);
-	public void initialize(CarLoanDetail carLoanDetail);
-	public void refresh(CarLoanDetail entity);
+	CarLoanDetail getCarLoanDetail();
+	CarLoanDetail getNewCarLoanDetail();
+	CarLoanDetail getCarLoanDetailByID(String loanRef,String type);
+	void update(CarLoanDetail carLoanDetail,String type);
+	void delete(CarLoanDetail carLoanDetail,String type);
+	String save(CarLoanDetail carLoanDetail,String type);
+	void initialize(CarLoanDetail carLoanDetail);
+	void refresh(CarLoanDetail entity);
 }

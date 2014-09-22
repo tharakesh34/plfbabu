@@ -50,22 +50,22 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 
 public interface OverdueChargeRecoveryDAO {
 
-	public OverdueChargeRecovery getOverdueChargeRecovery();
-	public OverdueChargeRecovery getNewOverdueChargeRecovery();
-	public OverdueChargeRecovery getOverdueChargeRecoveryById(String id,Date finSchDate, String finOdFor, String type);
-	public List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, String type);
-	public void update(OverdueChargeRecovery overdueChargeRecovery, String type);
-	public void delete(OverdueChargeRecovery overdueChargeRecovery,String type);
-	public String save(OverdueChargeRecovery overdueChargeRecovery,String type);
-	public void initialize(OverdueChargeRecovery overdueChargeRecovery);
-	public void refresh(OverdueChargeRecovery entity);
-	public BigDecimal getPendingODCAmount(String id);
-	public List<String> getOverDueFinanceList();
-	public OverdueChargeRecovery getMaxOverdueChargeRecoveryById(String finReference, Date schdDate, String finODFor, String type);
-	public void deleteUnpaid(String finReference, Date finODSchdDate, String finODFor, String type);
-	public void updatePenaltyPaid(OverdueChargeRecovery recovery, String type);
-	public List<OverdueChargeRecovery> getFinancePenaltysByFinRef(String id, String type);
-	public BigDecimal getPaidPenaltiesbySchDates(String finReference, List<Date> pastSchDates);
-	public void saveODDeferHistory(String finReference, List<Date> pastSchDates);
-	public void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
+	OverdueChargeRecovery getOverdueChargeRecovery();
+	OverdueChargeRecovery getNewOverdueChargeRecovery();
+	OverdueChargeRecovery getOverdueChargeRecoveryById(String id,Date finSchDate, String finOdFor, String type);
+	List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, String type);
+	void update(OverdueChargeRecovery overdueChargeRecovery, String type);
+	void delete(OverdueChargeRecovery overdueChargeRecovery,String type);
+	String save(OverdueChargeRecovery overdueChargeRecovery,String type);
+	void initialize(OverdueChargeRecovery overdueChargeRecovery);
+	void refresh(OverdueChargeRecovery entity);
+	BigDecimal getPendingODCAmount(String id);
+	List<String> getOverDueFinanceList();
+	OverdueChargeRecovery getMaxOverdueChargeRecoveryById(String finReference, Date schdDate, String finODFor, String type);
+	void deleteUnpaid(String finReference, Date finODSchdDate, String finODFor, String type);
+	void updatePenaltyPaid(OverdueChargeRecovery recovery, String type);
+	List<OverdueChargeRecovery> getFinancePenaltysByFinRef(String id, String type);
+	BigDecimal getPaidPenaltiesbySchDates(String finReference, List<Date> pastSchDates);
+	void saveODDeferHistory(String finReference, List<Date> pastSchDates);
+	void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
 }

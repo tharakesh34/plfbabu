@@ -50,12 +50,12 @@ import com.pennant.backend.model.customermasters.CustomerIdentity;
  */
 public interface CustomerIdentityDAO {
 
-	public CustomerIdentity getCustomerIdentity();
-	public CustomerIdentity getNewCustomerIdentity();
-	public CustomerIdentity getCustomerIdentityByID(long id,String idType,String type);
-	public void update(CustomerIdentity customerIdentity,String type);
-	public void delete(CustomerIdentity customerIdentity,String type);
-	public long save(CustomerIdentity customerIdentity,String type);
-	public void initialize(CustomerIdentity customerIdentity);
-	public void refresh(CustomerIdentity entity);
+	 CustomerIdentity getCustomerIdentity();
+	 CustomerIdentity getNewCustomerIdentity();
+	 CustomerIdentity getCustomerIdentityByID(long id,String idType,String type);
+	 void update(CustomerIdentity customerIdentity,String type);
+	 void delete(CustomerIdentity customerIdentity,String type);
+	 long save(CustomerIdentity customerIdentity,String type);
+	 void initialize(CustomerIdentity customerIdentity);
+	 void refresh(CustomerIdentity entity);
 }

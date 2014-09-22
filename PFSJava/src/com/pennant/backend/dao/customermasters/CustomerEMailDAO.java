@@ -52,15 +52,15 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
  */
 public interface CustomerEMailDAO {
 
-	public CustomerEMail getCustomerEMail();
-	public CustomerEMail getNewCustomerEMail();
-	public CustomerEMail getCustomerEMailById(long id,String typeCode,String type);
-	public List<CustomerEMail> getCustomerEmailByCustomer(final long id,String type);
-	public void update(CustomerEMail customerEMail,String type);
-	public void delete(CustomerEMail customerEMail,String type);
-	public void deleteByCustomer(long custID,String type);
-	public long save(CustomerEMail customerEMail,String type);
-	public void initialize(CustomerEMail customerEMail);
-	public void refresh(CustomerEMail entity);
-	public List<String> getCustEmailsByCustId(long custId);
+	 CustomerEMail getCustomerEMail();
+	 CustomerEMail getNewCustomerEMail();
+	 CustomerEMail getCustomerEMailById(long id,String typeCode,String type);
+	 List<CustomerEMail> getCustomerEmailByCustomer(final long id,String type);
+	 void update(CustomerEMail customerEMail,String type);
+	 void delete(CustomerEMail customerEMail,String type);
+	 void deleteByCustomer(long custID,String type);
+	 long save(CustomerEMail customerEMail,String type);
+	 void initialize(CustomerEMail customerEMail);
+	 void refresh(CustomerEMail entity);
+	 List<String> getCustEmailsByCustId(long custId);
 }

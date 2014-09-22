@@ -31,19 +31,19 @@ import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 public interface JountAccountDetailDAO {
 
-	public JointAccountDetail getJountAccountDetail();
-	public JointAccountDetail getNewJountAccountDetail();
-	public JointAccountDetail getJountAccountDetailById(long id, String type);
-	public void update(JointAccountDetail jountAccountDetail, String type);
-	public void delete(JointAccountDetail jountAccountDetail, String type);
-	public long save(JointAccountDetail jountAccountDetail, String type);
-	public void initialize(JointAccountDetail jountAccountDetail);
-	public void refresh(JointAccountDetail entity);
-	public JointAccountDetail getJountAccountDetailByRefId(String finReference, String custCIF, String type);
-	public void deleteByFinRef(String finReference, String type);
-	public List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);	
-	public List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail);
-	public List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jointAccountDetail);
-	public List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jointAccountDetail);
-	public FinanceExposure getOverDueDetails(FinanceExposure exposure);
+	JointAccountDetail getJountAccountDetail();
+	JointAccountDetail getNewJountAccountDetail();
+	JointAccountDetail getJountAccountDetailById(long id, String type);
+	void update(JointAccountDetail jountAccountDetail, String type);
+	void delete(JointAccountDetail jountAccountDetail, String type);
+	long save(JointAccountDetail jountAccountDetail, String type);
+	void initialize(JointAccountDetail jountAccountDetail);
+	void refresh(JointAccountDetail entity);
+	JointAccountDetail getJountAccountDetailByRefId(String finReference, String custCIF, String type);
+	void deleteByFinRef(String finReference, String type);
+	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);	
+	List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail);
+	List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jointAccountDetail);
+	List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jointAccountDetail);
+	FinanceExposure getOverDueDetails(FinanceExposure exposure);
 }

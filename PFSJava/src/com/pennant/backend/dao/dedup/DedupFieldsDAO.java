@@ -50,15 +50,14 @@ import com.pennant.backend.model.dedup.DedupFields;
 
 public interface DedupFieldsDAO {
 
-	public DedupFields getDedupFields();
-	public DedupFields getNewDedupFields();
-	public DedupFields getDedupFieldsByID(String id,String type);
-	public void update(DedupFields dedupFields,String type);
-	public void delete(DedupFields dedupFields,String type);
-	public String save(DedupFields dedupFields,String type);
-	public void initialize(DedupFields dedupFields);
-	public void refresh(DedupFields entity);
-	public ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
+	DedupFields getDedupFields();
+	DedupFields getNewDedupFields();
+	DedupFields getDedupFieldsByID(String id,String type);
+	void update(DedupFields dedupFields,String type);
+	void delete(DedupFields dedupFields,String type);
+	String save(DedupFields dedupFields,String type);
+	void initialize(DedupFields dedupFields);
+	void refresh(DedupFields entity);
+	ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
 	List<BuilderTable> getFieldList(String queryModule);
-	
 }

@@ -54,17 +54,17 @@ import com.pennant.backend.model.finance.FinanceDedup;
  */
 public interface DedupParmDAO {
 
-	public DedupParm getDedupParm();
-	public DedupParm getNewDedupParm();
-	public DedupParm getDedupParmByID(String id,String queryModule,String querySubCode, String type);
-	public void update(DedupParm dedupParm,String type);
-	public void delete(DedupParm dedupParm,String type);
-	public String save(DedupParm dedupParm,String type);
-	public void initialize(DedupParm dedupParm);
-	public void refresh(DedupParm entity);
+	DedupParm getDedupParm();
+	DedupParm getNewDedupParm();
+	DedupParm getDedupParmByID(String id,String queryModule,String querySubCode, String type);
+	void update(DedupParm dedupParm,String type);
+	void delete(DedupParm dedupParm,String type);
+	String save(DedupParm dedupParm,String type);
+	void initialize(DedupParm dedupParm);
+	void refresh(DedupParm entity);
 	@SuppressWarnings("rawtypes")
-	public List validate(String resultQuery,CustomerDedup customerDedup);
-	public FinanceDedup getFinDedupByCustId(long custID);
-	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup,String sqlQuery);
-	public List<FinanceDedup> fetchFinDedupDetails(FinanceDedup dedup, String sqlQuery);
+	List validate(String resultQuery,CustomerDedup customerDedup);
+	FinanceDedup getFinDedupByCustId(long custID);
+	List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup,String sqlQuery);
+	List<FinanceDedup> fetchFinDedupDetails(FinanceDedup dedup, String sqlQuery);
 }

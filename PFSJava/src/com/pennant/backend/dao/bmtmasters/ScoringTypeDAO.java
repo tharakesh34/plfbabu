@@ -46,12 +46,12 @@ import com.pennant.backend.model.bmtmasters.ScoringType;
 
 public interface ScoringTypeDAO {
 
-	public ScoringType getScoringType();
-	public ScoringType getNewScoringType();
-	public ScoringType getScoringTypeById(String id,String type);
-	public void update(ScoringType scoringType,String type);
-	public void delete(ScoringType scoringType,String type);
-	public String save(ScoringType scoringType,String type);
-	public void initialize(ScoringType scoringType);
-	public void refresh(ScoringType entity);
+	ScoringType getScoringType();
+	ScoringType getNewScoringType();
+	ScoringType getScoringTypeById(String id,String type);
+	void update(ScoringType scoringType,String type);
+	void delete(ScoringType scoringType,String type);
+	String save(ScoringType scoringType,String type);
+	void initialize(ScoringType scoringType);
+	void refresh(ScoringType entity);
 }

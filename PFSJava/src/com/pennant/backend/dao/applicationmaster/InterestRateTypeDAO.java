@@ -50,19 +50,12 @@ import com.pennant.backend.model.applicationmaster.InterestRateType;
  */
 public interface InterestRateTypeDAO {
 
-	public InterestRateType getInterestRateType();
-
-	public InterestRateType getNewInterestRateType();
-
-	public InterestRateType getInterestRateTypeById(String id, String type);
-
-	public void update(InterestRateType interestRateType, String type);
-
-	public void delete(InterestRateType interestRateType, String type);
-
-	public String save(InterestRateType interestRateType, String type);
-
-	public void initialize(InterestRateType interestRateType);
-
-	public void refresh(InterestRateType entity);
+	InterestRateType getInterestRateType();
+	InterestRateType getNewInterestRateType();
+	InterestRateType getInterestRateTypeById(String id, String type);
+	void update(InterestRateType interestRateType, String type);
+	void delete(InterestRateType interestRateType, String type);
+	String save(InterestRateType interestRateType, String type);
+	void initialize(InterestRateType interestRateType);
+	void refresh(InterestRateType entity);
 }
