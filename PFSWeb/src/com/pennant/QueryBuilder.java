@@ -1643,7 +1643,7 @@ public class QueryBuilder extends Groupbox {
 			LinkedHashMap map = (LinkedHashMap) obj;
 			Listcell listCell;
 			for (int i = 0; i < str.length; i++) {
-				int index = str[i].indexOf(":");
+				int index = str[i].indexOf(':');
 				if (index > 0 ) {
 					String data = map.get(str[i].substring(0, index).toLowerCase()) == null ? "0" : map.get(str[i].substring(0, index).toLowerCase()).toString();
 					String type = str[i].substring(index + 1);
