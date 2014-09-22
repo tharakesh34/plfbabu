@@ -53,16 +53,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SecurityUserRolesService {
 	
-	public SecurityUserRoles getSecurityUserRoles();
-	public SecurityUserRoles getNewSecurityUserRoles();
-	public AuditHeader               	saveOrUpdate(AuditHeader auditHeader);
-	public  List<SecurityRole>         getRolesByUserId(long userId,boolean isAssigned);
-	public List<SecurityGroupRights> 	getGroupRightsByGrpId(SecurityGroup securityGroup);
-	public  SecurityUserRoles        	getUserRolesByUsrAndRoleIds(long userId,long roleId);
-	public  List<SecurityRole> getApprovedRoles();
-	public AuditHeader doApprove(AuditHeader auditHeader);
-	public List<SecurityRoleGroups> getApprovedRoleGroupsByRoleId(long roleId);
+	SecurityUserRoles getSecurityUserRoles();
+	SecurityUserRoles getNewSecurityUserRoles();
+	AuditHeader               	saveOrUpdate(AuditHeader auditHeader);
+	List<SecurityRole>         getRolesByUserId(long userId,boolean isAssigned);
+	List<SecurityGroupRights> 	getGroupRightsByGrpId(SecurityGroup securityGroup);
+	SecurityUserRoles        	getUserRolesByUsrAndRoleIds(long userId,long roleId);
+	List<SecurityRole> getApprovedRoles();
+	AuditHeader doApprove(AuditHeader auditHeader);
+	List<SecurityRoleGroups> getApprovedRoleGroupsByRoleId(long roleId);
 	AuditHeader doReject(AuditHeader auditHeader);
-	public List<String> getUsrMailsByRoleCd(String roleCode);
-	public List<String> getUsrMailsByRoleIds(String roleCode);
+	List<String> getUsrMailsByRoleCd(String roleCode);
+	List<String> getUsrMailsByRoleIds(String roleCode);
 }

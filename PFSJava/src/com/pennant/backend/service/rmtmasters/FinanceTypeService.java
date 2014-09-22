@@ -54,33 +54,18 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 public interface FinanceTypeService {
 
 	FinanceType getFinanceType();
-
 	FinanceType getNewFinanceType();
-
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
 	FinanceType getFinanceTypeById(String id);
-
 	FinanceType getApprovedFinanceTypeById(String id);
-
 	FinanceType refresh(FinanceType financeType);
-
 	AuditHeader delete(AuditHeader auditHeader);
-
 	AuditHeader doApprove(AuditHeader auditHeader);
-
 	AuditHeader doReject(AuditHeader auditHeader);
-	
 	FinanceType getCommodityFinanceType();
-
 	FinanceType getNewCommodityFinanceType();
-	
 	FinanceType getFinanceTypeByFinType(String finType);
-
 	boolean checkRIAFinance(String finType);
-	
-	public FinTypeAccount getFinTypeAccount();
-	
-	public FinTypeAccount getNewFinTypeAccount();
-
+	FinTypeAccount getFinTypeAccount();
+	FinTypeAccount getNewFinTypeAccount();
 }

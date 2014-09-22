@@ -13,10 +13,9 @@ public interface PostingsInterfaceService {
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public List<ReturnDataSet> doFillPostingDetails(List<ReturnDataSet> setDetails,String finBranch,
+	List<ReturnDataSet> doFillPostingDetails(List<ReturnDataSet> setDetails,String finBranch,
 			long linkTransId, String createNow) throws AccountNotFoundException;
 
-	public List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> list, Date valueDate,
+	List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> list, Date valueDate,
             String postBranch, long linkedTranId, String createNow, String isDummy) throws AccountNotFoundException; 
-	
 }

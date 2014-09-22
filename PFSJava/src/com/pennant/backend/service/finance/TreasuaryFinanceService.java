@@ -66,13 +66,12 @@ public interface TreasuaryFinanceService {
 	List<FinanceDetail> getFinanceDetails(InvestmentFinHeader investmentFinHeader);
 	FinanceDetail getFinanceDetailById(FinanceDetail financeDetail, String finReference); 
 	InvestmentFinHeader getTreasuaryFinHeader(String finReference, String tableType); 
-	public void setDocumentDetails(FinanceDetail financeDetail) ;
-	public void setAssetDetail(FinanceDetail financeDetail, String type) ;
-	public void setFeeCharges(FinanceDetail financeDetail, String type) ;
-	public void setFinanceDetails(FinanceDetail financeDetail, String strTab, String userRole);
+	void setDocumentDetails(FinanceDetail financeDetail) ;
+	void setAssetDetail(FinanceDetail financeDetail, String type) ;
+	void setFeeCharges(FinanceDetail financeDetail, String type) ;
+	void setFinanceDetails(FinanceDetail financeDetail, String strTab, String userRole);
 	ErrorDetails  investmentDealValidations(FinanceDetail aFinanceDetail,InvestmentFinHeader investmentFinHeader , String usrLanguage);
 	ErrorDetails  treasuryFinHeaderDialogValidations(InvestmentFinHeader investmentFinHeader , String usrLanguage);
 	AuditHeader saveOrUpdateDeal(AuditHeader auditHeader);
 	String getCustStatusByMinDueDays();
-
 }

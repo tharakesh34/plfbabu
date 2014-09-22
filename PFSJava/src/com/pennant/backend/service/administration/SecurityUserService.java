@@ -62,10 +62,9 @@ public interface SecurityUserService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	AuditHeader  changePassword(AuditHeader auditHeader);
-	public List<SecurityUserDivBranch> getSecUserDivBrList(long usrID,String type);
-	public List<AuditDetail> deleteDivBranchs(List<SecurityUserDivBranch> securityUserDivBranchList, String tableType, String auditTranType);
+	List<SecurityUserDivBranch> getSecUserDivBrList(long usrID,String type);
+	List<AuditDetail> deleteDivBranchs(List<SecurityUserDivBranch> securityUserDivBranchList, String tableType, String auditTranType);
 	//Security Work flow changes
 	SecurityUser getSecurityUserRolesById(long id);
 	SecurityUser getApprovedSecurityUserRolesById(long id);
-	
 }

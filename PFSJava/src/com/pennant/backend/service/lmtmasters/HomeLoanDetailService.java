@@ -67,10 +67,8 @@ public interface HomeLoanDetailService {
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<LovFieldDetail> getHomeConstructionStage();
 	
-	public AuditDetail saveOrUpdate(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType);
-	public AuditDetail doApprove(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType);
-	public AuditDetail validate(HomeLoanDetail homeLoanDetail, String method, String auditTranType, String  usrLanguage);
-	public AuditDetail delete(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType);
-	
-	
+	AuditDetail saveOrUpdate(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType);
+	AuditDetail doApprove(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType);
+	AuditDetail validate(HomeLoanDetail homeLoanDetail, String method, String auditTranType, String  usrLanguage);
+	AuditDetail delete(HomeLoanDetail homeLoanDetail, String tableType, String auditTranType);
 }

@@ -45,8 +45,6 @@ package com.pennant.policy;
 import com.pennant.backend.model.administration.SecurityUser;
 public interface User {
 
-	public long getUserId();
-
-	public SecurityUser getSecurityUser();
-
+	 long getUserId();
+	 SecurityUser getSecurityUser();
 }

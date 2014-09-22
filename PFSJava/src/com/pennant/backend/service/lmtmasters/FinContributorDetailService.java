@@ -56,9 +56,9 @@ public interface FinContributorDetailService {
 	FinContributorDetail getApprovedContributorDetailById(String finReference, long contributorBaseNo);
 	FinContributorDetail refresh(FinContributorDetail finContributorDetail);
 	
-	public FinContributorHeader getContributorHeaderById(String id);
-	public List<AuditDetail> saveOrUpdate(FinContributorHeader contributorHeader, String tableType, String auditTranType);
-	public List<AuditDetail> doApprove(FinContributorHeader contributorHeader, String tableType, String auditTranType);
-	public List<AuditDetail> delete(FinContributorHeader contributorHeader, String tableType, String auditTranType);
-	public List<AuditDetail> validate(List<FinContributorDetail> finContributorDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
+	FinContributorHeader getContributorHeaderById(String id);
+	List<AuditDetail> saveOrUpdate(FinContributorHeader contributorHeader, String tableType, String auditTranType);
+	List<AuditDetail> doApprove(FinContributorHeader contributorHeader, String tableType, String auditTranType);
+	List<AuditDetail> delete(FinContributorHeader contributorHeader, String tableType, String auditTranType);
+	List<AuditDetail> validate(List<FinContributorDetail> finContributorDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
 }

@@ -49,12 +49,11 @@ import com.pennant.backend.model.SecLoginlog;
 
 public interface LoginLoggingService {
 
-	public SecLoginlog getNewSecLoginlog();
-	public List<SecLoginlog> getAllLogs();
-	public List<SecLoginlog> getLogsByLoginName(String loginName);
-	public List<SecLoginlog> getAllLogsForSuccess();
-	public List<SecLoginlog> getAllLogsForFailed();
-	public void saveLog(SecLoginlog logingLog);
-	public void logLogOut(String sessionId);
-	
+	SecLoginlog getNewSecLoginlog();
+	List<SecLoginlog> getAllLogs();
+	List<SecLoginlog> getLogsByLoginName(String loginName);
+	List<SecLoginlog> getAllLogsForSuccess();
+	List<SecLoginlog> getAllLogsForFailed();
+	void saveLog(SecLoginlog logingLog);
+	void logLogOut(String sessionId);
 }

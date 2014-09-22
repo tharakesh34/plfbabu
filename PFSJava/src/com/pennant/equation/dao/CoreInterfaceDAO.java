@@ -12,28 +12,27 @@ import com.pennant.coreinterface.model.EquationRelationshipOfficer;
 
 public interface CoreInterfaceDAO {
 
-	public List<EquationCurrency> fetchCurrecnyDetails() ;
-	public List<EquationRelationshipOfficer> fetchRelationshipOfficerDetails(); 
-	public List<EquationCustomerType> fetchCustomerTypeDetails(); 
-	public List<EquationDepartment> fetchDepartmentDetails(); 
-	public List<EquationCustomerGroup> fetchCustomerGroupDetails();
-	public List<EquationAccountType> fetchAccountTypeDetails();
-	public List<EquationCustomerRating> fetchCustomerRatingDetails();
-	public void saveCurrecnyDetails(List<EquationCurrency> currencyList);
-	public void saveRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList);
-	public void saveCustomerTypeDetails(List<EquationCustomerType> customerTypes);
-	public void saveDepartmentDetails(List<EquationDepartment> departments);
-	public void saveCustomerGroupDetails(List<EquationCustomerGroup> customerGroups);
-	public void saveAccountTypeDetails(List<EquationAccountType> accountTypes);
-	public void saveAccountTypeNatureDetails(List<EquationAccountType> accountTypeNatures);
-	public void saveCustomerRatingDetails(List<EquationCustomerRating> customerRatings);
-	public void updateCurrecnyDetails(List<EquationCurrency> currencyList);
-	public void updateRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList);
-	public void updateCustomerTypeDetails(List<EquationCustomerType> customerTypes);
-	public void updateDepartmentDetails(List<EquationDepartment> departments);
-	public void updateCustomerGroupDetails(List<EquationCustomerGroup> customerGroups);
-	public void updateAccountTypeDetails(List<EquationAccountType> accountTypes);
-	public void updateAccountTypeNatureDetails(List<EquationAccountType> accountTypeNatures);
-	public void updateCustomerRatingDetails(List<EquationCustomerRating> customerRatings);
-	
+	List<EquationCurrency> fetchCurrecnyDetails() ;
+	List<EquationRelationshipOfficer> fetchRelationshipOfficerDetails(); 
+	List<EquationCustomerType> fetchCustomerTypeDetails(); 
+	List<EquationDepartment> fetchDepartmentDetails(); 
+	List<EquationCustomerGroup> fetchCustomerGroupDetails();
+	List<EquationAccountType> fetchAccountTypeDetails();
+	List<EquationCustomerRating> fetchCustomerRatingDetails();
+	void saveCurrecnyDetails(List<EquationCurrency> currencyList);
+	void saveRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList);
+	void saveCustomerTypeDetails(List<EquationCustomerType> customerTypes);
+	void saveDepartmentDetails(List<EquationDepartment> departments);
+	void saveCustomerGroupDetails(List<EquationCustomerGroup> customerGroups);
+	void saveAccountTypeDetails(List<EquationAccountType> accountTypes);
+	void saveAccountTypeNatureDetails(List<EquationAccountType> accountTypeNatures);
+	void saveCustomerRatingDetails(List<EquationCustomerRating> customerRatings);
+	void updateCurrecnyDetails(List<EquationCurrency> currencyList);
+	void updateRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList);
+	void updateCustomerTypeDetails(List<EquationCustomerType> customerTypes);
+	void updateDepartmentDetails(List<EquationDepartment> departments);
+	void updateCustomerGroupDetails(List<EquationCustomerGroup> customerGroups);
+	void updateAccountTypeDetails(List<EquationAccountType> accountTypes);
+	void updateAccountTypeNatureDetails(List<EquationAccountType> accountTypeNatures);
+	void updateCustomerRatingDetails(List<EquationCustomerRating> customerRatings);
 }

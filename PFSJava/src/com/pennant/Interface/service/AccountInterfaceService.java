@@ -14,15 +14,14 @@ import com.pennant.coreinterface.model.CoreBankAccountDetail;
 
 public interface AccountInterfaceService {
 	
-	public List<IAccounts> fetchExistAccount(List<IAccounts> accountDetails,String createNow) throws AccountNotFoundException;
-	public List<IAccounts> fetchExistAccountList(IAccounts processAccount) throws AccountNotFoundException;
-	public IAccounts fetchAccountAvailableBal(String processAccount) throws AccountNotFoundException;
-	public BigDecimal getAccountAvailableBal(String accountId);
-	public Map<String, IAccounts> getAccountsAvailableBalMap(List<String> accountsList);
-	public List<IAccounts> getAccountsAvailableBalList(List<IAccounts> accountsList) throws AccountNotFoundException;
-	public List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList) throws AccountNotFoundException ;
-	public int removeAccountHolds() throws Exception ;
-	public List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst, Date valueDate) throws EquationInterfaceException;
-	public Map<String, String> getAccountCurrencyMap(Map<String, String> accountCcyMap) throws AccountNotFoundException;
-
+	List<IAccounts> fetchExistAccount(List<IAccounts> accountDetails,String createNow) throws AccountNotFoundException;
+	List<IAccounts> fetchExistAccountList(IAccounts processAccount) throws AccountNotFoundException;
+	IAccounts fetchAccountAvailableBal(String processAccount) throws AccountNotFoundException;
+	BigDecimal getAccountAvailableBal(String accountId);
+	Map<String, IAccounts> getAccountsAvailableBalMap(List<String> accountsList);
+	List<IAccounts> getAccountsAvailableBalList(List<IAccounts> accountsList) throws AccountNotFoundException;
+	List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList) throws AccountNotFoundException ;
+	int removeAccountHolds() throws Exception ;
+	List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst, Date valueDate) throws EquationInterfaceException;
+	Map<String, String> getAccountCurrencyMap(Map<String, String> accountCcyMap) throws AccountNotFoundException;
 }

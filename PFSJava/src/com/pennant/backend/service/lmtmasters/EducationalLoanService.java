@@ -67,12 +67,11 @@ public interface EducationalLoanService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	
-	public EducationalLoan getEducationalLoanById(String finReference, String tableType);
-	public void setEducationalLoanDetails(FinanceDetail financeDetail, String tableType);
-	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType, String auditTranType);
-	public List<AuditDetail> doApprove(FinanceDetail financeDetail, String recordType, String auditTranType);
-	public List<AuditDetail> delete(FinanceDetail financeDetail, String tableType, String auditTranType);
-	public List<AuditDetail> getAuditDetail(Map<String, List<AuditDetail>> auditDetailMap, FinanceDetail financeDetail, String auditTranType, String method);	
-	public List<AuditDetail> validate(FinanceDetail financeDetail, String method,String  usrLanguage);
-	
+	EducationalLoan getEducationalLoanById(String finReference, String tableType);
+	void setEducationalLoanDetails(FinanceDetail financeDetail, String tableType);
+	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType, String auditTranType);
+	List<AuditDetail> doApprove(FinanceDetail financeDetail, String recordType, String auditTranType);
+	List<AuditDetail> delete(FinanceDetail financeDetail, String tableType, String auditTranType);
+	List<AuditDetail> getAuditDetail(Map<String, List<AuditDetail>> auditDetailMap, FinanceDetail financeDetail, String auditTranType, String method);	
+	List<AuditDetail> validate(FinanceDetail financeDetail, String method,String  usrLanguage);
 }

@@ -50,10 +50,6 @@ import com.pennant.backend.model.MenuDetails;
 
 public interface MenuDetailsService {
 
-	
-	public List<MenuDetails> getMenuDetailsByApp(String appCode);
-
-	public Map<String, Object> getLastLoginInfo(String string, String usrLogin,  Map<String, Object> inputParamMap, Map<String, Object> outputParamMap);
-	
-	
+	List<MenuDetails> getMenuDetailsByApp(String appCode);
+	Map<String, Object> getLastLoginInfo(String string, String usrLogin,  Map<String, Object> inputParamMap, Map<String, Object> outputParamMap);
 }

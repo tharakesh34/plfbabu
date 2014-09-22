@@ -8,10 +8,7 @@ import com.pennant.coreinterface.exception.CustomerNotFoundException;
 
 public interface CustomerInterfaceService {
 	
-	public Customer fetchCustomerDetails(Customer customer) throws CustomerNotFoundException;
-	
-	public String generateNewCIF(String operation, Customer customer, String finReference)throws CustomerNotFoundException;
-	
-	public AvailCustomerDetail fetchAvailCustDetails(AvailCustomerDetail detail, BigDecimal newExposure, String ccy) throws CustomerNotFoundException;
-	
+	Customer fetchCustomerDetails(Customer customer) throws CustomerNotFoundException;
+	String generateNewCIF(String operation, Customer customer, String finReference)throws CustomerNotFoundException;
+	AvailCustomerDetail fetchAvailCustDetails(AvailCustomerDetail detail, BigDecimal newExposure, String ccy) throws CustomerNotFoundException;
 }

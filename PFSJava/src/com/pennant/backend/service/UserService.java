@@ -52,33 +52,18 @@ import com.pennant.backend.model.administration.SecurityUser;
 
 public interface UserService {
 
-	public SecurityUser getNewUser();
-
-	public int getCountAllSecUser();
-
+	SecurityUser getNewUser();
+	int getCountAllSecUser();
 	List<SecurityUser> getAlleUser();
-	
-	
-	public SecurityUser getUserByLogin(final String userName);
-
-	public Collection<SecurityRight> getRightsByUser(SecurityUser user);
-
-	public List<SecurityUser> getUserLikeLoginname(String value);
-
-	public List<SecurityUser> getUserLikeLastname(String value);
-
-	public List<SecurityUser> getUserLikeEmail(String value);
-	
-	public List<SecurityUser> getUserListByLogin(String userName);
-	
-	public Collection<SecurityRight> getMenuRightsByUser(SecurityUser user);
-	
-	public Collection<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName);
-
-	public List<SecurityRole> getUserRolesByUserID(long userID);
-	
-	public List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName);
-	
-	public List<SecurityRight> getRoleRights(SecurityRight secRight,String[] roles); 
-	
+	SecurityUser getUserByLogin(final String userName);
+	Collection<SecurityRight> getRightsByUser(SecurityUser user);
+	List<SecurityUser> getUserLikeLoginname(String value);
+	List<SecurityUser> getUserLikeLastname(String value);
+	List<SecurityUser> getUserLikeEmail(String value);
+	List<SecurityUser> getUserListByLogin(String userName);
+	Collection<SecurityRight> getMenuRightsByUser(SecurityUser user);
+	Collection<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName);
+	List<SecurityRole> getUserRolesByUserID(long userID);
+	List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName);
+	List<SecurityRight> getRoleRights(SecurityRight secRight,String[] roles); 
 }

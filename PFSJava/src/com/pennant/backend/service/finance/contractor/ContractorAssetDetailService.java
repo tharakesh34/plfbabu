@@ -62,15 +62,11 @@ public interface ContractorAssetDetailService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-	
-	public List<ContractorAssetDetail> getContractorAssetDetailList(String finReference, String tableType);
-	public void setContractorAssetDetails(FinanceDetail financeDetail, String tableType);
-	public List<AuditDetail> getAuditDetail(List<ContractorAssetDetail> contractorAssetDetails, FinanceMain financeMain, String auditTranType, String method);	
-	public List<AuditDetail> validate(FinanceDetail financeDetail, String method,String  usrLanguage);
-	
-	public List<AuditDetail> saveOrUpdate(String finReference, List<ContractorAssetDetail> contractorAssetDetails, String tableType, String auditTranType);
-	public List<AuditDetail> doApprove(List<ContractorAssetDetail> contractorAssetDetails, String tableType, String auditTranType);
-	public List<AuditDetail> delete(List<ContractorAssetDetail> contractorAssetDetails, String tableType, String auditTranType);
-	
-	
+	List<ContractorAssetDetail> getContractorAssetDetailList(String finReference, String tableType);
+	void setContractorAssetDetails(FinanceDetail financeDetail, String tableType);
+	List<AuditDetail> getAuditDetail(List<ContractorAssetDetail> contractorAssetDetails, FinanceMain financeMain, String auditTranType, String method);	
+	List<AuditDetail> validate(FinanceDetail financeDetail, String method,String  usrLanguage);
+	List<AuditDetail> saveOrUpdate(String finReference, List<ContractorAssetDetail> contractorAssetDetails, String tableType, String auditTranType);
+	List<AuditDetail> doApprove(List<ContractorAssetDetail> contractorAssetDetails, String tableType, String auditTranType);
+	List<AuditDetail> delete(List<ContractorAssetDetail> contractorAssetDetails, String tableType, String auditTranType);
 }

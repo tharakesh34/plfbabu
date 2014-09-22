@@ -4,6 +4,5 @@ import com.pennant.coreinterface.model.HostEnquiry;
 
 public interface HostStatusEnquiryService {
 	
-	public HostEnquiry getHostStatus() throws Exception;
-	
+    HostEnquiry getHostStatus() throws Exception;
 }

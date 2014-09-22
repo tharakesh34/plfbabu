@@ -62,8 +62,8 @@ public interface MortgageLoanDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	
-	public AuditDetail saveOrUpdate(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType);
-	public AuditDetail doApprove(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType);
-	public AuditDetail validate(MortgageLoanDetail mortgageLoanDetail, String method, String auditTranType, String  usrLanguage);
-	public AuditDetail delete(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType);
+	AuditDetail saveOrUpdate(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType);
+	AuditDetail doApprove(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType);
+	AuditDetail validate(MortgageLoanDetail mortgageLoanDetail, String method, String auditTranType, String  usrLanguage);
+	AuditDetail delete(MortgageLoanDetail mortgageLoanDetail, String tableType, String auditTranType);
 }

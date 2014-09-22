@@ -29,7 +29,7 @@ public interface BulkRateChangeProcessService {
 	BigDecimal getAccrueAmount(String finReference);
 	boolean bulkDefermentChanges(List<BulkProcessDetails> defermentChangeFinances,String recalType, boolean excludeDeferment, 
 			String addTermAfter, Date calFromDate, Date calToDate, String cbRecalType) throws AccountNotFoundException, Exception;
-	public List<ScheduleMapDetails> getDeferedDates(List<BulkProcessDetails> defermentChangeFinances, String cbRecalType,
+	List<ScheduleMapDetails> getDeferedDates(List<BulkProcessDetails> defermentChangeFinances, String cbRecalType,
 			Date reCalFromDate, Date reCalToDate);
-	public BulkProcessHeader getBulkProcessHeaderByFromAndToDates( Date fromDate, Date toDate, String type);
+	BulkProcessHeader getBulkProcessHeaderByFromAndToDates( Date fromDate, Date toDate, String type);
 }

@@ -69,10 +69,9 @@ public interface JointAccountDetailService {
 	List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jountAccountDetail);
 	FinanceExposure getExposureSummaryDetail(List<FinanceExposure> exposerList);
 	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);
-	public BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, JointAccountDetail detail);
-	
-	public List<AuditDetail> saveOrUpdate(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
-	public List<AuditDetail> doApprove(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
-	public List<AuditDetail> validate(List<JointAccountDetail> jointAcDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
-	public List<AuditDetail> delete(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
+	BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, JointAccountDetail detail);
+	List<AuditDetail> saveOrUpdate(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
+	List<AuditDetail> doApprove(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
+	List<AuditDetail> validate(List<JointAccountDetail> jointAcDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
+	List<AuditDetail> delete(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
 }

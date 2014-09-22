@@ -47,5 +47,4 @@ import com.pennant.backend.model.administration.SecurityUser;
 public interface LoginService {
 
 	SecurityUser getLoginUser(String usrLoginName, String usrPassword);
-
 }

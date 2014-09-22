@@ -50,11 +50,11 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface WorkFlowDetailsService {
 
-	public WorkFlowDetails getWorkFlowDetails ();
-	public WorkFlowDetails getNewWorkFlowDetails ();
-	public WorkFlowDetails refresh(WorkFlowDetails  workFlowDetails);
-	public WorkFlowDetails getWorkFlowDetailsByID(long id);
-	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType);
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	public List<WorkFlowDetails> getActiveWorkFlowDetails();
+	WorkFlowDetails getWorkFlowDetails ();
+	WorkFlowDetails getNewWorkFlowDetails ();
+	WorkFlowDetails refresh(WorkFlowDetails  workFlowDetails);
+	WorkFlowDetails getWorkFlowDetailsByID(long id);
+	WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType);
+	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	List<WorkFlowDetails> getActiveWorkFlowDetails();
  }

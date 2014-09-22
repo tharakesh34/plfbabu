@@ -15,11 +15,10 @@ import com.pennant.backend.model.messages.UserContactsList;
  */
 public interface MessagesService {
 	
- public List<OfflineUsersMessagesBackup> getOfflineUsersMessagesBackupByUsrId(String usrId);
- public void  saveOfflineUsersMessages(List<OfflineUsersMessagesBackup> offlineMsgsList);
- public void deleteOfflineUsersMessages(String usrId);
- public UserContactsList getUserContactsList(String usrId,String type );
- public void  saveUserContactsList(UserContactsList userContactsList);
- public void deleteUserContactsList(String usrId,String type);
-	
+ List<OfflineUsersMessagesBackup> getOfflineUsersMessagesBackupByUsrId(String usrId);
+ void  saveOfflineUsersMessages(List<OfflineUsersMessagesBackup> offlineMsgsList);
+ void deleteOfflineUsersMessages(String usrId);
+ UserContactsList getUserContactsList(String usrId,String type );
+ void  saveUserContactsList(UserContactsList userContactsList);
+ void deleteUserContactsList(String usrId,String type);
 }

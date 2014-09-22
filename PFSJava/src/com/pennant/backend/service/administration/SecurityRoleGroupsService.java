@@ -9,10 +9,8 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SecurityRoleGroupsService {
 	
-	public AuditHeader Save(AuditHeader auditHeader);
-	public List<SecurityGroup> getGroupsByRoleId(long roleId,boolean isAssigned) ;
-	public List<SecurityGroupRights> getSecurityGroupRightsByGrpId(SecurityGroup securityGroups );
-	public SecurityRoleGroups getRoleGroupsByRoleAndGrpId(long roleID,long groupId);
-	
-	
+	AuditHeader Save(AuditHeader auditHeader);
+	List<SecurityGroup> getGroupsByRoleId(long roleId,boolean isAssigned) ;
+	List<SecurityGroupRights> getSecurityGroupRightsByGrpId(SecurityGroup securityGroups );
+	SecurityRoleGroups getRoleGroupsByRoleAndGrpId(long roleID,long groupId);
 }

@@ -49,6 +49,6 @@ import com.pennant.backend.model.AuditLogDetils;
 
 public interface AuditLogService {
 	
-	public List<AuditLogDetils> getLogDetails(String modName,String whereCond);
-	public List<AuditLogDetils> getLogDetails(String moduleName,String[] keyFields,String recordRole,long currentUser,Object beanObject);
+	List<AuditLogDetils> getLogDetails(String modName,String whereCond);
+	List<AuditLogDetils> getLogDetails(String moduleName,String[] keyFields,String recordRole,long currentUser,Object beanObject);
 }

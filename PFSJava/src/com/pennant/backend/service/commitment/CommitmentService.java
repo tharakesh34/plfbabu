@@ -63,11 +63,11 @@ public interface CommitmentService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-	public int getCmtAmountCount(long custID);
-	public int getCmtAmountTotal(long custID);
-	public int getUtilizedAmountTotal(long custID);
+	int getCmtAmountCount(long custID);
+	int getCmtAmountTotal(long custID);
+	int getUtilizedAmountTotal(long custID);
 	List<Rule> getRuleByModuleAndEvent(String module, String event);
-	public Map<String, Object> getAmountSummary(long custID);
+	Map<String, Object> getAmountSummary(long custID);
 	List<AvailCommitment> getCommitmentListByCustId(long custId);
 	List<CommitmentSummary> getCommitmentSummary(long custID);
 }

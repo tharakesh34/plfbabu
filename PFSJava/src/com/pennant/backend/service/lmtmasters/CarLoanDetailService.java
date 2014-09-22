@@ -61,9 +61,8 @@ public interface CarLoanDetailService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-	
-	public AuditDetail saveOrUpdate(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
-	public AuditDetail doApprove(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
-	public AuditDetail validate(CarLoanDetail carLoanDetail, String method, String auditTranType, String  usrLanguage);
-	public AuditDetail delete(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
+	AuditDetail saveOrUpdate(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
+	AuditDetail doApprove(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
+	AuditDetail validate(CarLoanDetail carLoanDetail, String method, String auditTranType, String  usrLanguage);
+	AuditDetail delete(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
 }

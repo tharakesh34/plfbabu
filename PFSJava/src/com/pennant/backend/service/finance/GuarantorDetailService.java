@@ -64,19 +64,17 @@ public interface GuarantorDetailService {
 	AuditHeader doReject(AuditHeader auditHeader);	
 	List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String tableType);
 	
-	public GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail);		
-	public List<GuarantorDetail> getGuarantorDetail(String finReference, String tableType);
-	public List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail);
-	public List<FinanceExposure> getSecondaryExposureList(GuarantorDetail guarantorDetail);
-	public List<FinanceExposure> getGuarantorExposureList(GuarantorDetail guarantorDetail);
-	public FinanceExposure getExposureSummaryDetail(List<FinanceExposure> exposerList);
-	public BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, GuarantorDetail detail);
+	GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail);		
+	List<GuarantorDetail> getGuarantorDetail(String finReference, String tableType);
+	List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail);
+	List<FinanceExposure> getSecondaryExposureList(GuarantorDetail guarantorDetail);
+	List<FinanceExposure> getGuarantorExposureList(GuarantorDetail guarantorDetail);
+	FinanceExposure getExposureSummaryDetail(List<FinanceExposure> exposerList);
+	BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, GuarantorDetail detail);
 	
-	public List<AuditDetail> saveOrUpdate(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType);
-	public List<AuditDetail> doApprove(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType);
-	public List<AuditDetail> validate(List<GuarantorDetail> guarantorDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
-	public List<AuditDetail> delete(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType);
-	public String getWorstStaus(long custID);
-		
-
+	List<AuditDetail> saveOrUpdate(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType);
+	List<AuditDetail> doApprove(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType);
+	List<AuditDetail> validate(List<GuarantorDetail> guarantorDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
+	List<AuditDetail> delete(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType);
+	String getWorstStaus(long custID);
 }

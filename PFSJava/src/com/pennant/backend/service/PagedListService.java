@@ -52,8 +52,6 @@ import com.pennant.search.SearchResult;
 
 public interface PagedListService {
 
-	public <T> List<T> getBySearchObject(JdbcSearchObject<T> so);
-
-	public <T> SearchResult<T> getSRBySearchObject(JdbcSearchObject<T> so);
-
+	<T> List<T> getBySearchObject(JdbcSearchObject<T> so);
+	<T> SearchResult<T> getSRBySearchObject(JdbcSearchObject<T> so);
 }

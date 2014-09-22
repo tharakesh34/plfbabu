@@ -61,10 +61,9 @@ public interface CommidityLoanDetailService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-	
-	public CommidityLoanHeader getCommidityLoanHeaderById(String id);
-	public List<AuditDetail> saveOrUpdate(CommidityLoanHeader commidityLoanHeader, String tableType, String auditTranType);
-	public List<AuditDetail> doApprove(CommidityLoanHeader commidityLoanHeader, String tableType, String auditTranType);
-	public List<AuditDetail> delete(CommidityLoanHeader commidityLoanHeader, String tableType, String auditTranType);
-	public List<AuditDetail> validate(List<CommidityLoanDetail> commidityLoanDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
+	CommidityLoanHeader getCommidityLoanHeaderById(String id);
+	List<AuditDetail> saveOrUpdate(CommidityLoanHeader commidityLoanHeader, String tableType, String auditTranType);
+	List<AuditDetail> doApprove(CommidityLoanHeader commidityLoanHeader, String tableType, String auditTranType);
+	List<AuditDetail> delete(CommidityLoanHeader commidityLoanHeader, String tableType, String auditTranType);
+	List<AuditDetail> validate(List<CommidityLoanDetail> commidityLoanDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
 }

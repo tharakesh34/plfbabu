@@ -54,22 +54,21 @@ import com.pennant.backend.model.reports.ReportSearchTemplate;
 
 public interface ReportConfigurationService {
 	
-	public ReportConfiguration getReportConfiguration();
-	public ReportConfiguration getNewReportConfiguration();
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	public ReportConfiguration getReportConfigurationById(long id);
-	public ReportConfiguration getApprovedReportConfigurationById(long id);
-	public ReportConfiguration refresh(ReportConfiguration currency);
-	public AuditHeader delete(AuditHeader auditHeader);
-	public AuditHeader doApprove(AuditHeader auditHeader);
-	public AuditHeader doReject(AuditHeader auditHeader);
-	public void saveOrUpdateSearchTemplate(List<ReportSearchTemplate> aReportSearchTemplateList, boolean isNew);
-	public Map<Object, List<ReportSearchTemplate>> getTemplatesByReportID(long reportId,long usrId);	
-	public int getRecordCountByTemplateName(long reportId,long usrId,String templateName);
-	public void deleteSearchTemplate(long reportId, long usrId, String templateName);
+	ReportConfiguration getReportConfiguration();
+	ReportConfiguration getNewReportConfiguration();
+	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	ReportConfiguration getReportConfigurationById(long id);
+	ReportConfiguration getApprovedReportConfigurationById(long id);
+	ReportConfiguration refresh(ReportConfiguration currency);
+	AuditHeader delete(AuditHeader auditHeader);
+	AuditHeader doApprove(AuditHeader auditHeader);
+	AuditHeader doReject(AuditHeader auditHeader);
+	void saveOrUpdateSearchTemplate(List<ReportSearchTemplate> aReportSearchTemplateList, boolean isNew);
+	Map<Object, List<ReportSearchTemplate>> getTemplatesByReportID(long reportId,long usrId);	
+	int getRecordCountByTemplateName(long reportId,long usrId,String templateName);
+	void deleteSearchTemplate(long reportId, long usrId, String templateName);
 	
 	//Month End Report Queries
-	public List<ValueLabel> getMonthEndReportGrpCodes();
-	public List<ValueLabel> getReportListByGrpCode(String grpCode);
-
+	List<ValueLabel> getMonthEndReportGrpCodes();
+	List<ValueLabel> getReportListByGrpCode(String grpCode);
 }

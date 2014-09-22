@@ -63,8 +63,8 @@ public interface GoodsLoanDetailService {
 	GoodsLoanDetail getApprovedGoodsLoanDetailById(String id);
 	GoodsLoanDetail getGoodsLoanDetailById(String id);
 	
-	public List<AuditDetail> saveOrUpdate(List<GoodsLoanDetail> goodsLoanDetailList, String tableType, String auditTranType);
-	public List<AuditDetail> doApprove(List<GoodsLoanDetail> goodsLoanDetailList, String tableType, String auditTranType);
-	public List<AuditDetail> validate(List<GoodsLoanDetail> goodsLoanDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
-	public List<AuditDetail> delete(List<GoodsLoanDetail> goodsLoanDetailList, String tableType, String auditTranType);
+	List<AuditDetail> saveOrUpdate(List<GoodsLoanDetail> goodsLoanDetailList, String tableType, String auditTranType);
+	List<AuditDetail> doApprove(List<GoodsLoanDetail> goodsLoanDetailList, String tableType, String auditTranType);
+	List<AuditDetail> validate(List<GoodsLoanDetail> goodsLoanDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
+	List<AuditDetail> delete(List<GoodsLoanDetail> goodsLoanDetailList, String tableType, String auditTranType);
 }

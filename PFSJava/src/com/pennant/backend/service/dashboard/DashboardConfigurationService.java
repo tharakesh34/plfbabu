@@ -64,11 +64,10 @@ public interface DashboardConfigurationService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 
-
 	Map<String, DashboardPosition> getDashboardPositionsByUser(long userId);
     void savePositions(List<DashboardPosition> dashboardDetailsList,long userid);
-	public DashBoard getDashBoardData(long userId,String roles);
-	public Map<String, DashboardConfiguration> getDashboardConfigurations(long userId) ;
+	DashBoard getDashBoardData(long userId,String roles);
+	Map<String, DashboardConfiguration> getDashboardConfigurations(long userId) ;
 	List<ChartSetElement> getLabelAndValues(DashboardConfiguration aDashboardConfiguration,String condition);
 	
 	

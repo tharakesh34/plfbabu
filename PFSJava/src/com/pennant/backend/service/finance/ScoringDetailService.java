@@ -8,9 +8,10 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 
 public interface ScoringDetailService {
-	public FinanceDetail setFinanceScoringDetails(FinanceDetail financeDetail, String finType, String userRole, String ctgType);
-	public List<ScoringMetrics> executeScoringMetrics(List<ScoringMetrics> scoringMetricsList, CustomerScoringCheck customerScoringCheck);
-	public void saveOrUpdate(FinanceDetail financeDetail);
-	public List<Object> getFinScoreDetailList(String finReference);
-	public void validate(FinanceDetail financeDetail, AuditDetail auditDetail, String[] errParm, String[] valueParm, String usrLanguage);
+	
+	FinanceDetail setFinanceScoringDetails(FinanceDetail financeDetail, String finType, String userRole, String ctgType);
+	List<ScoringMetrics> executeScoringMetrics(List<ScoringMetrics> scoringMetricsList, CustomerScoringCheck customerScoringCheck);
+	void saveOrUpdate(FinanceDetail financeDetail);
+	List<Object> getFinScoreDetailList(String finReference);
+	void validate(FinanceDetail financeDetail, AuditDetail auditDetail, String[] errParm, String[] valueParm, String usrLanguage);
 }

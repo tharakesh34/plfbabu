@@ -11,16 +11,15 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 
 public interface EligibilityDetailService {
 
-	public List<FinanceEligibilityDetail> setFinanceEligibilityDetails(String finReference, String finCcy, BigDecimal finAmount, 
+	List<FinanceEligibilityDetail> setFinanceEligibilityDetails(String finReference, String finCcy, BigDecimal finAmount, 
 			boolean isNewRecord, String finType, String userRole);
-	public FinanceEligibilityDetail getElgResult(FinanceEligibilityDetail financeEligibilityDetail,  FinanceDetail financeDetail);
-	public FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail referenceDetail, String finReference);
-	public boolean getEligibilityStatus(FinanceEligibilityDetail financeEligibilityDetail, String finCcy, BigDecimal finAmount);
-	public boolean isCustEligible(List<FinanceEligibilityDetail> financeEligibilityDetails);
-	public List<FinanceEligibilityDetail> getFinElgDetailList(String finReference);
-	public void validate(List<FinanceEligibilityDetail> financeEligibilityDetailList, AuditDetail auditDetail, String[] errParm, String[] valueParm, String usrLanguage);
-	public void saveOrUpdate(FinanceDetail financeDetail);
-	public RuleExecutionUtil getRuleExecutionUtil();
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil);
-
+	FinanceEligibilityDetail getElgResult(FinanceEligibilityDetail financeEligibilityDetail,  FinanceDetail financeDetail);
+	FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail referenceDetail, String finReference);
+	boolean getEligibilityStatus(FinanceEligibilityDetail financeEligibilityDetail, String finCcy, BigDecimal finAmount);
+	boolean isCustEligible(List<FinanceEligibilityDetail> financeEligibilityDetails);
+	List<FinanceEligibilityDetail> getFinElgDetailList(String finReference);
+	void validate(List<FinanceEligibilityDetail> financeEligibilityDetailList, AuditDetail auditDetail, String[] errParm, String[] valueParm, String usrLanguage);
+	void saveOrUpdate(FinanceDetail financeDetail);
+	RuleExecutionUtil getRuleExecutionUtil();
+	void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil);
 }
