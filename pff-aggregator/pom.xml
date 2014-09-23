@@ -38,6 +38,7 @@
 		<module>../PFSJava</module>
 		<module>../PFSBatch</module>
 		<module>../PFSWeb</module>
+		<module>../pff-test-suite</module>
 	</modules>
 
 	<dependencies>
