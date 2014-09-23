@@ -352,7 +352,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericService<BulkProcess
 		financeDetail.setUserDetails(getLoginUserDetails());
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		financeMain.setUserDetails(getLoginUserDetails());
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		if (financeMain.isWorkflow()) {
 			tableType = "_TEMP";

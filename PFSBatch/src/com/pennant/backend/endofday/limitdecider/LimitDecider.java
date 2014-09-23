@@ -59,6 +59,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.HolidayUtil;
 import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.equation.util.HostConnection;
 
 public class LimitDecider implements JobExecutionDecider {
@@ -74,8 +75,8 @@ public class LimitDecider implements JobExecutionDecider {
 	@SuppressWarnings("serial")
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
 
-		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
-		dateNextBusinessDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE").toString());
+		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
+		dateNextBusinessDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_NEXT).toString());
 
 		logger.debug("START: Limit Decider for generation of Loop for Value Date: "+ DateUtility.addDays(dateValueDate,-1));
 		stepExecution.getExecutionContext().put(stepExecution.getId().toString(), dateValueDate);
@@ -96,30 +97,30 @@ public class LimitDecider implements JobExecutionDecider {
 				String nextBussDate = DateUtility.formatUtilDate(HolidayUtil.getWorkingBussinessDate("GEN", "N", dateNextBusinessDate).getTime(),"yyyy-MM-dd");				
 				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
 				sqlStatement.setString(1, nextBussDate);
-				sqlStatement.setString(2, "APP_NEXT_BUS_DATE");
+				sqlStatement.setString(2, PennantConstants.APP_DATE_NEXT);
 				sqlStatement.executeUpdate();
 				
 				String prevBussDate = DateUtility.formatUtilDate(HolidayUtil.getWorkingBussinessDate("GEN", "P", dateNextBusinessDate).getTime(),"yyyy-MM-dd");				
 				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
 				sqlStatement.setString(1, prevBussDate);
-				sqlStatement.setString(2, "APP_LAST_BUS_DATE");
+				sqlStatement.setString(2, PennantConstants.APP_DATE_LAST);
 				sqlStatement.executeUpdate();
 							
 				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
 				sqlStatement.setString(1, dateNextBusinessDate.toString());
-				sqlStatement.setString(2, "APP_DATE");
+				sqlStatement.setString(2, PennantConstants.APP_DATE_CUR);
 				sqlStatement.executeUpdate();
 				
 				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
-				sqlStatement.setString(1, "DAY");
-				sqlStatement.setString(2, "PHASE");
+				sqlStatement.setString(1, PennantConstants.APP_PHASE_DAY);
+				sqlStatement.setString(2, PennantConstants.APP_PHASE);
 				sqlStatement.executeUpdate();
 				
 				//Reset Next Business Date in System Parameters
-				SystemParameterDetails.setParmDetails("APP_NEXT_BUS_DATE", nextBussDate);
-				SystemParameterDetails.setParmDetails("APP_LAST_BUS_DATE", prevBussDate);
-				SystemParameterDetails.setParmDetails("APP_DATE", dateNextBusinessDate.toString());
-				SystemParameterDetails.setParmDetails("PHASE", "DAY");
+				SystemParameterDetails.setParmDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
+				SystemParameterDetails.setParmDetails(PennantConstants.APP_DATE_LAST, prevBussDate);
+				SystemParameterDetails.setParmDetails(PennantConstants.APP_DATE_CUR, dateNextBusinessDate.toString());
+				SystemParameterDetails.setParmDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_DAY);
 				
 				//Close Host Connection
 				getHostConnection().closeAllConnection();

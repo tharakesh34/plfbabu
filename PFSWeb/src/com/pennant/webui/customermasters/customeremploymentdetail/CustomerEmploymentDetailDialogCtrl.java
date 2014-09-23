@@ -597,7 +597,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 						new String[] {Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpFrom.value"),
 							SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
 			}
-			if (this.custEmpFrom.getValue().compareTo(((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) != -1) {
+			if (this.custEmpFrom.getValue().compareTo(((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) != -1) {
 				throw new WrongValueException(this.custEmpFrom, Labels.getLabel("DATE_FUTURE_TODAY", new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpFrom.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
 			}
 			aCustomerEmploymentDetail.setCustEmpFrom(new Timestamp(this.custEmpFrom.getValue().getTime()));
@@ -612,7 +612,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 				if (!this.custEmpTo.getValue().after(((Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE")))) {
 					throw new WrongValueException(this.custEmpTo, Labels.getLabel("DATE_ALLOWED_AFTER", new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpTo.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
 				}
-				if (this.custEmpTo.getValue().compareTo(((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) != -1) {
+				if (this.custEmpTo.getValue().compareTo(((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) != -1) {
 					throw new WrongValueException(this.custEmpTo, Labels.getLabel("DATE_FUTURE_TODAY", new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpTo.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
 				}
 				aCustomerEmploymentDetail.setCustEmpTo(new Timestamp(this.custEmpTo.getValue().getTime()));

@@ -45,6 +45,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.EODProperties;
 
 public class AmortizationServiceImpl implements AmortizationService {
@@ -301,7 +302,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 	public void doAccrualPosting(Object object, Date valueDate, String postBranch , String isDummy) throws Exception{
 		logger.info("Entering");
 		
-		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;

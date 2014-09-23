@@ -1046,7 +1046,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			customer=getCustomerDAO().getCustomerByID(custID, "");
         }
 		CustomerEligibilityCheck eligibilityCheck= new CustomerEligibilityCheck();
-		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		BeanUtils.copyProperties(customer, eligibilityCheck);
 		int age = DateUtility.getYearsBetween(customer.getCustDOB(), DateUtility.today());
 		eligibilityCheck.setCustAge(age);

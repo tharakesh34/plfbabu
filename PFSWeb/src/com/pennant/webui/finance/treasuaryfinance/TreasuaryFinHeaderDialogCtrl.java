@@ -651,7 +651,7 @@ Serializable {
 							Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
 				}
 				/*if (DateUtility.compare(this.startDate.getValue(),
-						(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE")) == -1) {
+						(Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR)) == -1) {
 					throw new WrongValueException(this.startDate,Labels.getLabel("DATE_PAST",
 							new String[] {Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
 				}*/
@@ -854,7 +854,7 @@ Serializable {
 					Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
 		}
 		if (DateUtility.compare(this.startDate.getValue(),
-				(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE")) == -1) {
+				(Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR)) == -1) {
 			throw new WrongValueException(this.startDate,Labels.getLabel("DATE_PAST",
 					new String[] {Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
 		}

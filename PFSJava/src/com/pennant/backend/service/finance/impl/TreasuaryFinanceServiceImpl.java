@@ -404,7 +404,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		financeMain.setFinApprovedDate(curBDay);
 		
 		auditHeader = executeAccountingProcess(auditHeader, curBDay);
@@ -1131,7 +1131,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		finScheduleData.setFinReference(financeMain.getFinReference());
 		finScheduleData.setFinanceMain(financeMain);
 		
-		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		
 		if (financeMain.getFinStartDate() != null && financeMain.getFinStartDate().after(curBussDate)) {
 			eventCode = "ADDDBSF";
@@ -1259,7 +1259,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 		String eventCode = "";
 		if (StringUtils.trimToEmpty(eventCode).equals("")) {
-			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 			if (financeMain.getFinStartDate() != null && financeMain.getFinStartDate().after(curBussDate)) {
 				eventCode = "ADDDBSF";
@@ -1566,7 +1566,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			//TODO-- Check it is needed or not
 			if(tableType.equals("") && financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
 				
-				Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+				Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 				
 				//Fetch Existing data before Modification
 				FinScheduleData oldFinSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);

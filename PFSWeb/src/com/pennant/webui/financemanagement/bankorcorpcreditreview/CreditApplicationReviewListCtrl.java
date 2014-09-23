@@ -173,7 +173,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	private transient WorkFlowDetails	      workFlowDetails	= null;
 	private boolean isMaintinence = false;
 
-	int dateAppCurrentYear = DateUtility.getYear((Date)SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+	int dateAppCurrentYear = DateUtility.getYear((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 	int dateAppPrevYear = dateAppCurrentYear-1;
 	/**
 	 * default constructor.<br>

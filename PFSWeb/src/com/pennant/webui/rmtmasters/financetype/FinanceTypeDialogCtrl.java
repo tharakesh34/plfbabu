@@ -6670,7 +6670,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		rate.setBaseRateCode(baseRateCode);
 		rate.setSplRateCode(splRateCode);
 		rate.setMargin(margin);
-		rate.setValueDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+		rate.setValueDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		RateDetail rateDetail = RateUtil.getRefRate(rate);
 		if (rateDetail != null && rateDetail.getNetRefRateLoan() != null) {
 			logger.debug("Leaving");

@@ -178,7 +178,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl implements Seriali
 					setWorkFlowId(workFlowDetails.getId());
 					getFacility().setWorkflowId(workFlowDetails.getWorkFlowId());
 				}
-				Date appldate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+				Date appldate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 				getFacility().setStartDate(appldate);
 				getFacility().setPresentingUnit(PennantConstants.FACILITY_PRESENTING_UNIT);
 				getFacility().setCustID(customer.getCustID());

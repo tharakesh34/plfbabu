@@ -803,7 +803,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		
 		try {
 		if(this.custAddrFrom.getValue() != null){
-			Date appDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date appDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			if(appDate.compareTo(this.custAddrFrom.getValue()) != 1){
 				throw new WrongValueException(this.custAddrFrom, Labels.getLabel("NUMBER_MAXVALUE",
 						new String[] {Labels.getLabel("label_DirectorDetailDialog_CustAddrFrom.value"), 
@@ -849,7 +849,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			aDirectorDetail.setDob(this.dob.getValue());
 			if(this.dob.getValue() != null){
 			if (DateUtility.compare(this.dob.getValue(),
-					(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE")) != -1) {
+					(Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR)) != -1) {
 				throw new WrongValueException(this.dob,Labels.getLabel("DATE_FUTURE_TODAY",
 						new String[] {Labels.getLabel("label_DirectorDetailDialog_DOB.value") }));
 			}

@@ -127,7 +127,7 @@ public class PennantReferenceIDUtil implements Serializable {
 	}
 	public static String genNewCafRef(String division,String custCtgCode) {
 		logger.debug("Entering");
-		Date appldate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date appldate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		StringBuilder caf=new StringBuilder();
 		//Division
 		if (division.equals(PennantConstants.FACILITY_COMMERCIAL)) {

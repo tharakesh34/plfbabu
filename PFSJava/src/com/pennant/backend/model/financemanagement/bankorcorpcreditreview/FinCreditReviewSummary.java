@@ -2,8 +2,8 @@ package com.pennant.backend.model.financemanagement.bankorcorpcreditreview;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import com.pennant.backend.model.Entity;
 
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
 
 public class FinCreditReviewSummary implements java.io.Serializable ,Entity{

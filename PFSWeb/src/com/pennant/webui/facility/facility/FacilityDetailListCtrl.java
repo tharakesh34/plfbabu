@@ -112,7 +112,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> impl
 	private boolean enqModule = false;
 	private String userRole;
 	
-	Date appldate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date appldate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 	// NEEDED for the ReUse in the SearchWindow
 	/**
 	 * default constructor.<br>

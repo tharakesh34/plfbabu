@@ -956,7 +956,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			DataSet dataSet = AEAmounts.createDataSet(finMain, eventCode, finMain.getFinStartDate(), finMain.getFinStartDate());
 
-			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
 					getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(), curBDay);
 
@@ -973,7 +973,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 					if(disbursement.getDisbAmount().compareTo(BigDecimal.ZERO) > 0){
 
 						if(eventCode.equals("")){
-							if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) {
+							if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) {
 								dataSet.setFinEvent("ADDDBSF");
 							} else {
 								dataSet.setFinEvent("ADDDBSP");

@@ -14,6 +14,7 @@ import com.pennant.Interface.service.DailyDownloadInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 
 public class DailyDownloadProcess implements Tasklet {
@@ -27,7 +28,7 @@ public class DailyDownloadProcess implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
 		
-		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 
 		logger.debug("START: Daily Download Details for Value Date: "+ DateUtility.addDays(dateValueDate,-1));		
 

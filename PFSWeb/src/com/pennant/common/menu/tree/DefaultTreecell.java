@@ -70,8 +70,10 @@ import org.zkoss.zul.Treecell;
 
 import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.endofday.main.BatchMonitor;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.common.menu.util.ILabelElement;
 import com.pennant.policy.model.UserImpl;
 import com.pennant.util.PennantAppUtil;
@@ -98,26 +100,30 @@ class DefaultTreecell extends Treecell implements EventListener<Event>, Serializ
 		/* This condition checks  whether current system time is between user signOnFrom to signOnTo time 
 		 * .if not show message box to prevent operations */
  		Component comp = event.getTarget();
+ 		
 		if(BatchMonitor.isEodRunning() && !comp.getId().contains("menu_Item_BatchAdmin")){
 			Clients.showNotification(Labels.getLabel("EOD_RUNNING"),  "info", null, null, -1);
+		}else if(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).equals(PennantConstants.APP_PHASE_EOD)
+				&& !comp.getId().contains("menu_Item_BatchAdmin")){
+	 		Clients.showNotification(Labels.getLabel("CHANGE_EOD_PHASE"),  "info", null, null, -1);
 		}else{
-		if(((securityUser.getUsrCanSignonFrom()!=null) && (securityUser.getUsrCanSignonTo()!=null))){
 
-			if((DateUtility.compareTime(new Date(System.currentTimeMillis()),securityUser.getUsrCanSignonFrom(), false)==-1)
-					|| DateUtility.compareTime( new Date(System.currentTimeMillis()),securityUser.getUsrCanSignonTo(), false)==1){
+			if(((securityUser.getUsrCanSignonFrom()!=null) && (securityUser.getUsrCanSignonTo()!=null))){
 
-				MultiLineMessageBox.show(Labels.getLabel("OPERATIONS_TIME"
-						,new String[]{PennantAppUtil.getTime(securityUser.getUsrCanSignonFrom()).toString()
-								,PennantAppUtil.getTime(securityUser.getUsrCanSignonTo()).toString()}),"",
-								MultiLineMessageBox.OK,MultiLineMessageBox.INFORMATION, true);		
+				if((DateUtility.compareTime(new Date(System.currentTimeMillis()),securityUser.getUsrCanSignonFrom(), false)==-1)
+						|| DateUtility.compareTime( new Date(System.currentTimeMillis()),securityUser.getUsrCanSignonTo(), false)==1){
+
+					MultiLineMessageBox.show(Labels.getLabel("OPERATIONS_TIME"
+							,new String[]{PennantAppUtil.getTime(securityUser.getUsrCanSignonFrom()).toString()
+									,PennantAppUtil.getTime(securityUser.getUsrCanSignonTo()).toString()}),"",
+									MultiLineMessageBox.OK,MultiLineMessageBox.INFORMATION, true);		
+				}else{
+					openPage();
+				}
 			}else{
-
 				openPage();
 			}
-		}else{
-			openPage();
 		}
-	}
 	}
 
 	private void openPage() throws InterruptedException{

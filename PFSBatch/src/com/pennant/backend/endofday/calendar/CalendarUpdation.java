@@ -63,6 +63,7 @@ import com.pennant.app.util.HolidayUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.model.ExecutionStatus;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
 
 public class CalendarUpdation implements Tasklet {
@@ -79,7 +80,7 @@ public class CalendarUpdation implements Tasklet {
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
 		//Date Parameter List
-		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 
 		logger.debug("START: CalendarUpdation for Value Date: "+ dateValueDate);
 		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
@@ -95,11 +96,11 @@ public class CalendarUpdation implements Tasklet {
 			//Value Date updation with Application Date
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
-			sqlStatement.setString(1, SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
-			sqlStatement.setString(2, "APP_VALUEDATE");
+			sqlStatement.setString(1, SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
+			sqlStatement.setString(2, PennantConstants.APP_DATE_VALUE);
 			sqlStatement.executeUpdate();
 
-			SystemParameterDetails.setParmDetails("APP_VALUEDATE", SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+			SystemParameterDetails.setParmDetails(PennantConstants.APP_DATE_VALUE, SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 
 			//Calendar Updation 
 			boolean isUpdated = getCalendarInterfaceService().calendarUpdate();
@@ -112,21 +113,21 @@ public class CalendarUpdation implements Tasklet {
 
 				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
 				sqlStatement.setString(1, DateUtility.formatUtilDate(calendar.getTime(),"yyyy-MM-dd"));
-				sqlStatement.setString(2, "APP_NEXT_BUS_DATE");
+				sqlStatement.setString(2, PennantConstants.APP_DATE_NEXT);
 				sqlStatement.executeUpdate();
 				
-				SystemParameterDetails.setParmDetails("APP_NEXT_BUS_DATE", nextBussDate);
+				SystemParameterDetails.setParmDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
 
 			}
 
 			//Update PHASE Parameter
 			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
-			sqlStatement.setString(1, "EOD");
-			sqlStatement.setString(2, "PHASE");
+			sqlStatement.setString(1, PennantConstants.APP_PHASE_EOD);
+			sqlStatement.setString(2, PennantConstants.APP_PHASE);
 			sqlStatement.executeUpdate();
 
 			//Reset System Parameter Value
-			SystemParameterDetails.setParmDetails("PHASE", "EOD");
+			SystemParameterDetails.setParmDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_EOD);
 
 		} catch (EquationInterfaceException e) {
 			logger.error(e);

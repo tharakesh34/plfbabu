@@ -7691,7 +7691,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		if (this.finStartDate.getValue() == null) {
-			this.finStartDate.setValue((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+			this.finStartDate.setValue((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		}
 
 		if (this.finContractDate.getValue() == null) {
@@ -14184,7 +14184,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		try{
 			long custid = getCustId();
 		if (custid != 0) {
-			Date appldate=(Date)SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date appldate=(Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			String appDate=DateUtility.formatUtilDate(appldate, PennantConstants.dateFormate);
 			if (custAgreementData == null) {
 				//Customer Data

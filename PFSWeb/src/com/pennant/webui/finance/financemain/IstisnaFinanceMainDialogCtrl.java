@@ -1053,7 +1053,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			DataSet dataSet = AEAmounts.createDataSet(finMain, eventCode, finMain.getFinStartDate(), finMain.getFinStartDate());
 
-			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
 					getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(), curBDay);
 
@@ -1071,14 +1071,14 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 				for (FinanceDisbursement disbursement : disbList) {
 					
 					//Stop Posting Process for future Disbursements
-					if(disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))){
+					if(disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))){
 						if("B".equals(disbursement.getDisbType())){
 							continue;						
 						}
 					}
 
 					if(eventCode.equals("")){
-						if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) {
+						if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) {
 							dataSet.setFinEvent("ADDDBSF");
 						} else {
 							dataSet.setFinEvent("ADDDBSP");

@@ -142,9 +142,8 @@ public class AEAmounts implements Serializable {
 			dateSuspPftTfr = DateUtility.getMonthStartDate(dateSuspPftTfr);
 		}
 
-		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(
-		        "PHASE").toString());
-		if (!phase.equals("DAY")) {
+		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).toString());
+		if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
 			isEOD = true;
 		}
 
@@ -853,7 +852,7 @@ public class AEAmounts implements Serializable {
 
 		if (eventCode.equals("")) {
 			if (financeMain.getFinStartDate().after(
-			        (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) {
+			        (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) {
 				dataSet.setFinEvent("ADDDBSF");
 			} else {
 				dataSet.setFinEvent("ADDDBSP");
@@ -864,7 +863,7 @@ public class AEAmounts implements Serializable {
 
 		dataSet.setFinBranch(financeMain.getFinBranch());
 		dataSet.setFinCcy(financeMain.getFinCcy());
-		dataSet.setPostDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+		dataSet.setPostDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		dataSet.setValueDate(dateValueDate);
 		dataSet.setSchdDate(dateSchdDate);
 		dataSet.setFinType(financeMain.getFinType());

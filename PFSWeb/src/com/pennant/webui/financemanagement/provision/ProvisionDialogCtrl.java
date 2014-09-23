@@ -612,7 +612,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-			Date appDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+			Date appDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 			aProvision.setProvisionCalDate(appDate);
 		}catch (WrongValueException we ) {
 			wve.add(we);

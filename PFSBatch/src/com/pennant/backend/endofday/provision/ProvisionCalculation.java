@@ -63,6 +63,7 @@ import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.EODProperties;
 
 public class ProvisionCalculation implements Tasklet {
@@ -82,7 +83,7 @@ public class ProvisionCalculation implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
-		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		
 		logger.debug("START: Provision Calculation for Value Date: "+ dateValueDate);
 		

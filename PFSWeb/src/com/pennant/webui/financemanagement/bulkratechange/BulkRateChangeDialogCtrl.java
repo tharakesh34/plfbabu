@@ -1516,7 +1516,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		Date appDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date appDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		try {
 			if(this.fromDate.getValue() != null  && (this.fromDate.getValue().compareTo(appDate) != -1)) {
 				

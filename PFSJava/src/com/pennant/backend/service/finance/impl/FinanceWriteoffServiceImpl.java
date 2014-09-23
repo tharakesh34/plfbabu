@@ -167,7 +167,7 @@ public class FinanceWriteoffServiceImpl  extends GenericService<FinanceMain>  im
 		FinanceMain financeMain = header.getFinanceMain();
 		
 		String finReference = financeMain.getFinReference();
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		if (financeMain.isWorkflow()) {
 			tableType = "_TEMP";
@@ -366,7 +366,7 @@ public class FinanceWriteoffServiceImpl  extends GenericService<FinanceMain>  im
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		
 		FinanceWriteoffHeader header = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		
 		//Execute Accounting Details Process
 		//=======================================
@@ -498,7 +498,7 @@ public class FinanceWriteoffServiceImpl  extends GenericService<FinanceMain>  im
 			
 			/*// Finance Disbursement Details
 			mapDateSeq = new HashMap<Date, Integer>();
-			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			for (int i = 0; i < scheduleData.getDisbursementDetails().size(); i++) {
 				scheduleData.getDisbursementDetails().get(i).setFinReference(scheduleData.getFinReference());
 				scheduleData.getDisbursementDetails().get(i).setDisbReqDate(curBDay);

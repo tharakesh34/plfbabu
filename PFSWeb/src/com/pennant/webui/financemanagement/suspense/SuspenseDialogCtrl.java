@@ -382,7 +382,7 @@ public class SuspenseDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finSuspDate.setValue(aSuspHead.getFinSuspDate());
 		this.finSuspTrfDate.setValue(aSuspHead.getFinSuspTrfDate());
 		if(aSuspHead.getFinSuspDate() == null){
-			Date appDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date appDate = (Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			this.finSuspDate.setValue(appDate);
 			this.finSuspTrfDate.setValue(appDate);
 		}

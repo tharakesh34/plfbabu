@@ -418,7 +418,7 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 
 	private InvestmentFinHeader getTrasuryFinHeader(InvestmentFinHeader treasuaryFinHeader) {
 		treasuaryFinHeader.setInvestmentRef(String.valueOf(PennantReferenceIDUtil.genInvetmentNewRef()));
-		treasuaryFinHeader.setStartDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+		treasuaryFinHeader.setStartDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		return treasuaryFinHeader;
 	}
 

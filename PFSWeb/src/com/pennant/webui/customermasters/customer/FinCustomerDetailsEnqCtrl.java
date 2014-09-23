@@ -187,7 +187,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl implements Serializab
 
 	public void loadData() {
 		try {
-			Date appldate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date appldate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			if (custid != 0) {
 				boolean isCustomerChanged = false;
 				if (custAgreementData == null) {

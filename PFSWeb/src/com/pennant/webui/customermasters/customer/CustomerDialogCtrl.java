@@ -1164,9 +1164,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 			if (this.custDOB.getValue() != null) {
 				if (!this.custDOB.getValue().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE"))) {
 					throw new WrongValueException(this.custDOB, Labels.getLabel("DATE_ALLOWED_AFTER", new String[] { Labels.getLabel("label_CustomerDialog_CustDOB.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
-				}else if (this.custDOB.getValue().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) {
+				}else if (this.custDOB.getValue().after((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) {
 					throw new WrongValueException(this.custDOB, Labels.getLabel("DATE_ALLOWED_BEFORE", new String[] { Labels.getLabel("label_CustomerDialog_CustDOB.value"), 
-							SystemParameterDetails.getSystemParameterValue("APP_DATE").toString() }));
+							SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString() }));
 				}
 				aCustomer.setCustDOB(new Timestamp(this.custDOB.getValue().getTime()));
 			}

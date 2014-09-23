@@ -12,6 +12,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.DataPurgingProcess;
 
 public class AuditDataPurgingTaskLet implements Tasklet{
@@ -22,7 +23,7 @@ public class AuditDataPurgingTaskLet implements Tasklet{
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		//Date Parameter List
-		Date	dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		Date	dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		
 		logger.debug("START: Audit Data Purging for Value Date: "+ dateValueDate);
 		try {

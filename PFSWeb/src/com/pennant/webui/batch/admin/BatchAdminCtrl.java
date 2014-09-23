@@ -196,9 +196,9 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 	}
 
 	private void setDates() {
-		lable_Value_Date.setValue(DateUtility.formatUtilDate((Date)SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE"), PennantConstants.dateFormate));
-		lable_NextBusiness_Date.setValue(DateUtility.formatUtilDate((Date)SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE"), PennantConstants.dateFormate));
-		lable_LastBusiness_Date.setValue(DateUtility.formatUtilDate((Date)SystemParameterDetails.getSystemParameterValue("APP_LAST_BUS_DATE"), PennantConstants.dateFormate));
+		lable_Value_Date.setValue(DateUtility.formatUtilDate((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE), PennantConstants.dateFormate));
+		lable_NextBusiness_Date.setValue(DateUtility.formatUtilDate((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_NEXT), PennantConstants.dateFormate));
+		lable_LastBusiness_Date.setValue(DateUtility.formatUtilDate((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_LAST), PennantConstants.dateFormate));
 	}
 
 	private void setRunningStatus() {
@@ -270,7 +270,7 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 		
 		String msg = "";
 		if ("Start".equals(this.btnStartJob.getLabel())) {
-			args[0] = DateUtility.formatDate((Date) SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE"),  PennantConstants.dateFormat);
+			args[0] = DateUtility.formatDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_NEXT),  PennantConstants.dateFormat);
 			msg = Labels.getLabel("labe_start_job", args);
 		} else {
 			msg = Labels.getLabel("labe_reStart_job");
@@ -289,7 +289,7 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 			this.processMap.clear();
 			
 			if ("Start".equals(this.btnStartJob.getLabel())) {
-				args[0] = DateUtility.formatDate((Date) SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE"),  PennantConstants.dateFormat);
+				args[0] = DateUtility.formatDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_NEXT),  PennantConstants.dateFormat);
 				PFSBatchAdmin.setArgs(args);
 				PFSBatchAdmin.setRunType("START");
 				resetPanels();

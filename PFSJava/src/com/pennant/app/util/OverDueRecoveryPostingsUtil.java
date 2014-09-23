@@ -176,14 +176,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				amountCodes.setPENALTY(penaltyPaidNow);
 				amountCodes.setWAIVER(waiverAmt);
 				
-				String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("PHASE").toString());
+				String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).toString());
 				boolean isEODProcess = false;
-				if (!phase.equals("DAY")) {
+				if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
 					isEODProcess = true;
 				}
 
 				// Accounting Set Execution to get Posting Details List
-				Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+				Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 				List<Object> resultList = getPostingsPreparationUtil().processPostingDetails(
 						dataSet, amountCodes, isEODProcess, isRIAFinance, "Y", dateAppDate, false, linkedTranId);
 

@@ -79,7 +79,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl{
 		logger.debug("Entering : "+event);
 		
 		if("".equals(AccrualProcess.ACC_RUNNING)) {
-			this.valueDate.setValue(DateUtility.getMonthEndDate(DateUtility.getDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString(), PennantConstants.DBDateFormat)));
+			this.valueDate.setValue(DateUtility.getMonthEndDate(DateUtility.getDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString(), PennantConstants.DBDateFormat)));
 			this.valueDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_ProjectedProfitDetails_valueDate.value") }));
 		}
 		
@@ -237,7 +237,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl{
 		reportArgumentsMap.put("userName", usrName);
 		reportArgumentsMap.put("reportHeading", reportConfiguration.getReportHeading());
 		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
-		reportArgumentsMap.put("appDate", DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString()));
+		reportArgumentsMap.put("appDate", DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString()));
 		reportArgumentsMap.put("appCcy", (String)SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR"));
 		reportArgumentsMap.put("appccyEditField", Integer.parseInt((String)SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR_EDIT_FIELD")));
 

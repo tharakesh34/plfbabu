@@ -135,13 +135,13 @@ public class SuspensePostingUtil implements Serializable {
 		dataSet.setNewRecord(false);
 		
 		boolean isEODProcess = false;
-		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("PHASE").toString());
-		if (!phase.equals("DAY")) {
+		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).toString());
+		if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
 			isEODProcess = true;
 		}
 
 		//Postings Preparation
-		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 		List<Object> result = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes,
 				isEODProcess ,isRIAFinance,  "Y", dateAppDate,false, Long.MIN_VALUE);
 		isPostingSuccess = (Boolean)result.get(0);
@@ -254,7 +254,7 @@ public class SuspensePostingUtil implements Serializable {
 		dataSet.setNewRecord(false);
 
 		//Postings Preparation
-		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 		linkedTranId = (Long) getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes,
 				isEODProcess, isRIAFinance, "Y", dateAppDate, false, Long.MIN_VALUE).get(1);
 
@@ -314,7 +314,7 @@ public class SuspensePostingUtil implements Serializable {
 
 			//Suspend Amount Calculation
 			if (suspFromDate.compareTo(DateUtility.getDBDate(SystemParameterDetails
-					.getSystemParameterValue("APP_VALUEDATE").toString())) > 0 && !suspHead.isManualSusp()) {
+					.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString())) > 0 && !suspHead.isManualSusp()) {
 				suspAmtToMove = suspHead.getFinCurSuspAmt();
 				isInSuspNow = false;
 			} else {
@@ -337,7 +337,7 @@ public class SuspensePostingUtil implements Serializable {
 		amountCodes.setSUSPRLS(suspAmtToMove);
 
 		//Postings Preparation
-		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 		linkedTranId = (Long) getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, isEODProcess, 
 				 isRIAFinance, "Y", dateAppDate,false, Long.MIN_VALUE).get(1);
 
@@ -352,7 +352,7 @@ public class SuspensePostingUtil implements Serializable {
 		//Finance Suspend Details Record Insert
 		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspAmtToMove, 1,
 				DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(
-						"APP_VALUEDATE").toString()), odDate, "R", suspFromDate, linkedTranId);
+						PennantConstants.APP_DATE_VALUE).toString()), odDate, "R", suspFromDate, linkedTranId);
 		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
 
 		logger.debug("Leaving");

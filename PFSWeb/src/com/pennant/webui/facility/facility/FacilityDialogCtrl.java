@@ -366,7 +366,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.collateralsFromEquation = collaterals;
 	}
 	
-	Date appldate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date appldate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 	int ccyFormat=0;
 	private BigDecimal countryLimitEQ=BigDecimal.ZERO;

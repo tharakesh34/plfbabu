@@ -470,7 +470,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			if(detail == null){
 				logger.debug("Log Entry Details Missing. Cancellation process for Manual Reversal Payment Process");
 				
-				Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+				Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 				
 				detail = new FinLogEntryDetail();
 				detail.setFinReference(finReference);
@@ -734,7 +734,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			BigDecimal postAmount, long linkedtranId){
 
 		CommitmentMovement movement = new CommitmentMovement();
-		Date curBussDate =(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate =(Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		movement.setCmtReference(commitment.getCmtReference());
 		movement.setFinReference(financeMain.getFinReference());
@@ -833,7 +833,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		for (int i = 0; i < finDetail.getDisbursementDetails().size(); i++) {
 			finDetail.getDisbursementDetails().get(i).setFinReference(finDetail.getFinanceMain().getFinReference());
 			finDetail.getDisbursementDetails().get(i).setDisbReqDate(curBDay);

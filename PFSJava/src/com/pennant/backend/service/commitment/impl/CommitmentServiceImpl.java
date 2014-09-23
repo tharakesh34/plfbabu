@@ -864,7 +864,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		try {
 			
 			//Preparation for Commitment Postings
-			Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+			Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 			if (PennantConstants.MNTCMT.equals(event)) {
 				Commitment prvCommitment =  getCommitmentDAO().getCommitmentById(commitment.getId(), "");
 				BigDecimal diffAmount=commitment.getCmtAmount().subtract(prvCommitment.getCmtAmount());

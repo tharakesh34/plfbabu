@@ -63,6 +63,7 @@ import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 
 public class ProvisionCalculationUtil implements Serializable {
@@ -190,7 +191,7 @@ public class ProvisionCalculationUtil implements Serializable {
 			boolean isPostingsSuccess = true;
 			if(isScrnLvlProc && movement != null){
 				amountCodes.setPROVDUE(movement.getProvisionDue() == null ? BigDecimal.ZERO : movement.getProvisionDue());
-				Date dateAppDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+				Date dateAppDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 				
 				returnList = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, false,
 						isRIAFinance, "Y", dateAppDate,false, Long.MIN_VALUE);
@@ -297,7 +298,7 @@ public class ProvisionCalculationUtil implements Serializable {
 		provision.setProvisionCalDate(valueDate);
 		provision.setPrincipalDue(aeAmountCodes.getPriAB());
 		provision.setProfitDue(aeAmountCodes.getPftAB());
-		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		provision.setDueFromDate(DateUtility.addDays(curBussDate, -aeAmountCodes.getODDays()));
 		provision.setLastFullyPaidDate(DateUtility.addDays(curBussDate, -aeAmountCodes.getDaysFromFullyPaid()));
 

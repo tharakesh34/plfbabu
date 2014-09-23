@@ -1016,7 +1016,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			DataSet dataSet = AEAmounts.createDataSet(finMain, eventCode, finMain.getFinStartDate(), finMain.getFinStartDate());
 
-			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
 					getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(), curBDay);
 
@@ -1033,7 +1033,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 					if(disbursement.getDisbAmount().compareTo(BigDecimal.ZERO) > 0){
 						
 						if(eventCode.equals("")){
-							if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) {
+							if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) {
 								dataSet.setFinEvent("ADDDBSF");
 							} else {
 								dataSet.setFinEvent("ADDDBSP");
@@ -1086,7 +1086,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 				getAccountingDetailDialogCtrl().doFillCmtAccounting(getFinanceDetail().getCmtDataSetList(), commitment.getCcyEditField());
 			}
 		
-			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			if(finMain != null && StringUtils.trimToEmpty(finMain.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)){
 				if(finMain.getGrcPeriodEndDate() != null && finMain.getGrcPeriodEndDate().compareTo(curBDay) <= 0){

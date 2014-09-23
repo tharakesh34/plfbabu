@@ -1555,7 +1555,7 @@ public class DealFinanceDialogCtrl extends DealFinanceBaseCtrl implements Serial
 		}
 
 		DataSet dataSet = AEAmounts.createDataSet(financeMain, eventCode, financeMain.getFinStartDate(), financeMain.getFinStartDate());
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		amountCodes = AEAmounts.procAEAmounts(financeMain, financeScheduleDetails, new FinanceProfitDetail(), curBDay);
 
 		setAmountCodes(amountCodes);

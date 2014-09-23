@@ -951,7 +951,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("Entering");
 		OverdueChargeRecovery recovery = new OverdueChargeRecovery();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ocr);
-		//Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		//Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		StringBuilder selectSql = new StringBuilder("Select ");
 		selectSql.append(" (SUM(PrincipalSchd) + SUM(DefPrincipalSchd) - SUM (SchdPriPaid) - SUM(DefSchdPriPaid)) as lovDescCurSchPriDue,");
 		selectSql.append(" (SUM(ProfitSchd) + SUM(DefProfitSchd) - SUM (SchdPftPaid) - SUM(DefSchdPftPaid)) as lovDescCurSchPftDue");

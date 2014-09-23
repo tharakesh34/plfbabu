@@ -317,7 +317,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//Finance Accounting Fee Charge Details
 		String eventCode = "";
-		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		if (startDate.after(curBussDate)) {
 			eventCode = "ADDDBSF";
 		} else {
@@ -558,7 +558,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		if (StringUtils.trimToEmpty(eventCode).equals("")) {
-			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 			if (financeMain.getFinStartDate().after(curBussDate)) {
 				eventCode = "ADDDBSF";
@@ -714,7 +714,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finReference = financeMain.getFinReference();
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		if (financeMain.isWorkflow()) {
 			tableType = "_TEMP";
@@ -1090,7 +1090,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		//Execute Accounting Details Process
 		//=======================================
@@ -2054,7 +2054,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			eligibilityCheck.setReqFinAmount(finAmount);
 
-			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			eligibilityCheck.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate,
 					customer.getCustBlackListDate()));
 
@@ -2164,7 +2164,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			eligibilityCheck.setReqFinAmount(finAmount);
 
-			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			eligibilityCheck.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate,
 					customer.getCustBlackListDate()));
 
@@ -2435,7 +2435,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (summaryRequired) {
 
 			//Finance Summary Details Preparation
-			final Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			final Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			FinanceSummary summary = new FinanceSummary();
 			summary.setFinReference(financeMain.getFinReference());
 			summary.setSchDate(curBussDate);
@@ -2763,7 +2763,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (customerLimitList != null && customerLimitList.size() > 0) {
 
-			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			String limitType = "";
 			
 			BigDecimal finAmount =  financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
@@ -3076,7 +3076,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		String eventCode = "";
-		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		if (financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate().after(curBussDate)) {
 			eventCode = "ADDDBSF";
 		} else {

@@ -53,6 +53,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.app.eod.service.AmortizationService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.util.PennantConstants;
 
 public class AmortizationCalculation implements Tasklet {
 	
@@ -64,7 +65,7 @@ public class AmortizationCalculation implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
-		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 			
 		logger.debug("START: Amortization Caluclation for Value Date: "+ dateValueDate);		
 		

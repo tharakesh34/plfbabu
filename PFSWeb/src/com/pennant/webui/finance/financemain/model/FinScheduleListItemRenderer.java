@@ -166,7 +166,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 		
 		if(accrueValue != null){
 
-			Date lastAccrueDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date lastAccrueDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			if((!lastRec && lastAccrueDate.compareTo(prvSchDetail.getSchDate()) > 0 && 
 					lastAccrueDate.compareTo(getFinanceScheduleDetail().getSchDate()) < 0)  || 
 					(lastRec && lastAccrueDate.compareTo(getFinanceScheduleDetail().getSchDate()) > 0)){

@@ -512,7 +512,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
 		
-		Date curBussDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		boolean curTermExcluded = false;
 		
 		totalAlwRpyAmt = BigDecimal.ZERO;

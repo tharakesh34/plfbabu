@@ -567,7 +567,7 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 				}else{
 					
 					Date date = DateUtility.getUtilDate(orgData.getCmtExpDate(),PennantConstants.DBDateTimeFormat1);
-					if(date.compareTo((Date)SystemParameterDetails.getSystemParameterValue("APP_DATE")) < 0){
+					if(date.compareTo((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR)) < 0){
 						orgData.setCmtExpFlag("T");
 					}
 					

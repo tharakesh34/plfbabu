@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2011 - Pennant Technologies
  * 
@@ -675,7 +676,7 @@ public class LoanEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> implemen
 		}else if("ACTFIN".equals(value)){
 			this.searchObj.addFilter(new Filter("FinIsActive", 1, Filter.OP_EQUAL));
 		}else if("MATFIN".equals(value)){
-			this.searchObj.addFilter(new Filter("MaturityDate", SystemParameterDetails.getSystemParameterValue("APP_DATE"), Filter.OP_LESS_THAN));
+			this.searchObj.addFilter(new Filter("MaturityDate", SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR), Filter.OP_LESS_THAN));
 		}else if("ODCFIN".equals(value)){
 			List<String> list = getOverdueChargeRecoveryService().getOverDueFinanceList();
 			if(list != null && list.size() > 0){

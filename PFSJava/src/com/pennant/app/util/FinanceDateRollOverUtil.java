@@ -1,3 +1,5 @@
+
+
 /**
  * Copyright 2011 - Pennant Technologies
  * 
@@ -86,8 +88,8 @@ public class FinanceDateRollOverUtil implements Serializable {
 
 	private static FinanceMain changeRepayDates(FinanceMain financeMain) {
 
-		if (financeMain.getNextRepayDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE")) >= 0
-		        && financeMain.getNextRepayDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE")) < 0) {
+		if (financeMain.getNextRepayDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR)) >= 0
+		        && financeMain.getNextRepayDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_NEXT)) < 0) {
 
 			financeMain.setLastRepayDate(financeMain.getNextRepayDate());
 			Date nextdate = FrequencyUtil.getNextDate(financeMain.getRepayFrq(), 1, financeMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
@@ -98,8 +100,8 @@ public class FinanceDateRollOverUtil implements Serializable {
 	}
 
 	private static FinanceMain changeProfitDates(FinanceMain financeMain) {
-		if (financeMain.getNextRepayPftDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE")) >= 0
-		        && financeMain.getNextRepayPftDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE")) < 0) {
+		if (financeMain.getNextRepayPftDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR)) >= 0
+		        && financeMain.getNextRepayPftDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_NEXT)) < 0) {
 
 			financeMain.setLastRepayPftDate(financeMain.getNextRepayPftDate());
 			Date nextdate = FrequencyUtil.getNextDate(financeMain.getRepayPftFrq(), 1, financeMain.getNextRepayPftDate(), HolidayHandlerTypes.MOVE_NONE, false)
@@ -111,8 +113,8 @@ public class FinanceDateRollOverUtil implements Serializable {
 	}
 
 	private static FinanceMain changeReviewDates(FinanceMain financeMain) {
-		if (financeMain.getNextRepayRvwDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE")) >= 0
-		        && financeMain.getNextRepayRvwDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE")) < 0) {
+		if (financeMain.getNextRepayRvwDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR)) >= 0
+		        && financeMain.getNextRepayRvwDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_NEXT)) < 0) {
 
 			financeMain.setLastRepayRvwDate(financeMain.getNextRepayRvwDate());
 			Date nextdate = FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1, financeMain.getNextRepayRvwDate(), HolidayHandlerTypes.MOVE_NONE, false)
@@ -124,8 +126,8 @@ public class FinanceDateRollOverUtil implements Serializable {
 	}
 
 	private static FinanceMain changeCaptalizationDates(FinanceMain financeMain) {
-		if (financeMain.getNextRepayCpzDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE")) >= 0
-		        && financeMain.getNextRepayCpzDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue("APP_NEXT_BUS_DATE")) < 0) {
+		if (financeMain.getNextRepayCpzDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR)) >= 0
+		        && financeMain.getNextRepayCpzDate().compareTo((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_NEXT)) < 0) {
 
 			financeMain.setLastRepayCpzDate(financeMain.getNextRepayCpzDate());
 			Date nextdate = FrequencyUtil.getNextDate(financeMain.getRepayCpzFrq(), 1, financeMain.getNextRepayCpzDate(), HolidayHandlerTypes.MOVE_NONE, false)

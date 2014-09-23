@@ -504,7 +504,7 @@ public class DSRCalculationReportData implements Serializable{
 		reportData.setCustName(detail.getCustomer().getCustShrtName());
 		reportData.setCustCRCPR(detail.getCustomer().getCustCRCPR());
 		reportData.setAppDate(PennantApplicationUtil.formateDate((Date) SystemParameterDetails
-				.getSystemParameterValue("APP_DATE"), PennantConstants.dateFormate));
+				.getSystemParameterValue(PennantConstants.APP_DATE_CUR), PennantConstants.dateFormate));
 		reportData.setEmpStatus(detail.getCustomer().getLovDescCustEmpStsName());
 		reportData.setJointCust(detail.getCustomer().isJointCust() ? "True" : "False");
 		

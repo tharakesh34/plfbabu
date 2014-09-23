@@ -297,8 +297,8 @@ public class AccountEngineExecution implements Serializable {
 		String accountingSetId = getAccSetId(dataSet.getFinEvent(), finType);
 
 		List<TransactionEntry> transactionEntries = null;
-		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("PHASE").toString());
-		if (phase.equals("DAY")) {
+		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).toString());
+		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
 			transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(Long.valueOf(accountingSetId), "_AEView",true);
 		}else{
 			transactionEntries = EODProperties.getTransactionEntryList(Long.valueOf(accountingSetId));
@@ -592,9 +592,9 @@ public class AccountEngineExecution implements Serializable {
 		resetVariables();
 		
 		dataSetFiller = new DataSetFiller();
-		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("PHASE").toString());
+		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).toString());
 		boolean isEODProcess = false;
-		if (phase.equals("EOD")) {
+		if (phase.equals(PennantConstants.APP_PHASE_EOD)) {
 			isEODProcess = true;
 		}
 		
@@ -856,12 +856,12 @@ public class AccountEngineExecution implements Serializable {
 		
 		List<ReturnDataSet> newEntries = new ArrayList<ReturnDataSet>(2);
 		String actTranType = existDataSet.getDrOrCr();
-		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("PHASE").toString());
+		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).toString());
 		String finCcyNum = "";
 		String acCcyNum = "";
 		int formatter = 0;
 		
-		if(phase.equals("EOD")){
+		if(phase.equals(PennantConstants.APP_PHASE_EOD)){
 			finCcyNum = EODProperties.getCcyNumber(dataSet.getFinCcy());
 			acCcyNum = EODProperties.getCcyNumber(acCcy);
 		}else{
@@ -1085,7 +1085,7 @@ public class AccountEngineExecution implements Serializable {
 				
 				dataSetFiller.setFACEVAL(premiumDetail.getFaceValue().multiply(new BigDecimal(premiumDetail.getNoOfUnits())));
 				dataSetFiller.setPRMVALUE(dataSet.getFinAmount().subtract(dataSetFiller.getFACEVAL()));
-				Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+				Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 				int totalDays = DateUtility.getDaysBetween(dataSet.getMaturityDate(), premiumDetail.getPurchaseDate());
 				int curPrmDays = DateUtility.getDaysBetween(curBussDate, premiumDetail.getPurchaseDate());
 				
@@ -1408,9 +1408,9 @@ public class AccountEngineExecution implements Serializable {
 	private String generateAccount(DataSet dataSet, String accountType, boolean isBuildAc, String subHeadRuleCode,
 			String dbOrCr) throws IllegalAccessException, InvocationTargetException{
 		
-		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("PHASE").toString());
+		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).toString());
 		boolean isEODProcess = false;
-		if (phase.equals("EOD")) {
+		if (phase.equals(PennantConstants.APP_PHASE_EOD)) {
 			isEODProcess = true;
 		}
 		

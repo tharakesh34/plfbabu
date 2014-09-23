@@ -396,7 +396,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	BigDecimal	                         oldCmtAmount	         = BigDecimal.ZERO;
 	protected Label	                     labelCustIDName;
 	public int	                       borderLayoutHeight	= 0;
-	Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+	Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 
 	private long custIDTemp = Long.MIN_VALUE;
 	

@@ -175,7 +175,7 @@ public class RateUtil implements Serializable {
 		rate.setBaseRateCode(baseRateCode);
 		rate.setSplRateCode(splRateCode);
 		rate.setMargin(margin);
-		rate.setValueDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+		rate.setValueDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		logger.debug("Leaving");
 		return getRefRate(rate);
 	}

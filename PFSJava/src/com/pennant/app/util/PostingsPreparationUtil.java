@@ -398,7 +398,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		CommitmentMovement movement = new CommitmentMovement();
 		
-		Date curBussDate =(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate =(Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		movement.setCmtReference(commitment.getCmtReference());
 		movement.setFinReference(dataSet.getFinReference());

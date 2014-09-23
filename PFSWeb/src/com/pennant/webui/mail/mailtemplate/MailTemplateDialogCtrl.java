@@ -1795,8 +1795,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl implements Serializable 
 
 			Map<String, Object> model = new HashMap<String, Object>();
 			FinanceMain fm = new FinanceMain();
-			fm.setMaturityDate((Date) SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE"));
-			fm.setFinStartDate((Date) SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE"));
+			fm.setMaturityDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE));
+			fm.setFinStartDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE));
 			model.put("vo", fm);
 
 			FreeMarkerTemplateUtils.processTemplateIntoString(template, model);

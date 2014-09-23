@@ -427,7 +427,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> im
 			}
 			
 			//Fetch Fee Charge Details List
-			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			this.financeDetail.setFeeCharges(getFinanceDetailService().getFeeRuleDetails(this.financeDetail.getFinScheduleData().getFinanceType(), 
 					curBussDate, true));	
 			

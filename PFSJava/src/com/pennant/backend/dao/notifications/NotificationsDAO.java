@@ -14,6 +14,7 @@
 package com.pennant.backend.dao.notifications;
 
 import java.util.List;
+
 import com.pennant.backend.model.rulefactory.Notifications;
 
 

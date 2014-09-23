@@ -212,10 +212,10 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 		//Fill Amount Code Detail Object with Respect to Schedule Details
 		String accountingSetId = prepareAmountCodes(dataSet, aeAmountCodes, riaDetailList);
-		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("PHASE").toString());
+		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).toString());
 		
 		List<TransactionEntry> transactionEntries = null;
-		if (phase.equals("DAY")) {
+		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
 			transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(Long.valueOf(accountingSetId), "_AEView", true);
 		} else {
 			transactionEntries = EODProperties.getTransactionEntryList(Long.valueOf(accountingSetId));

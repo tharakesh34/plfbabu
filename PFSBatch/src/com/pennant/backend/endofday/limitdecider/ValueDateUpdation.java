@@ -58,6 +58,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.util.PennantConstants;
 
 public class ValueDateUpdation implements Tasklet {
 	
@@ -70,7 +71,7 @@ public class ValueDateUpdation implements Tasklet {
 	@SuppressWarnings("serial")
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
-		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 
 		logger.debug("START: Updation of ValueDate on Value Date: "+ dateValueDate);
 		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
@@ -83,11 +84,11 @@ public class ValueDateUpdation implements Tasklet {
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
 			sqlStatement.setString(1,  DateUtility.addDays(dateValueDate, 1).toString());
-			sqlStatement.setString(2,  "APP_VALUEDATE");
+			sqlStatement.setString(2,  PennantConstants.APP_DATE_VALUE);
 			sqlStatement.executeUpdate();
 			
 			//Value Date Updation 
-			SystemParameterDetails.setParmDetails("APP_VALUEDATE", DateUtility.addDays(dateValueDate, 1).toString());
+			SystemParameterDetails.setParmDetails(PennantConstants.APP_DATE_VALUE, DateUtility.addDays(dateValueDate, 1).toString());
 			
 			//PURGING_PROCESS Value Updation Based On Month End
 			Date monthEndDate  = DateUtility.getMonthEndDate(dateValueDate);

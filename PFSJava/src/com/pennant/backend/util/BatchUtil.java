@@ -38,8 +38,8 @@ public class BatchUtil {
 		}
 
 		EXECUTING.setExecutionName(stepExecution.getStepName());
-		EXECUTING.setValueDate((Date)SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE"));
-		stepExecution.getExecutionContext().put("VDATE", (Date)SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE"));
+		EXECUTING.setValueDate((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE));
+		stepExecution.getExecutionContext().put("VDATE", (Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE));
 		
 		if(!"INFO".equals(key)) {
 			if(value != null) {

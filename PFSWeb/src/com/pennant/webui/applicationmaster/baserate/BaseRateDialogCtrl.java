@@ -502,7 +502,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}catch(WrongValueException we ){
 			wve.add(we);
 		}
-		aBaseRate.setLastMdfDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+		aBaseRate.setLastMdfDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		
 		
 		doRemoveValidation();
@@ -737,7 +737,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * Method for BaseRate Date Validation
 	 */
 	public void dateValidation(){
-		Date curBussniessDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussniessDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		int daysBackward = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("BVRC").toString());
 		Date dateBackward = DateUtility.addDays(curBussniessDate, (daysBackward * (-1)));
 		

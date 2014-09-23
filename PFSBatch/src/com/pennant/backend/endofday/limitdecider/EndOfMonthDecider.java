@@ -52,6 +52,7 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.util.PennantConstants;
 
 public class EndOfMonthDecider implements JobExecutionDecider {
 	
@@ -64,7 +65,7 @@ public class EndOfMonthDecider implements JobExecutionDecider {
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
 		logger.debug("Entering");
 		try{
-			dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+			dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 			monthEndDate  = DateUtility.getMonthEndDate(dateValueDate);
 			if(dateValueDate.compareTo(monthEndDate) == 0){
 				return new FlowExecutionStatus("EndOfMonth");

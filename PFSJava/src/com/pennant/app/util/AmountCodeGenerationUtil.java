@@ -1,3 +1,4 @@
+
 /*package com.pennant.app.util;
 
 import java.math.BigDecimal;
@@ -139,7 +140,7 @@ public class AmountCodeGenerationUtil {
 		}
 		dataSet.setFinBranch(financeMain.getFinBranch());
 		dataSet.setFinCcy(financeMain.getFinCcy());
-		dataSet.setPostDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+		dataSet.setPostDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		dataSet.setValueDate(financeMain.getFinStartDate());
 		dataSet.setSchdDate(financeMain.getFinStartDate());		
 		dataSet.setFinType(financeMain.getFinType());		

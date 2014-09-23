@@ -51,7 +51,6 @@ public class PennantConstants {
  	public static final int DatabaseSystem = 1;
  	public static final String applicationCode = "PLF";
  	public static final String default_Language = "EN";
- 	public static final String default_LanguageDesc = "English";
 	public static final int searchGridSize = 10;
 	public static final int listGridSize = 5;
 	public static final String List_Select = "#";
@@ -171,7 +170,6 @@ public class PennantConstants {
 	public static final String KEY_SEPERATOR = "-";
 
 	//Regular Expression Constants
-	public static final String PATH_REGEX = "^\\S[a-zA-Z0-9\\/\\-\\s\\,\\:\\.]*";//Need to think & remove TODO
 	public static final String PPT_VISA_REGEX = "[A-Za-z0-9]*";//Need to think & remove TODO
 	public static final String TRADE_LICENSE_REGEX = "^\\w((((\\/?[A-Za-z0-9\\s]+)*)|((\\\\?[A-Za-z0-9\\s]+))*)?)";//Need to think & remove TODO
 	public static final String VISA_REGEX = "^\\S[A-Za-z0-9]*";//Need to think & remove TODO
@@ -311,7 +309,6 @@ public class PennantConstants {
 
 	//SMT Parameter Values
 	public static final String APP_PHASE = "PHASE";
-	public static final String APP_PHASE_SOD = "SOD";
 	public static final String APP_PHASE_EOD = "EOD";
 	public static final String APP_PHASE_DAY = "DAY";
 	public static final String APP_DATE_CUR = "APP_DATE";
@@ -610,16 +607,10 @@ public class PennantConstants {
 	//Early Settlement Agreement Codes
 	public static final String EARLYSTL_AGGCODE = "'INSRELEASELETTER', 'TRAFFICRELEASELETTER'";
 	
-	// SecurityUserDivBranch
-	public static final String SEC_USR_DIV_BRANCH = "SecurityUserDivBranch";
-	public static final String PRODUCTCODE = "ProductCode";
-	public static final String FIN_TYPE = "FinType";
-	
 	// Finance Postings
 	public static final String Posting_success= "Success";
 	public static final String InProgress= "In Progress";
 	public static final String Posting_fail="Failed";
-	public static final String SUCCESS_CODE ="0";
 	public static final String MODULETYPE_ENQ ="ENQ";
 	public static final String MODULETYPE_REPOSTING ="REPOSTING";
 	

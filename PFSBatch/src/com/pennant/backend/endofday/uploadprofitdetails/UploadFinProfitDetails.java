@@ -12,6 +12,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.app.eod.service.UploadFinPftDetailService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.util.PennantConstants;
 
 public class UploadFinProfitDetails implements Tasklet {
 	private Logger logger = Logger.getLogger(UploadFinProfitDetails.class);
@@ -25,7 +26,7 @@ public class UploadFinProfitDetails implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
 		
-		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 
 		logger.debug("START: Upload Profit Details for Value Date: "+ dateValueDate);		
 

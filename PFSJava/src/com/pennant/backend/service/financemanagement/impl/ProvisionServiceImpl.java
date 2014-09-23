@@ -180,7 +180,7 @@ public class ProvisionServiceImpl extends GenericService<Provision> implements P
 			//Check Finance is RIA Finance Type or Not
 			boolean isRIAFinance = getFinanceTypeDAO().checkRIAFinance(provision.getFinType());
 
-			Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+			Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 			getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, isRIAFinance);
 		}else{
 
@@ -309,7 +309,7 @@ public class ProvisionServiceImpl extends GenericService<Provision> implements P
 		provision.setWorkflowId(0);
 
 		//Provision Postings Process
-		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, isRIAFinance);
 
 		getProvisionDAO().delete(provision,"_Temp");

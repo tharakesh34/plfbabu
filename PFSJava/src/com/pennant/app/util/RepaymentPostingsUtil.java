@@ -361,7 +361,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Entering");
 		List<Object> actReturnList = new ArrayList<Object>();
 
-		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		Date valueDate = dateValueDate;
 
 		//Overdue Recovery Postings
@@ -443,7 +443,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Entering");
 		
 		List<Object> actReturnList = new ArrayList<Object>();
-		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		
 		Map<String,FinanceScheduleDetail> scheduleMap = new HashMap<String, FinanceScheduleDetail>();
 		for (FinanceScheduleDetail detail : scheduleDetails) {
@@ -615,7 +615,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setRefund(repayDetailMap.get("totRefund"));
 		amountCodes.setInsRefund(repayDetailMap.get("INSREFUND"));
 
-		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+		Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 		List<Object> resultList = getPostingsPreparationUtil().processPostingDetailsWithFee(dataSet,
 		        amountCodes, isEODProcess,isRIAFinance, "Y", dateAppDate, true, linkedTranId, feeRuleDetailMap);
 		
@@ -841,7 +841,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		logger.debug("Entering");
 		FinanceRepayments repayment = new FinanceRepayments();
-		Date curAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+		Date curAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 
 		repayment.setFinReference(queue.getFinReference());
 		repayment.setFinSchdDate(queue.getRpyDate());

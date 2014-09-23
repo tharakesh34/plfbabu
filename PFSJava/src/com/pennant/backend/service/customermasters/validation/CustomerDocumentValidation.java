@@ -240,11 +240,11 @@ public class CustomerDocumentValidation {
 		}
 		
 		if(!customerDocument.getCustDocExpDate().after((Date) SystemParameterDetails
-				.getSystemParameterValue("APP_DATE"))){
+				.getSystemParameterValue(PennantConstants.APP_DATE_CUR))){
 			return	new ErrorDetails(PennantConstants.KEY_FIELD,"E0039", 
 					new String[] {Labels.getLabel("DocumentDetails"),
 					Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
-					DateUtility.formatUtilDate((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"), PennantConstants.dateFormat)}, 
+					DateUtility.formatUtilDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR), PennantConstants.dateFormat)}, 
 					new String[] {});	
 		}
 

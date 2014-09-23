@@ -83,6 +83,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.customermasters.FinCreditRevSubCategoryService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -131,7 +132,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseListCtrl<Finance
 	private    CreditApplicationReviewService creditApplicationReviewService;
 	private    FinCreditRevSubCategoryService finCreditRevSubCategoryService;
 	private    WIFCustomer wifcustomer = new WIFCustomer();
-	int currentYear = DateUtility.getYear((Date)SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+	int currentYear = DateUtility.getYear((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 
 	List<Filter> filterList = null;	
 	protected JdbcSearchObject<Customer> newSearchObject ;
@@ -389,7 +390,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseListCtrl<Finance
 		    }
               
             if(this.auditYear.intValue() != 0){
-            	Date appDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+            	Date appDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
             	Date startDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
             	startDate = DateUtility.addDays(startDate, 1);
             	if(this.auditYear.intValue() > DateUtility.getYear(appDate)){

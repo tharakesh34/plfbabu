@@ -259,7 +259,7 @@ public class SuspenseServiceImpl extends GenericService<FinanceSuspHead> impleme
 			/*//Check Finance is RIA Finance Type or Not
 			boolean isRIAFinance = getFinanceTypeDAO().checkRIAFinance(financeSuspHead.getFinType());
 
-			Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+			Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 			getFinanceSuspHeadCalculationUtil().processProvCalculations(financeSuspHead, dateValueDate, false, true, isRIAFinance);*/
 		}
 

@@ -96,7 +96,7 @@ public class ScheduleCalculator {
 	private Date recalStartDate = new Date();
 	private Date recalEndDate = new Date();
 	private Date lastRepayDate = null;
-	private Date curBussniessDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	private Date curBussniessDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 	private String defermentMethod = SystemParameterDetails.getSystemParameterValue("DEF_METHOD").toString();
 	
 	private FinScheduleData finScheduleData;

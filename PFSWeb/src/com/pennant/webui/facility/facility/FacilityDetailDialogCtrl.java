@@ -233,7 +233,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private int ccyFormat=0;
 	Commitment commitment=null;
 	String userRole="";
-	Date appldate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date appldate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 	/**
 	 * default constructor.<br>
 	 */

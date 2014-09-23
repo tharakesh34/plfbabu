@@ -431,7 +431,7 @@ public class FinanceWriteoffDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.writeoffDate.setValue(financeWriteoff.getWriteoffDate());
 
 		if(financeWriteoff.getWriteoffDate() == null){
-			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			this.writeoffDate.setValue(curBDay);
 		}
 		

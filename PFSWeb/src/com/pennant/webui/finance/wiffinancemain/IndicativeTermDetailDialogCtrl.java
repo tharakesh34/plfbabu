@@ -513,7 +513,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		logger.debug("Entering" + event.toString());
 		FinanceDetail detail = null;
 		String finDivision = "";
-  	    Date date = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+  	    Date date = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		try {
 			Object object = getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail").invoke(financeMainDialogCtrl);

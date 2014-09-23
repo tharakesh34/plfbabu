@@ -244,7 +244,7 @@ public class ManualPaymentServiceImpl  extends GenericService<FinanceMain>  impl
 		FinanceMain financeMain = repayData.getFinanceMain();
 		FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
 		String finReference = financeMain.getFinReference();
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		
 		String actualRepayAcc = financeMain.getRepayAccountId();
 
@@ -497,7 +497,7 @@ public class ManualPaymentServiceImpl  extends GenericService<FinanceMain>  impl
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		
 		//Repayment Postings Details Process Execution
 		long linkedTranId = 0;
@@ -837,7 +837,7 @@ public class ManualPaymentServiceImpl  extends GenericService<FinanceMain>  impl
 		if(logKey != 0){
 			// Finance Disbursement Details
 			mapDateSeq = new HashMap<Date, Integer>();
-			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			for (int i = 0; i < scheduleData.getDisbursementDetails().size(); i++) {
 				scheduleData.getDisbursementDetails().get(i).setFinReference(scheduleData.getFinReference());
 				scheduleData.getDisbursementDetails().get(i).setDisbReqDate(curBDay);

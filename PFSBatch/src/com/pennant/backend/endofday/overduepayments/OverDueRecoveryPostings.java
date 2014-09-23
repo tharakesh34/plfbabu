@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2011 - Pennant Technologies
  * 
@@ -85,7 +86,7 @@ public class OverDueRecoveryPostings implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		
-		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		
 		logger.debug("START: OverDue Recovery Postings for Value Date: "+ dateValueDate);
 		

@@ -764,7 +764,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreem
 	private FacilityAgreementDetail setBasicDetails(Facility detail, FacilityAgreementDetail agreement) {
 		try {
 			// Application Date
-			Date appldate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+			Date appldate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			String appDate = DateUtility.formatUtilDate(appldate, PennantConstants.dateFormate);
 			agreement.setApplicationDate(appDate);
 			agreement.setDate(formatdDate(detail.getStartDate()));

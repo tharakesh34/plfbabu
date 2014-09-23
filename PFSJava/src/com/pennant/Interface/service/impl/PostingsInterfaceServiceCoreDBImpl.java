@@ -14,6 +14,7 @@ import com.pennant.Interface.service.PostingsInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.model.CoreBankAccountPosting;
 import com.pennant.coreinterface.service.AccountPostingProcess;
@@ -45,7 +46,7 @@ public class PostingsInterfaceServiceCoreDBImpl implements PostingsInterfaceServ
 			accountPosting.setFinReference(dataSet.getFinReference());
 			accountPosting.setFinEvent(dataSet.getFinEvent());
 			accountPosting.setFinType(dataSet.getFinType());
-			accountPosting.setPostingDate(DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString()));
+			accountPosting.setPostingDate(DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString()));
 			accountPosting.setValueDate(dataSet.getValueDate());
 			accountPosting.setCustCIF(dataSet.getCustCIF());
 			accountPosting.setAcBranch(dataSet.getFinBranch());

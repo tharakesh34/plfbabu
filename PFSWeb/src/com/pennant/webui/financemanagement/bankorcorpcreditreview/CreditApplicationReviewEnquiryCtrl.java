@@ -180,7 +180,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 	protected Div 				div_SearchBtntoolbar;
 	protected Div 				divDel;
 	protected Groupbox 			gb_basicDetails;
-	Date appldate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date appldate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 	Date appDftStrtDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	String maxAuditYear=null;
 	boolean showCurrentYear;

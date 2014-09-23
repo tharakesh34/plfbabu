@@ -491,7 +491,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 		try {
 
 			if (custid != 0) {
-				Date appldate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+				Date appldate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 				String appDate = DateUtility.formatUtilDate(appldate, PennantConstants.dateFormate);
 
 				// ------------------ Customer Data Setting

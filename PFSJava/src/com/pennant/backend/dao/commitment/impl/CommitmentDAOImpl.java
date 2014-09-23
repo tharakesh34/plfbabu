@@ -578,7 +578,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		logger.debug("Entering");
 		
 		boolean cmtExpired = false;
-		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		if(cmtExpDate.compareTo(curBussDate) < 0){
 			cmtExpired = true;
 		}

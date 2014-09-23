@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2011 - Pennant Technologies
  * 
@@ -428,7 +429,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 		setPaymentHeader(getPaymentService().getPaymentHeader(
 				getFinanceMain(),
 				(Date) SystemParameterDetails
-						.getSystemParameterValue("APP_DATE")));
+						.getSystemParameterValue(PennantConstants.APP_DATE_CUR)));
 		listFinSchdDetails = getPaymentHeader().getUnPaidFinSchdDetails();
 		if (listFinSchdDetails.size() > 0) {
 			// delete and insert in schedule details work table
@@ -443,7 +444,7 @@ public class PaymentDialogCtrl extends GFCBaseCtrl {
 			setCurFinanceScheduleDetail(listFinSchdDetails.get(count));
 			doDateChangeProcess(
 					(Date) SystemParameterDetails
-							.getSystemParameterValue("APP_DATE"),
+							.getSystemParameterValue(PennantConstants.APP_DATE_CUR),
 					getDCBValue(this.rpyAmount));
 		} else {
 			try {

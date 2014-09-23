@@ -144,7 +144,7 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 		final String appVersion = this.appName + " v5.0.409 / " + PTDateFormat.getDateFormater().format(date);
 
 		final String userName = ((UserImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-		final String loginDate = DateUtility.formatDate(DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString()),
+		final String loginDate = DateUtility.formatDate(DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString()),
 				PennantConstants.dateFormat).toString();
 		final String loginTime = PennantAppUtil.getTime(new Timestamp(System.currentTimeMillis())).toString();
 		final String branchCode = ((UserImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getSecurityUser().getUsrBranchCode();

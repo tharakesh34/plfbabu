@@ -81,7 +81,7 @@ public class RepayCalculator implements Serializable {
 	private SubHeadRule subHeadRule;
 	private Map<Date,FinanceScheduleDetail> scheduleMap = null;
 
-	Date curBussniessDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date curBussniessDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 	private static DefermentDetailDAO defermentDetailDAO;
 	private static RuleExecutionUtil ruleExecutionUtil;
 	private static OverDueRecoveryPostingsUtil recoveryPostingsUtil;

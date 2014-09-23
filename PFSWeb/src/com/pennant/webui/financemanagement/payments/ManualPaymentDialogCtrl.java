@@ -733,7 +733,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 					}
 				}else{
 					
-					Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+					Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 					this.earlySettlementDate.setConstraint("");
 					this.earlySettlementDate.setErrorMessage("");
@@ -1087,7 +1087,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 */
 	public void onChange$earlySettlementDate(Event event){
 		logger.debug("Entering" + event.toString());
-		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		this.earlySettlementDate.setConstraint("");
 		this.earlySettlementDate.setErrorMessage("");
@@ -1100,7 +1100,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}else if(this.moduleDefiner.equals(PennantConstants.SCH_EARLYPAY)){
 
 			//Check Early Settlement Date, EITHER Equal to Current Buss Date or Last Business Value Date
-			Date lastBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_LAST_BUS_DATE");
+			Date lastBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_LAST);
 			if(lastBussDate.compareTo(this.earlySettlementDate.getValue()) > 0 || curBussDate.compareTo(this.earlySettlementDate.getValue()) < 0){
 				throw new WrongValueException(this.earlySettlementDate, Labels.getLabel("label_EarlySettlementDate", new String[]{
 						lastBussDate.toString() , curBussDate.toString()}));
@@ -1874,7 +1874,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		
 		header.setFinReference(this.finReference.getValue());
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		header.setValueDate(curBDay);
 		header.setFinEvent(moduleDefiner);
 		header.setRepayAmount(PennantApplicationUtil.unFormateAmount(this.rpyAmount.getValue(), finFormatter));
@@ -1922,12 +1922,12 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 		List<FinanceScheduleDetail> schdlDetail = getRepayData().getScheduleDetails().isEmpty() ? finSchDetails : getRepayData().getScheduleDetails();
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(financeMain.getFinReference());
 		FinanceType financeType = getFinanceTypeService().getFinanceTypeById(finMain.getFinType());
-		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		
 		finMain.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(repayAccount.getValue()));
 		DataSet dataSet = AEAmounts.createDataSet(finMain, eventCode, dateValueDate, dateValueDate);
 
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		amountCodes = AEAmounts.procAEAmounts(finMain,schdlDetail, profitDetail , curBDay);
 
 		//Set Repay Amount Codes
@@ -2559,7 +2559,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private boolean isValid(boolean isChgRpy) throws InterruptedException, AccountNotFoundException {
 		logger.debug("Entering");
 
-		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		if(financeMain != null && curBussDate.compareTo(financeMain.getFinStartDate()) == 0) {
 			PTMessageUtils.showErrorMessage(" Disbursement Date is Same as Current Business Date. Not Allowed for Repayment. ");
 			return false;
@@ -2571,7 +2571,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 			this.earlySettlementDate.setConstraint("");
 			this.earlySettlementDate.setErrorMessage("");
 
-			Date lastBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_LAST_BUS_DATE");
+			Date lastBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_LAST);
 			if(this.earlySettlementDate.getValue() == null){
 				this.earlySettlementDate.setValue(curBussDate);
 			}
@@ -2973,7 +2973,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		if (this.financeMain != null) {
-			earlySettlement.setAppDate(DateUtility.formatUtilDate((Date)SystemParameterDetails.getSystemParameterValue("APP_DATE"), PennantConstants.dateFormat));
+			earlySettlement.setAppDate(DateUtility.formatUtilDate((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR), PennantConstants.dateFormat));
 			earlySettlement.setFinReference(financeMain.getFinReference());
 			earlySettlement.setFinType(financeMain.getFinType());
 			earlySettlement.setFinTypeDesc(financeMain.getLovDescFinTypeName());

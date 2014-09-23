@@ -4502,7 +4502,7 @@ public class IjarahWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			boolean isFeesModified = false;
 			if(this.finStartDate.getValue() != null){
 
-				Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+				Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 				if(this.finStartDate.getValue().compareTo(curBussDate) > 0 ){
 					if(isPastDeal){
 						getFinanceDetail().setFeeCharges(getFinanceDetailService().getFeeRuleDetails(getFinanceDetail().getFinScheduleData().getFinanceType(),
@@ -5037,7 +5037,7 @@ public class IjarahWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		if (this.finStartDate.getValue() == null) {
-			this.finStartDate.setValue((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"));
+			this.finStartDate.setValue((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		}
 
 		if (this.lovDescFinCcyName.getValue().equals("")) {

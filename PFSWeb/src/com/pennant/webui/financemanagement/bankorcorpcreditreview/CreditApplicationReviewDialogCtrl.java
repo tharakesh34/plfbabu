@@ -170,7 +170,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	public  List<Notes>     notesList = new ArrayList<Notes>();
     public  List<CreditReviewSubCtgDetails> creditReviewSubCtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
 	public  CreditReviewSubCtgDetails creditReviewSubCtgDetailsHeaders = new CreditReviewSubCtgDetails();
-    Date date = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+    Date date = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 
 	@SuppressWarnings("unused")

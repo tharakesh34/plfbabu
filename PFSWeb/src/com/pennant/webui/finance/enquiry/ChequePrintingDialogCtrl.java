@@ -330,7 +330,7 @@ public class ChequePrintingDialogCtrl  extends GFCBaseListCtrl<FinanceScheduleDe
 	private ChequeDetails prepareReportObject(FinScheduleData finScheduleData){
 		ChequeDetails chequeDetails = new ChequeDetails();
 		chequeDetails.setFinBranchName(Labels.getLabel("label_AlBarakaIslamicBank"));//finScheduleData.getFinanceMain().getLovDescFinBranchName()
-		chequeDetails.setAppDate(DateUtility.formatUtilDate(DateUtility.getUtilDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString(),PennantConstants.DBDateFormat),PennantConstants.dateFormate));
+		chequeDetails.setAppDate(DateUtility.formatUtilDate(DateUtility.getUtilDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString(),PennantConstants.DBDateFormat),PennantConstants.dateFormate));
 		chequeDetails.setCustName(finScheduleData.getFinanceMain().getLovDescCustFName()+" "+StringUtils.trimToEmpty(finScheduleData.getFinanceMain().getLovDescCustLName()));
 		chequeDetails.setDisbAccountId(finScheduleData.getFinanceMain().getRepayAccountId());
 		chequeDetails.setFinReference(finScheduleData.getFinanceMain().getFinType()+"-"+finScheduleData.getFinanceMain().getFinReference());

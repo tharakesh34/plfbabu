@@ -1,3 +1,4 @@
+
 /*package com.pennant.app.util;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class FinanceRateReviewUtil {
 	public static void recalRateReview() {
 		System.out.println("Rate Review Process Started");
 		List<FinScheduleData> finScheduleDatas = new ArrayList<FinScheduleData>();
-		Date date = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date date = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		//list of base rates which fall under the application date
 		final ArrayList<BaseRate> baseRateslist = new ArrayList<BaseRate>(getBaseRateDAO().getBSRListByMdfDate(date, ""));
 		//list of special rates which fall under the application date

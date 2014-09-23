@@ -78,6 +78,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.rits.cloning.Cloner;
 
 public class RefreshRateChanges  implements Tasklet {
@@ -104,8 +105,8 @@ public class RefreshRateChanges  implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
-		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
-		dateAppDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
+		dateAppDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 
 		logger.debug("START: Refresh Rate Changes for Value Date: " + DateUtility.addDays(dateValueDate,-1));
 
@@ -330,7 +331,7 @@ public class RefreshRateChanges  implements Tasklet {
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		for (int i = 0; i < finDetail.getDisbursementDetails().size(); i++) {
 			finDetail.getDisbursementDetails().get(i).setFinReference(finDetail.getFinReference());
 			finDetail.getDisbursementDetails().get(i).setDisbReqDate(curBDay);

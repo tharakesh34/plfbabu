@@ -732,7 +732,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 						for (FinanceDisbursement disbursement : financeDetail.getFinScheduleData().getDisbursementDetails()) {
 
-							if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) {
+							if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) {
 								if("B".equals(disbursement.getDisbType())){
 									continue;						
 								}
@@ -878,7 +878,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 							if(disbursement.getDisbAmount().compareTo(BigDecimal.ZERO) > 0){
 
-								if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) {
+								if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) {
 									dataSet.setFinEvent("ADDDBSF");
 								} else {
 									dataSet.setFinEvent("ADDDBSP");
@@ -1080,7 +1080,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					amountCodes.setWAIVER(BigDecimal.ZERO);
 					
 					// Accounting Set Execution to get Posting Details List
-					Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
+					Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 					List<Object> resultList = null;
 					try {
 	                    resultList = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, false, false, "Y", dateAppDate, false, Long.MIN_VALUE);
@@ -1331,7 +1331,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		long linkedTranId = Long.MIN_VALUE;
 		AEAmountCodes amountCodes = null;
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		DataSet dataSet = AEAmounts.createDataSet(financeMain, "STAGE",
 				financeMain.getFinStartDate(), financeMain.getFinStartDate());
@@ -1413,7 +1413,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			FinanceMain financeMain, BigDecimal postAmount, long linkedtranId) {
 
 		CommitmentMovement movement = new CommitmentMovement();
-		Date curBussDate =(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate =(Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		movement.setCmtReference(commitment.getCmtReference());
 		movement.setFinReference(financeMain.getFinReference());
@@ -1459,7 +1459,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		// Save/Update Finance Profit Details
 		FinanceProfitDetail finProfitDetails = profitDetail;
 
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
@@ -1592,7 +1592,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
-		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		for (int i = 0; i < finDetail.getDisbursementDetails().size(); i++) {
 			finDetail.getDisbursementDetails().get(i).setFinReference(finDetail.getFinReference());
 			finDetail.getDisbursementDetails().get(i).setDisbReqDate(curBDay);

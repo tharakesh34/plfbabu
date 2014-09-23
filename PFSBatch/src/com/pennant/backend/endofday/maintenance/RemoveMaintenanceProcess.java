@@ -16,6 +16,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.util.PennantConstants;
 
 public class RemoveMaintenanceProcess implements Tasklet {
 	private Logger logger = Logger.getLogger(RemoveMaintenanceProcess.class);
@@ -28,7 +29,7 @@ public class RemoveMaintenanceProcess implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
 		
-		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 
 		logger.debug("START: Finance Maintenance Details Removal for Value Date: "+ dateValueDate);		
 

@@ -529,7 +529,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl implements Serializable {
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
 		boolean termsExist = false;
-		Date curBussDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date curBussDate = (Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		boolean curTermExcluded = false;
 		
 		if (financeScheduleDetails != null) {

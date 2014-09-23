@@ -11,6 +11,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.BackupDatabase;
 
 public class BackupDatabaseTaskLet implements Tasklet{
@@ -22,7 +23,7 @@ public class BackupDatabaseTaskLet implements Tasklet{
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		//Date Parameter List
-		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 
     	logger.debug("START: Data Base Backup for Value Date: "+ dateValueDate);
 		try {

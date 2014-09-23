@@ -80,7 +80,7 @@ public class ExtFinanceUploadService {
 	private HostConnection hostConnection;
 
 	private BigDecimal zeroValue = BigDecimal.ZERO;
-	private Date dateValueDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	private Date dateValueDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 	private FinanceMain finMain;
 	private FinanceMain old_finMain;
 	private FinanceDisbursement disbursementDetails = new FinanceDisbursement();
@@ -790,7 +790,7 @@ public class ExtFinanceUploadService {
 
 		// Contract Date
 		extFinData.setFinContractDate((Date) SystemParameterDetails
-		        .getSystemParameterValue("APP_VALUEDATE"));
+		        .getSystemParameterValue(PennantConstants.APP_DATE_VALUE));
 
 		// Grace Rate Basis
 		if ("REDUCE".equals(finType.getFinGrcRateType())) {
