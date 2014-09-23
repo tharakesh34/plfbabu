@@ -14,6 +14,16 @@
 		<!-- Module Dependencies -->
 		<dependency>
 			<groupId>com.pennant.pff</groupId>
+			<artifactId>PLFInterface</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pennant.pff</groupId>
+			<artifactId>PFSJava</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pennant.pff</groupId>
 			<artifactId>PFSWeb</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
