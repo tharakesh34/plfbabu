@@ -504,7 +504,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 		sqlQuery.append(" SELECT F.FinReference, P.AcrTillLBD, P.TdPftAmortizedSusp, " );
 		sqlQuery.append(" P.AmzTillLBD, P.FirstODDate, P.LastODDate FROM FinanceMain F ");
 		sqlQuery.append(" INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference ");
-		sqlQuery.append(" WHERE F.FinIsActive = '1'");
+		sqlQuery.append(" WHERE P.FinIsActive = '1'");
 		//selQuery.append(" AND MaturityDate >= '"+  dateValueDate +"'");
 		sqlQuery.append(" AND F.FinStartDate <=? ");
 		return sqlQuery.toString();
@@ -561,7 +561,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 		StringBuilder sqlQuery = new StringBuilder();
 		sqlQuery.append(" SELECT count(F.FinReference) FROM FinanceMain F ");
 		sqlQuery.append(" INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference ");
-		sqlQuery.append(" WHERE F.FinIsActive = '1'");
+		sqlQuery.append(" WHERE P.FinIsActive = '1'");
 		//selQuery.append(" AND MaturityDate >= '"+  dateValueDate +"'");
 		sqlQuery.append(" AND F.FinStartDate <=? ");
 		return sqlQuery.toString();
