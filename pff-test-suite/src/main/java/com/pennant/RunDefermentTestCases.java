@@ -9,20 +9,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import com.pennant.external.AccrualTest;
+import com.pennant.external.ScheduleTestCase;
 
 /**
- * Process for Running Accrual Process calculation either for All finances or particular list of Finances
+ * Process for Preparing Schedule calculations on All test Methods 
+ * @author siva.m
  *
  */
-public class RunAccrualTestCases {
+public class RunDefermentTestCases {
 
 	public static void main(String[] args) {
-		
 		try {
 
 			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
-			System.out.println("Starting Accural Test Case Execution");
+			System.out.println("Starting Schedule Test Case Execution");
 			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
 
 			// -----------------------------------------------------------------------------------------------------------------------------------
@@ -31,16 +31,18 @@ public class RunAccrualTestCases {
 			DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
 			// Define a bean and register it
-			BeanDefinition beanDefinition = BeanDefinitionBuilder.rootBeanDefinition(Arrays.class, "asList")
+			BeanDefinition beanDefinition = BeanDefinitionBuilder
+					.rootBeanDefinition(Arrays.class, "asList")
 					.addConstructorArgValue(args).getBeanDefinition();
-			
 			beanFactory.registerBeanDefinition("args", beanDefinition);
-			GenericApplicationContext cmdArgCxt = new GenericApplicationContext(beanFactory);
+			GenericApplicationContext cmdArgCxt = new GenericApplicationContext(
+					beanFactory);
 
 			// Must call refresh to initialize context
 			cmdArgCxt.refresh();
 
-			// Create application context, passing command line context as parent
+			// Create application context, passing command line context as
+			// parent
 			ApplicationContext mainContext = new ClassPathXmlApplicationContext(CONFIG_LOCATIONS, cmdArgCxt);
 			
 			// -----------------------------------------------------------------------------------------------------------------------------------
@@ -49,23 +51,25 @@ public class RunAccrualTestCases {
 
 			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
 
-			long usedHeapSize = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long usedHeapSize = Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory();
 			System.out.println("Used Heap Size= " + usedHeapSize);
 
+
+			// REDUCING RATE SCHEDULE WITH GRACE PROFIT PAYMENT
+
 			System.out.println("---------------------------------------------------------------------");
-			System.out.println("ACCRUAL TEST");
+			System.out.println("Schedule TEST");
 			System.out.println("---------------------------------------------------------------------");
 			
-			if (AccrualTest.RunTestCase(mainContext)) {
-				System.out.println("Result for : Accrual Test : success");
+			if (ScheduleTestCase.RunTestCase(mainContext)) {
+				System.out.println("Result for : ScheduleTestCase : success");
 			} else {
-				System.err.println("Result for : Accrual Test : failed");
+				System.err.println("Result for : ScheduleTestCase : failed");
 			}
 
 			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
 
-			usedHeapSize = Runtime.getRuntime().totalMemory()
-					- Runtime.getRuntime().freeMemory();
+			usedHeapSize = Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory();
 			System.out.println("Used Heap Size= " + usedHeapSize);
 
 		} catch (Exception e) {

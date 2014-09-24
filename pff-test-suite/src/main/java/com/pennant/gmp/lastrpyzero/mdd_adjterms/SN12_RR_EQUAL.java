@@ -37,8 +37,8 @@ public class SN12_RR_EQUAL extends TestingUtil {
 			sh.setFinReference("I AM ORIGINAL");
 			sh.setNumberOfTerms(24);
 			sh.setAllowGrcPeriod(true);
-			sh.setGraceBaseRate("MBR07");
-			sh.setGraceSpecialRate("MSR07");
+			sh.setGraceBaseRate("L1");
+			sh.setGraceSpecialRate("S1");
 			sh.setGrcPftRate(BigDecimal.ZERO);
 			sh.setGrcPftFrq("M0031");// Monthly
 			sh.setNextGrcPftDate(DateUtility.getDate("31/01/2011"));
@@ -48,8 +48,8 @@ public class SN12_RR_EQUAL extends TestingUtil {
 			sh.setAllowGrcCpz(true);
 			sh.setGrcCpzFrq("H0631");
 			sh.setNextGrcCpzDate(DateUtility.getDate("30/06/2011"));
-			sh.setRepayBaseRate("MBR07");
-			sh.setRepaySpecialRate("MSR07");
+			sh.setRepayBaseRate("L1");
+			sh.setRepaySpecialRate("S1");
 			sh.setRepayProfitRate(BigDecimal.ZERO);
 			sh.setRepayFrq("M0031");// M0031
 			sh.setNextRepayDate(DateUtility.getDate("31/01/2012"));
@@ -111,6 +111,7 @@ public class SN12_RR_EQUAL extends TestingUtil {
 					CalculationConstants.RPYCHG_ADJMDT);
 			
 			sh2.getFinanceMain().setRecalToDate(DateUtility.getDate("31/12/2013"));
+			sh2.getFinanceMain().setRecalFromDate(DateUtility.getDate("31/12/2013"));
 			String schdMethod = CalculationConstants.EQUAL;
 			sh2 = ScheduleCalculator.changeRepay(sh2, Amount, schdMethod);
 

@@ -1,4 +1,4 @@
-package com.pennant.gnp.adddefer_adjmdt.AccrualTest;
+package com.pennant.external;
 
 import java.io.File;
 import java.io.FileWriter;

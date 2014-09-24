@@ -1,8 +1,10 @@
 package com.pennant;
 
-
-public class MemoryTest
-{
+/**
+ * Process for Memory Test Details finding
+ */
+public class MemoryTest {
+	
 	private static final long MEGABYTE = 1024L * 1024L;
 
 	public static long bytesToMegabytes(long bytes) {

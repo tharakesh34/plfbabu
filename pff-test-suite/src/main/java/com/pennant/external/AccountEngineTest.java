@@ -1,4 +1,4 @@
-package com.pennant;
+package com.pennant.external;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
+import com.pennant.TestingUtil;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -17,24 +18,17 @@ import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceDetailService;
 
+/**
+ * Method for testing Account Engine Class for Transaction Entry Details
+ */
 public class AccountEngineTest extends TestingUtil {
 
 	private static boolean isSuccess = false;
-	/*private static BigDecimal expectedResult = new BigDecimal(8303929);
-	private static BigDecimal expectedTotPft = new BigDecimal(9647115);
-	private static BigDecimal expectedDefPri = BigDecimal.ZERO;
-	private static BigDecimal expectedDefPft = BigDecimal.ZERO;
-	private static BigDecimal zeroValue = BigDecimal.ZERO;
-	private static BigDecimal resultedTotPft = BigDecimal.ZERO;
-	private static BigDecimal resultDefPft = BigDecimal.ZERO;
-	private static BigDecimal resultDefPri = BigDecimal.ZERO;*/
-	
 	static FinanceDetailService detailService;
 
 	public static FinanceDetailService getDetailService() {
 		return detailService;
 	}
-
 	public static void setDetailService(FinanceDetailService detailService) {
 			AccountEngineTest.detailService = detailService;
 	}
@@ -44,16 +38,17 @@ public class AccountEngineTest extends TestingUtil {
 
 	}
 
-	public static boolean RunTestCase(ApplicationContext mainContext) {
+	public static boolean RunTestCase(ApplicationContext mainContext, String finReference) {
 		try {
 
 			setDetailService((FinanceDetailService)mainContext.getBean("financeDetailService"));
-			// Tesing Code
 			DataSet dataSet = new DataSet();
 			
-			FinScheduleData data = getDetailService().getFinSchDataByFinRef("SN20_RR_PRI", "_View", 0);
+			//Select Finance Reference for Testing Accounting Engine Calculation
+			FinScheduleData data = getDetailService().getFinSchDataByFinRef(finReference, "_View", 0);
 			
 			dataSet.setFinReference(data.getFinReference());
+			dataSet.setCustId(data.getFinanceMain().getCustID());
 			dataSet.setFinEvent("ADDDBSP");
 			dataSet.setPostDate(new Date());
 			dataSet.setValueDate(new Date());
@@ -64,16 +59,15 @@ public class AccountEngineTest extends TestingUtil {
 			dataSet.setFinCcy(data.getFinanceMain().getFinCcy());
 			dataSet.setFinBranch(data.getFinanceMain().getFinBranch());
 			
+			//Amount Code details calculation
 			AEAmountCodes amountCodeDetail = com.pennant.app.util.AEAmounts.procAEAmounts(data.getFinanceMain(),
 					data.getFinanceScheduleDetails(), new FinanceProfitDetail(), new Date());
 			
 			List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
 
-			// generate schedule
-			returnDataSets = new AccountEngineExecution().getAccEngineExecResults(dataSet,amountCodeDetail,"N", null, false, null);//TODO
+			// Building Account Entry Details
+			returnDataSets = new AccountEngineExecution().getAccEngineExecResults(dataSet,amountCodeDetail,"N", null, false, data.getFinanceType());
 
-			// File file = new
-			// File(Executions.getCurrent().getDesktop().getWebApp().getRealPath("/Schedule.xls"));
 			File file = new File(getFile());
 			FileWriter txt;
 			txt = new FileWriter(file);
@@ -88,11 +82,6 @@ public class AccountEngineTest extends TestingUtil {
 						+ set.getAccount().toString() + "  \t  " + set.getPostAmount() + " \t  " );
 				
 				isSuccess = true;
-				
-				/*if (i == (sdSize - 1) && sd.getRepayAmount().equals(expectedResult)
-						&& resultedTotPft.equals(expectedTotPft) && resultDefPri.equals(expectedDefPri) && resultDefPft.equals(expectedDefPft) && sd.getClosingBalance().equals(zeroValue)) {
-					isSuccess = true;
-				}*/
 			}
 			out.close();
 		} catch (Exception e) {

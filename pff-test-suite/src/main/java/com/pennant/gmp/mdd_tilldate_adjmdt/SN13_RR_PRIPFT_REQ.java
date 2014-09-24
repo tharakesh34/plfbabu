@@ -38,8 +38,8 @@ public class SN13_RR_PRIPFT_REQ extends TestingUtil {
 			FinanceMain sh = new FinanceMain();
 			sh.setNumberOfTerms(24);
 			sh.setAllowGrcPeriod(true);
-			sh.setGraceBaseRate("MBR07");
-			sh.setGraceSpecialRate("MSR07");
+			sh.setGraceBaseRate("L1");
+			sh.setGraceSpecialRate("S1");
 			sh.setGrcPftRate(BigDecimal.ZERO);
 			sh.setGrcPftFrq("M0031");// Monthly
 			sh.setNextGrcPftDate(DateUtility.getDate("31/01/2011"));
@@ -49,8 +49,8 @@ public class SN13_RR_PRIPFT_REQ extends TestingUtil {
 			sh.setAllowGrcCpz(true);
 			sh.setGrcCpzFrq("H0631");
 			sh.setNextGrcCpzDate(DateUtility.getDate("30/06/2011"));
-			sh.setRepayBaseRate("MBR07");
-			sh.setRepaySpecialRate("MSR07");
+			sh.setRepayBaseRate("L1");
+			sh.setRepaySpecialRate("S1");
 			sh.setRepayProfitRate(BigDecimal.ZERO);
 			sh.setRepayFrq("M0031");// M0031
 			sh.setNextRepayDate(DateUtility.getDate("31/01/2012"));
@@ -110,6 +110,7 @@ public class SN13_RR_PRIPFT_REQ extends TestingUtil {
 					CalculationConstants.RPYCHG_ADJMDT);
 			
 			sh2.getFinanceMain().setRecalToDate(DateUtility.getDate("31/12/2013"));
+			sh2.getFinanceMain().setRecalFromDate(DateUtility.getDate("31/12/2013"));
 			String schdMethod = CalculationConstants.NOPAY;
 			sh2 = ScheduleCalculator.changeRepay(sh2, Amount, schdMethod);
 
@@ -119,6 +120,7 @@ public class SN13_RR_PRIPFT_REQ extends TestingUtil {
 			sh2.getFinanceMain().setEventToDate(
 					DateUtility.getDate("31/12/2011"));
 			sh2.getFinanceMain().setRecalToDate(DateUtility.getDate("31/12/2013"));
+			sh2.getFinanceMain().setRecalFromDate(DateUtility.getDate("31/12/2013"));
 			sh2 = ScheduleCalculator.changeRepay(sh2, Amount, schdMethod);
 
 			// Add Disbursement with recalculation till maturity date
@@ -146,8 +148,8 @@ public class SN13_RR_PRIPFT_REQ extends TestingUtil {
 
 
 			// Change rate by adding margin for the review period jan,feb,mar'11
-			/*String baseRate = "MBR07";
-			String splRate = "MSR07";
+			/*String baseRate = "L1";
+			String splRate = "S1";
 			BigDecimal mrgRate = new BigDecimal(1.0);*/
 
 

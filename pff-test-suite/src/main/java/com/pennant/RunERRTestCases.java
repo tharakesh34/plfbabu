@@ -9,9 +9,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import com.pennant.gnp.adddefer_adjmdt.AccrualTest.EffectiveRateTestCase;
+import com.pennant.external.EffectiveRateTestCase;
 
-
+/**
+ * Process for Calculating Effective rate of Return (ERR) Value
+ */
 public class RunERRTestCases {
 
 	public static void main(String[] args) {
@@ -28,20 +30,18 @@ public class RunERRTestCases {
 			DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
 			// Define a bean and register it
-			BeanDefinition beanDefinition = BeanDefinitionBuilder
-					.rootBeanDefinition(Arrays.class, "asList")
+			BeanDefinition beanDefinition = BeanDefinitionBuilder.rootBeanDefinition(Arrays.class, "asList")
 					.addConstructorArgValue(args).getBeanDefinition();
+			
 			beanFactory.registerBeanDefinition("args", beanDefinition);
-			GenericApplicationContext cmdArgCxt = new GenericApplicationContext(
-					beanFactory);
+			GenericApplicationContext cmdArgCxt = new GenericApplicationContext(beanFactory);
 
 			// Must call refresh to initialize context
 			cmdArgCxt.refresh();
 
 			// Create application context, passing command line context as
 			// parent
-			ApplicationContext mainContext = new ClassPathXmlApplicationContext(
-					CONFIG_LOCATIONS, cmdArgCxt);
+			ApplicationContext mainContext = new ClassPathXmlApplicationContext(CONFIG_LOCATIONS, cmdArgCxt);
 			
 			// -----------------------------------------------------------------------------------------------------------------------------------
 			// Bean Loading - Ending
@@ -49,8 +49,7 @@ public class RunERRTestCases {
 
 			System.out.println("-------------------------------------------------------------------------------------");
 
-			long usedHeapSize = Runtime.getRuntime().totalMemory()
-					- Runtime.getRuntime().freeMemory();
+			long usedHeapSize = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			System.out.println("Used Heap Size= " + usedHeapSize);
 
 			System.out.println("-------------------------------------------------------------------------------------");
@@ -58,21 +57,19 @@ public class RunERRTestCases {
 			System.out.println("-------------------------------------------------------------------------------------");
 			
 			if (EffectiveRateTestCase.RunTestCase(mainContext)) {
-				System.out.println("Result for : EffectiveRateTestCase : success");
+				System.out.println("Result for : Effective Rate Test Case : success");
 			} else {
-				System.err.println("Result for : EffectiveRateTestCase : failed");
+				System.err.println("Result for : Effective Rate Test Case : failed");
 			}
 
 			System.out.println("-------------------------------------------------------------------------------------");
 
-			usedHeapSize = Runtime.getRuntime().totalMemory()
-					- Runtime.getRuntime().freeMemory();
+			usedHeapSize = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			System.out.println("Used Heap Size= " + usedHeapSize);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	private static String[] CONFIG_LOCATIONS = new String[] {

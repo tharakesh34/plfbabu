@@ -1,4 +1,4 @@
-package com.pennant.gnp.adddefer_adjmdt.AccrualTest;
+package com.pennant.external;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,36 +24,39 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.util.PennantConstants;
 
 
-public class ASN19_RR_EQUAL_REQ extends TestingUtil {
+public class AccrualTest extends TestingUtil {
 	private static boolean isSuccess = false;
 
 	private static String getFile() {
-		return getFileLoc() + ASN19_RR_EQUAL_REQ.class.getSimpleName() + ".xls";
-
+		return getFileLoc() + AccrualTest.class.getSimpleName() + ".xls";
 	}
+	
 	static FinanceDetailService detailService;
 
 	public static FinanceDetailService getDetailService() {
 		return detailService;
 	}
-
 	public static void setDetailService(FinanceDetailService detailService) {
-		ASN19_RR_EQUAL_REQ.detailService = detailService;
+		AccrualTest.detailService = detailService;
 	}
 
 	public static boolean RunTestCase(ApplicationContext mainContext) {
 		try {
 
-			// Tesing Code
+			// Services Initialization
 			setDetailService((FinanceDetailService)mainContext.getBean("financeDetailService"));
 
-			List<String> finRefList = getDetailService().getFinanceReferenceList();//new ArrayList<String>();
-			/*//finRefList.add("713988");
-			//finRefList.add("713989");
-			//finRefList.add("001120");
-			finRefList.add("1120812000001");*/
+			//Fetching List of all Finance Reference Details
+			List<String> finRefList = getDetailService().getFinanceReferenceList();
+				/*new ArrayList<String>();
+				finRefList.add("713988");
+				finRefList.add("713989");
+				finRefList.add("001120");
+				finRefList.add("1120812000001");*/
+			
 			File file = new File(getFile());
 			FileWriter txt;
 			txt = new FileWriter(file);
@@ -76,59 +79,44 @@ public class ASN19_RR_EQUAL_REQ extends TestingUtil {
 				FinScheduleData data = getDetailService().getFinSchDataByFinRef(finReference, "_AView",0);
 
 				// Profit Details Fill
-				Date curBD = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+				Date curBD = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 				curBD = DateUtility.addDays(curBD, 1);
 
-				//	Date monthEnd = curBD;
-
-
 				FinanceProfitDetail fpd = new FinanceProfitDetail();
-
 				for (int i = 0; i < 1; i++) {
+
 					fpd = profitDetailsDAO.getFinPftDetailForBatch(finReference);
+					if(fpd == null){
+						fpd = new FinanceProfitDetail();
+					}
 
-					//fpd = new FinanceProfitDetail();
-
-					/*if (curBD.compareTo(monthEnd)==0) {
-					data.getFinanceScheduleDetails().get(1).setSchdPftPaid(data.getFinanceScheduleDetails().get(1).getProfitSchd());
-					data.getFinanceScheduleDetails().get(1).setSchdPriPaid(data.getFinanceScheduleDetails().get(1).getPrincipalSchd());
-				}*/
-
+					//Amount code Details Calculation
 					AEAmountCodes aeAmountCodes = AEAmounts.procAccrualAmounts(data.getFinanceMain(), 
 							data.getFinanceScheduleDetails(), fpd, curBD);
 
-					// UPDATE After Calculation
-					
-					fpd = setFD(fpd,data);
+					// Setting all Profit Detail parameters to Bean					
+					fpd = setFinanceDetails(fpd,data);
 					fpd = detailFiller.prepareFinPftDetails(aeAmountCodes,fpd, curBD);
-					
+
 					java.util.Date firstRepayDate = financeScheduleDetailDAO.getFirstRepayDate(finReference);
 					if(firstRepayDate == null) {
 						fpd.setFirstRepayDate(data.getFinanceMain().getFinStartDate());
 					} else {
 						fpd.setFirstRepayDate(firstRepayDate);
 					}
-					
+
 					if(customerDAO != null){
 						String worstSts = customerDAO.getFinanceStatus(finReference, true);
 						fpd.setFinWorstStatus(worstSts);
 					}
-					profitDetailsDAO.save(fpd,"_Temp");
-					
-					
-					out.write("\n"  + "CAL  \t" + fpd.getFinReference()+  "\t" + fpd.getCustId()+  "\t" + fpd.getFinBranch()+  "\t" + fpd.getFinType()+  "\t" + fpd.getLastMdfDate()+  "\t" + fpd.getTotalPftSchd()+  "\t" + fpd.getTotalPftCpz()+  "\t" + fpd.getTotalPftPaid()+  "\t" + fpd.getTotalPftBal()+  "\t" + fpd.getTotalPftPaidInAdv()+  "\t" + fpd.getTotalPriPaid()+  "\t" + fpd.getTotalPriBal()+  "\t" + fpd.getTdSchdPft()+  "\t" + fpd.getTdPftCpz()+  "\t" + fpd.getTdSchdPftPaid()+  "\t" + fpd.getTdSchdPftBal()+  "\t" + fpd.getTdPftAccrued()+  "\t" + fpd.getTdPftAccrueSusp()+  "\t" + fpd.getTdPftAmortized()+  "\t" + fpd.getTdPftAmortizedSusp()+  "\t" + fpd.getTdSchdPri()+  "\t" + fpd.getTdSchdPriPaid()+  "\t" + fpd.getTdSchdPriBal()+  "\t" + fpd.getAcrTillNBD()+  "\t" + fpd.getAcrTillLBD()+  "\t" + fpd.getAcrTodayToNBD()+  "\t" + fpd.getAmzTillNBD()+  "\t" + fpd.getAmzTillLBD()+  "\t" + fpd.getAmzTodayToNBD()+ " \t "+ fpd.getPftAccrueTsfd()+ " \t"+ fpd.getDepreciatePri()+ " \t" );
 
-					/*// UPDATE After Posting
-				fpd = setPostFD(aeAmountCodes, fpd, curBD);
-				profitDetailsDAO.update(fpd);
-				out.write("\n"  + "POST \t " + fpd.getFinReference() + " \t "  + fpd.getLastMdfDate() + " \t "  + fpd.getTotalPftSchd() + " \t "  + fpd.getTotalPftCpz() + " \t "  + fpd.getTotalPftPaid() + " \t "  + fpd.getTotalPftBal() + " \t "  + fpd.getTotalPftPaidInAdv() + " \t "  + fpd.getTotalPriPaid() + " \t "  + fpd.getTotalPriBal() + " \t "  + fpd.getTdSchdPft() + " \t "  + fpd.getTdPftCpz() + " \t "  + fpd.getTdSchdPftPaid() + " \t "  + fpd.getTdSchdPftBal() + " \t "  + fpd.getTdPftAccrued() + " \t "  + fpd.getTdPftAccrueSusp() + " \t "  + fpd.getTdPftAmortized() + " \t "  + fpd.getTdPftAmortizedSusp() + " \t "  + fpd.getTdSchdPri() + " \t "  + fpd.getTdSchdPriPaid() + " \t "  + fpd.getTdSchdPriBal() + " \t "  + fpd.getAcrTillLBD() + " \t "  + fpd.getAcrTillNBD() + " \t "  + fpd.getAcrTodayToNBD() + " \t "  + fpd.getAmzTillNBD() + " \t "  + fpd.getAmzTillLBD() + " \t "  + fpd.getAmzTodayToNBD() + " \t " );
-					 */
-					//curBD = DateUtility.addDays(curBD, 1);
-					}
-				
+					//If Profit Details Need to save directly into DB -- in case on Migration purpose
+					profitDetailsDAO.save(fpd,"_Temp");
+
+					out.write("\n"  + "CAL  \t" + fpd.getFinReference()+  "\t" + fpd.getCustId()+  "\t" + fpd.getFinBranch()+  "\t" + fpd.getFinType()+  "\t" + fpd.getLastMdfDate()+  "\t" + fpd.getTotalPftSchd()+  "\t" + fpd.getTotalPftCpz()+  "\t" + fpd.getTotalPftPaid()+  "\t" + fpd.getTotalPftBal()+  "\t" + fpd.getTotalPftPaidInAdv()+  "\t" + fpd.getTotalPriPaid()+  "\t" + fpd.getTotalPriBal()+  "\t" + fpd.getTdSchdPft()+  "\t" + fpd.getTdPftCpz()+  "\t" + fpd.getTdSchdPftPaid()+  "\t" + fpd.getTdSchdPftBal()+  "\t" + fpd.getTdPftAccrued()+  "\t" + fpd.getTdPftAccrueSusp()+  "\t" + fpd.getTdPftAmortized()+  "\t" + fpd.getTdPftAmortizedSusp()+  "\t" + fpd.getTdSchdPri()+  "\t" + fpd.getTdSchdPriPaid()+  "\t" + fpd.getTdSchdPriBal()+  "\t" + fpd.getAcrTillNBD()+  "\t" + fpd.getAcrTillLBD()+  "\t" + fpd.getAcrTodayToNBD()+  "\t" + fpd.getAmzTillNBD()+  "\t" + fpd.getAmzTillLBD()+  "\t" + fpd.getAmzTodayToNBD()+ " \t "+ fpd.getPftAccrueTsfd()+ " \t"+ fpd.getDepreciatePri()+ " \t" );
+				}
 				isSuccess = true;
 			}
-
 			out.close();
 
 		} catch (Exception e) {
@@ -138,7 +126,13 @@ public class ASN19_RR_EQUAL_REQ extends TestingUtil {
 		return isSuccess;
 	}
 
-	private static FinanceProfitDetail setFD(FinanceProfitDetail fpd, FinScheduleData finScheduleData) {
+	/**
+	 * Method for Setting Finance Details to Profit Details Bean
+	 * @param fpd
+	 * @param finScheduleData
+	 * @return
+	 */
+	private static FinanceProfitDetail setFinanceDetails(FinanceProfitDetail fpd, FinScheduleData finScheduleData) {
 		
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
@@ -194,13 +188,4 @@ public class ASN19_RR_EQUAL_REQ extends TestingUtil {
 		return fpd;
 	}
 
-	/*private static  FinanceProfitDetail setPostFD(AEAmountCodes aeAmountCodes, FinanceProfitDetail fpd, Date curBD) {
-		fpd.setAcrTillLBD(fpd.getTdPftAccrued()); 
-		fpd.setAcrTodayToNBD(BigDecimal.ZERO);
-
-		fpd.setAmzTillLBD(fpd.getAmzTillNBD());
-		fpd.setAmzTodayToNBD(BigDecimal.ZERO);
-		return fpd;
-	}
-*/
 }

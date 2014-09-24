@@ -1,10 +1,12 @@
-package com.pennant.gmp.mdd_tilldate;
+package com.pennant.external;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+
+import org.springframework.context.ApplicationContext;
 
 import com.pennant.TestingUtil;
 import com.pennant.app.constants.CalculationConstants;
@@ -16,30 +18,48 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.util.PennantConstants;
 
-public class SN09_RR_PRI extends TestingUtil {
+public class ScheduleTestCase extends TestingUtil {
 
 	private static boolean isSuccess = false;
-	private static BigDecimal expectedResult = new BigDecimal(15094540);
-	private static BigDecimal expectedTotPft = new BigDecimal(15013060);
+	private static BigDecimal expectedResult = new BigDecimal(8303929);
+	private static BigDecimal expectedTotPft = new BigDecimal(9647115);
+	private static BigDecimal expectedDefPri = new BigDecimal(7814049);
+	private static BigDecimal expectedDefPft = new BigDecimal(489877);
+	private static BigDecimal zeroValue = BigDecimal.ZERO;
 	private static BigDecimal resultedTotPft = BigDecimal.ZERO;
+	private static BigDecimal resultDefPft = BigDecimal.ZERO;
+	private static BigDecimal resultDefPri = BigDecimal.ZERO;
+	
+	static FinanceTypeService financeTypeService;
 
+	public static FinanceTypeService getFinanceTypeService() {
+		return financeTypeService;
+	}
+
+	public static void setFinanceTypeService(FinanceTypeService financeTypeService) {
+		ScheduleTestCase.financeTypeService = financeTypeService;
+	}
 
 	private static String getFile() {
-		return getFileLoc() + SN09_RR_PRI.class.getName()
-				+ ".xls";
+		return getFileLoc() + ScheduleTestCase.class.getName() + ".xls";
 
 	}
 
-	public static boolean RunTestCase() {
+	public static boolean RunTestCase(ApplicationContext mainContext) {
 		try {
+			
+			setFinanceTypeService((FinanceTypeService)mainContext.getBean("financeTypeService"));
 
 			// Tesing Code
 			FinanceMain sh = new FinanceMain();
 			sh.setNumberOfTerms(12);
 			sh.setAllowGrcPeriod(true);
-			sh.setGraceBaseRate("MBR07");
-			sh.setGraceSpecialRate("MSR07");
+			sh.setGraceBaseRate("L1");
+			sh.setGraceSpecialRate("S1");
 			sh.setGrcPftRate(BigDecimal.ZERO);
 			sh.setGrcPftFrq("M0031");// Monthly
 			sh.setNextGrcPftDate(DateUtility.getDate("31/01/2011"));
@@ -49,8 +69,8 @@ public class SN09_RR_PRI extends TestingUtil {
 			sh.setAllowGrcCpz(true);
 			sh.setGrcCpzFrq("H0631");
 			sh.setNextGrcCpzDate(DateUtility.getDate("30/06/2011"));
-			sh.setRepayBaseRate("MBR07");
-			sh.setRepaySpecialRate("MSR07");
+			sh.setRepayBaseRate("L1");
+			sh.setRepaySpecialRate("S1");
 			sh.setRepayProfitRate(BigDecimal.ZERO);
 			sh.setRepayFrq("M0031");// M0031
 			sh.setNextRepayDate(DateUtility.getDate("31/01/2012"));
@@ -64,13 +84,13 @@ public class SN09_RR_PRI extends TestingUtil {
 			sh.setNextRepayCpzDate(DateUtility.getDate("30/06/2012"));
 			sh.setMaturityDate(DateUtility.getDate("31/12/2012"));
 			sh.setCpzAtGraceEnd(true);
-			sh.setDownPayment(BigDecimal.ZERO);
+			sh.setDownPayment(new BigDecimal(10000000));
 			sh.setReqRepayAmount(BigDecimal.ZERO);
 			sh.setTotalProfit(BigDecimal.ZERO);
 			sh.setTotalGrossPft(BigDecimal.ZERO);
 			sh.setGrcRateBasis("R");
 			sh.setRepayRateBasis("R");
-			sh.setScheduleMethod(CalculationConstants.PRI);
+			sh.setScheduleMethod(CalculationConstants.EQUAL);
 			sh.setProfitDaysBasis(CalculationConstants.IDB_ACT_365FIXED);
 			sh.setCalculateRepay(true);
 			sh.setEqualRepay(true);
@@ -80,10 +100,12 @@ public class SN09_RR_PRI extends TestingUtil {
 			sh.setEventToDate(DateUtility.getDate("31/12/2012"));
 			sh.setRecalType("CURPRD");
 			sh.setGrcPeriodEndDate(DateUtility.getDate("31/12/2011"));
-			sh.setAllowGrcRepay(true);
-			sh.setGrcSchdMthd(CalculationConstants.PFT);
+			sh.setAllowGrcRepay(false);
+			// sh.setGrcSchdMthd(CalculationConstants.NOPAY);
 			sh.setFinStartDate(DateUtility.getDate("01/01/2011"));
 			sh.setExcludeDeferedDates(false);
+			sh.setFinGrcRvwRateApplFor(PennantConstants.RVW_UNPAID_INST);
+			sh.setFinRvwRateApplFor(PennantConstants.RVW_UNPAID_INST);
 			
 			// ADD Disbursements
 			FinanceDisbursement dd = new FinanceDisbursement();
@@ -97,60 +119,29 @@ public class SN09_RR_PRI extends TestingUtil {
 			financeDetail.getFinScheduleData().getDisbursementDetails().add(dd);
 			FinScheduleData sh1 = ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData());
 
+			//Fetch Fiannce Type Details
+			FinanceType financeType = getFinanceTypeService().getApprovedFinanceTypeById("TAF");
+			sh1.setFinanceType(financeType);
+			
 			// calculate schedule
 			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1);
 
-			BigDecimal Amount = new BigDecimal(0.0);
-			sh2.getFinanceMain().setEventFromDate(DateUtility.getDate("30/04/2011"));
-			sh2.getFinanceMain().setEventToDate(DateUtility.getDate("30/06/2011"));
-			sh2.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLDATE);
-			
-			sh2.getFinanceMain().setRecalToDate(DateUtility.getDate("31/12/2012"));
-			
-			String schdMethod = CalculationConstants.NOPAY;
-			sh2 = ScheduleCalculator.changeRepay(sh2, Amount, schdMethod);
-			
-			sh2.getFinanceMain().setEventFromDate(DateUtility.getDate("31/10/2011"));
-			sh2.getFinanceMain().setEventToDate(DateUtility.getDate("31/12/2011"));
-			
-			sh2.getFinanceMain().setRecalToDate(DateUtility.getDate("31/12/2012"));
-			sh2 = ScheduleCalculator.changeRepay(sh2, Amount, schdMethod);
-			
-			Amount = new BigDecimal(25000000);
-			sh2.getFinanceMain().setEventFromDate(DateUtility.getDate("15/02/2011"));
-			sh2.getFinanceMain().setEventToDate(DateUtility.getDate("15/02/2011"));
-			sh2.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLMDT);
-			
-			sh2.getFinanceMain().setRecalToDate(null);
-			
-			schdMethod = CalculationConstants.ADDTERM_AFTMDT;
-			sh2 = ScheduleCalculator.addDisbursement(sh2, Amount, schdMethod,BigDecimal.ZERO);
+			sh2.getFinanceMain().setEventFromDate(DateUtility.getDate("29/02/2012"));
+			sh2.getFinanceMain().setEventToDate(DateUtility.getDate("29/02/2012"));
+			sh2.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+			sh2 = ScheduleCalculator.addDeferment(sh2);
 
-			
-			Amount = new BigDecimal(25000000);
-			sh2.getFinanceMain().setEventFromDate(DateUtility.getDate("15/05/2011"));
-			sh2.getFinanceMain().setEventToDate(DateUtility.getDate("15/05/2011"));
-			sh2.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLMDT);
-			
-			sh2.getFinanceMain().setRecalToDate(null);
-			
-			schdMethod = CalculationConstants.ADDTERM_AFTMDT;
-			sh2 = ScheduleCalculator.addDisbursement(sh2, Amount, schdMethod,BigDecimal.ZERO);
-
-			// File file = new
-			// File(Executions.getCurrent().getDesktop().getWebApp().getRealPath("/Schedule.xls"));
 			File file = new File(getFile());
 			FileWriter txt;
 			txt = new FileWriter(file);
 			PrintWriter out = new PrintWriter(txt);
 
 			out.print("Date \t CPZ \t PFT \t RVW \t RPY \tRate\t DisAmount \t DWPAY   \t OPBAL   \t CLOSBAL \t"
-					+ " NODAYS \t DAYSFACTOR \t ProfitCalc \t ProfitPaid \t PrincipalPaid \t RepayAmount \t ProfitBalance \tCpzAmount "
-					+ "\t ProfitFraction \t SchdMethod");
+					+ " NODAYS \t ProfitCalc \t ProfitPaid \t PrincipalPaid \t RepayAmount \t ProfitBalance \tCpzAmount \tDefPriSchd\tDefPriSchd");
 
 			int sdSize = sh2.getFinanceScheduleDetails().size();
 			for (int i = 0; i < sh2.getFinanceScheduleDetails().size(); i++) {
-				FinanceScheduleDetail sd = sh1.getFinanceScheduleDetails().get(
+				FinanceScheduleDetail sd = sh2.getFinanceScheduleDetails().get(
 						i);
 				out.write("\n" + sd.getSchDate() + "  \t  "
 						+ yesrno(sd.isCpzOnSchDate()) + "  \t  "
@@ -161,20 +152,25 @@ public class SN09_RR_PRI extends TestingUtil {
 						+ " \t  " + (sd.getDownPaymentAmount()) + "    \t  "
 						+ (sd.getBalanceForPftCal()) + "\t   "
 						+ (sd.getClosingBalance()) + "  \t  "
-						+ sd.getNoOfDays() + "  \t  " + (sd.getDayFactor())
-						+ "  \t  " + (sd.getProfitCalc()) + "  \t  "
-						+ (sd.getProfitSchd()) + "  \t  "
+						+ sd.getNoOfDays() + "  \t  " + (sd.getProfitCalc())
+						+ "  \t  " + (sd.getProfitSchd()) + "  \t  "
 						+ (sd.getPrincipalSchd()) + "  \t  "
 						+ (sd.getRepayAmount()) + "  \t  "
 						+ (sd.getProfitBalance()) + "  \t  "
 						+ (sd.getCpzAmount()) + "  \t  "
-						+ (sd.getProfitFraction()) + " \t"
-						+ (sd.getSchdMethod()));
+						+ (sd.getDefPrincipalSchd()) + "  \t  "
+						+ (sd.getDefProfitSchd()) + "  \t  ");
 
 				resultedTotPft = resultedTotPft.add(sd.getProfitCalc());
-				
+				resultDefPri = resultDefPri.add(sd.getDefPrincipalSchd());
+				resultDefPft = resultDefPft.add(sd.getDefProfitSchd());
+
 				if (i == (sdSize - 1)
-						&& sd.getRepayAmount().equals(expectedResult) && resultedTotPft.equals(expectedTotPft)) {
+						&& sd.getRepayAmount().equals(expectedResult)
+						&& resultedTotPft.equals(expectedTotPft)
+						&& resultDefPri.equals(expectedDefPri)
+						&& resultDefPft.equals(expectedDefPft)
+						&& sd.getClosingBalance().equals(zeroValue)) {
 					isSuccess = true;
 				}
 			}

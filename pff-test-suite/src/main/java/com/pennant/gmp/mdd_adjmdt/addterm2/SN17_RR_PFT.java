@@ -37,8 +37,8 @@ public class SN17_RR_PFT extends TestingUtil {
 			FinanceMain sh = new FinanceMain();
 			sh.setNumberOfTerms(24);
 			sh.setAllowGrcPeriod(true);
-			sh.setGraceBaseRate("MBR07");
-			sh.setGraceSpecialRate("MSR07");
+			sh.setGraceBaseRate("L1");
+			sh.setGraceSpecialRate("S1");
 			sh.setGrcPftRate(BigDecimal.ZERO);
 			sh.setGrcPftFrq("M0031");// Monthly
 			sh.setNextGrcPftDate(DateUtility.getDate("31/01/2011"));
@@ -48,8 +48,8 @@ public class SN17_RR_PFT extends TestingUtil {
 			sh.setAllowGrcCpz(true);
 			sh.setGrcCpzFrq("H0631");
 			sh.setNextGrcCpzDate(DateUtility.getDate("30/06/2011"));
-			sh.setRepayBaseRate("MBR07");
-			sh.setRepaySpecialRate("MSR07");
+			sh.setRepayBaseRate("L1");
+			sh.setRepaySpecialRate("S1");
 			sh.setRepayProfitRate(BigDecimal.ZERO);
 			sh.setRepayFrq("M0031");// M0031
 			sh.setNextRepayDate(DateUtility.getDate("31/01/2012"));
@@ -125,7 +125,7 @@ public class SN17_RR_PFT extends TestingUtil {
 
 			int sdSize = sh2.getFinanceScheduleDetails().size();
 			for (int i = 0; i < sh2.getFinanceScheduleDetails().size(); i++) {
-				FinanceScheduleDetail sd = sh1.getFinanceScheduleDetails().get(
+				FinanceScheduleDetail sd = sh2.getFinanceScheduleDetails().get(
 						i);
 				out.write("\n" + sd.getSchDate() + "  \t  "
 						+ yesrno(sd.isCpzOnSchDate()) + "  \t  "

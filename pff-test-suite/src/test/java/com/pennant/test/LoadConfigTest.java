@@ -12,8 +12,6 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.pennant.backend.service.rmtmasters.impl.FinanceTypeServiceImpl;
-
 public class LoadConfigTest {
 	final String[] CONFIG_LOCATIONS = new String[] {
 			"applicationContext-db.xml", "applicationContext-daos.xml",
@@ -25,26 +23,26 @@ public class LoadConfigTest {
 	public void setUp() {
 		System.out.println("Initializing application context...");
 
-		BeanDefinition definition = BeanDefinitionBuilder
-				.rootBeanDefinition(Arrays.class, "asList")
-				.addConstructorArgValue(new String[] {}).getBeanDefinition();
-
-		DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-		factory.registerBeanDefinition("args", definition);
-
-		GenericApplicationContext parent = new GenericApplicationContext(
-				factory);
-		parent.refresh();
-
-		context = new ClassPathXmlApplicationContext(CONFIG_LOCATIONS);
+//		BeanDefinition definition = BeanDefinitionBuilder
+//				.rootBeanDefinition(Arrays.class, "asList")
+//				.addConstructorArgValue(new String[] {}).getBeanDefinition();
+//
+//		DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+//		factory.registerBeanDefinition("args", definition);
+//
+//		GenericApplicationContext parent = new GenericApplicationContext(
+//				factory);
+//		parent.refresh();
+//
+//		context = new ClassPathXmlApplicationContext(CONFIG_LOCATIONS, parent);
 	}
 
 	@Test
 	public void testBean() {
-//		FinanceTypeServiceImpl impl = (FinanceTypeServiceImpl) context
-//				.getBean("financeTypeService");
-//
-//		System.out.println(impl instanceof FinanceTypeServiceImpl);
+		// FinanceTypeServiceImpl impl = (FinanceTypeServiceImpl) context
+		// .getBean("financeTypeService");
+		//
+		// System.out.println(impl instanceof FinanceTypeServiceImpl);
 		System.out.println("Done!!!");
 	}
 

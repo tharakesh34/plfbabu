@@ -8,6 +8,10 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 
+/**
+ * Process for Testing Days calculation on Interest basis codes
+ *
+ */
 public class CalTest {
 	
 	public static void main(String[] args) {

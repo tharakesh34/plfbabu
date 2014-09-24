@@ -9,18 +9,21 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import com.pennant.gnp.adddefer_adjmdt.AccrualTest.ASN19_RR_EQUAL_REQ;
+import com.pennant.external.AccountEngineTest;
 
-
-public class RunRepayTestCases {
-
+/**
+ * Process for Executing Account Engine Details
+ * @author siva.m
+ *
+ */
+public class RunAccountEngineTest {
+	
 	public static void main(String[] args) {
-		
-		// TODO Auto-generated method stub
+
 		try {
 
 			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
-			System.out.println("Starting Repayment Test Case Execution");
+			System.out.println("Starting Test Case Execution");
 			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
 
 			// -----------------------------------------------------------------------------------------------------------------------------------
@@ -37,37 +40,31 @@ public class RunRepayTestCases {
 			// Must call refresh to initialize context
 			cmdArgCxt.refresh();
 
-			// Create application context, passing command line context as
-			// parent
+			// Create application context, passing command line context as parent
 			ApplicationContext mainContext = new ClassPathXmlApplicationContext(CONFIG_LOCATIONS, cmdArgCxt);
-			
+
 			// -----------------------------------------------------------------------------------------------------------------------------------
 			// Bean Loading - Ending
 			// -----------------------------------------------------------------------------------------------------------------------------------
 
 			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
 
-			long usedHeapSize = Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory();
+			long usedHeapSize = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			System.out.println("Used Heap Size= " + usedHeapSize);
 
-			// REDUCING RATE SCHEDULE WITH GRACE PROFIT PAYMENT
-
-			System.out.println("---------------------------------------------------------------------");
-			System.out.println("REPAYMENT TEST START...........");
-			System.out.println("---------------------------------------------------------------------");
+			// Calling Account Engine test case with constant finance Reference
+			String finReference= "2014212000009";//TODO
 			
-			if (ASN19_RR_EQUAL_REQ.RunTestCase(mainContext)) {
-				System.out.println("Result for : Repayment Calculations : success");
+			if (AccountEngineTest.RunTestCase(mainContext, finReference)) {
+				System.out.println("Result for : Account Engine Test : success");
 			} else {
-				System.err.println("Result for : Repayment Calculations : failed");
+				System.err.println("Result for : Account Engine Test : failed");
 			}
 			
-			System.out.println("---------------------------------------------------------------------");
-			System.out.println("REPAYMENT TEST ENDS...........");
-			System.out.println("---------------------------------------------------------------------");
-
-			usedHeapSize = Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory();
-			System.out.println("Used Heap Size= " + usedHeapSize);
+			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+			System.out.println("Ending Test Case Execution");
+			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
