@@ -3131,7 +3131,7 @@ public class ScheduleCalculator {
 
 		//FIND ALLOWED RATE CHANGE DATE
 		String rvwRateApplFor = finScheduleData.getFinanceMain().getFinGrcRvwRateApplFor();
-		if (!rvwRateApplFor.equals(PennantConstants.RVW_ALL)) {
+		if (!StringUtils.trimToEmpty(rvwRateApplFor).equals(PennantConstants.RVW_ALL)) {
 			dateAllowedChange = findAllowedChangeDate(finScheduleData, rvwRateApplFor,
 			        dateAllowedChange);
 		}
@@ -3206,7 +3206,7 @@ public class ScheduleCalculator {
 
 		//FIND ALLOWED RATE CHANGE DATE
 		String rvwRateApplFor = finScheduleData.getFinanceMain().getFinRvwRateApplFor();
-		if (!rvwRateApplFor.equals(PennantConstants.RVW_ALL)) {
+		if (!StringUtils.trimToEmpty(rvwRateApplFor).equals(PennantConstants.RVW_ALL)) {
 			dateAllowedChange = findAllowedChangeDate(finScheduleData, rvwRateApplFor,
 			        dateAllowedChange);
 		}
@@ -3268,7 +3268,7 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			if (rvwRateApplFor.equals(PennantConstants.RVW_UNPAID_INST)) {
+			if (StringUtils.trimToEmpty(rvwRateApplFor).equals(PennantConstants.RVW_UNPAID_INST)) {
 				if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
 					dateAllowedChange = curSchd.getSchDate();
 				} else {
@@ -3315,7 +3315,8 @@ public class ScheduleCalculator {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		String repayRateBasis = financeMain.getRepayRateBasis();
 		
-		financeMain.setCpzAtGraceEnd(finScheduleData.getFinanceType().isFinIsIntCpzAtGrcEnd());
+		//Need to Discuss with Pradeep TODO
+		//financeMain.setCpzAtGraceEnd(finScheduleData.getFinanceType().isFinIsIntCpzAtGrcEnd());
 
 		/* Loop through grace period schedule */
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -4779,8 +4780,9 @@ public class ScheduleCalculator {
 				calRepayAmount = financeMain.getFinAmount().subtract(schdAmountFixed);
 			}
 			
-			calRepayAmount = calRepayAmount.divide(BigDecimal.valueOf(termTobeAdjusted), 0,
-			        RoundingMode.HALF_DOWN);
+			if (termTobeAdjusted >0) {
+				calRepayAmount = calRepayAmount.divide(BigDecimal.valueOf(termTobeAdjusted), 0, RoundingMode.HALF_DOWN);
+			}
 			
 			finScheduleData = setRpyInstructDetails(finScheduleData, recalStartDate, recalEndDate,
 			        calRepayAmount, schdMethod);
