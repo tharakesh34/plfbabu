@@ -456,7 +456,7 @@ public class HomeLoanDetailSearchCtrl extends GFCBaseCtrl implements Serializabl
 			}
 		}
 		// Default Sort on the table
-		so.addSort("HomeLoanId", false);
+		so.addSort("loanRefNumber", false);
 
 		if (logger.isDebugEnabled()) {
 			final List<Filter> lf = so.getFilters();

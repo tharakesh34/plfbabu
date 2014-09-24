@@ -353,7 +353,7 @@ public class DealFinanceSearchCtrl extends GFCBaseCtrl implements Serializable {
 		}else{
 			so.addTabelName("FinanceMain_AView");
 		}
-		
+		so.addFilter(new Filter("InvestmentRef", "", Filter.OP_NOT_EQUAL));
 		if (StringUtils.isNotEmpty(this.investmentRef.getValue())) {
 
 			// get the search operator
@@ -370,7 +370,7 @@ public class DealFinanceSearchCtrl extends GFCBaseCtrl implements Serializable {
 				}
 			}
 		}
-		
+
 		if (StringUtils.isNotEmpty(this.finReference.getValue())) {
 
 			// get the search operator

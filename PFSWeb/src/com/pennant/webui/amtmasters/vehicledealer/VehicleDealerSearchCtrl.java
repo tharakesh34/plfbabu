@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -63,6 +64,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -95,7 +97,7 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 	protected Listbox recordType;	// autowired
 	protected Listbox sortOperator_recordStatus; // autowired
 	protected Listbox sortOperator_recordType; // autowired
-	protected Textbox dealerType; // autowired
+	protected Combobox dealerType; // autowired
 	protected Listbox sortOperator_dealerType; // autowired
 	protected Textbox dealerTelephone; // autowired
 	protected Listbox sortOperator_dealerTelephone; // autowired
@@ -170,6 +172,7 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 			this.label_VehicleDealerSearch_RecordType.setVisible(false);
 		}
 		
+		fillComboBox(this.dealerType, "", PennantStaticListUtil.getDealerType(), "");
 		// ++++ Restore the search mask input definition ++++ //
 		// if exists a searchObject than show formerly inputs of filter values
 		if (args.containsKey("searchObject")) {
@@ -190,7 +193,8 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 					this.dealerName.setValue(filter.getValue().toString());
 				} else if (filter.getProperty().equals("dealerType")) {
 					SearchOperators.restoreStringOperator(this.sortOperator_dealerType, filter);
-					this.dealerType.setValue(filter.getValue().toString());
+					fillComboBox(this.dealerType, filter.getValue().toString(), PennantStaticListUtil.getDealerType(), "");
+
 				}  else if (filter.getProperty().equals("dealerTelephone")) {
 					SearchOperators.restoreStringOperator(this.sortOperator_dealerTelephone, filter);
 					this.dealerTelephone.setValue(filter.getValue().toString());
@@ -317,7 +321,7 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 				}
 			}
 		}
-		if (StringUtils.isNotEmpty(this.dealerType.getValue())) {
+		if (!this.dealerType.getSelectedItem().getValue().toString().equals("#")) {
 
 			// get the search operator
 			final Listitem itemDealerType = this.sortOperator_dealerType.getSelectedItem();
@@ -326,11 +330,11 @@ public class VehicleDealerSearchCtrl extends GFCBaseCtrl implements Serializable
 				final int searchOpId = ((SearchOperators) itemDealerType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("dealerType", "%" + this.dealerType.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("dealerType", "%" + this.dealerType.getSelectedItem().getValue().toString().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("dealerType", this.dealerType.getValue(), searchOpId));
+					so.addFilter(new Filter("dealerType", this.dealerType.getSelectedItem().getValue().toString(), searchOpId));
 				}
 			}
 		}

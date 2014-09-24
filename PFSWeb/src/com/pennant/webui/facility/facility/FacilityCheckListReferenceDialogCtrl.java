@@ -370,14 +370,14 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseListCtrl<Financ
 					if (!enqModule) {
 						if (!notInputInStageMap.containsKey(checkListDetail.getLovDescFinRefId())) {
 							Button uploadBtn = new Button("Upload");
-							uploadBtn.setStyle("color:#ffffff !important;font-size:10px;padding:0px 2px");
+							uploadBtn.setStyle("background-color:#16a085;color:#ffffff !important;font-size:10px;padding:0px 2px;");
 							listCell.appendChild(uploadBtn);
 							uploadBtn.addForward("onClick", "", "onUploadRequiredDocument", checkListDetail);
 						}
 					}
 					listCell.appendChild(new Space());
 					Button viewBtn = new Button("View");
-					viewBtn.setStyle("color:#ffffff !important;font-size:10px;padding:0px 2px");
+					viewBtn.setStyle("background-color:#16a085;color:#ffffff !important;font-size:10px;padding:0px 2px;");
 					listCell.appendChild(viewBtn);
 					viewBtn.addForward("onClick", "", "onViewRequiredDocument", checkListDetail);
 				}

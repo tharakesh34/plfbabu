@@ -347,13 +347,13 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseListCtrl<Finance
 					item.setDisabled(true);
 					if (checkListDetail.getLovDescFinRefDetail().getAllowInputInStage().contains(checkListDetail.getLovDescUserRole())) {
 						Button uploadBtn = new Button("Upload");
-						uploadBtn.setStyle("background-color:#00b050;color:#ffffff !important;font-size:10px;padding:0px 2px;");
+						uploadBtn.setStyle("background-color:#16a085;color:#ffffff !important;font-size:10px;padding:0px 2px;");
 						listCell.appendChild(uploadBtn);
 						uploadBtn.addForward("onClick", "", "onUploadRequiredDocument", checkListDetail);
 					}
 					listCell.appendChild(new Space());
 					Button viewBtn = new Button("View");
-					viewBtn.setStyle("background-color:#00b050;color:#ffffff !important;font-size:10px;padding:0px 2px;");
+					viewBtn.setStyle("background-color:#16a085;color:#ffffff !important;font-size:10px;padding:0px 2px;");
 					listCell.appendChild(viewBtn);
 					viewBtn.addForward("onClick", "", "onViewRequiredDocument", checkListDetail);
 				}

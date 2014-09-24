@@ -44,13 +44,18 @@
 package com.pennant.webui.staticparms.extendedfieldheader;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
@@ -60,9 +65,11 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -86,9 +93,9 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 	 */
 	protected Window 	window_ExtendedFieldHeaderSearch; 	// autowired
 	
-	protected Textbox 	moduleName; 						// autowired
+	protected Combobox 	moduleName; 						// autowired
 	protected Listbox 	sortOperator_moduleName; 			// autowired
-	protected Textbox 	subModuleName; 						// autowired
+	protected Combobox 	subModuleName; 						// autowired
 	protected Listbox 	sortOperator_subModuleName; 		// autowired
 	protected Textbox 	tabHeading; 						// autowired
 	protected Listbox 	sortOperator_tabHeading; 			// autowired
@@ -107,7 +114,8 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 	private transient ExtendedFieldHeaderListCtrl extendedFieldHeaderCtrl; // overhanded per param
 	private transient WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("ExtendedFieldHeader");
 	private JdbcSearchObject<ExtendedFieldHeader> searchObj;
-	
+	private final HashMap<String, HashMap<String, String>> moduleMap = PennantStaticListUtil.getModuleName();
+	private List<ValueLabel> modulesList = null;
 	/**
 	 * constructor
 	 */
@@ -122,6 +130,17 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_ExtendedFieldHeaderSearch(Event event) throws Exception {
 		logger.debug("Entering" +event.toString());
+		
+		if (modulesList == null) {
+			ValueLabel valuLable = null;
+			modulesList = new ArrayList<ValueLabel>(moduleMap.size());
+			Set<String> moduleKeys = moduleMap.keySet();
+			for (String key : moduleKeys) {
+				valuLable = new ValueLabel(key,Labels.getLabel("label_ExtendedField_" + key));
+				modulesList.add(valuLable);
+			}
+		}
+		
 		
 		try{
 		if (workFlowDetails==null){
@@ -172,6 +191,8 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 			this.label_ExtendedFieldHeaderSearch_RecordType.setVisible(false);
 		}
 		
+		fillComboBox(moduleName, null, modulesList, "");
+		fillsubModule(subModuleName, "", "");
 		// ++++ Restore the search mask input definition ++++ //
 		// if exists a searchObject than show formerly inputs of filter values
 		if (args.containsKey("searchObject")) {
@@ -185,14 +206,13 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 				// restore founded properties
 			    if (filter.getProperty().equals("moduleName")) {
 					SearchOperators.restoreStringOperator(this.sortOperator_moduleName, filter);
-					this.moduleName.setValue(filter.getValue().toString());
-
-					
+					fillComboBox(moduleName, filter.getValue().toString(), modulesList, "");
 			    } else if (filter.getProperty().equals("subModuleName")) {
 					SearchOperators.restoreStringOperator(this.sortOperator_subModuleName, filter);
 					this.subModuleName.setValue(filter.getValue().toString());
-
-					
+					String moduleName = this.moduleName.getSelectedItem().getValue().toString().equals("#") ? "" : 
+						                        this.moduleName.getSelectedItem().getValue().toString();
+					fillsubModule(subModuleName, moduleName, filter.getValue().toString());
 			    } else if (filter.getProperty().equals("tabHeading")) {
 					SearchOperators.restoreStringOperator(this.sortOperator_tabHeading, filter);
 					this.tabHeading.setValue(filter.getValue().toString());
@@ -215,10 +235,7 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 					}
 	
 				}
-			    this.searchObj.removeFilter(filter);
-			    
-			}
-			
+			} 
 		}
 		showExtendedFieldHeaderSeekDialog();
 		} catch (Exception e) {
@@ -230,6 +247,17 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 		logger.debug("Leaving" + event.toString());
 	}
 
+	
+	
+	public void onChange$moduleName(Event event){
+		logger.debug("Entering  :" + event.toString());
+        if(!this.moduleName.getSelectedItem().getValue().toString().equals("#")){
+               fillsubModule(subModuleName, this.moduleName.getSelectedItem().getValue().toString(), "");
+        } else {
+            fillsubModule(subModuleName, "", "");
+        }
+		logger.debug("Leaving  :" + event.toString());
+	}
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++ Components events +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -278,6 +306,34 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 		}
 	}
 
+	
+	private void fillsubModule(Combobox combobox, String moduleName, String value) {
+		if (this.moduleName.getSelectedItem() != null) {
+			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null ? new HashMap<String, String>()
+					: PennantStaticListUtil.getModuleName().get(moduleName);
+			ArrayList<String> arrayList = new ArrayList<String>(hashMap.keySet());
+			subModuleName.getItems().clear();
+			Comboitem comboitem = new Comboitem();
+			comboitem.setLabel("----Select-----");
+			comboitem.setValue("");
+			subModuleName.appendChild(comboitem);
+			subModuleName.setSelectedItem(comboitem);
+			if (arrayList != null) {
+				for (int i = 0; i < arrayList.size(); i++) {
+					comboitem = new Comboitem();
+					comboitem.setLabel(Labels.getLabel("label_ExtendedField_"+arrayList.get(i)));
+					comboitem.setValue(arrayList.get(i));
+					subModuleName.appendChild(comboitem);
+					if (StringUtils.trimToEmpty(value).equals(arrayList.get(i))) {
+						subModuleName.setSelectedItem(comboitem);
+					}
+				}
+			}
+		} else {
+			subModuleName.getItems().clear();
+		}
+	}
+	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -317,7 +373,7 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 		
 		
 		
-		if (StringUtils.isNotEmpty(this.moduleName.getValue())) {
+		if (!this.moduleName.getSelectedItem().getValue().toString().equals("#")) {
 
 			// get the search operator
 			final Listitem itemModuleName = this.sortOperator_moduleName.getSelectedItem();
@@ -325,27 +381,27 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 				final int searchOpId = ((SearchOperators) itemModuleName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("moduleName", "%" + this.moduleName.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("moduleName", "%" + this.moduleName.getSelectedItem().getValue().toString().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("moduleName", this.moduleName.getValue(), searchOpId));
+					so.addFilter(new Filter("moduleName", this.moduleName.getSelectedItem().getValue().toString(), searchOpId));
 				}
 			}
 		}
-		if (StringUtils.isNotEmpty(this.subModuleName.getValue())) {
+		if (!this.subModuleName.getSelectedItem().getValue().toString().equals("#")
+				&& !this.subModuleName.getSelectedItem().getValue().toString().equals("")) {
 
 			// get the search operator
 			final Listitem itemSubModuleName = this.sortOperator_subModuleName.getSelectedItem();
 			if (itemSubModuleName != null) {
 				final int searchOpId = ((SearchOperators) itemSubModuleName.getAttribute("data")).getSearchOperatorId();
-
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("subModuleName", "%" + this.subModuleName.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("subModuleName", "%" + this.subModuleName.getSelectedItem().getValue().toString().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("subModuleName", this.subModuleName.getValue(), searchOpId));
+					so.addFilter(new Filter("subModuleName", this.subModuleName.getSelectedItem().getValue().toString(), searchOpId));
 				}
 			}
 		}

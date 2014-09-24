@@ -1432,7 +1432,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	    throwValidation();
 		doWriteComponentsToBean(getBulkProcessHeader());
 		
-		if (getRole().equals("MSTGRP1_MAKER")
+		if (getUserWorkspace().isAllowed("button_BulkProcessHeader_btnProceed")
 				&& !StringUtils.trimToEmpty(this.bulkProcessHeader.getRecordStatus()).equals(PennantConstants.RCD_STATUS_APPROVED)) {
 
 			Date fromDate = DateUtility.getDBDate(DateUtility.formatDate(this.fromDate.getValue(), PennantConstants.DBDateFormat));

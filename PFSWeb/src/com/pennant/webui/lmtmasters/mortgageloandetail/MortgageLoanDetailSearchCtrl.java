@@ -802,7 +802,7 @@ public class MortgageLoanDetailSearchCtrl extends GFCBaseCtrl implements Seriali
 			}
 		}
 		// Default Sort on the table
-		so.addSort("MortgLoanId", false);
+		so.addSort("loanRefNumber", false);
 
 		if (logger.isDebugEnabled()) {
 			final List<Filter> lf = so.getFilters();

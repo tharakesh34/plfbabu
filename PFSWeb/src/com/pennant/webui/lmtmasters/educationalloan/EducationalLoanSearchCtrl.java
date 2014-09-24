@@ -646,7 +646,7 @@ public class EducationalLoanSearchCtrl extends GFCBaseCtrl implements Serializab
 			}
 		}
 		// Default Sort on the table
-		so.addSort("EduLoanId", false);
+		so.addSort("loanRefNumber", false);
 
 		if (logger.isDebugEnabled()) {
 			final List<Filter> lf = so.getFilters();

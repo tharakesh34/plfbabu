@@ -231,7 +231,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl implements Serializable 
 	private void doSetFieldProperties() {
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
-		this.fieldCode.setMaxlength(8);
+		this.fieldCode.setMaxlength(10);
 		this.fieldCodeDesc.setMaxlength(50);
 
 		if (isWorkFlowEnabled()){

@@ -981,6 +981,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cmtPftRateMin.setFormat(PennantConstants.rateFormate9);
 		this.cmtPftRateMin.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.cmtPftRateMin.setScale(9);
+		this.space_CmtPftRateMin.setSclass("mandatory");
 		this.cmtPftRateMax.setMaxlength(13);
 		this.cmtPftRateMax.setFormat(PennantConstants.rateFormate9);
 		this.cmtPftRateMax.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -1370,12 +1371,16 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 
-		// Cmt Exp Date
+		  // Cmt Exp Date
 			if ( this.userAction.getSelectedItem() != null && (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Resubmit")  || 
 				 this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Reject") ||
 				 this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel")) )
 			{
+			try {
 				aCommitment.setCmtExpDate(this.cmtExpDate.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}else{	
 			try {/*
 				if(dateAppDate.after(this.cmtExpDate.getValue())) {
@@ -1392,9 +1397,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 				wve.add(we);
 			}
 		}
-		
-			aCommitment.setCmtExpDate(this.cmtExpDate.getValue());
-//	 	 Promised Date
+			
+		//Promised Date
 		try {
 			if (this.cmtExpDate.getValue() != null && this.cmtStartDate.getValue() != null) {
 				if(!this.cmtExpDate.isReadonly() && !this.cmtExpDate.isDisabled()) {
@@ -1720,7 +1724,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// Cmt Pft Rate Min
 		if (!this.cmtPftRateMin.isReadonly()) {
 			this.cmtPftRateMin.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_CommitmentDialog_CmtPftRateMin.value")));
-
 		}
 		// Cmt Pft Rate Max
 		if (!this.cmtPftRateMax.isReadonly()) {
@@ -2574,6 +2577,20 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving calculateCharges()");
 	}
 
+	/*
+	 * onChange Event For cmtPftRateMin
+	 */
+	public void onChange$cmtPftRateMin(Event event){
+		logger.debug("Entering :"+event.toString());
+          if(this.cmtPftRateMin.getValue() != null &&
+        		  this.cmtPftRateMin.getValue().compareTo(BigDecimal.ZERO) >= 0){
+        	  this.space_CmtPftRateMax.setSclass("mandatory");
+          } else {
+        	  this.space_CmtPftRateMax.setSclass("none");
+          }
+		logger.debug("Leaving :"+event.toString());
+	}
+	
 	private void getFinaceDetails(String cmtReference) {
 		JdbcSearchObject<FinanceMain> searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class);
 		searchObj.addSort("FinReference", false);
