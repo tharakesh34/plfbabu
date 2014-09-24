@@ -2780,7 +2780,6 @@
 	<bean id="extendedFieldHeaderSearchCtrl"
 		class="com.pennant.webui.staticparms.extendedfieldheader.ExtendedFieldHeaderSearchCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="extendedFieldHeaderService" ref="extendedFieldHeaderService" />
 	</bean>
 
 	<!--============ Frequency Details ============== -->
