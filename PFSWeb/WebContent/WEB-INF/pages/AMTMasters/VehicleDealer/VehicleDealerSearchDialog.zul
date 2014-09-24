@@ -33,8 +33,7 @@
 									<listbox
 										id="sortOperator_dealerType" width="43px" mold="select"
 										rows="1" />
-									<textbox id="dealerType"
-										width="171px" maxlength="19" />
+									<combobox id="dealerType" />
 								</row>
 								<row visible="false">
 									<label

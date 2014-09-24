@@ -24,7 +24,7 @@
 						<column width="100%" />
 					</columns>
 					<rows>
-						<row>
+						<row visible="false">
 							<label
 								id="label_MortgageLoanDetailSearch_MortgLoanId"
 								value="${c:l('label_MortgageLoanDetailSearch_MortgLoanId.value')}" />

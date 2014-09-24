@@ -34,7 +34,7 @@
 									<listbox
 										id="sortOperator_moduleName" width="43px" mold="select"
 										rows="1" />
-									<textbox id="moduleName"
+									<combobox id="moduleName"
 										width="250px" maxlength="50" />
 								</row>
 								<row>
@@ -44,7 +44,7 @@
 									<listbox
 										id="sortOperator_subModuleName" width="43px" mold="select"
 										rows="1" />
-									<textbox id="subModuleName"
+									<combobox id="subModuleName"
 										width="250px" maxlength="50" />
 								</row>
 								<row>
