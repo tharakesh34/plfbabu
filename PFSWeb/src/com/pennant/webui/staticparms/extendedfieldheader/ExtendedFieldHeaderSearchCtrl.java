@@ -131,6 +131,7 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 	public void onCreate$window_ExtendedFieldHeaderSearch(Event event) throws Exception {
 		logger.debug("Entering" +event.toString());
 		
+        // Filling Module Map
 		if (modulesList == null) {
 			ValueLabel valuLable = null;
 			modulesList = new ArrayList<ValueLabel>(moduleMap.size());
@@ -248,7 +249,9 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 	}
 
 	
-	
+	/*
+	 * onChange Event for combobox moduleName
+	 */
 	public void onChange$moduleName(Event event){
 		logger.debug("Entering  :" + event.toString());
         if(!this.moduleName.getSelectedItem().getValue().toString().equals("#")){
@@ -306,7 +309,9 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 		}
 	}
 
-	
+	/*
+	 * Method For filling submodules
+	 */
 	private void fillsubModule(Combobox combobox, String moduleName, String value) {
 		if (this.moduleName.getSelectedItem() != null) {
 			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null ? new HashMap<String, String>()
@@ -315,7 +320,7 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 			subModuleName.getItems().clear();
 			Comboitem comboitem = new Comboitem();
 			comboitem.setLabel("----Select-----");
-			comboitem.setValue("");
+			comboitem.setValue("#");
 			subModuleName.appendChild(comboitem);
 			subModuleName.setSelectedItem(comboitem);
 			if (arrayList != null) {
@@ -389,8 +394,7 @@ public class ExtendedFieldHeaderSearchCtrl extends GFCBaseCtrl implements Serial
 				}
 			}
 		}
-		if (!this.subModuleName.getSelectedItem().getValue().toString().equals("#")
-				&& !this.subModuleName.getSelectedItem().getValue().toString().equals("")) {
+		if (!this.subModuleName.getSelectedItem().getValue().toString().equals("#")) {
 
 			// get the search operator
 			final Listitem itemSubModuleName = this.sortOperator_subModuleName.getSelectedItem();

@@ -1020,7 +1020,9 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 					if(checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())){
 						List<Listitem>  list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
 						for (int i = 0; i < list.size(); i++) {
+							list.get(i).setDisabled(false);
 							list.get(i).setSelected(true);
+							list.get(i).setDisabled(true);
 						}
 					}
 					closeWindow();

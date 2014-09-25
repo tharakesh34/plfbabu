@@ -45,15 +45,20 @@ package com.pennant.webui.solutionfactory.extendedfielddetail;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -70,11 +75,13 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ModuleMapping;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.service.solutionfactory.ExtendedFieldDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -116,9 +123,9 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	protected Listheader listheader_RecordType;
 	
 	//search
-	protected Textbox moduleName; // autowired
+	protected Combobox moduleName; // autowired
 	protected Listbox sortOperator_moduleName; // autowired
-	protected Textbox subModuleName; // autowired
+	protected Combobox subModuleName; // autowired
 	protected Listbox sortOperator_subModuleName; // autowired
 	protected Textbox recordStatus; // autowired
 	protected Listbox recordType;	// autowired
@@ -147,7 +154,9 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	protected JdbcSearchObject<ExtendedFieldHeader> searchObj;
 	private transient ExtendedFieldDetailService extendedFieldDetailService;
 	private transient WorkFlowDetails workFlowDetails=null;
-	
+	private HashMap<String, HashMap<String, String>> moduleMap = PennantStaticListUtil.getModuleName();
+	private List<ValueLabel> modulesList = null;
+
 	private Tabbox						   tabbox;
 	private Tab							   tab;
 	
@@ -173,7 +182,18 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	 */
 	public void onCreate$window_ExtendedFieldDetailList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
+		
+		// Filling Module Map
+		if (modulesList == null) {
+			ValueLabel valuLable = null;
+			modulesList = new ArrayList<ValueLabel>(moduleMap.size());
+			Set<String> moduleKeys = moduleMap.keySet();
+			for (String key : moduleKeys) {
+				valuLable = new ValueLabel(key,Labels.getLabel("label_ExtendedField_" + key));
+				modulesList.add(valuLable);
+			}
+		}
+		
 		try{
 			if(event.getTarget() != null && event.getTarget().getParent() != null 
 					&& event.getTarget().getParent().getParent() != null
@@ -219,6 +239,8 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 				this.label_ExtendedFieldDetailSearch_RecordType.setVisible(false);
 			}
 
+			fillComboBox(moduleName, null, modulesList, "");
+			fillsubModule(subModuleName, "", "");
 			/* set components visible dependent on the users rights */
 			doCheckRights();
 
@@ -368,9 +390,9 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		this.sortOperator_moduleName.setSelectedIndex(0);
-		this.moduleName.setValue("");
+		this.moduleName.setSelectedIndex(0);
 		this.sortOperator_subModuleName.setSelectedIndex(0);
-		this.subModuleName.setValue("");
+		this.subModuleName.setSelectedIndex(0);
 		
 		if (isWorkFlowEnabled()) {
 			this.sortOperator_recordStatus.setSelectedIndex(0);
@@ -436,13 +458,13 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 			this.searchObj.addTabelName("ExtendedFieldHeader_AView");
 		}
 		//Module
-		if (!StringUtils.trimToEmpty(this.moduleName.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_moduleName.getSelectedItem(), this.moduleName.getValue(), "moduleName");
+		if (!this.moduleName.getSelectedItem().getValue().toString().equals("#") ) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_moduleName.getSelectedItem(), this.moduleName.getSelectedItem().getValue().toString(), "moduleName");
 		}
 		
 		// SubModule Name
-		if (!StringUtils.trimToEmpty(this.subModuleName.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_subModuleName.getSelectedItem(), this.subModuleName.getValue(), "subModuleName");
+		if (!this.subModuleName.getSelectedItem().getValue().toString().equals("#")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_subModuleName.getSelectedItem(), this.subModuleName.getSelectedItem().getValue().toString(), "subModuleName");
 		}
 		// Record Status
 		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
@@ -465,6 +487,49 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj,this.listBoxExtendedFieldDetail,this.pagingExtendedFieldDetailList);
 		logger.debug("Leaving" );
+	}
+	
+	/*
+	 * onChange Event For combobox moduleName
+	 */
+	public void onChange$moduleName(Event event){
+		logger.debug("Entering  :" + event.toString());
+        if(!this.moduleName.getSelectedItem().getValue().toString().equals("#")){
+             fillsubModule(subModuleName, this.moduleName.getSelectedItem().getValue().toString(), "");
+        } else {
+             fillsubModule(subModuleName, "", "");
+        }
+		logger.debug("Leaving  :" + event.toString());
+	}
+	
+	/*
+	 * method For filling submodules list
+	 */
+	private void fillsubModule(Combobox combobox, String moduleName, String value) {
+		if (this.moduleName.getSelectedItem() != null) {
+			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null ? new HashMap<String, String>()
+					: PennantStaticListUtil.getModuleName().get(moduleName);
+			ArrayList<String> arrayList = new ArrayList<String>(hashMap.keySet());
+			subModuleName.getItems().clear();
+			Comboitem comboitem = new Comboitem();
+			comboitem.setLabel("----Select-----");
+			comboitem.setValue("#");
+			subModuleName.appendChild(comboitem);
+			subModuleName.setSelectedItem(comboitem);
+			if (arrayList != null) {
+				for (int i = 0; i < arrayList.size(); i++) {
+					comboitem = new Comboitem();
+					comboitem.setLabel(Labels.getLabel("label_ExtendedField_"+arrayList.get(i)));
+					comboitem.setValue(arrayList.get(i));
+					subModuleName.appendChild(comboitem);
+					if (StringUtils.trimToEmpty(value).equals(arrayList.get(i))) {
+						subModuleName.setSelectedItem(comboitem);
+					}
+				}
+			}
+		} else {
+			subModuleName.getItems().clear();
+		}
 	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
