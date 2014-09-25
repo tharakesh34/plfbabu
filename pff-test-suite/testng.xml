@@ -4,6 +4,7 @@
 	<test name="TestConfig">
 		<classes>
 			<class name="com.pennant.test.LoadConfigTest" />
+			<class name="com.pennant.test.ScheduleTest" />
 		</classes>
 	</test>
 </suite>
