@@ -48,7 +48,7 @@
 									<label id="label_WIFFinanceMainSearch_FinCcy"
 										value="${c:l('label_WIFFinanceMainSearch_FinCcy.value')}" />
 									<listbox id="sortOperator_finCcy" width="43px" mold="select" rows="1" />
-									<textbox id="finCcy" width="27px" maxlength="3" />
+									<textbox id="finCcy" width="50px" maxlength="3" />
 								</row>
 								<row visible="false">
 									<label id="label_WIFFinanceMainSearch_ScheduleMethod"

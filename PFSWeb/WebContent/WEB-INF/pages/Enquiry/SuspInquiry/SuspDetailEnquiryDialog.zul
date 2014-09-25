@@ -46,6 +46,7 @@
 			<borderlayout id="borderlayoutSuspense">
 				<center border="none" autoscroll="true">
 					<vlayout visible="true">
+					<groupbox >
 						<grid id="grid_Basicdetails"
 							sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="border:0px;padding-left:20px;padding-top:0px;">
@@ -73,12 +74,12 @@
 										id="label_SuspenseEnquiryDialog_FinSuspDate"
 										value="${c:l('label_SuspenseEnquiryDialog_FinSuspDate.value')}" />
 									<datebox id="finSuspDate"
-										width="100px" disabled="true" format="dd/MM/yyyy" />
+										width="110px" disabled="true" format="dd/MM/yyyy" />
 									<label
 										id="label_SuspenseEnquiryDialog_FinSuspTrfDate"
 										value="${c:l('label_SuspenseEnquiryDialog_FinSuspTrfDate.value')}" />
 									<datebox id="finSuspTrfDate"
-										width="100px" disabled="true" format="dd/MM/yyyy" />
+										width="110px" disabled="true" format="dd/MM/yyyy" />
 								</row>
 								<row visible="true">
 									<label
@@ -94,6 +95,7 @@
 								</row>
 							</rows>
 						</grid>
+						</groupbox>
 						<tabbox width="auto" height="100%"
 							id="tabBoxIndexCenter">
 							<tabs id="tabsIndexCenter">

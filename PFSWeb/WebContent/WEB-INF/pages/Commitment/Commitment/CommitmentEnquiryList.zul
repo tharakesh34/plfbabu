@@ -77,7 +77,7 @@
 									
 									<label id="label_CommitmentList_CmtCcy" value="${c:l('label_CommitmentList_CmtCcy.value')}" />
 									<listbox id="sortOperator_CmtCcy" width="43px" mold="select" rows="1" />
-									<textbox id="cmtCcy" width="27px" maxlength="3" />
+									<textbox id="cmtCcy" width="50px" maxlength="3" />
 				
 								</row>
 								<row>

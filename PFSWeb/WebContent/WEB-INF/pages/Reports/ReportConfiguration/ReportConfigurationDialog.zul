@@ -8,7 +8,6 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_ReportConfigurationDialog"
-			title="${c:l('window_ReportConfigurationDialog.title')}"
 			border="normal" apply="${reportConfigurationDialogCtrl}" width="100%"
 			height="100%" sizable="false">
 
@@ -34,6 +33,9 @@
 						<button id="btnCancel" visible="false"
 							 tooltiptext="${c:l('btnCancel.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						<button id="btnPreviewReport" label = "${c:l('label_Print')}"
+							tooltiptext="${c:l('btnPreviewReportView.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						<button id="btnNotes" 
 							tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
 					</toolbar>
@@ -41,10 +43,8 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
 						sclass="toolbar-center">
-							<button id="btnPreviewReport" 
-							image="/images/icons/icon-pdf_16x16.png"
-							tooltiptext="${c:l('btnPreviewReportView.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						<label value="${c:l('window_ReportConfigurationDialog.title')}" 
+						       sclass="label-heading" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
