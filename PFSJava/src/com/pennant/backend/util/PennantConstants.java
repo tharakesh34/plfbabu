@@ -614,4 +614,8 @@ public class PennantConstants {
 	public static final String MODULETYPE_ENQ ="ENQ";
 	public static final String MODULETYPE_REPOSTING ="REPOSTING";
 	
+	//Account Holding Type
+	public static final String HOLDTYPE_OVERDUE 	=	"P";
+	public static final String HOLDTYPE_FUTURE 		=	"F";
+	
 }

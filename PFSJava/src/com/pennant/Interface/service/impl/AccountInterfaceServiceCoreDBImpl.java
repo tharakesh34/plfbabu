@@ -226,7 +226,7 @@ public class AccountInterfaceServiceCoreDBImpl implements AccountInterfaceServic
 
 	@Override
     public List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst,
-            Date valueDate) throws EquationInterfaceException {
+            Date valueDate, String holdType) throws EquationInterfaceException {
 	    // TODO Auto-generated method stub
 	    return null;
     }

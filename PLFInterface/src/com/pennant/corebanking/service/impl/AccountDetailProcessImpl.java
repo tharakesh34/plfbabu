@@ -116,8 +116,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 	}
 
 	@Override
-	public List<AccountBalance> addAccountHolds(
-			List<AccountBalance> accountslIst)
+	public List<AccountBalance> addAccountHolds(List<AccountBalance> accountslIst, String holdType)
 			throws EquationInterfaceException {
 		// TODO Auto-generated method stub
 		return null;

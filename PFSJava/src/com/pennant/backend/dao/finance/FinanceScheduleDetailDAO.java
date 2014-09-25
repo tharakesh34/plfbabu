@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
@@ -84,4 +85,5 @@ public interface FinanceScheduleDetailDAO {
 	void updateForRpy(FinanceScheduleDetail financeScheduleDetail, String rpyFor);
 	Date getFirstRepayDate(String finReference);
 	List<ScheduleMapDetails> getFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate, Date schdTodate);
+	public List<AccountHoldStatus> getFutureInstAmtByRepayAc(Date dateValueDate, Date futureDate);
 }

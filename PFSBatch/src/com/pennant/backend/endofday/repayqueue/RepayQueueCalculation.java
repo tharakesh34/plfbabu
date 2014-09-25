@@ -98,7 +98,7 @@ public class RepayQueueCalculation implements Tasklet {
 
 		priorityMap = new HashMap<String, Integer>();
 		for (int i = 0; i < finRpyPriorities.size(); i++) {
-			priorityMap.put(finRpyPriorities.get(i).getLabel(),Integer.parseInt(finRpyPriorities.get(i).getValue()));
+			priorityMap.put(finRpyPriorities.get(i).getLabel().trim(),Integer.parseInt(finRpyPriorities.get(i).getValue().trim()));
 		}
 
 		// READ REPAYMENTS DUE TODAY

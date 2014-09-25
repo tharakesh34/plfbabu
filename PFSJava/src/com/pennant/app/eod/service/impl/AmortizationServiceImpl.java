@@ -71,7 +71,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 	/**
 	 * Method for Calculating Accrual Details
 	 */
-	@Override
+    @Override
 	public void doAccrualCalculation(Object object, Date valueDate, String isDummy) throws Exception{
 		logger.info("Entering");
 		
@@ -298,7 +298,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 		getFinanceProfitDetailDAO().update(pftDetailsList, type);
 	}
 
-	@Override
+    @Override
 	public void doAccrualPosting(Object object, Date valueDate, String postBranch , String isDummy) throws Exception{
 		logger.info("Entering");
 		

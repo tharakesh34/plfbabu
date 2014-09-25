@@ -408,8 +408,8 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into AccountHoldStatus");
-		insertSql.append(" (Account, CurODAmount,ValueDate, HoldStatus ,StatusDesc )");
-		insertSql.append(" Values(:Account, :CurODAmount, :ValueDate, :HoldStatus, :StatusDesc )");
+		insertSql.append(" (Account, CurODAmount,ValueDate, HoldType, HoldStatus ,StatusDesc )");
+		insertSql.append(" Values(:Account, :CurODAmount, :ValueDate, :HoldType, :HoldStatus, :StatusDesc )");
 
 		logger.debug("insertSql: " + insertSql.toString());
 

@@ -328,12 +328,12 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 	
 	/**
 	 * Method for Processing Holding on Repay Account Details
-	 * @param accountslIst
+	 * @param accountsList
 	 * @return
 	 * @throws EquationInterfaceException 
 	 */
 	@Override
-	public List<AccountBalance> addAccountHolds(List<AccountBalance> accountslIst) throws EquationInterfaceException {
+	public List<AccountBalance> addAccountHolds(List<AccountBalance> accountsList, String holdType) throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -341,15 +341,16 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 		String pcml = "PFFAAH";//Add Account Holds
 		int[] indices = new int[1];
 		AccountBalance acBal = null;
-		int acListSize = accountslIst.size();
+		int acListSize = accountsList.size();
 
 		try {
 
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
-			pcmlDoc.setValue(pcml + ".@REQDTA.@NOREQ", acListSize);// Account Number
-			for (indices[0] = 0; indices[0] < accountslIst.size(); indices[0]++){
-				acBal = accountslIst.get(indices[0]);
+			pcmlDoc.setValue(pcml + ".@REQDTA.@NOREQ", acListSize);// Number of Requests
+			pcmlDoc.setValue(pcml + ".@REQDTA.HOLDTYPE", holdType);// Hold Type
+			for (indices[0] = 0; indices[0] < accountsList.size(); indices[0]++){
+				acBal = accountsList.get(indices[0]);
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.RepayAccount",indices, acBal.getRepayAccount());// Account Number
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.CurODAmount",indices, acBal.getAccBalance());// Account Balance
 			}
@@ -366,7 +367,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 			int dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.@NORES").toString()); // Number of records returned 
 			if(acListSize == dsRspCount) {
 				for (indices[0] = 0; indices[0] < dsRspCount; indices[0]++){
-					acBal = accountslIst.get(indices[0]);
+					acBal = accountsList.get(indices[0]);
 					acBal.setAcHoldStatus(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.AcHoldStatus",indices).toString()); //Account Holding status
 					acBal.setStatusDesc((pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.StatusDesc",indices).toString())); //Status Reason for Fail
 				}
@@ -382,7 +383,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 			this.hostConnection.closeConnection(as400);
 		}
 		logger.debug("Leaving");
-		return accountslIst;
+		return accountsList;
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

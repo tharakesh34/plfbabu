@@ -373,7 +373,7 @@ public class RepayQueuePostings implements Tasklet {
 						}else{
 							subAcList = accountsList;
 						}
-						returnAcList.addAll(getAccountInterfaceService().addAccountHolds(subAcList,dateValueDate));
+						returnAcList.addAll(getAccountInterfaceService().addAccountHolds(subAcList,dateValueDate,PennantConstants.HOLDTYPE_OVERDUE));
 
 						if(accountsList.size() > 2000){
 							accountsList.subList(0, 2000).clear();

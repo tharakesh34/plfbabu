@@ -10,7 +10,9 @@ public class AccountHoldStatus implements Serializable {
 	
 	private String account;
 	private BigDecimal curODAmount;
+	private String holdType;
 	private Date valueDate;
+	private Date futureDate;
 	private String holdStatus ="";
 	private String statusDesc ="";
 	
@@ -37,6 +39,20 @@ public class AccountHoldStatus implements Serializable {
     }
 	public void setValueDate(Date valueDate) {
     	this.valueDate = valueDate;
+    }
+	
+	public Date getFutureDate() {
+	    return futureDate;
+    }
+	public void setFutureDate(Date futureDate) {
+	    this.futureDate = futureDate;
+    }
+	
+	public String getHoldType() {
+	    return holdType;
+    }
+	public void setHoldType(String holdType) {
+	    this.holdType = holdType;
     }
 	
 	public String getHoldStatus() {

@@ -21,6 +21,6 @@ public interface AccountDetailProcess {
 
 	int removeAccountHolds() throws EquationInterfaceException;
 
-	List<AccountBalance> addAccountHolds(List<AccountBalance> accountslIst)	throws EquationInterfaceException;
+	List<AccountBalance> addAccountHolds(List<AccountBalance> accountslIst, String holdType)	throws EquationInterfaceException;
 
 }

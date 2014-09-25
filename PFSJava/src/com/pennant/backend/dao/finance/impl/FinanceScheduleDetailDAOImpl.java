@@ -49,6 +49,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
@@ -1181,10 +1182,37 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 			firstRepayDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),beanParameters, Date.class);
 		}
 
-
 		logger.debug("Leaving");
 		return firstRepayDate;
-
 	}
+	
+	/**
+	 * Method for Fetching Account hold Details on Future installment Amounts grouping by Repayments Account
+	 */
+	@Override
+    public List<AccountHoldStatus> getFutureInstAmtByRepayAc(Date dateValueDate, Date futureDate) {
+		logger.debug("Entering");
+		
+		AccountHoldStatus holdStatus = new AccountHoldStatus();
+		holdStatus.setValueDate(dateValueDate);
+		holdStatus.setFutureDate(futureDate);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT F.RepayAccountId AS Account,  ");
+		selectSql.append(" SUM(S.PrincipalSchd - S.SchdPriPaid + S.ProfitSchd - S.SchdPftPaid + S.DefPrincipalSchd - S.DefSchdPriPaid + S.DefProfitSchd  -S.DefSchdPftPaid) AS CurODAmount FROM FinScheduleDetails S ");
+		selectSql.append(" INNER JOIN FinanceMain F ON S.FinReference = F.FinReference ");
+		selectSql.append(" INNER JOIN RMTFinanceTypes T ON F.FinType = T.FinType  ");
+		selectSql.append(" WHERE S.SchDate > :ValueDate AND  S.SchDate <= :FutureDate  ");
+		selectSql.append(" AND T.FinDivision = 'RETAIL' AND F.FinRepayMethod = 'AUTO' AND ");
+		selectSql.append("(S.PrincipalSchd - S.SchdPriPaid + S.ProfitSchd - S.SchdPftPaid + S.DefPrincipalSchd - S.DefSchdPriPaid + S.DefProfitSchd  -S.DefSchdPftPaid) > 0 GROUP BY F.RepayAccountId " );
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holdStatus);
+		RowMapper<AccountHoldStatus> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountHoldStatus.class);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+    }
+
 
 }

@@ -22,6 +22,6 @@ public interface AccountInterfaceService {
 	List<IAccounts> getAccountsAvailableBalList(List<IAccounts> accountsList) throws AccountNotFoundException;
 	List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList) throws AccountNotFoundException ;
 	int removeAccountHolds() throws Exception ;
-	List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst, Date valueDate) throws EquationInterfaceException;
+	List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst, Date valueDate,String holdType) throws EquationInterfaceException;
 	Map<String, String> getAccountCurrencyMap(Map<String, String> accountCcyMap) throws AccountNotFoundException;
 }

@@ -728,6 +728,29 @@
 		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<!-- Future Account Holds -->
+	<bean id="futureInstallmentHoldsTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="futureInstallmentHoldsTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="futureInstallmentHoldsTarget"
+		class="com.pennant.backend.endofday.repayqueue.FutureInstallmentHolds">
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="accountInterfaceService" ref="accountInterfaceService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+	</bean>
 
 	<!-- Amortization Calculation -->
 	<bean id="amortizationTasklet"
@@ -1216,6 +1239,13 @@
 		<!-- Schedule Repayment Postings -->
 		<step id="repayQueuePostings">
 			<tasklet ref="repayQueuePostingsTasklet" />
+			<next on="*" to="futureInstallmentHolds" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- Future Account Holds -->
+		<step id="futureInstallmentHolds">
+			<tasklet ref="futureInstallmentHoldsTasklet" />
 			<next on="*" to="amortizationCalculation" />
 			<fail on="FAILED"/>
 		</step>

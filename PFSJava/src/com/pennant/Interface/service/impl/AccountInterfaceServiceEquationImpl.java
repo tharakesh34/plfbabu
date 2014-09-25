@@ -344,7 +344,8 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 	 * @throws EquationInterfaceException 
 	 */
 	@Override
-    public List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst, Date valueDate) throws EquationInterfaceException {
+    public List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst, Date valueDate, String holdType) 
+    		throws EquationInterfaceException {
 		logger.debug("Entering");
 		
 		//Preparing List Of account Balance Details
@@ -359,7 +360,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
         }
 		
 		if(!acBalList.isEmpty()){
-			List<AccountBalance> returnAcBalList = getAccountDetailProcess().addAccountHolds(acBalList);
+			List<AccountBalance> returnAcBalList = getAccountDetailProcess().addAccountHolds(acBalList, holdType);
 			AccountHoldStatus holdStatus = null;
 			for (AccountBalance accountBalance : returnAcBalList) {
 	            holdStatus = new AccountHoldStatus();
@@ -368,6 +369,7 @@ public class AccountInterfaceServiceEquationImpl implements AccountInterfaceServ
 	            holdStatus.setHoldStatus(accountBalance.getAcHoldStatus());
 	            holdStatus.setStatusDesc(accountBalance.getStatusDesc());
 	            holdStatus.setValueDate(valueDate);
+	            holdStatus.setHoldType(holdType);
 	            acBalStatusList.add(holdStatus);
             }
 		}
