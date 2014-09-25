@@ -3963,6 +3963,10 @@
 	
 
 	<!--============ List Report Configuration Details ============== -->
+	<bean id="PTListReportUtils" class="com.pennant.webui.util.PTListReportUtils"
+		parent="basisCtrl" scope="prototype">
+		<property name="reportListService" ref="reportListService" />
+	</bean>
 
 	<bean id="reportListListCtrl" class="com.pennant.webui.reports.reportlist.ReportListListCtrl"
 		parent="basisListCtrl" scope="prototype">

@@ -5872,11 +5872,6 @@
 		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	<bean id="PTListReportUtils" class="com.pennant.webui.util.PTListReportUtils"
-		parent="basisCtrl" scope="prototype">
-		<property name="reportListService" ref="reportListService" />
-	</bean>
 
 	<bean name="reportGenerationUtil" class="com.pennant.app.util.ReportGenerationUtil"  scope="prototype"/>
 
