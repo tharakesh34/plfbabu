@@ -2,9 +2,8 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="UnitTestSuite">
 	<test name="TestConfig">
-		<classes>
-			<class name="com.pennant.test.LoadConfigTest" />
-			<class name="com.pennant.test.ScheduleTest" />
-		</classes>
+		<packages>
+			<package name="com.pennant.test" />
+		</packages>
 	</test>
 </suite>
