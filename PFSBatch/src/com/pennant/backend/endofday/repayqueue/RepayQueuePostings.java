@@ -188,9 +188,8 @@ public class RepayQueuePostings implements Tasklet {
 				long linkedTranId = Long.MIN_VALUE;
 				
 				//Repayments Only for "AUTO" Payment Finances
-				String repayMethod = resultSet.getString("FinRepayMethod");
 				boolean doProcessPostings = false;
-				if(StringUtils.trimToEmpty(repayMethod).equals(PennantConstants.REPAYMTH_AUTO)){
+				if(StringUtils.trimToEmpty(financeMain.getFinRepayMethod()).equals(PennantConstants.REPAYMTH_AUTO)){
 					doProcessPostings = true;
 				}
 
@@ -286,7 +285,9 @@ public class RepayQueuePostings implements Tasklet {
 						if (isStsChanged) {
 							
 							BigDecimal feeChargeAmt = financeMain.getFeeChargeAmt() == null? BigDecimal.ZERO : financeMain.getFeeChargeAmt();
-							getFinanceMainDAO().updateRepaymentAmount(financeMain.getFinReference(), financeMain.getFinAmount().add(feeChargeAmt), 
+							BigDecimal downpayAmt = financeMain.getDownPayment() == null? BigDecimal.ZERO : financeMain.getDownPayment();
+							getFinanceMainDAO().updateRepaymentAmount(financeMain.getFinReference(), 
+									financeMain.getFinAmount().add(feeChargeAmt).subtract(downpayAmt), 
 									financeMain.getFinRepaymentAmount(), curFinStatus, PennantConstants.FINSTSRSN_SYSTEM,false);
 						}
 						
@@ -530,8 +531,8 @@ public class RepayQueuePostings implements Tasklet {
 			financeMain.setFinCustPftAccount(resultSet.getString("FinCustPftAccount"));
 			financeMain.setFinCommitmentRef(resultSet.getString("FinCommitmentRef"));
 			financeMain.setFinCcy(resultSet.getString("FinCcy"));
-			financeMain.setFinBranch(resultSet.getString("Branch"));
-			financeMain.setCustID(resultSet.getLong("CustomerID"));
+			financeMain.setFinBranch(resultSet.getString("FinBranch"));
+			financeMain.setCustID(resultSet.getLong("CustID"));
 			financeMain.setFinAmount(resultSet.getBigDecimal("FinAmount"));
 			financeMain.setFeeChargeAmt(resultSet.getBigDecimal("FeeChargeAmt"));
 			financeMain.setDownPayment(resultSet.getBigDecimal("DownPayment"));
@@ -557,6 +558,7 @@ public class RepayQueuePostings implements Tasklet {
 			financeMain.setFinStatus(resultSet.getString("FinStatus"));
 			financeMain.setFinStsReason(resultSet.getString("FinStsReason"));
 			financeMain.setMaturityDate(resultSet.getDate("MaturityDate"));
+			financeMain.setFinRepayMethod(resultSet.getString("FinRepayMethod"));
 
 		} catch (SQLException e) {
 			throw new DataAccessException(e.getMessage()) { };
