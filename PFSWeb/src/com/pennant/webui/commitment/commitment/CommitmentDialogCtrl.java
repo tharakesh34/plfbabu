@@ -1272,10 +1272,12 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 			} else {
 				aCommitment.setCmtPftRateMin(BigDecimal.ZERO);
 			}
-			if (this.cmtPftRateMax.getValue() != null) {
-				aCommitment.setCmtPftRateMax(this.cmtPftRateMax.getValue());
-			} else {
-				aCommitment.setCmtPftRateMax(BigDecimal.ZERO);
+			if (aCommitment.getCmtPftRateMin().compareTo(BigDecimal.ZERO) > 0) {
+				if (this.cmtPftRateMax.getValue() != null) {
+					aCommitment.setCmtPftRateMax(this.cmtPftRateMax.getValue());
+				} else {
+					aCommitment.setCmtPftRateMax(BigDecimal.ZERO);
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1289,13 +1291,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 				aCommitment.setCmtPftRateMax(BigDecimal.ZERO);
 			}
 			
-			if (aCommitment.getCmtPftRateMin().compareTo(BigDecimal.ZERO) != 0 && aCommitment.getCmtPftRateMax().compareTo(BigDecimal.ZERO) != 0) {
-				if (aCommitment.getCmtPftRateMax().compareTo(aCommitment.getCmtPftRateMin()) < 0) {
-
-					throw new WrongValueException(this.cmtPftRateMax, Labels.getLabel("FIELD_IS_GREATER", new String[] { Labels.getLabel("label_CommitmentDialog_CmtPftRateMax.value"),
-					        String.valueOf(this.cmtPftRateMin.getValue()) }));
-				}
-
+			if (aCommitment.getCmtPftRateMax().compareTo(aCommitment.getCmtPftRateMin()) < 0) {
+				   throw new WrongValueException(this.cmtPftRateMax, Labels.getLabel("FIELD_IS_GREATER", new String[] { Labels.getLabel("label_CommitmentDialog_CmtPftRateMax.value"),
+					      String.valueOf(this.cmtPftRateMin.getValue()) }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1398,6 +1396,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 			
+		try {
+			aCommitment.setCmtExpDate(this.cmtExpDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		//Promised Date
 		try {
 			if (this.cmtExpDate.getValue() != null && this.cmtStartDate.getValue() != null) {
@@ -2583,7 +2586,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public void onChange$cmtPftRateMin(Event event){
 		logger.debug("Entering :"+event.toString());
           if(this.cmtPftRateMin.getValue() != null &&
-        		  this.cmtPftRateMin.getValue().compareTo(BigDecimal.ZERO) >= 0){
+        		  this.cmtPftRateMin.getValue().compareTo(BigDecimal.ZERO) > 0){
         	  this.space_CmtPftRateMax.setSclass("mandatory");
           } else {
         	  this.space_CmtPftRateMax.setSclass("none");

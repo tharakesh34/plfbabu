@@ -275,7 +275,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doCheckRights() {
 		logger.debug("Entering") ;
 
-		getUserWorkspace().alocateAuthorities("ReportListDialog");
+		getUserWorkspace().alocateAuthorities("ReportListDialog", getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ReportListDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ReportListDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ReportListDialog_btnDelete"));
