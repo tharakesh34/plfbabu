@@ -358,7 +358,7 @@ public class AddRmvDeffermentDialogCtrl extends GFCBaseCtrl implements Serializa
 		fillSchDates(this.cbTillDateTo,aFinSchData, false, aFinSchData.getFinanceMain().getFinStartDate(), true);
 		if(isAddDefferment()){
 			recalTypeRow.setVisible(true);
-			fillComboBox(this.cbReCalType, "", recalTypes, ",CURPRD,ADDLAST,");
+			fillComboBox(this.cbReCalType, "", recalTypes, ",CURPRD,ADDLAST,ADDRECAL,");
 			if(getFinScheduleData().getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLDATE) ||
 					getFinScheduleData().getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLMDT)) {
 				this.recallFromDateRow.setVisible(true);
