@@ -6796,6 +6796,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	 * @param totRepayTerms
 	 */
 	public void resetScheduleTerms(FinScheduleData scheduleData, Integer totGrcTerms ,  Integer totRepayTerms){
+		
+		getFinanceDetail().setFinScheduleData(scheduleData);
+		
 		this.graceTerms.setText("");
 		this.graceTerms_Two.setValue(totGrcTerms);
 		this.oldVar_graceTerms = totGrcTerms;

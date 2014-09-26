@@ -3315,8 +3315,9 @@ public class ScheduleCalculator {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		String repayRateBasis = financeMain.getRepayRateBasis();
 		
-		//Need to Discuss with Pradeep TODO
-		//financeMain.setCpzAtGraceEnd(finScheduleData.getFinanceType().isFinIsIntCpzAtGrcEnd());
+		if(finScheduleData.getFinanceType() != null){
+			financeMain.setCpzAtGraceEnd(finScheduleData.getFinanceType().isFinIsIntCpzAtGrcEnd());
+		}
 
 		/* Loop through grace period schedule */
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
