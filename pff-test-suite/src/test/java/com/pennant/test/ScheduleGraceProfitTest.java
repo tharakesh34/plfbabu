@@ -60,8 +60,6 @@ public class ScheduleGraceProfitTest {
 		finance.setDownPayment(new BigDecimal(10000000));
 		finance.setTotalProfit(BigDecimal.ZERO);
 		finance.setTotalGrossPft(BigDecimal.ZERO);
-		finance.setGrcRateBasis("R");
-		finance.setRepayRateBasis("R");
 		finance.setProfitDaysBasis(CalculationConstants.IDB_ACT_365FIXED);
 		finance.setReqTerms(12);
 		finance.setIncreaseTerms(false);
@@ -69,8 +67,6 @@ public class ScheduleGraceProfitTest {
 		finance.setEventToDate(DateUtility.getDate("31/12/2012"));
 		finance.setRecalType("CURPRD");
 		finance.setGrcPeriodEndDate(DateUtility.getDate("31/12/2011"));
-		finance.setAllowGrcRepay(true);
-		finance.setGrcSchdMthd(CalculationConstants.PFT);
 		finance.setFinStartDate(DateUtility.getDate("01/01/2011"));
 		finance.setExcludeDeferedDates(false);
 
@@ -86,19 +82,27 @@ public class ScheduleGraceProfitTest {
 	}
 
 	@Test(dataProvider = "dataset")
-	public void testSchedule(String name, BigDecimal reqRepayAmt,
-			String schMethod, boolean calRepay, boolean eqRepay,
+	public void testSchedule(String fileName, BigDecimal reqRepayAmt,
+			String rpySchMethod, String grcSchMethod, boolean alwGrcRpy,
+			boolean calRepay, boolean eqRepay, boolean flatRate,
 			BigDecimal expLastRepayAmt, BigDecimal expTotProfit)
 			throws IllegalAccessException, InvocationTargetException {
+
 		schedule.getFinanceMain().setReqRepayAmount(reqRepayAmt);
-		schedule.getFinanceMain().setScheduleMethod(schMethod);
+		schedule.getFinanceMain().setScheduleMethod(rpySchMethod);
+		schedule.getFinanceMain().setAllowGrcRepay(alwGrcRpy);
+		if (alwGrcRpy) {
+			schedule.getFinanceMain().setGrcSchdMthd(grcSchMethod);
+		}
 		schedule.getFinanceMain().setCalculateRepay(calRepay);
 		schedule.getFinanceMain().setEqualRepay(eqRepay);
-		// TODO:
-		// schedule.getFinanceMain().setFinGrcRvwRateApplFor(
-		// PennantConstants.RVW_ALL);
-		// schedule.getFinanceMain()
-		// .setFinRvwRateApplFor(PennantConstants.RVW_ALL);
+		if (flatRate) {
+			schedule.getFinanceMain().setGrcRateBasis("F");
+			schedule.getFinanceMain().setRepayRateBasis("F");
+		} else {
+			schedule.getFinanceMain().setGrcRateBasis("R");
+			schedule.getFinanceMain().setRepayRateBasis("R");
+		}
 
 		// Generate the schedule.
 		schedule = ScheduleGenerator.getNewSchd(schedule);
@@ -116,14 +120,197 @@ public class ScheduleGraceProfitTest {
 	@DataProvider
 	public Object[][] dataset() {
 		return new Object[][] {
-				new Object[] { "SN01_RR_EQUAL_REQ",
+				new Object[] { "RR_GRCPFT_EQUAL_REQ",
 						BigDecimal.valueOf(7500000),
-						CalculationConstants.EQUAL, false, false,
+						CalculationConstants.EQUAL, CalculationConstants.PFT,
+						true, false, false, false,
 						BigDecimal.valueOf(11250745),
 						BigDecimal.valueOf(10347622) },
-				new Object[] { "SN01_RR_EQUAL", BigDecimal.ZERO,
-						CalculationConstants.EQUAL, true, true,
-						BigDecimal.valueOf(7802114),
-						BigDecimal.valueOf(10222300) } };
+				new Object[] { "RR_GRCPFT_EQUAL", BigDecimal.ZERO,
+						CalculationConstants.EQUAL, CalculationConstants.PFT,
+						true, true, true, false, BigDecimal.valueOf(7802114),
+						BigDecimal.valueOf(10222300) },
+				new Object[] { "RR_GRCPFT_PFT", BigDecimal.ZERO,
+						CalculationConstants.PFT, CalculationConstants.PFT,
+						true, true, true, false, BigDecimal.valueOf(90561822),
+						BigDecimal.valueOf(13230000) },
+				new Object[] { "RR_GRCPFT_PRI_REQ",
+						BigDecimal.valueOf(7500000), CalculationConstants.PRI,
+						CalculationConstants.PFT, true, false, false, false,
+						BigDecimal.valueOf(11182143),
+						BigDecimal.valueOf(10279020) },
+				new Object[] { "RR_GRCPFT_PRI", BigDecimal.ZERO,
+						CalculationConstants.PRI, CalculationConstants.PFT,
+						true, true, true, false, BigDecimal.valueOf(8718137),
+						BigDecimal.valueOf(10190530) },
+				new Object[] { "RR_GRCPFT_PRIPFT_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.PRI_PFT, CalculationConstants.PFT,
+						true, false, false, false, BigDecimal.valueOf(7546818),
+						BigDecimal.valueOf(10182267) },
+				new Object[] { "RR_GRCPFT_PRIPFT", BigDecimal.ZERO,
+						CalculationConstants.PRI_PFT, CalculationConstants.PFT,
+						true, true, true, false, BigDecimal.valueOf(7546818),
+						BigDecimal.valueOf(10182267) },
+				new Object[] { "FR_GRCPFT_EQUAL_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.EQUAL, CalculationConstants.PFT,
+						true, false, false, true, BigDecimal.valueOf(14133123),
+						BigDecimal.valueOf(13230000) },
+				new Object[] { "FR_GRCPFT_EQUAL", BigDecimal.ZERO,
+						CalculationConstants.EQUAL, CalculationConstants.PFT,
+						true, true, true, true, BigDecimal.valueOf(8052763),
+						BigDecimal.valueOf(13230000) },
+				new Object[] { "FR_GRCPFT_PFT", BigDecimal.ZERO,
+						CalculationConstants.PFT, CalculationConstants.PFT,
+						true, true, true, true, BigDecimal.valueOf(90561822),
+						BigDecimal.valueOf(13230000) },
+				new Object[] { "FR_GRCPFT_PRI_REQ",
+						BigDecimal.valueOf(7500000), CalculationConstants.PRI,
+						CalculationConstants.PFT, true, false, false, true,
+						BigDecimal.valueOf(14255337),
+						BigDecimal.valueOf(13352214) },
+				new Object[] { "FR_GRCPFT_PRI", BigDecimal.ZERO,
+						CalculationConstants.PRI, CalculationConstants.PFT,
+						true, true, true, true, BigDecimal.valueOf(11231767),
+						BigDecimal.valueOf(13352214) },
+				new Object[] { "FR_GRCPFT_PRIPFT_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.PRI_PFT, CalculationConstants.PFT,
+						true, false, false, true, BigDecimal.valueOf(8061822),
+						BigDecimal.valueOf(13230000) },
+				new Object[] { "FR_GRCPFT_PRIPFT", BigDecimal.ZERO,
+						CalculationConstants.PRI_PFT, CalculationConstants.PFT,
+						true, true, true, true, BigDecimal.valueOf(8061822),
+						BigDecimal.valueOf(13230000) },
+				new Object[] { "RR_GRCNOPAY_EQUAL_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.EQUAL, CalculationConstants.NOPAY,
+						true, false, false, false,
+						BigDecimal.valueOf(18480672),
+						BigDecimal.valueOf(10980672) },
+				new Object[] { "RR_GRCNOPAY_EQUAL", BigDecimal.ZERO,
+						CalculationConstants.EQUAL, CalculationConstants.NOPAY,
+						true, true, true, false, BigDecimal.valueOf(8384477),
+						BigDecimal.valueOf(10613779) },
+				new Object[] { "RR_GRCNOPAY_PFT", BigDecimal.ZERO,
+						CalculationConstants.PFT, CalculationConstants.NOPAY,
+						true, true, true, false, BigDecimal.valueOf(97321506),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "RR_GRCNOPAY_PRI_REQ",
+						BigDecimal.valueOf(7500000), CalculationConstants.PRI,
+						CalculationConstants.NOPAY, true, false, false, false,
+						BigDecimal.valueOf(18404121),
+						BigDecimal.valueOf(10904121) },
+				new Object[] { "RR_GRCNOPAY_PRI", BigDecimal.ZERO,
+						CalculationConstants.PRI, CalculationConstants.NOPAY,
+						true, true, true, false, BigDecimal.valueOf(9368869),
+						BigDecimal.valueOf(10579637) },
+				new Object[] { "RR_GRCNOPAY_PRIPFT_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.PRI_PFT,
+						CalculationConstants.NOPAY, true, false, false, true,
+						BigDecimal.valueOf(14306502),
+						BigDecimal.valueOf(10798246) },
+				new Object[] { "RR_GRCNOPAY_PRIPFT", BigDecimal.ZERO,
+						CalculationConstants.PRI_PFT,
+						CalculationConstants.NOPAY, true, true, false, true,
+						BigDecimal.valueOf(8110129),
+						BigDecimal.valueOf(10570758) },
+				new Object[] { "FR_GRCNOPAY_EQUAL_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.EQUAL, CalculationConstants.NOPAY,
+						true, false, false, true, BigDecimal.valueOf(21345979),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "FR_GRCNOPAY_EQUAL", BigDecimal.ZERO,
+						CalculationConstants.EQUAL, CalculationConstants.NOPAY,
+						true, true, true, true, BigDecimal.valueOf(8653827),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "FR_GRCNOPAY_PFT", BigDecimal.ZERO,
+						CalculationConstants.PFT, CalculationConstants.NOPAY,
+						true, true, true, true, BigDecimal.valueOf(97321506),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "FR_GRCNOPAY_PRI_REQ",
+						BigDecimal.valueOf(7500000), CalculationConstants.PRI,
+						CalculationConstants.NOPAY, true, false, false, true,
+						BigDecimal.valueOf(21477315),
+						BigDecimal.valueOf(13977315) },
+				new Object[] { "FR_GRCNOPAY_PRI", BigDecimal.ZERO,
+						CalculationConstants.PRI, CalculationConstants.NOPAY,
+						true, true, true, true, BigDecimal.valueOf(12070126),
+						BigDecimal.valueOf(13977315) },
+				new Object[] { "FR_GRCNOPAY_PRIPFT_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.PRI_PFT,
+						CalculationConstants.NOPAY, true, false, false, true,
+						BigDecimal.valueOf(14821506),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "FR_GRCNOPAY_PRIPFT", BigDecimal.ZERO,
+						CalculationConstants.PRI_PFT,
+						CalculationConstants.NOPAY, true, true, true, true,
+						BigDecimal.valueOf(8663574),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "RR_GRCNORPYCHK_EQUAL_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.EQUAL, null, false, false, false,
+						false, BigDecimal.valueOf(18480672),
+						BigDecimal.valueOf(10980672) },
+				new Object[] { "RR_GRCNORPYCHK_EQUAL", BigDecimal.ZERO,
+						CalculationConstants.EQUAL, null, false, true, true,
+						false, BigDecimal.valueOf(8384477),
+						BigDecimal.valueOf(10613779) },
+				new Object[] { "RR_GRCNORPYCHK_PFT", BigDecimal.ZERO,
+						CalculationConstants.PFT, null, false, true, true,
+						false, BigDecimal.valueOf(97321506),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "RR_GRCNORPYCHK_PRI_REQ",
+						BigDecimal.valueOf(7500000), CalculationConstants.PRI,
+						null, false, false, false, false,
+						BigDecimal.valueOf(18404121),
+						BigDecimal.valueOf(10904121) },
+				new Object[] { "RR_GRCNORPYCHK_PRI", BigDecimal.ZERO,
+						CalculationConstants.PRI, null, false, true, true,
+						false, BigDecimal.valueOf(9368869),
+						BigDecimal.valueOf(10579637) },
+				new Object[] { "RR_GRCNORPYCHK_PRIPFT_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.PRI_PFT, null, false, false,
+						false, false, BigDecimal.valueOf(14306502),
+						BigDecimal.valueOf(10798246) },
+				new Object[] { "RR_GRCNORPYCHK_PRIPFT", BigDecimal.ZERO,
+						CalculationConstants.PRI_PFT, null, false, true, true,
+						false, BigDecimal.valueOf(8110129),
+						BigDecimal.valueOf(10570758) },
+				new Object[] { "FR_GRCNORPYCHK_EQUAL_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.EQUAL, null, false, false, false,
+						true, BigDecimal.valueOf(21345979),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "FR_GRCNORPYCHK_EQUAL", BigDecimal.ZERO,
+						CalculationConstants.EQUAL, null, false, true, true,
+						true, BigDecimal.valueOf(8653827),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "FR_GRCNORPYCHK_PFT", BigDecimal.ZERO,
+						CalculationConstants.PFT, null, false, true, true,
+						true, BigDecimal.valueOf(97321506),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "FR_GRCNORPYCHK_PRI_REQ",
+						BigDecimal.valueOf(7500000), CalculationConstants.PRI,
+						null, false, false, false, true,
+						BigDecimal.valueOf(21477315),
+						BigDecimal.valueOf(13977315) },
+				new Object[] { "FR_GRCNORPYCHK_PRI", BigDecimal.ZERO,
+						CalculationConstants.PRI, null, false, true, true,
+						true, BigDecimal.valueOf(12070126),
+						BigDecimal.valueOf(13977315) },
+				new Object[] { "FR_GRCNORPYCHK_PRIPFT_REQ",
+						BigDecimal.valueOf(7500000),
+						CalculationConstants.PRI_PFT, null, false, false,
+						false, true, BigDecimal.valueOf(14821506),
+						BigDecimal.valueOf(13845979) },
+				new Object[] { "FR_GRCNORPYCHK_PRIPFT", BigDecimal.ZERO,
+						CalculationConstants.PRI_PFT, null, false, true, true,
+						true, BigDecimal.valueOf(8663574),
+						BigDecimal.valueOf(13845979) } };
 	}
 }
