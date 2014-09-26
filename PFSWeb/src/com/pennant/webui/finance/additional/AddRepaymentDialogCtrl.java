@@ -899,11 +899,16 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				.equals(CalculationConstants.RPYCHG_ADDRECAL)
 				|| selectedRecalType
 						.equals(CalculationConstants.RPYCHG_ADDTERM)) {
-			this.cbTillDate.setSelectedIndex(0);
+			
+			if(this.cbTillDate.getItemCount() > 0){
+				this.cbTillDate.setSelectedIndex(0);
+			}
 			this.tillDateRow.setVisible(false);
 			this.numOfTermsRow.setVisible(true);
 		} else {
-			this.cbTillDate.setSelectedIndex(0);
+			if(this.cbTillDate.getItemCount() > 0){
+				this.cbTillDate.setSelectedIndex(0);
+			}
 			this.tillDateRow.setVisible(false);
 			this.numOfTermsRow.setVisible(false);
 		}
