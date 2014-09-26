@@ -429,7 +429,7 @@ public class ScheduleCalculator {
 	        String schdMethod) {
 		logger.debug("Entering");
 		if (method.equals("procAddTerm")) {
-			setFinScheduleData(procAddTerm(finScheduleData, noOfTerms, schdMethod));
+			setFinScheduleData(procAddTerm(finScheduleData, noOfTerms, schdMethod, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -1459,7 +1459,7 @@ public class ScheduleCalculator {
 			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 	        int indexNewTermStart = sdSize;
 			
-	        finScheduleData = procAddTerm(finScheduleData, financeMain.getAdjTerms(), schdMethod);
+	        finScheduleData = procAddTerm(finScheduleData, financeMain.getAdjTerms(), schdMethod, false);
 	        financeMain = finScheduleData.getFinanceMain();
 	        
 	        sdSize = finScheduleData.getFinanceScheduleDetails().size();
@@ -1952,7 +1952,8 @@ public class ScheduleCalculator {
 	 */
 
 	private FinScheduleData procAddTerm(FinScheduleData orgFinScheduleData, int noOfTerms,
-	        String schdMethod) {
+	        String schdMethod, boolean isCalSchedule) {
+		
 		logger.debug("Entering");
 
 		FinScheduleData finScheduleData = null;
@@ -1985,10 +1986,12 @@ public class ScheduleCalculator {
 			}
 		}
 
-		//Except first time creation of schedule covert flat rate to reducing will be treated as reducing only
-		finScheduleData = calSchdProcess(finScheduleData, false);
-		finScheduleData.getFinanceMain().setScheduleMaintained(true);
-
+		//Except first time creation of schedule convert flat rate to reducing will be treated as reducing only
+		if (isCalSchedule) {
+			finScheduleData = calSchdProcess(finScheduleData, false);
+			finScheduleData.getFinanceMain().setScheduleMaintained(true);
+		}
+		
 		logger.debug("Leaving");
 		return finScheduleData;
 
