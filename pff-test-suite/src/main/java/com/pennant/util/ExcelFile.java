@@ -7,13 +7,14 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class ExcelFile {
-	final String TAB = "\t";
+	static final String TAB = "\t";
+	static final String folderPath = "D:/ScheduleResults/";
 
-	public void writeExcel(String name, FinScheduleData schedule) {
+	public static void writeExcel(String fileName, FinScheduleData schedule) {
 		PrintWriter out = null;
 
 		try {
-			out = new PrintWriter(name);
+			out = new PrintWriter(folderPath + fileName +".xls");
 
 			out.print("Date \t CPZ \t PFT \t RVW \t RPY \t Rate\t DisAmount \t DWPAY \t");
 			out.print("OPBAL \t CLOSBAL \t NODAYS \t DAYSFACTOR \t ProfitCalc \t ProfitPaid \t");
