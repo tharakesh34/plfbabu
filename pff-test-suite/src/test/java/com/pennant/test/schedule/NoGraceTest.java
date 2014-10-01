@@ -13,7 +13,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.util.ExcelFile;
 import com.pennant.util.ScheduleData;
 
 public class NoGraceTest extends ScheduleData {
@@ -33,7 +32,7 @@ public class NoGraceTest extends ScheduleData {
 
 	@AfterMethod
 	public void destroyObject() {
-		ExcelFile.writeExcel(excelFileName, schedule);
+		//ExcelFile.writeExcel(excelFileName, schedule);
 		schedule = null;
 	}
 

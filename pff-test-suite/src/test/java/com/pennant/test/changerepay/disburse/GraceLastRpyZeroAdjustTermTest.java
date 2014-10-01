@@ -14,7 +14,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.util.ExcelFile;
 import com.pennant.util.ScheduleData;
 
 public class GraceLastRpyZeroAdjustTermTest extends ScheduleData {
@@ -40,7 +39,7 @@ public class GraceLastRpyZeroAdjustTermTest extends ScheduleData {
 
 	@AfterMethod
 	public void destroyObject() {
-		ExcelFile.writeExcel(excelFileName, schedule);
+		//ExcelFile.writeExcel(excelFileName, schedule);
 		schedule = null;
 	}
 
