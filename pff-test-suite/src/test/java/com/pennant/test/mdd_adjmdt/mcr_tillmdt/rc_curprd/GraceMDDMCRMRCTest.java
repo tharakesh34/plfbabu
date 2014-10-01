@@ -15,9 +15,9 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.util.ExcelFile;
-import com.pennant.util.GenericDataProcess;
+import com.pennant.util.ScheduleData;
 
-public class GraceMDDMCRMRCTest extends GenericDataProcess {
+public class GraceMDDMCRMRCTest extends ScheduleData {
 
 	static FinScheduleData schedule;
 	static BigDecimal actLastRepayAmt;
@@ -26,7 +26,7 @@ public class GraceMDDMCRMRCTest extends GenericDataProcess {
 
 	@BeforeMethod
 	public void createObject() {
-		schedule = super.prepareCommonData(true);
+		schedule = super.getScheduleData(true);
 		schedule.getFinanceMain().setNumberOfTerms(24);
 		schedule.getFinanceMain().setReqTerms(24);
 		schedule.getFinanceMain().setDownPayment(BigDecimal.ZERO);

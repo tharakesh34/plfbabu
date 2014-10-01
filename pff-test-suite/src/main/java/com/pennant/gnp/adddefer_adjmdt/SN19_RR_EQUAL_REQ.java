@@ -39,55 +39,55 @@ public class SN19_RR_EQUAL_REQ extends TestingUtil {
 		try {
 
 			// Tesing Code
-			FinanceMain sh = new FinanceMain();
-			sh.setNumberOfTerms(12);
-			sh.setAllowGrcPeriod(true);
-			sh.setGraceBaseRate("L1");
-			sh.setGraceSpecialRate("S1");
-			sh.setGrcPftRate(BigDecimal.ZERO);
-			sh.setGrcPftFrq("M0031");// Monthly
-			sh.setNextGrcPftDate(DateUtility.getDate("31/01/2011"));
-			sh.setAllowGrcPftRvw(true);
-			sh.setGrcPftRvwFrq("Q0331");
-			sh.setNextGrcPftRvwDate(DateUtility.getDate("31/03/2011"));
-			sh.setAllowGrcCpz(true);
-			sh.setGrcCpzFrq("H0631");
-			sh.setNextGrcCpzDate(DateUtility.getDate("30/06/2011"));
-			sh.setRepayBaseRate("L1");
-			sh.setRepaySpecialRate("S1");
-			sh.setRepayProfitRate(BigDecimal.ZERO);
-			sh.setRepayFrq("M0031");// M0031
-			sh.setNextRepayDate(DateUtility.getDate("31/01/2012"));
-			sh.setRepayPftFrq("M0031");
-			sh.setNextRepayPftDate(DateUtility.getDate("31/01/2012"));
-			sh.setAllowRepayRvw(true);
-			sh.setRepayRvwFrq("Q0331");
-			sh.setNextRepayRvwDate(DateUtility.getDate("31/03/2012"));
-			sh.setAllowRepayCpz(true);
-			sh.setRepayCpzFrq("H0631");
-			sh.setNextRepayCpzDate(DateUtility.getDate("30/06/2012"));
-			sh.setMaturityDate(DateUtility.getDate("31/12/2012"));
-			sh.setCpzAtGraceEnd(true);
-			sh.setDownPayment(new BigDecimal(10000000));
-			sh.setReqRepayAmount(new BigDecimal(8300000));
-			sh.setTotalProfit(BigDecimal.ZERO);
-			sh.setTotalGrossPft(BigDecimal.ZERO);
-			sh.setGrcRateBasis("R");
-			sh.setRepayRateBasis("R");
-			sh.setScheduleMethod(CalculationConstants.EQUAL);
-			sh.setProfitDaysBasis(CalculationConstants.IDB_ACT_365FIXED);
-			sh.setCalculateRepay(false);
-			sh.setEqualRepay(false);
-			sh.setReqTerms(12);
-			sh.setIncreaseTerms(false);
-			sh.setEventFromDate(DateUtility.getDate("01/01/2011"));
-			sh.setEventToDate(DateUtility.getDate("31/12/2012"));
-			sh.setRecalType("CURPRD");
-			sh.setGrcPeriodEndDate(DateUtility.getDate("31/12/2011"));
-			sh.setAllowGrcRepay(false);
+			FinanceMain finance = new FinanceMain();
+			finance.setNumberOfTerms(12);
+			finance.setAllowGrcPeriod(true);
+			finance.setGraceBaseRate("L1");
+			finance.setGraceSpecialRate("S1");
+			finance.setGrcPftRate(BigDecimal.ZERO);
+			finance.setGrcPftFrq("M0031");// Monthly
+			finance.setNextGrcPftDate(DateUtility.getDate("31/01/2011"));
+			finance.setAllowGrcPftRvw(true);
+			finance.setGrcPftRvwFrq("Q0331");
+			finance.setNextGrcPftRvwDate(DateUtility.getDate("31/03/2011"));
+			finance.setAllowGrcCpz(true);
+			finance.setGrcCpzFrq("H0631");
+			finance.setNextGrcCpzDate(DateUtility.getDate("30/06/2011"));
+			finance.setRepayBaseRate("L1");
+			finance.setRepaySpecialRate("S1");
+			finance.setRepayProfitRate(BigDecimal.ZERO);
+			finance.setRepayFrq("M0031");// M0031
+			finance.setNextRepayDate(DateUtility.getDate("31/01/2012"));
+			finance.setRepayPftFrq("M0031");
+			finance.setNextRepayPftDate(DateUtility.getDate("31/01/2012"));
+			finance.setAllowRepayRvw(true);
+			finance.setRepayRvwFrq("Q0331");
+			finance.setNextRepayRvwDate(DateUtility.getDate("31/03/2012"));
+			finance.setAllowRepayCpz(true);
+			finance.setRepayCpzFrq("H0631");
+			finance.setNextRepayCpzDate(DateUtility.getDate("30/06/2012"));
+			finance.setMaturityDate(DateUtility.getDate("31/12/2012"));
+			finance.setCpzAtGraceEnd(true);
+			finance.setDownPayment(new BigDecimal(10000000));
+			finance.setReqRepayAmount(new BigDecimal(4500000));
+			finance.setTotalProfit(BigDecimal.ZERO);
+			finance.setTotalGrossPft(BigDecimal.ZERO);
+			finance.setGrcRateBasis("R");
+			finance.setRepayRateBasis("R");
+			finance.setScheduleMethod(CalculationConstants.EQUAL);
+			finance.setProfitDaysBasis(CalculationConstants.IDB_ACT_365FIXED);
+			finance.setCalculateRepay(false);
+			finance.setEqualRepay(false);
+			finance.setReqTerms(12);
+			finance.setIncreaseTerms(false);
+			finance.setEventFromDate(DateUtility.getDate("01/01/2011"));
+			finance.setEventToDate(DateUtility.getDate("31/12/2012"));
+			finance.setRecalType("CURPRD");
+			finance.setGrcPeriodEndDate(DateUtility.getDate("31/12/2011"));
+			finance.setAllowGrcRepay(false);
 			//sh.setGrcSchdMthd(CalculationConstants.NOPAY);
-			sh.setFinStartDate(DateUtility.getDate("01/01/2011"));
-			sh.setExcludeDeferedDates(false);
+			finance.setFinStartDate(DateUtility.getDate("01/01/2011"));
+			finance.setExcludeDeferedDates(false);
 			
 			// ADD Disbursements
 			FinanceDisbursement dd = new FinanceDisbursement();
@@ -97,7 +97,7 @@ public class SN19_RR_EQUAL_REQ extends TestingUtil {
 
 			// generate schedule
 			FinanceDetail financeDetail = new FinanceDetail();
-			financeDetail.getFinScheduleData().setFinanceMain(sh);
+			financeDetail.getFinScheduleData().setFinanceMain(finance);
 			financeDetail.getFinScheduleData().getDisbursementDetails().add(dd);
 			FinScheduleData sh1 = ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData());
 

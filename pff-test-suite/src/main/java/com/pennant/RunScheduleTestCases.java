@@ -9,6 +9,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+import com.pennant.gnp.adddefer_adjmdt.SN19_RR_EQUAL;
+import com.pennant.gnp.adddefer_adjmdt.SN19_RR_EQUAL_REQ;
+import com.pennant.gnp.adddefer_adjmdt.SN19_RR_PFT;
+import com.pennant.gnp.adddefer_adjmdt.SN19_RR_PRI;
+import com.pennant.gnp.adddefer_adjmdt.SN19_RR_PRIPFT;
+import com.pennant.gnp.adddefer_adjmdt.SN19_RR_PRIPFT_REQ;
+import com.pennant.gnp.adddefer_adjmdt.SN19_RR_PRI_REQ;
+
 public class RunScheduleTestCases {
 	static final String[] CONFIG_LOCATIONS = new String[] {
 			"../PLFInterface/src/applicationContext-equation-interface.xml",
@@ -33,134 +41,48 @@ public class RunScheduleTestCases {
 
 		try {
 			
-			// System.out
-			// .println("---------------------------------------------------------------------");
-			// System.out
-			// .println("MAINTAIN DISBURSEMENT BY ADDING 2 TERMS AND EXTEND MATURITY...........");
-			// System.out
-			// .println("---------------------------------------------------------------------");
-			//
-			// if (SN17_RR_EQUAL_REQ.RunTestCase()) {
-			// System.out.println("Result for : SN17_RR_EQUAL_REQ : success");
-			// } else {
-			// System.err.println("Result for : SN17_RR_EQUAL_REQ : failed");
-			// }
-			// if (SN17_RR_EQUAL.RunTestCase()) {
-			// System.out.println("Result for : SN17_RR_EQUAL : success");
-			// } else {
-			// System.err.println("Result for : SN17_RR_EQUAL : failed");
-			// }
-			// if (SN17_RR_PFT.RunTestCase()) {
-			// System.out.println("Result for : SN17_RR_PFT : success");
-			// } else {
-			// System.err.println("Result for : SN17_RR_PFT : failed");
-			// }
-			// if (SN17_RR_PRI_REQ.RunTestCase()) {
-			// System.out.println("Result for : SN17_RR_PRI_REQ : success");
-			// } else {
-			// System.err.println("Result for : SN17_RR_PRI_REQ : failed");
-			// }
-			// if (SN17_RR_PRI.RunTestCase()) {
-			// System.out.println("Result for : SN17_RR_PRI : success");
-			// } else {
-			// System.err.println("Result for : SN17_RR_PRI : failed");
-			// }
-			// if (SN17_RR_PRIPFT_REQ.RunTestCase()) {
-			// System.out.println("Result for : SN17_RR_PRIPFT_REQ : success");
-			// } else {
-			// System.err.println("Result for : SN17_RR_PRIPFT_REQ : failed");
-			// }
-			// if (SN17_RR_PRIPFT.RunTestCase()) {
-			// System.out.println("Result for : SN17_RR_PRIPFT : success");
-			// } else {
-			// System.err.println("Result for : SN17_RR_PRIPFT : failed");
-			// }
-			//
-			// System.out
-			// .println("---------------------------------------------------------------------");
-			// System.out
-			// .println("MAINTAIN DISBURSEMENT BY ADDING 4 TERMS AND EXTEND MATURITY...........");
-			// System.out
-			// .println("---------------------------------------------------------------------");
-			//
-			// if (SN18_RR_EQUAL_REQ.RunTestCase()) {
-			// System.out.println("Result for : SN18_RR_EQUAL_REQ : success");
-			// } else {
-			// System.err.println("Result for : SN18_RR_EQUAL_REQ : failed");
-			// }
-			// if (SN18_RR_EQUAL.RunTestCase()) {
-			// System.out.println("Result for : SN18_RR_EQUAL : success");
-			// } else {
-			// System.err.println("Result for : SN18_RR_EQUAL : failed");
-			// }
-			// if (SN18_RR_PFT.RunTestCase()) {
-			// System.out.println("Result for : SN18_RR_PFT : success");
-			// } else {
-			// System.err.println("Result for : SN18_RR_PFT : failed");
-			// }
-			// if (SN18_RR_PRI_REQ.RunTestCase()) {
-			// System.out.println("Result for : SN18_RR_PRI_REQ : success");
-			// } else {
-			// System.err.println("Result for : SN18_RR_PRI_REQ : failed");
-			// }
-			// if (SN18_RR_PRI.RunTestCase()) {
-			// System.out.println("Result for : SN18_RR_PRI : success");
-			// } else {
-			// System.err.println("Result for : SN18_RR_PRI : failed");
-			// }
-			// if (SN18_RR_PRIPFT_REQ.RunTestCase()) {
-			// System.out.println("Result for : SN18_RR_PRIPFT_REQ : success");
-			// } else {
-			// System.err.println("Result for : SN18_RR_PRIPFT_REQ : failed");
-			// }
-			// if (SN18_RR_PRIPFT.RunTestCase()) {
-			// System.out.println("Result for : SN18_RR_PRIPFT : success");
-			// } else {
-			// System.err.println("Result for : SN18_RR_PRIPFT : failed");
-			// }
-			//
-			// System.out
-			// .println("---------------------------------------------------------------------");
-			// System.out.println("ADD DEFERMENT WITH ADJUST MATURITY...........");
-			// System.out
-			// .println("---------------------------------------------------------------------");
-			//
-			// if (SN19_RR_EQUAL_REQ.RunTestCase()) {
-			// System.out.println("Result for : SN19_RR_EQUAL_REQ : success");
-			// } else {
-			// System.err.println("Result for : SN19_RR_EQUAL_REQ : failed");
-			// }
-			// if (SN19_RR_EQUAL.RunTestCase()) {
-			// System.out.println("Result for : SN19_RR_EQUAL : success");
-			// } else {
-			// System.err.println("Result for : SN19_RR_EQUAL : failed");
-			// }
-			// if (SN19_RR_PFT.RunTestCase()) {
-			// System.out.println("Result for : SN19_RR_PFT : success");
-			// } else {
-			// System.err.println("Result for : SN19_RR_PFT : failed");
-			// }
-			// if (SN19_RR_PRI_REQ.RunTestCase()) {
-			// System.out.println("Result for : SN19_RR_PRI_REQ : success");
-			// } else {
-			// System.err.println("Result for : SN19_RR_PRI_REQ : failed");
-			// }
-			// if (SN19_RR_PRI.RunTestCase()) {
-			// System.out.println("Result for : SN19_RR_PRI : success");
-			// } else {
-			// System.err.println("Result for : SN19_RR_PRI : failed");
-			// }
-			// if (SN19_RR_PRIPFT_REQ.RunTestCase()) {
-			// System.out.println("Result for : SN19_RR_PRIPFT_REQ : success");
-			// } else {
-			// System.err.println("Result for : SN19_RR_PRIPFT_REQ : failed");
-			// }
-			// if (SN19_RR_PRIPFT.RunTestCase()) {
-			// System.out.println("Result for : SN19_RR_PRIPFT : success");
-			// } else {
-			// System.err.println("Result for : SN19_RR_PRIPFT : failed");
-			// }
-			//
+			 System.out
+			 .println("---------------------------------------------------------------------");
+			 System.out.println("ADD DEFERMENT WITH ADJUST MATURITY...........");
+			 System.out
+			 .println("---------------------------------------------------------------------");
+			
+			 if (SN19_RR_EQUAL_REQ.RunTestCase()) {
+			 System.out.println("Result for : SN19_RR_EQUAL_REQ : success");
+			 } else {
+			 System.err.println("Result for : SN19_RR_EQUAL_REQ : failed");
+			 }
+			 if (SN19_RR_EQUAL.RunTestCase()) {
+			 System.out.println("Result for : SN19_RR_EQUAL : success");
+			 } else {
+			 System.err.println("Result for : SN19_RR_EQUAL : failed");
+			 }
+			 if (SN19_RR_PFT.RunTestCase()) {
+			 System.out.println("Result for : SN19_RR_PFT : success");
+			 } else {
+			 System.err.println("Result for : SN19_RR_PFT : failed");
+			 }
+			 if (SN19_RR_PRI_REQ.RunTestCase()) {
+			 System.out.println("Result for : SN19_RR_PRI_REQ : success");
+			 } else {
+			 System.err.println("Result for : SN19_RR_PRI_REQ : failed");
+			 }
+			 if (SN19_RR_PRI.RunTestCase()) {
+			 System.out.println("Result for : SN19_RR_PRI : success");
+			 } else {
+			 System.err.println("Result for : SN19_RR_PRI : failed");
+			 }
+			 if (SN19_RR_PRIPFT_REQ.RunTestCase()) {
+			 System.out.println("Result for : SN19_RR_PRIPFT_REQ : success");
+			 } else {
+			 System.err.println("Result for : SN19_RR_PRIPFT_REQ : failed");
+			 }
+			 if (SN19_RR_PRIPFT.RunTestCase()) {
+			 System.out.println("Result for : SN19_RR_PRIPFT : success");
+			 } else {
+			 System.err.println("Result for : SN19_RR_PRIPFT : failed");
+			 }
+			
 			// System.out
 			// .println("---------------------------------------------------------------------");
 			// System.out.println("ADD DEFERMENT WITH TILL DATE...........");

@@ -1,4 +1,4 @@
-package com.pennant.test.mrc;
+package com.pennant.test.ratechange;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -15,9 +15,9 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.util.ExcelFile;
-import com.pennant.util.GenericDataProcess;
+import com.pennant.util.ScheduleData;
 
-public class GraceMRCTest extends GenericDataProcess {
+public class GraceTillMaturityTest extends ScheduleData {
 
 	static FinScheduleData schedule;
 	static BigDecimal actLastRepayAmt;
@@ -26,7 +26,7 @@ public class GraceMRCTest extends GenericDataProcess {
 
 	@BeforeMethod
 	public void createObject() {
-		schedule = super.prepareCommonData(true);
+		schedule = super.getScheduleData(true);
 		schedule.getFinanceMain().setNumberOfTerms(24);
 		schedule.getFinanceMain().setReqTerms(24);
 		schedule.getFinanceMain().setDownPayment(BigDecimal.ZERO);
@@ -108,43 +108,6 @@ public class GraceMRCTest extends GenericDataProcess {
 	@DataProvider
 	public Object[][] dataset() {
 		return new Object[][] {
-				new Object[] { "RR_GRCPFT_MRCCP_EQUAL_REQ",
-						BigDecimal.valueOf(4500000),
-						CalculationConstants.EQUAL, false, false,
-						BigDecimal.valueOf(4326901),
-						BigDecimal.valueOf(15606908),
-						CalculationConstants.RPYCHG_CURPRD },
-				new Object[] { "RR_GRCPFT_MRCCP_EQUAL", BigDecimal.ZERO,
-						CalculationConstants.EQUAL, true, true,
-						BigDecimal.valueOf(4493278),
-						BigDecimal.valueOf(15618901),
-						CalculationConstants.RPYCHG_CURPRD },
-				new Object[] { "RR_GRCPFT_MRCCP_PFT", BigDecimal.ZERO,
-						CalculationConstants.PFT, true, true,
-						BigDecimal.valueOf(100624246),
-						BigDecimal.valueOf(22548630),
-						CalculationConstants.RPYCHG_CURPRD },
-				new Object[] { "RR_GRCPFT_MRCCP_PRI_REQ",
-						BigDecimal.valueOf(4500000), CalculationConstants.PRI,
-						false, false, BigDecimal.valueOf(4185963),
-						BigDecimal.valueOf(15450814),
-						CalculationConstants.RPYCHG_CURPRD },
-				new Object[] { "RR_GRCPFT_MRCCP_PRI", BigDecimal.ZERO,
-						CalculationConstants.PRI, true, true,
-						BigDecimal.valueOf(5045244),
-						BigDecimal.valueOf(15511938),
-						CalculationConstants.RPYCHG_CURPRD },
-				new Object[] { "RR_GRCPFT_MRCCP_PRIPFT_REQ",
-						BigDecimal.valueOf(4200000),
-						CalculationConstants.PRI_PFT, false, false,
-						BigDecimal.valueOf(3421224),
-						BigDecimal.valueOf(15379259),
-						CalculationConstants.RPYCHG_CURPRD },
-				new Object[] { "RR_GRCPFT_MRCCP_PRIPFT", BigDecimal.ZERO,
-						CalculationConstants.PRI_PFT, true, true,
-						BigDecimal.valueOf(4192669),
-						BigDecimal.valueOf(15436158),
-						CalculationConstants.RPYCHG_CURPRD },
 				new Object[] { "RR_GRCPFT_MRCTM_EQUAL_REQ",
 						BigDecimal.valueOf(4500000),
 						CalculationConstants.EQUAL, false, false,
@@ -181,43 +144,6 @@ public class GraceMRCTest extends GenericDataProcess {
 						CalculationConstants.PRI_PFT, true, true,
 						BigDecimal.valueOf(4192669),
 						BigDecimal.valueOf(15436158),
-						CalculationConstants.RPYCHG_TILLMDT },
-				new Object[] { "RR_GRCPFT_MRCAM_EQUAL_REQ",
-						BigDecimal.valueOf(4500000),
-						CalculationConstants.EQUAL, false, false,
-						BigDecimal.valueOf(4838294),
-						BigDecimal.valueOf(15668157),
-						CalculationConstants.RPYCHG_ADJMDT },
-				new Object[] { "RR_GRCPFT_MRCAM_EQUAL", BigDecimal.ZERO,
-						CalculationConstants.EQUAL, true, true,
-						BigDecimal.valueOf(5004767),
-						BigDecimal.valueOf(15680162),
-						CalculationConstants.RPYCHG_ADJMDT },
-				new Object[] { "RR_GRCPFT_MRCAM_PFT", BigDecimal.ZERO,
-						CalculationConstants.PFT, true, true,
-						BigDecimal.valueOf(100624246),
-						BigDecimal.valueOf(22548630),
-						CalculationConstants.RPYCHG_ADJMDT },
-				new Object[] { "RR_GRCPFT_MRCAM_PRI_REQ",
-						BigDecimal.valueOf(4500000), CalculationConstants.PRI,
-						false, false, BigDecimal.valueOf(4679245),
-						BigDecimal.valueOf(15509108),
-						CalculationConstants.RPYCHG_ADJMDT },
-				new Object[] { "RR_GRCPFT_MRCAM_PRI", BigDecimal.ZERO,
-						CalculationConstants.PRI, true, true,
-						BigDecimal.valueOf(5539010),
-						BigDecimal.valueOf(15570290),
-						CalculationConstants.RPYCHG_ADJMDT },
-				new Object[] { "RR_GRCPFT_MRCAM_PRIPFT_REQ",
-						BigDecimal.valueOf(4200000),
-						CalculationConstants.PRI_PFT, false, false,
-						BigDecimal.valueOf(3421224),
-						BigDecimal.valueOf(15379259),
-						CalculationConstants.RPYCHG_ADJMDT },
-				new Object[] { "RR_GRCPFT_MRCAM_PRIPFT", BigDecimal.ZERO,
-						CalculationConstants.PRI_PFT, true, true,
-						BigDecimal.valueOf(4192669),
-						BigDecimal.valueOf(15436158),
-						CalculationConstants.RPYCHG_ADJMDT } };
+						CalculationConstants.RPYCHG_TILLMDT } };
 	}
 }

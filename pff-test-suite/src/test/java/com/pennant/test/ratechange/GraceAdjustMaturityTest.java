@@ -1,4 +1,4 @@
-package com.pennant.test.mcr_adjmdt.mdd_tilldate_adjmdt;
+package com.pennant.test.ratechange;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -17,7 +17,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.util.ExcelFile;
 import com.pennant.util.ScheduleData;
 
-public class GraceMCRMDDTest extends ScheduleData {
+public class GraceAdjustMaturityTest extends ScheduleData {
 
 	static FinScheduleData schedule;
 	static BigDecimal actLastRepayAmt;
@@ -54,15 +54,14 @@ public class GraceMCRMDDTest extends ScheduleData {
 	 * 		5. Equal Repay</br>
 	 * 		6. Expected Last Schedule Repayment Amount</br>
 	 * 		7. Total Expected Finance Schedule Profit</br>
-	 * 		8. Disbursement Amount on Each maintenance</br>
+	 * 		8. Recalculation Type</br>
 	 * <font>
 	 */
 	@Test(dataProvider = "dataset")
 	public void testSchedule(String fileName, BigDecimal reqRepayAmt,
 			String rpySchMethod, boolean calRepay, boolean eqRepay,
-			BigDecimal expLastRepayAmt, BigDecimal expTotProfit,
-			BigDecimal disbAmt) throws IllegalAccessException,
-			InvocationTargetException {
+			BigDecimal expLastRepayAmt, BigDecimal expTotProfit, String recalType)
+			throws IllegalAccessException, InvocationTargetException {
 
 		excelFileName = fileName;
 
@@ -75,54 +74,14 @@ public class GraceMCRMDDTest extends ScheduleData {
 		schedule = ScheduleGenerator.getNewSchd(schedule);
 		schedule = ScheduleCalculator.getCalSchd(schedule);
 
-		// Set NO PAYMENT for three months in Grace period
+		// Change rate by adding margin for the review period
 		schedule.getFinanceMain().setEventFromDate(
-				DateUtility.getDate("30/04/2011"));
-		schedule.getFinanceMain().setEventToDate(
-				DateUtility.getDate("30/06/2011"));
-		schedule.getFinanceMain().setRecalType(
-				CalculationConstants.RPYCHG_ADJMDT);
-		schedule.getFinanceMain().setRecalToDate(
-				DateUtility.getDate("31/12/2013"));
-		schedule.getFinanceMain().setRecalFromDate(
-				DateUtility.getDate("31/12/2013"));
-		schedule = ScheduleCalculator.changeRepay(schedule, BigDecimal.ZERO,
-				CalculationConstants.NOPAY);
-
-		// Set NO PAYMENT for three months in Grace period
-		schedule.getFinanceMain().setEventFromDate(
-				DateUtility.getDate("31/10/2011"));
-		schedule.getFinanceMain().setEventToDate(
 				DateUtility.getDate("31/12/2011"));
-		schedule.getFinanceMain().setRecalToDate(
-				DateUtility.getDate("31/12/2013"));
-		schedule.getFinanceMain().setRecalFromDate(
-				DateUtility.getDate("31/12/2013"));
-		schedule = ScheduleCalculator.changeRepay(schedule, BigDecimal.ZERO,
-				CalculationConstants.NOPAY);
-
-		// Add Disbursement with recalculation till date
-		schedule.getFinanceMain().setEventFromDate(
-				DateUtility.getDate("15/02/2011"));
 		schedule.getFinanceMain().setEventToDate(
-				DateUtility.getDate("15/02/2011"));
-		schedule.getFinanceMain().setRecalType(
-				CalculationConstants.RPYCHG_TILLDATE);
-		schedule.getFinanceMain().setRecalToDate(
-				DateUtility.getDate("31/03/2012"));
-		schedule = ScheduleCalculator.addDisbursement(schedule, disbAmt,
-				CalculationConstants.ADDTERM_AFTMDT, BigDecimal.ZERO);
-
-		// Add Disbursement with recalculation Adjust to maturity
-		schedule.getFinanceMain().setEventFromDate(
-				DateUtility.getDate("15/05/2011"));
-		schedule.getFinanceMain().setEventToDate(
-				DateUtility.getDate("15/05/2011"));
-		schedule.getFinanceMain().setRecalType(
-				CalculationConstants.RPYCHG_ADJMDT);
-		schedule.getFinanceMain().setRecalToDate(null);
-		schedule = ScheduleCalculator.addDisbursement(schedule, disbAmt,
-				CalculationConstants.ADDTERM_AFTMDT, BigDecimal.ZERO);
+				DateUtility.getDate("30/06/2012"));
+		schedule.getFinanceMain().setRecalType(recalType);
+		schedule = ScheduleCalculator.changeRate(schedule, "L1", "S1",
+				BigDecimal.ONE, BigDecimal.ZERO, true);
 
 		actLastRepayAmt = schedule.getFinanceScheduleDetails()
 				.get(schedule.getFinanceScheduleDetails().size() - 1)
@@ -143,48 +102,48 @@ public class GraceMCRMDDTest extends ScheduleData {
 	 * 		5. Equal Repay</br>
 	 * 		6. Expected Last Schedule Repayment Amount</br>
 	 * 		7. Total Expected Finance Schedule Profit</br>
-	 * 		8. Disbursement Amount on Each maintenance</br>
+	 * 		8. Recalculation Type</br>
 	 * <font>
 	 */
 	@DataProvider
 	public Object[][] dataset() {
 		return new Object[][] {
-				new Object[] { "RR_GRCPFT_MCRMDD_EQUAL_REQ",
+				new Object[] { "RR_GRCPFT_MRCAM_EQUAL_REQ",
 						BigDecimal.valueOf(4500000),
 						CalculationConstants.EQUAL, false, false,
-						BigDecimal.valueOf(20538230),
-						BigDecimal.valueOf(18680076),
-						BigDecimal.valueOf(10000000) },
-				new Object[] { "RR_GRCPFT_MCRMDD_EQUAL", BigDecimal.ZERO,
+						BigDecimal.valueOf(4838294),
+						BigDecimal.valueOf(15668157),
+						CalculationConstants.RPYCHG_ADJMDT },
+				new Object[] { "RR_GRCPFT_MRCAM_EQUAL", BigDecimal.ZERO,
 						CalculationConstants.EQUAL, true, true,
-						BigDecimal.valueOf(20704607),
-						BigDecimal.valueOf(18691985),
-						BigDecimal.valueOf(10000000) },
-				new Object[] { "RR_GRCPFT_MCRMDD_PFT", BigDecimal.ZERO,
+						BigDecimal.valueOf(5004767),
+						BigDecimal.valueOf(15680162),
+						CalculationConstants.RPYCHG_ADJMDT },
+				new Object[] { "RR_GRCPFT_MRCAM_PFT", BigDecimal.ZERO,
 						CalculationConstants.PFT, true, true,
-						BigDecimal.valueOf(125146904),
-						BigDecimal.valueOf(26821014),
-						BigDecimal.valueOf(10000000) },
-				new Object[] { "RR_GRCPFT_MCRMDD_PRI_REQ",
+						BigDecimal.valueOf(100624246),
+						BigDecimal.valueOf(22548630),
+						CalculationConstants.RPYCHG_ADJMDT },
+				new Object[] { "RR_GRCPFT_MRCAM_PRI_REQ",
 						BigDecimal.valueOf(4500000), CalculationConstants.PRI,
-						false, false, BigDecimal.valueOf(20361765),
-						BigDecimal.valueOf(18500329),
-						BigDecimal.valueOf(10000000) },
-				new Object[] { "RR_GRCPFT_MCRMDD_PRI", BigDecimal.ZERO,
+						false, false, BigDecimal.valueOf(4679245),
+						BigDecimal.valueOf(15509108),
+						CalculationConstants.RPYCHG_ADJMDT },
+				new Object[] { "RR_GRCPFT_MRCAM_PRI", BigDecimal.ZERO,
 						CalculationConstants.PRI, true, true,
-						BigDecimal.valueOf(21221047),
-						BigDecimal.valueOf(18561028),
-						BigDecimal.valueOf(10000000) },
-				new Object[] { "RR_GRCPFT_MCRMDD_PRIPFT_REQ",
-						BigDecimal.valueOf(4500000),
+						BigDecimal.valueOf(5539010),
+						BigDecimal.valueOf(15570290),
+						CalculationConstants.RPYCHG_ADJMDT },
+				new Object[] { "RR_GRCPFT_MRCAM_PRIPFT_REQ",
+						BigDecimal.valueOf(4200000),
 						CalculationConstants.PRI_PFT, false, false,
-						BigDecimal.valueOf(10564162),
-						BigDecimal.valueOf(17795590),
-						BigDecimal.valueOf(10000000) },
-				new Object[] { "RR_GRCPFT_MCRMDD_PRIPFT", BigDecimal.ZERO,
+						BigDecimal.valueOf(3421224),
+						BigDecimal.valueOf(15379259),
+						CalculationConstants.RPYCHG_ADJMDT },
+				new Object[] { "RR_GRCPFT_MRCAM_PRIPFT", BigDecimal.ZERO,
 						CalculationConstants.PRI_PFT, true, true,
-						BigDecimal.valueOf(18278680),
-						BigDecimal.valueOf(18360432),
-						BigDecimal.valueOf(10000000) } };
+						BigDecimal.valueOf(4192669),
+						BigDecimal.valueOf(15436158),
+						CalculationConstants.RPYCHG_ADJMDT } };
 	}
 }

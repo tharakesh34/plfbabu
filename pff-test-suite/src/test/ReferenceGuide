@@ -11,6 +11,7 @@ Definitions for Declared Short Names
 6.	MRC/mrc		:	Multiple Rate Change
 7.	Grace		:	Allowed Grace Period is TRUE
 8.	AT			:	Add Terms
+9.	DFR/dfr		:	Deferment
 
 
 Package Declaration Names

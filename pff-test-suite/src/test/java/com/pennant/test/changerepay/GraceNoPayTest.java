@@ -1,4 +1,4 @@
-package com.pennant.test.mcr_nopay;
+package com.pennant.test.changerepay;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -15,9 +15,9 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.util.ExcelFile;
-import com.pennant.util.GenericDataProcess;
+import com.pennant.util.ScheduleData;
 
-public class GraceMCRTest extends GenericDataProcess {
+public class GraceNoPayTest extends ScheduleData {
 
 	static FinScheduleData schedule;
 	static BigDecimal actLastRepayAmt;
@@ -26,7 +26,7 @@ public class GraceMCRTest extends GenericDataProcess {
 
 	@BeforeMethod
 	public void createObject() {
-		schedule = super.prepareCommonData(true);
+		schedule = super.getScheduleData(true);
 		schedule.getFinanceMain().setDownPayment(BigDecimal.ZERO);
 		schedule.getFinanceMain().setAllowGrcRepay(true);
 		schedule.getFinanceMain().setGrcSchdMthd(CalculationConstants.PFT);

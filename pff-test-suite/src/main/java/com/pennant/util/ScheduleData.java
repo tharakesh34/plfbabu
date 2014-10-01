@@ -13,9 +13,9 @@ import com.pennant.backend.model.finance.FinanceMain;
  * @author siva.m
  *
  */
-public class GenericDataProcess {
+public class ScheduleData {
 	
-	protected FinScheduleData prepareCommonData(boolean isAlwGrace){
+	protected FinScheduleData getScheduleData(boolean isAlwGrace){
 		
 		FinScheduleData schedule = new FinScheduleData();
 		schedule.setFinanceMain(new FinanceMain());
