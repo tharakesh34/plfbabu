@@ -13,7 +13,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.util.ExcelFile;
 import com.pennant.util.GenericDataProcess;
 
@@ -27,9 +26,8 @@ public class GraceProfitTest extends GenericDataProcess {
 	@BeforeMethod
 	public void createObject() {
 		schedule = super.prepareCommonData(true);
-		FinanceMain finance = schedule.getFinanceMain();
-		finance.setAllowGrcRepay(true);
-		finance.setGrcSchdMthd(CalculationConstants.PFT);
+		schedule.getFinanceMain().setAllowGrcRepay(true);
+		schedule.getFinanceMain().setGrcSchdMthd(CalculationConstants.PFT);
 	}
 
 	@AfterMethod

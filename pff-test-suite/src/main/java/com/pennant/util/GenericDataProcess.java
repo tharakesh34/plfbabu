@@ -62,7 +62,7 @@ public class GenericDataProcess {
 		finance.setAllowRepayCpz(true);
 		finance.setRepayCpzFrq("H0631");
 		finance.setMaturityDate(DateUtility.getDate("31/12/2012"));
-		finance.setDownPayment(new BigDecimal(10000000));
+		finance.setDownPayment(BigDecimal.valueOf(10000000));
 		finance.setTotalProfit(BigDecimal.ZERO);
 		finance.setTotalGrossPft(BigDecimal.ZERO);
 		finance.setProfitDaysBasis(CalculationConstants.IDB_ACT_365FIXED);

@@ -3,7 +3,7 @@
 <suite name="UnitTestSuite">
 	<test name="TestConfig">
 		<packages>
-			<package name="com.pennant.test" />
+			<package name="com.pennant.test.*" />
 		</packages>
 	</test>
 </suite>
