@@ -16,7 +16,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 
-public class GraceProfitReducingRateTest {
+public class GraceProfitFlatRateTest {
 	static FinScheduleData schedule;
 
 	@Test(dataProvider = "dataset")
@@ -84,8 +84,8 @@ public class GraceProfitReducingRateTest {
 		finance.setDownPayment(new BigDecimal(10000000));
 		finance.setTotalProfit(BigDecimal.ZERO);
 		finance.setTotalGrossPft(BigDecimal.ZERO);
-		finance.setGrcRateBasis("R");
-		finance.setRepayRateBasis("R");
+		finance.setGrcRateBasis("F");
+		finance.setRepayRateBasis("F");
 		finance.setProfitDaysBasis(CalculationConstants.IDB_ACT_365FIXED);
 		finance.setReqTerms(12);
 		finance.setIncreaseTerms(false);
@@ -112,20 +112,20 @@ public class GraceProfitReducingRateTest {
 	@DataProvider
 	public Object[][] dataset() {
 		return new Object[][] {
-				new Object[] { "SN01_RR_EQUAL_REQ", CalculationConstants.EQUAL,
-						7500000, 11250745, 10347622 },
-				new Object[] { "SN01_RR_EQUAL", CalculationConstants.EQUAL, 0,
-						7802114, 10222300 },
-				new Object[] { "SN01_RR_PFT", CalculationConstants.PFT, 0,
+				new Object[] { "SN02_FR_EQUAL_REQ", CalculationConstants.EQUAL,
+						8000000, 8633123, 13230000 },
+				new Object[] { "SN02_FR_EQUAL", CalculationConstants.EQUAL, 0,
+						8052763, 13230000 },
+				new Object[] { "SN02_FR_PFT", CalculationConstants.PFT, 0,
 						90561822, 13230000 },
-				new Object[] { "SN01_RR_PRI_REQ", CalculationConstants.PRI,
-						7500000, 11182143, 10279020 },
-				new Object[] { "SN01_RR_PRI", CalculationConstants.PRI, 0,
-						8718137, 10190530 },
-				new Object[] { "SN01_RR_PRIPFT_REQ",
-						CalculationConstants.PRI_PFT, 7000000, 13081152,
-						10385450 },
-				new Object[] { "SN01_RR_PRIPFT", CalculationConstants.PRI_PFT,
-						0, 7546818, 10182267 } };
+				new Object[] { "SN02_FR_PRI_REQ", CalculationConstants.PRI,
+						7500000, 14255337, 13352214 },
+				new Object[] { "SN02_FR_PRI", CalculationConstants.PRI, 0,
+						11231767, 13352214 },
+				new Object[] { "SN02_FR_PRIPFT_REQ",
+						CalculationConstants.PRI_PFT, 7000000, 13561822,
+						13230000 },
+				new Object[] { "SN02_FR_PRIPFT", CalculationConstants.PRI_PFT,
+						0, 8061822, 13230000 } };
 	}
 }
