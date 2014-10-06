@@ -363,7 +363,6 @@
 								</grid>
 							</groupbox>
 						</tabpanel>
-
 						<tabpanel style="overflow:auto">
 							<groupbox id="gb_GracePeriod"
 								closable="false">
@@ -395,8 +394,6 @@
 													id="finGrcIntRate" width="125px" maxlength="15"
 													style="text-align:right" />
 											</hbox>
-
-
 										</row>
 										<row visible="true">
 											<label
@@ -421,7 +418,6 @@
 												<decimalbox
 													id="finGrcMargin" width="125px" maxlength="15"
 													style="text-align:right" />
-
 												<label
 													id="labe_GrcEffectiveRate" style="font-weight:bold;" />
 											</hbox>
@@ -442,9 +438,7 @@
 													id="cbfinGrcDftIntFrqDays" width="50px" readonly="true" />
 											</hbox>
 										</row>
-
 										<row visible="true">
-
 											<label
 												id="label_FinanceTypeDialog_FinIsAlwGrcRepay"
 												value="${c:l('label_FinanceTypeDialog_FinIsAlwGrcRepay.value')}" />
@@ -521,8 +515,7 @@
 												value="${c:l('label_FinanceTypeDialog_FinGrcRvwRateApplFor.value')}" />
 											<hbox>
 												<space
-													id="space_FinGrcRvwRateApplFor" spacing="2px"
-													sclass="mandatory" />
+													id="space_FinGrcRvwRateApplFor" spacing="2px" />
 												<combobox
 													id="cbfinGrcRvwRateApplFor" width="275px" readonly="true" />
 											</hbox>
@@ -571,7 +564,6 @@
 								</grid>
 							</groupbox>
 						</tabpanel>
-
 						<tabpanel style="overflow:auto">
 							<div id="repayDetailDiv">
 								<groupbox id="gb_Repayment"
@@ -754,8 +746,7 @@
 													value="${c:l('label_FinanceTypeDialog_FinRvwRateApplFor.value')}" />
 												<hbox>
 													<space
-														id="space_FinRvwRateApplFor" spacing="2px"
-														sclass="mandatory" />
+														id="space_FinRvwRateApplFor" spacing="2px" />
 													<combobox
 														id="cbfinRvwRateApplFor" width="275px" readonly="true" />
 												</hbox>
@@ -764,7 +755,7 @@
 													value="${c:l('label_FinanceTypeDialog_FinSchCalCodeOnRvw.value')}" />
 												<hbox>
 													<space spacing="2px"
-														sclass="mandatory" id="space_cbfinSchCalCodeOnRvw" />
+														 id="space_cbfinSchCalCodeOnRvw" />
 													<combobox
 														id="cbfinSchCalCodeOnRvw" width="275px" readonly="true" />
 												</hbox>
