@@ -1,4 +1,4 @@
-package com.pennant.test;
+package com.pennant.testing;
 
 import java.util.Arrays;
 
