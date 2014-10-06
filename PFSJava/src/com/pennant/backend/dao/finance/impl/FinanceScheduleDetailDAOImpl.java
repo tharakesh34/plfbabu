@@ -1203,7 +1203,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		selectSql.append(" INNER JOIN FinanceMain F ON S.FinReference = F.FinReference ");
 		selectSql.append(" INNER JOIN RMTFinanceTypes T ON F.FinType = T.FinType  ");
 		selectSql.append(" WHERE S.SchDate > :ValueDate AND  S.SchDate <= :FutureDate  ");
-		selectSql.append(" AND T.FinDivision = 'RETAIL' AND F.FinRepayMethod = 'AUTO' AND ");
+		selectSql.append(" AND T.FinDivision = 'RETAIL' AND F.FinRepayMethod = 'AUTO' AND F.FinIsActive = '1' AND ");
 		selectSql.append("(S.PrincipalSchd - S.SchdPriPaid + S.ProfitSchd - S.SchdPftPaid + S.DefPrincipalSchd - S.DefSchdPriPaid + S.DefProfitSchd  -S.DefSchdPftPaid) > 0 GROUP BY F.RepayAccountId " );
 
 		logger.debug("selectSql: " + selectSql.toString());

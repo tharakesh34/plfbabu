@@ -1239,17 +1239,10 @@
 		<!-- Schedule Repayment Postings -->
 		<step id="repayQueuePostings">
 			<tasklet ref="repayQueuePostingsTasklet" />
-			<next on="*" to="futureInstallmentHolds" />
-			<fail on="FAILED"/>
-		</step>
-		
-		<!-- Future Account Holds -->
-		<step id="futureInstallmentHolds">
-			<tasklet ref="futureInstallmentHoldsTasklet" />
 			<next on="*" to="amortizationCalculation" />
 			<fail on="FAILED"/>
 		</step>
-
+		
 		<!-- Amortization Calculation -->
 		<step id="amortizationCalculation">
 			<tasklet ref="amortizationTasklet" />
@@ -1324,6 +1317,13 @@
 		<!-- Value Date Updation -->
 		<step id="valueDateUpdation">
 			<tasklet ref="valueDateUpdationTasklet" />
+			<next on="*" to="futureInstallmentHolds" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- Future Account Holds -->
+		<step id="futureInstallmentHolds">
+			<tasklet ref="futureInstallmentHoldsTasklet" />
 			<next on="*" to="commencementPostings" />
 			<fail on="FAILED"/>
 		</step>

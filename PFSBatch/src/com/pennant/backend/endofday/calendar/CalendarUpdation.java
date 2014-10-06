@@ -112,7 +112,7 @@ public class CalendarUpdation implements Tasklet {
 				String nextBussDate = DateUtility.formatUtilDate(calendar.getTime(),"yyyy-MM-dd");
 
 				sqlStatement = connection.prepareStatement(prepareUpdateQuery());
-				sqlStatement.setString(1, DateUtility.formatUtilDate(calendar.getTime(),"yyyy-MM-dd"));
+				sqlStatement.setString(1, nextBussDate);
 				sqlStatement.setString(2, PennantConstants.APP_DATE_NEXT);
 				sqlStatement.executeUpdate();
 				
