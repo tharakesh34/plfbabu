@@ -5799,12 +5799,18 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onChange$cbfinGrcRateType(Event event) {
 		if (this.cbfinGrcRateType.getSelectedItem() != null) {
+			this.finGrcBaseRate.setValue("");
+			this.finGrcSplRate.setValue("");
+			this.finGrcMargin.setText("");
 			doCheckRateType(this.cbfinGrcRateType, true,true);
 		}
 	}
 
 	public void onChange$cbfinRateType(Event event) {
 		if (this.cbfinRateType.getSelectedItem() != null) {
+			this.finBaseRate.setValue("");
+			this.finSplRate.setValue("");
+			this.finMargin.setText("");
 			doCheckRateType(this.cbfinRateType, false,true);
 		}
 	}
@@ -5894,14 +5900,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.cbfinRvwFrqDays.setDisabled(false);
 				this.cbfinRvwRateApplFor.setDisabled(false);
 				this.cbfinSchCalCodeOnRvw.setDisabled(false);
-				this.space_cbfinSchCalCodeOnRvw.setStyle("background-color:red");
+				this.space_cbfinSchCalCodeOnRvw.setSclass("mandatory");
 				if (this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.PRI_PFT)
 				        || this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.PFT)) {
 					fillComboBox(this.cbfinSchCalCodeOnRvw, "TILLMDT", scCalCode, "");
 					this.cbfinSchCalCodeOnRvw.setDisabled(true);
-					this.space_cbfinSchCalCodeOnRvw.setStyle("background-color:white");
+					this.space_cbfinSchCalCodeOnRvw.setSclass("none");
 				}
-				this.space_FinRvwRateApplFor.setStyle("background-color:red");
+				this.space_FinRvwRateApplFor.setSclass("mandatory");
 
 				if (getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.PFT)) {
 					this.finAlwIndRate.setDisabled(isReadOnly("FinanceTypeDialog_FinGrcAlwIndRate"));
@@ -5921,8 +5927,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.finIndBaseRate.setValue("");
 				this.finIndBaseRate.setDescription("");
 			}
-			this.space_FinRvwRateApplFor.setStyle("background-color:white");
-			this.space_cbfinSchCalCodeOnRvw.setStyle("background-color:white");
+			this.space_FinRvwRateApplFor.setSclass("none");
+			this.space_cbfinSchCalCodeOnRvw.setSclass("none");
 			this.cbfinRvwFrqCode.setDisabled(true);
 			this.cbfinRvwFrqMth.setDisabled(true);
 			this.cbfinRvwFrqDays.setDisabled(true);
@@ -6367,12 +6373,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.cbfinGrcRvwFrqMth.setDisabled(false);
 				this.cbfinGrcRvwFrqDays.setDisabled(false);
 				this.cbfinGrcRvwRateApplFor.setDisabled(false);
-				this.space_FinGrcRvwRateApplFor.setStyle("background-color:red");
+				this.space_FinGrcRvwRateApplFor.setSclass("mandatory");
 				this.finGrcAlwIndRate.setDisabled(false);
 			}
 		} else {
 			this.finGrcRvwFrq.setValue("");
-			this.space_FinGrcRvwRateApplFor.setStyle("background-color:white");
+			this.space_FinGrcRvwRateApplFor.setSclass("none");
 			this.cbfinGrcRvwFrqCode.setSelectedIndex(0);
 			this.cbfinGrcRvwFrqCode.setDisabled(true);
 			this.cbfinGrcRvwFrqMth.setSelectedIndex(0);
