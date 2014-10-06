@@ -153,6 +153,11 @@ public class GraceMDDMCRMRCTest extends ScheduleData {
 				.get(schedule.getFinanceScheduleDetails().size() - 1)
 				.getRepayAmount();
 		actTotProfit = schedule.getFinanceMain().getTotalGrossPft();
+		
+		System.out.println("VAL:: actLastRepayAmt: " + actLastRepayAmt);
+		System.out.println("VAL:: expLastRepayAmt: " + expLastRepayAmt);
+		System.out.println("VAL:: actTotProfit: " + actTotProfit);
+		System.out.println("VAL:: expTotProfit: " + expTotProfit);
 
 		Assert.assertTrue(actLastRepayAmt.compareTo(expLastRepayAmt) == 0
 				&& actTotProfit.compareTo(expTotProfit) == 0);
