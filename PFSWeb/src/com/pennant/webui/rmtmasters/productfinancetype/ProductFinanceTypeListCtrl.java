@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.rmtmasters.productfinancetype.model.ProductFinanceTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -429,7 +429,7 @@ GFCBaseListCtrl<ProductFinanceType> implements Serializable {
 	public void onClick$button_ProductFinanceTypeList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Enterring");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("ProductFinanceType", getSearchObj());
+		new PTListReportUtils("ProductFinanceType", getSearchObj(),this.pagingProductFinanceTypeList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

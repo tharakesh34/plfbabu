@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.staticparms.lovfieldcode.model.LovFieldCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -387,7 +387,7 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> implemen
 	public void onClick$button_LovFieldCodeList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("LovFieldCode", getSearchObj());
+		new PTListReportUtils("LovFieldCode", getSearchObj(),this.pagingLovFieldCodeList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

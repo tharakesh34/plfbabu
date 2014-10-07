@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.rmtmasters.accountenginerule.model.AccountEngineRuleListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -420,7 +420,7 @@ public class AccountEngineRuleListCtrl extends
 	 */
 	public void onClick$button_AccountEngineRuleList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" +event.toString());
-		PTReportUtils.getReport("AccountEngineRule", getSearchObj());
+		new PTListReportUtils("AccountEngineRule", getSearchObj(),this.pagingAccountEngineRuleList.getTotalSize()+1);
 		logger.debug("Leaving" +event.toString());
 	}
 

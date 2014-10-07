@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.rmtmasters.penaltycode.model.PenaltyCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -420,7 +420,7 @@ public class PenaltyCodeListCtrl extends GFCBaseListCtrl<PenaltyCode> implements
 	public void onClick$button_PenaltyCodeList_PrintList(Event event)
 			throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("PenaltyCode", getSearchObj());
+		new PTListReportUtils("PenaltyCode", getSearchObj(),this.pagingPenaltyCodeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

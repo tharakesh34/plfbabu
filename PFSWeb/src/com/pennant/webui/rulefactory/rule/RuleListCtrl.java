@@ -487,11 +487,9 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> implements Serializable 
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("unused")
 	public void onClick$button_RuleList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" +event.toString());
-		PTListReportUtils reportUtils = new PTListReportUtils("CustomerRating", getSearchObj(),
-				this.pagingRuleList.getTotalSize() + 1);
+	    new PTListReportUtils("Rule", getSearchObj(),this.pagingRuleList.getTotalSize() + 1);
 		logger.debug("Leaving" +event.toString());
 	}
 

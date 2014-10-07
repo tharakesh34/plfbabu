@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.staticparms.frequency.model.FrequencyListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -408,7 +408,7 @@ public class FrequencyListCtrl extends GFCBaseListCtrl<Frequency> implements Ser
 	 */
 	public void onClick$button_FrequencyList_PrintList(Event event)	throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("Frequency", getSearchObj());
+		new PTListReportUtils("Frequency", getSearchObj(),this.pagingFrequencyList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

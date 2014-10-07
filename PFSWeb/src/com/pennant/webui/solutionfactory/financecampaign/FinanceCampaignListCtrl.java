@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.solutionfactory.financecampaign.model.FinanceCampaignListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -376,7 +376,7 @@ public class FinanceCampaignListCtrl extends GFCBaseListCtrl<FinanceCampaign> im
 	public void onClick$button_FinanceCampaignList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("FinanceCampaign", getSearchObj());
+		new PTListReportUtils("FinanceCampaign", getSearchObj(),this.pagingFinanceCampaignList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.staticparms.schedulemethod.model.ScheduleMethodListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -397,7 +397,7 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> impl
 	 */
 	public void onClick$button_ScheduleMethodList_PrintList(Event event)throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("ScheduleMethod", getSearchObj());
+		new PTListReportUtils("ScheduleMethod", getSearchObj(),this.pagingScheduleMethodList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

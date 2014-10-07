@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.smtmasters.pfsparameter.model.PFSParameterListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -409,7 +409,7 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 	 */
 	public void onClick$button_PFSParameterList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("PFSParameter", getSearchObj());
+		new PTListReportUtils("PFSParameter", getSearchObj(),this.pagingPFSParameterList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

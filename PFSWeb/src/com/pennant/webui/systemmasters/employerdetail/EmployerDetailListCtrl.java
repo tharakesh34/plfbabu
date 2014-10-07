@@ -354,10 +354,9 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("unused")
 	public void onClick$button_EmployerDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		PTListReportUtils reportUtils = new PTListReportUtils("EmployerDetail", getSearchObj(),this.pagingEmployerDetailList.getTotalSize()+1);
+		new PTListReportUtils("EmployerDetail", getSearchObj(),this.pagingEmployerDetailList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 	

@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.staticparms.language.model.LanguageListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -409,7 +409,7 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 	 */
 	public void onClick$button_LanguageList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("Language", getSearchObj());
+		new PTListReportUtils("Language", getSearchObj(),this.pagingLanguageList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

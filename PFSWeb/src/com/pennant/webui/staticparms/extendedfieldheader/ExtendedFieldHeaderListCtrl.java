@@ -76,8 +76,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.staticparms.extendedfieldheader.model.ExtendedFieldHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -430,7 +430,7 @@ public class ExtendedFieldHeaderListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	 */
 	public void onClick$button_ExtendedFieldHeaderList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("ExtendedFieldHeader", getSearchObj());
+		new PTListReportUtils("ExtendedFieldHeader", getSearchObj(),this.pagingExtendedFieldHeaderList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

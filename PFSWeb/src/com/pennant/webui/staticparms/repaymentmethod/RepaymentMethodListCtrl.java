@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.staticparms.repaymentmethod.model.RepaymentMethodListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -396,7 +396,7 @@ public class RepaymentMethodListCtrl extends GFCBaseListCtrl<RepaymentMethod> im
 	 */
 	public void onClick$button_RepaymentMethodList_PrintList(Event event)throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("RepaymentMethod", getSearchObj());
+		new PTListReportUtils("RepaymentMethod", getSearchObj(),this.pagingRepaymentMethodList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

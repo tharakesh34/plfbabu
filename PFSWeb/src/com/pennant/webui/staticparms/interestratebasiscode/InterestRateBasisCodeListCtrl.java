@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.staticparms.interestratebasiscode.model.InterestRateBasisCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -410,7 +410,7 @@ public class InterestRateBasisCodeListCtrl extends GFCBaseListCtrl<InterestRateB
 	 */
 	public void onClick$button_InterestRateBasisCodeList_PrintList(Event event)throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("InterestRateBasisCode", getSearchObj());
+		new PTListReportUtils("InterestRateBasisCode", getSearchObj(),this.pagingInterestRateBasisCodeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 
