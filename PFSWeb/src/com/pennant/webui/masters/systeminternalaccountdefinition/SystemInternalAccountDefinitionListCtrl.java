@@ -436,10 +436,9 @@ public class SystemInternalAccountDefinitionListCtrl extends GFCBaseListCtrl<Sys
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("unused")
 	public void onClick$button_SystemInternalAccountDefinitionList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		PTListReportUtils reportUtils = new PTListReportUtils("SystemInternalAccountDefinition", getSearchObj(),this.pagingSystemInternalAccountDefinitionList.getTotalSize()+1);
+		new PTListReportUtils("SystemInternalAccountDefinition", getSearchObj(),this.pagingSystemInternalAccountDefinitionList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 	public void doSearch(){

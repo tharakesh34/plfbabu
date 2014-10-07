@@ -73,8 +73,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.carloandetail.model.CarLoanDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -401,7 +401,7 @@ public class CarLoanDetailListCtrl extends GFCBaseListCtrl<CarLoanDetail> implem
 	 */
 	public void onClick$button_CarLoanDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("CarLoanDetail", getSearchObj());
+		new PTListReportUtils("CarLoanDetail", getSearchObj(),this.pagingCarLoanDetailList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

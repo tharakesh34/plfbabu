@@ -73,8 +73,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.educationalloan.model.EducationalLoanListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -404,7 +404,7 @@ public class EducationalLoanListCtrl extends GFCBaseListCtrl<EducationalLoan> im
 	 */
 	public void onClick$button_EducationalLoanList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("EducationalLoan", getSearchObj());
+		new PTListReportUtils("EducationalLoan", getSearchObj(),this.pagingEducationalLoanList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

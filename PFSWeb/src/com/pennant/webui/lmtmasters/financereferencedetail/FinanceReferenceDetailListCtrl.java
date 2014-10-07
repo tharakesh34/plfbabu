@@ -79,8 +79,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.financereferencedetail.model.FinanceReferenceDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -421,7 +421,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	 */
 	public void onClick$button_FinanceReferenceDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("FinanceReferenceDetail", getSearchObj());
+		new PTListReportUtils("FinanceReferenceDetail", getSearchObj(),this.pagingFinanceReferenceDetailList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

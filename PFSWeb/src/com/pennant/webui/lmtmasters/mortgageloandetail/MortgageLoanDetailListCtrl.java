@@ -73,8 +73,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.mortgageloandetail.model.MortgageLoanDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -401,7 +401,7 @@ public class MortgageLoanDetailListCtrl extends GFCBaseListCtrl<MortgageLoanDeta
 	 */
 	public void onClick$button_MortgageLoanDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("MortgageLoanDetail", getSearchObj());
+		new PTListReportUtils("MortgageLoanDetail", getSearchObj(),this.pagingMortgageLoanDetailList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

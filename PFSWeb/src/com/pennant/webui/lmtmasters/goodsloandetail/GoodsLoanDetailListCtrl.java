@@ -83,8 +83,8 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.WorkflowLoad;
 import com.pennant.webui.lmtmasters.goodsloandetail.model.GoodsLoanDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 	
@@ -402,7 +402,7 @@ public class GoodsLoanDetailListCtrl extends GFCBaseListCtrl<GoodsLoanDetail> im
 	public void onClick$button_GoodsLoanDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("GoodsLoanDetail", getSearchObj());
+		new PTListReportUtils("GoodsLoanDetail", getSearchObj(),this.pagingGoodsLoanDetailList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 	

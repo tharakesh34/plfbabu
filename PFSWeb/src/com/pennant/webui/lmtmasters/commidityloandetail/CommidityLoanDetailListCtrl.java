@@ -83,8 +83,8 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.WorkflowLoad;
 import com.pennant.webui.lmtmasters.commidityloandetail.model.CommidityLoanDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -419,7 +419,7 @@ public class CommidityLoanDetailListCtrl extends GFCBaseListCtrl<CommidityLoanDe
 	public void onClick$button_CommidityLoanDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("CommidityLoanDetail", getSearchObj());
+		new PTListReportUtils("CommidityLoanDetail", getSearchObj(),this.pagingCommidityLoanDetailList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 
