@@ -16,7 +16,7 @@
 				<!-- COMMON BUTTONS -->
 				<label value="" />
 				<!-- SEARCH AREA -->
-				<toolbar align="center" sclass="toolbar-center"
+				<toolbar align="center" sclass="toolbar-center" >
 					<button
 						id="button_VehicleVersionList_VehicleVersionSearchDialog"
 						 label = "${c:l('label_Filter')}"
@@ -49,9 +49,7 @@
 
 		<borderlayout id="borderLayout_VehicleVersionList">
 			<north border="none" />
-
 			<center border="none">
-
 				<listbox id="listBoxVehicleVersion" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 					height="100%" multiple="false">
@@ -69,13 +67,11 @@
 							label="${c:l('listheader_RecordType.label')}" sort="auto"
 							width="0%" />
 					</listhead>
-
 				</listbox>
 			</center>
 			<south border="none">
 				<paging id="pagingVehicleVersionList" />
 			</south>
-
 		</borderlayout>
 	</window>
 </zk>

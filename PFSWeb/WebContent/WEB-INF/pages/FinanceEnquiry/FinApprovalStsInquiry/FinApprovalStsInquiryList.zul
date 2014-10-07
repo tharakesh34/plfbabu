@@ -14,7 +14,7 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center" style="border-style: none;">
 						<button id="button_FinApprovalStsInquiryList_Search"  label = "${c:l('label_Filter')}" autodisable="button_FinApprovalStsInquiryList_FinApprovalStsInquiryListDialog,button_FinApprovalStsInquiryList_PrintList,btnRefresh,btnHelp" tooltiptext="${c:l('button_CustomerMaintenaceList_FinApprovalStsInquiryListDialog.tooltiptext')}" />
-						<button id="button_FinApprovalStsInquiryList_PrintList"   visible="false" label="${c:l('label_Print')}" autodisable="button_FinApprovalStsInquiryList_FinApprovalStsInquiryListDialog,button_FinApprovalStsInquiryList_PrintList,btnRefresh,btnHelp" tooltiptext="${c:l('button_CustomerMaintenaceList_PrintList.tooltiptext')}" />
+						<button id="button_FinApprovalStsInquiryList_PrintList"  label="${c:l('label_Print')}" autodisable="button_FinApprovalStsInquiryList_FinApprovalStsInquiryListDialog,button_FinApprovalStsInquiryList_PrintList,btnRefresh,btnHelp" tooltiptext="${c:l('button_CustomerMaintenaceList_PrintList.tooltiptext')}" />
 					</toolbar>
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="float:right; border-style: none;">
