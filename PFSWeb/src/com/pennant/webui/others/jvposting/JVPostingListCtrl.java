@@ -81,8 +81,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.others.jvposting.model.JVPostingListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 	
@@ -536,7 +536,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> implements Ser
 		logger.debug("Entering");
 		logger.debug(event.toString());
 		this.timer.stop();
-		PTReportUtils.getReport("JVPosting", getSearchObj());
+		new PTListReportUtils("JVPosting", getSearchObj(),this.pagingJVPostingList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 
