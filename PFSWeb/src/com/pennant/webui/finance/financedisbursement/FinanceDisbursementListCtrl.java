@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.finance.financedisbursement.model.FinanceDisbursementListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -379,7 +379,7 @@ public class FinanceDisbursementListCtrl extends GFCBaseListCtrl<FinanceDisburse
 	public void onClick$button_FinanceDisbursementList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("FinanceDisbursement", getSearchObj());
+		new PTListReportUtils("FinanceDisbursement", getSearchObj(),this.pagingFinanceDisbursementList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

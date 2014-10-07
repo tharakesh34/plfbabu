@@ -82,8 +82,8 @@ import com.pennant.search.Filter;
 import com.pennant.util.WorkflowLoad;
 import com.pennant.webui.finance.enquiry.model.FinApprovalStsInquiryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 	 
@@ -408,10 +408,10 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$button_button_FinApprovalStsInquiryList_PrintList_PrintList(Event event) throws InterruptedException {
+	public void onClick$button_FinApprovalStsInquiryList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("FinApprovalStsInquiryList", getSearchObj());
+		new PTListReportUtils("FinanceMain", getSearchObj(),this.pagingFinApprovalStsInquiryList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 	
