@@ -306,7 +306,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl implements Serializable {
 		//Upgraded to ZK-6.5.1.1 Changed from get children to get items 	
 		List<Listitem> list = listBoxFields.getItems();
 
-		for (int i = 1; i < list.size(); i++) {
+		for (int i = 0; i < list.size(); i++) {
 			List<Component> listcells = list.get(i).getChildren();
 			Checkbox checkbox = (Checkbox) listcells.get(0).getLastChild();
 
