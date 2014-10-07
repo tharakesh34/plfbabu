@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.bmtmasters.scoringtype.model.ScoringTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -391,7 +391,7 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> implements
 	 */
 	public void onClick$button_ScoringTypeList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("ScoringType", getSearchObj());
+		new PTListReportUtils("ScoringType", getSearchObj(),this.pagingScoringTypeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.finance.commodity.commoditydetail.model.CommodityDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -380,7 +380,7 @@ public class CommodityDetailListCtrl extends GFCBaseListCtrl<CommodityDetail> im
 	public void onClick$button_CommodityDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		logger.debug(event.toString());
-		PTReportUtils.getReport("CommodityDetail", getSearchObj());
+		new PTListReportUtils("CommodityDetail", getSearchObj(),this.pagingCommodityDetailList.getTotalSize()+1);
 		logger.debug("Leaving " + event.toString());
 	}
 

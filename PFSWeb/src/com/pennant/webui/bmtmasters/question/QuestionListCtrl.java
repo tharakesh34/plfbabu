@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.bmtmasters.question.model.QuestionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -385,7 +385,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> implements Seria
 	public void onClick$button_QuestionList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("Question", getSearchObj());
+		new PTListReportUtils("Question", getSearchObj(),this.pagingQuestionList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

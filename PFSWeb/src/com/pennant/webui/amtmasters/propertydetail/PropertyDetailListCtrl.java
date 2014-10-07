@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.amtmasters.propertydetail.model.PropertyDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -370,7 +370,7 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 	public void onClick$button_PropertyDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("PropertyDetail", getSearchObj());
+		new PTListReportUtils("PropertyDetail", getSearchObj(),this.pagingPropertyDetailList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

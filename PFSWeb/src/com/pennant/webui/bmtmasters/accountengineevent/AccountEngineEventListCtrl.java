@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.bmtmasters.accountengineevent.model.AccountEngineEventListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -404,7 +404,7 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	 */
 	public void onClick$button_AccountEngineEventList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("AccountEngineEvent", getSearchObj());
+		new PTListReportUtils("AccountEngineEvent", getSearchObj(),this.pagingAccountEngineEventList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

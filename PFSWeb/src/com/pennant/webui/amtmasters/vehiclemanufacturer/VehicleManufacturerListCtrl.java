@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.amtmasters.vehiclemanufacturer.model.VehicleManufacturerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -370,7 +370,7 @@ public class VehicleManufacturerListCtrl extends GFCBaseListCtrl<VehicleManufact
 	public void onClick$button_VehicleManufacturerList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("VehicleManufacturer", getSearchObj());
+		new PTListReportUtils("VehicleManufacturer", getSearchObj(),this.pagingVehicleManufacturerList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

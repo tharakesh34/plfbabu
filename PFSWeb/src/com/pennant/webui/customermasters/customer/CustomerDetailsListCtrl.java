@@ -75,8 +75,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.customermasters.customer.model.CustomerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -408,7 +408,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> implement
 	 */
 	public void onClick$button_CustomerDetailsList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("Customer", getSearchObj());
+		new PTListReportUtils("Customer", getSearchObj(),this.pagingCustomerDetailsList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

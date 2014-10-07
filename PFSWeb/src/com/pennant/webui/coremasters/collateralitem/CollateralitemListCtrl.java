@@ -72,8 +72,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.coremasters.collateralitem.model.CollateralitemListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -212,6 +212,7 @@ public class CollateralitemListCtrl extends GFCBaseListCtrl<Collateralitem> impl
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
+	@SuppressWarnings("unused")
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("CollateralitemList");
@@ -381,7 +382,7 @@ public class CollateralitemListCtrl extends GFCBaseListCtrl<Collateralitem> impl
 	public void onClick$button_CollateralitemList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("Collateralitem", getSearchObj());
+		new PTListReportUtils("Collateralitem", getSearchObj(),this.pagingCollateralitemList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

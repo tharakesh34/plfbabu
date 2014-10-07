@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.bmtmasters.ratingtype.model.RatingTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -415,7 +415,7 @@ public class RatingTypeListCtrl extends GFCBaseListCtrl<RatingType> implements S
 	 */
 	public void onClick$button_RatingTypeList_PrintList(Event event)throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("RatingType", getSearchObj());
+		new PTListReportUtils("RatingType", getSearchObj(),this.pagingRatingTypeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

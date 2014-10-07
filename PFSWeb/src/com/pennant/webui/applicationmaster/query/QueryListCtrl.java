@@ -86,8 +86,8 @@ import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.applicationmaster.query.model.QueryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 
@@ -430,7 +430,7 @@ public class QueryListCtrl extends GFCBaseListCtrl<Query> implements Serializabl
 	public void onClick$button_QueryList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("Query", getSearchObj());
+		new PTListReportUtils("Query", getSearchObj(),this.pagingQueryList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.administration.securityuser.model.SecurityUserListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 
 /**
@@ -141,7 +141,6 @@ public class SecurityUserRolesListCtrl extends GFCBaseListCtrl<SecurityUser> imp
 	 */
 	public void onCreate$win_SecurityUserRolesList(Event event) throws Exception {
 		logger.debug("Entering into"+event.toString());
-		
 		try{
 		this.button_SecurityUserList_PrintList.setVisible(false);
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("SecurityUser");
@@ -409,7 +408,7 @@ public class SecurityUserRolesListCtrl extends GFCBaseListCtrl<SecurityUser> imp
 	 */
 	public void onClick$button_SecurityUserList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering into "+event.toString());
-		PTReportUtils.getReport("SecurityUser", getSearchObj());
+		new PTListReportUtils("SecurityUser", getSearchObj(),this.pagingSecurityUserList.getTotalSize()+1);
 		logger.debug("Leaving "+event.toString());
 	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

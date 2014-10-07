@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.amtmasters.vehicledealer.model.VehicleDealerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -430,7 +430,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 	throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("VehicleDealer", getSearchObj());
+		new PTListReportUtils("VehicleDealer", getSearchObj(),this.pagingVehicleDealerList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

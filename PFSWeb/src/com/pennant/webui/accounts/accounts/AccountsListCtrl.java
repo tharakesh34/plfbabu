@@ -77,8 +77,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.accounts.accounts.model.AccountsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -441,7 +441,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> implements Seria
 	public void onClick$button_AccountsList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("Accounts", getSearchObj());
+		new PTListReportUtils("Accounts", getSearchObj(),this.pagingAcountsList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

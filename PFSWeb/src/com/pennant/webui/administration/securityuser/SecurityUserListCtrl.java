@@ -200,7 +200,6 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> implemen
 	 */
 	public void onCreate$window_SecurityUserList(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
-
 		try{
 			String moduleName ="SecurityUser";
 			if(moduleType==null){
@@ -559,9 +558,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> implemen
 			this.button_SecurityUserList_NewSecurityUser.setVisible(false);
 		}
 		
-		
 		this.button_SecurityUserList_PrintList.setVisible(getUserWorkspace().isAllowed("button_SecurityUserList_PrintList"));
-		
 		logger.debug("Leaving ");
 	}
 

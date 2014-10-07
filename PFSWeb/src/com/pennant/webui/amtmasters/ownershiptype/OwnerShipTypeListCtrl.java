@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.amtmasters.ownershiptype.model.OwnerShipTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -370,7 +370,7 @@ public class OwnerShipTypeListCtrl extends GFCBaseListCtrl<OwnerShipType> implem
 	public void onClick$button_OwnerShipTypeList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("OwnerShipType", getSearchObj());
+		new PTListReportUtils("OwnerShipType", getSearchObj(),this.pagingOwnerShipTypeList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 

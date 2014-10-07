@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.administration.securityright.model.SecurityRightListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -398,7 +398,7 @@ public class SecurityRightListCtrl extends GFCBaseListCtrl<SecurityRight> implem
 	 */
 	public void onClick$button_SecurityRightList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		PTReportUtils.getReport("SecurityRight", getSearchObj());
+		new PTListReportUtils("SecurityRight", getSearchObj(),this.pagingSecurityRightList.getTotalSize()+1);
 		logger.debug("Leaving " + event.toString());
 	}
 

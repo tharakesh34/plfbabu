@@ -77,8 +77,8 @@ import com.pennant.search.SearchResult;
 import com.pennant.webui.customermasters.customerbalancesheet.model.CustomerBalanceSheetComparator;
 import com.pennant.webui.customermasters.customerbalancesheet.model.CustomerBalanceSheetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -442,7 +442,7 @@ public class CustomerBalanceSheetListCtrl extends GFCBaseListCtrl<CustomerBalanc
 	public void onClick$button_CustomerBalanceSheetList_PrintList(Event event) 
 			throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTReportUtils.getReport("CustomerBalanceSheet", getSearchObj());
+		new PTListReportUtils("CustomerBalanceSheet", getSearchObj(),this.pagingCustomerBalanceSheetList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

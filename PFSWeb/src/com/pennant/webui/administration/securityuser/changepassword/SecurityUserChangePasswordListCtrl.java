@@ -74,8 +74,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.administration.securityuser.model.SecurityUserListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 
 /**
@@ -420,7 +420,7 @@ implements Serializable {
 	public void onClick$button_SecurityUserList_PrintList(Event event) 
 	throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		PTReportUtils.getReport("SecurityUser", getSearchObj());
+		new PTListReportUtils("SecurityUser", getSearchObj(),this.pagingSecurityUserList.getTotalSize()+1);
 		logger.debug("Leaving " + event.toString());
 	}
 
