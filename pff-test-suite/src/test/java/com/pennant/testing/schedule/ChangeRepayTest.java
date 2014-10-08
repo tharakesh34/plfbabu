@@ -48,6 +48,11 @@ public class ChangeRepayTest {
 				.getRepayAmount();
 		BigDecimal actTotProfit = schedule.getFinanceMain().getTotalGrossPft();
 
+		System.out.println("SAI:: createSchedule " + name + " : "
+				+ actLastRepayAmt.longValue());
+		System.out.println("SAI:: createSchedule " + name + " : "
+				+ actTotProfit.longValue());
+
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
 	}
@@ -102,6 +107,11 @@ public class ChangeRepayTest {
 				.get(schedule.getFinanceScheduleDetails().size() - 1)
 				.getRepayAmount();
 		BigDecimal actTotProfit = schedule.getFinanceMain().getTotalGrossPft();
+
+		System.out.println("SAI:: changeRepay " + name + " : "
+				+ actLastRepayAmt.longValue());
+		System.out.println("SAI:: changeRepay " + name + " : "
+				+ actTotProfit.longValue());
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expFinalLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expFinalTotalProfit);

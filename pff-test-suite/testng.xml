@@ -6,7 +6,7 @@
 			<class name="com.pennant.testing.LoadConfigTest" />
 		</classes>
 	</test>
-	<test name="schedule-test" group-by-instances="true">
+	<test name="schedule-test" group-by-instances="false">
 		<packages>
 			<package name="com.pennant.testing.schedule" />
 		</packages>
