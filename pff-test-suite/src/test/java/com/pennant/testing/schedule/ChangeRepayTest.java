@@ -90,7 +90,8 @@ public class ChangeRepayTest {
 			System.out.println(name);
 			for (FinanceScheduleDetail detail : schedule
 					.getFinanceScheduleDetails()) {
-				System.out.println("SchDate: " + detail.getSchDate());
+				System.out.print("SchDate: ");
+				System.out.println(detail.getSchDate());
 			}
 			e.printStackTrace();
 			throw e;
