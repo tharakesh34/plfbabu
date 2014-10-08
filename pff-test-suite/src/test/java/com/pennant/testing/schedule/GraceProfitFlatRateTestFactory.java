@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Factory;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.util.BeanFactory;
 
@@ -13,6 +14,7 @@ public class GraceProfitFlatRateTestFactory {
 	public Object[] createObjects(String name, String scheduleMethod,
 			long reqRepayAmt, long expLastRepayAmt, long expTotalProfit) {
 		FinScheduleData schedule = BeanFactory.getSchedule();
+		schedule.getFinanceMain().setGrcSchdMthd(CalculationConstants.PFT);
 		schedule.getFinanceMain().setGrcRateBasis("F");
 		schedule.getFinanceMain().setRepayRateBasis("F");
 

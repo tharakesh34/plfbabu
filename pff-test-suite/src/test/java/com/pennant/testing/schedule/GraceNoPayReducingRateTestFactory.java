@@ -9,12 +9,12 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.util.BeanFactory;
 
-public class GraceProfitReducingRateTestFactory {
+public class GraceNoPayReducingRateTestFactory {
 	@Factory(dataProvider = "dataset")
 	public Object[] createObjects(String name, String scheduleMethod,
 			long reqRepayAmt, long expLastRepayAmt, long expTotalProfit) {
 		FinScheduleData schedule = BeanFactory.getSchedule();
-		schedule.getFinanceMain().setGrcSchdMthd(CalculationConstants.PFT);
+		schedule.getFinanceMain().setGrcSchdMthd(CalculationConstants.NOPAY);
 		schedule.getFinanceMain().setGrcRateBasis("R");
 		schedule.getFinanceMain().setRepayRateBasis("R");
 
@@ -37,18 +37,18 @@ public class GraceProfitReducingRateTestFactory {
 	public Object[][] dataset() {
 		Object[][] result = new Object[7][];
 
-		result[0] = new Object[] { "SN01_RR_EQUAL_REQ", "EQUAL", 7500000,
-				11250745, 10347622 };
-		result[1] = new Object[] { "SN01_RR_EQUAL", "EQUAL", 0, 7802114,
-				10222300 };
-		result[2] = new Object[] { "SN01_RR_PFT", "PFT", 0, 90561822, 13230000 };
-		result[3] = new Object[] { "SN01_RR_PRI_REQ", "PRI", 7500000, 11182143,
-				10279020 };
-		result[4] = new Object[] { "SN01_RR_PRI", "PRI", 0, 8718137, 10190530 };
-		result[5] = new Object[] { "SN01_RR_PRIPFT_REQ", "PRI_PFT", 7000000,
-				13081152, 10385450 };
-		result[6] = new Object[] { "SN01_RR_PRIPFT", "PRI_PFT", 0, 7546818,
-				10182267 };
+		result[0] = new Object[] { "SN03_RR_EQUAL_REQ", "EQUAL", 8000000,
+				12773266, 10773266 };
+		result[1] = new Object[] { "SN03_RR_EQUAL", "EQUAL", 0, 8384477,
+				10613779 };
+		result[2] = new Object[] { "SN03_RR_PFT", "PFT", 0, 97321506, 13845979 };
+		result[3] = new Object[] { "SN03_RR_PRI_REQ", "PRI", 8000000, 12699241,
+				10699241 };
+		result[4] = new Object[] { "SN03_RR_PRI", "PRI", 0, 9368869, 10579637 };
+		result[5] = new Object[] { "SN03_RR_PRIPFT_REQ", "PRI_PFT", 7500000,
+				14306502, 10798246 };
+		result[6] = new Object[] { "SN03_RR_PRIPFT", "PRI_PFT", 0, 8110129,
+				10570758 };
 
 		return result;
 	}
