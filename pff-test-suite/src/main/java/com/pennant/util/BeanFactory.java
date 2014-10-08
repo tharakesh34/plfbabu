@@ -53,7 +53,6 @@ public class BeanFactory {
 		finance.setEventToDate(DateUtility.getDate("31/12/2012"));
 		finance.setRecalType("CURPRD");
 		finance.setGrcPeriodEndDate(DateUtility.getDate("31/12/2011"));
-		finance.setAllowGrcRepay(true);
 		finance.setFinStartDate(DateUtility.getDate("01/01/2011"));
 		finance.setExcludeDeferedDates(false);
 

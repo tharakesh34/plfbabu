@@ -17,6 +17,7 @@ public class GraceNoPayReducingRateTestFactory {
 		schedule.getFinanceMain().setGrcSchdMthd(CalculationConstants.NOPAY);
 		schedule.getFinanceMain().setGrcRateBasis("R");
 		schedule.getFinanceMain().setRepayRateBasis("R");
+		schedule.getFinanceMain().setAllowGrcRepay(true);
 
 		schedule.getFinanceMain().setScheduleMethod(scheduleMethod);
 		schedule.getFinanceMain().setReqRepayAmount(

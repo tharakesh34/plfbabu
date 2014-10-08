@@ -17,6 +17,7 @@ public class GraceProfitFlatRateTestFactory {
 		schedule.getFinanceMain().setGrcSchdMthd(CalculationConstants.PFT);
 		schedule.getFinanceMain().setGrcRateBasis("F");
 		schedule.getFinanceMain().setRepayRateBasis("F");
+		schedule.getFinanceMain().setAllowGrcRepay(true);
 
 		schedule.getFinanceMain().setScheduleMethod(scheduleMethod);
 		schedule.getFinanceMain().setReqRepayAmount(

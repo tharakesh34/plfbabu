@@ -14,6 +14,8 @@
 			<class
 				name="com.pennant.testing.schedule.GraceNoPayReducingRateTestFactory" />
 			<class name="com.pennant.testing.schedule.GraceNoPayFlatRateTestFactory" />
+			<class
+				name="com.pennant.testing.schedule.GraceNoRepayReducingRateTestFactory" />
 		</classes>
 	</test>
 </suite>
