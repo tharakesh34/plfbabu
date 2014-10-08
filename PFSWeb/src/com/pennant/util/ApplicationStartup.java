@@ -1,9 +1,5 @@
 package com.pennant.util;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.newTrigger;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,16 +40,16 @@ public class ApplicationStartup  implements ServletContextListener
 			logger.debug("cornExpression:"+cornExpression);
 
 			//Next Processing Date Calculation	
-			JobDetail     job 	  = newJob(StatisticsSheduler.class).withIdentity("AUDIT_STATISTICS", "AUDITSTATISTICS").build();
-			CronTrigger   trigger = newTrigger().withIdentity("AUDIT_STATISTICS_TRIGGER", "AUDITSTATISTICS").
-			withSchedule(cronSchedule("0  */5 */1 * * ?")).build();	
-			if(schedular!=null){
+//			JobDetail     job 	  = newJob(StatisticsSheduler.class).withIdentity("AUDIT_STATISTICS", "AUDITSTATISTICS").build();
+//			CronTrigger   trigger = newTrigger().withIdentity("AUDIT_STATISTICS_TRIGGER", "AUDITSTATISTICS").
+//			withSchedule(cronSchedule("0  */5 */1 * * ?")).build();	
+			/*if(schedular!=null){
 				schedular.scheduleJob(job, trigger);
 				contextMap.put("jobScheduler", schedular);
 				sc.setAttribute("jobScheduler", schedular);
-			/*	schedular.start();*/
+				schedular.start();
 
-			}
+			}*/
 		}catch (Exception se) {
 			logger.error( se.toString());
 			try {

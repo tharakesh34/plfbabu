@@ -1,11 +1,13 @@
 package com.pennant.webui.diarynotes.diarynotes;
 
+import java.io.Serializable;
 import java.util.List;
 
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
+import org.quartz.StatefulJob;
+import org.quartz.utils.Key;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.util.FrequencyUtil;
@@ -13,7 +15,7 @@ import com.pennant.backend.dao.diarynotes.DiaryNotesDAO;
 import com.pennant.backend.model.diarynotes.DiaryNotes;
 
 
-public class DiaryNotesSchedule implements Job {
+public class DiaryNotesSchedule  extends QuartzJobBean implements StatefulJob, Serializable {
 	private static final long serialVersionUID = 3560027943201460852L;
 	
 	private List<DiaryNotes> dnList = null;
@@ -24,10 +26,10 @@ public class DiaryNotesSchedule implements Job {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {	
+	public void executeInternal(JobExecutionContext context) throws JobExecutionException {	
 		System.out.println("TESTING");
 		
-		JobKey jobKey = arg0.getJobDetail().getKey();
+		Key jobKey = context.getJobDetail().getKey();
 		
 		if(jobKey.getName().equalsIgnoreCase("NPD")){
 			dnList = getDiaryNotesDAO().getDiaryNoteRecord();

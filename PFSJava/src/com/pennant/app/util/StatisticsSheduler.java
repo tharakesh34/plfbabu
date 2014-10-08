@@ -45,26 +45,27 @@ package com.pennant.app.util;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
 import org.quartz.SchedulerException;
+import org.quartz.StatefulJob;
+import org.quartz.utils.Key;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.pennant.backend.service.dashboard.DetailStatisticsService;
 
-public class StatisticsSheduler implements Job,Serializable {
+public class StatisticsSheduler  extends QuartzJobBean implements StatefulJob, Serializable {
 
 	private static final long serialVersionUID = 4716466545490087546L;
 	private final static Logger logger = Logger.getLogger(StatisticsSheduler.class);
 	private static DetailStatisticsService detailStatisticsService;
 
 	@Override
-	public  synchronized void execute(JobExecutionContext context) throws JobExecutionException {
+	public void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		logger.debug("Entering ");
 		logger.debug("Entering HashCode:"+this.hashCode());
 		
-		JobKey jobKey = context.getJobDetail().getKey();
+		Key jobKey = context.getJobDetail().getKey();
 
 		context.toString();
 		logger.debug("--->Executing Audit Statistics fetching job");
