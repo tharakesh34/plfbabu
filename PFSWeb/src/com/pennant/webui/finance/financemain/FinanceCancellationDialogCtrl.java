@@ -528,7 +528,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		this.oldVar_noOfSteps = this.noOfSteps.intValue();
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
-
+		
 		this.oldVar_gracePeriodEndDate = this.gracePeriodEndDate_two.getValue();
 		if (this.gb_gracePeriodDetails.isVisible()) {
 			this.oldVar_graceTerms = this.graceTerms_Two.intValue();
@@ -537,9 +537,9 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 			this.oldVar_grcRateBasis = this.grcRateBasis.getSelectedIndex();
 			this.oldVar_allowGrcRepay = this.allowGrcRepay.isChecked();
 			this.oldVar_graceBaseRate = this.graceBaseRate.getValue();
-			this.oldVar_lovDescGraceBaseRateName = this.lovDescGraceBaseRateName.getValue();
+			this.oldVar_lovDescGraceBaseRateName = this.graceBaseRate.getDescription();
 			this.oldVar_graceSpecialRate = this.graceSpecialRate.getValue();
-			this.oldVar_lovDescGraceSpecialRateName = this.lovDescGraceSpecialRateName.getValue();
+			this.oldVar_lovDescGraceSpecialRateName = this.graceSpecialRate.getDescription();
 			this.oldVar_gracePftRate = this.gracePftRate.getValue();
 			this.oldVar_gracePftFrq = this.gracePftFrq.getValue();
 			this.oldVar_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
@@ -559,9 +559,9 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		this.oldVar_numberOfTerms = this.numberOfTerms_two.intValue();
 		this.oldVar_repayBaseRate = this.repayBaseRate.getValue();
 		this.oldVar_repayRateBasis = this.repayRateBasis.getSelectedIndex();
-		this.oldVar_lovDescRepayBaseRateName = this.lovDescRepayBaseRateName.getValue();
+		this.oldVar_lovDescRepayBaseRateName = this.repayBaseRate.getDescription();
 		this.oldVar_repaySpecialRate = this.repaySpecialRate.getValue();
-		this.oldVar_lovDescRepaySpecialRateName = this.lovDescRepaySpecialRateName.getValue();
+		this.oldVar_lovDescRepaySpecialRateName = this.repaySpecialRate.getDescription();
 		this.oldVar_repayProfitRate = this.repayProfitRate.getValue();
 		this.oldVar_repayMargin = this.repayMargin.getValue();
 		this.oldVar_scheduleMethod = this.cbScheduleMethod.getSelectedIndex();

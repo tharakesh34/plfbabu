@@ -1148,9 +1148,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			this.oldVar_grcRateBasis = this.grcRateBasis.getSelectedIndex();
 			this.oldVar_allowGrcRepay = this.allowGrcRepay.isChecked();
 			this.oldVar_graceBaseRate = this.graceBaseRate.getValue();
-			this.oldVar_lovDescGraceBaseRateName = this.lovDescGraceBaseRateName.getValue();
+			this.oldVar_lovDescGraceBaseRateName = this.graceBaseRate.getDescription();
 			this.oldVar_graceSpecialRate = this.graceSpecialRate.getValue();
-			this.oldVar_lovDescGraceSpecialRateName = this.lovDescGraceSpecialRateName.getValue();
+			this.oldVar_lovDescGraceSpecialRateName = this.graceSpecialRate.getDescription();
 			this.oldVar_gracePftRate = this.gracePftRate.getValue();
 			this.oldVar_gracePftFrq = this.gracePftFrq.getValue();
 			this.oldVar_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
@@ -1170,9 +1170,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.oldVar_numberOfTerms = this.numberOfTerms_two.intValue();
 		this.oldVar_repayBaseRate = this.repayBaseRate.getValue();
 		this.oldVar_repayRateBasis = this.repayRateBasis.getSelectedIndex();
-		this.oldVar_lovDescRepayBaseRateName = this.lovDescRepayBaseRateName.getValue();
+		this.oldVar_lovDescRepayBaseRateName = this.repayBaseRate.getDescription();
 		this.oldVar_repaySpecialRate = this.repaySpecialRate.getValue();
-		this.oldVar_lovDescRepaySpecialRateName = this.lovDescRepaySpecialRateName.getValue();
+		this.oldVar_lovDescRepaySpecialRateName = this.repaySpecialRate.getDescription();
 		this.oldVar_repayProfitRate = this.repayProfitRate.getValue();
 		this.oldVar_repayMargin = this.repayMargin.getValue();
 		this.oldVar_scheduleMethod = this.cbScheduleMethod.getSelectedIndex();
@@ -1270,9 +1270,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			this.grcRateBasis.setSelectedIndex(this.oldVar_grcRateBasis);
 			this.allowGrcRepay.setChecked(this.oldVar_allowGrcRepay);
 			this.graceBaseRate.setValue(this.oldVar_graceBaseRate);
-			this.lovDescGraceBaseRateName.setValue(this.oldVar_lovDescGraceBaseRateName);
+			this.graceBaseRate.setDescription(this.oldVar_lovDescGraceBaseRateName);
 			this.graceSpecialRate.setValue(this.oldVar_graceSpecialRate);
-			this.lovDescGraceSpecialRateName.setValue(this.oldVar_lovDescGraceSpecialRateName);
+			this.graceSpecialRate.setDescription(this.oldVar_lovDescGraceSpecialRateName);
 			this.gracePftRate.setValue(this.oldVar_gracePftRate);
 			this.gracePftFrq.setValue(this.oldVar_gracePftFrq);
 			this.nextGrcPftDate_two.setValue(this.oldVar_nextGrcPftDate);
@@ -1291,9 +1291,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.numberOfTerms.setValue(this.oldVar_numberOfTerms);
 		this.repayRateBasis.setSelectedIndex(this.oldVar_repayRateBasis);
 		this.repayBaseRate.setValue(this.oldVar_repayBaseRate);
-		this.lovDescRepayBaseRateName.setValue(this.oldVar_lovDescRepayBaseRateName);
+		this.repayBaseRate.setDescription(this.oldVar_lovDescRepayBaseRateName);
 		this.repaySpecialRate.setValue(this.oldVar_repaySpecialRate);
-		this.lovDescRepaySpecialRateName.setValue(this.oldVar_lovDescRepaySpecialRateName);
+		this.repaySpecialRate.setDescription(this.oldVar_lovDescRepaySpecialRateName);
 		this.repayProfitRate.setValue(this.oldVar_repayProfitRate);
 		this.repayMargin.setValue(this.oldVar_repayMargin);
 		this.cbScheduleMethod.setSelectedIndex(this.oldVar_scheduleMethod);
@@ -1889,8 +1889,8 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
-		if(!this.btnSearchGraceBaseRate.isDisabled()) {
-			this.lovDescGraceBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+		if(!this.graceBaseRate.isReadonly()) {
+			this.graceBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[] { Labels.getLabel("label_IstnormFinanceMainDialog_GraceBaseRate.value") }));
 		}
 
@@ -1901,8 +1901,8 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
-		if(!this.btnSearchRepayBaseRate.isDisabled()) {
-			this.lovDescRepayBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+		if(!this.repayBaseRate.isReadonly()) {
+			this.repayBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[] { Labels.getLabel("label_IstnormFinanceMainDialog_RepayBaseRate.value") }));
 		}
 
@@ -1931,14 +1931,14 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
-		this.lovDescGraceBaseRateName.setConstraint("");
-		this.lovDescGraceSpecialRateName.setConstraint("");
+		this.graceBaseRate.setConstraint("");
+		this.graceSpecialRate.setConstraint("");
 		this.lovDescGrcIndBaseRateName.setConstraint("");
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
-		this.lovDescRepayBaseRateName.setConstraint("");
-		this.lovDescRepaySpecialRateName.setConstraint("");
+		this.repayBaseRate.setConstraint("");
+		this.repaySpecialRate.setConstraint("");
 		this.lovDescRpyIndBaseRateName.setConstraint("");
 
 		logger.debug("Leaving ");
@@ -3076,26 +3076,25 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchGraceBaseRate(Event event) throws InterruptedException {
+	public void onFulfill$graceBaseRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
 		this.grcEffectiveRate.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_IstnormFinanceMainDialog, "BaseRateCode");
+		Object dataObject = graceBaseRate.getObject();
 
 		if (dataObject instanceof String) {
 			this.graceBaseRate.setValue(dataObject.toString());
-			this.lovDescGraceBaseRateName.setValue("");
+			this.graceBaseRate.setDescription("");
 			this.grcEffectiveRate.setValue(BigDecimal.ZERO);
 		} else {
 			BaseRateCode details = (BaseRateCode) dataObject;
 			if (details != null) {
 				this.graceBaseRate.setValue(details.getBRType());
-				this.lovDescGraceBaseRateName.setValue(details.getBRType() + "-" + details.getBRTypeDesc());
+				this.graceBaseRate.setDescription(details.getBRTypeDesc());
 			}
 		}
 
-		calculateRate(this.graceBaseRate, this.graceSpecialRate,
-				this.lovDescGraceBaseRateName, this.grcMargin, this.grcEffectiveRate);
+		calculateRate(this.graceBaseRate, this.graceSpecialRate, this.graceBaseRate, this.grcMargin, this.grcEffectiveRate);
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -3106,26 +3105,25 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchGraceSpecialRate(Event event) throws InterruptedException {
+	public void onFulfill$graceSpecialRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
 		this.grcEffectiveRate.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_IstnormFinanceMainDialog, "SplRateCode");
+		Object dataObject = graceSpecialRate.getObject();
 
 		if (dataObject instanceof String) {
 			this.graceSpecialRate.setValue(dataObject.toString());
-			this.lovDescGraceSpecialRateName.setValue("");
+			this.graceSpecialRate.setDescription("");
 			this.grcEffectiveRate.setValue(BigDecimal.ZERO);
 		} else {
 			SplRateCode details = (SplRateCode) dataObject;
 			if (details != null) {
 				this.graceSpecialRate.setValue(details.getSRType());
-				this.lovDescGraceSpecialRateName.setValue(details.getSRType() + "-" + details.getSRTypeDesc());
+				this.graceSpecialRate.setDescription(details.getSRTypeDesc());
 			}
 		}
 
-		calculateRate(this.graceBaseRate, this.graceSpecialRate,
-				this.lovDescGraceBaseRateName, this.grcMargin, this.grcEffectiveRate);
+		calculateRate(this.graceBaseRate, this.graceSpecialRate, this.graceBaseRate, this.grcMargin, this.grcEffectiveRate);
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -3192,26 +3190,26 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchRepayBaseRate(Event event) throws InterruptedException {
+	public void onFulfill$repayBaseRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
 		this.repayEffectiveRate.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_IstnormFinanceMainDialog, "BaseRateCode");
+		Object dataObject = repayBaseRate.getObject();
 
 		if (dataObject instanceof String) {
 			this.repayBaseRate.setValue(dataObject.toString());
-			this.lovDescRepayBaseRateName.setValue("");
+			this.repayBaseRate.setDescription("");
 			this.repayEffectiveRate.setValue(BigDecimal.ZERO);
 		} else {
 			BaseRateCode details = (BaseRateCode) dataObject;
 			if (details != null) {
 				this.repayBaseRate.setValue(details.getBRType());
-				this.lovDescRepayBaseRateName.setValue(details.getBRType() + "-" + details.getBRTypeDesc());
+				this.repayBaseRate.setDescription(details.getBRTypeDesc());
 			}
 		}
 
 		calculateRate(this.repayBaseRate, this.repaySpecialRate,
-				this.lovDescRepayBaseRateName, this.repayMargin, this.repayEffectiveRate);
+				this.repayBaseRate, this.repayMargin, this.repayEffectiveRate);
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -3222,26 +3220,26 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchRepaySpecialRate(Event event) throws InterruptedException {
+	public void onFulfill$repaySpecialRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
 		this.repayEffectiveRate.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_IstnormFinanceMainDialog, "SplRateCode");
+		Object dataObject = repaySpecialRate.getObject();
 
 		if (dataObject instanceof String) {
 			this.repaySpecialRate.setValue(dataObject.toString());
-			this.lovDescRepaySpecialRateName.setValue("");
+			this.repaySpecialRate.setDescription("");
 			this.repayEffectiveRate.setValue(BigDecimal.ZERO);
 		} else {
 			SplRateCode details = (SplRateCode) dataObject;
 			if (details != null) {
 				this.repaySpecialRate.setValue(details.getSRType());
-				this.lovDescRepaySpecialRateName.setValue(details.getSRType() + "-" + details.getSRTypeDesc());
+				this.repaySpecialRate.setDescription(details.getSRTypeDesc());
 			}
 		}
 
 		calculateRate(this.repayBaseRate, this.repaySpecialRate,
-				this.lovDescRepayBaseRateName, this.repayMargin, this.repayEffectiveRate);
+				this.repayBaseRate, this.repayMargin, this.repayEffectiveRate);
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -3720,17 +3718,17 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		doRemoveLOVValidation();
 		doClearMessage();
 
-		this.lovDescGraceBaseRateName.setConstraint("");
-		this.lovDescGraceSpecialRateName.setConstraint("");
+		this.graceBaseRate.setConstraint("");
+		this.graceSpecialRate.setConstraint("");
 		this.grcEffectiveRate.setConstraint("");
 
-		this.btnSearchGraceBaseRate.setDisabled(true);
-		this.btnSearchGraceSpecialRate.setDisabled(true);
+		this.graceBaseRate.setReadonly(true);
+		this.graceSpecialRate.setReadonly(true);
 
 		this.graceBaseRate.setValue("");
 		this.graceSpecialRate.setValue("");
-		this.lovDescGraceBaseRateName.setValue("");
-		this.lovDescGraceSpecialRateName.setValue("");
+		this.graceBaseRate.setDescription("");
+		this.graceSpecialRate.setDescription("");
 		readOnlyComponent(true, this.gracePftRate);
 		this.grcEffectiveRate.setText("0.00");
 		this.gracePftRate.setText("0.00");
@@ -3738,19 +3736,19 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		if(!this.grcRateBasis.getSelectedItem().getValue().toString().equals("#")) {
 			if(CalculationConstants.RATE_BASIS_F.equals(this.grcRateBasis.getSelectedItem().getValue().toString()) || 
 					CalculationConstants.RATE_BASIS_C.equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
-				this.btnSearchGraceBaseRate.setDisabled(true);
-				this.btnSearchGraceSpecialRate.setDisabled(true);
+				this.graceBaseRate.setReadonly(true);
+				this.graceSpecialRate.setReadonly(true);
 
-				this.lovDescGraceBaseRateName.setValue("");
-				this.lovDescGraceSpecialRateName.setValue("");
+				this.graceBaseRate.setDescription("");
+				this.graceSpecialRate.setDescription("");
 
 				this.grcEffectiveRate.setText("0.00");
 				readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
 			}else if(CalculationConstants.RATE_BASIS_R.equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
 
 				if(!StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate()).equals("")){
-					this.btnSearchGraceBaseRate.setDisabled(isReadOnly("FinanceMainDialog_graceBaseRate"));
-					this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("FinanceMainDialog_graceSpecialRate"));
+					this.graceBaseRate.setReadonly(isReadOnly("FinanceMainDialog_graceBaseRate"));
+					this.graceSpecialRate.setReadonly(isReadOnly("FinanceMainDialog_graceSpecialRate"));
 				}else{
 					readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
 				}
@@ -3769,17 +3767,17 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		doRemoveLOVValidation();
 		doClearMessage();
 
-		this.lovDescRepayBaseRateName.setConstraint("");
-		this.lovDescRepaySpecialRateName.setConstraint("");
+		this.repayBaseRate.setConstraint("");
+		this.repaySpecialRate.setConstraint("");
 		this.repayEffectiveRate.setConstraint("");
 
-		this.btnSearchRepayBaseRate.setDisabled(true);
-		this.btnSearchRepaySpecialRate.setDisabled(true);
+		this.repayBaseRate.setReadonly(true);
+		this.repaySpecialRate.setReadonly(true);
 
 		this.repayBaseRate.setValue("");
 		this.repaySpecialRate.setValue("");
-		this.lovDescRepayBaseRateName.setValue("");
-		this.lovDescRepaySpecialRateName.setValue("");
+		this.repayBaseRate.setDescription("");
+		this.repaySpecialRate.setDescription("");
 		readOnlyComponent(true, this.repayProfitRate);
 		this.repayEffectiveRate.setText("0.00");
 		this.repayProfitRate.setText("0.00");
@@ -3787,18 +3785,18 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		if(!this.repayRateBasis.getSelectedItem().getValue().toString().equals("#")) {
 			if(CalculationConstants.RATE_BASIS_F.equals(this.repayRateBasis.getSelectedItem().getValue().toString()) ||
 					CalculationConstants.RATE_BASIS_C.equals(this.repayRateBasis.getSelectedItem().getValue().toString())) {
-				this.btnSearchRepayBaseRate.setDisabled(true);
-				this.btnSearchRepaySpecialRate.setDisabled(true);
+				this.repayBaseRate.setReadonly(true);
+				this.repaySpecialRate.setReadonly(true);
 
-				this.lovDescRepayBaseRateName.setValue("");
-				this.lovDescRepaySpecialRateName.setValue("");
+				this.repayBaseRate.setDescription("");
+				this.repaySpecialRate.setDescription("");
 
 				this.repayEffectiveRate.setText("0.00");
 				readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
 			}else if(CalculationConstants.RATE_BASIS_R.equals(this.repayRateBasis.getSelectedItem().getValue().toString())) {
 				if(!StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceType().getFinBaseRate()).equals("")){
-					this.btnSearchRepayBaseRate.setDisabled(isReadOnly("FinanceMainDialog_repayBaseRate"));
-					this.btnSearchRepaySpecialRate.setDisabled(isReadOnly("FinanceMainDialog_repaySpecialRate"));
+					this.repayBaseRate.setReadonly(isReadOnly("FinanceMainDialog_repayBaseRate"));
+					this.repaySpecialRate.setReadonly(isReadOnly("FinanceMainDialog_repaySpecialRate"));
 				}else{
 					readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
 				}

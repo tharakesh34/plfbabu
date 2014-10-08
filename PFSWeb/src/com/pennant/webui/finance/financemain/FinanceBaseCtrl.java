@@ -241,8 +241,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Combobox	    grcRateBasis;							// autoWired
 	protected Decimalbox 	gracePftRate; 							// autoWired
 	protected Decimalbox 	grcEffectiveRate; 						// autoWired
-	protected Textbox 		graceBaseRate; 							// autoWired
-	protected Textbox 		graceSpecialRate; 						// autoWired
+	protected ExtendedCombobox 	graceBaseRate; 						// autoWired
+	protected ExtendedCombobox 	graceSpecialRate; 					// autoWired
 	protected Decimalbox 	grcMargin; 								// autoWired
 	protected Hbox			hbox_grcMargin;      					// autoWired
 	protected Combobox      grcPftDaysBasis;						// autoWired
@@ -287,8 +287,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Decimalbox 	repayProfitRate; 						// autoWired
 	protected Decimalbox 	repayEffectiveRate; 					// autoWired
 	protected Row			repayBaseRateRow;						// autoWired
-	protected Textbox 		repayBaseRate; 							// autoWired
-	protected Textbox 		repaySpecialRate; 						// autoWired
+	protected ExtendedCombobox  repayBaseRate; 						// autoWired
+	protected ExtendedCombobox	repaySpecialRate; 				    // autoWired
 	protected Decimalbox 	repayMargin; 							// autoWired
 	protected Combobox 		cbScheduleMethod; 						// autoWired
 	protected Row 			rpyPftFrqRow; 							// autoWired
@@ -386,20 +386,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button		btnSearchCommitmentRef;					// autoWired
 	protected Textbox 		lovDescCommitmentRefName;				// autoWired
 
-	protected Button 		btnSearchGraceBaseRate; 				// autoWired
-	protected Textbox 		lovDescGraceBaseRateName; 				// autoWired
-
-	protected Button 		btnSearchGraceSpecialRate;		 		// autoWired
-	protected Textbox 		lovDescGraceSpecialRateName; 			// autoWired
-
 	protected Button 		btnSearchGrcIndBaseRate; 				// autoWired
 	protected Textbox 		lovDescGrcIndBaseRateName; 				// autoWired
-
-	protected Button 		btnSearchRepayBaseRate; 				// autoWired
-	protected Textbox 		lovDescRepayBaseRateName; 				// autoWired
-
-	protected Button 		btnSearchRepaySpecialRate; 				// autoWired
-	protected Textbox 		lovDescRepaySpecialRateName; 			// autoWired
 
 	protected Button 		btnSearchRpyIndBaseRate;				// autoWired
 	protected Textbox 		lovDescRpyIndBaseRateName; 				// autoWired
@@ -727,8 +715,21 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.gracePeriodEndDate.setFormat(PennantConstants.dateFormat);
 		this.gracePeriodEndDate_two.setFormat(PennantConstants.dateFormate);
 		this.graceTerms.setMaxlength(4);
+		
 		this.graceBaseRate.setMaxlength(8);
+		this.graceBaseRate.setMandatoryStyle(true);
+		this.graceBaseRate.setModuleName("BaseRateCode");
+		this.graceBaseRate.setValueColumn("BRType");
+		this.graceBaseRate.setDescColumn("BRTypeDesc");
+		this.graceBaseRate.setValidateColumns(new String[] { "BRType" });
+		
 		this.graceSpecialRate.setMaxlength(8);
+		this.graceSpecialRate.setMandatoryStyle(true);
+		this.graceSpecialRate.setModuleName("SplRateCode");
+		this.graceSpecialRate.setValueColumn("SRType");
+		this.graceSpecialRate.setDescColumn("SRTypeDesc");
+		this.graceSpecialRate.setValidateColumns(new String[] { "SRType" });
+		
 		this.gracePftRate.setMaxlength(13);
 		this.gracePftRate.setFormat(PennantConstants.rateFormate9);
 		this.gracePftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -752,8 +753,21 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.numberOfTerms.setMaxlength(4);
 		this.finRepaymentAmount.setMaxlength(18);
 		this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		
 		this.repayBaseRate.setMaxlength(8);
+		this.repayBaseRate.setMandatoryStyle(true);
+		this.repayBaseRate.setModuleName("BaseRateCode");
+		this.repayBaseRate.setValueColumn("BRType");
+		this.repayBaseRate.setDescColumn("BRTypeDesc");
+		this.repayBaseRate.setValidateColumns(new String[] { "BRType" });
+		
 		this.repaySpecialRate.setMaxlength(8);
+		this.repaySpecialRate.setMandatoryStyle(true);
+		this.repaySpecialRate.setModuleName("SplRateCode");
+		this.repaySpecialRate.setValueColumn("SRType");
+		this.repaySpecialRate.setDescColumn("SRTypeDesc");
+		this.repaySpecialRate.setValidateColumns(new String[] { "SRType" });
+		
 		this.repayProfitRate.setMaxlength(13);
 		this.repayProfitRate.setFormat(PennantConstants.rateFormate9);
 		this.repayProfitRate.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -1983,11 +1997,10 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				getLabel_FinanceMainDialog_GraceMargin().setVisible(false);
 				
 				this.graceBaseRate.setValue(aFinanceMain.getGraceBaseRate());
-				this.lovDescGraceBaseRateName.setValue(aFinanceMain.getGraceBaseRate() == null ? "" : 
-					aFinanceMain.getGraceBaseRate() + "-" + aFinanceMain.getLovDescGraceBaseRateName());
+				this.graceBaseRate.setDescription(aFinanceMain.getGraceBaseRate() == null ? "" : aFinanceMain.getLovDescGraceBaseRateName());
 				this.graceSpecialRate.setValue(aFinanceMain.getGraceSpecialRate());
-				this.lovDescGraceSpecialRateName.setValue(aFinanceMain.getGraceSpecialRate() == null ? "" : 
-					aFinanceMain.getGraceSpecialRate() + "-" + aFinanceMain.getLovDescGraceSpecialRateName());
+				this.graceSpecialRate.setDescription(aFinanceMain.getGraceSpecialRate() == null ? "" : 
+					aFinanceMain.getLovDescGraceSpecialRateName());
 				RateDetail rateDetail = RateUtil.rates(aFinanceMain.getGraceBaseRate(), 
 						aFinanceMain.getGraceSpecialRate(), aFinanceMain.getGrcMargin());
 
@@ -2002,11 +2015,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				this.hbox_grcMargin.setVisible(true);
 				getLabel_FinanceMainDialog_GraceMargin().setVisible(true);
 				this.graceBaseRate.setValue("");
-				this.lovDescGraceBaseRateName.setValue("");
-				this.btnSearchGraceBaseRate.setDisabled(true);
+				this.graceBaseRate.setDescription("");
+				this.graceBaseRate.setReadonly(true);
 				this.graceSpecialRate.setValue("");
-				this.lovDescGraceSpecialRateName.setValue("");
-				this.btnSearchGraceSpecialRate.setDisabled(true);
+				this.graceSpecialRate.setDescription("");
+				this.graceSpecialRate.setReadonly(true);
 				readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
 				this.gracePftRate.setValue(aFinanceMain.getGrcPftRate());
 				this.grcEffectiveRate.setValue(aFinanceMain.getGrcPftRate());
@@ -2158,11 +2171,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			this.repayBaseRateRow.setVisible(true);
 			this.repayMarginRow.setVisible(true);
 			this.repayBaseRate.setValue(aFinanceMain.getRepayBaseRate());
-			this.lovDescRepayBaseRateName.setValue(aFinanceMain.getRepayBaseRate() == null ? "" : 
-				aFinanceMain.getRepayBaseRate() + "-" + aFinanceMain.getLovDescRepayBaseRateName());
+			this.repayBaseRate.setDescription(aFinanceMain.getRepayBaseRate() == null ? "" : 
+				aFinanceMain.getLovDescRepayBaseRateName());
 			this.repaySpecialRate.setValue(aFinanceMain.getRepaySpecialRate());
-			this.lovDescRepaySpecialRateName.setValue(aFinanceMain.getRepaySpecialRate() == null ? "" : 
-				aFinanceMain.getRepaySpecialRate() + "-" + aFinanceMain.getLovDescRepaySpecialRateName());
+			this.repaySpecialRate.setDescription(aFinanceMain.getRepaySpecialRate() == null ? "" : 
+				aFinanceMain.getLovDescRepaySpecialRateName());
 
 			RateDetail rateDetail = RateUtil.rates(
 					this.repayBaseRate.getValue(), this.repaySpecialRate.getValue(), this.repayMargin.getValue());
@@ -2179,11 +2192,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			this.repayMarginRow.setVisible(false);
 			this.repayMargin.setDisabled(true);
 			this.repayBaseRate.setValue("");
-			this.lovDescRepayBaseRateName.setValue("");
-			this.btnSearchRepayBaseRate.setDisabled(true);
+			this.repayBaseRate.setDescription("");
+			this.repayBaseRate.setReadonly(true);
 			this.repaySpecialRate.setValue("");
-			this.lovDescRepaySpecialRateName.setValue("");
-			this.btnSearchRepaySpecialRate.setDisabled(true);
+			this.repaySpecialRate.setDescription("");
+			this.repaySpecialRate.setReadonly(true);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
 			this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
 			this.repayEffectiveRate.setValue(aFinanceMain.getRepayProfitRate());
@@ -2486,8 +2499,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_gracePeriodEndDate"), this.gracePeriodEndDate);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_graceRateBasis"), this.grcRateBasis);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
-			this.btnSearchGraceBaseRate.setDisabled(isReadOnly("FinanceMainDialog_graceBaseRate"));
-			this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("FinanceMainDialog_graceSpecialRate"));
+			this.graceBaseRate.setReadonly(isReadOnly("FinanceMainDialog_graceBaseRate"));
+			this.graceSpecialRate.setReadonly(isReadOnly("FinanceMainDialog_graceSpecialRate"));
 			readOnlyComponent(isReadOnly("FinanceMainDialog_grcMargin"), this.grcMargin);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_grcPftDaysBasis"),this.grcPftDaysBasis);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrcInd"), this.allowGrcInd);
@@ -2536,8 +2549,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			readOnlyComponent(true, this.gracePeriodEndDate);
 			readOnlyComponent(true, this.grcRateBasis);
 			readOnlyComponent(true, this.gracePftRate);
-			this.btnSearchGraceBaseRate.setDisabled(true);
-			this.btnSearchGraceSpecialRate.setDisabled(true);
+			this.graceBaseRate.setReadonly(true);
+			this.graceSpecialRate.setReadonly(true);
 			readOnlyComponent(true, this.grcMargin);
 			readOnlyComponent(true, this.allowGrcInd);
 			readOnlyComponent(true, this.grcPftDaysBasis);
@@ -2565,12 +2578,12 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			if("R".equals(getComboboxValue(this.grcRateBasis))){
 
 				this.graceBaseRate.setValue(finType.getFinGrcBaseRate());
-				this.lovDescGraceBaseRateName.setValue(StringUtils.trimToEmpty(finType.getFinGrcBaseRate()).equals("")?"":
-					finType.getFinGrcBaseRate()+"-"+finType.getLovDescFinGrcBaseRateName());
+				this.graceBaseRate.setDescription(StringUtils.trimToEmpty(finType.getFinGrcBaseRate()).equals("")?"":
+					finType.getLovDescFinGrcBaseRateName());
 
 				this.graceSpecialRate.setValue(finType.getFinGrcSplRate());
-				this.lovDescGraceSpecialRateName.setValue(StringUtils.trimToEmpty(finType.getFinGrcSplRate()).equals("")?"":
-					finType.getFinGrcSplRate()+"-"+finType.getLovDescFinGrcSplRateName());
+				this.graceSpecialRate.setDescription(StringUtils.trimToEmpty(finType.getFinGrcSplRate()).equals("")?"":
+					finType.getLovDescFinGrcSplRateName());
 				
 				if(!StringUtils.trimToEmpty(finType.getFinGrcBaseRate()).equals("")){
 					RateDetail rateDetail = RateUtil.rates(this.graceBaseRate.getValue(),
@@ -2694,8 +2707,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		}
 		if(!this.grcRateBasis.getSelectedItem().getValue().toString().equals("#")) {
-			this.btnSearchGraceBaseRate.setDisabled(true);
-			this.btnSearchGraceSpecialRate.setDisabled(true);
+			this.graceBaseRate.setReadonly(true);
+			this.graceSpecialRate.setReadonly(true);
 			if("F".equals(this.grcRateBasis.getSelectedItem().getValue().toString()) || 
 					"C".equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
 				if(!this.allowGrace.isChecked()){
@@ -2706,11 +2719,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			}else if("R".equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
 				if(!StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate()).equals("")){
 					if(!this.allowGrace.isChecked()){
-						this.btnSearchGraceBaseRate.setDisabled(true);
-						this.btnSearchGraceSpecialRate.setDisabled(true);
+						this.graceBaseRate.setReadonly(true);
+						this.graceSpecialRate.setReadonly(true);
 					}else{
-						this.btnSearchGraceBaseRate.setDisabled(isReadOnly("FinanceMainDialog_graceBaseRate"));
-						this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("FinanceMainDialog_graceSpecialRate"));
+						this.graceBaseRate.setReadonly(isReadOnly("FinanceMainDialog_graceBaseRate"));
+						this.graceSpecialRate.setReadonly(isReadOnly("FinanceMainDialog_graceSpecialRate"));
 					}
 					readOnlyComponent(true, this.gracePftRate);
 					this.gracePftRate.setText("");
@@ -3413,7 +3426,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	 * 
 	 * @throws InterruptedException
 	 * **/
-	protected void calculateRate(Textbox baseRate, Textbox splRate, Textbox lovFieldTextBox, 
+	protected void calculateRate(ExtendedCombobox baseRate, ExtendedCombobox splRate,ExtendedCombobox lovFieldTextBox, 
 			Decimalbox margin, Decimalbox effectiveRate) throws InterruptedException {
 		logger.debug("Entering");
 
@@ -3424,7 +3437,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			PTMessageUtils.showErrorMessage(ErrorUtil.getErrorDetail(
 					rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			splRate.setValue("");
-			lovFieldTextBox.setValue("");
+			lovFieldTextBox.setDescription("");
 		}
 		logger.debug("Leaving");
 	}
@@ -3554,7 +3567,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				}
 
 				// validate finance profit rate
-				if (!this.btnSearchGraceBaseRate.isDisabled() && this.graceBaseRate.getValue().equals("")) {
+				if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getValue().equals("")) {
 					errorList.add(new ErrorDetails("btnSearchGraceBaseRate", "E0013", new String[] {}, new String[] {}));
 				}
 
@@ -3641,7 +3654,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 			//FinanceMain Details Tab ---> 3. Repayment Period Details
 
-			if (!this.btnSearchRepayBaseRate.isDisabled() && this.repayBaseRate.getValue().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getValue().equals("")) {
 				errorList.add(new ErrorDetails("btnSearchRepayBaseRate", "E0013", new String[] {}, null));
 			}
 
@@ -4254,11 +4267,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.lovDescGraceBaseRateName.getValue().equals("")) {
+				if (this.graceBaseRate.getDescription().equals("")) {
 					aFinanceMain.setLovDescGraceBaseRateName("");
 					aFinanceMain.setGraceBaseRate(null);
 				} else {
-					aFinanceMain.setLovDescGraceBaseRateName(this.lovDescGraceBaseRateName.getValue());
+					aFinanceMain.setLovDescGraceBaseRateName(this.graceBaseRate.getDescription());
 					aFinanceMain.setGraceBaseRate(this.graceBaseRate.getValue());
 				}
 			} catch (WrongValueException we) {
@@ -4278,11 +4291,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.lovDescGraceSpecialRateName.getValue().equals("")) {
+				if (this.graceSpecialRate.getDescription().equals("")) {
 					aFinanceMain.setLovDescGraceSpecialRateName("");
 					aFinanceMain.setGraceSpecialRate(null);
 				} else {
-					aFinanceMain.setLovDescGraceSpecialRateName(this.lovDescGraceSpecialRateName.getValue());
+					aFinanceMain.setLovDescGraceSpecialRateName(this.graceSpecialRate.getDescription());
 					aFinanceMain.setGraceSpecialRate(this.graceSpecialRate.getValue());
 				}
 				aFinanceMain.setGrcPftRate(this.grcEffectiveRate.getValue());
@@ -4291,9 +4304,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			} 
 
 			try {
-				if(!this.btnSearchGraceBaseRate.isDisabled()) {
+				if(!this.graceBaseRate.isReadonly()) {
 					calculateRate(this.graceBaseRate, this.graceSpecialRate,
-							this.lovDescGraceBaseRateName, this.grcMargin, this.grcEffectiveRate);	
+							this.graceBaseRate, this.grcMargin, this.grcEffectiveRate);	
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -4304,7 +4317,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			try {
 				if (this.gracePftRate.getValue() != null && !this.gracePftRate.isReadonly()) {
 					if ((this.gracePftRate.getValue().intValue() > 0) && 
-							(!this.lovDescGraceBaseRateName.getValue().equals(""))) {
+							(!this.graceBaseRate.getDescription().equals(""))) {
 
 						throw new WrongValueException(this.gracePftRate, Labels.getLabel("EITHER_OR",
 								new String[] {Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_GraceBaseRate.value"),
@@ -4480,11 +4493,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.lovDescRepayBaseRateName.getValue().equals("")) {
+			if (this.repayBaseRate.getDescription().equals("")) {
 				aFinanceMain.setLovDescRepayBaseRateName("");
 				aFinanceMain.setRepayBaseRate(null);
 			} else {
-				aFinanceMain.setLovDescRepayBaseRateName(this.lovDescRepayBaseRateName.getValue());
+				aFinanceMain.setLovDescRepayBaseRateName(this.repayBaseRate.getDescription());
 				aFinanceMain.setRepayBaseRate(this.repayBaseRate.getValue());
 			}
 		} catch (WrongValueException we) {
@@ -4494,11 +4507,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.lovDescRepaySpecialRateName.getValue().equals("")) {
+			if (this.repaySpecialRate.getDescription().equals("")) {
 				aFinanceMain.setLovDescRepaySpecialRateName("");
 				aFinanceMain.setRepaySpecialRate(null);
 			} else {
-				aFinanceMain.setLovDescRepaySpecialRateName(this.lovDescRepaySpecialRateName.getValue());
+				aFinanceMain.setLovDescRepaySpecialRateName(this.repaySpecialRate.getDescription());
 				aFinanceMain.setRepaySpecialRate(this.repaySpecialRate.getValue());
 			}
 			aFinanceMain.setRepayProfitRate(this.repayEffectiveRate.getValue());
@@ -4513,9 +4526,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		try {
-			if(!this.btnSearchRepayBaseRate.isDisabled()) {
+			if(!this.repayBaseRate.isReadonly()) {
 				calculateRate(this.repayBaseRate, this.repaySpecialRate,
-						this.lovDescRepayBaseRateName, this.repayMargin, this.repayEffectiveRate);
+						this.repayBaseRate, this.repayMargin, this.repayEffectiveRate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4550,7 +4563,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		try {
 			if (this.repayProfitRate.getValue() != null && !this.repayProfitRate.isReadonly()) {
 				if ((this.repayProfitRate.getValue().intValue() > 0)
-						&& (!this.lovDescRepayBaseRateName.getValue().equals(""))) {
+						&& (!this.repayBaseRate.getDescription().equals(""))) {
 					throw new WrongValueException(this.repayProfitRate, Labels.getLabel("EITHER_OR",
 							new String[] {Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_RepayBaseRate.value"),
 							Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_ProfitRate.value") }));
@@ -5729,23 +5742,23 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				this.grcMargin.setValue(financeType.getFinGrcMargin());
 			}
 
-			if (!this.btnSearchGraceBaseRate.isDisabled() && this.lovDescGraceBaseRateName.getValue().equals("")) {
+			if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getDescription().equals("")) {
 
 				this.graceBaseRate.setValue(financeType.getFinGrcBaseRate());
 
-				this.lovDescGraceBaseRateName.setValue(financeType.getFinGrcBaseRate() == null ?
-						"" : financeType.getFinGrcBaseRate()+ "-" + financeType.getLovDescFinGrcBaseRateName());
+				this.graceBaseRate.setDescription(financeType.getFinGrcBaseRate() == null ?
+						"" : financeType.getLovDescFinGrcBaseRateName());
 			}
 
-			if (!this.btnSearchGraceSpecialRate.isDisabled()
-					&& this.lovDescGraceSpecialRateName.getValue().equals("")) {
+			if (!this.graceSpecialRate.isReadonly()
+					&& this.graceSpecialRate.getDescription().equals("")) {
 
 				this.graceSpecialRate.setValue(financeType.getFinGrcSplRate());
-				this.lovDescGraceSpecialRateName.setValue(financeType.getFinGrcSplRate() == null ?
-						"" : financeType.getFinGrcSplRate()+ "-" + financeType.getLovDescFinGrcSplRateName());
+				this.graceSpecialRate.setDescription(financeType.getFinGrcSplRate() == null ?
+						"" : financeType.getLovDescFinGrcSplRateName());
 			}
 
-			if (!this.btnSearchGraceBaseRate.isDisabled()) {
+			if (!this.graceBaseRate.isReadonly()) {
 
 				RateDetail rateDetail = RateUtil.rates(this.graceBaseRate.getValue(), this.graceSpecialRate.getValue(),
 						this.grcMargin.getValue() == null ? BigDecimal.ZERO : this.grcMargin.getValue());
@@ -5867,23 +5880,23 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		if(CalculationConstants.RATE_BASIS_R.equals(getComboboxValue(this.repayRateBasis))){
 
-			if (!this.btnSearchRepayBaseRate.isDisabled() && this.lovDescRepayBaseRateName.getValue().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getDescription().equals("")) {
 
 				this.repayBaseRate.setValue(financeType.getFinBaseRate());
 
-				this.lovDescRepayBaseRateName.setValue(financeType.getFinBaseRate() == null ? ""
-						: financeType.getFinBaseRate()+ "-"+ financeType.getLovDescFinBaseRateName());
+				this.repayBaseRate.setDescription(financeType.getFinBaseRate() == null ? ""
+						: financeType.getLovDescFinBaseRateName());
 			}
 
-			if (!this.btnSearchRepayBaseRate.isDisabled() && this.lovDescRepaySpecialRateName.getValue().equals("")) {
+			if (!this.repaySpecialRate.isReadonly() && this.repaySpecialRate.getDescription().equals("")) {
 
 				this.repaySpecialRate.setValue(financeType.getFinSplRate());
 
-				this.lovDescRepaySpecialRateName.setValue(financeType.getFinSplRate() == null ? ""
-						: financeType.getFinSplRate()+ "-" + financeType.getLovDescFinSplRateName());
+				this.repaySpecialRate.setDescription(financeType.getFinSplRate() == null ? ""
+						:financeType.getLovDescFinSplRateName());
 			}
 
-			if (!this.btnSearchRepayBaseRate.isDisabled()) {
+			if (!this.repayBaseRate.isReadonly()) {
 
 				RateDetail rateDetail = RateUtil.rates(this.repayBaseRate.getValue(), this.repaySpecialRate.getValue(), 
 						this.repayMargin.getValue() == null ? BigDecimal.ZERO : this.repayMargin.getValue());
@@ -6172,8 +6185,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_gracePeriodEndDate"), this.gracePeriodEndDate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_grcSchdMthd"), this.cbGrcSchdMthd);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrcRepay"), this.allowGrcRepay);
-		this.btnSearchGraceBaseRate.setDisabled(isReadOnly("FinanceMainDialog_graceBaseRate"));
-		this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("FinanceMainDialog_graceSpecialRate"));
+		this.graceBaseRate.setReadonly(isReadOnly("FinanceMainDialog_graceBaseRate"));
+		this.graceSpecialRate.setReadonly(isReadOnly("FinanceMainDialog_graceSpecialRate"));
 		readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_grcMargin"), this.grcMargin);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_grcPftDaysBasis"), this.grcPftDaysBasis);
@@ -6194,8 +6207,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_repayRateBasis"), this.repayRateBasis);
 		this.numberOfTerms.setReadonly(isReadOnly("FinanceMainDialog_numberOfTerms"));
-		this.btnSearchRepayBaseRate.setDisabled(isReadOnly("FinanceMainDialog_repayBaseRate"));
-		this.btnSearchRepaySpecialRate.setDisabled(isReadOnly("FinanceMainDialog_repaySpecialRate"));
+		this.repayBaseRate.setReadonly(isReadOnly("FinanceMainDialog_repayBaseRate"));
+		this.repaySpecialRate.setReadonly(isReadOnly("FinanceMainDialog_repaySpecialRate"));
 		readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_repayMargin"), this.repayMargin);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_scheduleMethod"), this.cbScheduleMethod);
@@ -6279,8 +6292,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		this.grcRateBasis.setErrorMessage("");
 		this.gracePeriodEndDate.setErrorMessage("");
-		this.lovDescGraceBaseRateName.setErrorMessage("");
-		this.lovDescGraceSpecialRateName.setErrorMessage("");
+		this.graceBaseRate.setErrorMessage("");
+		this.graceSpecialRate.setErrorMessage("");
 		this.gracePftRate.setErrorMessage("");
 		this.grcEffectiveRate.setErrorMessage("");
 		this.grcMargin.setErrorMessage("");
@@ -6298,8 +6311,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		this.numberOfTerms.setErrorMessage("");
 		this.repayRateBasis.setErrorMessage("");
-		this.lovDescRepayBaseRateName.setErrorMessage("");
-		this.lovDescRepaySpecialRateName.setErrorMessage("");
+		this.repayBaseRate.setErrorMessage("");
+		this.repaySpecialRate.setErrorMessage("");
 		this.repayProfitRate.setErrorMessage("");
 		this.repayEffectiveRate.setErrorMessage("");
 		this.repayMargin.setErrorMessage("");
@@ -6375,8 +6388,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		readOnlyComponent(true, this.grcRateBasis);
 		readOnlyComponent(true, this.cbGrcSchdMthd);
 		readOnlyComponent(true, this.allowGrcRepay);
-		this.btnSearchGraceBaseRate.setDisabled(true);
-		this.btnSearchGraceSpecialRate.setDisabled(true);
+		this.graceBaseRate.setReadonly(true);
+		this.graceSpecialRate.setReadonly(true);
 		this.gracePftRate.setReadonly(true);
 		this.grcMargin.setReadonly(true);
 		this.grcPftDaysBasis.setDisabled(true);
@@ -6401,8 +6414,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		this.numberOfTerms.setReadonly(true);
 		readOnlyComponent(true, this.repayRateBasis);
-		this.btnSearchRepayBaseRate.setDisabled(true);
-		this.btnSearchRepaySpecialRate.setDisabled(true);
+		this.repayBaseRate.setReadonly(true);
+		this.repaySpecialRate.setReadonly(true);
 
 		readOnlyComponent(true, this.repayProfitRate);
 
@@ -6497,9 +6510,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.grcRateBasis.setSelectedIndex(0);
 		this.gracePeriodEndDate.setText("");
 		this.graceBaseRate.setValue("");
-		this.lovDescGraceBaseRateName.setValue("");
+		this.graceBaseRate.setDescription("");
 		this.graceSpecialRate.setValue("");
-		this.lovDescGraceSpecialRateName.setValue("");
+		this.graceSpecialRate.setDescription("");
 		this.gracePftRate.setValue("");
 		this.grcMargin.setValue("");
 		this.grcPftDaysBasis.setValue("");
@@ -6515,9 +6528,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.numberOfTerms.setText("");
 		this.repayRateBasis.setSelectedIndex(0);
 		this.repayBaseRate.setValue("");
-		this.lovDescRepayBaseRateName.setValue("");
+		this.repayBaseRate.setDescription("");
 		this.repaySpecialRate.setValue("");
-		this.lovDescRepaySpecialRateName.setValue("");
+		this.repaySpecialRate.setDescription("");
 		this.repayProfitRate.setValue("");
 		this.repayMargin.setValue("");
 		this.repayFrq.setValue("");

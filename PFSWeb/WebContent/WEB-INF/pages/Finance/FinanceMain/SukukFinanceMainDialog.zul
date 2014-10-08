@@ -684,31 +684,13 @@
 														id="label_SukukFinanceMainDialog_GraceBaseRate"
 														value="${c:l('label_SukukFinanceMainDialog_GraceBaseRate.value')}" />
 													<hbox>
-														<space
-															spacing="2px" sclass="mandatory" />
-														<textbox
-															id="graceBaseRate" width="200px" visible="false" />
-														<textbox
-															id="lovDescGraceBaseRateName" width="250px"
-															readonly="true" tabindex="-1" />
-														<button
-															id="btnSearchGraceBaseRate"
-															image="/images/icons/LOVSearch.png"  />
+														<extendedcombobox id="graceBaseRate"/>	
 													</hbox>
 													<label
 														id="label_SukukFinanceMainDialog_GraceSpecialRate"
 														value="${c:l('label_SukukFinanceMainDialog_GraceSpecialRate.value')}" />
 													<hbox>
-														<space
-															spacing="2px" />
-														<textbox
-															id="graceSpecialRate" width="200px" visible="false" />
-														<textbox
-															id="lovDescGraceSpecialRateName" width="250px"
-															readonly="true" tabindex="-1" />
-														<button
-															id="btnSearchGraceSpecialRate"
-															image="/images/icons/LOVSearch.png"  />
+														<extendedcombobox id="graceSpecialRate"/>
 													</hbox>
 												</row>
 												<row>
@@ -942,31 +924,13 @@
 														id="label_SukukFinanceMainDialog_RepayBaseRate"
 														value="${c:l('label_SukukFinanceMainDialog_RepayBaseRate.value')}" />
 													<hbox>
-														<space
-															spacing="2px" sclass="mandatory" />
-														<textbox
-															id="repayBaseRate" width="200px" visible="false" />
-														<textbox
-															id="lovDescRepayBaseRateName" width="250px"
-															readonly="true" />
-														<button
-															id="btnSearchRepayBaseRate"
-															image="/images/icons/LOVSearch.png"  />
+														<extendedcombobox id="repayBaseRate"/>
 													</hbox>
 													<label
 														id="label_SukukFinanceMainDialog_RepaySpecialRate"
 														value="${c:l('label_SukukFinanceMainDialog_RepaySpecialRate.value')}" />
 													<hbox>
-														<space
-															spacing="2px" />
-														<textbox
-															id="repaySpecialRate" width="200px" visible="false" />
-														<textbox
-															id="lovDescRepaySpecialRateName" width="250px"
-															readonly="true" />
-														<button
-															id="btnSearchRepaySpecialRate"
-															image="/images/icons/LOVSearch.png"  />
+														<extendedcombobox id="repaySpecialRate"/>
 													</hbox>
 												</row>
 												<row
