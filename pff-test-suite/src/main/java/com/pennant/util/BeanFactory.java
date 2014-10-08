@@ -46,8 +46,6 @@ public class BeanFactory {
 		finance.setDownPayment(new BigDecimal(10000000));
 		finance.setTotalProfit(BigDecimal.ZERO);
 		finance.setTotalGrossPft(BigDecimal.ZERO);
-		finance.setGrcRateBasis("R");
-		finance.setRepayRateBasis("R");
 		finance.setProfitDaysBasis(CalculationConstants.IDB_ACT_365FIXED);
 		finance.setReqTerms(12);
 		finance.setIncreaseTerms(false);
