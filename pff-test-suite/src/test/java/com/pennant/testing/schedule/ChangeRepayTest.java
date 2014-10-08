@@ -59,6 +59,13 @@ public class ChangeRepayTest {
 
 	@Test(dependsOnMethods = { "createSchedule" })
 	public void changeRepay() throws Exception {
+		System.out.println("SAI:: changeRepay " + name + " : "
+				+ schedule.getFinanceScheduleDetails()
+				.get(schedule.getFinanceScheduleDetails().size() - 1)
+				.getRepayAmount().longValue());
+		System.out.println("SAI:: changeRepay " + name + " : "
+				+ schedule.getFinanceMain().getTotalGrossPft().longValue());
+		
 		if ("SN01_RR_EQUAL".equals(name)) {
 			throw new SkipException("Skipped step.");
 		}
@@ -107,11 +114,6 @@ public class ChangeRepayTest {
 				.get(schedule.getFinanceScheduleDetails().size() - 1)
 				.getRepayAmount();
 		BigDecimal actTotProfit = schedule.getFinanceMain().getTotalGrossPft();
-
-		System.out.println("SAI:: changeRepay " + name + " : "
-				+ actLastRepayAmt.longValue());
-		System.out.println("SAI:: changeRepay " + name + " : "
-				+ actTotProfit.longValue());
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expFinalLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expFinalTotalProfit);
