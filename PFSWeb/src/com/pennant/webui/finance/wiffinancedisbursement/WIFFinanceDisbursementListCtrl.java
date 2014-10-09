@@ -73,8 +73,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.finance.wiffinancedisbursement.model.WIFFinanceDisbursementListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.PTReportUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -379,7 +379,7 @@ public class WIFFinanceDisbursementListCtrl extends GFCBaseListCtrl<FinanceDisbu
 	public void onClick$button_WIFFinanceDisbursementList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		PTReportUtils.getReport("WIFFinanceDisbursement", getSearchObj());
+		new PTListReportUtils("WIFFinanceDisbursement", getSearchObj(),this.pagingWIFFinanceDisbursementList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
 
