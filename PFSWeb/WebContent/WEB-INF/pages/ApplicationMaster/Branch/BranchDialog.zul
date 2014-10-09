@@ -69,6 +69,8 @@
 						<columns>
 							<column width="200px" />
 							<column />
+							<column width="200px" />
+							<column />
 						</columns>
 						<rows>
 							<row visible="true">
@@ -81,8 +83,6 @@
 									<uppercasebox id="branchCode"
 										maxlength="8" width="72px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchDesc"
 									value="${c:l('label_BranchDialog_BranchDesc.value')}" />
@@ -90,7 +90,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="branchDesc"
-										maxlength="50" width="450px" />
+										maxlength="50" width="250px" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -101,17 +101,15 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="branchAddrLine1"
-										maxlength="50" width="450px" />
+										maxlength="50" width="250px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchAddrLine2"
 									value="${c:l('label_BranchDialog_BranchAddrLine2.value')}" />
 								<hbox>
 									<space spacing="2px" />
 									<textbox id="branchAddrLine2"
-										maxlength="50" width="450px" />
+										maxlength="50" width="250px" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -123,8 +121,6 @@
 									<textbox id="branchPOBox"
 										maxlength="8" width="72px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchCountry"
 									value="${c:l('label_BranchDialog_BranchCountry.value')}" />
@@ -155,8 +151,6 @@
 										id="btnSearchBranchProvince"
 										image="/images/icons/LOVSearch.png"  />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchCity"
 									value="${c:l('label_BranchDialog_BranchCity.value')}" />
@@ -179,17 +173,15 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="branchFax"
-										maxlength="50" width="450px" />
+										maxlength="50" width="250px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label id="label_BranchDialog_BranchTel"
 									value="${c:l('label_BranchDialog_BranchTel.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="branchTel"
-										maxlength="50" width="450px" />
+										maxlength="50" width="250px" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -202,8 +194,6 @@
 									<uppercasebox
 										id="branchSwiftBankCode" maxlength="4" width="36px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchSwiftCountry"
 									value="${c:l('label_BranchDialog_BranchSwiftCountry.value')}" />
@@ -230,8 +220,6 @@
 									<uppercasebox
 										id="branchSwiftLocCode" maxlength="2" width="40px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchSwiftBrnCde"
 									value="${c:l('label_BranchDialog_BranchSwiftBrnCde.value')}" />
@@ -252,8 +240,6 @@
 									<uppercasebox id="branchSortCode"
 										maxlength="4" width="60px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchIsActive"
 									value="${c:l('label_BranchDialog_BranchIsActive.value')}" />

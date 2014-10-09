@@ -70,6 +70,8 @@
 						<columns>
 							<column width="200px" />
 							<column />
+							<column width="200px" />
+							<column />
 						</columns>
 						<rows>
 							<row visible="true">
@@ -81,8 +83,6 @@
 									<uppercasebox id="ccyCode"
 										maxlength="3" width="60px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcyNumber"
 									value="${c:l('label_CurrencyDialog_CcyNumber.value')}" />
@@ -100,10 +100,8 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="ccyDesc" maxlength="50"
-										width="600px" />
+										width="250px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcySwiftCode"
 									value="${c:l('label_CurrencyDialog_CcySwiftCode.value')}" />
@@ -123,8 +121,6 @@
 									<intbox id="ccyEditField"
 										width="60px" maxlength="1" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcyMinorCcyUnits"
 									value="${c:l('label_CurrencyDialog_CcyMinorCcyUnits.value')}" />
@@ -144,8 +140,6 @@
 									<uppercasebox id="ccySymbol"
 										maxlength="3" width="60px" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcyMinorCcyDesc"
 									value="${c:l('label_CurrencyDialog_CcyMinorCcyDesc.value')}" />
@@ -153,7 +147,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="ccyMinorCcyDesc"
-										maxlength="50" width="600px" />
+										maxlength="50" width="250px" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -172,8 +166,6 @@
 										id="btnSearchCcyDrRateBasisCode"
 										image="/images/icons/LOVSearch.png"  />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcyCrRateBasisCode"
 									value="${c:l('label_CurrencyDialog_CcyCrRateBasisCode.value')}" />
@@ -198,10 +190,8 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<decimalbox id="ccySpotRate"
-										width="288px" maxlength="18" />
+										width="250px" maxlength="18" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcyIsReceprocal"
 									value="${c:l('label_CurrencyDialog_CcyIsReceprocal.value')}" />
@@ -219,10 +209,8 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<decimalbox id="ccyUserRateBuy"
-										width="288px" maxlength="18" />
+										width="250px" maxlength="18" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcyUserRateSell"
 									value="${c:l('label_CurrencyDialog_CcyUserRateSell.value')}" />
@@ -230,7 +218,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<decimalbox id="ccyUserRateSell"
-										width="288px" maxlength="18" />
+										width="250px" maxlength="18" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -242,8 +230,6 @@
 									<checkbox id="ccyIsIntRounding"
 										checked="false" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcyIsMember"
 									value="${c:l('label_CurrencyDialog_CcyIsMember.value')}" />
@@ -262,8 +248,6 @@
 									<checkbox id="ccyIsGroup"
 										checked="false" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcyIsAlwForLoans"
 									value="${c:l('label_CurrencyDialog_CcyIsAlwForLoans.value')}" />
@@ -282,8 +266,6 @@
 									<checkbox id="ccyIsAlwForDepo"
 										checked="false" />
 								</hbox>
-							</row>
-							<row visible="true">
 								<label
 									id="label_CurrencyDialog_CcyIsAlwForAc"
 									value="${c:l('label_CurrencyDialog_CcyIsAlwForAc.value')}" />
