@@ -39,6 +39,8 @@ public class ChangeRepayTest {
 
 	@Test
 	public void createSchedule() {
+		schedule.getFinanceMain().setFinRemarks("ScheduleCreate" + name + schedule.hashCode());
+		
 		// Generate the schedule.
 		schedule = ScheduleGenerator.getNewSchd(schedule);
 		schedule = ScheduleCalculator.getCalSchd(schedule);
@@ -51,15 +53,12 @@ public class ChangeRepayTest {
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
-		
-		if ("SN01_RR_EQUAL_REQ".equals(name)) {
-			System.out.println(name);
-			ExcelFile.printSchedule(schedule);
-		}
+		schedule.getFinanceMain().setFinRemarks("ScheduleCreate" + name + schedule.hashCode());
 	}
 
 	@Test(dependsOnMethods = { "createSchedule" })
 	public void changeRepay() throws Exception {
+		schedule.getFinanceMain().setFinRemarks("ScheduleRepay" + name + schedule.hashCode());
 		System.out.println(name);
 
 		if ("SN01_RR_EQUAL".equals(name)) {
@@ -92,6 +91,9 @@ public class ChangeRepayTest {
 			schedule.getFinanceMain().setRecalType(recalType);
 			schedule.getFinanceMain().setRecalToDate(
 					DateUtility.getDate("31/12/2012"));
+			
+			System.out.println(recalType);
+			System.out.println(schedule);
 
 			schedule = ScheduleCalculator.changeRepay(schedule,
 					BigDecimal.ZERO, CalculationConstants.NOPAY);
@@ -110,6 +112,8 @@ public class ChangeRepayTest {
 			
 			System.out.println(name);
 			ExcelFile.printSchedule(schedule);
+			
+			schedule.getFinanceMain().setFinRemarks("ScheduleRepay" + name + schedule.hashCode());
 
 			// Get the actual results
 			BigDecimal actLastRepayAmt = schedule.getFinanceScheduleDetails()
