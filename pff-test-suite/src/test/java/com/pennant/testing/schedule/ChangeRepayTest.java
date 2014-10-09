@@ -39,7 +39,7 @@ public class ChangeRepayTest {
 
 	@Test
 	public void createSchedule() {
-		schedule.getFinanceMain().setFinRemarks("ScheduleCreate" + name + schedule.hashCode());
+		schedule.getFinanceMain().setFinRemarks("ScheduleCreate" + name + schedule.hashCode() + schedule.getFinanceMain().getGrcSchdMthd() + schedule.getFinanceMain().getScheduleMethod());
 		System.out.println(schedule.getFinanceMain().getFinRemarks());
 		
 		// Generate the schedule.
