@@ -39,7 +39,7 @@ public class ChangeRepayTest {
 
 	@Test
 	public void createSchedule() {
-		schedule.getFinanceMain().setFinRemarks("ScheduleCreate" + name + schedule.hashCode() + schedule.getFinanceMain().getGrcSchdMthd() + schedule.getFinanceMain().getScheduleMethod());
+		schedule.getFinanceMain().setFinRemarks("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
 		System.out.println(schedule.getFinanceMain().getFinRemarks());
 		
 		// Generate the schedule.
@@ -60,7 +60,6 @@ public class ChangeRepayTest {
 	@Test(dependsOnMethods = { "createSchedule" })
 	public void changeRepay() throws Exception {
 		System.out.println(schedule.getFinanceMain().getFinRemarks());
-		System.out.println(name);
 
 		if ("SN01_RR_EQUAL".equals(name)) {
 			throw new SkipException("Skipped");
@@ -80,9 +79,6 @@ public class ChangeRepayTest {
 		if ("SN01_RR_PRIPFT".equals(name)) {
 			throw new SkipException("Skipped");
 		}
-		
-		System.out.println(name);
-		ExcelFile.printSchedule(schedule);
 
 		try {
 			schedule.getFinanceMain().setEventFromDate(
@@ -92,16 +88,10 @@ public class ChangeRepayTest {
 			schedule.getFinanceMain().setRecalType(recalType);
 			schedule.getFinanceMain().setRecalToDate(
 					DateUtility.getDate("31/12/2012"));
-			
-			System.out.println(recalType);
-			System.out.println(schedule);
-
+			System.out.println(schedule.getFinanceMain().getFinRemarks());
 			schedule = ScheduleCalculator.changeRepay(schedule,
 					BigDecimal.ZERO, CalculationConstants.NOPAY);
-			
-			System.out.println(name);
-			ExcelFile.printSchedule(schedule);
-
+			System.out.println(schedule.getFinanceMain().getFinRemarks());
 			schedule.getFinanceMain().setEventFromDate(
 					DateUtility.getDate("31/10/2011"));
 			schedule.getFinanceMain().setEventToDate(
@@ -110,9 +100,6 @@ public class ChangeRepayTest {
 					DateUtility.getDate("31/12/2012"));
 			schedule = ScheduleCalculator.changeRepay(schedule,
 					BigDecimal.ZERO, CalculationConstants.NOPAY);
-			
-			System.out.println(name);
-			ExcelFile.printSchedule(schedule);
 			
 			System.out.println(schedule.getFinanceMain().getFinRemarks());
 
