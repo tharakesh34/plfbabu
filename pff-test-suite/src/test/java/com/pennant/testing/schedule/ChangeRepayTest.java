@@ -39,11 +39,12 @@ public class ChangeRepayTest {
 
 	@Test
 	public void createSchedule() {
-		System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
-		
 		// Generate the schedule.
 		schedule = ScheduleGenerator.getNewSchd(schedule);
 		schedule = ScheduleCalculator.getCalSchd(schedule);
+		
+		System.out.println(name);
+		ExcelFile.printScheduleInstructions(schedule);
 
 		// Get the actual results
 		BigDecimal actLastRepayAmt = schedule.getFinanceScheduleDetails()
@@ -53,13 +54,10 @@ public class ChangeRepayTest {
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
-		System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
 	}
 
 	@Test(dependsOnMethods = { "createSchedule" })
 	public void changeRepay() throws Exception {
-		System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
-
 		if ("SN01_RR_EQUAL".equals(name)) {
 			throw new SkipException("Skipped");
 		}
@@ -87,10 +85,16 @@ public class ChangeRepayTest {
 			schedule.getFinanceMain().setRecalType(recalType);
 			schedule.getFinanceMain().setRecalToDate(
 					DateUtility.getDate("31/12/2012"));
-			System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
+			
+			System.out.println(name);
+			ExcelFile.printScheduleInstructions(schedule);
+
 			schedule = ScheduleCalculator.changeRepay(schedule,
 					BigDecimal.ZERO, CalculationConstants.NOPAY);
-			System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
+			
+			System.out.println(name);
+			ExcelFile.printScheduleInstructions(schedule);
+
 			schedule.getFinanceMain().setEventFromDate(
 					DateUtility.getDate("31/10/2011"));
 			schedule.getFinanceMain().setEventToDate(

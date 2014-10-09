@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 
 public class ExcelFile {
 	static final String TAB = "\t";
@@ -86,6 +87,20 @@ public class ExcelFile {
 				System.out.print(item.getCpzAmount() + TAB);
 				System.out.print(item.getProfitFraction() + TAB);
 				System.out.println(item.getSchdMethod());
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public static void printScheduleInstructions(FinScheduleData schedule) {
+		try {
+			System.out.println("::ScheduleInstructions::");
+
+			for (RepayInstruction item : schedule.getRepayInstructions()) {
+				System.out.print(item.getRepayDate() + TAB);
+				System.out.print(item.getRepayAmount() + TAB);
+				System.out.println(item.getRepaySchdMethod());
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
