@@ -6,9 +6,17 @@
 			<class name="com.pennant.testing.LoadConfigTest" />
 		</classes>
 	</test>
-	<test name="schedule-test" group-by-instances="false">
-		<packages>
-			<package name="com.pennant.testing.schedule" />
-		</packages>
+	<test name="schedule-test" group-by-instances="true">
+		<classes>
+			<class
+				name="com.pennant.testing.schedule.GraceProfitReducingRateTestFactory" />
+			<class name="com.pennant.testing.schedule.GraceProfitFlatRateTestFactory" />
+			<class
+				name="com.pennant.testing.schedule.GraceNoPayReducingRateTestFactory" />
+			<class name="com.pennant.testing.schedule.GraceNoPayFlatRateTestFactory" />
+			<class
+				name="com.pennant.testing.schedule.GraceNoRepayReducingRateTestFactory" />
+			<class name="com.pennant.testing.schedule.GraceNoRepayFlatRateTestFactory" />
+		</classes>
 	</test>
 </suite>
