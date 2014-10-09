@@ -78,7 +78,7 @@
 										<space spacing="2px"
 											sclass="mandatory" />
 										<uppercasebox id="productCode"
-											maxlength="8" width="72px" />
+											maxlength="8" width="100px" />
 									</hbox>
 								</row>
 								<row>
