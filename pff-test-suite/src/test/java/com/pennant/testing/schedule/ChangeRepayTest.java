@@ -12,6 +12,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.util.ExcelFile;
 
 public class ChangeRepayTest {
 	String name;
@@ -50,6 +51,11 @@ public class ChangeRepayTest {
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
+		
+		if ("SN01_RR_EQUAL_REQ".equals(name)) {
+			System.out.println(name);
+			ExcelFile.printSchedule(schedule);
+		}
 	}
 
 	@Test(dependsOnMethods = { "createSchedule" })
@@ -74,6 +80,9 @@ public class ChangeRepayTest {
 		if ("SN01_RR_PRIPFT".equals(name)) {
 			throw new SkipException("Skipped");
 		}
+		
+		System.out.println(name);
+		ExcelFile.printSchedule(schedule);
 
 		try {
 			schedule.getFinanceMain().setEventFromDate(
@@ -86,6 +95,9 @@ public class ChangeRepayTest {
 
 			schedule = ScheduleCalculator.changeRepay(schedule,
 					BigDecimal.ZERO, CalculationConstants.NOPAY);
+			
+			System.out.println(name);
+			ExcelFile.printSchedule(schedule);
 
 			schedule.getFinanceMain().setEventFromDate(
 					DateUtility.getDate("31/10/2011"));
@@ -95,6 +107,20 @@ public class ChangeRepayTest {
 					DateUtility.getDate("31/12/2012"));
 			schedule = ScheduleCalculator.changeRepay(schedule,
 					BigDecimal.ZERO, CalculationConstants.NOPAY);
+			
+			System.out.println(name);
+			ExcelFile.printSchedule(schedule);
+
+			// Get the actual results
+			BigDecimal actLastRepayAmt = schedule.getFinanceScheduleDetails()
+					.get(schedule.getFinanceScheduleDetails().size() - 1)
+					.getRepayAmount();
+			BigDecimal actTotProfit = schedule.getFinanceMain()
+					.getTotalGrossPft();
+
+			Assert.assertEquals(actLastRepayAmt.longValue(),
+					expFinalLastRepayAmt);
+			Assert.assertEquals(actTotProfit.longValue(), expFinalTotalProfit);
 		} catch (Exception e) {
 			System.out.println(name);
 			for (FinanceScheduleDetail detail : schedule
@@ -105,14 +131,5 @@ public class ChangeRepayTest {
 			e.printStackTrace();
 			throw e;
 		}
-
-		// Get the actual results
-		BigDecimal actLastRepayAmt = schedule.getFinanceScheduleDetails()
-				.get(schedule.getFinanceScheduleDetails().size() - 1)
-				.getRepayAmount();
-		BigDecimal actTotProfit = schedule.getFinanceMain().getTotalGrossPft();
-
-		Assert.assertEquals(actLastRepayAmt.longValue(), expFinalLastRepayAmt);
-		Assert.assertEquals(actTotProfit.longValue(), expFinalTotalProfit);
 	}
 }
