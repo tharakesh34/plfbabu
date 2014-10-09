@@ -425,10 +425,9 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("unused")
 	public void onClick$button_ExtendedFieldDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTListReportUtils reportUtils = new PTListReportUtils("ExtendedFieldDetail", getSearchObj(),this.pagingExtendedFieldDetailList.getTotalSize()+1);
+		new PTListReportUtils("ExtendedFieldHeader", getSearchObj(),this.pagingExtendedFieldDetailList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 	public void doSearch(){

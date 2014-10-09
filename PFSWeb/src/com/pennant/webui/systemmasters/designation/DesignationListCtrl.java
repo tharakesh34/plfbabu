@@ -408,10 +408,9 @@ public class DesignationListCtrl extends GFCBaseListCtrl<Designation> implements
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("unused")
 	public void onClick$button_DesignationList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		PTListReportUtils reportUtils = new PTListReportUtils("Designation", getSearchObj(),this.pagingDesignationList.getTotalSize()+1);
+		 new PTListReportUtils("Designation", getSearchObj(),this.pagingDesignationList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
 

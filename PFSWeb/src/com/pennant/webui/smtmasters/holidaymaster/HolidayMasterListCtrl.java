@@ -284,8 +284,7 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 		this.button_HolidayMasterList_PrintList.setVisible(getUserWorkspace()
 				.isAllowed("button_HolidayMasterList_PrintList"));
 		this.button_HolidayMasterList_NewHolidayMaster.setVisible(true);
-		this.button_HolidayMasterList_HolidayMasterSearchDialog
-		.setVisible(true);
+		this.button_HolidayMasterList_HolidayMasterSearchDialog.setVisible(true);
 		logger.debug("Leaving ");
 	}
 
@@ -447,12 +446,10 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster>
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("unused")
 	public void onClick$button_HolidayMasterList_PrintList(Event event)
 			throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		PTListReportUtils reportUtils = new PTListReportUtils("HolidayMaster", getSearchObj(),
-				this.pagingHolidayMasterList.getTotalSize() + 1);
+		new PTListReportUtils("HolidayMaster", getSearchObj(), this.pagingHolidayMasterList.getTotalSize() + 1);
 		logger.debug("Leaving " + event.toString());
 	}
 	
