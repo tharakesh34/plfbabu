@@ -40,6 +40,7 @@ public class ChangeRepayTest {
 	@Test
 	public void createSchedule() {
 		schedule.getFinanceMain().setFinRemarks("ScheduleCreate" + name + schedule.hashCode());
+		System.out.println(schedule.getFinanceMain().getFinRemarks());
 		
 		// Generate the schedule.
 		schedule = ScheduleGenerator.getNewSchd(schedule);
@@ -53,12 +54,12 @@ public class ChangeRepayTest {
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
-		schedule.getFinanceMain().setFinRemarks("ScheduleCreate" + name + schedule.hashCode());
+		System.out.println(schedule.getFinanceMain().getFinRemarks());
 	}
 
 	@Test(dependsOnMethods = { "createSchedule" })
 	public void changeRepay() throws Exception {
-		schedule.getFinanceMain().setFinRemarks("ScheduleRepay" + name + schedule.hashCode());
+		System.out.println(schedule.getFinanceMain().getFinRemarks());
 		System.out.println(name);
 
 		if ("SN01_RR_EQUAL".equals(name)) {
@@ -113,7 +114,7 @@ public class ChangeRepayTest {
 			System.out.println(name);
 			ExcelFile.printSchedule(schedule);
 			
-			schedule.getFinanceMain().setFinRemarks("ScheduleRepay" + name + schedule.hashCode());
+			System.out.println(schedule.getFinanceMain().getFinRemarks());
 
 			// Get the actual results
 			BigDecimal actLastRepayAmt = schedule.getFinanceScheduleDetails()
