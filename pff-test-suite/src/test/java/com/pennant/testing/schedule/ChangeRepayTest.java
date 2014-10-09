@@ -48,28 +48,31 @@ public class ChangeRepayTest {
 				.getRepayAmount();
 		BigDecimal actTotProfit = schedule.getFinanceMain().getTotalGrossPft();
 
-		System.out.println("SAI:: createSchedule " + name + " : "
-				+ schedule.hashCode());
-
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
 	}
 
 	@Test(dependsOnMethods = { "createSchedule" })
 	public void changeRepay() throws Exception {
-		System.out.println("SAI:: changeRepay " + name + " : "
-				+ schedule.hashCode());
+		System.out.println(name);
 
 		if ("SN01_RR_EQUAL".equals(name)) {
-			throw new SkipException("Skipped step.");
+			throw new SkipException("Skipped");
 		}
-
+		if ("SN01_RR_PFT".equals(name)) {
+			throw new SkipException("Skipped");
+		}
+		if ("SN01_RR_PRI_REQ".equals(name)) {
+			throw new SkipException("Skipped");
+		}
 		if ("SN01_RR_PRI".equals(name)) {
-			throw new SkipException("Skipped step.");
+			throw new SkipException("Skipped");
 		}
-
+		if ("SN01_RR_PRIPFT_REQ".equals(name)) {
+			throw new SkipException("Skipped");
+		}
 		if ("SN01_RR_PRIPFT".equals(name)) {
-			throw new SkipException("Skipped step.");
+			throw new SkipException("Skipped");
 		}
 
 		try {
