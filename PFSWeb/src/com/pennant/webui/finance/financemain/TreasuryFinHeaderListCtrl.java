@@ -412,7 +412,7 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 	 */
 	public void onClick$button_InvestmentFinHeaderList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		new PTListReportUtils("FinanceMain", getSearchObj(),this.pagingTFinHeaderList.getTotalSize()+1);
+		new PTListReportUtils("InvestmentFinHeader", getSearchObj(),this.pagingTFinHeaderList.getTotalSize()+1);
 		logger.debug("Leaving " + event.toString());
 	}
 
