@@ -94,6 +94,7 @@ public class ChangeRepayTest {
 			
 			System.out.println(name);
 			ExcelFile.printScheduleInstructions(schedule);
+			ExcelFile.printSchedule(schedule);
 
 			schedule.getFinanceMain().setEventFromDate(
 					DateUtility.getDate("31/10/2011"));
