@@ -408,34 +408,24 @@ public class PennantAppUtil {
 		excludeModules.add("DashboardConfiguration");
 		excludeModules.add("DRBaseRateCode");
 		excludeModules.add("FinanceMarginSlab");
-		excludeModules.add("FinanceReferenceDetail");
 		excludeModules.add("Frequency");
 		excludeModules.add("GlobalVariable");
-		excludeModules.add("HolidayMaster");
-		excludeModules.add("LovFieldCode");
-		excludeModules.add("LovFieldDetail");
 		excludeModules.add("Notes");
-		excludeModules.add("PFSParameter");
 		excludeModules.add("Question");
 		excludeModules.add("ReportList");
 		excludeModules.add("ScoringSlab");
 		excludeModules.add("ScoringType");
 		excludeModules.add("WorkFlowDetails");
-		excludeModules.add("PropertyType");
 		excludeModules.add("MortgPropertyRelation");
-		excludeModules.add("OwnerShipType");
 		excludeModules.add("Ownership");
 		excludeModules.add("Calender");
-		excludeModules.add("ExtendedFieldDetail");
 		excludeModules.add("HolidayDetails");
-		excludeModules.add("WeekendDetails");
 		//
 
 		excludeModules.add("AddDefferment");
 		excludeModules.add("AddDisbursement");
 		excludeModules.add("AddTerms");
 		excludeModules.add("AddrateChange");
-		excludeModules.add("Authorization");
 		excludeModules.add("CAFFacilityType");
 		excludeModules.add("ChangeProfit");
 		excludeModules.add("ChangeRepay");
@@ -457,7 +447,6 @@ public class PennantAppUtil {
 		excludeModules.add("CommidityLoanHeader");
 		excludeModules.add("DivisionDetail");
 		excludeModules.add("DocumentDetails");
-		excludeModules.add("EmployerDetail");
 		excludeModules.add("Facility");
 		excludeModules.add("FacilityDetail");
 		excludeModules.add("FacilityReferenceDetail");
@@ -473,22 +462,18 @@ public class PennantAppUtil {
 		excludeModules.add("FinCreditReviewSummary");
 		excludeModules.add("FinanceDetail");
 		excludeModules.add("GenGoodsLoanDetail");
-		excludeModules.add("GoodsLoanDetail");
 		excludeModules.add("GuarantorDetail");
 		excludeModules.add("IncomeExpense");
 		excludeModules.add("IndicativeTermDetail");
-		excludeModules.add("InvestmentFinHeader");
 		excludeModules.add("JVPosting");
 		excludeModules.add("JVPostingEntry");
 		excludeModules.add("JointAccountDetail");
-		excludeModules.add("MailTemplate");
 		excludeModules.add("NFScoreRuleDetail");
 		excludeModules.add("OverdueCharge");
 		excludeModules.add("OverdueChargeDetail");
 		excludeModules.add("OverdueChargeRecovery");
 		excludeModules.add("ProductFinanceType");
 		excludeModules.add("ProvisionMovement");
-		excludeModules.add("RatingCode");
 		excludeModules.add("Recalculate");
 		excludeModules.add("RepayInstruction");
 		excludeModules.add("Repaymentmethod");
@@ -518,14 +503,11 @@ public class PennantAppUtil {
 		excludeModules.add("MaintainBasicDetail");
 		excludeModules.add("Notifications");
 		excludeModules.add("RepaymentMethod");
-		excludeModules.add("Rule");
 		excludeModules.add("SchdlRepayment");
 		excludeModules.add("WriteOff");
 		
 		// Newly excluded Modules for Audit Reports
-		excludeModules.add("Accounts");
 		excludeModules.add("CarColor");
-		excludeModules.add("CarLoanDetail");
 		excludeModules.add("CommodityBrokerDetail");
 		excludeModules.add("CommodityDetail");
 		excludeModules.add("CorporateCustomerDetail");
@@ -544,18 +526,13 @@ public class PennantAppUtil {
 		excludeModules.add("DefermentHeader");
 		excludeModules.add("DiaryNotes");
 		excludeModules.add("DirectorDetail");
-		excludeModules.add("ExtendedFieldHeader");
 		excludeModules.add("FinanceApplicationCode");
 		excludeModules.add("FinanceCampaign");
-		excludeModules.add("HomeLoanDetail");
-		excludeModules.add("InterestRateBasisCode");
-		excludeModules.add("MortgageLoanDetail");
 		excludeModules.add("Penalty");
 		excludeModules.add("PenaltyCode");
 		excludeModules.add("ProductAsset");
 		excludeModules.add("PropertyRelation");
 		excludeModules.add("PropertyRelationType");
-		excludeModules.add("RatingType");
 		excludeModules.add("ReportConfiguration");
 		excludeModules.add("SystemInternalAccountType");
 		excludeModules.add("Provision");
@@ -564,16 +541,13 @@ public class PennantAppUtil {
 		excludeModules.add("FinanceRepayPriority");
 		excludeModules.add("FinanceScheduleDetail");
 		excludeModules.add("EducationalExpense");
-		excludeModules.add("EducationalLoan");
 		excludeModules.add("FinanceWorkFlow");
 		excludeModules.add("DedupParm");
 		excludeModules.add("CustomerIncome");
 		excludeModules.add("ExpenseType");
 		excludeModules.add("FinanceCheckListReference");
 		excludeModules.add("GeneralDesignation");
-		excludeModules.add("ScheduleMethod");
 		excludeModules.add("ScoringMetrics");
-		excludeModules.add("SecurityGroup");
 		excludeModules.add("SecurityRight");
 		excludeModules.add("SecurityUserRoles");
 		excludeModules.add("SecurityRoleGroups");
@@ -584,7 +558,6 @@ public class PennantAppUtil {
 		excludeModules.add("WIFFinanceDisbursement");
 		excludeModules.add("WIFFinanceMain");
 		excludeModules.add("SecurityUser");
-		
 		ArrayList<ValueLabel> moduleName = new ArrayList<ValueLabel>();
 		String moduleNames = PennantJavaUtil.getModuleMap().keySet().toString();
 		moduleNames = moduleNames.substring(1, moduleNames.length() - 1);
