@@ -39,8 +39,7 @@ public class ChangeRepayTest {
 
 	@Test
 	public void createSchedule() {
-		schedule.getFinanceMain().setFinRemarks("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
-		System.out.println(schedule.getFinanceMain().getFinRemarks());
+		System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
 		
 		// Generate the schedule.
 		schedule = ScheduleGenerator.getNewSchd(schedule);
@@ -54,12 +53,12 @@ public class ChangeRepayTest {
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
-		System.out.println(schedule.getFinanceMain().getFinRemarks());
+		System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
 	}
 
 	@Test(dependsOnMethods = { "createSchedule" })
 	public void changeRepay() throws Exception {
-		System.out.println(schedule.getFinanceMain().getFinRemarks());
+		System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
 
 		if ("SN01_RR_EQUAL".equals(name)) {
 			throw new SkipException("Skipped");
@@ -88,10 +87,10 @@ public class ChangeRepayTest {
 			schedule.getFinanceMain().setRecalType(recalType);
 			schedule.getFinanceMain().setRecalToDate(
 					DateUtility.getDate("31/12/2012"));
-			System.out.println(schedule.getFinanceMain().getFinRemarks());
+			System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
 			schedule = ScheduleCalculator.changeRepay(schedule,
 					BigDecimal.ZERO, CalculationConstants.NOPAY);
-			System.out.println(schedule.getFinanceMain().getFinRemarks());
+			System.out.println("SAI::" + name + schedule.getFinanceMain().getGrcPeriodEndDate());
 			schedule.getFinanceMain().setEventFromDate(
 					DateUtility.getDate("31/10/2011"));
 			schedule.getFinanceMain().setEventToDate(
@@ -100,8 +99,6 @@ public class ChangeRepayTest {
 					DateUtility.getDate("31/12/2012"));
 			schedule = ScheduleCalculator.changeRepay(schedule,
 					BigDecimal.ZERO, CalculationConstants.NOPAY);
-			
-			System.out.println(schedule.getFinanceMain().getFinRemarks());
 
 			// Get the actual results
 			BigDecimal actLastRepayAmt = schedule.getFinanceScheduleDetails()
