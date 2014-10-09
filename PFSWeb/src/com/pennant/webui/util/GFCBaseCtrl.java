@@ -61,6 +61,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.CreateEvent;
@@ -148,7 +149,8 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 	private int	                       listRows	          = 0;
 	private int	                       gridRows	          = 0;
 	public int	                       borderLayoutHeight	= 0;
-
+	private int listRowHeight = 0;
+	private int rowheight = 0;
 
 	/**
 	 * Get the params map that are overhanded at creation time. <br>
@@ -987,34 +989,62 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 	public int getListRows() {
 		return this.listRows;
 	}
-
-	public String getBorderLayoutHeight() {
-		return calculateBorderLayoutHeight()+ "px";
-	}
+	
 	
 	public int calculateBorderLayoutHeight() {
 		if(this.borderLayoutHeight == 0){
 		if (this.borderLayoutHeight == 0) {
 			this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
 			this.gridRows = Math.round(this.borderLayoutHeight / 31) - 1;
-			this.listRows = Math.round(this.borderLayoutHeight / 24) - 1;
+			this.listRows = Math.round(this.borderLayoutHeight / 28) - 1;
 		}
 		return borderLayoutHeight;
 	}
 		return borderLayoutHeight;
 	}
 
+	
+public String getBorderLayoutHeight() {
+		
+		if (listRowHeight == 0 || rowheight == 0) {
+			if ("ie".equals(Executions.getCurrent().getBrowser())) {
+				listRowHeight = 28;
+				rowheight = 28;
+			} else {
+				listRowHeight = 25;
+				rowheight = 28;
+			}
+		}
+		
+		if(this.borderLayoutHeight == 0){		
+			if (this.borderLayoutHeight == 0) {
+				this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
+				this.gridRows = Math.round(this.borderLayoutHeight / rowheight) - 1;
+				this.listRows = Math.round(this.borderLayoutHeight / listRowHeight) - 1;
+			}
+			
+		return borderLayoutHeight +"px";
+	}
+		return borderLayoutHeight +"px";
+	}
+	
 	public String getListBoxHeight(int gridRowCount) {
-		int rowheight = 31;
 		if (this.borderLayoutHeight == 0) {
 			getBorderLayoutHeight();
 		}
 		int listboxheight = this.borderLayoutHeight;
-		listboxheight = listboxheight - (gridRowCount * rowheight) - 35;
-		this.listRows = Math.round(listboxheight / 24) - 1;
+		listboxheight = listboxheight - (gridRowCount * rowheight) - 30;
+		this.listRows = Math.round(listboxheight / listRowHeight) - 1;
 		return listboxheight + "px";
 	}
-
+	
+	
+	
+	
+	
+	
+	
+	
 	/*
 	 * Method For Getting UsrFinAuthentication By Branch and Division
 	 */

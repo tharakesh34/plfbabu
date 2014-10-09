@@ -2,12 +2,18 @@ package com.pennant.webui.util;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Session;
+import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
@@ -158,24 +164,30 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 		// Column for the Message buttons
 		Column statusBarMessageIndicator = new Column();
 		statusBarMessageIndicator.setWidth("20%");
+		statusBarMessageIndicator.setValign("middle");
 		statusBarMessageIndicator.setStyle("background-color: #D6DCDE; padding: 0px");
 		statusBarMessageIndicator.setParent(columns);
 		// Column for the Middle Space 
 		Column statusBarMiddleSpace = new Column();
 		statusBarMiddleSpace.setWidth("57%");
+		Label versionLabel=new Label(getAppVersion());
+		statusBarMiddleSpace.setValign("middle");
+		statusBarMiddleSpace.setAlign("center");
+		statusBarMiddleSpace.appendChild(versionLabel);
 		statusBarMiddleSpace.setStyle("background-color: #D6DCDE; padding: 0px");
 		statusBarMiddleSpace.setParent(columns);
 		// Column for the Version Details 
 		Column statusBarVersionIndicator = new Column();
 		statusBarVersionIndicator.setWidth("20%");
-		Label versionLabel=new Label(PennantConstants.PROJECT_VERSION);
-		statusBarVersionIndicator.appendChild(versionLabel);
+		statusBarVersionIndicator.setValign("middle");
 		statusBarVersionIndicator.setStyle("background-color: #D6DCDE; padding: 0px");
 		statusBarVersionIndicator.setParent(columns);
 
 		// Column for the Host Details 
 	    Column hostEnq = new Column();
-	    Image hostStatus =  new Image("/images/Pennant/HostUp.jpg");
+	    Image hostStatus =  new Image("/images/Pennant/HostUp.png");
+	    hostStatus.setStyle("background-color: #D6DCDE; padding: 0px");
+	    hostEnq.setStyle("background-color: #D6DCDE; padding: 0px");
 	    hostStatus.setTooltiptext(Labels.getLabel("label_HostStatus"));
 	    hostStatus.setParent(hostEnq);
 	    hostEnq.setParent(columns);
@@ -282,4 +294,23 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 	public MessagesService getMessagesService() {
 		return messagesService;
 	}
+	
+	 private String getAppVersion() {
+			String appVersion = Labels.getLabel(PennantConstants.applicationCode);
+
+			try {
+				Session sess = Sessions.getCurrent();
+				HttpSession hses = (HttpSession) sess.getNativeSession();
+				ServletContext sCon = hses.getServletContext();
+				Properties prop = new Properties();
+				prop.load(sCon.getResourceAsStream("/META-INF/MANIFEST.MF"));
+
+				appVersion = appVersion + " " + prop.getProperty("Implementation-Version");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return appVersion;
+		}
 }
