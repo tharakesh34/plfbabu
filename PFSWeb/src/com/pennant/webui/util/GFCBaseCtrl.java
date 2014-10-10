@@ -1029,21 +1029,12 @@ public String getBorderLayoutHeight() {
 	}
 	
 	public String getListBoxHeight(int gridRowCount) {
-		if (this.borderLayoutHeight == 0) {
-			getBorderLayoutHeight();
-		}
+		getBorderLayoutHeight();
 		int listboxheight = this.borderLayoutHeight;
 		listboxheight = listboxheight - (gridRowCount * rowheight) - 30;
 		this.listRows = Math.round(listboxheight / listRowHeight) - 1;
 		return listboxheight + "px";
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	/*
 	 * Method For Getting UsrFinAuthentication By Branch and Division
