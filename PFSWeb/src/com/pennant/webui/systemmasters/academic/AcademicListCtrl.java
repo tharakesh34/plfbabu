@@ -52,35 +52,36 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
-import org.zkoss.zul.Iframe;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.SessionUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.service.systemmasters.AcademicService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.policy.model.UserImpl;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.academic.model.AcademicListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -119,12 +120,24 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 	protected Button button_AcademicList_AcademicSearchDialog;  // autoWired
 	protected Button button_AcademicList_PrintList; 			// autoWired
 
+	protected Textbox academicLevel;                            // autoWired
+	protected Listbox sortOperator_academicLevel;               // autoWired
+	protected Textbox academicDecipline;                        // autoWired
+	protected Listbox sortOperator_academicDecipline;           // autoWired
+	protected Textbox academicDesc;                             // autoWired
+	protected Listbox sortOperator_academicDesc;                // autoWired
+	protected Listbox sortOperator_RecordStatus;                 // autoWired
+	protected Textbox recordStatus;                              // autoWired
+	protected Listbox sortOperator_RecordType;                    // autoWired
+	protected Listbox recordType;                                 // autoWired
+
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Academic> searchObj;
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
 
 	private transient AcademicService academicService;
 	private transient WorkFlowDetails workFlowDetails=null;
-	Iframe report;
 
 	/**
 	 * default constructor.<br>
@@ -136,25 +149,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
-	
-	private String getLoggedInUsers() {
-		StringBuilder builder = new StringBuilder();
-		List<UserImpl> users = SessionUtil.getLoggedInUsers();
-		SecurityUser secUser = null;
-		if(!users.isEmpty()) {			
-			for (UserImpl user : users) {
-				if(user.getUserId() != getUserWorkspace().getLoginUserDetails().getLoginUsrID()){
-					if(builder.length() > 0){
-						builder.append("</br>");
-					}
-					secUser = user.getSecurityUser(); 
-					builder.append("&bull;").append("&nbsp;").append(user.getUserId()).append("&ndash;").append(secUser.getUsrFName() + " " + StringUtils.trimToEmpty(secUser.getUsrMName()) + " " + secUser.getUsrLName()  );
-				}
-			}
-		}
-		return builder.toString();
-	}
-	
+
 	/**
 	 * Before binding the data and calling the List window we check, if the
 	 * ZUL-file is called with a parameter for a selected AcademicCode object in
@@ -165,18 +160,10 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 	 */
 	public void onCreate$window_AcademicList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		String loggedInUsers = getLoggedInUsers();		
-		if(!loggedInUsers.equals("")) {
-			loggedInUsers = "\n"+loggedInUsers;
-			//PTMessageUtils.showErrorMessage(Labels.getLabel("label_current_logged_users", new String[]{loggedInUsers}));
-			Clients.showNotification(Labels.getLabel("label_current_logged_users", new String[]{loggedInUsers}),  "info", null, null, -1);
-
-			//return;
-		}
 
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("Academic");
 		boolean wfAvailable = true;
-	    
+
 		if (moduleMapping.getWorkflowType() != null) {
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Academic");
 
@@ -190,6 +177,25 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 		} else {
 			wfAvailable = false;
 		}
+		
+		this.sortOperator_academicLevel.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_academicLevel.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_academicDecipline.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_academicDecipline.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_academicDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_academicDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		if (isWorkFlowEnabled()){
+			this.sortOperator_RecordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_RecordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_RecordStatus.setSelectedIndex(0);
+			this.sortOperator_RecordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_RecordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_RecordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
 
 		/* set components visible dependent on the users rights */
 		doCheckRights();
@@ -200,6 +206,8 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_AcademicList.setHeight(getBorderLayoutHeight());
+		this.listBoxAcademic.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
+
 		// set the paging parameters
 		this.pagingAcademicList.setPageSize(getListRows());
 		this.pagingAcademicList.setDetailed(true);
@@ -226,17 +234,23 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 		this.searchObj = new JdbcSearchObject<Academic>(Academic.class, getListRows());
 		this.searchObj.addSort("AcademicLevel", false);
 		this.searchObj.addSort("AcademicDecipline", false);
+		this.searchObj.addField("academicid");
+		this.searchObj.addField("academicLevel");
+		this.searchObj.addField("academicDecipline");
+		this.searchObj.addField("academicDesc");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("BMTAcademics_View");
 			if (isFirstTask()) {
 				button_AcademicList_NewAcademic.setVisible(true);
 			} else {
 				button_AcademicList_NewAcademic.setVisible(false);
 			}
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-		} else {
+			this.searchObj.addTabelName("BMTAcademics_View");
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+		} else{
 			this.searchObj.addTabelName("BMTAcademics_AView");
 		}
 
@@ -247,8 +261,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 			this.button_AcademicList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxAcademic, this.pagingAcademicList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxAcademic.setItemRenderer(new AcademicListModelItemRenderer());
 		}
@@ -399,9 +412,25 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingAcademicList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_AcademicList, event);
-		this.window_AcademicList.invalidate();
+		
+		this.sortOperator_academicLevel.setSelectedIndex(0);
+		this.academicLevel.setValue("");
+		this.sortOperator_academicDesc.setSelectedIndex(0);
+		this.academicDesc.setValue("");
+		this.sortOperator_academicDecipline.setSelectedIndex(0);
+		this.academicDecipline.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_RecordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_RecordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		//Clear All Filters
+		this.searchObj.clearFilters();
+		
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(getSearchObj(), this.listBoxAcademic,this.pagingAcademicList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -413,25 +442,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 	 */
 	public void onClick$button_AcademicList_AcademicSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our AcademicDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Academic. For handed over
-		 * these parameter only a Map is accepted. So we put the Academic object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("academicCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/Academic/AcademicSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
-
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -447,7 +458,60 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> implements Seria
 		PTListReportUtils reportUtils = new PTListReportUtils("Academic", getSearchObj(),this.pagingAcademicList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+		
+		this.searchObj.clearFilters();
+		
+		if (!StringUtils.trimToEmpty(this.academicLevel.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_academicLevel.getSelectedItem(),
+					this.academicLevel.getValue(), "AcademicLevel");
+		}
+		if (!StringUtils.trimToEmpty(this.academicDecipline.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_academicDecipline.getSelectedItem(),
+					this.academicDecipline.getValue(), "AcademicDecipline");
+		}
+		if (!StringUtils.trimToEmpty(this.academicDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_academicDesc.getSelectedItem(),
+					this.academicDesc.getValue(), "AcademicDesc");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_RecordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_RecordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxAcademic,this.pagingAcademicList);
+
+		logger.debug("Leaving");
+	}
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

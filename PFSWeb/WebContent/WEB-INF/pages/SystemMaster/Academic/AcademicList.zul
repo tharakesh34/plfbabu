@@ -61,30 +61,90 @@
 				<north border="none" />
 
 				<center border="none">
-
-					<listbox id="listBoxAcademic" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true">
-						<listhead sizable="true">
-							<listheader id="listheader_AcademicLevel"
-								label="${c:l('listheader_AcademicLevel.label')}" sort="auto"
-								hflex="min" />
-							<listheader
-								id="listheader_AcademicDecipline"
-								label="${c:l('listheader_Academic_Decipline.label')}"
-								sort="auto" hflex="min"/>
-							<listheader id="listheader_AcademicDesc"
-								label="${c:l('listheader_AcademicDesc.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min" />
-						</listhead>
-
-					</listbox>
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_AcademicSearch_AcademicLevel"
+										value="${c:l('label_AcademicSearch_AcademicLevel.value')}" />
+									<listbox
+										id="sortOperator_academicLevel" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="academicLevel"
+										width="100px" maxlength="8" />
+									<label
+										id="label_AcademicSearch_AcademicDecipline"
+										value="${c:l('label_AcademicSearch_AcademicDecipline.value')}" />
+									<listbox
+										id="sortOperator_academicDecipline" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="academicDecipline"
+										width="100px" maxlength="8" />
+								</row>
+								<row>
+									<label
+										id="label_AcademicSearch_AcademicDesc"
+										value="${c:l('label_AcademicSearch_AcademicDesc.value')}" />
+									<listbox
+										id="sortOperator_academicDesc" width="43px" mold="select"
+										rows="1" />
+									<textbox id="academicDesc"
+										width="320px" maxlength="50" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_AcademicSearch_RecordStatus"
+										value="${c:l('label_AcademicSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_RecordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_AcademicSearch_RecordType"
+										value="${c:l('label_AcademicSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_RecordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxAcademic" vflex="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" span="true">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_AcademicLevel"
+									label="${c:l('listheader_AcademicLevel.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_AcademicDecipline"
+									label="${c:l('listheader_Academic_Decipline.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_AcademicDesc"
+									label="${c:l('listheader_AcademicDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingAcademicList" />
