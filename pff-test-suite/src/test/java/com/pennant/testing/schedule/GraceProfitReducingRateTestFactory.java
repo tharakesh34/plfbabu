@@ -6,6 +6,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Factory;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.util.BeanFactory;
 
@@ -15,7 +16,17 @@ public class GraceProfitReducingRateTestFactory {
 			long reqRepayAmt, long expLastRepayAmt, long expTotalProfit,
 			String recalType, long expFinalLastRepayAmt,
 			long expFinalTotalProfit) {
-		FinScheduleData schedule = BeanFactory.getSchedule();
+		FinScheduleData schedule = BeanFactory.getSchedule(true);
+		schedule.getFinanceMain().setGrcPeriodEndDate(
+				DateUtility.getDate("31/12/2011"));
+		schedule.getFinanceMain().setNextRepayDate(
+				DateUtility.getDate("31/01/2012"));
+		schedule.getFinanceMain().setNextRepayPftDate(
+				DateUtility.getDate("31/01/2012"));
+		schedule.getFinanceMain().setNextRepayRvwDate(
+				DateUtility.getDate("31/03/2012"));
+		schedule.getFinanceMain().setNextRepayCpzDate(
+				DateUtility.getDate("30/06/2012"));
 		schedule.getFinanceMain().setGrcSchdMthd(CalculationConstants.PFT);
 		schedule.getFinanceMain().setGrcRateBasis("R");
 		schedule.getFinanceMain().setRepayRateBasis("R");
