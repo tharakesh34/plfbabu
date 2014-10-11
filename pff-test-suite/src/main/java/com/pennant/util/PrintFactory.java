@@ -7,20 +7,21 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 
-public class ExcelFile {
+public class PrintFactory {
 	static final String TAB = "\t";
 	static final String folderPath = "D:/ScheduleResults/";
 
-	public static void writeExcel(String fileName, FinScheduleData schedule) {
+	public static void scheduleToExcel(String fileName, FinScheduleData schedule) {
 		PrintWriter out = null;
 
 		try {
 			out = new PrintWriter(folderPath + fileName + ".xls");
 
-			out.print("Date \t CPZ \t PFT \t RVW \t RPY \t Rate\t DisAmount \t DWPAY \t");
-			out.print("OPBAL \t CLOSBAL \t NODAYS \t DAYSFACTOR \t ProfitCalc \t ProfitPaid \t");
-			out.print("PrincipalPaid \t RepayAmount \t ProfitBalance \tCpzAmount \t");
-			out.print("ProfitFraction \t SchdMethod");
+			out.print("Date\t CPZ\t PFT\t RVW\t RPY\t Rate\t");
+			out.print("DisAmount\t DWPAY\t OPBAL\t CLOSBAL\t NODAYS\t");
+			out.print("DAYSFACTOR\t ProfitCalc\t ProfitPaid\t");
+			out.print("PrincipalPaid\t RepayAmount\t ProfitBalance\t");
+			out.println("CpzAmount\t ProfitFraction\t SchdMethod");
 
 			for (FinanceScheduleDetail item : schedule
 					.getFinanceScheduleDetails()) {
@@ -55,15 +56,13 @@ public class ExcelFile {
 		}
 	}
 
-	public static void printSchedule(FinScheduleData schedule) {
+	public static void scheduleToConsole(FinScheduleData schedule) {
 		try {
-			System.out
-					.print("Date \t CPZ \t PFT \t RVW \t RPY \t Rate\t DisAmount \t DWPAY \t");
-			System.out
-					.print("OPBAL \t CLOSBAL \t NODAYS \t DAYSFACTOR \t ProfitCalc \t ProfitPaid \t");
-			System.out
-					.print("PrincipalPaid \t RepayAmount \t ProfitBalance \tCpzAmount \t");
-			System.out.println("ProfitFraction \t SchdMethod");
+			System.out.print("Date\t CPZ\t PFT\t RVW\t RPY\t Rate\t");
+			System.out.print("DisAmount\t DWPAY\t OPBAL\t CLOSBAL\t NODAYS\t");
+			System.out.print("DAYSFACTOR\t ProfitCalc\t ProfitPaid\t");
+			System.out.print("PrincipalPaid\t RepayAmount\t ProfitBalance\t");
+			System.out.println("CpzAmount\t ProfitFraction\t SchdMethod");
 
 			for (FinanceScheduleDetail item : schedule
 					.getFinanceScheduleDetails()) {
@@ -93,7 +92,7 @@ public class ExcelFile {
 		}
 	}
 
-	public static void printScheduleInstructions(FinScheduleData schedule) {
+	public static void scheduleInstructionsToConsole(FinScheduleData schedule) {
 		try {
 			System.out.println("::ScheduleInstructions::");
 
