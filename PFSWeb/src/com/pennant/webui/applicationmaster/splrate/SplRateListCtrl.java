@@ -45,21 +45,29 @@ package com.pennant.webui.applicationmaster.splrate;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
@@ -70,10 +78,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.splrate.model.SplRateListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +110,17 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> implements Seriali
 	protected Paging 		pagingSplRateList; 			// autoWired
 	protected Listbox 		listBoxSplRate; 			// autoWired
 
+	protected Textbox sRType; 							// autowired
+	protected Listbox sortOperator_sRType; 				// autowired
+	protected Datebox sREffDate; 						// autowired
+	protected Listbox sortOperator_sREffDate; 			// autowired
+	protected Decimalbox sRRate; 						// autowired
+	protected Listbox sortOperator_sRRate; 				// autowired
+	protected Textbox recordStatus; 					// autowired
+	protected Listbox recordType;						// autowired
+	protected Listbox sortOperator_recordStatus; 		// autowired
+	protected Listbox sortOperator_recordType; 			// autowired
+
 	// List headers
 	protected Listheader listheader_SRType; 		// autoWired
 	protected Listheader listheader_SREffDate; 		// autoWired
@@ -114,7 +136,9 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> implements Seriali
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<SplRate> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient SplRateService splRateService;
 	private transient WorkFlowDetails workFlowDetails=null;
 	
@@ -155,7 +179,26 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> implements Seriali
 		}else{
 			wfAvailable=false;
 		}
-		
+		this.sortOperator_sRType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sRType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_sREffDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_sREffDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_sRRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_sRRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);	
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -165,7 +208,7 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> implements Seriali
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_SplRateList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxSplRate.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingSplRateList.setPageSize(getListRows());
 		this.pagingSplRateList.setDetailed(true);
@@ -192,7 +235,13 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> implements Seriali
 		this.searchObj = new JdbcSearchObject<SplRate>(SplRate.class,getListRows());
 		this.searchObj.addSort("SRType", false);
 		this.searchObj.addSort("SREffDate", false);
-		
+		this.searchObj.addField("sRType");
+		this.searchObj.addField("lovDescSRTypeName");
+		this.searchObj.addField("sRRate");
+		this.searchObj.addField("sREffDate");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("RMTSplRates_View");
@@ -213,8 +262,7 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> implements Seriali
 			this.button_SplRateList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxSplRate,this.pagingSplRateList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxSplRate.setItemRenderer(new SplRateListModelItemRenderer());
 		}	
@@ -366,9 +414,23 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> implements Seriali
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingSplRateList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_SplRateList, event);
-		this.window_SplRateList.invalidate();
+		this.sortOperator_sRType.setSelectedIndex(0);
+		this.sRType.setValue("");
+		this.sortOperator_sRRate.setSelectedIndex(0);
+		this.sRRate.setText("");
+		this.sortOperator_sREffDate.setSelectedIndex(0);
+		this.sREffDate.setValue(null);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clear All the Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxSplRate,this.pagingSplRateList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -379,24 +441,7 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> implements Seriali
 	 */
 	public void onClick$button_SplRateList_SplRateSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our SplRateDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected SplRate. For handed over
-		 * these parameter only a Map is accepted. So we put the SplRate object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("splRateCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/ApplicationMaster/SplRate/SplRateSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -412,7 +457,48 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> implements Seriali
 		PTListReportUtils reportUtils = new PTListReportUtils("SplRate", getSearchObj(),this.pagingSplRateList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
+		this.searchObj.clearFilters();
+		if (!StringUtils.trimToEmpty(this.sRType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_sRType.getSelectedItem(),this.sRType.getValue(), "SRType");
+		}
+		if (this.sRRate.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_sRRate.getSelectedItem(),this.sRRate.getValue(), "SRRate");
+		}
+		if (this.sREffDate.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_sREffDate.getSelectedItem(), DateUtility.formatDate(this.sREffDate.getValue(), PennantConstants.DBDateFormat), "SREffDate");
+		}
 
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSplRate,this.pagingSplRateList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

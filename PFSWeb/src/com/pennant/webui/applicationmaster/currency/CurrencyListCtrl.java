@@ -45,20 +45,27 @@ package com.pennant.webui.applicationmaster.currency;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +78,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.currency.model.CurrencyListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 
 /**
@@ -85,7 +95,7 @@ import com.pennant.webui.util.PTMessageUtils;
  * 
  */
 public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Serializable {
-	
+
 	private static final long serialVersionUID = -7603242416503761389L;
 	private final static Logger logger = Logger.getLogger(CurrencyListCtrl.class);
 
@@ -102,6 +112,20 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Seria
 	protected Paging 		pagingCurrencyList; 				// autoWired
 	protected Listbox 		listBoxCurrency; 					// autoWired
 
+	protected Textbox  ccyCode; 						// autoWired
+	protected Listbox  sortOperator_ccyCode; 			// autoWired
+	protected Intbox   ccyNumber; 						// autoWired
+	protected Listbox  sortOperator_ccyNumber; 			// autoWired
+	protected Textbox  ccyDesc; 						// autoWired
+	protected Listbox  sortOperator_ccyDesc; 			// autoWired
+	protected Textbox  ccySwiftCode; 					// autoWired
+	protected Listbox  sortOperator_ccySwiftCode; 		// autoWired
+	protected Checkbox ccyIsActive; 					// autoWired
+	protected Listbox  sortOperator_ccyIsActive; 		// autoWired
+	protected Textbox  recordStatus; 					// autoWired
+	protected Listbox  recordType;						// autoWired
+	protected Listbox  sortOperator_recordStatus; 		// autoWired
+	protected Listbox  sortOperator_recordType;
 	// List headers
 	protected Listheader 	listheader_CcyCode; 				// autoWired
 	protected Listheader 	listheader_CcyNumber; 				// autoWired
@@ -119,6 +143,8 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Seria
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Currency> searchObj;
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
 	
 	private transient CurrencyService currencyService;
 	private transient WorkFlowDetails workFlowDetails=null;
@@ -160,7 +186,31 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Seria
 		}else{
 			wfAvailable=false;
 		}
-		
+		this.sortOperator_ccyCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_ccyCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_ccyNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_ccyNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_ccyDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_ccyDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_ccySwiftCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_ccySwiftCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_ccyIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_ccyIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType =setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -170,7 +220,7 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Seria
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CurrencyList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxCurrency.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingCurrencyList.setPageSize(getListRows());
 		this.pagingCurrencyList.setDetailed(true);
@@ -199,6 +249,14 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Seria
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<Currency>(Currency.class,getListRows());
 		this.searchObj.addSort("CcyCode", false);
+		this.searchObj.addField("ccyCode");
+		this.searchObj.addField("ccyNumber");
+		this.searchObj.addField("ccyDesc");
+		this.searchObj.addField("ccySwiftCode");
+		this.searchObj.addField("ccyIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -220,9 +278,7 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Seria
 			this.button_CurrencyList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,
-					this.listBoxCurrency,this.pagingCurrencyList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxCurrency.setItemRenderer(new CurrencyListModelItemRenderer());
 		}	
@@ -370,9 +426,26 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Seria
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingCurrencyList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_CurrencyList, event);
-		this.window_CurrencyList.invalidate();
+		this.sortOperator_ccyCode.setSelectedIndex(0);
+		this.ccyCode.setValue("");
+		this.sortOperator_ccyDesc.setSelectedIndex(0);
+		this.ccyDesc.setValue("");
+		this.sortOperator_ccyNumber.setSelectedIndex(0);
+		this.ccyNumber.setValue(null);;
+		this.sortOperator_ccySwiftCode.setSelectedIndex(0);
+		this.ccySwiftCode.setValue("");
+		this.sortOperator_ccyIsActive.setSelectedIndex(0);
+		this.ccyIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears all the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxCurrency,this.pagingCurrencyList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -385,24 +458,7 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Seria
 	public void onClick$button_CurrencyList_CurrencySearchDialog(Event event)
 			throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our CurrencyDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Currency. For handed over
-		 * these parameter only a Map is accepted. So we put the Currency object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("currencyCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/ApplicationMaster/Currency/CurrencySearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -418,11 +474,61 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> implements Seria
 		PTListReportUtils reportUtils = new PTListReportUtils("Currency", getSearchObj(),this.pagingCurrencyList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.ccyCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_ccyCode.getSelectedItem(),this.ccyCode.getValue(), "CcyCode");
+		}
+		if (this.ccyNumber.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_ccyNumber.getSelectedItem(),this.ccyNumber.getValue(), "CcyNumber");
+		}
+		if (!StringUtils.trimToEmpty(this.ccyDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_ccyDesc.getSelectedItem(),this.ccyDesc.getValue(), "CcyDesc");
+		}
+		if (!StringUtils.trimToEmpty(this.ccySwiftCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_ccySwiftCode.getSelectedItem(),this.ccySwiftCode.getValue(), "CcySwiftCode");
+		}
+		int intccyIsActive=0;
+		if(this.ccyIsActive.isChecked()){
+			intccyIsActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_ccyIsActive.getSelectedItem(),intccyIsActive, "CcyIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxCurrency,this.pagingCurrencyList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	public void setCurrencyService(CurrencyService currencyService) {
 		this.currencyService = currencyService;
 	}

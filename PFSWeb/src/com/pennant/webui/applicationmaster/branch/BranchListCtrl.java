@@ -45,19 +45,25 @@ package com.pennant.webui.applicationmaster.branch;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.branch.model.BranchListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +108,25 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> implements Serializa
 	protected Paging 		pagingBranchList; 			// auto wired
 	protected Listbox 		listBoxBranch; 				// auto wired
 
+	protected Textbox 	branchCode; 						// auto wired
+	protected Listbox 	sortOperator_branchCode; 			// auto wired
+	protected Textbox 	branchDesc; 						// auto wired
+	protected Listbox 	sortOperator_branchDesc; 			// auto wired
+	protected Textbox 	branchCity; 						// auto wired
+	protected Listbox 	sortOperator_branchCity; 			// auto wired
+	protected Textbox 	branchProvince; 					// auto wired
+	protected Listbox 	sortOperator_branchProvince; 		// auto wired
+	protected Textbox 	branchCountry; 						// auto wired
+	protected Listbox 	sortOperator_branchCountry; 		// auto wired
+	protected Textbox 	branchSwiftBankCde; 				// auto wired
+	protected Listbox 	sortOperator_branchSwiftBankCde; 	// auto wired
+	protected Checkbox 	branchIsActive; 					// auto wired
+	protected Listbox 	sortOperator_branchIsActive; 		// auto wired
+	protected Textbox 	recordStatus; 						// auto wired
+	protected Listbox 	recordType;							// auto wired
+	protected Listbox 	sortOperator_recordStatus; 			// auto wired
+	protected Listbox 	sortOperator_recordType; 			// auto wired
+
 	// List headers
 	protected Listheader listheader_BranchCode; 		// auto wired
 	protected Listheader listheader_BranchDesc; 		// auto wired
@@ -118,6 +146,8 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> implements Serializa
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Branch> searchObj;
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
 	
 	private transient BranchService branchService;
 	private transient WorkFlowDetails workFlowDetails=null;
@@ -159,7 +189,38 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> implements Serializa
 		}else{
 			wfAvailable=false;
 		}
-		
+		this.sortOperator_branchCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_branchCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_branchDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_branchDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_branchCity.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_branchCity.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_branchProvince.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_branchProvince.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_branchCountry.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_branchCountry.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_branchSwiftBankCde.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_branchSwiftBankCde.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_branchIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_branchIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType =setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -169,6 +230,7 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> implements Serializa
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_BranchList.setHeight(getBorderLayoutHeight());
+		this.listBoxBranch.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingBranchList.setPageSize(getListRows());
@@ -202,7 +264,20 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> implements Serializa
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<Branch>(Branch.class,getListRows());
 		this.searchObj.addSort("BranchCode", false);
-		
+		this.searchObj.addField("branchCode");
+		this.searchObj.addField("branchDesc");
+		this.searchObj.addField("lovDescBranchCityName");
+		this.searchObj.addField("branchCity");
+		this.searchObj.addField("lovDescBranchProvinceName");
+		this.searchObj.addField("branchProvince");
+		this.searchObj.addField("lovDescBranchCountryName");
+		this.searchObj.addField("lovDescBranchSwiftCountryName");
+		this.searchObj.addField("branchCountry");
+		this.searchObj.addField("branchSwiftBankCde");
+		this.searchObj.addField("branchIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
 		// Work flow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("RMTBranches_View");
@@ -223,11 +298,9 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> implements Serializa
 			this.button_BranchList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxBranch,this.pagingBranchList);
+			doSearch();
 			// set the itemRenderer
-			this.listBoxBranch.setItemRenderer(
-					new BranchListModelItemRenderer());
+			this.listBoxBranch.setItemRenderer(new BranchListModelItemRenderer());
 		}	
 		logger.debug("Leaving" + event.toString());
 	}
@@ -372,9 +445,31 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> implements Serializa
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering"+event.toString());
-		this.pagingBranchList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_BranchList, event);
-		this.window_BranchList.invalidate();
+		this.sortOperator_branchCity.setSelectedIndex(0);
+		this.branchCity.setValue("");
+		this.sortOperator_branchCode.setSelectedIndex(0);
+		this.branchCode.setValue("");
+		this.sortOperator_branchCountry.setSelectedIndex(0);
+		this.branchCountry.setValue("");
+		this.sortOperator_branchDesc.setSelectedIndex(0);
+		this.branchDesc.setValue("");
+		this.sortOperator_branchProvince.setSelectedIndex(0);
+		this.branchProvince.setValue("");
+		this.sortOperator_branchSwiftBankCde.setSelectedIndex(0);
+		this.branchSwiftBankCde.setValue("");
+		this.sortOperator_branchIsActive.setSelectedIndex(0);
+		this.branchIsActive.setChecked(false);
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears all Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxBranch,this.pagingBranchList);
+
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -385,24 +480,7 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> implements Serializa
 	 */
 	public void onClick$button_BranchList_BranchSearchDialog(Event event) throws Exception {
 		logger.debug("Entering"+event.toString());
-		/*
-		 * we can call our BranchDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Branch. For handed over
-		 * these parameter only a Map is accepted. So we put the Branch object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("branchCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/ApplicationMaster/Branch/BranchSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -418,7 +496,65 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> implements Serializa
 		PTListReportUtils reportUtils = new PTListReportUtils("Branch", getSearchObj(),this.pagingBranchList.getTotalSize()+1);
 		logger.debug("Leaving"+event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
+		
+		this.searchObj.clearFilters();
+		
+		if (!StringUtils.trimToEmpty(this.branchCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_branchCode.getSelectedItem(),this.branchCode.getValue(), "BranchCode");
+		}
+		if (!StringUtils.trimToEmpty(this.branchDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_branchDesc.getSelectedItem(),this.branchDesc.getValue(), "BranchDesc");
+		}
+		if (!StringUtils.trimToEmpty(this.branchCity.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_branchCity.getSelectedItem(),this.branchCity.getValue(), "BranchCity");
+		}
+		if (!StringUtils.trimToEmpty(this.branchProvince.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_branchProvince.getSelectedItem(),this.branchProvince.getValue(), "BranchProvince");
+		}
+		if (!StringUtils.trimToEmpty(this.branchCountry.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_branchCountry.getSelectedItem(),this.branchCountry.getValue(), "BranchCountry");
+		}
+		if (!StringUtils.trimToEmpty(this.branchSwiftBankCde.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_branchSwiftBankCde.getSelectedItem(),this.branchSwiftBankCde.getValue(), "BranchSwiftBankCde");
+		}
+		int intActive=0;
+		if(this.branchIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_branchIsActive.getSelectedItem(),intActive, "BranchIsActive");
 
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType
+						.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxBranch,this.pagingBranchList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

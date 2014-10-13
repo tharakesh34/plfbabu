@@ -45,19 +45,25 @@ package com.pennant.webui.applicationmaster.transactioncode;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -69,11 +75,15 @@ import com.pennant.backend.service.applicationmaster.TransactionCodeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.transactioncode.model.TransactionCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +109,19 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> im
 	protected Paging 		pagingTransactionCodeList; 			// autoWired
 	protected Listbox 		listBoxTransactionCode; 			// autoWired
 
+	protected Textbox tranCode; 					// autoWired
+	protected Listbox sortOperator_tranCode; 		// autoWired
+	protected Textbox tranDesc; 					// autoWired
+	protected Listbox sortOperator_tranDesc; 		// autoWired
+	protected Combobox tranType; 					// autoWired
+	protected Listbox sortOperator_tranType; 		// autoWired
+	protected Checkbox tranIsActive; 				// autoWired
+	protected Listbox sortOperator_tranIsActive; 	// autoWired
+	protected Textbox recordStatus; 				// autoWired
+	protected Listbox recordType;					// autoWired
+	protected Listbox sortOperator_recordStatus; 	// autoWired
+	protected Listbox sortOperator_recordType; 		// autoWired
+	
 	// List headers
 	protected Listheader listheader_TranCode; 		// autoWired
 	protected Listheader listheader_TranDesc; 		// autoWired
@@ -115,6 +138,8 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> im
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<TransactionCode> searchObj;
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
 	
 	private transient TransactionCodeService transactionCodeService;
 	private transient WorkFlowDetails workFlowDetails=null;
@@ -157,12 +182,35 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> im
 		}else{
 			wfAvailable=false;
 		}
-		
+		this.sortOperator_tranCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_tranCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_tranDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_tranDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_tranType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_tranType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		fillComboBox(this.tranType,"",PennantStaticListUtil.getTranType(),"");
+
+		this.sortOperator_tranIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_tranIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType= setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent on the users rights */
 		doCheckRights();
-		
-		this.borderLayout_TransactionCodeList.setHeight(getBorderLayoutHeight());
 
+		this.borderLayout_TransactionCodeList.setHeight(getBorderLayoutHeight());
+		this.listBoxTransactionCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingTransactionCodeList.setPageSize(getListRows());
 		this.pagingTransactionCodeList.setDetailed(true);
@@ -189,6 +237,12 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> im
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<TransactionCode>(TransactionCode.class,getListRows());
 		this.searchObj.addSort("TranCode", false);
+		this.searchObj.addField("tranCode");
+		this.searchObj.addField("tranDesc");
+		this.searchObj.addField("tranType");
+		this.searchObj.addField("tranIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("BMTTransactionCode_View");
@@ -210,9 +264,7 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> im
 			this.button_TransactionCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxTransactionCode,
-					this.pagingTransactionCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxTransactionCode.setItemRenderer(new TransactionCodeListModelItemRenderer());
 		}
@@ -362,9 +414,26 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> im
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingTransactionCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_TransactionCodeList, event);
-		this.window_TransactionCodeList.invalidate();
+		this.sortOperator_tranCode.setSelectedIndex(0);
+		this.tranCode.setValue("");
+		this.sortOperator_tranDesc.setSelectedIndex(0);
+		this.tranDesc.setValue("");
+		this.sortOperator_tranType.setSelectedIndex(0);
+		this.tranType.setSelectedIndex(0);
+		this.sortOperator_tranIsActive.setSelectedIndex(0);
+		this.tranIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears all the filter
+		this.searchObj.clearFilters();
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxTransactionCode,this.pagingTransactionCodeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -375,25 +444,7 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> im
 	 */
 	public void onClick$button_TransactionCodeList_TransactionCodeSearchDialog(Event event)throws Exception {
 		logger.debug("Entering" + event.toString());
-		
-		/*
-		 * we can call our TransactionCodeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected TransactionCode. For handed over
-		 * these parameter only a Map is accepted. So we put the TransactionCode object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("transactionCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-				"/WEB-INF/pages/ApplicationMaster/TransactionCode/TransactionCodeSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -408,6 +459,54 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> im
 		logger.debug("Entering" + event.toString());
 		PTListReportUtils reportUtils = new PTListReportUtils("TransactionCode", getSearchObj(),this.pagingTransactionCodeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doSearch() {
+		logger.debug("Entering");
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.tranCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_tranCode.getSelectedItem(),this.tranCode.getValue(), "TranCode");
+		}
+		if (!StringUtils.trimToEmpty(this.tranDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_tranDesc.getSelectedItem(),this.tranDesc.getValue(), "TranDesc");
+		}
+		if (this.tranType.getValue()!= null && !PennantConstants.List_Select.equals(this.tranType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_tranType.getSelectedItem(),this.tranType.getSelectedItem().getValue().toString(), "TranType");
+		}
+		int intActive=0;
+		if(this.tranIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_tranIsActive.getSelectedItem(),intActive, "TranIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxTransactionCode,this.pagingTransactionCodeList);
+
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

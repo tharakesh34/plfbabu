@@ -45,19 +45,26 @@ package com.pennant.webui.applicationmaster.baserate;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
@@ -71,10 +78,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.baserate.model.BaseRateListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 
 /**
@@ -101,6 +111,16 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 	protected Paging 		pagingBaseRateList; 		// auto wired
 	protected Listbox 		listBoxBaseRate; 			// auto wired
 
+	protected Textbox bRType; 						// auto wired
+	protected Listbox sortOperator_bRType; 			// auto wired
+	protected Datebox bREffDate; 					// auto wired
+	protected Listbox sortOperator_bREffDate; 		// auto wired
+	protected Decimalbox bRRate; 					// auto wired
+	protected Listbox sortOperator_bRRate; 			// auto wired
+	protected Textbox recordStatus; 				// auto wired
+	protected Listbox recordType;					// auto wired
+	protected Listbox sortOperator_recordStatus; 	// auto wired
+	protected Listbox sortOperator_recordType; 		// auto wired
 	// List headers
 	protected Listheader listheader_BRType; 		// auto wired
 	protected Listheader listheader_BREffDate; 		// auto wired
@@ -116,10 +136,11 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<BaseRate> searchObj;
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
 	
 	private transient BaseRateService baseRateService;
 	private transient WorkFlowDetails workFlowDetails=null;
-	
 	/**
 	 * default constructor.<br>
 	 */
@@ -157,7 +178,27 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 		}else{
 			wfAvailable=false;
 		}
-		
+		this.sortOperator_bRType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_bRType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_bREffDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_bREffDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_bRRate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_bRRate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -167,6 +208,7 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_BaseRateList.setHeight(getBorderLayoutHeight());
+		this.listBoxBaseRate.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingBaseRateList.setPageSize(getListRows());
@@ -178,7 +220,7 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 		this.listheader_BREffDate.setSortDescending(new FieldComparator("bREffDate", false));
 		this.listheader_BRRate.setSortAscending(new FieldComparator("bRRate", true));
 		this.listheader_BRRate.setSortDescending(new FieldComparator("bRRate", false));
-		
+
 		if (isWorkFlowEnabled()){
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
@@ -188,11 +230,17 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
+
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<BaseRate>(BaseRate.class,getListRows());
-		this.searchObj.addSort("BRType", false);
-		
+		this.searchObj.addSort("BRType",false);
+		this.searchObj.addField("bRType");
+		this.searchObj.addField("lovDescBRTypeName");
+		this.searchObj.addField("bREffDate");
+		this.searchObj.addField("bRRate");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
 		// Work flow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("RMTBaseRates_View");
@@ -214,9 +262,7 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 			this.button_BaseRateList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,
-					this.listBoxBaseRate,this.pagingBaseRateList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxBaseRate.setItemRenderer(new BaseRateListModelItemRenderer());
 		}
@@ -367,9 +413,22 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering"+event.toString());
-		this.pagingBaseRateList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_BaseRateList, event);
-		this.window_BaseRateList.invalidate();
+		this.bRType.setValue("");
+		this.sortOperator_bRType.setSelectedIndex(0);
+		this.bREffDate.setValue(null);
+		this.sortOperator_bREffDate.setSelectedIndex(0);
+		this.bRRate.setText("");
+		this.sortOperator_bRRate.setSelectedIndex(0);
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears all the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxBaseRate,this.pagingBaseRateList);
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -380,24 +439,7 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 	 */
 	public void onClick$button_BaseRateList_BaseRateSearchDialog(Event event) throws Exception {
 		logger.debug("Entering"+event.toString());
-		/*
-		 * we can call our BaseRateDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected BaseRate. For handed over
-		 * these parameter only a Map is accepted. So we put the BaseRate object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("baseRateCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/ApplicationMaster/BaseRate/BaseRateSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -413,7 +455,54 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> implements Seria
 		PTListReportUtils reportUtils = new PTListReportUtils("BaseRate", getSearchObj(),this.pagingBaseRateList.getTotalSize()+1);
 		logger.debug("Leaving"+event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+
+		//BaseRateType
+		if (!StringUtils.trimToEmpty(this.bRType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_bRType.getSelectedItem(),this.bRType.getValue(), "BRType");
+		}
+
+		//EffectiveDate
+		if (this.bREffDate.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_bREffDate.getSelectedItem(), DateUtility.formatDate(this.bREffDate.getValue(), PennantConstants.DBDateFormat), "BREffDate");
+		}
+
+		//BaseRate
+		if (this.bRRate.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_bRRate.getSelectedItem(),this.bRRate.getValue(), "BRRate");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxBaseRate,this.pagingBaseRateList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

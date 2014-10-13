@@ -45,19 +45,24 @@ package com.pennant.webui.applicationmaster.baseratecode;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.baseratecode.model.BaseRateCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,14 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 	protected Paging 		pagingBaseRateCodeList; 		// auto wired
 	protected Listbox 		listBoxBaseRateCode; 			// auto wired
 
+	protected Textbox bRType; 						// auto wired
+	protected Listbox sortOperator_bRType; 			// auto wired
+	protected Textbox bRTypeDesc; 					// auto wired
+	protected Listbox sortOperator_bRTypeDesc; 		// auto wired
+	protected Textbox recordStatus; 				// auto wired
+	protected Listbox recordType;					// auto wired
+	protected Listbox sortOperator_recordStatus; 	// auto wired
+	protected Listbox sortOperator_recordType; 		// auto wired
 	// List headers
 	protected Listheader listheader_BRType; 		// auto wired
 	protected Listheader listheader_BRTypeDesc; 	// auto wired
@@ -113,6 +129,8 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<BaseRateCode> searchObj;
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
 	
 	private transient BaseRateCodeService baseRateCodeService;
 	private transient WorkFlowDetails workFlowDetails=null;
@@ -155,7 +173,23 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 		}else{
 			wfAvailable=false;
 		}
-		
+		this.sortOperator_bRType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_bRType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_bRTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_bRTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType =setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -165,6 +199,7 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_BaseRateCodeList.setHeight(getBorderLayoutHeight());
+		this.listBoxBaseRateCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingBaseRateCodeList.setPageSize(getListRows());
@@ -186,10 +221,13 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 		}
 		
 		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<BaseRateCode>(
-				BaseRateCode.class,getListRows());
-		this.searchObj.addSort("BRType", false);
-		
+		this.searchObj = new JdbcSearchObject<BaseRateCode>(BaseRateCode.class,getListRows());
+		this.searchObj.addSort("BRType",false);
+		this.searchObj.addField("bRType");
+		this.searchObj.addField("bRTypeDesc");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
 		// Work flow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("RMTBaseRateCodes_View");
@@ -210,9 +248,7 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 			this.button_BaseRateCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,
-					this.listBoxBaseRateCode,this.pagingBaseRateCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxBaseRateCode.setItemRenderer(new BaseRateCodeListModelItemRenderer());
 		}
@@ -266,22 +302,22 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 						new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			}else{
-			String whereCond =  " AND BRType='"+ baseRateCode.getBRType()+
-							"' AND version=" + baseRateCode.getVersion()+" ";
-			
-			if(isWorkFlowEnabled()){
-				boolean userAcces =  validateUserAccess(workFlowDetails.getId(),
-						getUserWorkspace().getLoginUserDetails().getLoginUsrID(),
-						"BaseRateCode", whereCond, baseRateCode.getTaskId(),
-						baseRateCode.getNextTaskId());
-				if (userAcces){
-					showDetailView(baseRateCode);
+				String whereCond =  " AND BRType='"+ baseRateCode.getBRType()+
+						"' AND version=" + baseRateCode.getVersion()+" ";
+
+				if(isWorkFlowEnabled()){
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),
+							getUserWorkspace().getLoginUserDetails().getLoginUsrID(),
+							"BaseRateCode", whereCond, baseRateCode.getTaskId(),
+							baseRateCode.getNextTaskId());
+					if (userAcces){
+						showDetailView(baseRateCode);
+					}else{
+						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
 				}else{
-					PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					showDetailView(baseRateCode);
 				}
-			}else{
-				showDetailView(baseRateCode);
-			}
 			}
 		}
 		logger.debug("Leaving"+event.toString());
@@ -362,9 +398,20 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering"+event.toString());
-		this.pagingBaseRateCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_BaseRateCodeList, event);
-		this.window_BaseRateCodeList.invalidate();
+		this.sortOperator_bRType.setSelectedIndex(0);
+		this.bRType.setValue("");
+		this.sortOperator_bRTypeDesc.setSelectedIndex(0);
+		this.bRTypeDesc.setValue("");
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears All filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxBaseRateCode,this.pagingBaseRateCodeList);
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -375,24 +422,7 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 	 */
 	public void onClick$button_BaseRateCodeList_BaseRateCodeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering"+event.toString());
-		/*
-		 * we can call our BaseRateCodeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected BaseRateCode. For handed over
-		 * these parameter only a Map is accepted. So we put the BaseRateCode object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("baseRateCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/ApplicationMaster/BaseRateCode/BaseRateCodeSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -408,7 +438,50 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> implemen
 		PTListReportUtils reportUtils = new PTListReportUtils("BaseRateCode", getSearchObj(),this.pagingBaseRateCodeList.getTotalSize()+1);
 		logger.debug("Leaving"+event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+
+		//BaseRateType
+		if (!StringUtils.trimToEmpty(this.bRType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_bRType.getSelectedItem(),this.bRType.getValue(), "BRType");
+		}
+
+		//BaseRateDescription
+		if (!StringUtils.trimToEmpty(this.bRTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_bRTypeDesc.getSelectedItem(),this.bRTypeDesc.getValue(), "BRTypeDesc");
+		}
+
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType
+						.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxBaseRateCode,this.pagingBaseRateCodeList);
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

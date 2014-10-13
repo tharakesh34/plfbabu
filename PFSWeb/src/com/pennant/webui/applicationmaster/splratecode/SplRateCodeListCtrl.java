@@ -45,19 +45,24 @@ package com.pennant.webui.applicationmaster.splratecode;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.splratecode.model.SplRateCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,17 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> implements
 	protected Paging 		pagingSplRateCodeList; 			// autoWired
 	protected Listbox 		listBoxSplRateCode; 			// autoWired
 
+	protected Textbox  sRType; 						// autowired
+	protected Listbox  sortOperator_sRType; 		// autowired
+	protected Textbox  sRTypeDesc; 					// autowired
+	protected Listbox  sortOperator_sRTypeDesc; 	// autowired
+	protected Checkbox sRIsActive; 					// autowired
+	protected Listbox  sortOperator_sRIsActive; 	// autowired
+	protected Textbox  recordStatus; 				// autowired
+	protected Listbox  recordType;					// autowired
+	protected Listbox  sortOperator_recordStatus; 	// autowired
+	protected Listbox  sortOperator_recordType; 	// autowired
+
 	// List headers
 	protected Listheader listheader_SRType; 		// autoWired
 	protected Listheader listheader_SRTypeDesc; 	// autoWired
@@ -114,7 +133,9 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> implements
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<SplRateCode> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient SplRateCodeService splRateCodeService;
 	private transient WorkFlowDetails workFlowDetails=null;
 
@@ -156,6 +177,27 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> implements
 			wfAvailable=false;
 		}
 
+		this.sortOperator_sRType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sRType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_sRTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sRTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_sRIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_sRIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType =setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -165,7 +207,7 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> implements
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_SplRateCodeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxSplRateCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingSplRateCodeList.setPageSize(getListRows());
 		this.pagingSplRateCodeList.setDetailed(true);
@@ -191,6 +233,11 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> implements
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<SplRateCode>(SplRateCode.class,getListRows());
 		this.searchObj.addSort("SRType", false);
+		this.searchObj.addField("sRType");
+		this.searchObj.addField("sRTypeDesc");
+		this.searchObj.addField("sRIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -212,8 +259,7 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> implements
 			this.button_SplRateCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxSplRateCode,this.pagingSplRateCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxSplRateCode.setItemRenderer(new SplRateCodeListModelItemRenderer());
 		}	
@@ -360,9 +406,24 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> implements
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingSplRateCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_SplRateCodeList, event);
-		this.window_SplRateCodeList.invalidate();
+		this.sortOperator_sRType.setSelectedIndex(0);
+		this.sRType.setValue("");
+		this.sortOperator_sRTypeDesc.setSelectedIndex(0);
+		this.sRTypeDesc.setValue("");
+		this.sortOperator_sRIsActive.setSelectedIndex(0);
+		this.sRIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxSplRateCode,this.pagingSplRateCodeList);
+
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -373,24 +434,7 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> implements
 	 */
 	public void onClick$button_SplRateCodeList_SplRateCodeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our SplRateCodeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected SplRateCode. For handed over
-		 * these parameter only a Map is accepted. So we put the SplRateCode object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("splRateCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -406,7 +450,51 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> implements
 		PTListReportUtils reportUtils = new PTListReportUtils("SplRateCode", getSearchObj(),this.pagingSplRateCodeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
+		this.searchObj.clearFilters();
 
+		if (!StringUtils.trimToEmpty(this.sRType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_sRType.getSelectedItem(),this.sRType.getValue(), "SRType");
+		}
+		if (!StringUtils.trimToEmpty(this.sRTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_sRTypeDesc.getSelectedItem(),this.sRTypeDesc.getValue(), "SRTypeDesc");
+		}
+		int intActive=0;
+		if(this.sRIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_sRIsActive.getSelectedItem(),intActive, "SRIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSplRateCode,this.pagingSplRateCodeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

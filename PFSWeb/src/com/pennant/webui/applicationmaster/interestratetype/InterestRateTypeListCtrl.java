@@ -45,21 +45,26 @@ package com.pennant.webui.applicationmaster.interestratetype;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
-
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
@@ -69,11 +74,15 @@ import com.pennant.backend.service.applicationmaster.InterestRateTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.interestratetype.model.InterestRateTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +108,17 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType>	
 	protected Paging 		pagingInterestRateTypeList; 			// autoWired
 	protected Listbox 		listBoxInterestRateType; 				// autoWired
 
+	protected Combobox 	intRateTypeCode; 					// autoWired
+	protected Listbox 	sortOperator_intRateTypeCode; 		// autoWired
+	protected Textbox 	intRateTypeDesc;				 	// autoWired
+	protected Listbox 	sortOperator_intRateTypeDesc; 		// autoWired
+	protected Checkbox 	intRateTypeIsActive; 				// autoWired
+	protected Listbox 	sortOperator_intRateTypeIsActive; 	// autoWired
+	protected Textbox 	recordStatus; 						// autoWired
+	protected Listbox 	recordType; 						// autoWired
+	protected Listbox 	sortOperator_recordStatus; 			// autoWired
+	protected Listbox 	sortOperator_recordType; 			// autoWired
+
 	// List headers
 	protected Listheader listheader_IntRateTypeCode; 				// autoWired
 	protected Listheader listheader_IntRateTypeDesc; 				// autoWired
@@ -114,7 +134,9 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType>	
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<InterestRateType> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient InterestRateTypeService interestRateTypeService;
 	private transient WorkFlowDetails 		  workFlowDetails = null;
 
@@ -156,6 +178,26 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType>	
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_intRateTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_intRateTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		fillComboBox(this.intRateTypeCode,"",PennantStaticListUtil.getInterestRateType(true),"");
+		
+		this.sortOperator_intRateTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_intRateTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_intRateTypeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_intRateTypeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -166,7 +208,7 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType>	
 		 * that are filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_InterestRateTypeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxInterestRateType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingInterestRateTypeList.setPageSize(getListRows());
 		this.pagingInterestRateTypeList.setDetailed(true);
@@ -191,6 +233,11 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType>	
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<InterestRateType>(InterestRateType.class, getListRows());
 		this.searchObj.addSort("IntRateTypeCode", false);
+		this.searchObj.addField("intRateTypeCode");
+		this.searchObj.addField("intRateTypeDesc");
+		this.searchObj.addField("intRateTypeIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -212,8 +259,7 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType>	
 			this.button_InterestRateTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxInterestRateType,this.pagingInterestRateTypeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxInterestRateType.setItemRenderer(new InterestRateTypeListModelItemRenderer());
 		}
@@ -365,9 +411,23 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType>	
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingInterestRateTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_InterestRateTypeList, event);
-		this.window_InterestRateTypeList.invalidate();
+		this.sortOperator_intRateTypeCode.setSelectedIndex(0);
+		this.intRateTypeCode.setSelectedIndex(0);
+		this.sortOperator_intRateTypeDesc.setSelectedIndex(0);
+		this.intRateTypeDesc.setValue("");
+		this.sortOperator_intRateTypeIsActive.setSelectedIndex(0);
+		this.intRateTypeIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears the Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxInterestRateType,this.pagingInterestRateTypeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -379,24 +439,7 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType>	
 	 */
 	public void onClick$button_InterestRateTypeList_InterestRateTypeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our InterestRateTypeDialog ZUL-file with parameters. So
-		 * we can call them with a object of the selected InterestRateType. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * InterestRateType object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("interestRateTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/ApplicationMaster/InterestRateType/InterestRateTypeSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -412,7 +455,52 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType>	
 		PTListReportUtils reportUtils = new PTListReportUtils("InterestRateType", getSearchObj(),this.pagingInterestRateTypeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+		
+		if (this.intRateTypeCode.getValue()!= null && !PennantConstants.List_Select.equals(this.intRateTypeCode.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_intRateTypeCode.getSelectedItem(),this.intRateTypeCode.getSelectedItem().getValue().toString(), "IntRateTypeCode");
+		}
+		if (!StringUtils.trimToEmpty(this.intRateTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_intRateTypeDesc.getSelectedItem(),this.intRateTypeDesc.getValue(), "IntRateTypeDesc");
+		}
+
+		int intActive=0;
+		if(this.intRateTypeIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_intRateTypeIsActive.getSelectedItem(),intActive, "IntRateTypeIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxInterestRateType,this.pagingInterestRateTypeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

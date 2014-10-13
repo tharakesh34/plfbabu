@@ -45,19 +45,24 @@ package com.pennant.webui.applicationmaster.relationshipofficer;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.relationshipofficer.model.RelationshipOfficerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -101,6 +109,19 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 	protected Paging 		pagingRelationshipOfficerList; 			// autoWired
 	protected Listbox 		listBoxRelationshipOfficer; 			// autoWired
 
+	protected Textbox rOfficerCode; 								// autoWired
+	protected Listbox sortOperator_rOfficerCode; 					// autoWired
+	protected Textbox rOfficerDesc; 								// autoWired
+	protected Listbox sortOperator_rOfficerDesc; 					// autoWired
+	protected Textbox rOfficerDeptCode; 							// autoWired
+	protected Listbox sortOperator_rOfficerDeptCode; 				// autoWired
+	protected Checkbox rOfficerIsActive; 							// autoWired
+	protected Listbox sortOperator_rOfficerIsActive; 				// autoWired
+	protected Textbox recordStatus; 								// autoWired
+	protected Listbox recordType;									// autoWired
+	protected Listbox sortOperator_recordStatus; 					// autoWired
+	protected Listbox sortOperator_recordType;
+
 	// List headers
 	protected Listheader listheader_ROfficerCode; 		// autoWired
 	protected Listheader listheader_ROfficerDesc; 		// autoWired
@@ -117,7 +138,9 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<RelationshipOfficer> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient RelationshipOfficerService relationshipOfficerService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -159,12 +182,34 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_rOfficerCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_rOfficerCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_rOfficerDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_rOfficerDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_rOfficerDeptCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_rOfficerDeptCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_rOfficerIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_rOfficerIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_RelationshipOfficerList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxRelationshipOfficer.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingRelationshipOfficerList.setPageSize(getListRows());
 		this.pagingRelationshipOfficerList.setDetailed(true);
@@ -191,6 +236,14 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<RelationshipOfficer>(RelationshipOfficer.class, getListRows());
 		this.searchObj.addSort("ROfficerCode", false);
+		this.searchObj.addField("rOfficerCode");
+		this.searchObj.addField("rOfficerDesc");
+		this.searchObj.addField("rOfficerDeptCode");
+		this.searchObj.addField("lovDescROfficerDeptCodeName");
+		this.searchObj.addField("rOfficerIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -213,8 +266,7 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 			this.button_RelationshipOfficerList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxRelationshipOfficer,this.pagingRelationshipOfficerList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxRelationshipOfficer.setItemRenderer(new RelationshipOfficerListModelItemRenderer());
 		}
@@ -361,9 +413,25 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingRelationshipOfficerList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_RelationshipOfficerList, event);
-		this.window_RelationshipOfficerList.invalidate();
+		this.sortOperator_rOfficerCode.setSelectedIndex(0);
+		this.rOfficerCode.setValue("");
+		this.sortOperator_rOfficerDesc.setSelectedIndex(0);
+		this.rOfficerDesc.setValue("");
+		this.sortOperator_rOfficerDeptCode.setSelectedIndex(0);
+		this.rOfficerDeptCode.setValue("");
+		this.sortOperator_rOfficerIsActive.setSelectedIndex(0);
+		this.rOfficerIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxRelationshipOfficer,this.pagingRelationshipOfficerList);
+
 		logger.debug("Leaving");
 	}
 
@@ -373,25 +441,7 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 
 	public void onClick$button_RelationshipOfficerList_RelationshipOfficerSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our RelationshipOfficerDialog ZUL-file with parameters.
-		 * So we can call them with a object of the selected
-		 * RelationshipOfficer. For handed over these parameter only a Map is
-		 * accepted. So we put the RelationshipOfficer object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("relationshipOfficerCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-				"/WEB-INF/pages/ApplicationMaster/RelationshipOfficer/RelationshipOfficerSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -407,7 +457,54 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 		PTListReportUtils reportUtils = new PTListReportUtils("RelationshipOfficer", getSearchObj(),this.pagingRelationshipOfficerList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
+	public void doSearch() {
+		logger.debug("Entering");
+		this.searchObj.clearFilters();
 
+		if (!StringUtils.trimToEmpty(this.rOfficerCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_rOfficerCode.getSelectedItem(),this.rOfficerCode.getValue(), "ROfficerCode");
+		}
+		if (!StringUtils.trimToEmpty(this.rOfficerDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_rOfficerDesc.getSelectedItem(),this.rOfficerDesc.getValue(), "ROfficerDesc");
+		}
+		if (!StringUtils.trimToEmpty(this.rOfficerDeptCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_rOfficerDeptCode.getSelectedItem(),this.rOfficerDeptCode.getValue(), "ROfficerDeptCode");
+		}
+		int intActive=0;
+		if(this.rOfficerIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_rOfficerIsActive.getSelectedItem(),intActive, "ROfficerIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxRelationshipOfficer,this.pagingRelationshipOfficerList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

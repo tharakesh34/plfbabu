@@ -45,19 +45,24 @@ package com.pennant.webui.applicationmaster.salesofficer;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.salesofficer.model.SalesOfficerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,19 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> implemen
 	protected Paging pagingSalesOfficerList; 					// autoWired
 	protected Listbox listBoxSalesOfficer; 						// autoWired
 
+	protected Textbox salesOffCode; 					// autoWired
+	protected Listbox sortOperator_salesOffCode; 		// autoWired
+	protected Textbox salesOffFName; 					// autoWired
+	protected Listbox sortOperator_salesOffFName; 		// autoWired
+	protected Textbox salesOffDept; 					// autoWired
+	protected Listbox sortOperator_salesOffDept; 		// autoWired
+	protected Checkbox salesOffIsActive; 				// autoWired
+	protected Listbox sortOperator_salesOffIsActive; 	// autoWired
+	protected Textbox recordStatus; 					// autoWired
+	protected Listbox recordType; 						// autoWired
+	protected Listbox sortOperator_recordStatus; 		// autoWired
+	protected Listbox sortOperator_recordType;			// autoWired
+
 	// List headers
 	protected Listheader listheader_SalesOffCode; 				// autoWired
 	protected Listheader listheader_SalesOffFName; 				// autoWired
@@ -115,7 +136,9 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> implemen
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<SalesOfficer> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient SalesOfficerService salesOfficerService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -157,12 +180,35 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> implemen
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_salesOffCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_salesOffCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_salesOffFName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_salesOffFName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_salesOffDept.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_salesOffDept.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_salesOffIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_salesOffIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_SalesOfficerList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxSalesOfficer.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingSalesOfficerList.setPageSize(getListRows());
 		this.pagingSalesOfficerList.setDetailed(true);
@@ -189,6 +235,13 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> implemen
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<SalesOfficer>(SalesOfficer.class,getListRows());
 		this.searchObj.addSort("SalesOffCode", false);
+		this.searchObj.addField("salesOffCode");
+		this.searchObj.addField("salesOffFName");
+		this.searchObj.addField("salesOffDept");
+		this.searchObj.addField("lovDescSalesOffDeptName");
+		this.searchObj.addField("salesOffIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -212,8 +265,7 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> implemen
 			this.button_SalesOfficerList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxSalesOfficer, this.pagingSalesOfficerList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxSalesOfficer.setItemRenderer(new SalesOfficerListModelItemRenderer());
 		}
@@ -371,9 +423,25 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> implemen
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingSalesOfficerList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_SalesOfficerList, event);
-		this.window_SalesOfficerList.invalidate();
+		this.sortOperator_salesOffCode.setSelectedIndex(0);
+		this.salesOffCode.setValue("");
+		this.sortOperator_salesOffDept.setSelectedIndex(0);
+		this.salesOffDept.setValue("");
+		this.sortOperator_salesOffFName.setSelectedIndex(0);
+		this.salesOffFName.setValue("");
+		this.sortOperator_salesOffIsActive.setSelectedIndex(0);
+		this.salesOffIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears All the Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxSalesOfficer, this.pagingSalesOfficerList);
+
 		logger.debug("Leaving");
 	}
 
@@ -383,24 +451,7 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> implemen
 
 	public void onClick$button_SalesOfficerList_SalesOfficerSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our SalesOfficerDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected SalesOfficer. For handed
-		 * over these parameter only a Map is accepted. So we put the
-		 * SalesOfficer object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("salesOfficerCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-				"/WEB-INF/pages/ApplicationMaster/SalesOfficer/SalesOfficerSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -416,7 +467,54 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> implemen
 		PTListReportUtils reportUtils = new PTListReportUtils("SalesOfficer", getSearchObj(),this.pagingSalesOfficerList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
+	public void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.salesOffCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_salesOffCode.getSelectedItem(),this.salesOffCode.getValue(), "SalesOffCode");
+		}
+		if (!StringUtils.trimToEmpty(this.salesOffFName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_salesOffFName.getSelectedItem(),this.salesOffFName.getValue(), "SalesOffFName");
+		}
+		if (!StringUtils.trimToEmpty(this.salesOffDept.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_salesOffDept.getSelectedItem(),this.salesOffDept.getValue(), "SalesOffDept");
+		}
+		int intActive=0;
+		if(this.salesOffIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_salesOffIsActive.getSelectedItem(),intActive, "SalesOffIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSalesOfficer,this.pagingSalesOfficerList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
