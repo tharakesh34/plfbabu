@@ -14,6 +14,9 @@ public class NoGraceReducingRateTestFactory {
 	public Object[] createObjects(String name, String scheduleMethod,
 			long reqRepayAmt, long expLastRepayAmt, long expTotalProfit) {
 		FinScheduleData schedule = BeanFactory.getSchedule(false);
+		schedule.getFinanceMain().setNumberOfTerms(24);
+		schedule.getFinanceMain().setReqTerms(24);
+		schedule.getFinanceMain().setDownPayment(BigDecimal.ZERO);
 		schedule.getFinanceMain().setGrcPeriodEndDate(
 				DateUtility.getDate("01/01/2011"));
 		schedule.getFinanceMain().setNextRepayDate(

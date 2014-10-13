@@ -39,9 +39,5 @@ public class ScheduleTest {
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
-		
-		System.out.println(name);
-		System.out.println(actLastRepayAmt);
-		System.out.println(actTotProfit);
 	}
 }

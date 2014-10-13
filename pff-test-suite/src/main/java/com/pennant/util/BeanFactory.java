@@ -22,7 +22,6 @@ public class BeanFactory {
 		schedule.getDisbursementDetails().add(new FinanceDisbursement());
 
 		FinanceMain finance = schedule.getFinanceMain();
-		finance.setNumberOfTerms(12);
 		if (allowGracePeriod) {
 			finance.setAllowGrcPeriod(true);
 			finance.setGraceBaseRate("L1");
@@ -49,9 +48,7 @@ public class BeanFactory {
 		if (allowGracePeriod) {
 			finance.setCpzAtGraceEnd(true);
 		}
-		finance.setDownPayment(new BigDecimal(10000000));
 		finance.setProfitDaysBasis(CalculationConstants.IDB_ACT_365FIXED);
-		finance.setReqTerms(12);
 		finance.setEventFromDate(toDate(EVENT_FROM_DATE));
 		finance.setEventToDate(toDate(EVENT_TO_DATE));
 		finance.setRecalType("CURPRD");

@@ -15,6 +15,9 @@ public class GraceNoPayFlatRateTestFactory {
 	public Object[] createObjects(String name, String scheduleMethod,
 			long reqRepayAmt, long expLastRepayAmt, long expTotalProfit) {
 		FinScheduleData schedule = BeanFactory.getSchedule(true);
+		schedule.getFinanceMain().setNumberOfTerms(12);
+		schedule.getFinanceMain().setReqTerms(12);
+		schedule.getFinanceMain().setDownPayment(new BigDecimal(10000000));
 		schedule.getFinanceMain().setGrcPeriodEndDate(
 				DateUtility.getDate("31/12/2011"));
 		schedule.getFinanceMain().setNextRepayDate(
