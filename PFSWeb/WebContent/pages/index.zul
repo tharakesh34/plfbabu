@@ -67,33 +67,8 @@
 										</menu>
 									</menubar>
 								</hbox>
+								<timer id="hostStatusTimer" repeats="true" />
 							</div>
-							<timer id="timer" delay="1000"
-									repeats="true">
-								<attribute name="onTimer">
-									Date date = new Date();
-									java.text.DateFormat dateFormat = new java.text.SimpleDateFormat(
-											"dd/MMM/yyyy");
-									label_currentDate.setValue(dateFormat.format(date));
-									dateFormat = new java.text.SimpleDateFormat("HH:mm:ss");
-									label_currentTime.setValue(dateFormat.format(date));
-									
-									 String hostStatusReq= com.pennant.app.util.SystemParameterDetails.getSystemParameterValue("HOSTSTATUS_REQUIRED").toString();
-									 if(hostStatusReq.equals("Y")){
-										if (com.pennant.app.util.HostStatusUtil.getHostStatus("PFF")) {
-											  if(winMessageBar.getChildren().contains("hostStatus")){
-											 	Image image = (Image)winMessageBar.getFellowIfAny("hostStatus");
-											  	image.setSrc("//images//Pennant//HostUp.jpg");
-											  }
-										} else {
-											if(winMessageBar.getChildren().contains("hostStatus")){
-												Image image = (Image)winMessageBar.getFellowIfAny("hostStatus");
-										 		image.setSrc("//images//Pennant//HostDown.jpg");
-										 	}
-										}
-									}
-							</attribute>
-						</timer>
 					</window>
 					</hbox>
 				</div>

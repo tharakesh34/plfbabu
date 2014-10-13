@@ -63,9 +63,11 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Timer;
 import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
 
@@ -89,7 +91,6 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 	protected Window winUserBar; // autowired
 
 	// Used Labels
-	private org.zkoss.zul.Timer timer;
 	private Label label_branch;
 	private Menu menu_user;
 	
@@ -101,6 +102,11 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 	private String _BranchCodeText = "";
 	private String _DepartmentCodeText = "";
 
+	protected Label label_currentDate; // autowired
+	protected Label label_currentTime; // autowired
+    protected Timer hostStatusTimer; // autowired
+    protected Window outerIndexWindow; // autowired
+    
 	private transient MenuDetailsService menuDetailsService;
 
 	/**
@@ -180,7 +186,8 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void onCreate$winUserBar(Event event) {
 		this.winUserBar.setBorder("none");
-		Events.postEvent("onTimer", this.timer, event);
+		this.hostStatusTimer.setDelay(10000);
+		this.hostStatusTimer.start();
 	}
  
 	/**
@@ -269,6 +276,37 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		builder.append("</table>");
 		return builder.toString();
+	}
+
+	/**
+	 * this event will raise for every n seconds .
+	 * 
+	 * @param event
+	 */
+	public void onTimer$hostStatusTimer(Event event) {
+				
+		Date date = new Date();
+		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("dd/MMM/yyyy");
+		label_currentDate.setValue(dateFormat.format(date));
+		dateFormat = new java.text.SimpleDateFormat("HH:mm:ss");
+		label_currentTime.setValue(dateFormat.format(date));
+		String hostStatusReq = com.pennant.app.util.SystemParameterDetails
+				.getSystemParameterValue("HOSTSTATUS_REQUIRED").toString();
+		
+		//winUserBar
+		Window winMessageBar =  (Window) this.outerIndexWindow.getFellowIfAny("winMessageBar");
+		
+		if (winMessageBar.getFellowIfAny("hostStatus") != null) {
+			Image image = (Image) winMessageBar.getFellowIfAny("hostStatus");
+			if (hostStatusReq.equals("Y")) {
+				image.setVisible(true);
+				if (com.pennant.app.util.HostStatusUtil.getHostStatus("PFF")) {
+					image.setSrc("//images//Pennant//HostUp.png");
+				} else {
+					image.setSrc("//images//Pennant//HostDown.png");
+				}
+			} 
+		}
 	}
 
 

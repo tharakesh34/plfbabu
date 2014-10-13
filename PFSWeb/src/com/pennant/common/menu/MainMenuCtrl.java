@@ -355,6 +355,7 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 				tab.addEventListener(Events.ON_CLOSE, new EventListener<Event>() {
 					public void onEvent(Event event) throws UiException {
 						String pageName = event.getTarget().getId().replace("tab_", "");
+						@SuppressWarnings("deprecation")
 						UserWorkspace workspace= UserWorkspace.getInstance();
 						workspace.deAlocateAuthorities(pageName);
 					}
@@ -534,6 +535,7 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 
 	private boolean isAllowed(String menuId){
 		logger.debug("Entering ");
+		@SuppressWarnings("deprecation")
 		UserWorkspace workspace = UserWorkspace.getInstance();
 		if (workspace.getHasMenuRights().get(menuId)==null){
 			return false;
