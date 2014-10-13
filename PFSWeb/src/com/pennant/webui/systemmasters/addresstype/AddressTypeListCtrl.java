@@ -45,19 +45,25 @@ package com.pennant.webui.systemmasters.addresstype;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.addresstype.model.AddressTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +108,24 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 	protected Paging 		pagingAddressTypeList; 			// autoWired
 	protected Listbox 		listBoxAddressType; 			// autoWired
 
+	protected Textbox addrTypeCode;
+	protected Listbox sortOperator_addrTypeCode;
+
+	protected Textbox addrTypeDesc;
+	protected Listbox sortOperator_addrTypeDesc;
+
+	protected Intbox addrTypePriority;
+	protected Listbox sortOperator_addrTypePriority;
+
+	protected Checkbox addrTypeIsActive;
+	protected Listbox sortOperator_addrTypeIsActive;
+
+	protected Textbox recordStatus;
+	protected Listbox sortOperator_recordStatus;
+
+	protected Listbox recordType;
+	protected Listbox sortOperator_recordType;
+
 	// List headers
 	protected Listheader listheader_AddrTypeCode; 		// autoWired
 	protected Listheader listheader_AddrTypeDesc; 		// autoWired
@@ -115,7 +142,9 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<AddressType> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient AddressTypeService addressTypeService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -158,6 +187,30 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 			wfAvailable = false;
 		}
 
+		this.sortOperator_addrTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_addrTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_addrTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_addrTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_addrTypePriority.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_addrTypePriority.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_addrTypeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_addrTypeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -167,6 +220,7 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_AddressTypeList.setHeight(getBorderLayoutHeight());
+		this.listBoxAddressType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingAddressTypeList.setPageSize(getListRows());
@@ -191,24 +245,28 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 			this.listheader_RecordType.setVisible(false);
 		}
 
-		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<AddressType>(AddressType.class, getListRows());
-		this.searchObj.addSort("AddrTypeCode", false);
+		// ++ create the searchObject and initial sorting ++//
+		this.searchObj = new JdbcSearchObject<AddressType>(AddressType.class,getListRows());
+		this.searchObj.addSort("AddrTypeCode",false);
+		this.searchObj.addField("addrTypeCode");
+		this.searchObj.addField("addrTypeDesc");
+		this.searchObj.addField("addrTypePriority");
+		this.searchObj.addField("addrTypeIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("BMTAddressTypes_View");
 			if (isFirstTask()) {
 				button_AddressTypeList_NewAddressType.setVisible(true);
 			} else {
 				button_AddressTypeList_NewAddressType.setVisible(false);
 			}
-
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-		} else {
+			this.searchObj.addTabelName("BMTAddressTypes_View");
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+		} else{
 			this.searchObj.addTabelName("BMTAddressTypes_AView");
 		}
-
 		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_AddressTypeList_NewAddressType.setVisible(false);
@@ -216,11 +274,11 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 			this.button_AddressTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxAddressType, this.pagingAddressTypeList);
+			doSearch();              
 			// set the itemRenderer
 			this.listBoxAddressType.setItemRenderer(new AddressTypeListModelItemRenderer());
 		}
+		this.listBoxAddressType.setHeight(getBorderLayoutHeight());
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -251,7 +309,6 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 
 	public void onAddressTypeItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
 		// get the selected AddressType object
 		final Listitem item = this.listBoxAddressType.getSelectedItem();
 
@@ -325,7 +382,6 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 		if (aAddressType.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aAddressType.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("addressType", aAddressType);
 		/*
@@ -369,9 +425,26 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingAddressTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_AddressTypeList, event);
-		this.window_AddressTypeList.invalidate();
+		this.sortOperator_addrTypeCode.setSelectedIndex(0);
+		this.addrTypeCode.setValue("");
+		this.sortOperator_addrTypeDesc.setSelectedIndex(0);
+		this.addrTypeDesc.setValue("");
+		this.sortOperator_addrTypePriority.setSelectedIndex(0);
+		this.addrTypePriority.setValue(null);
+		this.sortOperator_addrTypeIsActive.setSelectedIndex(0);
+		this.addrTypeIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clear All Filters
+		this.searchObj.clearFilters();
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(getSearchObj(), this.listBoxAddressType,this.pagingAddressTypeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -380,28 +453,56 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> implements
 	 */
 	public void onClick$button_AddressTypeList_AddressTypeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our AddressTypeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected AddressType. For handed over
-		 * these parameter only a Map is accepted. So we put the AddressType
-		 * object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("addressTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/AddressType/AddressTypeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.addrTypeCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_addrTypeCode.getSelectedItem(),this.addrTypeCode.getValue(), "AddrTypeCode");
+		}
+		if (!StringUtils.trimToEmpty(this.addrTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_addrTypeDesc.getSelectedItem(),this.addrTypeDesc.getValue(), "AddrTypeDesc");
+		}
+		if (this.addrTypePriority.getValue()!= null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_addrTypePriority.getSelectedItem(),this.addrTypePriority.getValue(), "AddrTypePriority");
+		}
+		// Active
+		int intActive=0;
+		if(this.addrTypeIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_addrTypeIsActive.getSelectedItem(),intActive, "AddrTypeIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxAddressType,this.pagingAddressTypeList);
+		logger.debug("Leaving");
+	}
 	/**
 	 * When the addressType print button is clicked.
 	 * 

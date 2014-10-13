@@ -45,19 +45,25 @@ package com.pennant.webui.systemmasters.emailtype;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.emailtype.model.EMailTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -107,6 +116,19 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 	protected Listheader listheader_RecordStatus; 		// autoWired
 	protected Listheader listheader_RecordType;
 
+	protected Textbox 	emailTypeCode; 						// autoWired
+	protected Listbox 	sortOperator_emailTypeCode; 		// autoWired
+	protected Textbox 	emailTypeDesc; 						// autoWired
+	protected Listbox 	sortOperator_emailTypeDesc; 		// autoWired
+	protected Intbox 	emailTypePriority; 					// autoWired
+	protected Listbox 	sortOperator_emailTypePriority; 	// autoWired
+	protected Checkbox 	emailTypeIsActive; 					// autoWired
+	protected Listbox 	sortOperator_emailTypeIsActive; 	// autoWired
+	protected Textbox 	recordStatus; 						// autoWired
+	protected Listbox 	recordType; 						// autoWired
+	protected Listbox 	sortOperator_recordStatus; 			// autoWired
+	protected Listbox 	sortOperator_recordType; 			// autoWired
+
 	// checkRights
 	protected Button btnHelp; 										// autoWired
 	protected Button button_EMailTypeList_NewEMailType; 			// autoWired
@@ -115,7 +137,9 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<EMailType> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient EMailTypeService eMailTypeService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -157,6 +181,30 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_emailTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_emailTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_emailTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_emailTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_emailTypePriority.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_emailTypePriority.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_emailTypeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_emailTypeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+			
+		}
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -167,7 +215,7 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_EMailTypeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxEMailType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingEMailTypeList.setPageSize(getListRows());
 		this.pagingEMailTypeList.setDetailed(true);
@@ -192,8 +240,14 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 		}
 
 		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<EMailType>(EMailType.class, getListRows());
-		this.searchObj.addSort("EmailTypeCode", false);
+		this.searchObj =new JdbcSearchObject<EMailType>(EMailType.class, getListRows());
+		this.searchObj.addSort("EmailTypeCode",false);
+		this.searchObj.addField("emailTypeCode");
+		this.searchObj.addField("emailTypeDesc");
+		this.searchObj.addField("emailTypePriority");
+		this.searchObj.addField("emailTypeIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -216,8 +270,7 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 			this.button_EMailTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxEMailType, this.pagingEMailTypeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxEMailType.setItemRenderer(new EMailTypeListModelItemRenderer());
 		}
@@ -258,7 +311,6 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 			// CAST AND STORE THE SELECTED OBJECT
 			final EMailType aEMailType = (EMailType) item.getAttribute("data");
 			final EMailType eMailType = getEMailTypeService().getEMailTypeById(aEMailType.getId());
-
 			if (eMailType == null) {
 
 				String[] valueParm = new String[2];
@@ -324,7 +376,6 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 		if (aEMailType.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aEMailType.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("eMailType", aEMailType);
 		/*
@@ -368,9 +419,25 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingEMailTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_EMailTypeList, event);
-		this.window_EMailTypeList.invalidate();
+
+		this.sortOperator_emailTypeCode.setSelectedIndex(0);
+		this.emailTypeCode.setValue("");
+		this.sortOperator_emailTypeDesc.setSelectedIndex(0);
+		this.emailTypeDesc.setValue("");
+		this.sortOperator_emailTypePriority.setSelectedIndex(0);
+		this.emailTypePriority.setValue(null);
+		this.sortOperator_emailTypeIsActive.setSelectedIndex(0);
+		this.emailTypeIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears the Filter
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxEMailType,this.pagingEMailTypeList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -382,25 +449,7 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 	 */
 	public void onClick$button_EMailTypeList_EMailTypeSearchDialog(Event event)	throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our EMailTypeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected EMailType. For handed over
-		 * these parameter only a Map is accepted. So we put the EMailType
-		 * object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("eMailTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/EMailType/EMailTypeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -417,6 +466,70 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> implements Ser
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+		
+		if (!StringUtils.trimToEmpty(this.emailTypeCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_emailTypeCode.getSelectedItem(),
+					this.emailTypeCode.getValue(), "EmailTypeCode");
+		}
+		if (!StringUtils.trimToEmpty(this.emailTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_emailTypeDesc.getSelectedItem(),
+					this.emailTypeDesc.getValue(), "EmailTypeDesc");
+		}
+		if (this.emailTypePriority.getValue()!= null) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_emailTypePriority.getSelectedItem(),
+					this.emailTypePriority.getValue(), "EmailTypePriority");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.emailTypeIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_emailTypeIsActive.getSelectedItem(),intActive, "EmailTypeIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType
+						.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),
+					"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxEMailType,
+				this.pagingEMailTypeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

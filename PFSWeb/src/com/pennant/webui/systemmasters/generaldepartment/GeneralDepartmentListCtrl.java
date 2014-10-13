@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.generaldepartment;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.generaldepartment.model.GeneralDepartmentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,14 @@ public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment
 	protected Paging 		pagingGeneralDepartmentList; 		// autoWired
 	protected Listbox 		listBoxGeneralDepartment; 			// autoWired
 
+	protected Textbox genDepartment; 					// autoWired
+	protected Listbox sortOperator_genDepartment; 		// autoWired
+	protected Textbox genDeptDesc; 						// autoWired
+	protected Listbox sortOperator_genDeptDesc; 		// autoWired
+	protected Textbox recordStatus; 					// autoWired
+	protected Listbox recordType;						// autoWired
+	protected Listbox sortOperator_recordStatus; 		// autoWired
+	protected Listbox sortOperator_recordType; 			// autoWired
 	// List headers
 	protected Listheader listheader_GenDepartment; 	// autoWired
 	protected Listheader listheader_GenDeptDesc; 	// autoWired
@@ -113,6 +129,8 @@ public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<GeneralDepartment> searchObj;
+	protected Grid  searchGrid;
+	protected Row row_AlwWorkflow;
 	
 	private transient GeneralDepartmentService generalDepartmentService;
 	private transient WorkFlowDetails workFlowDetails=null;
@@ -154,7 +172,25 @@ public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment
 		}else{
 			wfAvailable=false;
 		}
-		
+		this.sortOperator_genDepartment.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_genDepartment.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_genDeptDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_genDeptDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -164,39 +200,34 @@ public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_GeneralDepartmentList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxGeneralDepartment.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingGeneralDepartmentList.setPageSize(getListRows());
 		this.pagingGeneralDepartmentList.setDetailed(true);
 
-		this.listheader_GenDepartment.setSortAscending(
-				new FieldComparator("genDepartment", true));
-		this.listheader_GenDepartment.setSortDescending(
-				new FieldComparator("genDepartment", false));
-		this.listheader_GenDeptDesc.setSortAscending(
-				new FieldComparator("genDeptDesc", true));
-		this.listheader_GenDeptDesc.setSortDescending(
-				new FieldComparator("genDeptDesc", false));
-		
+		this.listheader_GenDepartment.setSortAscending(new FieldComparator("genDepartment", true));
+		this.listheader_GenDepartment.setSortDescending(new FieldComparator("genDepartment", false));
+		this.listheader_GenDeptDesc.setSortAscending(new FieldComparator("genDeptDesc", true));
+		this.listheader_GenDeptDesc.setSortDescending(new FieldComparator("genDeptDesc", false));
+
 		if (isWorkFlowEnabled()){
-			this.listheader_RecordStatus.setSortAscending(
-					new FieldComparator("recordStatus", true));
-			this.listheader_RecordStatus.setSortDescending(
-					new FieldComparator("recordStatus", false));
-			this.listheader_RecordType.setSortAscending(
-					new FieldComparator("recordType", true));
-			this.listheader_RecordType.setSortDescending(
-					new FieldComparator("recordType", false));
+			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
+			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
+			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
+			this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
 		}else{
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
+
 		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<GeneralDepartment>(
-				GeneralDepartment.class,getListRows());
-		this.searchObj.addSort("GenDepartment", false);
-		
+		this.searchObj = new JdbcSearchObject<GeneralDepartment>(GeneralDepartment.class,getListRows());;
+		this.searchObj.addSort("GenDepartment",false);
+		this.searchObj.addField("genDepartment");
+		this.searchObj.addField("genDeptDesc");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("RMTGenDepartments_View");
@@ -206,8 +237,7 @@ public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment
 				button_GeneralDepartmentList_NewGeneralDepartment.setVisible(false);
 			}
 
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),
-					isFirstTask());
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
 		}else{
 			this.searchObj.addTabelName("RMTGenDepartments_AView");
 		}
@@ -217,15 +247,11 @@ public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment
 			this.button_GeneralDepartmentList_NewGeneralDepartment.setVisible(false);
 			this.button_GeneralDepartmentList_GeneralDepartmentSearchDialog.setVisible(false);
 			this.button_GeneralDepartmentList_PrintList.setVisible(false);
-			PTMessageUtils.showErrorMessage(
-					PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
+			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,
-					this.listBoxGeneralDepartment,this.pagingGeneralDepartmentList);
+			doSearch();
 			// set the itemRenderer
-			this.listBoxGeneralDepartment.setItemRenderer(
-					new GeneralDepartmentListModelItemRenderer());
+			this.listBoxGeneralDepartment.setItemRenderer(new GeneralDepartmentListModelItemRenderer());
 		}	
 		logger.debug("Leaving" + event.toString());
 	}
@@ -375,9 +401,20 @@ public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingGeneralDepartmentList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_GeneralDepartmentList, event);
-		this.window_GeneralDepartmentList.invalidate();
+		this.sortOperator_genDepartment.setSelectedIndex(0);
+		this.genDepartment.setValue("");
+		this.sortOperator_genDeptDesc.setSelectedIndex(0);
+		this.genDeptDesc.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxGeneralDepartment,this.pagingGeneralDepartmentList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -386,28 +423,8 @@ public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$button_GeneralDepartmentList_GeneralDepartmentSearchDialog(
-			Event event) throws Exception {
-		logger.debug("Entering"+event.toString());
-		/*
-		 * we can call our GeneralDepartmentDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected GeneralDepartment. For handed over
-		 * these parameter only a Map is accepted. So we put the GeneralDepartment object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("generalDepartmentCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/GeneralDepartment/GeneralDepartmentSearchDialog.zul",
-							null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+	public void onClick$button_GeneralDepartmentList_GeneralDepartmentSearchDialog(Event event) throws Exception {
+		doSearch();
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -425,6 +442,46 @@ public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+		if (!StringUtils.trimToEmpty(this.genDepartment.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_genDepartment.getSelectedItem(),this.genDepartment.getValue(), "GenDepartment");
+		}
+		if (!StringUtils.trimToEmpty(this.genDeptDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_genDeptDesc.getSelectedItem(),this.genDeptDesc.getValue(), "GenDeptDesc");
+		}
+
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxGeneralDepartment,this.pagingGeneralDepartmentList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

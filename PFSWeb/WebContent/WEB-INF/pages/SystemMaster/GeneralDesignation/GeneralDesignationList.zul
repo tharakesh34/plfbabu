@@ -58,25 +58,74 @@
 			<north border="none" />
 
 			<center border="none">
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true"
+						style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_GeneralDesignationSearch_GenDesignation"
+									value="${c:l('label_GeneralDesignationSearch_GenDesignation.value')}" />
+								<listbox
+									id="sortOperator_genDesignation" width="43px" mold="select"
+									rows="1" />
+								<uppercasebox id="genDesignation"
+									width="100px" maxlength="8" />
+								<label
+									id="label_GeneralDesignationSearch_GenDesgDesc"
+									value="${c:l('label_GeneralDesignationSearch_GenDesgDesc.value')}" />
+								<listbox id="sortOperator_genDesgDesc"
+									width="43px" mold="select" rows="1" />
+								<textbox id="genDesgDesc" width="320px"
+									maxlength="50" />
+							</row>
+							<row id="row_AlwWorkflow">
+								<label
+									id="label_GeneralDesignationSearch_RecordStatus"
+									value="${c:l('label_GeneralDesignationSearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_recordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="100px"
+									maxlength="50" />
+								<label
+									id="label_GeneralDesignationSearch_RecordType"
+									value="${c:l('label_GeneralDesignationSearch_RecordType.value')}" />
+								<listbox id="sortOperator_recordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="100px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
 
-				<listbox id="listBoxGeneralDesignation" vflex="true"
-					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false" sizedByContent="true" span="true">
-					<listhead sizable="true">
-						<listheader id="listheader_GenDesignation"
-							label="${c:l('listheader_GenDesignation.label')}" sort="auto"
-							hflex="min" />
-						<listheader id="listheader_GenDesgDesc"
-							label="${c:l('listheader_GenDesgDesc.label')}" sort="auto"
-							hflex="min" />
-						<listheader id="listheader_RecordStatus"
-							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							hflex="min" />
-						<listheader id="listheader_RecordType"
-							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							hflex="min" />
-					</listhead>
-				</listbox>
+					<listbox id="listBoxGeneralDesignation" vflex="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false" span="true">
+						<listhead sizable="true">
+							<listheader id="listheader_GenDesignation"
+								label="${c:l('listheader_GenDesignation.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_GenDesgDesc"
+								label="${c:l('listheader_GenDesgDesc.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
 
 			</center>
 			<south border="none">

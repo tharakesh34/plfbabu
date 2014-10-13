@@ -45,19 +45,23 @@ package com.pennant.webui.systemmasters.generaldesignation;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +74,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.generaldesignation.model.GeneralDesignationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +106,15 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 	protected Paging 		pagingGeneralDesignationList; 		// autoWired
 	protected Listbox 		listBoxGeneralDesignation; 			// autoWired
 
+	protected Textbox genDesignation; 					// autoWired
+	protected Listbox sortOperator_genDesignation; 		// autoWired
+	protected Textbox genDesgDesc; 						// autoWired
+	protected Listbox sortOperator_genDesgDesc; 		// autoWired
+	protected Textbox recordStatus; 					// autoWired
+	protected Listbox recordType; 						// autoWired
+	protected Listbox sortOperator_recordStatus; 		// autoWired
+	protected Listbox sortOperator_recordType; 			// autoWired
+
 	// List headers
 	protected Listheader listheader_GenDesignation; // autoWired
 	protected Listheader listheader_GenDesgDesc; 	// autoWired
@@ -113,7 +129,9 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<GeneralDesignation> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient GeneralDesignationService generalDesignationService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -154,7 +172,23 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_genDesignation.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_genDesignation.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_genDesgDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_genDesgDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -164,7 +198,7 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_GeneralDesignationList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxGeneralDesignation.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingGeneralDesignationList.setPageSize(getListRows());
 		this.pagingGeneralDesignationList.setDetailed(true);
@@ -186,7 +220,11 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<GeneralDesignation>(GeneralDesignation.class, getListRows());
-		this.searchObj.addSort("GenDesignation", false);
+		this.searchObj.addSort("GenDesignation",false);
+		this.searchObj.addField("genDesignation");
+		this.searchObj.addField("genDesgDesc");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -209,8 +247,7 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 			this.button_GeneralDesignationList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxGeneralDesignation,this.pagingGeneralDesignationList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxGeneralDesignation.setItemRenderer(new GeneralDesignationListModelItemRenderer());
 		}
@@ -223,7 +260,6 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("GeneralDesignationList");
-
 		this.button_GeneralDesignationList_NewGeneralDesignation.setVisible(getUserWorkspace()
 				.isAllowed("button_GeneralDesignationList_NewGeneralDesignation"));
 		this.button_GeneralDesignationList_GeneralDesignationSearchDialog.setVisible(getUserWorkspace()
@@ -359,9 +395,20 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingGeneralDesignationList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_GeneralDesignationList, event);
-		this.window_GeneralDesignationList.invalidate();
+		this.sortOperator_genDesgDesc.setSelectedIndex(0);
+		this.genDesgDesc.setValue("");
+		this.sortOperator_genDesignation.setSelectedIndex(0);
+		this.genDesignation.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxGeneralDesignation,this.pagingGeneralDesignationList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -372,23 +419,7 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 	 */
 	public void onClick$button_GeneralDesignationList_GeneralDesignationSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our GeneralDesignationDialog ZUL-file with parameters. So
-		 * we can call them with a object of the selected GeneralDesignation.
-		 * For handed over these parameter only a Map is accepted. So we put the
-		 * GeneralDesignation object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("generalDesignationCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SystemMaster/GeneralDesignation/GeneralDesignationSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -406,6 +437,47 @@ public class GeneralDesignationListCtrl extends	GFCBaseListCtrl<GeneralDesignati
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.genDesignation.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_genDesignation.getSelectedItem(),this.genDesignation.getValue(), "GenDesignation");
+		}
+		if (!StringUtils.trimToEmpty(this.genDesgDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_genDesgDesc.getSelectedItem(),this.genDesgDesc.getValue(), "GenDesgDesc");
+		}
+
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxGeneralDesignation,this.pagingGeneralDesignationList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

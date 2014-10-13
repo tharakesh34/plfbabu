@@ -52,10 +52,78 @@
 			<north border="none" />
 
 			<center border="none">
-
+			<div>
+    			<grid id="searchGrid" sclass="GridLayoutNoBorder"
+							fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+				         </columns>
+							<rows>
+								<row>
+									<label
+										id="label_SalesOfficerSearch_SalesOffCode"
+										value="${c:l('label_SalesOfficerSearch_SalesOffCode.value')}" />
+									<listbox
+										id="sortOperator_salesOffCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="salesOffCode"
+										width="100px" maxlength="8" />
+									<label
+										id="label_SalesOfficerSearch_SalesOffFName"
+										value="${c:l('label_SalesOfficerSearch_SalesOffFName.value')}" />
+									<listbox
+										id="sortOperator_salesOffFName" width="43px" mold="select"
+										rows="1" />
+									<textbox id="salesOffFName"
+										width="320px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_SalesOfficerSearch_SalesOffDept"
+										value="${c:l('label_SalesOfficerSearch_SalesOffDept.value')}" />
+									<listbox
+										id="sortOperator_salesOffDept" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="salesOffDept"
+										width="100px" maxlength="8" />
+									<label
+										id="label_SalesOfficerSearch_SalesOffIsActive"
+										value="${c:l('label_SalesOfficerSearch_SalesOffIsActive.value')}" />
+									<listbox
+										id="sortOperator_salesOffIsActive" width="43px" mold="select"
+										rows="1" />
+									<checkbox id="salesOffIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_SalesOfficerSearch_RecordStatus"
+										value="${c:l('label_SalesOfficerSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_SalesOfficerSearch_RecordType"
+										value="${c:l('label_SalesOfficerSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 				<listbox id="listBoxSalesOfficer" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false"  sizedByContent="true" span="true">
+					height="100%" multiple="false"  span="true">
 					<listhead sizable="true">
 						<listheader id="listheader_SalesOffCode"
 							label="${c:l('listheader_SalesOffCode.label')}" sort="auto"
@@ -77,7 +145,7 @@
 							hflex="min" />
 					</listhead>
 				</listbox>
-
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingSalesOfficerList" />

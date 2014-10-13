@@ -60,12 +60,12 @@
 							sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="border:0px; padding-left:5px; padding-right:5px;">
 							<columns>
-								<column width="15%" />
-								<column width="5%" />
-								<column width="30%" />
-								<column width="15%" />
-								<column width="5%" />
-								<column width="30%" />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
 							</columns>
 							<rows>
 								<row>
@@ -76,7 +76,7 @@
 										id="sortOperator_DivisionCode" width="43px" mold="select"
 										rows="1" />
 									<uppercasebox id="divisionCode"
-										width="72px" maxlength="8" />
+										width="100px" maxlength="8" />
 									<label
 										id="label_DivisionDetailList_DivisionCodeDesc"
 										value="${c:l('label_DivisionDetailList_DivisionCodeDesc.value')}" />
@@ -84,7 +84,7 @@
 										id="sortOperator_DivisionCodeDesc" width="43px" mold="select"
 										rows="1" />
 									<textbox id="divisionCodeDesc"
-										width="200px" maxlength="50" />
+										width="320px" maxlength="50" />
 								</row>
 								<row>
 									<label
@@ -96,7 +96,7 @@
 										checked="false" />
 								</row>
 
-								<row>
+								<row id="row_AlwWorkflow">
 									<label
 										id="label_DivisionDetailList_RecordStatus"
 										value="${c:l('label_DivisionDetailList_RecordStatus.value')}" />
@@ -119,8 +119,8 @@
 
 						<listbox id="listBoxDivisionDetail"
 							emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
-							vflex="true"  tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-							height="100%" multiple="false" sizedByContent="true" span="true">
+							vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" span="true">
 							<listhead sizable="true">
 								<listheader id="listheader_DivisionCode"
 									label="${c:l('listheader_DivisionCode.label')}" sort="auto"
@@ -144,7 +144,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingDivisionDetailList"   />
+					<paging id="pagingDivisionDetailList" />
 				</south>
 
 			</borderlayout>

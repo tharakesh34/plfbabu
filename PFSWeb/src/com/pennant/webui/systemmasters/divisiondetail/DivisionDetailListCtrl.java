@@ -57,13 +57,11 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -79,7 +77,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.WorkflowLoad;
 import com.pennant.webui.systemmasters.divisiondetail.model.DivisionDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -124,16 +121,15 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 	protected Button button_DivisionDetailList_NewDivisionDetail; // autowired
 	protected Button button_DivisionDetailList_DivisionDetailSearch; // autowired
 	protected Button button_DivisionDetailList_PrintList; // autowired
-	protected Label  label_DivisionDetailList_RecordStatus; 							// autoWired
-	protected Label  label_DivisionDetailList_RecordType; 							// autoWired
-	
+
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<DivisionDetail> searchObj;
+	protected Row  row_AlwWorkflow;
+	protected Grid 			searchGrid;	
 	
 	private transient DivisionDetailService divisionDetailService;
 	private transient WorkFlowDetails workFlowDetails=null;
-	
-	
+
 	protected Textbox divisionCode; // autowired
 	protected Listbox sortOperator_DivisionCode; // autowired
 
@@ -147,14 +143,7 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 	protected Listbox recordType;	// autowired
 	protected Listbox sortOperator_RecordStatus; // autowired
 	protected Listbox sortOperator_RecordType; // autowired
-	protected Grid 			searchGrid;							// autowired
-	protected Textbox 		moduleType; 						// autowired
-	protected Radio			fromApproved;
-	protected Radio			fromWorkFlow;
-	protected Row			workFlowFrom;
-	
-	private transient boolean  approvedList=false;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -202,18 +191,14 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 			this.sortOperator_RecordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.sortOperator_RecordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_RecordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.recordType=PennantAppUtil.setRecordType(this.recordType);
+			this.recordType=setRecordType(this.recordType);
 
 			this.sortOperator_RecordType.setSelectedIndex(0);
 			this.recordType.setSelectedIndex(0);
 
 		}else{
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.label_DivisionDetailList_RecordStatus.setVisible(false);
-			this.label_DivisionDetailList_RecordType.setVisible(false);
-			this.sortOperator_RecordStatus.setVisible(false);
-			this.sortOperator_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
+			
 		}
 		/* set components visible dependent on the users rights */
 		doCheckRights();
@@ -243,6 +228,29 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<DivisionDetail>(DivisionDetail.class,getListRows());
+		this.searchObj.addSort("DivisionCode", false);
+		this.searchObj.addField("divisionCode");
+		this.searchObj.addField("divisionCodeDesc");
+		this.searchObj.addField("active");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
+		// WorkFlow
+		if (isWorkFlowEnabled()) {
+			if (isFirstTask()) {
+				button_DivisionDetailList_NewDivisionDetail.setVisible(true);
+			} else {
+				button_DivisionDetailList_NewDivisionDetail.setVisible(false);
+			}
+			this.searchObj.addTabelName("SMTDivisionDetail_View");
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+		} else{
+			this.searchObj.addTabelName("SMTDivisionDetail_AView");
+		}
+
+		setSearchObj(this.searchObj);
 
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_DivisionDetailList_NewDivisionDetail.setVisible(false);
@@ -250,14 +258,12 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 			this.button_DivisionDetailList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 
-		}else{
+		}else {
 			doSearch();
-			if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
-				this.workFlowFrom.setVisible(false);
-				this.fromApproved.setSelected(true);
-			}
+			// set the itemRenderer
+			this.listBoxDivisionDetail.setItemRenderer(new DivisionDetailListModelItemRenderer());
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -278,13 +284,7 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final DivisionDetail aDivisionDetail = (DivisionDetail) item.getAttribute("data");
-			DivisionDetail divisionDetail = null;
-			if(approvedList){
-				divisionDetail = getDivisionDetailService().getApprovedDivisionDetailById(aDivisionDetail.getId());
-			}else{
-				divisionDetail = getDivisionDetailService().getDivisionDetailById(aDivisionDetail.getId());
-			}
-			
+			DivisionDetail divisionDetail = getDivisionDetailService().getDivisionDetailById(aDivisionDetail.getId());
 			if(divisionDetail==null){
 				String[] errParm= new String[1];
 				String[] valueParm= new String[1];
@@ -294,7 +294,7 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			}else{
-				if(isWorkFlowEnabled() && moduleType==null){
+				if(isWorkFlowEnabled()){
 
 					if(divisionDetail.getWorkflowId()==0){
 						divisionDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
@@ -330,13 +330,13 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 	/*
 	 * Invoke Search
 	 */
-	
+
 	public void onClick$button_DivisionDetailList_DivisionDetailSearch(Event event) throws Exception {
 		logger.debug("Entering" +event.toString());
 		doSearch();
 		logger.debug("Leaving" +event.toString());
 	}
-	
+
 	/**
 	 * when the "refresh" button is clicked. <br>
 	 * <br>
@@ -347,27 +347,24 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-	/*		this.pagingDivisionDetailList.setActivePage(0);
-			Events.postEvent("onCreate", this.window_DivisionDetailList, event);
-			this.window_DivisionDetailList.invalidate();
-	*/		
 
-  		this.sortOperator_DivisionCode.setSelectedIndex(0);
-	  	this.divisionCode.setValue("");
-  		this.sortOperator_DivisionCodeDesc.setSelectedIndex(0);
-	  	this.divisionCodeDesc.setValue("");
-  		this.sortOperator_Active.setSelectedIndex(0);
+		this.sortOperator_DivisionCode.setSelectedIndex(0);
+		this.divisionCode.setValue("");
+		this.sortOperator_DivisionCodeDesc.setSelectedIndex(0);
+		this.divisionCodeDesc.setValue("");
+		this.sortOperator_Active.setSelectedIndex(0);
 		this.active.setChecked(false);
 
 		if (isWorkFlowEnabled()){
 			this.sortOperator_RecordStatus.setSelectedIndex(0);
 			this.recordStatus.setValue("");
-
 			this.sortOperator_RecordType.setSelectedIndex(0);
 			this.recordType.setSelectedIndex(0);
 		}
-
-		doSearch();
+		//Clears All the Fiters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(getSearchObj(), this.listBoxDivisionDetail,this.pagingDivisionDetailList);
 
 		logger.debug("Leaving");
 	}
@@ -435,14 +432,9 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("DivisionDetailList");
-		
-		if(moduleType==null){
-			this.button_DivisionDetailList_NewDivisionDetail.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailList_NewDivisionDetail"));
-		}else{
-			this.button_DivisionDetailList_NewDivisionDetail.setVisible(false);
-		}	
+		this.button_DivisionDetailList_NewDivisionDetail.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailList_NewDivisionDetail"));
 		this.button_DivisionDetailList_PrintList.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailList_PrintList"));
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 
@@ -460,14 +452,13 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
+		if (aDivisionDetail.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			aDivisionDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("divisionDetail", aDivisionDetail);
-		if(moduleType!=null){
-			map.put("enqModule", true);
-		}else{
-			map.put("enqModule", false);
-		}
+
 		/*
 		 * we can additionally handed over the listBox or the controller self,
 		 * so we have in the dialog access to the listbox Listmodel. This is
@@ -494,69 +485,36 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */ 
-	
+
 	public void doSearch() {
 		logger.debug("Entering");
-		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<DivisionDetail>(DivisionDetail.class,getListRows());
-		this.searchObj.addSort("DivisionCode", false);
-		this.searchObj.addTabelName("SMTDivisionDetail_View");
-		
-		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
-	/*	this.searchObj.addField("divisionCode");
-		this.searchObj.addField("divisionCodeDesc");
-		this.searchObj.addField("active");*/
-		
-		// Workflow
-		if (isWorkFlowEnabled()) {
-			
-			if (isFirstTask() && this.moduleType==null) {
-				button_DivisionDetailList_NewDivisionDetail.setVisible(true);
-			} else {
-				button_DivisionDetailList_NewDivisionDetail.setVisible(false);
-			}
-			
-			if(this.moduleType==null){
-				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-				approvedList=false;
-			}else{
-				if(this.fromApproved.isSelected()){
-					approvedList=true;
-				}else{
-					this.searchObj.addTabelName("SMTDivisionDetail_TView");
-					approvedList=false;
-				}
-			}
-		}else{
-			approvedList=true;
-		}
-		if(approvedList){
-			this.searchObj.addTabelName("SMTDivisionDetail_AView");
-		}
-		
-	// Division Code
+
+		this.searchObj.clearFilters();
+
+		// Division Code
 		if (!StringUtils.trimToEmpty(this.divisionCode.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_DivisionCode.getSelectedItem(), this.divisionCode.getValue(), "DivisionCode");
 		}
-	// Division Code Desc
+		// Division Code Desc
 		if (!StringUtils.trimToEmpty(this.divisionCodeDesc.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_DivisionCodeDesc.getSelectedItem(), this.divisionCodeDesc.getValue(), "DivisionCodeDesc");
 		}
-	// Active
+		// Active
 		int intActive=0;
 		if(this.active.isChecked()){
 			intActive=1;
 		}
-	 	searchObj = getSearchFilter(searchObj, this.sortOperator_Active.getSelectedItem(),intActive, "Active");
-	
+		searchObj = getSearchFilter(searchObj, this.sortOperator_Active.getSelectedItem(),intActive, "Active");
+
 		// Record Status
 		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_RecordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
 		}
-		
+
 		// Record Type
-		if (this.recordType.getSelectedItem()!=null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_RecordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_RecordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -575,7 +533,7 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> impl
 
 		logger.debug("Leaving");
 	}
-	
+
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

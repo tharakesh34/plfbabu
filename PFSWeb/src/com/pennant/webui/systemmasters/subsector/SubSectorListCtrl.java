@@ -45,20 +45,26 @@ package com.pennant.webui.systemmasters.subsector;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -76,6 +82,8 @@ import com.pennant.webui.systemmasters.subsector.model.SubSectorListModelItemRen
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -109,8 +117,21 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> implements Ser
 	protected Listheader listheader_RecordStatus; 				// autoWired
 	protected Listheader listheader_RecordType;
 
+	protected Window 	window_SubSectorSearch; 			// autoWired
+	protected Textbox 	sectorCode; 						// autoWired
+	protected Listbox 	sortOperator_sectorCode; 			// autoWired
+	protected Textbox 	subSectorCode; 						// autoWired
+	protected Listbox 	sortOperator_subSectorCode; 		// autoWired
+	protected Textbox 	subSectorDesc; 						// autoWired
+	protected Listbox 	sortOperator_subSectorDesc; 		// autoWired
+	protected Checkbox 	subSectorIsActive; 					// autoWired
+	protected Listbox 	sortOperator_subSectorIsActive; 	// autoWired
+	protected Textbox 	recordStatus; 						// autoWired
+	protected Listbox 	recordType;							// autoWired
+	protected Listbox 	sortOperator_recordStatus; 			// autoWired
+	protected Listbox 	sortOperator_recordType; 			// autoWired
 	protected Panel subSectorSeekPanel; 						// autoWired
-	protected Panel subSectorListPanel; 						// autoWired
+	protected Panel subSectorListPanel; 
 
 	// checkRights
 	protected Button btnHelp; 									// autoWired
@@ -120,7 +141,8 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> implements Ser
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<SubSector> searchObj;
-	
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
 	private transient SubSectorService subSectorService;
 	private transient WorkFlowDetails workFlowDetails=null;
 	
@@ -161,6 +183,29 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> implements Ser
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_sectorCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sectorCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_subSectorCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_subSectorCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_subSectorDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_subSectorDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_subSectorIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_subSectorIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType =setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -170,7 +215,7 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> implements Ser
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_SubSectorList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxSubSector.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingSubSectorList.setPageSize(getListRows());
 		this.pagingSubSectorList.setDetailed(true);
@@ -199,7 +244,12 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> implements Ser
 		this.searchObj = new JdbcSearchObject<SubSector>(SubSector.class, getListRows());
 		this.searchObj.addSort("SectorCode", false);
 		this.searchObj.addFilter(new Filter("SectorCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
-		
+		this.searchObj.addField("sectorCode");
+		this.searchObj.addField("subSectorCode");
+		this.searchObj.addField("subSectorDesc");
+		this.searchObj.addField("subSectorIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("BMTSubSectors_View");
@@ -221,8 +271,7 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> implements Ser
 			this.button_SubSectorList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxSubSector, this.pagingSubSectorList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxSubSector.setItemRenderer(new SubSectorListModelItemRenderer());
 		}
@@ -376,9 +425,25 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> implements Ser
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingSubSectorList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_SubSectorList, event);
-		this.window_SubSectorList.invalidate();
+		this.sortOperator_sectorCode.setSelectedIndex(0);
+		this.sectorCode.setValue("");
+		this.sortOperator_subSectorCode.setSelectedIndex(0);
+		this.subSectorCode.setValue("");
+		this.sortOperator_subSectorDesc.setSelectedIndex(0);
+		this.subSectorDesc.setValue("");
+		this.sortOperator_subSectorIsActive.setSelectedIndex(0);
+		this.subSectorIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears All the Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSubSector, this.pagingSubSectorList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -391,24 +456,7 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> implements Ser
 	 */
 	public void onClick$button_SubSectorList_SubSectorSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our SubSectorDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected SubSector. For handed over
-		 * these parameter only a Map is accepted. So we put the SubSector
-		 * object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("subSectorCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-				"/WEB-INF/pages/SystemMaster/SubSector/SubSectorSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -425,6 +473,54 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> implements Ser
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.sectorCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_sectorCode.getSelectedItem(),this.sectorCode.getValue(), "SectorCode");
+		}
+		if (!StringUtils.trimToEmpty(this.subSectorCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_subSectorCode.getSelectedItem(),this.subSectorCode.getValue(), "subSectorCode");
+		}
+		if (!StringUtils.trimToEmpty(this.subSectorDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_subSectorDesc.getSelectedItem(),this.subSectorDesc.getValue(), "subSectorDesc");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.subSectorIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_subSectorIsActive.getSelectedItem(),intActive, "subSectorIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSubSector,this.pagingSubSectorList);
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

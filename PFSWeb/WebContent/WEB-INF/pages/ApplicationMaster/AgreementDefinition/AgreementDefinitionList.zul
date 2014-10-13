@@ -58,34 +58,98 @@
 
 			<borderlayout id="borderLayout_AgreementDefinitionList">
 				<north border="none" />
-
 				<center border="none">
-
-					<listbox id="listBoxAgreementDefinition"
-						vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-						width="100%" height="100%" multiple="false" span="true">
-						<listhead sizable="true">
-							<listheader id="listheader_AggCode"
-								label="${c:l('listheader_AgreementDef_AggCode.label')}"
-								sort="auto"  hflex="min" />
-							<listheader id="listheader_AggName"
-								label="${c:l('listheader_AggName.label')}" sort="auto"
-								hflex="min"  />
-							<listheader id="listheader_AggDesc"
-								label="${c:l('listheader_AggDesc.label')}" sort="auto"
-								hflex="min"  />
-							<listheader id="listheader_AggIsActive"
-								label="${c:l('listheader_AggIsActive.label')}" sort="auto"
-								hflex="min"  />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min"  />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min"  />
-						</listhead>
-
-					</listbox>
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_AgreementDefinitionSearch_AggCode"
+										value="${c:l('label_AgreementDefinitionSearch_AggCode.value')}" />
+									<listbox id="sortOperator_aggCode"
+										width="43px" mold="select" rows="1" />
+									<uppercasebox id="aggCode"
+										width="100px" maxlength="50" />
+									<label
+										id="label_AgreementDefinitionSearch_AggName"
+										value="${c:l('label_AgreementDefinitionSearch_AggName.value')}" />
+									<listbox id="sortOperator_aggName"
+										width="43px" mold="select" rows="1" />
+									<textbox id="aggName" width="250px"
+										maxlength="100" />
+								</row>
+								<row>
+									<label
+										id="label_AgreementDefinitionSearch_AggDesc"
+										value="${c:l('label_AgreementDefinitionSearch_AggDesc.value')}" />
+									<listbox id="sortOperator_aggDesc"
+										width="43px" mold="select" rows="1" />
+									<textbox id="aggDesc" width="250px"
+										maxlength="50" />
+									<label
+										id="label_AgreementDefinitionSearch_AggIsActive"
+										value="${c:l('label_AgreementDefinitionSearch_AggIsActive.value')}" />
+									<listbox
+										id="sortOperator_aggIsActive" width="43px" mold="select"
+										rows="1" />
+									<checkbox id="aggIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_AgreementDefinitionSearch_RecordStatus"
+										value="${c:l('label_AgreementDefinitionSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_AgreementDefinitionSearch_RecordType"
+										value="${c:l('label_AgreementDefinitionSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxAgreementDefinition"
+							vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_AggCode"
+									label="${c:l('listheader_AgreementDef_AggCode.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_AggName"
+									label="${c:l('listheader_AggName.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_AggDesc"
+									label="${c:l('listheader_AggDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_AggIsActive"
+									label="${c:l('listheader_AggIsActive.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingAgreementDefinitionList" />

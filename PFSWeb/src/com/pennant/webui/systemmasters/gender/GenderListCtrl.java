@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.gender;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -75,6 +80,8 @@ import com.pennant.webui.systemmasters.gender.model.GenderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +107,16 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> implements Serializa
 	protected Paging 		pagingGenderList; 			// autoWired
 	protected Listbox 		listBoxGender; 				// autoWired
 
+	protected Textbox 	genderCode; 					// autoWired
+	protected Listbox 	sortOperator_genderCode; 		// autoWired
+	protected Textbox 	genderDesc; 					// autoWired
+	protected Listbox 	sortOperator_genderDesc; 		// autoWired
+	protected Checkbox 	genderIsActive; 				// autoWired
+	protected Listbox 	sortOperator_genderIsActive; 	// autoWired
+	protected Textbox 	recordStatus; 					// autoWired
+	protected Listbox 	recordType; 					// autoWired
+	protected Listbox	sortOperator_recordStatus; 		// autoWired
+	protected Listbox 	sortOperator_recordType; 		// autoWired
 	// List headers
 	protected Listheader listheader_GenderCode; 		// autoWired
 	protected Listheader listheader_GenderDesc; 		// autoWired
@@ -115,7 +132,9 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> implements Serializa
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Gender> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient GenderService genderService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -158,6 +177,26 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> implements Serializa
 			wfAvailable = false;
 		}
 
+		this.sortOperator_genderCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_genderCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_genderDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_genderDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_genderIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_genderIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType =setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -167,7 +206,7 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> implements Serializa
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_GenderList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxGender.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingGenderList.setPageSize(getListRows());
 		this.pagingGenderList.setDetailed(true);
@@ -193,7 +232,11 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> implements Serializa
 		this.searchObj = new JdbcSearchObject<Gender>(Gender.class,getListRows());
 		this.searchObj.addSort("GenderCode", false);
 		this.searchObj.addFilter(new Filter("GenderCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
-
+		this.searchObj.addField("genderCode");
+		this.searchObj.addField("genderDesc");
+		this.searchObj.addField("genderIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		// Work flow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("BMTGenders_View");
@@ -214,8 +257,7 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> implements Serializa
 			this.button_GenderList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxGender, this.pagingGenderList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxGender.setItemRenderer(new GenderListModelItemRenderer());
 		}
@@ -369,9 +411,23 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> implements Serializa
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingGenderList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_GenderList, event);
-		this.window_GenderList.invalidate();
+
+		this.sortOperator_genderCode.setSelectedIndex(0);
+		this.genderCode.setValue("");
+		this.sortOperator_genderDesc.setSelectedIndex(0);
+		this.genderDesc.setValue("");
+		this.sortOperator_genderIsActive.setSelectedIndex(0);
+		this.genderIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxGender, this.pagingGenderList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -383,28 +439,9 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> implements Serializa
 	 */
 	public void onClick$button_GenderList_GenderSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our GenderDialog ZUL-file with parameters. So we can call
-		 * them with a object of the selected Gender. For handed over these
-		 * parameter only a Map is accepted. So we put the Gender object in a
-		 * HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("genderCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/Gender/GenderSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
-
 	/**
 	 * When the gender print button is clicked.
 	 * 
@@ -417,7 +454,53 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> implements Serializa
 		PTListReportUtils reportUtils = new PTListReportUtils("Gender", getSearchObj(),this.pagingGenderList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+		
+		if (!StringUtils.trimToEmpty(this.genderCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_genderCode.getSelectedItem(),this.genderCode.getValue(), "GenderCode");
+		}
+		if (!StringUtils.trimToEmpty(this.genderDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_genderDesc.getSelectedItem(),this.genderDesc.getValue(), "GenderDesc");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.genderIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_genderIsActive.getSelectedItem(),intActive, "GenderIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxGender,this.pagingGenderList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

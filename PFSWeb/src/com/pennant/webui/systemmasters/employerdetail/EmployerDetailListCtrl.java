@@ -47,20 +47,21 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -74,6 +75,7 @@ import com.pennant.backend.service.systemmasters.EmployerDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.WorkflowLoad;
@@ -81,7 +83,9 @@ import com.pennant.webui.systemmasters.employerdetail.model.EmployerDetailListMo
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
-	
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
+
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the /WEB-INF/pages/SystemMaster/EmployerDetail/EmployerDetailList.zul
@@ -106,6 +110,28 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	protected Paging pagingEmployerDetailList; // autowired
 	protected Listbox listBoxEmployerDetail; // autowired
 
+	protected Textbox empIndustry; // autowired
+	protected Listbox sortOperator_EmpIndustry; // autowired/
+
+	protected Textbox empName; // autowired
+	protected Listbox sortOperator_EmpName; // autowired
+
+
+	protected Textbox empPOBox; // autowired
+	protected Listbox sortOperator_EmpPOBox; // autowired
+
+
+	protected Textbox empCity; // autowired
+	protected Listbox sortOperator_EmpCity; // autowired
+
+	protected Combobox empAlocationType; // autowired
+	protected Listbox sortOperator_EmpAlocationType; // autowired
+
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType;	// autowired
+	protected Listbox sortOperator_RecordStatus; // autowired
+	protected Listbox sortOperator_RecordType; // autowired
+
 	// List headers
 	protected Listheader listheader_EmployerId; // autowired
 	protected Listheader listheader_EmpIndustry; // autowired
@@ -121,24 +147,14 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	protected Button button_EmployerDetailList_NewEmployerDetail; // autowired
 	protected Button button_EmployerDetailList_EmployerDetailSearch; // autowired
 	protected Button button_EmployerDetailList_PrintList; // autowired
-	protected Label  label_EmployerDetailList_RecordStatus; 							// autoWired
-	protected Label  label_EmployerDetailList_RecordType; 							// autoWired
-	
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<EmployerDetail> searchObj;
+	protected Row row_AlwWorkflow;
+	protected Grid 			searchGrid;	
 	
 	private transient EmployerDetailService employerDetailService;
 	private transient WorkFlowDetails workFlowDetails=null;
-	
-	
-	protected Grid 			searchGrid;							// autowired
-	protected Textbox 		moduleType; 						// autowired
-	protected Radio			fromApproved;
-	protected Radio			fromWorkFlow;
-	protected Row			workFlowFrom;
-	
-	private transient boolean  approvedList=false;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -169,13 +185,42 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 		}else{
 			wfAvailable=false;
 		}
+		this.sortOperator_EmpIndustry.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_EmpIndustry.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-	
+		this.sortOperator_EmpName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_EmpName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+
+		this.sortOperator_EmpPOBox.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_EmpPOBox.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_EmpCity.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_EmpCity.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_EmpAlocationType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		fillComboBox(this.empAlocationType,"",PennantStaticListUtil.getEmpAlocList(),"");
+		this.sortOperator_EmpAlocationType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_RecordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_RecordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_RecordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_RecordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_RecordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 		
 		this.borderLayout_EmployerDetailList.setHeight(getBorderLayoutHeight());
-		//this.listBoxEmployerDetail.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount())); 
+		this.listBoxEmployerDetail.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount())); 
 		
 		// set the paging parameters
 		this.pagingEmployerDetailList.setPageSize(getListRows());
@@ -203,10 +248,37 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
-		// set the itemRenderer
-		this.listBoxEmployerDetail.setItemRenderer(new EmployerDetailListModelItemRenderer());
 
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<EmployerDetail>(EmployerDetail.class,getListRows());
+		this.searchObj.addSort("EmployerId", false);
+		this.searchObj.addField("EmployerId");
+		this.searchObj.addField("empIndustry");
+		this.searchObj.addField("empName");
+		this.searchObj.addField("establishDate");
+		this.searchObj.addField("empPOBox");
+		this.searchObj.addField("empCity");
+		this.searchObj.addField("empAlocationType");
+		this.searchObj.addField("lovDescIndustryDesc");
+		this.searchObj.addField("lovDescCityName");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
+		// Work flow
+		if (isWorkFlowEnabled()) {
+			this.searchObj.addTabelName("EmployerDetail_View");
+			if (isFirstTask()) {
+				button_EmployerDetailList_NewEmployerDetail.setVisible(true);
+			} else {
+				button_EmployerDetailList_NewEmployerDetail.setVisible(false);
+			}
+
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		} else {
+			this.searchObj.addTabelName("EmployerDetail_AView");
+		}
+
+		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable){
 			this.button_EmployerDetailList_NewEmployerDetail.setVisible(false);
 			this.button_EmployerDetailList_EmployerDetailSearch.setVisible(false);
@@ -215,12 +287,10 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 
 		}else{
 			doSearch();
-			if(this.workFlowFrom!=null && !isWorkFlowEnabled()){
-				this.workFlowFrom.setVisible(false);
-				this.fromApproved.setSelected(true);
-			}
+			// set the itemRenderer
+			this.listBoxEmployerDetail.setItemRenderer(new EmployerDetailListModelItemRenderer());
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -241,13 +311,8 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final EmployerDetail aEmployerDetail = (EmployerDetail) item.getAttribute("data");
-			EmployerDetail employerDetail = null;
-			if(approvedList){
-				employerDetail = getEmployerDetailService().getApprovedEmployerDetailById(aEmployerDetail.getId());
-			}else{
-				employerDetail = getEmployerDetailService().getEmployerDetailById(aEmployerDetail.getId());
-			}
-			
+			EmployerDetail employerDetail = getEmployerDetailService().getEmployerDetailById(aEmployerDetail.getId());
+
 			if(employerDetail==null){
 				String[] errParm= new String[1];
 				String[] valueParm= new String[1];
@@ -257,7 +322,7 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
 			}else{
-				if(isWorkFlowEnabled() && moduleType==null){
+				if(isWorkFlowEnabled()){
 
 					if(employerDetail.getWorkflowId()==0){
 						employerDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
@@ -295,25 +360,9 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	 */
 	
 	public void onClick$button_EmployerDetailList_EmployerDetailSearch(Event event) throws Exception {
-		
-		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our EmploymentTypeDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected EmploymentType. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * EmploymentType object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("EmployerDetailListCtrl", this);
-		map.put("searchObject", this.searchObj);
 
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SystemMaster/EmployerDetail/EmployerDetailSearch.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		logger.debug("Entering" + event.toString());
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -327,7 +376,27 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		  doSearch();
+		this.sortOperator_EmpIndustry.setSelectedIndex(0);
+		this.empIndustry.setValue("");
+		this.sortOperator_EmpName.setSelectedIndex(0);
+		this.empName.setValue("");
+		this.sortOperator_EmpPOBox.setSelectedIndex(0);
+		this.empPOBox.setValue("");
+		this.sortOperator_EmpCity.setSelectedIndex(0);
+		this.empCity.setValue("");
+		this.sortOperator_EmpAlocationType.setSelectedIndex(0);
+		this.empAlocationType.setSelectedIndex(0);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_RecordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_RecordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears all the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxEmployerDetail,this.pagingEmployerDetailList);
+
 		logger.debug("Leaving");
 	}
 
@@ -393,14 +462,9 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("EmployerDetailList");
-		
-		if(moduleType==null){
-			this.button_EmployerDetailList_NewEmployerDetail.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailList_NewEmployerDetail"));
-		}else{
-			this.button_EmployerDetailList_NewEmployerDetail.setVisible(false);
-		}	
+		this.button_EmployerDetailList_NewEmployerDetail.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailList_NewEmployerDetail"));
 		this.button_EmployerDetailList_PrintList.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailList_PrintList"));
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 
@@ -414,20 +478,24 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	private void showDetailView(EmployerDetail aEmployerDetail) throws Exception {
 		logger.debug("Entering");
 		/*
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
+		 */
+		if (aEmployerDetail.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			aEmployerDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
+
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("employerDetail", aEmployerDetail);
-		if(moduleType!=null){
-			map.put("enqModule", true);
-		}else{
-			map.put("enqModule", false);
-		}
+
 		/*
-		 * we can additionally handed over the listBox or the controller self,
+		 * we can additi-onally handed over the listBox or the controller self,
 		 * so we have in the dialog access to the listbox Listmodel. This is
 		 * fine for synchronizing the data in the EmployerDetailListbox from the
 		 * dialog when we do a delete, edit or insert a EmployerDetail.
@@ -452,56 +520,54 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 */ 
-	
+
 	public void doSearch() {
 		logger.debug("Entering");
-		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<EmployerDetail>(EmployerDetail.class,getListRows());
-		this.searchObj.addSort("EmployerId", false);
-		this.searchObj.addTabelName("EmployerDetail_View");
-		
-		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
-		this.searchObj.addField("EmployerId");
-		this.searchObj.addField("empIndustry");
-		this.searchObj.addField("empName");
-		this.searchObj.addField("establishDate");
-		this.searchObj.addField("empFlatNbr");
-		this.searchObj.addField("empPOBox");
-		this.searchObj.addField("empCountry");
-		this.searchObj.addField("empProvince");
-		this.searchObj.addField("empCity");
-		this.searchObj.addField("empAlocationType");
-		this.searchObj.addField("lovDescIndustryDesc");
-		this.searchObj.addField("lovDescCityName");
-		this.searchObj.addField("recordStatus");
-		this.searchObj.addField("recordType");
 
-		// Workflow
-		if (isWorkFlowEnabled()) {
-			
-			if (isFirstTask() && this.moduleType==null) {
-				button_EmployerDetailList_NewEmployerDetail.setVisible(true);
-			} else {
-				button_EmployerDetailList_NewEmployerDetail.setVisible(false);
-			}
-			
-			if(this.moduleType==null){
-				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-				approvedList=false;
-			}else{
-				if(this.fromApproved.isSelected()){
-					approvedList=true;
-				}else{
-					this.searchObj.addTabelName("EmployerDetail_TView");
-					approvedList=false;
-				}
-			}
-		}else{
-			approvedList=true;
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.empIndustry.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_EmpIndustry.getSelectedItem(),
+					this.empIndustry.getValue(), "EmpIndustry");
 		}
-		if(approvedList){
-			this.searchObj.addTabelName("EmployerDetail_AView");
+		if (!StringUtils.trimToEmpty(this.empName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_EmpName.getSelectedItem(),
+					this.empName.getValue(), "EmpName");
 		}
+
+		if (this.empAlocationType.getValue()!= null && !PennantConstants.List_Select.equals(this.empAlocationType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_EmpAlocationType.getSelectedItem(),
+					this.empAlocationType.getSelectedItem().getValue().toString(), "EmpAlocationType");
+		}
+		if (!StringUtils.trimToEmpty(this.empCity.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_EmpCity.getSelectedItem(),
+					this.empCity.getValue(), "EmpCity");
+		}
+		if (!StringUtils.trimToEmpty(this.empPOBox.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_EmpPOBox.getSelectedItem(),
+					this.empPOBox.getValue(), "EmpPOBox");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_RecordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType
+						.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_RecordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),
+					"RecordType");
+		}
+
 
 		if (logger.isDebugEnabled()) {
 			final List<Filter> lf = this.searchObj.getFilters();
@@ -518,7 +584,7 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 
 		logger.debug("Leaving");
 	}
-	
+
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

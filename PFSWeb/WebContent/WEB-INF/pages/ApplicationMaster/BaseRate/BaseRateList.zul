@@ -51,34 +51,87 @@
 		<borderlayout id="borderLayout_BaseRateList">
 			<north border="none" />
 			<center border="none">
-			
-				<listbox id="listBoxBaseRate" vflex="true"
-					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false" sizedByContent="true" span="true">
-					<listhead sizable="true">
-						<listheader id="listheader_BRType"
-							label="${c:l('listheader_BRType.label')}" sort="auto"
-							hflex="min" />
-						<listheader id="listheader_BREffDate"
-							label="${c:l('listheader_BREffDate.label')}" sort="auto"
-							hflex="min" />
-						<listheader id="listheader_BRRate"
-							label="${c:l('listheader_BRRate.label')}" sort="auto"
-							hflex="min" />
-						<listheader id="listheader_RecordStatus"
-							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							hflex="min" />
-						<listheader id="listheader_RecordType"
-							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							hflex="min" />
-					</listhead>
-				</listbox>
-				
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true"
+						style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label id="label_BaseRateSearch_BRType"
+									value="${c:l('label_BaseRateSearch_BRType.value')}" />
+								<listbox id="sortOperator_bRType"
+									width="43px" mold="select" rows="1" />
+								<uppercasebox id="bRType" width="120px"
+									maxlength="8" />
+								<label
+									id="label_BaseRateSearch_BREffDate"
+									value="${c:l('label_BaseRateSearch_BREffDate.value')}" />
+								<listbox id="sortOperator_bREffDate"
+									width="43px" mold="select" rows="1" />
+								<datebox id="bREffDate" width="120px"
+									format="dd/MM/yyyy" />
+							</row>
+							<row>
+								<label id="label_BaseRateSearch_BRRate"
+									value="${c:l('label_BaseRateSearch_BRRate.value')}" />
+								<listbox id="sortOperator_bRRate"
+									width="43px" mold="select" rows="1" />
+								<decimalbox id="bRRate" width="120px"
+									format="##0.00#######" maxlength="15" />
+							</row>
+							<row id="row_AlwWorkflow">
+								<label
+									id="label_BaseRateSearch_RecordStatus"
+									value="${c:l('label_BaseRateSearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_recordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="120px"
+									maxlength="50" />
+								<label
+									id="label_BaseRateSearch_RecordType"
+									value="${c:l('label_BaseRateSearch_RecordType.value')}" />
+								<listbox id="sortOperator_recordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="120px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxBaseRate" vflex="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false" span="true">
+						<listhead sizable="true">
+							<listheader id="listheader_BRType"
+								label="${c:l('listheader_BRType.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_BREffDate"
+								label="${c:l('listheader_BREffDate.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_BRRate"
+								label="${c:l('listheader_BRRate.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingBaseRateList" />
 			</south>
-			
+
 		</borderlayout>
 	</window>
 </zk>

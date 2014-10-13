@@ -50,6 +50,97 @@
 		<borderlayout id="borderLayout_BranchList">
 			<north border="none" />
 			<center border="none">
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true"
+						style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label
+									id="label_BranchSearch_BranchCode"
+									value="${c:l('label_BranchSearch_BranchCode.value')}" />
+								<listbox id="sortOperator_branchCode"
+									width="43px" mold="select" rows="1" />
+								<uppercasebox id="branchCode"
+									width="100px" maxlength="8" />
+								<label
+									id="label_BranchSearch_BranchDesc"
+									value="${c:l('label_BranchSearch_BranchDesc.value')}" />
+								<listbox id="sortOperator_branchDesc"
+									width="43px" mold="select" rows="1" />
+								<textbox id="branchDesc" width="320px"
+									maxlength="50" />
+							</row>
+							<row>
+								<label
+									id="label_BranchSearch_BranchCity"
+									value="${c:l('label_BranchSearch_BranchCity.value')}" />
+								<listbox id="sortOperator_branchCity"
+									width="43px" mold="select" rows="1" />
+								<uppercasebox id="branchCity"
+									width="100px" maxlength="8" />
+								<label
+									id="label_BranchSearch_BranchProvince"
+									value="${c:l('label_BranchSearch_BranchProvince.value')}" />
+								<listbox
+									id="sortOperator_branchProvince" width="43px" mold="select"
+									rows="1" />
+								<uppercasebox id="branchProvince"
+									width="100px" maxlength="8" />
+							</row>
+							<row>
+								<label
+									id="label_BranchSearch_BranchCountry"
+									value="${c:l('label_BranchSearch_BranchCountry.value')}" />
+								<listbox id="sortOperator_branchCountry"
+									width="43px" mold="select" rows="1" />
+								<uppercasebox id="branchCountry"
+									width="100px" maxlength="2" />
+								<label
+									id="label_BranchSearch_BranchSwiftBankCde"
+									value="${c:l('label_BranchSearch_BranchSwiftBankCde.value')}" />
+								<listbox
+									id="sortOperator_branchSwiftBankCde" width="43px" mold="select"
+									rows="1" />
+								<uppercasebox id="branchSwiftBankCde"
+									width="100px" maxlength="4" />
+							</row>
+							<row>
+								<label
+									id="label_BranchSearch_BranchIsActive"
+									value="${c:l('label_BranchSearch_BranchIsActive.value')}" />
+								<listbox
+									id="sortOperator_branchIsActive" width="43px" mold="select"
+									rows="1" />
+								<checkbox id="branchIsActive"
+									checked="false" />
+							</row>
+							<row id="row_AlwWorkflow">
+								<label
+									id="label_BranchSearch_RecordStatus"
+									value="${c:l('label_BranchSearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_recordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="100px"
+									maxlength="50" />
+								<label
+									id="label_BranchSearch_RecordType"
+									value="${c:l('label_BranchSearch_RecordType.value')}" />
+								<listbox id="sortOperator_recordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="100px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
 
 				<listbox id="listBoxBranch" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
@@ -84,7 +175,7 @@
 							hflex="min" />
 					</listhead>
 				</listbox>
-
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingBranchList" />

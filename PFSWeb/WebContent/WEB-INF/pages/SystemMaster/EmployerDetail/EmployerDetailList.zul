@@ -49,30 +49,116 @@
 			<borderlayout id="borderLayout_EmployerDetailList">
 				<north border="none" />
 				<center border="none">
-					<listbox id="listBoxEmployerDetail" fixedLayout="true"  
-					vflex="true"  tooltiptext="${c:l('listbox.tooltiptext')}"
-					 width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
-						<listhead sizable="true">
-							<listheader id="listheader_EmployerId" label="${c:l('listheader_EmployerId.label')}" sort="auto" 
-								hflex="min"  />
-							<listheader id="listheader_EmpName" label="${c:l('listheader_EmpName.label')}" sort="auto" 
-								hflex="min"  />
-							<listheader id="listheader_EmpIndustry" label="${c:l('listheader_EmpIndustry.label')}" sort="auto" 
-								hflex="min"  />
-							<listheader id="listheader_EstablishDate" label="${c:l('listheader_EstablishDate.label')}" sort="auto" 
-								hflex="min"  />
-							<listheader id="listheader_EmpPOBox" label="${c:l('listheader_EmpPOBox.label')}" sort="auto" 
-								hflex="min"  />
-							<listheader id="listheader_EmpCity" label="${c:l('listheader_EmpCity.label')}" sort="auto" 
-								hflex="min"  />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min"  />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min"  />
-						</listhead>		
-					</listbox>
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_EmployerDetailList_EmpIndustry"
+										value="${c:l('label_EmployerDetailList_EmpIndustry.value')}" />
+									<listbox
+										id="sortOperator_EmpIndustry" width="43px" mold="select"
+										rows="1" />
+									<textbox id="empIndustry"
+										width="100px" maxlength="8" />
+									<label
+										id="label_EmployerDetailList_EmpName"
+										value="${c:l('label_EmployerDetailList_EmpName.value')}" />
+									<listbox id="sortOperator_EmpName"
+										width="43px" mold="select" rows="1" />
+									<textbox id="empName" width="300px"
+										maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_EmployerDetailList_EmpPOBox"
+										value="${c:l('label_EmployerDetailList_EmpPOBox.value')}" />
+									<listbox id="sortOperator_EmpPOBox"
+										width="43px" mold="select" rows="1" />
+									<textbox id="empPOBox" width="100px"
+										maxlength="8" />
+									<label
+										id="label_EmployerDetailList_EmpCity"
+										value="${c:l('label_EmployerDetailList_EmpCity.value')}" />
+									<listbox id="sortOperator_EmpCity"
+										width="43px" mold="select" rows="1" />
+									<textbox id="empCity" width="100px"
+										maxlength="8" />
+								</row>
+								<row>
+									<label
+										id="label_EmployerDetailList_EmpAlocationType"
+										value="${c:l('label_EmployerDetailList_EmpAlocationType.value')}" />
+									<listbox
+										id="sortOperator_EmpAlocationType" width="43px" mold="select"
+										rows="1" />
+									<combobox id="empAlocationType"
+										width="100px" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_EmployerDetailList_RecordStatus"
+										value="${c:l('label_EmployerDetailList_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_RecordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_EmployerDetailList_RecordType"
+										value="${c:l('label_EmployerDetailList_RecordType.value')}" />
+									<listbox
+										id="sortOperator_RecordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxEmployerDetail"
+							fixedLayout="true" vflex="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true"
+							span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_EmployerId"
+									label="${c:l('listheader_EmployerId.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_EmpName"
+									label="${c:l('listheader_EmpName.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_EmpIndustry"
+									label="${c:l('listheader_EmpIndustry.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_EstablishDate"
+									label="${c:l('listheader_EstablishDate.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_EmpPOBox"
+									label="${c:l('listheader_EmpPOBox.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_EmpCity"
+									label="${c:l('listheader_EmpCity.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 
 				<south border="none" >
@@ -80,6 +166,6 @@
 				</south>
 				
 			</borderlayout>
+		</window>
 	</window>
-</window>
 </zk>

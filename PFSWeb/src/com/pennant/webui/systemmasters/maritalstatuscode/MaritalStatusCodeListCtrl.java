@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.maritalstatuscode;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -75,6 +80,8 @@ import com.pennant.webui.systemmasters.maritalstatuscode.model.MaritalStatusCode
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +107,17 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 	protected Paging 		pagingMaritalStatusCodeList; 		 // autoWired
 	protected Listbox 		listBoxMaritalStatusCode; 			 // autoWired
 
+	protected Textbox 	maritalStsCode; 					// autoWired
+	protected Listbox 	sortOperator_maritalStsCode; 		// autoWired
+	protected Textbox 	maritalStsDesc; 					// autoWired
+	protected Listbox 	sortOperator_maritalStsDesc; 		// autoWired
+	protected Checkbox 	maritalStsIsActive; 				// autoWired
+	protected Listbox 	sortOperator_maritalStsIsActive; 	// autoWired
+	protected Textbox 	recordStatus; 						// autoWired
+	protected Listbox 	recordType; 						// autoWired
+	protected Listbox 	sortOperator_recordStatus; 			// autoWired
+	protected Listbox 	sortOperator_recordType; 			// autoWired
+
 	// List headers
 	protected Listheader listheader_MaritalStsCode; 			// autoWired
 	protected Listheader listheader_MaritalStsDesc; 			// autoWired
@@ -115,7 +133,9 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<MaritalStatusCode> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient MaritalStatusCodeService maritalStatusCodeService;
 	private transient WorkFlowDetails 		   workFlowDetails = null;
 
@@ -158,7 +178,26 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_maritalStsCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_maritalStsCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_maritalStsDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_maritalStsDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_maritalStsIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_maritalStsIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -168,8 +207,8 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 		 * that are filled by onClientInfo() in the indexCtroller
 		 */
 
-		this.borderLayout_MaritalStatusCodeList
-		.setHeight(getBorderLayoutHeight());
+		this.borderLayout_MaritalStatusCodeList.setHeight(getBorderLayoutHeight());
+		this.listBoxMaritalStatusCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingMaritalStatusCodeList.setPageSize(getListRows());
@@ -194,8 +233,14 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<MaritalStatusCode>(MaritalStatusCode.class, getListRows());
-		this.searchObj.addSort("MaritalStsCode", false);
+		this.searchObj.addSort("MaritalStsCode",false);
 		this.searchObj.addFilter(new Filter("MaritalStsCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
+		this.searchObj.addField("maritalStsCode");
+		this.searchObj.addField("maritalStsDesc");
+		this.searchObj.addField("maritalStsIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
+
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -217,8 +262,7 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 			this.button_MaritalStatusCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxMaritalStatusCode, this.pagingMaritalStatusCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxMaritalStatusCode.setItemRenderer(new MaritalStatusCodeListModelItemRenderer());
 		}
@@ -365,9 +409,24 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingMaritalStatusCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_MaritalStatusCodeList, event);
-		this.window_MaritalStatusCodeList.invalidate();
+
+		this.sortOperator_maritalStsCode.setSelectedIndex(0);
+		this.maritalStsCode.setValue("");
+		this.sortOperator_maritalStsDesc.setSelectedIndex(0);
+		this.maritalStsDesc.setValue("");
+		this.sortOperator_maritalStsIsActive.setSelectedIndex(0);
+		this.maritalStsIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears the Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxMaritalStatusCode, this.pagingMaritalStatusCodeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -376,25 +435,7 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 	 */
 	public void onClick$button_MaritalStatusCodeList_MaritalStatusCodeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our MaritalStatusCodeDialog ZUL-file with parameters. So
-		 * we can call them with a object of the selected MaritalStatusCode. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * MaritalStatusCode object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("maritalStatusCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/MaritalStatusCode/MaritalStatusCodeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -410,7 +451,55 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 		PTListReportUtils reportUtils = new PTListReportUtils("MaritalStatusCode", getSearchObj(),this.pagingMaritalStatusCodeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.maritalStsCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_maritalStsCode.getSelectedItem(),this.maritalStsCode.getValue(), "maritalStsCode");
+		}
+		if (!StringUtils.trimToEmpty(this.maritalStsDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_maritalStsDesc.getSelectedItem(),this.maritalStsDesc.getValue(), "maritalStsDesc");
+		}
+
+
+		// Active
+		int intActive=0;
+		if(this.maritalStsIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_maritalStsIsActive.getSelectedItem(),intActive, "maritalStsIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxMaritalStatusCode,this.pagingMaritalStatusCodeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

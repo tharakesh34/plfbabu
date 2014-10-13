@@ -61,26 +61,77 @@
 				<north border="none" />
 
 				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_IdentityDetailsSearch_IdentityType"
+										value="${c:l('label_IdentityDetailsSearch_IdentityType.value')}" />
+									<listbox
+										id="sortOperator_identityType" width="43px" mold="select"
+										rows="1" />
+									<textbox id="identityType"
+										width="100px" maxlength="8" />
+									<label
+										id="label_IdentityDetailsSearch_IdentityDesc"
+										value="${c:l('label_IdentityDetailsSearch_IdentityDesc.value')}" />
+									<listbox
+										id="sortOperator_identityDesc" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="identityDesc"
+										width="320px" maxlength="50" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_IdentityDetailsSearch_RecordStatus"
+										value="${c:l('label_IdentityDetailsSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_IdentityDetailsSearch_RecordType"
+										value="${c:l('label_IdentityDetailsSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 
-					<listbox id="listBoxIdentityDetails" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true">
-						<listhead sizable="true">
-							<listheader id="listheader_IdentityType"
-								label="${c:l('listheader_IdentityType.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_IdentityDesc"
-								label="${c:l('listheader_IdentityDesc.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min" />
-						</listhead>
-					</listbox>
-
+						<listbox id="listBoxIdentityDetails"
+							vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_IdentityType"
+									label="${c:l('listheader_IdentityType.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_IdentityDesc"
+									label="${c:l('listheader_IdentityDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingIdentityDetailsList"/>

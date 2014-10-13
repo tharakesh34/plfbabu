@@ -45,20 +45,26 @@ package com.pennant.webui.systemmasters.phonetype;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +77,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.phonetype.model.PhoneTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -101,6 +110,19 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 	protected Paging 		pagingPhoneTypeList; 				// autoWired
 	protected Listbox 		listBoxPhoneType; 					// autoWired
 
+	protected Textbox 	phoneTypeCode; 					// autoWired
+	protected Listbox 	sortOperator_phoneTypeCode; 	// autoWired
+	protected Textbox 	phoneTypeDesc; 					// autoWired
+	protected Listbox 	sortOperator_phoneTypeDesc; 	// autoWired
+	protected Intbox 	phoneTypePriority; 				// autoWired
+	protected Listbox 	sortOperator_phoneTypePriority; // autoWired
+	protected Checkbox 	phoneTypeIsActive; 				// autoWired
+	protected Listbox 	sortOperator_phoneTypeIsActive; // autoWired
+	protected Textbox 	recordStatus; 					// autoWired
+	protected Listbox 	recordType; 					// autoWired
+	protected Listbox 	sortOperator_recordStatus; 		// autoWired
+	protected Listbox 	sortOperator_recordType; 		// autoWired
+
 	// List headers
 	protected Listheader listheader_PhoneTypeCode; 				// autoWired
 	protected Listheader listheader_PhoneTypeDesc; 				// autoWired
@@ -117,7 +139,9 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<PhoneType> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient PhoneTypeService phoneTypeService;
 	private transient WorkFlowDetails  workFlowDetails = null;
 
@@ -159,7 +183,26 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_phoneTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_phoneTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_phoneTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_phoneTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_phoneTypePriority.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_phoneTypePriority.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_phoneTypeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_phoneTypeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -170,7 +213,7 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 		 */
 
 		this.borderLayout_PhoneTypeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxPhoneType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingPhoneTypeList.setPageSize(getListRows());
 		this.pagingPhoneTypeList.setDetailed(true);
@@ -196,7 +239,13 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<PhoneType>(PhoneType.class,getListRows());
-		this.searchObj.addSort("PhoneTypeCode", false);
+		this.searchObj.addSort("PhoneTypeCode",false);
+		this.searchObj.addField("phoneTypeCode");
+		this.searchObj.addField("phoneTypeDesc");
+		this.searchObj.addField("phoneTypePriority");
+		this.searchObj.addField("phoneTypeIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -218,8 +267,7 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 			this.button_PhoneTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxPhoneType,this.pagingPhoneTypeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxPhoneType.setItemRenderer(new PhoneTypeListModelItemRenderer());
 		}
@@ -259,7 +307,6 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 			// CAST AND STORE THE SELECTED OBJECT
 			final PhoneType aPhoneType = (PhoneType) item.getAttribute("data");
 			final PhoneType phoneType = getPhoneTypeService().getPhoneTypeById(aPhoneType.getId());
-
 			if (phoneType == null) {
 
 				String[] valueParm = new String[2];
@@ -371,9 +418,25 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingPhoneTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_PhoneTypeList, event);
-		this.window_PhoneTypeList.invalidate();
+		this.phoneTypeCode.setValue("");
+		this.sortOperator_phoneTypeCode.setSelectedIndex(0);
+		this.sortOperator_phoneTypeDesc.setSelectedIndex(0);
+		this.phoneTypeDesc.setValue("");
+		this.sortOperator_phoneTypePriority.setSelectedIndex(0);
+		this.phoneTypePriority.setValue(null);
+		this.sortOperator_phoneTypeIsActive.setSelectedIndex(0);
+		this.phoneTypeIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxPhoneType,this.pagingPhoneTypeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -385,24 +448,7 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 	 */
 	public void onClick$button_PhoneTypeList_PhoneTypeSearchDialog(Event event)throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our PhoneTypeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected PhoneType. For handed over
-		 * these parameter only a Map is accepted. So we put the PhoneType
-		 * object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("phoneTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/PhoneType/PhoneTypeSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -418,7 +464,55 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> implements Ser
 		PTListReportUtils reportUtils = new PTListReportUtils("PhoneType", getSearchObj(),this.pagingPhoneTypeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
+		
+		this.searchObj.clearFilters();
 
+		if (!StringUtils.trimToEmpty(this.phoneTypeCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_phoneTypeCode.getSelectedItem(),this.phoneTypeCode.getValue(), "PhoneTypeCode");
+		}
+		if (!StringUtils.trimToEmpty(this.phoneTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_phoneTypeDesc.getSelectedItem(),this.phoneTypeDesc.getValue(), "PhoneTypeDesc");
+		}
+		if (this.phoneTypePriority.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_phoneTypePriority.getSelectedItem(),this.phoneTypePriority.getValue(), "PhoneTypePriority");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.phoneTypeIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_phoneTypeIsActive.getSelectedItem(),intActive, "PhoneTypeIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxPhoneType,this.pagingPhoneTypeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.documenttype;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.documenttype.model.DocumentTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,23 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> implemen
 	protected Paging 		pagingDocumentTypeList; 		// autoWired
 	protected Listbox 		listBoxDocumentType; 			// autoWired
 
+	protected Listbox sortOperator_docTypeCode;
+	protected Textbox docTypeCode;
+
+	protected Listbox sortOperator_docTypeDesc;
+	protected Textbox docTypeDesc;
+
+	protected Listbox sortOperator_docIsMandatory;
+	protected Checkbox docIsMandatory;
+
+	protected Listbox sortOperator_docTypeIsActive;
+	protected Checkbox docTypeIsActive;
+
+	protected Listbox sortOperator_recordStatus;
+	protected Textbox recordStatus;
+
+	protected Listbox sortOperator_recordType;
+	protected Listbox recordType;
 	// List headers
 	protected Listheader listheader_DocTypeCode; 		// autoWired
 	protected Listheader listheader_DocTypeDesc; 		// autoWired
@@ -115,7 +140,9 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> implemen
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<DocumentType> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient DocumentTypeService documentTypeService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -158,6 +185,33 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> implemen
 			wfAvailable = false;
 		}
 
+		this.sortOperator_docTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_docTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_docTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_docTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_docTypeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_docTypeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_docIsMandatory.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_docIsMandatory.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus
+			.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType
+			.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+			
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -167,6 +221,7 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> implemen
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_DocumentTypeList.setHeight(getBorderLayoutHeight());
+		this.listBoxDocumentType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingDocumentTypeList.setPageSize(getListRows());
@@ -192,8 +247,14 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> implemen
 		}
 
 		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<DocumentType>(DocumentType.class, getListRows());
-		this.searchObj.addSort("DocTypeCode", false);
+		this.searchObj =new JdbcSearchObject<DocumentType>(DocumentType.class, getListRows());
+		this.searchObj.addSort("DocTypeCode",false);
+		this.searchObj.addField("docTypeCode");
+		this.searchObj.addField("docTypeDesc");
+		this.searchObj.addField("docTypeIsActive");
+		this.searchObj.addField("docIsMandatory");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -215,8 +276,7 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> implemen
 			this.button_DocumentTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxDocumentType, this.pagingDocumentTypeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxDocumentType.setItemRenderer(new DocumentTypeListModelItemRenderer());
 		}
@@ -364,9 +424,24 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> implemen
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingDocumentTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_DocumentTypeList, event);
-		this.window_DocumentTypeList.invalidate();
+		this.sortOperator_docTypeCode.setSelectedIndex(0);
+		this.docTypeCode.setValue("");
+		this.sortOperator_docTypeDesc.setSelectedIndex(0);
+		this.docTypeDesc.setValue("");
+		this.sortOperator_docIsMandatory.setSelectedIndex(0);
+		this.docIsMandatory.setChecked(false);
+		this.sortOperator_docTypeIsActive.setSelectedIndex(0);
+		this.docTypeIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//clears all the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxDocumentType, this.pagingDocumentTypeList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -378,25 +453,7 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> implemen
 	 */
 	public void onClick$button_DocumentTypeList_DocumentTypeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our DocumentTypeDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected DocumentType. For handed
-		 * over these parameter only a Map is accepted. So we put the
-		 * DocumentType object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("documentTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -413,6 +470,61 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> implemen
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+		if (!StringUtils.trimToEmpty(this.docTypeCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_docTypeCode.getSelectedItem(),this.docTypeCode.getValue(), "DocTypeCode");
+		}
+		if (!StringUtils.trimToEmpty(this.docTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_docTypeDesc.getSelectedItem(),this.docTypeDesc.getValue(), "DocTypeDesc");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.docTypeIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_docTypeIsActive.getSelectedItem(),intActive, "DocTypeIsActive");
+
+		int intMandatory=0;
+		if(this.docIsMandatory.isChecked()){
+			intMandatory=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_docIsMandatory.getSelectedItem(),intMandatory, "DocIsMandatory");
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxDocumentType,
+				this.pagingDocumentTypeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

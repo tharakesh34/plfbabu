@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.dispatchmode;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.dispatchmode.model.DispatchModeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,18 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> implemen
 	protected Paging 		pagingDispatchModeList; 		// autoWired
 	protected Listbox 		listBoxDispatchMode; 			// autoWired
 
+	protected Listbox sortOperator_dispatchModeCode;
+	protected Textbox dispatchModeCode;
+	protected Listbox sortOperator_dispatchModeDesc;
+	protected Textbox dispatchModeDesc;
+
+	protected Listbox sortOperator_dispatchModeIsActive;
+	protected Checkbox dispatchModeIsActive;
+
+	protected Listbox sortOperator_recordStatus;
+	protected Textbox recordStatus;
+	protected Listbox sortOperator_recordType;
+	protected Listbox recordType;
 	// List headers
 	protected Listheader listheader_DispatchModeCode; 		// autoWired
 	protected Listheader listheader_DispatchModeDesc; 		// autoWired
@@ -114,7 +134,9 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> implemen
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<DispatchMode> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient DispatchModeService dispatchModeService;
 	private transient WorkFlowDetails workFlowDetails=null;
 
@@ -157,6 +179,28 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> implemen
 			wfAvailable = false;
 		}
 
+		this.sortOperator_dispatchModeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_dispatchModeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_dispatchModeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_dispatchModeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_dispatchModeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_dispatchModeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
@@ -166,6 +210,7 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> implemen
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_DispatchModeList.setHeight(getBorderLayoutHeight());
+		this.listBoxDispatchMode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingDispatchModeList.setPageSize(getListRows());
@@ -190,7 +235,12 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> implemen
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<DispatchMode>(DispatchMode.class, getListRows());
-		this.searchObj.addSort("DispatchModeCode", false);
+		this.searchObj.addSort("DispatchModeCode",false);
+		this.searchObj.addField("dispatchModeCode");
+		this.searchObj.addField("dispatchModeDesc");
+		this.searchObj.addField("dispatchModeIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -212,8 +262,7 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> implemen
 			this.button_DispatchModeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxDispatchMode, this.pagingDispatchModeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxDispatchMode.setItemRenderer(new DispatchModeListModelItemRenderer());
 		}
@@ -363,9 +412,24 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> implemen
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingDispatchModeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_DispatchModeList, event);
-		this.window_DispatchModeList.invalidate();
+		
+		this.sortOperator_dispatchModeCode.setSelectedIndex(0);
+		this.dispatchModeCode.setValue("");
+		this.sortOperator_dispatchModeDesc.setSelectedIndex(0);
+		this.dispatchModeDesc.setValue("");
+		this.sortOperator_dispatchModeIsActive.setSelectedIndex(0);
+		this.dispatchModeIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears All the Fields
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxDispatchMode, this.pagingDispatchModeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -377,25 +441,7 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> implemen
 	 */
 	public void onClick$button_DispatchModeList_DispatchModeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our DispatchModeDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected DispatchMode. For handed
-		 * over these parameter only a Map is accepted. So we put the
-		 * DispatchMode object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("dispatchModeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/DispatchMode/DispatchModeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -412,6 +458,55 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> implemen
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.dispatchModeCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dispatchModeCode.getSelectedItem(),this.dispatchModeCode.getValue(), "dispatchModeCode");
+		}
+		if (!StringUtils.trimToEmpty(this.dispatchModeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dispatchModeDesc.getSelectedItem(),this.dispatchModeDesc.getValue(), "DispatchModeDesc");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.dispatchModeIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_dispatchModeIsActive.getSelectedItem(),intActive, "DispatchModeIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxDispatchMode,
+				this.pagingDispatchModeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

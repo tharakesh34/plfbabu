@@ -60,36 +60,98 @@
 				<north border="none" />
 
 				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_ProfessionSearch_ProfessionCode"
+										value="${c:l('label_ProfessionSearch_ProfessionCode.value')}" />
+									<listbox
+										id="sortOperator_professionCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="professionCode"
+										width="96px" maxlength="8" />
+									<label
+										id="label_ProfessionSearch_ProfessionDesc"
+										value="${c:l('label_ProfessionSearch_ProfessionDesc.value')}" />
+									<listbox
+										id="sortOperator_professionDesc" width="43px" mold="select"
+										rows="1" />
+									<textbox id="professionDesc"
+										width="320px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_ProfessionSearch_ProfessionIsActive"
+										value="${c:l('label_ProfessionSearch_ProfessionIsActive.value')}" />
+									<listbox
+										id="sortOperator_professionIsActive" width="43px"
+										mold="select" rows="1" />
+									<checkbox id="professionIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_ProfessionSearch_RecordStatus"
+										value="${c:l('label_ProfessionSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_ProfessionSearch_RecordType"
+										value="${c:l('label_ProfessionSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 
-					<listbox id="listBoxProfession" 
-					        emptyMessage="${c:l('listbox.emptyMessage')}"
-							fixedLayout="true" vflex="true" 
-							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-							height="100%" multiple="false" sizedByContent="true" span="true">
-						<listhead sizable="true">
-							<listheader id="listheader_ProfessionCode"
-								label="${c:l('listheader_ProfessionCode.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_ProfessionDesc"
-								label="${c:l('listheader_ProfessionDesc.label')}" sort="auto"
-								hflex="min" />
-							<listheader
-								id="listheader_ProfessionSelfEmployee"
-								label="${c:l('listheader_ProfessionSelfEmployee.label')}" sort="auto"
-								 hflex="min" />
-							<listheader
-								id="listheader_ProfessionIsActive"
-								label="${c:l('listheader_ProfessionIsActive.label')}" sort="auto"
-								 hflex="min" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min" />
-						</listhead>
-					</listbox>
-
+						<listbox id="listBoxProfession"
+							emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+							vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" span="true">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_ProfessionCode"
+									label="${c:l('listheader_ProfessionCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_ProfessionDesc"
+									label="${c:l('listheader_ProfessionDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_ProfessionSelfEmployee"
+									label="${c:l('listheader_ProfessionSelfEmployee.label')}"
+									sort="auto" hflex="min" />
+								<listheader
+									id="listheader_ProfessionIsActive"
+									label="${c:l('listheader_ProfessionIsActive.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingProfessionList" />

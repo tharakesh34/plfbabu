@@ -45,19 +45,23 @@ package com.pennant.webui.systemmasters.employmenttype;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +74,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.employmenttype.model.EmploymentTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +107,14 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 	protected Paging 		pagingEmploymentTypeList; 			// autoWired
 	protected Listbox 		listBoxEmploymentType; 				// autoWired
 
+	protected Textbox empType; 							// auto wired
+	protected Listbox sortOperator_empType; 			// auto wired
+	protected Textbox empTypeDesc; 						// auto wired
+	protected Listbox sortOperator_empTypeDesc; 		// auto wired
+	protected Textbox recordStatus; 					// auto wired
+	protected Listbox recordType; 						// auto wired
+	protected Listbox sortOperator_recordStatus; 		// auto wired
+	protected Listbox sortOperator_recordType; 			// auto wired
 	// List headers
 	protected Listheader listheader_EmpType; 		// autoWired
 	protected Listheader listheader_EmpTypeDesc; 	// autoWired
@@ -114,9 +129,12 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<EmploymentType> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid  searchGrid;
+	
 	private transient EmploymentTypeService employmentTypeService;
 	private transient WorkFlowDetails workFlowDetails = null;
+
 
 	/**
 	 * default constructor.<br>
@@ -156,6 +174,23 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_empType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_empType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_empTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_empTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -166,7 +201,7 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 		 * are filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_EmploymentTypeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxEmploymentType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingEmploymentTypeList.setPageSize(getListRows());
 		this.pagingEmploymentTypeList.setDetailed(true);
@@ -187,9 +222,12 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 		}
 
 		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<EmploymentType>(EmploymentType.class, getListRows());
-		this.searchObj.addSort("EmpType", false);
-
+		this.searchObj = new JdbcSearchObject<EmploymentType>(EmploymentType.class, getListRows());;
+		this.searchObj.addSort("EmpType",false);
+		this.searchObj.addField("empType");
+		this.searchObj.addField("empTypeDesc");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		// Work flow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("RMTEmpTypes_View");
@@ -211,8 +249,7 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 			this.button_EmploymentTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxEmploymentType, this.pagingEmploymentTypeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxEmploymentType.setItemRenderer(new EmploymentTypeListModelItemRenderer());
 		}
@@ -318,7 +355,6 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 		if (aEmploymentType.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aEmploymentType.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("employmentType", aEmploymentType);
 		/*
@@ -361,9 +397,20 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingEmploymentTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_EmploymentTypeList, event);
-		this.window_EmploymentTypeList.invalidate();
+		this.sortOperator_empType.setSelectedIndex(0);
+		this.empType.setValue("");
+		this.sortOperator_empTypeDesc.setSelectedIndex(0);
+		this.empTypeDesc.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxEmploymentType, this.pagingEmploymentTypeList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -374,23 +421,7 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 	 */
 	public void onClick$button_EmploymentTypeList_EmploymentTypeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our EmploymentTypeDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected EmploymentType. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * EmploymentType object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("employmentTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SystemMaster/EmploymentType/EmploymentTypeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -407,6 +438,46 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType>
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+		
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.empType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_empType.getSelectedItem(),this.empType.getValue(), "EmpType");
+		}
+		if (!StringUtils.trimToEmpty(this.empTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_empTypeDesc.getSelectedItem(),this.empTypeDesc.getValue(), "EmpTypeDesc");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxEmploymentType,this.pagingEmploymentTypeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

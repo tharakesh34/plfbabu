@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.empstscode;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -75,6 +80,8 @@ import com.pennant.webui.systemmasters.empstscode.model.EmpStsCodeListModelItemR
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +107,17 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 	protected Paging 		pagingEmpStsCodeList; 			// autoWired
 	protected Listbox 		listBoxEmpStsCode; 				// autoWired
 
+	protected Textbox 	empStsCode; 					// autoWired
+	protected Listbox 	sortOperator_empStsCode; 		// autoWired
+	protected Textbox 	empStsDesc; 					// autoWired
+	protected Listbox 	sortOperator_empStsDesc; 		// autoWired
+	protected Checkbox 	empStsIsActive; 				// autoWired
+	protected Listbox 	sortOperator_empStsIsActive; 	// autoWired
+	protected Textbox 	recordStatus; 					// autoWired
+	protected Listbox 	recordType; 					// autoWired
+	protected Listbox 	sortOperator_recordStatus; 		// autoWired
+	protected Listbox 	sortOperator_recordType; 		// autoWired
+
 	// List headers
 	protected Listheader listheader_EmpStsCode; 		// autoWired
 	protected Listheader listheader_EmpStsDesc; 		// autoWired
@@ -115,6 +133,8 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<EmpStsCode> searchObj;
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
 
 	private transient EmpStsCodeService empStsCodeService;
 	private transient WorkFlowDetails workFlowDetails = null;
@@ -158,6 +178,26 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 			wfAvailable = false;
 		}
 
+		this.sortOperator_empStsCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_empStsCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_empStsDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_empStsDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_empStsIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_empStsIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -167,7 +207,7 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_EmpStsCodeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxEmpStsCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingEmpStsCodeList.setPageSize(getListRows());
 		this.pagingEmpStsCodeList.setDetailed(true);
@@ -191,8 +231,13 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<EmpStsCode>(EmpStsCode.class,	getListRows());
-		this.searchObj.addSort("EmpStsCode", false);
+		this.searchObj.addSort("EmpStsCode",false);
 		this.searchObj.addFilter(new Filter("EmpStsCode",PennantConstants.NONE, Filter.OP_NOT_EQUAL));
+		this.searchObj.addField("empStsCode");
+		this.searchObj.addField("empStsDesc");
+		this.searchObj.addField("empStsIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -215,8 +260,7 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 			this.button_EmpStsCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxEmpStsCode,this.pagingEmpStsCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxEmpStsCode.setItemRenderer(new EmpStsCodeListModelItemRenderer());
 		}
@@ -323,7 +367,6 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 		if (aEmpStsCode.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aEmpStsCode.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("empStsCode", aEmpStsCode);
 		/*
@@ -367,9 +410,24 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingEmpStsCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_EmpStsCodeList, event);
-		this.window_EmpStsCodeList.invalidate();
+
+		this.sortOperator_empStsCode.setSelectedIndex(0);
+		this.empStsCode.setValue("");
+		this.sortOperator_empStsDesc.setSelectedIndex(0);
+		this.empStsDesc.setValue("");
+		this.sortOperator_empStsIsActive.setSelectedIndex(0);
+		this.empStsIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxEmpStsCode,this.pagingEmpStsCodeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -381,25 +439,7 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 	 */
 	public void onClick$button_EmpStsCodeList_EmpStsCodeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our EmpStsCodeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected EmpStsCode. For handed over
-		 * these parameter only a Map is accepted. So we put the EmpStsCode
-		 * object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("empStsCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/EmpStsCode/EmpStsCodeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -415,7 +455,53 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> implements S
 		PTListReportUtils reportUtils = new PTListReportUtils("EmpStsCode", getSearchObj(),this.pagingEmpStsCodeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.empStsCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_empStsCode.getSelectedItem(),this.empStsCode.getValue(), "EmpStsCode");
+		}
+		if (!StringUtils.trimToEmpty(this.empStsDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_empStsDesc.getSelectedItem(),this.empStsDesc.getValue(), "EmpStsDesc");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.empStsIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_empStsIsActive.getSelectedItem(),intActive, "EmpStsIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxEmpStsCode,this.pagingEmpStsCodeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

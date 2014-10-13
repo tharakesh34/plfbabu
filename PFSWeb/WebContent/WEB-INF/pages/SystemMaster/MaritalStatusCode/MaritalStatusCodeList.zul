@@ -61,33 +61,96 @@
 				<north border="none" />
 
 				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_MaritalStatusCodeSearch_MaritalStsCode"
+										value="${c:l('label_MaritalStatusCodeSearch_MaritalStsCode.value')}" />
+									<listbox
+										id="sortOperator_maritalStsCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="maritalStsCode"
+										width="100px" maxlength="8" />
+									<label
+										id="label_MaritalStatusCodeSearch_MaritalStsDesc"
+										value="${c:l('label_MaritalStatusCodeSearch_MaritalStsDesc.value')}" />
+									<listbox
+										id="sortOperator_maritalStsDesc" width="43px" mold="select"
+										rows="1" />
+									<textbox id="maritalStsDesc"
+										width="320px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_MaritalStatusCodeSearch_MaritalStsIsActive"
+										value="${c:l('label_MaritalStatusCodeSearch_MaritalStsIsActive.value')}" />
+									<listbox
+										id="sortOperator_maritalStsIsActive" width="43px"
+										mold="select" rows="1" />
+									<checkbox id="maritalStsIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_MaritalStatusCodeSearch_RecordStatus"
+										value="${c:l('label_MaritalStatusCodeSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_MaritalStatusCodeSearch_RecordType"
+										value="${c:l('label_MaritalStatusCodeSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 
-					<listbox id="listBoxMaritalStatusCode" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true">
-						<listhead sizable="true">
-							<listheader id="listheader_MaritalStsCode"
-								label="${c:l('listheader_MaritalStsCode.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_MaritalStsDesc"
-								label="${c:l('listheader_MaritalStsDesc.label')}" sort="auto"
-								hflex="min" />
-							<listheader
-								id="listheader_MaritalStsIsActive"
-								label="${c:l('listheader_MaritalStsIsActive.label')}"
-								sort="auto" hflex="min" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min" />
-						</listhead>
-					</listbox>
-
+						<listbox id="listBoxMaritalStatusCode"
+							vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" span="true">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_MaritalStsCode"
+									label="${c:l('listheader_MaritalStsCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_MaritalStsDesc"
+									label="${c:l('listheader_MaritalStsDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_MaritalStsIsActive"
+									label="${c:l('listheader_MaritalStsIsActive.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingMaritalStatusCodeList"/>
+					<paging id="pagingMaritalStatusCodeList" />
 				</south>
 
 			</borderlayout>

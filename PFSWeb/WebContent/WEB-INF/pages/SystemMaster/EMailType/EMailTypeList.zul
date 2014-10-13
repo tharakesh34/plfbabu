@@ -59,34 +59,104 @@
 				<north border="none" />
 
 				<center border="none">
-
-					<listbox id="listBoxEMailType" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true">
-						<listhead sizable="true">
-							<listheader id="listheader_EmailTypeCode"
-								label="${c:l('listheader_EmailTypeCode.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_EmailTypeDesc"
-								label="${c:l('listheader_EmailTypeDesc.label')}" sort="auto"
-								hflex="min" />
-							<listheader
-								id="listheader_EmailTypePriority"
-								label="${c:l('listheader_EmailTypePriority.label')}" sort="auto"
-								hflex="min" />
-							<listheader
-								id="listheader_EmailTypeIsActive"
-								label="${c:l('listheader_EmailTypeIsActive.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min" />
-						</listhead>
-					</listbox>
-
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_EMailTypeSearch_EmailTypeCode"
+										value="${c:l('label_EMailTypeSearch_EmailTypeCode.value')}" />
+									<listbox
+										id="sortOperator_emailTypeCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="emailTypeCode"
+										width="72px" maxlength="8" />
+									<label
+										id="label_EMailTypeSearch_EmailTypeDesc"
+										value="${c:l('label_EMailTypeSearch_EmailTypeDesc.value')}" />
+									<listbox
+										id="sortOperator_emailTypeDesc" width="43px" mold="select"
+										rows="1" />
+									<textbox id="emailTypeDesc"
+										width="300px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_EMailTypeSearch_EmailTypePriority"
+										value="${c:l('label_EMailTypeSearch_EmailTypePriority.value')}" />
+									<listbox
+										id="sortOperator_emailTypePriority" width="43px" mold="select"
+										rows="1" />
+									<intbox id="emailTypePriority"
+										width="100px" maxlength="10" />
+									<label
+										id="label_EMailTypeSearch_EmailTypeIsActive"
+										value="${c:l('label_EMailTypeSearch_EmailTypeIsActive.value')}" />
+									<listbox
+										id="sortOperator_emailTypeIsActive" width="43px" mold="select"
+										rows="1" />
+									<checkbox id="emailTypeIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_EMailTypeSearch_RecordStatus"
+										value="${c:l('label_EMailTypeSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_EMailTypeSearch_RecordType"
+										value="${c:l('label_EMailTypeSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxEMailType" vflex="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" span="true">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_EmailTypeCode"
+									label="${c:l('listheader_EmailTypeCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_EmailTypeDesc"
+									label="${c:l('listheader_EmailTypeDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_EmailTypePriority"
+									label="${c:l('listheader_EmailTypePriority.label')}"
+									sort="auto" hflex="min" />
+								<listheader
+									id="listheader_EmailTypeIsActive"
+									label="${c:l('listheader_EmailTypeIsActive.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingEMailTypeList" />

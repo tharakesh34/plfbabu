@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.incometype;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.incometype.model.IncomeTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,17 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 	protected Paging 		pagingIncomeTypeList; 			        // autoWired
 	protected Listbox 		listBoxIncomeType; 				        // autoWired
 
+	protected Textbox 	incomeTypeCode; 					// autoWired
+	protected Listbox 	sortOperator_incomeTypeCode; 		// autoWired
+	protected Textbox 	incomeTypeDesc; 					// autoWired
+	protected Listbox 	sortOperator_incomeTypeDesc; 		// autoWired
+	protected Checkbox 	incomeTypeIsActive; 				// autoWired
+	protected Listbox 	sortOperator_incomeTypeIsActive;	// autoWired
+	protected Textbox 	recordStatus; 						// autoWired
+	protected Listbox 	recordType; 						// autoWired
+	protected Listbox 	sortOperator_recordStatus; 			// autoWired
+	protected Listbox 	sortOperator_recordType; 			// autoWired
+
 	// List headers
 	protected Listheader listheader_IncomeExpense; 		        	// autoWired
 	protected Listheader listheader_IncomeTypeCategory; 		    // autoWired
@@ -116,7 +135,9 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<IncomeType> searchObj;
-
+	protected Grid  searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient IncomeTypeService incomeTypeService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -158,7 +179,24 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_incomeTypeCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_incomeTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_incomeTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_incomeTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_incomeTypeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_incomeTypeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -168,7 +206,7 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_IncomeTypeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxIncomeType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingIncomeTypeList.setPageSize(getListRows());
 		this.pagingIncomeTypeList.setDetailed(true);
@@ -196,7 +234,14 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<IncomeType>(IncomeType.class,getListRows());
-		this.searchObj.addSort("IncomeExpense", true);
+		this.searchObj.addSort("IncomeExpense",false);
+		this.searchObj.addField("incomeExpense");
+		this.searchObj.addField("category");
+		this.searchObj.addField("incomeTypeCode");
+		this.searchObj.addField("incomeTypeDesc");
+		this.searchObj.addField("incomeTypeIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -218,8 +263,7 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 			this.button_IncomeTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxIncomeType,this.pagingIncomeTypeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxIncomeType.setItemRenderer(new IncomeTypeListModelItemRenderer());
 		}
@@ -260,7 +304,6 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 			// CAST AND STORE THE SELECTED OBJECT
 			final IncomeType aIncomeType = (IncomeType) item.getAttribute("data");
 			final IncomeType incomeType = getIncomeTypeService().getIncomeTypeById(aIncomeType.getId(),aIncomeType.getIncomeExpense(),aIncomeType.getCategory());
-
 			if (incomeType == null) {
 
 				String[] valueParm = new String[2];
@@ -369,9 +412,23 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingIncomeTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_IncomeTypeList, event);
-		this.window_IncomeTypeList.invalidate();
+		this.sortOperator_incomeTypeCode.setSelectedIndex(0);
+		this.incomeTypeCode.setValue("");
+		this.sortOperator_incomeTypeDesc.setSelectedIndex(0);
+		this.incomeTypeDesc.setValue("");
+		this.sortOperator_incomeTypeIsActive.setSelectedIndex(0);
+		this.incomeTypeIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//  Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxIncomeType,this.pagingIncomeTypeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -383,25 +440,7 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 	 */
 	public void onClick$button_IncomeTypeList_IncomeTypeSearchDialog(Event event)throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our IncomeTypeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected IncomeType. For handed over
-		 * these parameter only a Map is accepted. So we put the IncomeType
-		 * object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("incomeTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/IncomeType/IncomeTypeSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -417,7 +456,51 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> implements S
 		PTListReportUtils reportUtils = new PTListReportUtils("IncomeType", getSearchObj(),this.pagingIncomeTypeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
+		
+		this.searchObj.clearFilters();
+		
+		if (!StringUtils.trimToEmpty(this.incomeTypeCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_incomeTypeCode.getSelectedItem(),this.incomeTypeCode.getValue(), "IncomeTypeCode");
+		}
+		if (!StringUtils.trimToEmpty(this.incomeTypeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_incomeTypeDesc.getSelectedItem(),this.incomeTypeDesc.getValue(), "IncomeTypeDesc");
+		}
 
+		// Active
+		int intActive=0;
+		if(this.incomeTypeIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_incomeTypeIsActive.getSelectedItem(),intActive, "IncomeTypeIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxIncomeType,this.pagingIncomeTypeList);
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

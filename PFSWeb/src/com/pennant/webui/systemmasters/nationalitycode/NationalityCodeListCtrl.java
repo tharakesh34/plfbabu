@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.nationalitycode;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.nationalitycode.model.NationalityCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,17 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode>	im
 	protected Paging 		pagingNationalityCodeList; 			              // autoWired
 	protected Listbox 		listBoxNationalityCode; 				          // autoWired
 
+	protected Textbox 	nationalityCode; 					// autoWired
+	protected Listbox 	sortOperator_nationalityCode; 		// autoWired
+	protected Textbox 	nationalityDesc; 					// autoWired
+	protected Listbox 	sortOperator_nationalityDesc; 		// autoWired
+	protected Checkbox 	nationalityIsActive; 				// autoWired
+	protected Listbox 	sortOperator_nationalityIsActive; 	// autoWired
+	protected Textbox 	recordStatus; 						// autoWired
+	protected Listbox 	recordType; 						// autoWired
+	protected Listbox 	sortOperator_recordStatus; 			// autoWired
+	protected Listbox 	sortOperator_recordType; 			// autoWired
+
 	// List headers
 	protected Listheader listheader_NationalityCode; 				          // autoWired
 	protected Listheader listheader_NationalityDesc; 				          // autoWired
@@ -114,10 +133,11 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode>	im
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<NationalityCode> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient NationalityCodeService nationalityCodeService;
 	private transient WorkFlowDetails workFlowDetails = null;
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -154,7 +174,26 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode>	im
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_nationalityCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_nationalityCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_nationalityDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_nationalityDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_nationalityIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_nationalityIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -164,7 +203,7 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode>	im
 		 * that are filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_NationalityCodeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxNationalityCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingNationalityCodeList.setPageSize(getListRows());
 		this.pagingNationalityCodeList.setDetailed(true);
@@ -188,7 +227,12 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode>	im
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<NationalityCode>(NationalityCode.class, getListRows());
-		this.searchObj.addSort("NationalityCode", false);
+		this.searchObj.addSort("NationalityCode",false);
+		this.searchObj.addField("nationalityCode");
+		this.searchObj.addField("nationalityDesc");
+		this.searchObj.addField("nationalityIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -210,8 +254,7 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode>	im
 			this.button_NationalityCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxNationalityCode, this.pagingNationalityCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxNationalityCode.setItemRenderer(new NationalityCodeListModelItemRenderer());
 		}
@@ -360,9 +403,23 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode>	im
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingNationalityCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_NationalityCodeList, event);
-		this.window_NationalityCodeList.invalidate();
+		this.sortOperator_nationalityCode.setSelectedIndex(0);
+		this.nationalityCode.setValue("");
+		this.sortOperator_nationalityDesc.setSelectedIndex(0);
+		this.nationalityDesc.setValue("");
+		this.sortOperator_nationalityIsActive.setSelectedIndex(0);
+		this.nationalityIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxNationalityCode, this.pagingNationalityCodeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -374,24 +431,7 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode>	im
 	 */
 	public void onClick$button_NationalityCodeList_NationalityCodeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our NationalityCodeDialog ZUL-file with parameters. So
-		 * we can call them with a object of the selected NationalityCode. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * NationalityCode object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("nationalityCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/NationalityCode/NationalityCodeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -407,7 +447,53 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode>	im
 		PTListReportUtils reportUtils = new PTListReportUtils("NationalityCode", getSearchObj(),this.pagingNationalityCodeList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.nationalityCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_nationalityCode.getSelectedItem(),this.nationalityCode.getValue(), "NationalityCode");
+		}
+		if (!StringUtils.trimToEmpty(this.nationalityDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_nationalityDesc.getSelectedItem(),this.nationalityDesc.getValue(), "NationalityDesc");
+		}
+		// Active
+		int intActive=0;
+		if(this.nationalityIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_nationalityIsActive.getSelectedItem(),intActive, "NationalityIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType
+						.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxNationalityCode,this.pagingNationalityCodeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

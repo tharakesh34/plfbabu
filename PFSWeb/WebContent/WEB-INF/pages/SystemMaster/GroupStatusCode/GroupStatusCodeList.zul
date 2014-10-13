@@ -56,33 +56,95 @@
 				<north border="none" />
 
 				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_GroupStatusCodeSearch_GrpStsCode"
+										value="${c:l('label_GroupStatusCodeSearch_GrpStsCode.value')}" />
+									<listbox
+										id="sortOperator_grpStsCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="grpStsCode"
+										width="100px" maxlength="8" />
+									<label
+										id="label_GroupStatusCodeSearch_GrpStsDescription"
+										value="${c:l('label_GroupStatusCodeSearch_GrpStsDescription.value')}" />
+									<listbox
+										id="sortOperator_grpStsDescription" width="43px" mold="select"
+										rows="1" />
+									<textbox id="grpStsDescription"
+										width="320px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_GroupStatusCodeSearch_GrpStsIsActive"
+										value="${c:l('label_GroupStatusCodeSearch_GrpStsIsActive.value')}" />
+									<listbox
+										id="sortOperator_grpStsIsActive" width="43px" mold="select"
+										rows="1" />
+									<checkbox id="grpStsIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_GroupStatusCodeSearch_RecordStatus"
+										value="${c:l('label_GroupStatusCodeSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_GroupStatusCodeSearch_RecordType"
+										value="${c:l('label_GroupStatusCodeSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 
-					<listbox id="listBoxGroupStatusCode" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true">
-						<listhead sizable="true">
-							<listheader id="listheader_GrpStsCode"
-								label="${c:l('listheader_GrpStsCode.label')}" sort="auto"
-								width="15%" />
-							<listheader
-								id="listheader_GrpStsDescription"
-								label="${c:l('listheader_GrpStsDescription.label')}" sort="auto"
-								width="55%" />
-							<listheader id="listheader_GrpStsIsActive"
-								label="${c:l('listheader_GrpStsIsActive.label')}" sort="auto"
-								width="10%" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
-						</listhead>
-					</listbox>
-
+						<listbox id="listBoxGroupStatusCode"
+							vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_GrpStsCode"
+									label="${c:l('listheader_GrpStsCode.label')}" sort="auto"
+									width="15%" />
+								<listheader
+									id="listheader_GrpStsDescription"
+									label="${c:l('listheader_GrpStsDescription.label')}"
+									sort="auto" width="55%" />
+								<listheader
+									id="listheader_GrpStsIsActive"
+									label="${c:l('listheader_GrpStsIsActive.label')}" sort="auto"
+									width="10%" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									width="10%" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									width="10%" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingGroupStatusCodeList"/>
+					<paging id="pagingGroupStatusCodeList" />
 				</south>
 
 			</borderlayout>

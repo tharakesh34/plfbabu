@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.profession;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -75,6 +80,8 @@ import com.pennant.webui.systemmasters.profession.model.ProfessionListModelItemR
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +107,17 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 	protected Paging 		pagingProfessionList; 			// autoWired
 	protected Listbox 		listBoxProfession; 				// autoWired
 
+	protected Textbox 	professionCode; 						// autoWired
+	protected Listbox 	sortOperator_professionCode; 			// autoWired
+	protected Textbox 	professionDesc; 						// autoWired
+	protected Listbox 	sortOperator_professionDesc; 			// autoWired
+	protected Checkbox 	professionIsActive; 					// autoWired
+	protected Listbox 	sortOperator_professionIsActive;  		// autoWired
+	protected Textbox 	recordStatus; 							// autoWired
+	protected Listbox 	recordType; 							// autoWired
+	protected Listbox 	sortOperator_recordStatus; 				// autoWired
+	protected Listbox 	sortOperator_recordType; 				// autoWired
+
 	// List headers
 	protected Listheader 	listheader_ProfessionCode; 		    // autoWired
 	protected Listheader 	listheader_ProfessionDesc; 		    // autoWired
@@ -116,7 +134,9 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Profession> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient ProfessionService professionService;
 	private transient WorkFlowDetails   workFlowDetails = null;
 
@@ -158,7 +178,26 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_professionCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_professionCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_professionDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_professionDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_professionIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_professionIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType =setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -168,7 +207,7 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_ProfessionList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxProfession.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingProfessionList.setPageSize(getListRows());
 		this.pagingProfessionList.setDetailed(true);
@@ -177,8 +216,8 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 		this.listheader_ProfessionCode.setSortDescending(new FieldComparator("professionCode", false));
 		this.listheader_ProfessionDesc.setSortAscending(new FieldComparator("professionDesc", true));
 		this.listheader_ProfessionDesc.setSortDescending(new FieldComparator("professionDesc", false));
-		this.listheader_ProfessionSelfEmployee.setSortAscending(new FieldComparator("professionSelfEmployee", true));
-		this.listheader_ProfessionSelfEmployee.setSortDescending(new FieldComparator("professionSelfEmployee", false));
+		this.listheader_ProfessionSelfEmployee.setSortAscending(new FieldComparator("selfEmployee", true));
+		this.listheader_ProfessionSelfEmployee.setSortDescending(new FieldComparator("selfEmployee", false));
 		this.listheader_ProfessionIsActive.setSortAscending(new FieldComparator("professionIsActive", true));
 		this.listheader_ProfessionIsActive.setSortDescending(new FieldComparator("professionIsActive", false));
 
@@ -193,9 +232,15 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 		}
 
 		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<Profession>(Profession.class, getListRows());
-		this.searchObj.addSort("ProfessionCode", false);
+		this.searchObj =new JdbcSearchObject<Profession>(Profession.class, getListRows());
+		this.searchObj.addSort("ProfessionCode",false);
 		this.searchObj.addFilter(new Filter("ProfessionCode",PennantConstants.NONE, Filter.OP_NOT_EQUAL));
+		this.searchObj.addField("professionCode");
+		this.searchObj.addField("professionDesc");
+		this.searchObj.addField("professionIsActive");
+		this.searchObj.addField("selfEmployee");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -217,8 +262,7 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 			this.button_ProfessionList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxProfession, this.pagingProfessionList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxProfession.setItemRenderer(new ProfessionListModelItemRenderer());
 		}
@@ -369,9 +413,24 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingProfessionList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_ProfessionList, event);
-		this.window_ProfessionList.invalidate();
+
+		this.sortOperator_professionCode.setSelectedIndex(0);
+		this.professionCode.setValue("");
+		this.sortOperator_professionDesc.setSelectedIndex(0);
+		this.professionDesc.setValue("");
+		this.sortOperator_professionIsActive.setSelectedIndex(0);
+		this.professionIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxProfession, this.pagingProfessionList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -383,25 +442,7 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 	 */
 	public void onClick$button_ProfessionList_ProfessionSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our ProfessionDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Profession. For handed over
-		 * these parameter only a Map is accepted. So we put the Profession
-		 * object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("professionCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/Profession/ProfessionSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -416,6 +457,56 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> implements S
 		logger.debug("Entering" + event.toString());
 		PTListReportUtils reportUtils = new PTListReportUtils("Profession", getSearchObj(),this.pagingProfessionList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
+	}
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.professionCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_professionCode.getSelectedItem(),this.professionCode.getValue(), "ProfessionCode");
+		}
+		if (!StringUtils.trimToEmpty(this.professionDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_professionDesc.getSelectedItem(),this.professionDesc.getValue(), "ProfessionDesc");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.professionIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_professionIsActive.getSelectedItem(),intActive, "ProfessionIsActive");
+
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxProfession,this.pagingProfessionList);
+
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

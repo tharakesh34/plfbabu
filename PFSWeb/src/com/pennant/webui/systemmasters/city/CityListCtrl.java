@@ -45,20 +45,24 @@ package com.pennant.webui.systemmasters.city;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.city.model.CityListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -95,19 +102,38 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window 		window_CityList;		// autoWired
-	protected Panel 		panel_CityList; 		// autoWired
-	protected Borderlayout 	borderLayout_CityList; 	// autoWired
-	protected Paging 		pagingCityList; 		// autoWired
-	protected Listbox 		listBoxCity; 			// autoWired
+	protected Window 		window_CityList;		 // autoWired
+	protected Panel 		panel_CityList; 		 // autoWired
+	protected Borderlayout 	borderLayout_CityList; 	 // autoWired
+	protected Paging 		pagingCityList; 		 // autoWired
+	protected Listbox 		listBoxCity; 			 // autoWired
+
+
+	protected Listbox sortOperator_pCCountry;		 // autoWired
+	protected Textbox pCCountry;			    	 // autoWired
+
+	protected Listbox  sortOperator_pCProvince;		  // autoWired
+	protected Textbox pCProvince;				      // autoWired
+
+	protected Listbox sortOperator_pCCity;		      // autoWired
+	protected Textbox pCCity;  				          // autoWired
+
+	protected Listbox sortOperator_pCCityName;	      // autoWired
+	protected Textbox pCCityName;				      // autoWired
+
+	protected Listbox sortOperator_recordStatus;      // autoWired
+	protected Textbox recordStatus;				  	  // autoWired
+
+	protected Listbox sortOperator_recordType;	  	  // autoWired
+	protected Listbox recordType;				      // autoWired
 
 	// List headers
 	protected Listheader 	listheader_PCCountry; 		// autoWired
-    protected Listheader 	listheader_PCProvince; 		// autoWired
+	protected Listheader 	listheader_PCProvince; 		// autoWired
 	protected Listheader 	listheader_PCCity; 			// autoWired
 	protected Listheader 	listheader_PCCityName; 		// autoWired
 	protected Listheader 	listheader_RecordStatus; 	// autoWired
-	protected Listheader 	listheader_RecordType;
+	protected Listheader 	listheader_RecordType;		// autoWired
 
 	// checkRights
 	protected Button 		btnHelp; 					// autoWired
@@ -117,7 +143,9 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<City> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient CityService cityService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -158,7 +186,31 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_pCCity.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_pCCity.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_pCCityName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_pCCityName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_pCCountry.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_pCCountry.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_pCProvince.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_pCProvince.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -168,47 +220,41 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CityList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxCity.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingCityList.setPageSize(getListRows());
 		this.pagingCityList.setDetailed(true);
 		
 		//Apply sorting for getting List in the ListBox 
-		this.listheader_PCCountry.setSortAscending(
-				new FieldComparator("pCCountry", true));
-		this.listheader_PCCountry.setSortDescending(
-				new FieldComparator("pCCountry", false));
-		this.listheader_PCProvince.setSortAscending(
-				new FieldComparator("pCProvince", true));
-		this.listheader_PCProvince.setSortDescending(
-				new FieldComparator("pCProvince", false));
-		this.listheader_PCCity.setSortAscending(
-				new FieldComparator("pCCity",true));
-		this.listheader_PCCity.setSortDescending(
-				new FieldComparator("pCCity",false));
-		this.listheader_PCCityName.setSortAscending(
-				new FieldComparator("pCCityName", true));
-		this.listheader_PCCityName.setSortDescending(
-				new FieldComparator("pCCityName", false));
+		this.listheader_PCCountry.setSortAscending(new FieldComparator("pCCountry", true));
+		this.listheader_PCCountry.setSortDescending(new FieldComparator("pCCountry", false));
+		this.listheader_PCProvince.setSortAscending(new FieldComparator("pCProvince", true));
+		this.listheader_PCProvince.setSortDescending(new FieldComparator("pCProvince", false));
+		this.listheader_PCCity.setSortAscending(new FieldComparator("pCCity",true));
+		this.listheader_PCCity.setSortDescending(new FieldComparator("pCCity",false));
+		this.listheader_PCCityName.setSortAscending(new FieldComparator("pCCityName", true));
+		this.listheader_PCCityName.setSortDescending(new FieldComparator("pCCityName", false));
 
 		if (isWorkFlowEnabled()) {
-			this.listheader_RecordStatus.setSortAscending(
-					new FieldComparator("recordStatus", true));
-			this.listheader_RecordStatus.setSortDescending(
-					new FieldComparator("recordStatus", false));
-			this.listheader_RecordType.setSortAscending(
-					new FieldComparator("recordType", true));
-			this.listheader_RecordType.setSortDescending(
-					new FieldComparator("recordType", false));
+			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
+			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
+			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
+			this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
 		} else {
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
 
-		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<City>(City.class, getListRows());
-		this.searchObj.addSort("PCCountry", false);
-
+		this.searchObj.addSort("PCCountry",false);
+		this.searchObj.addField("pCCountry");
+		this.searchObj.addField("lovDescPCCountryName");
+		this.searchObj.addField("pCProvince");
+		this.searchObj.addField("lovDescPCProvinceName");
+		this.searchObj.addField("pCCity");
+		this.searchObj.addField("pCCityName");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("RMTProvinceVsCity_View");
@@ -218,8 +264,7 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 				button_CityList_NewCity.setVisible(false);
 			}
 
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace()
-					.getUserRoles(), isFirstTask());
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		} else {
 			this.searchObj.addTabelName("RMTProvinceVsCity_AView");
 		}
@@ -232,9 +277,7 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 			PTMessageUtils.showErrorMessage(PennantJavaUtil
 					.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxCity,
-					this.pagingCityList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxCity.setItemRenderer(new CityListModelItemRenderer());
 		}
@@ -396,9 +439,27 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingCityList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_CityList, event);
-		this.window_CityList.invalidate();
+		this.sortOperator_pCCity.setSelectedIndex(0);
+		this.pCCity.setValue("");
+		this.sortOperator_pCCityName.setSelectedIndex(0);
+		this.pCCityName.setValue("");
+		this.sortOperator_pCCountry.setSelectedIndex(0);
+		this.pCCountry.setValue("");
+		this.sortOperator_pCProvince.setSelectedIndex(0);
+		this.pCProvince.setValue("");
+		if(isWorkFlowEnabled())
+		{
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clear All Filters
+		this.searchObj.clearFilters();
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(getSearchObj(), this.listBoxCity,this.pagingCityList);
+
 		logger.debug("leaving" + event.toString());
 	}
 
@@ -410,24 +471,7 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 	
 	public void onClick$button_CityList_CitySearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our CityDialog ZUL-file with parameters. So we can call
-		 * them with a object of the selected City. For handed over these
-		 * parameter only a Map is accepted. So we put the City object in a
-		 * HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("cityCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/City/CitySearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("leaving" + event.toString());
 	}
 
@@ -443,7 +487,57 @@ public class CityListCtrl extends GFCBaseListCtrl<City> implements Serializable 
 		PTListReportUtils reportUtils = new PTListReportUtils("City", getSearchObj(),this.pagingCityList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
+
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.pCCountry.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_pCCountry.getSelectedItem(),this.pCCountry.getValue(), "PCCountry");
+		}
+		if (!StringUtils.trimToEmpty(this.pCProvince.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_pCProvince.getSelectedItem(),this.pCProvince.getValue(), "PCProvince");
+		}
+		if (!StringUtils.trimToEmpty(this.pCCity.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_pCCity.getSelectedItem(),this.pCCity.getValue(), "PCCity");
+		}
+
+		if (!StringUtils.trimToEmpty(this.pCCityName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_pCCityName.getSelectedItem(),this.pCCityName.getValue(), "PCCityName");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxCity,
+				this.pagingCityList);
+
+		logger.debug("Leaving");
+	}
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

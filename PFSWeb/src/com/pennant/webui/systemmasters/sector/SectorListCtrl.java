@@ -46,19 +46,25 @@ package com.pennant.webui.systemmasters.sector;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -76,6 +82,8 @@ import com.pennant.webui.systemmasters.sector.model.SectorListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -101,6 +109,20 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 	protected Paging 		pagingSectorList; 				// autoWired
 	protected Listbox 		listBoxSector; 					// autoWired
 
+
+	protected Textbox  		sectorCode; 					// autoWired
+	protected Listbox  		sortOperator_sectorCode; 		// autoWired
+	protected Textbox  		sectorDesc; 					// autoWired
+	protected Listbox  		sortOperator_sectorDesc; 		// autoWired
+	protected Decimalbox  	sectorLimit; 					// autoWired
+	protected Listbox  		sortOperator_sectorLimit; 		// autoWired
+	protected Checkbox 		sectorIsActive; 				// autoWired
+	protected Listbox  		sortOperator_sectorIsActive; 	// autoWired
+	protected Textbox  		recordStatus; 					// autoWired
+	protected Listbox  		recordType;						// autoWired
+	protected Listbox  		sortOperator_recordStatus; 		// autoWired
+	protected Listbox  		sortOperator_recordType; 		// autoWired
+
 	// List headers
 	protected Listheader listheader_SectorCode; 			// autoWired
 	protected Listheader listheader_SectorDesc; 			// autoWired
@@ -117,7 +139,9 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Sector> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient SectorService sectorService;
 	private transient WorkFlowDetails workFlowDetails=null;
 
@@ -159,6 +183,30 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_sectorCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sectorCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_sectorDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sectorDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_sectorLimit.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_sectorLimit.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_sectorIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_sectorIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+			}
+
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -168,7 +216,7 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_SectorList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxSector.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingSectorList.setPageSize(getListRows());
 		this.pagingSectorList.setDetailed(true);
@@ -197,7 +245,12 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 		this.searchObj = new JdbcSearchObject<Sector>(Sector.class, getListRows());
 		this.searchObj.addSort("SectorCode", false);
 		this.searchObj.addFilter(new Filter("SectorCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
-
+		this.searchObj.addField("sectorCode");
+		this.searchObj.addField("sectorDesc");
+		this.searchObj.addField("sectorLimit");
+		this.searchObj.addField("sectorIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("BMTSectors_View");
@@ -220,8 +273,7 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 			this.button_SectorList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxSector, this.pagingSectorList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxSector.setItemRenderer(new SectorListModelItemRenderer());
 		}
@@ -307,7 +359,6 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 
 		// create a new Sector object, We GET it from the backEnd.
 		final Sector aSector = getSectorService().getNewSector();
-
 		aSector.setSectorLimit(BigDecimal.ZERO); // initialize
 		showDetailView(aSector);
 		logger.debug("Leaving" + event.toString());
@@ -375,9 +426,25 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingSectorList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_SectorList, event);
-		this.window_SectorList.invalidate();
+		this.sortOperator_sectorCode.setSelectedIndex(0);
+		this.sectorCode.setValue("");
+		this.sortOperator_sectorDesc.setSelectedIndex(0);
+		this.sectorDesc.setValue("");
+		this.sortOperator_sectorLimit.setSelectedIndex(0);
+		this.sectorLimit.setText("");
+		this.sortOperator_sectorIsActive.setSelectedIndex(0);
+		this.sectorIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears All the Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSector, this.pagingSectorList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -390,25 +457,7 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 	 */
 	public void onClick$button_SectorList_SectorSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our SectorDialog ZUL-file with parameters. So we can call
-		 * them with a object of the selected Sector. For handed over these
-		 * parameter only a Map is accepted. So we put the Sector object in a
-		 * HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("sectorCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/Sector/SectorSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -425,6 +474,55 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> implements Serializa
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.sectorCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_sectorCode.getSelectedItem(),this.sectorCode.getValue(), "SectorCode");
+		}
+		if (!StringUtils.trimToEmpty(this.sectorDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_sectorDesc.getSelectedItem(),this.sectorDesc.getValue(), "SectorDesc");
+		}
+		if (this.sectorLimit.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_sectorLimit.getSelectedItem(),this.sectorLimit.getValue(), "SectorLimit");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.sectorIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_sectorIsActive.getSelectedItem(),intActive, "SectorIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSector,this.pagingSectorList);
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

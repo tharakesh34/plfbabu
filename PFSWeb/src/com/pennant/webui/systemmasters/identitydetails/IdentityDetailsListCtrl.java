@@ -45,19 +45,23 @@ package com.pennant.webui.systemmasters.identitydetails;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +74,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.identitydetails.model.IdentityDetailsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,11 +106,22 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> im
 	protected Paging 		pagingIdentityDetailsList; 			// autoWired
 	protected Listbox 		listBoxIdentityDetails; 			// autoWired
 
+
+	protected Textbox 	identityType; 					// autoWired
+	protected Listbox 	sortOperator_identityType; 		// autoWired
+	protected Textbox 	identityDesc; 					// autoWired
+	protected Listbox 	sortOperator_identityDesc; 		// autoWired
+	protected Textbox 	recordStatus; 					// autoWired
+	protected Listbox 	recordType; 					// autoWired
+	protected Listbox 	sortOperator_recordStatus; 		// autoWired
+	protected Listbox 	sortOperator_recordType; 		// autoWired
+
 	// List headers
 	protected Listheader listheader_IdentityType;				// autoWired
 	protected Listheader listheader_IdentityDesc;				// autoWired
 	protected Listheader listheader_RecordStatus;				// autoWired
 	protected Listheader listheader_RecordType;	 				// autoWired
+
 
 	// checkRights
 	protected Button btnHelp; 													// autoWired
@@ -113,7 +131,9 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> im
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<IdentityDetails> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient IdentityDetailsService identityDetailsService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -157,6 +177,23 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> im
 			wfAvailable = false;
 		}
 
+		this.sortOperator_identityType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_identityType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_identityDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_identityDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -166,6 +203,7 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> im
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_IdentityDetailsList.setHeight(getBorderLayoutHeight());
+		this.listBoxIdentityDetails.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingIdentityDetailsList.setPageSize(getListRows());
@@ -188,7 +226,11 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> im
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<IdentityDetails>(IdentityDetails.class, getListRows());
-		this.searchObj.addSort("IdentityType", false);
+		this.searchObj.addSort("IdentityType",false);
+		this.searchObj.addField("identityType");
+		this.searchObj.addField("identityDesc");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -210,8 +252,7 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> im
 			this.button_IdentityDetailsList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxIdentityDetails,this.pagingIdentityDetailsList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxIdentityDetails.setItemRenderer(new IdentityDetailsListModelItemRenderer());
 		}
@@ -363,9 +404,21 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> im
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingIdentityDetailsList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_IdentityDetailsList, event);
-		this.window_IdentityDetailsList.invalidate();
+
+		this.sortOperator_identityDesc.setSelectedIndex(0);
+		this.identityDesc.setValue("");
+		this.sortOperator_identityType.setSelectedIndex(0);
+		this.identityType.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxIdentityDetails,this.pagingIdentityDetailsList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -377,25 +430,7 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> im
 	 */
 	public void onClick$button_IdentityDetailsList_IdentityDetailsSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our IdentityDetailsDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected IdentityDetails. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * IdentityDetails object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("identityDetailsCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/IdentityDetails/IdentityDetailsSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -412,6 +447,49 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> im
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.identityType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_identityType.getSelectedItem(),this.identityType.getValue(), "IdentityType");
+		}
+		if (!StringUtils.trimToEmpty(this.identityDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_identityDesc.getSelectedItem(),this.identityDesc.getValue(), "IdentityDesc");
+		}
+
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxIdentityDetails,this.pagingIdentityDetailsList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

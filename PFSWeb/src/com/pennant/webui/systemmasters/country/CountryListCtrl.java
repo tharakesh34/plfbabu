@@ -45,19 +45,25 @@ package com.pennant.webui.systemmasters.country;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.country.model.CountryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +108,30 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> implements Seriali
 	protected Paging 		pagingCountryList; 			// autoWired
 	protected Listbox 		listBoxCountry; 			// autoWired
 
+	protected Listbox sortOperator_countryCode;
+	protected Textbox countryCode;
+
+	protected Listbox sortOperator_countryDesc;
+	protected Textbox countryDesc;
+
+	protected Listbox sortOperator_countryParentLimit;
+	protected Decimalbox countryParentLimit;
+
+	protected Listbox sortOperator_countryResidenceLimit;
+	protected Decimalbox countryResidenceLimit;
+
+	protected Listbox sortOperator_countryRiskLimit;
+	protected Decimalbox countryRiskLimit;
+
+	protected Listbox sortOperator_countryIsActive;
+	protected Checkbox countryIsActive;
+
+	protected Listbox sortOperator_recordStatus;
+	protected Textbox recordStatus;
+
+	protected Listbox sortOperator_recordType;
+	protected Listbox recordType;
+
 	// List headers
 	protected Listheader listheader_CountryCode; 			// autoWired
 	protected Listheader listheader_CountryDesc; 			// autoWired
@@ -117,7 +150,9 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> implements Seriali
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Country> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient CountryService countryService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -159,7 +194,34 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> implements Seriali
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_countryCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_countryCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_countryDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_countryDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_countryParentLimit.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_countryParentLimit.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_countryResidenceLimit.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_countryResidenceLimit.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_countryRiskLimit.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_countryRiskLimit.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_countryIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_countryIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -169,6 +231,7 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> implements Seriali
 		 * are filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_CountryList.setHeight(getBorderLayoutHeight());
+		this.listBoxCountry.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingCountryList.setPageSize(getListRows());
@@ -198,8 +261,16 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> implements Seriali
 		}
 
 		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<Country>(Country.class,getListRows());
-		this.searchObj.addSort("CountryCode", false);
+		this.searchObj = new JdbcSearchObject<Country>((Country.class), getListRows());
+		this.searchObj.addSort("CountryCode",false);
+		this.searchObj.addField("countryCode");
+		this.searchObj.addField("countryDesc");
+		this.searchObj.addField("countryParentLimit");
+		this.searchObj.addField("countryResidenceLimit");
+		this.searchObj.addField("countryRiskLimit");
+		this.searchObj.addField("countryIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -222,8 +293,7 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> implements Seriali
 			this.button_CountryList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxCountry,this.pagingCountryList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxCountry.setItemRenderer(new CountryListModelItemRenderer());
 		}
@@ -373,9 +443,30 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> implements Seriali
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingCountryList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_CountryList, event);
-		this.window_CountryList.invalidate();
+		this.sortOperator_countryCode.setSelectedIndex(0);
+		this.countryCode.setValue("");
+		this.sortOperator_countryDesc.setSelectedIndex(0);
+		this.countryDesc.setValue("");
+		this.sortOperator_countryResidenceLimit.setSelectedIndex(0);
+		this.countryResidenceLimit.setText("");
+		this.sortOperator_countryParentLimit.setSelectedIndex(0);
+		this.countryParentLimit.setText("");
+		this.sortOperator_countryRiskLimit.setSelectedIndex(0);
+		this.countryRiskLimit.setText("");
+		this.sortOperator_countryIsActive.setSelectedIndex(0);
+		this.countryIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clear All Filters
+		this.searchObj.clearFilters();
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(getSearchObj(), this.listBoxCountry,this.pagingCountryList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -385,28 +476,9 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> implements Seriali
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$button_CountryList_CountrySearchDialog(Event event)
-	throws Exception {
+	public void onClick$button_CountryList_CountrySearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our CountryDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Country. For handed over
-		 * these parameter only a Map is accepted. So we put the Country object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("countryCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/Country/CountrySearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -421,6 +493,67 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> implements Seriali
 		logger.debug("Entering" + event.toString());
 		PTListReportUtils reportUtils = new PTListReportUtils("Country", getSearchObj(),this.pagingCountryList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.countryCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_countryCode.getSelectedItem(),this.countryCode.getValue(), "CountryCode");
+		}
+		if (!StringUtils.trimToEmpty(this.countryDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_countryDesc.getSelectedItem(),this.countryDesc.getValue(), "CountryDesc");
+		}
+
+		if (this.countryParentLimit.getValue()!= null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_countryParentLimit.getSelectedItem(),this.countryParentLimit.getValue(), "CountryParentLimit");
+		}
+
+		if (this.countryResidenceLimit.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_countryResidenceLimit.getSelectedItem(),this.countryResidenceLimit.getValue(), "CountryResidenceLimit");
+		}
+
+		if (this.countryRiskLimit.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_countryRiskLimit.getSelectedItem(),this.countryRiskLimit.getValue(), "CountryRiskLimit");
+		}
+		// Active
+		int intActive=0;
+		if(this.countryIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_countryIsActive.getSelectedItem(),intActive, "CountryIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxCountry,
+				this.pagingCountryList);
+
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

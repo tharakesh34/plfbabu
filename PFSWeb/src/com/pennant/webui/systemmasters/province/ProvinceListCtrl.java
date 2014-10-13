@@ -45,19 +45,23 @@ package com.pennant.webui.systemmasters.province;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +74,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.province.model.ProvinceListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +106,17 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 	protected Paging 		pagingProvinceList; 		        // autoWired
 	protected Listbox 		listBoxProvince; 			        // autoWired
 
+	protected Textbox cPCountry; 					// autoWired
+	protected Listbox sortOperator_cPCountry; 		// autoWired
+	protected Textbox cPProvince; 					// autoWired
+	protected Listbox sortOperator_cPProvince; 		// autoWired
+	protected Textbox cPProvinceName; 				// autoWired
+	protected Listbox sortOperator_cPProvinceName; 	// autoWired
+	protected Textbox recordStatus; 				// autoWired
+	protected Listbox recordType;					// autoWired
+	protected Listbox sortOperator_recordStatus; 	// autoWired
+	protected Listbox sortOperator_recordType; 		// autoWired
+
 	// List headers
 	protected Listheader listheader_CPCountry; 		            // autoWired
 	protected Listheader listheader_CPProvince; 	            // autoWired
@@ -114,9 +132,12 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Province> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient ProvinceService provinceService;
 	private transient WorkFlowDetails workFlowDetails=null;
+
 
 	/**
 	 * default constructor.<br>
@@ -155,6 +176,27 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 		}else{
 			wfAvailable=false;
 		}
+		this.sortOperator_cPCountry.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_cPCountry.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_cPProvince.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_cPProvince.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_cPProvinceName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_cPProvinceName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -165,7 +207,7 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_ProvinceList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxProvince.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingProvinceList.setPageSize(getListRows());
 		this.pagingProvinceList.setDetailed(true);
@@ -190,7 +232,13 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<Province>(Province.class,getListRows());
-		this.searchObj.addSort("CPCountry", false);
+		this.searchObj.addSort("CPCountry",false);
+		this.searchObj.addField("cPCountry");
+		this.searchObj.addField("lovDescCPCountryName");
+		this.searchObj.addField("cPProvince");
+		this.searchObj.addField("cPProvinceName");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -213,8 +261,7 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 			this.button_ProvinceList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxProvince,this.pagingProvinceList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxProvince.setItemRenderer(new ProvinceListModelItemRenderer());
 		}	
@@ -227,7 +274,6 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("ProvinceList");
-
 		this.button_ProvinceList_NewProvince.setVisible(getUserWorkspace()
 				.isAllowed("button_ProvinceList_NewProvince"));
 		this.button_ProvinceList_ProvinceSearchDialog.setVisible(getUserWorkspace()
@@ -366,9 +412,24 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingProvinceList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_ProvinceList, event);
-		this.window_ProvinceList.invalidate();
+
+		this.sortOperator_cPCountry.setSelectedIndex(0);
+		this.cPCountry.setValue("");
+		this.sortOperator_cPProvince.setSelectedIndex(0);
+		this.cPProvince.setValue("");
+		this.sortOperator_cPProvinceName.setSelectedIndex(0);
+		this.cPProvinceName.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// clears all filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxProvince,this.pagingProvinceList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -379,23 +440,7 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 	 */
 	public void onClick$button_ProvinceList_ProvinceSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our ProvinceDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Province. For handed over
-		 * these parameter only a Map is accepted. So we put the Province object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("provinceCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SystemMaster/Province/ProvinceSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -411,7 +456,50 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> implements Seria
 		PTListReportUtils reportUtils = new PTListReportUtils("Province", getSearchObj(),this.pagingProvinceList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString()); 
 	}
+	public void doSearch() {
+		logger.debug("Entering");
+		
+		this.searchObj.clearFilters();
 
+		if (!StringUtils.trimToEmpty(this.cPCountry.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_cPCountry.getSelectedItem(),this.cPCountry.getValue(), "CPCountry");
+		}
+		if (!StringUtils.trimToEmpty(this.cPProvince.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_cPProvince.getSelectedItem(),this.cPProvince.getValue(), "CPProvince");
+		}
+		if (!StringUtils.trimToEmpty(this.cPProvinceName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_cPProvinceName.getSelectedItem(),this.cPProvinceName.getValue(), "CPProvinceName");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxProvince,this.pagingProvinceList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

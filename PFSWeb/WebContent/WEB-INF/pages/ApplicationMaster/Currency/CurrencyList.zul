@@ -57,10 +57,74 @@
 			<north border="none" />
 
 			<center border="none">
-
+			<div>
+				<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px; padding-left:5px; padding-right:5px;">
+					<columns>
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+				   </columns>
+					<rows>
+						<row>
+							<label id="label_CurrencySearch_CcyCode"
+								value="${c:l('label_CurrencySearch_CcyCode.value')}" />
+							<listbox id="sortOperator_ccyCode"
+								width="43px" mold="select" rows="1" />
+							<uppercasebox id="ccyCode" width="100px"
+								maxlength="3" />
+							<label id="label_CurrencySearch_CcyNumber"
+								value="${c:l('label_CurrencySearch_CcyNumber.value')}" />
+							<listbox id="sortOperator_ccyNumber"
+								width="43px" mold="select" rows="1" />
+							<intbox id="ccyNumber" width="100px"
+								maxlength="3" />
+						</row>
+						<row>
+							<label id="label_CurrencySearch_CcyDesc"
+								value="${c:l('label_CurrencySearch_CcyDesc.value')}" />
+							<listbox id="sortOperator_ccyDesc"
+								width="43px" mold="select" rows="1" />
+							<textbox id="ccyDesc" width="290px"
+								maxlength="50" />
+							<label
+								id="label_CurrencySearch_CcySwiftCode"
+								value="${c:l('label_CurrencySearch_CcySwiftCode.value')}" />
+							<listbox id="sortOperator_ccySwiftCode"
+								width="43px" mold="select" rows="1" />
+							<uppercasebox id="ccySwiftCode" width="100px"
+								maxlength="3" />
+						</row>
+						<row>
+							<label id="label_CurrencySearch_CcyIsActive"
+								value="${c:l('label_CurrencySearch_CcyIsActive.value')}" />
+							<listbox id="sortOperator_ccyIsActive"
+								width="43px" mold="select" rows="1" />
+							<checkbox id="ccyIsActive" checked="false" />
+						</row>
+						<row id="row_AlwWorkflow">
+							<label
+								id="label_CurrencySearch_RecordStatus"
+								value="${c:l('label_CurrencySearch_RecordStatus.value')}" />
+							<listbox id="sortOperator_recordStatus"
+								width="43px" mold="select" rows="1" />
+							<textbox id="recordStatus" width="100px"
+								maxlength="50" />
+							<label id="label_CurrencySearch_RecordType"
+								value="${c:l('label_CurrencySearch_RecordType.value')}" />
+							<listbox id="sortOperator_recordType"
+								width="43px" mold="select" rows="1" />
+							<listbox id="recordType" width="100px"
+								mold="select" />
+						</row>
+					</rows>
+				</grid>
 				<listbox id="listBoxCurrency" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false" sizedByContent="true" span="true">
+					height="100%" multiple="false" span="true">
 					<listhead sizable="true">
 						<listheader id="listheader_CcyCode"
 							label="${c:l('listheader_CcyCode.label')}" sort="auto"
@@ -86,6 +150,7 @@
 					</listhead>
 
 				</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingCurrencyList" />

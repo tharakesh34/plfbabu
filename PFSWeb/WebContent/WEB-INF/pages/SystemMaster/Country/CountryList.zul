@@ -57,42 +57,131 @@
 
 			<borderlayout id="borderLayout_CountryList">
 				<north border="none" />
-
 				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_CountrySearch_CountryCode"
+										value="${c:l('label_CountrySearch_CountryCode.value')}" />
+									<listbox
+										id="sortOperator_countryCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="countryCode"
+										width="50px" maxlength="2" />
+									<label
+										id="label_CountrySearch_CountryDesc"
+										value="${c:l('label_CountrySearch_CountryDesc.value')}" />
+									<listbox
+										id="sortOperator_countryDesc" width="43px" mold="select"
+										rows="1" />
+									<textbox id="countryDesc"
+										width="300px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_CountrySearch_CountryParentLimit"
+										value="${c:l('label_CountrySearch_CountryParentLimit.value')}" />
+									<listbox
+										id="sortOperator_countryParentLimit" width="43px"
+										mold="select" rows="1" />
+									<decimalbox id="countryParentLimit"
+										width="189px" maxlength="21" />
+									<label
+										id="label_CountrySearch_CountryResidenceLimit"
+										value="${c:l('label_CountrySearch_CountryResidenceLimit.value')}" />
+									<listbox
+										id="sortOperator_countryResidenceLimit" width="43px"
+										mold="select" rows="1" />
+									<decimalbox
+										id="countryResidenceLimit" width="189px" maxlength="21" />
+								</row>
+								<row>
+									<label
+										id="label_CountrySearch_CountryRiskLimit"
+										value="${c:l('label_CountrySearch_CountryRiskLimit.value')}" />
+									<listbox
+										id="sortOperator_countryRiskLimit" width="43px" mold="select"
+										rows="1" />
+									<decimalbox id="countryRiskLimit"
+										width="189px" maxlength="21" />
+									<label
+										id="label_CountrySearch_CountryIsActive"
+										value="${c:l('label_CountrySearch_CountryIsActive.value')}" />
+									<listbox
+										id="sortOperator_countryIsActive" width="43px" mold="select"
+										rows="1" />
+									<checkbox id="countryIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_CountrySearch_RecordStatus"
+										value="${c:l('label_CountrySearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_CountrySearch_RecordType"
+										value="${c:l('label_CountrySearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 
-					<listbox id="listBoxCountry" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true">
-						<listhead sizable="true">
-							<listheader id="listheader_CountryCode"
-								label="${c:l('listheader_CountryCode.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_CountryDesc"
-								label="${c:l('listheader_CountryDesc.label')}" sort="auto"
-								hflex="min" />
-							<listheader
-								id="listheader_CountryParentLimit"
-								label="${c:l('listheader_CountryParentLimit.label')}"
-								sort="auto" hflex="min" />
-							<listheader
-								id="listheader_CountryResidenceLimit"
-								label="${c:l('listheader_CountryResidenceLimit.label')}"
-								sort="auto" hflex="min" />
-							<listheader id="listheader_CountryRiskLimit"
-								label="${c:l('listheader_CountryRiskLimit.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_CountryIsActive"
-								label="${c:l('listheader_CountryIsActive.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min" />
-						</listhead>
-					</listbox>
 
+						<listbox id="listBoxCountry" vflex="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_CountryCode"
+									label="${c:l('listheader_CountryCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CountryDesc"
+									label="${c:l('listheader_CountryDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_CountryParentLimit"
+									label="${c:l('listheader_CountryParentLimit.label')}"
+									sort="auto" hflex="min" />
+								<listheader
+									id="listheader_CountryResidenceLimit"
+									label="${c:l('listheader_CountryResidenceLimit.label')}"
+									sort="auto" hflex="min" />
+								<listheader
+									id="listheader_CountryRiskLimit"
+									label="${c:l('listheader_CountryRiskLimit.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_CountryIsActive"
+									label="${c:l('listheader_CountryIsActive.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingCountryList" />

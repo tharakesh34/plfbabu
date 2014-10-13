@@ -58,34 +58,103 @@
 
 			<borderlayout id="borderLayout_AddressTypeList">
 				<north border="none" />
-
 				<center border="none">
-
-					<listbox id="listBoxAddressType" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true" >
-						<listhead sizable="true">
-							<listheader id="listheader_AddrTypeCode"
-								label="${c:l('listheader_AddrTypeCode.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_AddrTypeDesc"
-								label="${c:l('listheader_AddrTypeDesc.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_AddrTypePriority"
-								label="${c:l('listheader_AddrTypePriority.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_AddrTypeIsActive"
-								label="${c:l('listheader_AddrTypeIsActive.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min" />
-						</listhead>
-
-					</listbox>
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_AddressTypeSearch_AddrTypeCode"
+										value="${c:l('label_AddressTypeSearch_AddrTypeCode.value')}" />
+									<listbox
+										id="sortOperator_addrTypeCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="addrTypeCode"
+										width="100px" maxlength="8" />
+									<label
+										id="label_AddressTypeSearch_AddrTypeDesc"
+										value="${c:l('label_AddressTypeSearch_AddrTypeDesc.value')}" />
+									<listbox
+										id="sortOperator_addrTypeDesc" width="43px" mold="select"
+										rows="1" />
+									<textbox id="addrTypeDesc"
+										width="320px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_AddressTypeSearch_AddrTypePriority"
+										value="${c:l('label_AddressTypeSearch_AddrTypePriority.value')}" />
+									<listbox
+										id="sortOperator_addrTypePriority" width="43px" mold="select"
+										rows="1" />
+									<intbox id="addrTypePriority"
+										width="80px" maxlength="4" />
+									<label
+										id="label_AddressTypeSearch_AddrTypeIsActive"
+										value="${c:l('label_AddressTypeSearch_AddrTypeIsActive.value')}" />
+									<listbox
+										id="sortOperator_addrTypeIsActive" width="43px" mold="select"
+										rows="1" />
+									<checkbox id="addrTypeIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_AddressTypeSearch_RecordStatus"
+										value="${c:l('label_AddressTypeSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_AddressTypeSearch_RecordType"
+										value="${c:l('label_AddressTypeSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxAddressType" vflex="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_AddrTypeCode"
+									label="${c:l('listheader_AddrTypeCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_AddrTypeDesc"
+									label="${c:l('listheader_AddrTypeDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_AddrTypePriority"
+									label="${c:l('listheader_AddrTypePriority.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_AddrTypeIsActive"
+									label="${c:l('listheader_AddrTypeIsActive.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingAddressTypeList" />

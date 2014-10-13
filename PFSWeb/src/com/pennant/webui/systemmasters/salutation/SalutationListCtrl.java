@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.salutation;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.salutation.model.SalutationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -106,6 +114,18 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> implements S
 	protected Listheader   listheader_RecordStatus; 			// autoWired
 	protected Listheader   listheader_RecordType;
 
+	protected Window  window_SalutationSearch; 				// autoWired
+	protected Textbox salutationCode; 						// autoWired
+	protected Listbox sortOperator_salutationCode; 			// autoWired
+	protected Textbox saluationDesc; 						// autoWired
+	protected Listbox sortOperator_saluationDesc; 			// autoWired
+	protected Checkbox salutationIsActive; 					// autoWired
+	protected Listbox sortOperator_salutationIsActive;  	// autoWired
+	protected Textbox recordStatus; 						// autoWired
+	protected Listbox recordType;							// autoWired
+	protected Listbox sortOperator_recordStatus; 			// autoWired
+	protected Listbox sortOperator_recordType; 				// autoWired
+
 	// checkRights
 	protected Button btnHelp; 										// autoWired
 	protected Button button_SalutationList_NewSalutation; 			// autoWired
@@ -114,7 +134,9 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> implements S
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Salutation> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient SalutationService salutationService;
 	private transient WorkFlowDetails   workFlowDetails=null;
 
@@ -155,7 +177,26 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> implements S
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_salutationCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_salutationCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_saluationDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_saluationDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_salutationIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_salutationIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 		/**
@@ -164,7 +205,7 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> implements S
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_SalutationList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxSalutation.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingSalutationList.setPageSize(getListRows());
 		this.pagingSalutationList.setDetailed(true);
@@ -189,7 +230,12 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> implements S
 
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<Salutation>(Salutation.class, getListRows());
-		this.searchObj.addSort("SalutationCode", false);
+		this.searchObj.addSort("SalutationCode",false);
+		this.searchObj.addField("salutationCode");
+		this.searchObj.addField("saluationDesc");
+		this.searchObj.addField("salutationIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -212,8 +258,7 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> implements S
 			this.button_SalutationList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxSalutation, this.pagingSalutationList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxSalutation.setItemRenderer(new SalutationListModelItemRenderer());
 		}
@@ -364,9 +409,23 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> implements S
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingSalutationList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_SalutationList, event);
-		this.window_SalutationList.invalidate();
+		this.sortOperator_salutationCode.setSelectedIndex(0);
+		this.salutationCode.setValue("");
+		this.sortOperator_saluationDesc.setSelectedIndex(0);
+		this.saluationDesc.setValue("");
+		this.sortOperator_salutationIsActive.setSelectedIndex(0);
+		this.salutationIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears the Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSalutation, this.pagingSalutationList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -378,24 +437,7 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> implements S
 	 */
 	public void onClick$button_SalutationList_SalutationSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our SalutationDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Salutation. For handed over
-		 * these parameter only a Map is accepted. So we put the Salutation
-		 * object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("salutationCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/Salutation/SalutationSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch(); 
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -411,7 +453,52 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> implements S
 		PTListReportUtils reportUtils = new PTListReportUtils("Salutation", getSearchObj(),this.pagingSalutationList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	public void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.salutationCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_salutationCode.getSelectedItem(),this.salutationCode.getValue(), "SalutationCode");
+		}
+		if (!StringUtils.trimToEmpty(this.saluationDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_saluationDesc.getSelectedItem(),this.saluationDesc.getValue(), "SaluationDesc");
+		}
+
+		int intActive=0;
+		if(this.salutationIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_salutationIsActive.getSelectedItem(),intActive, "SalutationIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSalutation,this.pagingSalutationList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

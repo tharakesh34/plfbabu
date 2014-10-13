@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.blacklistreasoncode;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -75,6 +80,8 @@ import com.pennant.webui.systemmasters.blacklistreasoncode.model.BlackListReason
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -112,10 +119,28 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 	protected Button btnHelp; 															// autoWired
 	protected Button button_BlackListReasonCodeList_NewBlackListReasonCode; 			// autoWired
 	protected Button button_BlackListReasonCodeList_BlackListReasonCodeSearchDialog; 	// autoWired
-	protected Button button_BlackListReasonCodeList_PrintList; 						// autoWired
+	protected Button button_BlackListReasonCodeList_PrintList; 						    // autoWired
+
+	protected Listbox sortOperator_bLRsnCode;			// autoWired
+	protected Textbox bLRsnCode;						// autoWired
+
+	protected Listbox sortOperator_bLRsnDesc;			// autoWired
+	protected Textbox bLRsnDesc;						// autoWired
+
+	protected Listbox sortOperator_bLIsActive;			// autoWired
+	protected Checkbox bLIsActive;						// autoWired
+
+	protected Listbox sortOperator_recordStatus;		// autoWired
+	protected Textbox recordStatus;						// autoWired
+
+	protected Listbox sortOperator_recordType;			// autoWired
+	protected Listbox recordType;						// autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<BlackListReasonCode> searchObj;
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient BlackListReasonCodeService blackListReasonCodeService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -156,7 +181,25 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_bLRsnCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_bLRsnCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_bLRsnDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_bLRsnDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_bLIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_bLIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -166,6 +209,7 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_BlackListReasonCodeList.setHeight(getBorderLayoutHeight());
+		this.listBoxBlackListReasonCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingBlackListReasonCodeList.setPageSize(getListRows());
@@ -189,10 +233,14 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 		}
 
 		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<BlackListReasonCode>(
-				BlackListReasonCode.class, getListRows());
+		this.searchObj = new JdbcSearchObject<BlackListReasonCode>(BlackListReasonCode.class, getListRows());
 		this.searchObj.addSort("BLRsnCode", false);
 		this.searchObj.addFilter(new Filter("BLRsnCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
+		this.searchObj.addField("bLRsnCode");
+		this.searchObj.addField("bLRsnDesc");
+		this.searchObj.addField("bLIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -215,8 +263,7 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 			this.button_BlackListReasonCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxBlackListReasonCode, this.pagingBlackListReasonCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxBlackListReasonCode.setItemRenderer(new BlackListReasonCodeListModelItemRenderer());
 		}
@@ -371,9 +418,24 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingBlackListReasonCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_BlackListReasonCodeList, event);
-		this.window_BlackListReasonCodeList.invalidate();
+		this.sortOperator_bLRsnCode.setSelectedIndex(0);
+		this.bLRsnCode.setValue("");
+		this.sortOperator_bLRsnDesc.setSelectedIndex(0);
+		this.bLRsnDesc.setValue("");
+		this.bLIsActive.setChecked(false);
+		this.sortOperator_bLIsActive.setSelectedIndex(0);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clear All Filters
+		this.searchObj.clearFilters();
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(getSearchObj(), this.listBoxBlackListReasonCode,this.pagingBlackListReasonCodeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -386,25 +448,7 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 	public void onClick$button_BlackListReasonCodeList_BlackListReasonCodeSearchDialog(
 			Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our BlackListReasonCodeDialog ZUL-file with parameters.
-		 * So we can call them with a object of the selected
-		 * BlackListReasonCode. For handed over these parameter only a Map is
-		 * accepted. So we put the BlackListReasonCode object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("blackListReasonCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/BlackListReasonCode/BlackListReasonCodeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -421,6 +465,54 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 		logger.debug("Leaving" + event.toString());
 	}
 
+
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.bLRsnCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_bLRsnCode.getSelectedItem(),this.bLRsnCode.getValue(), "BLRsnCode");
+		}
+		if (!StringUtils.trimToEmpty(this.bLRsnDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_bLRsnDesc.getSelectedItem(),this.bLRsnDesc.getValue(), "BLRsnDesc");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.bLIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_bLIsActive.getSelectedItem(),intActive, "BLIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxBlackListReasonCode,
+				this.pagingBlackListReasonCodeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

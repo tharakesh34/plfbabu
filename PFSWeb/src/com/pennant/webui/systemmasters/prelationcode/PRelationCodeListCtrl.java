@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.prelationcode;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.prelationcode.model.PRelationCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,17 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> implem
 	protected Paging 		pagingPRelationCodeList; 		// autoWired
 	protected Listbox 		listBoxPRelationCode; 			// autoWired
 
+	protected Textbox 	pRelationCode; 						// autoWired
+	protected Listbox 	sortOperator_pRelationCode; 		// autoWired
+	protected Textbox 	pRelationDesc; 						// autoWired
+	protected Listbox 	sortOperator_pRelationDesc; 		// autoWired
+	protected Checkbox 	relationCodeIsActive; 				// autoWired
+	protected Listbox 	sortOperator_relationCodeIsActive; 	// autoWired
+	protected Textbox 	recordStatus; 						// autoWired
+	protected Listbox 	recordType; 						// autoWired
+	protected Listbox 	sortOperator_recordStatus; 			// autoWired
+	protected Listbox 	sortOperator_recordType; 			// autoWired
+
 	// List headers
 	protected Listheader 	listheader_PRelationCode; 		// autoWired
 	protected Listheader 	listheader_PRelationDesc; 		// autoWired
@@ -114,7 +133,9 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> implem
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<PRelationCode> searchObj;
-
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+	
 	private transient PRelationCodeService 	pRelationCodeService;
 	private transient WorkFlowDetails 		workFlowDetails=null;
 
@@ -156,7 +177,24 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> implem
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_pRelationCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_pRelationCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_pRelationDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_pRelationDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_relationCodeIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_relationCodeIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -166,7 +204,7 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> implem
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_PRelationCodeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxPRelationCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingPRelationCodeList.setPageSize(getListRows());
 		this.pagingPRelationCodeList.setDetailed(true);
@@ -190,7 +228,12 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> implem
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<PRelationCode>(PRelationCode.class, getListRows());
-		this.searchObj.addSort("PRelationCode", false);
+		this.searchObj.addSort("PRelationCode",false);
+		this.searchObj.addField("pRelationCode");
+		this.searchObj.addField("pRelationDesc");
+		this.searchObj.addField("relationCodeIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -212,8 +255,7 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> implem
 			this.button_PRelationCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxPRelationCode, this.pagingPRelationCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxPRelationCode.setItemRenderer(new PRelationCodeListModelItemRenderer());
 		}
@@ -364,9 +406,24 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> implem
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingPRelationCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_PRelationCodeList, event);
-		this.window_PRelationCodeList.invalidate();
+
+		this.sortOperator_pRelationCode.setSelectedIndex(0);
+		this.pRelationCode.setValue("");
+		this.sortOperator_pRelationDesc.setSelectedIndex(0);
+		this.pRelationDesc.setValue("");
+		this.sortOperator_relationCodeIsActive.setSelectedIndex(0);
+		this.relationCodeIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxPRelationCode, this.pagingPRelationCodeList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -378,24 +435,7 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> implem
 	 */
 	public void onClick$button_PRelationCodeList_PRelationCodeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our PRelationCodeDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected PRelationCode. For handed
-		 * over these parameter only a Map is accepted. So we put the
-		 * PRelationCode object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("pRelationCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/PRelationCode/PRelationCodeSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -412,6 +452,54 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> implem
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.pRelationCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_pRelationCode.getSelectedItem(),this.pRelationCode.getValue(), "PRelationCode");
+		}
+		if (!StringUtils.trimToEmpty(this.pRelationDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_pRelationDesc.getSelectedItem(),this.pRelationDesc.getValue(), "PRelationDesc");
+		}
+
+		int intActive=0;
+		if(this.relationCodeIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_relationCodeIsActive.getSelectedItem(),intActive, "RelationCodeIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType
+						.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxPRelationCode,this.pagingPRelationCodeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

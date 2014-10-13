@@ -56,10 +56,69 @@
 				<north border="none" />
 
 				<center border="none">
-
+				<div>
+				<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px; padding-left:5px; padding-right:5px;">
+					<columns>
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+				   </columns>
+					<rows>
+						<row>
+							<label
+								id="label_TransactionCodeSearch_TranCode"
+								value="${c:l('label_TransactionCodeSearch_TranCode.value')}" />
+							<listbox id="sortOperator_tranCode"
+								width="43px" mold="select" rows="1" />
+							<uppercasebox id="tranCode" width="100px"
+								maxlength="8" />
+							<label
+								id="label_TransactionCodeSearch_TranDesc"
+								value="${c:l('label_TransactionCodeSearch_TranDesc.value')}" />
+							<listbox id="sortOperator_tranDesc"
+								width="43px" mold="select" rows="1" />
+							<textbox id="tranDesc" width="320px"
+								maxlength="50" />
+						</row>
+						<row>
+							<label
+								id="label_TransactionCodeSearch_TranType"
+								value="${c:l('label_TransactionCodeSearch_TranType.value')}" />
+							<listbox id="sortOperator_tranType"
+								width="43px" mold="select" rows="1" />
+							<combobox id="tranType" width="100px" />
+							<label
+								id="label_TransactionCodeSearch_TranIsActive"
+								value="${c:l('label_TransactionCodeSearch_TranIsActive.value')}" />
+							<listbox id="sortOperator_tranIsActive"
+								width="43px" mold="select" rows="1" />
+							<checkbox id="tranIsActive" checked="false" />
+						</row>
+						<row id="row_AlwWorkflow">
+							<label
+								id="label_TransactionCodeSearch_RecordStatus"
+								value="${c:l('label_TransactionCodeSearch_RecordStatus.value')}" />
+							<listbox id="sortOperator_recordStatus"
+								width="43px" mold="select" rows="1" />
+							<textbox id="recordStatus" width="100px"
+								maxlength="50" />
+							<label
+								id="label_TransactionCodeSearch_RecordType"
+								value="${c:l('label_TransactionCodeSearch_RecordType.value')}" />
+							<listbox id="sortOperator_recordType"
+								width="43px" mold="select" rows="1" />
+							<listbox id="recordType" width="100px"
+								mold="select" />
+						</row>
+					</rows>
+				</grid>
 					<listbox id="listBoxTransactionCode" vflex="true"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true">
+						height="100%" multiple="false" span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_TranCode"
 								label="${c:l('listheader_TranCode.label')}" sort="auto"
@@ -81,7 +140,7 @@
 								hflex="min" />
 						</listhead>
 					</listbox>
-
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingTransactionCodeList" />

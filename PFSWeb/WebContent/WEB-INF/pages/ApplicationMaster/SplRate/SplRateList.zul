@@ -58,10 +58,58 @@
 			<north border="none" />
 
 			<center border="none">
-
+			  <div>
+				<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px; padding-left:5px; padding-right:5px;">
+					<columns>
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+									<column width="130px" />
+									<column width="50px" />
+									<column />
+				   </columns>
+					<rows>
+						<row>
+							<label id="label_SplRateSearch_SRType"
+								value="${c:l('label_SplRateSearch_SRType.value')}" />
+							<listbox id="sortOperator_sRType"
+								width="43px" mold="select" rows="1" />
+							<uppercasebox id="sRType" width="100px"
+								maxlength="8" />
+							<label id="label_SplRateSearch_SREffDate"
+								value="${c:l('label_SplRateSearch_SREffDate.value')}" />
+							<listbox id="sortOperator_sREffDate"
+								width="43px" mold="select" rows="1" />
+							<datebox id="sREffDate" width="100px" format="dd/MM/yyyy" />
+						</row>
+						<row>
+							<label id="label_SplRateSearch_SRRate"
+								value="${c:l('label_SplRateSearch_SRRate.value')}" />
+							<listbox id="sortOperator_sRRate"
+								width="43px" mold="select" rows="1" />
+							<decimalbox id="sRRate" width="140px"
+								maxlength="13" format="##0.00#######"/>
+						</row>
+						<row id="row_AlwWorkflow">
+							<label id="label_SplRateSearch_RecordStatus"
+								value="${c:l('label_SplRateSearch_RecordStatus.value')}" />
+							<listbox id="sortOperator_recordStatus"
+								width="43px" mold="select" rows="1" />
+							<textbox id="recordStatus" width="100px"
+								maxlength="50" />
+							<label id="label_SplRateSearch_RecordType"
+								value="${c:l('label_SplRateSearch_RecordType.value')}" />
+							<listbox id="sortOperator_recordType"
+								width="43px" mold="select" rows="1" />
+							<listbox id="recordType" width="100px"
+								mold="select" />
+						</row>
+					</rows>
+				</grid>
 				<listbox id="listBoxSplRate" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false" sizedByContent="true" span="true">
+					height="100%" multiple="false" span="true">
 					<listhead sizable="true">
 						<listheader id="listheader_SRType"
 							label="${c:l('listheader_SRType.label')}" sort="auto"
@@ -80,7 +128,7 @@
 							hflex="min" />
 					</listhead>
 				</listbox>
-
+			</div>
 			</center>
 			<south border="none">
 				<paging id="pagingSplRateList" />

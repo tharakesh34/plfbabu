@@ -45,19 +45,24 @@ package com.pennant.webui.systemmasters.groupstatuscode;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -75,6 +80,8 @@ import com.pennant.webui.systemmasters.groupstatuscode.model.GroupStatusCodeList
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +107,17 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> im
 	protected Paging 		pagingGroupStatusCodeList; 			// autoWired
 	protected Listbox 		listBoxGroupStatusCode; 			// autoWired
 
+	protected Textbox 	grpStsCode; 						// autoWired
+	protected Listbox 	sortOperator_grpStsCode; 			// autoWired
+	protected Textbox 	grpStsDescription; 					// autoWired
+	protected Listbox 	sortOperator_grpStsDescription; 	// autoWired
+	protected Checkbox 	grpStsIsActive; 					// autoWired
+	protected Listbox 	sortOperator_grpStsIsActive; 		// autoWired
+	protected Textbox 	recordStatus; 						// autoWired
+	protected Listbox 	recordType; 						// autoWired
+	protected Listbox 	sortOperator_recordStatus; 			// autoWired
+	protected Listbox 	sortOperator_recordType; 			// autoWired
+
 	// List headers
 	protected Listheader listheader_GrpStsCode; 		// autoWired
 	protected Listheader listheader_GrpStsDescription; 	// autoWired
@@ -115,7 +133,9 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> im
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<GroupStatusCode> searchObj;
-
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	
 	private transient GroupStatusCodeService groupStatusCodeService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -157,7 +177,24 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> im
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_grpStsCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpStsCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_grpStsDescription.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpStsDescription.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_grpStsIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_grpStsIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -167,7 +204,7 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> im
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_GroupStatusCodeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxGroupStatusCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingGroupStatusCodeList.setPageSize(getListRows());
 		this.pagingGroupStatusCodeList.setDetailed(true);
@@ -191,8 +228,13 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> im
 
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<GroupStatusCode>(GroupStatusCode.class, getListRows());
-		this.searchObj.addSort("GrpStsCode", false);
+		this.searchObj.addSort("GrpStsCode",false);
 		this.searchObj.addFilter(new Filter("GrpStsCode",PennantConstants.NONE, Filter.OP_NOT_EQUAL));
+		this.searchObj.addField("grpStsCode");
+		this.searchObj.addField("grpStsDescription");
+		this.searchObj.addField("grpStsIsActive");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// Work flow
 		if (isWorkFlowEnabled()) {
@@ -215,8 +257,7 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> im
 			this.button_GroupStatusCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxGroupStatusCode,this.pagingGroupStatusCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxGroupStatusCode.setItemRenderer(new GroupStatusCodeListModelItemRenderer());
 		}
@@ -367,9 +408,22 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> im
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingGroupStatusCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_GroupStatusCodeList, event);
-		this.window_GroupStatusCodeList.invalidate();
+		this.sortOperator_grpStsCode.setSelectedIndex(0);
+		this.grpStsCode.setValue("");
+		this.sortOperator_grpStsDescription.setSelectedIndex(0);
+		this.grpStsDescription.setValue("");
+		this.sortOperator_grpStsIsActive.setSelectedIndex(0);
+		this.grpStsIsActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//clears the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxGroupStatusCode,this.pagingGroupStatusCodeList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -381,24 +435,7 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> im
 	 */
 	public void onClick$button_GroupStatusCodeList_GroupStatusCodeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our GroupStatusCodeDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected GroupStatusCode. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * GroupStatusCode object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("groupStatusCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SystemMaster/GroupStatusCode/GroupStatusCodeSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -415,6 +452,53 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> im
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		if (!StringUtils.trimToEmpty(this.grpStsCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_grpStsCode.getSelectedItem(),this.grpStsCode.getValue(), "GrpStsCode");
+		}
+		if (!StringUtils.trimToEmpty(this.grpStsDescription.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_grpStsDescription.getSelectedItem(),this.grpStsDescription.getValue(), "GrpStsDescription");
+		}
+
+		// Active
+		int intActive=0;
+		if(this.grpStsIsActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_grpStsIsActive.getSelectedItem(),intActive, "GrpStsIsActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxGroupStatusCode,this.pagingGroupStatusCodeList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
