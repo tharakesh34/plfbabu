@@ -15,21 +15,18 @@
 			<div id="div_ToolBar" sclass="z-toolbar"
 				style="padding:0">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%" >
+					width="100%" widths="25%,40%,25%">
 
 					<!-- COMMON BUTTONS   -->
 					<toolbar align="start"
 						style="border-style: none;margin:4px;" height="15px">
-						<label value="${c:l('label_FinancesList')}"
-							style="font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
-                            font-size: 11px;font-style: normal;font-weight:bold;"
-							width="auto" />
 					</toolbar>
 
 					<!--  SEARCH AREA  -->
 					<toolbar align="center"
 						style="float:left; border-style: none;">
-						<hbox align="center" style="padding: 2px"></hbox>
+						<label id="label_FinancesList" 
+						     sclass="label-heading" value="${c:l('label_FinancesList')}"  />
 					</toolbar>
 
 					<!-- CRUD BUTTONS  -->

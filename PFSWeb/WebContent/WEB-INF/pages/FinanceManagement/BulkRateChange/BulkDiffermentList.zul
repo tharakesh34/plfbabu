@@ -34,7 +34,7 @@
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
 					<button id="button_BulkRateChangeList_NewBulkRateChange"
-						 label="${c:l('label_New')}"
+						label="${c:l('label_New')}"
 						autodisable="button_BulkRateChangeList_BulkRateChangeSearchDialog,button_BulkRateChangeList_PrintList,button_BulkRateChangeList_NewBulkRateChange,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_BulkRateChangeList_NewBulkRateChange.tooltiptext')}" />
 					<button id="btnRefresh" 
