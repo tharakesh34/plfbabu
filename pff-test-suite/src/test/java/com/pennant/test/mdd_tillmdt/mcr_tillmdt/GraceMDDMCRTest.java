@@ -17,6 +17,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.util.ScheduleData;
 
 public class GraceMDDMCRTest extends ScheduleData {
+	// SN09
 
 	static FinScheduleData schedule;
 	static BigDecimal actLastRepayAmt;
