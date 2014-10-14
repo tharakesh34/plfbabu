@@ -40,16 +40,24 @@ public class Dataset {
 		return StringUtils.trimToNull(data[index].getContents());
 	}
 
-	public static BigDecimal getBigDecimal(Cell[] data, int index) {
-		return new BigDecimal(data[index].getContents());
+	public static int getInt(Cell[] data, int index) {
+		return Integer.parseInt(data[index].getContents());
 	}
 
 	public static Long getLong(Cell[] data, int index) {
 		return new Long(data[index].getContents());
 	}
 
+	public static BigDecimal getBigDecimal(Cell[] data, int index) {
+		return new BigDecimal(data[index].getContents());
+	}
+
 	public static Date getDate(Cell[] data, int index) {
 		return DateUtility.getDate(data[index].getContents());
+	}
+
+	public static boolean getBoolean(Cell[] data, int index) {
+		return new Boolean(data[index].getContents());
 	}
 
 	public static void close() {

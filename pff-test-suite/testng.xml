@@ -8,14 +8,7 @@
 	</test>
 	<test name="schedule-test" group-by-instances="true">
 		<classes>
-			<class name="com.pennant.test.schedule.GraceProfitReducingRateTestFactory" />
-			<class name="com.pennant.test.schedule.GraceProfitFlatRateTestFactory" />
-			<class name="com.pennant.test.schedule.GraceNoPayReducingRateTestFactory" />
-			<class name="com.pennant.test.schedule.GraceNoPayFlatRateTestFactory" />
-			<class
-				name="com.pennant.test.schedule.GraceNoRepayReducingRateTestFactory" />
-			<class name="com.pennant.test.schedule.GraceNoRepayFlatRateTestFactory" />
-			<class name="com.pennant.test.schedule.NoGraceReducingRateTestFactory" />
+			<class name="com.pennant.test.schedule.ScheduleTestFactory" />
 		</classes>
 	</test>
 	<test name="schedule-test-others">
