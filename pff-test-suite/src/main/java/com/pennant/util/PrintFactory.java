@@ -2,6 +2,7 @@ package com.pennant.util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -10,6 +11,22 @@ import com.pennant.backend.model.finance.RepayInstruction;
 public class PrintFactory {
 	static final String TAB = "\t";
 	static final String folderPath = "D:/ScheduleResults/";
+
+	public static void toConsole(String name) {
+		System.out.print("- Executing ");
+		System.out.println(name);
+	}
+
+	public static void toConsole(long expcted, long actual) {
+		System.out.print("Expected: ");
+		System.out.print(expcted);
+		System.out.print("; Actual: ");
+		System.out.println(actual);
+	}
+
+	public static void toConsole(long expcted, BigDecimal actual) {
+		toConsole(expcted, actual.longValue());
+	}
 
 	public static void scheduleToExcel(String fileName, FinScheduleData schedule) {
 		PrintWriter out = null;

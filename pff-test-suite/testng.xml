@@ -10,14 +10,13 @@
 		<classes>
 			<class
 				name="com.pennant.testing.schedule.GraceProfitReducingRateTestFactory" />
-			<class name="com.pennant.testing.schedule.GraceProfitFlatRateTestFactory" />
-			<class
-				name="com.pennant.testing.schedule.GraceNoPayReducingRateTestFactory" />
-			<class name="com.pennant.testing.schedule.GraceNoPayFlatRateTestFactory" />
-			<class
-				name="com.pennant.testing.schedule.GraceNoRepayReducingRateTestFactory" />
-			<class name="com.pennant.testing.schedule.GraceNoRepayFlatRateTestFactory" />
-			<class name="com.pennant.testing.schedule.NoGraceReducingRateTestFactory" />
+			<!-- class name="com.pennant.testing.schedule.GraceProfitFlatRateTestFactory" 
+				/> <class name="com.pennant.testing.schedule.GraceNoPayReducingRateTestFactory" 
+				/> <class name="com.pennant.testing.schedule.GraceNoPayFlatRateTestFactory" 
+				/> <class name="com.pennant.testing.schedule.GraceNoRepayReducingRateTestFactory" 
+				/> <class name="com.pennant.testing.schedule.GraceNoRepayFlatRateTestFactory" 
+				/> <class name="com.pennant.testing.schedule.NoGraceReducingRateTestFactory" 
+				/ -->
 		</classes>
 	</test>
 </suite>

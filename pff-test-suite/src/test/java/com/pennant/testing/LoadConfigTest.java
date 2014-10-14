@@ -1,6 +1,9 @@
 package com.pennant.testing;
 
+import java.io.IOException;
 import java.util.Arrays;
+
+import jxl.read.biff.BiffException;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -24,7 +27,7 @@ public class LoadConfigTest {
 	static ApplicationContext context;
 
 	@BeforeSuite
-	public void setUp() {
+	public void setUp() throws BiffException, IOException {
 		System.out.println("Initializing application context...");
 
 		BeanDefinition definition = BeanDefinitionBuilder
@@ -39,6 +42,9 @@ public class LoadConfigTest {
 		parent.refresh();
 
 		context = new FileSystemXmlApplicationContext(CONFIG_LOCATIONS, parent);
+
+		System.out.println("Loading the dataset...");
+		Dataset.load();
 	}
 
 	@Test
@@ -53,6 +59,8 @@ public class LoadConfigTest {
 	@AfterSuite
 	public void tearDown() {
 		System.out.println("Performing cleanup operations...");
+
+		Dataset.close();
 
 		context = null;
 	}
