@@ -25,12 +25,6 @@ public class ScheduleTest {
 		this.data = data;
 	}
 
-	@Deprecated
-	public ScheduleTest(String name, FinScheduleData schedule,
-			long expLastRepayAmt, long expTotalProfit) {
-		super();
-	}
-
 	@Test
 	public void createSchedule() {
 		String name = Dataset.getString(data, 1);
@@ -72,11 +66,12 @@ public class ScheduleTest {
 	@Test(dependsOnMethods = { "createSchedule" })
 	public void changeRepay() {
 		String name = Dataset.getString(data, 6);
-		PrintFactory.toConsole(name);
 
 		if (null == name) {
 			throw new SkipException("Skipped!");
 		}
+
+		PrintFactory.toConsole(name);
 
 		// Get the expected results
 		long expLastRepayAmt = Dataset.getLong(data, 14);
