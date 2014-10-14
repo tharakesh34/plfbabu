@@ -172,7 +172,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	protected Listheader listheader_FinAmount;		// autoWired
 	protected Listheader listheader_CurFinAmount;	// autoWired
 	protected Listheader listheader_RecordStatus;	// autoWired
-
+    protected Label  label_FinancesList;            // autoWired
 	protected Label label_FinanceSelectResult; 			// autowired
 	private String moduleDefiner = "";
 	private String workflowCode = "";
@@ -226,7 +226,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			
 			String menuItemName = tabbox.getSelectedTab().getId();
 			menuItemName = menuItemName.trim().replace("tab_", "menu_Item_");
-			
+			this.label_FinancesList.setValue(Labels.getLabel(menuItemName));
 			if (getUserWorkspace().getHasMenuRights().containsKey(menuItemName)) {
 				menuItemRightName = getUserWorkspace().getHasMenuRights().get(menuItemName);
 			}
