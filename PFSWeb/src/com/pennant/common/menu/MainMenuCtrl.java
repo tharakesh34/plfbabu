@@ -80,6 +80,7 @@ import org.zkoss.zul.North;
 import org.zkoss.zul.Separator;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
@@ -326,7 +327,9 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 			/* get an instance of the searched CENTER layout area */
 			final Center center = bl.getCenter();
 			// get the tabs component
-			final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter");
+			final Tabbox tabbox = ((Tabbox)center.getFellow("divCenter").getFellow("tabBoxIndexCenter"));
+			final Tabs tabs = (Tabs) tabbox.getFellow("tabsIndexCenter");
+			Tab selectedTab = tabbox.getSelectedTab();
 
 			/**
 			 * Check if the tab is already opened than select them and<br>
@@ -337,7 +340,9 @@ public class MainMenuCtrl extends WindowBaseCtrl implements Serializable {
 			try {
 				// checkTab = (Tab) tabs.getFellow(tabName);
 				checkTab = (Tab) tabs.getFellow(tabName.trim().replace("menu_Item_", "tab_"));
-				checkTab.setSelected(true);
+				if(selectedTab != null && selectedTab.getId().equals(checkTab.getId())){
+					checkTab.setSelected(true);
+				}
 			} catch (final ComponentNotFoundException ex) {
 				// Ignore if can not get tab.
 			}

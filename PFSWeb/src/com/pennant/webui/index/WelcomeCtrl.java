@@ -81,6 +81,7 @@ import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.dashboard.DashBoard;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
@@ -141,6 +142,13 @@ public class WelcomeCtrl extends GFCBaseListCtrl<DashBoard> implements Serializa
 		Tab tab = (Tab) tabbox.getSelectedTab();
 		tab.addForward("onSelect", window_Welcome, "onDashBoardTabSelected", null);
 		int delayTime = 10 * 60 * 1000;
+		try {
+			delayTime = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("DASHBOARD_REFRESH_MIN").toString());
+			delayTime = delayTime * 60 * 1000;
+		} catch (Exception e) {
+			logger.error("Error on parsing delay time" + e.toString());
+		}
+		
 		this.refreshTimer.setDelay(delayTime);
 		initilizeDashBords(false);// Refresh is false
 		setDashBoardsLayOut(2);
