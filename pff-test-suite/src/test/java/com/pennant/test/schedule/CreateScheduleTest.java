@@ -36,11 +36,11 @@ public class CreateScheduleTest {
 		PrintFactory.toConsole(name);
 
 		// Get the expected results
-		long expLastRepayAmt = Dataset.getLong(data, 15);
-		long expTotalProfit = Dataset.getLong(data, 16);
+		long expLastRepayAmt = Dataset.getLong(data, 17);
+		long expTotalProfit = Dataset.getLong(data, 18);
 
 		// Calculate the schedule
-		schedule = execute(schedule, Arrays.copyOfRange(data, 2, 15));
+		schedule = execute(schedule, Arrays.copyOfRange(data, 2, 17));
 
 		// Get the actual results
 		BigDecimal actLastRepayAmt = schedule.getFinanceScheduleDetails()
@@ -64,21 +64,28 @@ public class CreateScheduleTest {
 		boolean allowGracePeriod = Dataset.getBoolean(data, 0);
 		int terms = Dataset.getInt(data, 1);
 		BigDecimal downPayment = Dataset.getBigDecimal(data, 2);
-		Date grcPeriodEndDate = Dataset.getDate(data, 3);
-		Date nextRepayDate = Dataset.getDate(data, 4);
-		Date nextRepayPftDate = Dataset.getDate(data, 5);
-		Date nextRepayRvwDate = Dataset.getDate(data, 6);
-		Date nextRepayCpzDate = Dataset.getDate(data, 7);
-		String grcSchdMthd = Dataset.getString(data, 8);
-		String rateBasis = Dataset.getString(data, 9);
-		boolean allowGrcRepay = Dataset.getBoolean(data, 10);
-		String scheduleMethod = Dataset.getString(data, 11);
-		BigDecimal reqRepayAmount = Dataset.getBigDecimal(data, 12);
+		Date eventFromDate = Dataset.getDate(data, 3);
+		Date eventToDate = Dataset.getDate(data, 4);
+		Date grcPeriodEndDate = Dataset.getDate(data, 5);
+		Date nextRepayDate = Dataset.getDate(data, 6);
+		Date nextRepayPftDate = Dataset.getDate(data, 7);
+		Date nextRepayRvwDate = Dataset.getDate(data, 8);
+		Date nextRepayCpzDate = Dataset.getDate(data, 9);
+		String grcSchdMthd = Dataset.getString(data, 10);
+		String rateBasis = Dataset.getString(data, 11);
+		boolean allowGrcRepay = Dataset.getBoolean(data, 12);
+		String scheduleMethod = Dataset.getString(data, 13);
+		BigDecimal reqRepayAmount = Dataset.getBigDecimal(data, 14);
 
 		// Generate the schedule.
 		schedule.getFinanceMain().setNumberOfTerms(terms);
 		schedule.getFinanceMain().setReqTerms(terms);
 		schedule.getFinanceMain().setDownPayment(downPayment);
+		schedule.getFinanceMain().setEventFromDate(eventFromDate);
+		schedule.getFinanceMain().setFinStartDate(eventFromDate);
+		schedule.getDisbursementDetails().get(0).setDisbDate(eventFromDate);
+		schedule.getFinanceMain().setMaturityDate(eventToDate);
+		schedule.getFinanceMain().setEventToDate(eventToDate);
 		schedule.getFinanceMain().setGrcPeriodEndDate(grcPeriodEndDate);
 		schedule.getFinanceMain().setNextRepayDate(nextRepayDate);
 		schedule.getFinanceMain().setNextRepayPftDate(nextRepayPftDate);

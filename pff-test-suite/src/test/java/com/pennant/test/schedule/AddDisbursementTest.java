@@ -35,34 +35,34 @@ public class AddDisbursementTest {
 		PrintFactory.toConsole(name);
 
 		// Get the expected results
-		long expLastRepayAmt = Dataset.getLong(data, 40);
-		long expTotalProfit = Dataset.getLong(data, 41);
+		long expLastRepayAmt = Dataset.getLong(data, 42);
+		long expTotalProfit = Dataset.getLong(data, 43);
 
 		// Calculate the schedule
 		schedule = CreateScheduleTest.execute(schedule,
-				Arrays.copyOfRange(data, 2, 15));
+				Arrays.copyOfRange(data, 2, 17));
 
-		if (null != Dataset.getString(data, 15)) {
+		if (null != Dataset.getString(data, 17)) {
 			schedule = ChangeRepayTest.execute(schedule,
-					Arrays.copyOfRange(data, 15, 20));
+					Arrays.copyOfRange(data, 17, 22));
 		}
 
-		if (null != Dataset.getString(data, 20)) {
+		if (null != Dataset.getString(data, 22)) {
 			schedule = ChangeRepayTest.execute(schedule,
-					Arrays.copyOfRange(data, 20, 25));
+					Arrays.copyOfRange(data, 22, 27));
 		}
 
-		if (null != Dataset.getString(data, 25)) {
-			schedule = execute(schedule, Arrays.copyOfRange(data, 25, 30));
+		if (null != Dataset.getString(data, 27)) {
+			schedule = execute(schedule, Arrays.copyOfRange(data, 27, 32));
 		}
 
-		if (null != Dataset.getString(data, 30)) {
-			schedule = execute(schedule, Arrays.copyOfRange(data, 30, 35));
+		if (null != Dataset.getString(data, 32)) {
+			schedule = execute(schedule, Arrays.copyOfRange(data, 32, 37));
 		}
 
-		if (null != Dataset.getString(data, 35)) {
+		if (null != Dataset.getString(data, 37)) {
 			schedule = ChangeRepayTest.execute(schedule,
-					Arrays.copyOfRange(data, 35, 40));
+					Arrays.copyOfRange(data, 37, 42));
 		}
 
 		// Get the actual results

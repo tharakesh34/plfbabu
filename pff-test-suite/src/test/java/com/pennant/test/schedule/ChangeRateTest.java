@@ -14,13 +14,14 @@ import org.testng.annotations.Test;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.test.Dataset;
+import com.pennant.util.BeanFactory;
 import com.pennant.util.PrintFactory;
 
-public class ChangeRepayTest {
+public class ChangeRateTest {
 	FinScheduleData schedule;
 	Cell[] data;
 
-	public ChangeRepayTest(FinScheduleData schedule, Cell[] data) {
+	public ChangeRateTest(FinScheduleData schedule, Cell[] data) {
 		super();
 
 		this.schedule = schedule;
@@ -35,19 +36,40 @@ public class ChangeRepayTest {
 		PrintFactory.toConsole(name);
 
 		// Get the expected results
-		long expLastRepayAmt = Dataset.getLong(data, 27);
-		long expTotalProfit = Dataset.getLong(data, 28);
+		long expLastRepayAmt = Dataset.getLong(data, 45);
+		long expTotalProfit = Dataset.getLong(data, 46);
 
 		// Calculate the schedule
 		schedule = CreateScheduleTest.execute(schedule,
 				Arrays.copyOfRange(data, 2, 17));
 
 		if (null != Dataset.getString(data, 17)) {
-			schedule = execute(schedule, Arrays.copyOfRange(data, 17, 22));
+			schedule = ChangeRepayTest.execute(schedule,
+					Arrays.copyOfRange(data, 17, 22));
 		}
 
 		if (null != Dataset.getString(data, 22)) {
-			schedule = execute(schedule, Arrays.copyOfRange(data, 22, 27));
+			schedule = ChangeRepayTest.execute(schedule,
+					Arrays.copyOfRange(data, 22, 27));
+		}
+
+		if (null != Dataset.getString(data, 27)) {
+			schedule = AddDisbursementTest.execute(schedule,
+					Arrays.copyOfRange(data, 27, 32));
+		}
+
+		if (null != Dataset.getString(data, 32)) {
+			schedule = AddDisbursementTest.execute(schedule,
+					Arrays.copyOfRange(data, 32, 37));
+		}
+
+		if (null != Dataset.getString(data, 37)) {
+			schedule = ChangeRepayTest.execute(schedule,
+					Arrays.copyOfRange(data, 37, 42));
+		}
+
+		if (null != Dataset.getString(data, 42)) {
+			schedule = execute(schedule, Arrays.copyOfRange(data, 42, 45));
 		}
 
 		// Get the actual results
@@ -72,20 +94,15 @@ public class ChangeRepayTest {
 		Date eventFromDate = Dataset.getDate(data, 0);
 		Date eventToDate = Dataset.getDate(data, 1);
 		String recalType = Dataset.getString(data, 2);
-		BigDecimal amount = Dataset.getBigDecimal(data, 3);
-		String scheduleMethod = Dataset.getString(data, 4);
 
 		// Generate the schedule.
 		schedule.getFinanceMain().setEventFromDate(eventFromDate);
 		schedule.getFinanceMain().setEventToDate(eventToDate);
 		schedule.getFinanceMain().setRecalType(recalType);
-		schedule.getFinanceMain().setRecalFromDate(
-				schedule.getFinanceMain().getMaturityDate());
-		schedule.getFinanceMain().setRecalToDate(
-				schedule.getFinanceMain().getMaturityDate());
 
-		schedule = ScheduleCalculator.changeRepay(schedule, amount,
-				scheduleMethod);
+		schedule = ScheduleCalculator.changeRate(schedule,
+				BeanFactory.BASE_RATE, BeanFactory.SPECIAL_RATE,
+				BigDecimal.ONE, BigDecimal.ZERO, true);
 
 		return schedule;
 	}

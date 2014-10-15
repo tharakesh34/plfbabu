@@ -10,11 +10,11 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 
 public class BeanFactory {
-	final static String EVENT_FROM_DATE = "01/01/2011";
-	final static String EVENT_TO_DATE = "31/12/2012";
-	final static String NEXT_GRACE_PROFIT_DATE = "31/01/2011";
-	final static String NEXT_GRACE_PROFIT_REVIEW_DATE = "31/03/2011";
-	final static String NEXT_GRACE_CPZ_DATE = "30/06/2011";
+	public static final String BASE_RATE = "L1";
+	public static final String SPECIAL_RATE = "S1";
+	static final String NEXT_GRACE_PROFIT_DATE = "31/01/2011";
+	static final String NEXT_GRACE_PROFIT_REVIEW_DATE = "31/03/2011";
+	static final String NEXT_GRACE_CPZ_DATE = "30/06/2011";
 
 	public static FinScheduleData getSchedule(boolean allowGracePeriod) {
 		FinScheduleData schedule = new FinScheduleData();
@@ -24,8 +24,8 @@ public class BeanFactory {
 		FinanceMain finance = schedule.getFinanceMain();
 		if (allowGracePeriod) {
 			finance.setAllowGrcPeriod(true);
-			finance.setGraceBaseRate("L1");
-			finance.setGraceSpecialRate("S1");
+			finance.setGraceBaseRate(BASE_RATE);
+			finance.setGraceSpecialRate(SPECIAL_RATE);
 			finance.setGrcPftRate(BigDecimal.ZERO);
 			finance.setGrcPftFrq("M0031");
 			finance.setNextGrcPftDate(toDate(NEXT_GRACE_PROFIT_DATE));
@@ -36,28 +36,23 @@ public class BeanFactory {
 			finance.setGrcCpzFrq("H0631");
 			finance.setNextGrcCpzDate(toDate(NEXT_GRACE_CPZ_DATE));
 		}
-		finance.setRepayBaseRate("L1");
-		finance.setRepaySpecialRate("S1");
+		finance.setRepayBaseRate(BASE_RATE);
+		finance.setRepaySpecialRate(SPECIAL_RATE);
 		finance.setRepayFrq("M0031");
 		finance.setRepayPftFrq("M0031");
 		finance.setAllowRepayRvw(true);
 		finance.setRepayRvwFrq("Q0331");
 		finance.setAllowRepayCpz(true);
 		finance.setRepayCpzFrq("H0631");
-		finance.setMaturityDate(toDate(EVENT_TO_DATE));
 		if (allowGracePeriod) {
 			finance.setCpzAtGraceEnd(true);
 		}
 		finance.setProfitDaysBasis(CalculationConstants.IDB_ACT_365FIXED);
-		finance.setEventFromDate(toDate(EVENT_FROM_DATE));
-		finance.setEventToDate(toDate(EVENT_TO_DATE));
 		finance.setRecalType("CURPRD");
-		finance.setFinStartDate(toDate(EVENT_FROM_DATE));
 
 		FinanceDisbursement disbursement = schedule.getDisbursementDetails()
 				.get(0);
 		disbursement.setDisbAmount(new BigDecimal(100000000));
-		disbursement.setDisbDate(toDate(EVENT_FROM_DATE));
 
 		return schedule;
 	}
