@@ -10,6 +10,7 @@
 		<classes>
 			<class name="com.pennant.test.schedule.CreateScheduleTestFactory" />
 			<class name="com.pennant.test.schedule.ChangeRepayTestFactory" />
+			<class name="com.pennant.test.schedule.AddDisbursementTestFactory" />
 		</classes>
 	</test>
 	<test name="schedule-test-others">
