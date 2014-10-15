@@ -9,6 +9,7 @@
 	<test name="schedule-test" group-by-instances="true">
 		<classes>
 			<class name="com.pennant.test.schedule.CreateScheduleTestFactory" />
+			<class name="com.pennant.test.schedule.ChangeRepayTestFactory" />
 		</classes>
 	</test>
 	<test name="schedule-test-others">
