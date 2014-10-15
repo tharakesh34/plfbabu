@@ -87,6 +87,7 @@
 		<url-pattern>/zkau/*</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
+		<welcome-file>loginDialog.zul</welcome-file>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.zul</welcome-file>
 		<welcome-file>PennantWelcome.html</welcome-file>

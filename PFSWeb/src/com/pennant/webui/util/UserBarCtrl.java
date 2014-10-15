@@ -186,7 +186,7 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void onCreate$winUserBar(Event event) {
 		this.winUserBar.setBorder("none");
-		this.hostStatusTimer.setDelay(10000);
+		this.hostStatusTimer.setDelay(1000);
 		this.hostStatusTimer.start();
 	}
  
