@@ -2,6 +2,7 @@ package com.pennant.test.schedule;
 
 import java.io.IOException;
 
+import jxl.Cell;
 import jxl.Sheet;
 import jxl.read.biff.BiffException;
 
@@ -11,24 +12,26 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.test.Dataset;
 import com.pennant.util.BeanFactory;
 
-public class ScheduleTestFactory {
-	final String SHEET_NAME = "Schedule";
+public class CreateScheduleTestFactory {
+	final String SHEET_NAME = "CreateSchedule";
+	final int DATA_OFFSET = 2;
 
 	@Factory
 	public Object[] createObjects() throws BiffException, IOException {
 		// Prepare the tests
 		Sheet dataset = Dataset.getSchedule(SHEET_NAME);
-		int testCount = dataset.getColumns() - 2;
+		int testCount = dataset.getColumns() - DATA_OFFSET;
 		Object[] result = new Object[testCount];
 
 		for (int i = 0; i < testCount; i++) {
-			boolean allowGracePeriod = Dataset.getBoolean(
-					dataset.getColumn(i + 2), 2);
+			Cell[] cells = dataset.getColumn(i + DATA_OFFSET);
+
+			boolean allowGracePeriod = Dataset.getBoolean(cells, 2);
 
 			FinScheduleData schedule = BeanFactory
 					.getSchedule(allowGracePeriod);
 
-			result[i] = new ScheduleTest(schedule, dataset.getColumn(i + 2));
+			result[i] = new CreateScheduleTest(schedule, cells);
 		}
 
 		return result;
