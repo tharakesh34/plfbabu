@@ -16,7 +16,6 @@
 	<test name="schedule-test-others">
 		<packages>
 			<package name="com.pennant.test.ratechange.*" />
-			<package name="com.pennant.test.mdd_tillmdt.mcr_tillmdt.*" />
 			<package name="com.pennant.test.mdd_adjmdt.mcr_tillmdt.rc_curprd.*" />
 			<package name="com.pennant.test.mcr_adjmdt.mdd_tilldate_adjmdt.*" />
 			<package name="com.pennant.test.disburse.*" />
