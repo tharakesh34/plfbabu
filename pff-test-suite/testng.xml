@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="unit-test-suite" verbose="1">
+<suite name="unit-test-suite" verbose="1" parallel="tests"
+	thread-count="5">
 	<test name="config-test">
 		<classes>
 			<class name="com.pennant.test.LoadConfigTest" />
