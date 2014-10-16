@@ -16,8 +16,8 @@
 	</test>
 	<test name="schedule-test-others">
 		<packages>
-			<package name="com.pennant.test.ratechange.*" />
 			<package name="com.pennant.test.disburse.*" />
+			<package name="com.pennant.test.ratechange.*" />
 		</packages>
 	</test>
 </suite>
