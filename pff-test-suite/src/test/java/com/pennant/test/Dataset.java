@@ -53,6 +53,10 @@ public class Dataset {
 	}
 
 	public static Date getDate(Cell[] data, int index) {
+		if (null == getString(data, index)) {
+			return null;
+		}
+
 		return DateUtility.getDate(data[index].getContents());
 	}
 

@@ -35,8 +35,8 @@ public class AddDisbursementTest {
 		PrintFactory.toConsole(name);
 
 		// Get the expected results
-		long expLastRepayAmt = Dataset.getLong(data, 42);
-		long expTotalProfit = Dataset.getLong(data, 43);
+		long expLastRepayAmt = Dataset.getLong(data, 44);
+		long expTotalProfit = Dataset.getLong(data, 45);
 
 		// Calculate the schedule
 		schedule = CreateScheduleTest.execute(schedule,
@@ -53,16 +53,16 @@ public class AddDisbursementTest {
 		}
 
 		if (null != Dataset.getString(data, 27)) {
-			schedule = execute(schedule, Arrays.copyOfRange(data, 27, 32));
+			schedule = execute(schedule, Arrays.copyOfRange(data, 27, 33));
 		}
 
-		if (null != Dataset.getString(data, 32)) {
-			schedule = execute(schedule, Arrays.copyOfRange(data, 32, 37));
+		if (null != Dataset.getString(data, 33)) {
+			schedule = execute(schedule, Arrays.copyOfRange(data, 33, 39));
 		}
 
-		if (null != Dataset.getString(data, 37)) {
+		if (null != Dataset.getString(data, 39)) {
 			schedule = ChangeRepayTest.execute(schedule,
-					Arrays.copyOfRange(data, 37, 42));
+					Arrays.copyOfRange(data, 39, 44));
 		}
 
 		// Get the actual results
@@ -87,14 +87,15 @@ public class AddDisbursementTest {
 		Date eventFromDate = Dataset.getDate(data, 0);
 		Date eventToDate = Dataset.getDate(data, 1);
 		String recalType = Dataset.getString(data, 2);
-		BigDecimal amount = Dataset.getBigDecimal(data, 3);
-		String scheduleMethod = Dataset.getString(data, 4);
+		Date recalToDate = Dataset.getDate(data, 3);
+		BigDecimal amount = Dataset.getBigDecimal(data, 4);
+		String scheduleMethod = Dataset.getString(data, 5);
 
 		// Generate the schedule.
 		schedule.getFinanceMain().setEventFromDate(eventFromDate);
 		schedule.getFinanceMain().setEventToDate(eventToDate);
 		schedule.getFinanceMain().setRecalType(recalType);
-		schedule.getFinanceMain().setRecalToDate(null);
+		schedule.getFinanceMain().setRecalToDate(recalToDate);
 
 		schedule = ScheduleCalculator.addDisbursement(schedule, amount,
 				scheduleMethod, BigDecimal.ZERO);

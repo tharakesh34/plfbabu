@@ -36,8 +36,8 @@ public class ChangeRateTest {
 		PrintFactory.toConsole(name);
 
 		// Get the expected results
-		long expLastRepayAmt = Dataset.getLong(data, 45);
-		long expTotalProfit = Dataset.getLong(data, 46);
+		long expLastRepayAmt = Dataset.getLong(data, 47);
+		long expTotalProfit = Dataset.getLong(data, 48);
 
 		// Calculate the schedule
 		schedule = CreateScheduleTest.execute(schedule,
@@ -55,21 +55,21 @@ public class ChangeRateTest {
 
 		if (null != Dataset.getString(data, 27)) {
 			schedule = AddDisbursementTest.execute(schedule,
-					Arrays.copyOfRange(data, 27, 32));
+					Arrays.copyOfRange(data, 27, 33));
 		}
 
-		if (null != Dataset.getString(data, 32)) {
+		if (null != Dataset.getString(data, 33)) {
 			schedule = AddDisbursementTest.execute(schedule,
-					Arrays.copyOfRange(data, 32, 37));
+					Arrays.copyOfRange(data, 33, 39));
 		}
 
-		if (null != Dataset.getString(data, 37)) {
+		if (null != Dataset.getString(data, 39)) {
 			schedule = ChangeRepayTest.execute(schedule,
-					Arrays.copyOfRange(data, 37, 42));
+					Arrays.copyOfRange(data, 39, 44));
 		}
 
-		if (null != Dataset.getString(data, 42)) {
-			schedule = execute(schedule, Arrays.copyOfRange(data, 42, 45));
+		if (null != Dataset.getString(data, 44)) {
+			schedule = execute(schedule, Arrays.copyOfRange(data, 44, 47));
 		}
 
 		// Get the actual results
