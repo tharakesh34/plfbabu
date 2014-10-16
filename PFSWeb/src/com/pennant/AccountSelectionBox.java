@@ -195,7 +195,9 @@ public class AccountSelectionBox extends Hbox {
 		this.textbox.setErrorMessage("");
 		Clients.clearWrongValue(this.button);
 		if(finTypeAccount != null){
-			prepareAccountsList();
+			if(!prepareAccountsList()){
+				return;
+			}
 		}
 		try {
 			if((moduleName != null && moduleName.length() != 0 )) {
@@ -219,7 +221,7 @@ public class AccountSelectionBox extends Hbox {
 	 * Prepare the accounts list
 	 * @throws InterruptedException
 	 */
-	private void prepareAccountsList() throws InterruptedException {
+	private boolean prepareAccountsList() throws InterruptedException {
 		accountDetails.clear();
 		if(!StringUtils.trimToEmpty(finTypeAccount.getAccountReceivable()).equals("")){
 			String[] accounts = finTypeAccount.getAccountReceivable().split(",");
@@ -244,6 +246,7 @@ public class AccountSelectionBox extends Hbox {
 				iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
 			}catch (AccountNotFoundException e) {
 				PTMessageUtils.showErrorMessage(e.getErrorMsg());
+				return false;
 			}	
 			if(iAccountList != null && !iAccountList.isEmpty()){
 				for (IAccounts iAccounts : iAccountList) {
@@ -253,6 +256,7 @@ public class AccountSelectionBox extends Hbox {
 				}
 			}
 		}
+		return true;
 	}
 	
 	/**
@@ -331,7 +335,7 @@ public class AccountSelectionBox extends Hbox {
 					this.decimalbox.setValue(BigDecimal.ZERO);
 					Events.postEvent("onFulfill", this, null);
 				//	doClear();	
-					throw new WrongValueException(this.button, this.textbox.getValue() + " is not valid");
+					throw new WrongValueException(this.textbox, this.textbox.getValue() + " is not valid");
 				}  else{
 					this.selectedAccount = accountDetail;
 					try {
