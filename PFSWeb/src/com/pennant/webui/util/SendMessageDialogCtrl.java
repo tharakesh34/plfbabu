@@ -346,7 +346,6 @@ public class SendMessageDialogCtrl  extends  GFCBaseListCtrl<ReportConfiguration
 			msg = msg +this.messageBox.getValue()+ "\n"+ "\n";
 			msg = msg  + "*******************   END  ********************* " + "\n";
 			
-
 			Set  seletedSet=null;
 			boolean isByUsers=false;
 			if(this.rg_Selection.getSelectedItem().getId().equals("radio_Users")){

@@ -24,6 +24,7 @@ import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Style;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
@@ -236,6 +237,8 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 	}
 
 
+	
+	
 	/**
 	 * This Method returns new messageWindow
 	 * @return
@@ -246,7 +249,12 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 			msgWindow = new Window();
 			msgWindow.setDraggable("false");
 			msgWindow.setId("msgWindow");
+			Style contentStyle = new Style();
+			contentStyle.setContent(".z-window-header {font-size: 13px;font-weight: bold;"
+									 +"font-style: normal;color: white;}");	
+			contentStyle.setParent(msgWindow);
 			msgWindow.setTitle("Messages");
+			msgWindow.setStyle("padding: 2px;background: #5A87B5;overflow: hidden; border:1px solid #5A87B5;");
 			msgWindow.setSizable(true);
 			msgWindow.setClosable(true);
 			msgWindow.setWidth("400px");
@@ -266,7 +274,8 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 			tb.setRows(10);
 			tb.setReadonly(true);
 			tb.setHeight("100%");
-			tb.setWidth("98%");
+			tb.setWidth("100%");
+			tb.setStyle("border-color: lightpink;background: lightyellow;");
 			tb.setParent(msgWindow);
 			msgWindow.doOverlapped();
 		}
