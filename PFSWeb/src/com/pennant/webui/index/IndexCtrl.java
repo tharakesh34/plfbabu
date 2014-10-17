@@ -48,6 +48,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -107,6 +109,7 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 	protected Checkbox CBtreeMenu; // autowired
 
 	private final int centerAreaHeightOffset = 50;
+	private boolean homePageDisplayed = false;
 
 	private final String appName = Labels.getLabel(PennantConstants.applicationCode);
 
@@ -161,7 +164,7 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 		EventQueues.lookup("appVersionEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeAppVersion", null, version));
 		EventQueues.lookup("tableSchemaEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeTableSchema", null, tableSchemaName));
 		
-		if("Y".equals(SystemParameterDetails.getSystemParameterValue("LAST_LOGIN_INFO"))) {
+		if(PennantConstants.YES.equals(SystemParameterDetails.getSystemParameterValue("LAST_LOGIN_INFO"))) {
 			EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeLastLogin", null, ""));
 		}
 
@@ -223,10 +226,18 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 		final West west = bl.getWest();
 		// clear the center child comps
 		west.getChildren().clear();
+		
+		Map<String, String> map = new HashMap<String, String>();
+		if (homePageDisplayed) {
+			map.put("HomePageDisplayed", "YES");
+		} else {
+			homePageDisplayed = true;
+			map.put("HomePageDisplayed", "NO");
+		}
 
 		// create the components from the mainmenu.zul-file and put
 		// it in the west layout area
-		Executions.createComponents("/WEB-INF/pages/mainTreeMenu.zul", west, null);
+		Executions.createComponents("/WEB-INF/pages/mainTreeMenu.zul", west, map);
 	}
 
 	/**
@@ -279,72 +290,55 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 	private void showPage(String zulFilePathName, String tabName) throws InterruptedException {
 
 		try {
-			// get the parameter for working with tabs from the application
-			// params
-			//final int workWithTabs = 1;
+			// get the parameter for working with tabs from the application params
 
-			//if (workWithTabs == 1) {
+			/* get an instance of the borderlayout defined in the zul-file */
+			final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+			/* get an instance of the searched CENTER layout area */
+			final Center center = bl.getCenter();
+			// get the tabs component
+			final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter");
 
-				/* get an instance of the borderlayout defined in the zul-file */
-				final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
-				/* get an instance of the searched CENTER layout area */
-				final Center center = bl.getCenter();
-				// get the tabs component
-				final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter");
+			/**
+			 * Check if the tab is already opened than select them and<br>
+			 * go out of here. If not than create them.<br>
+			 */
+
+			Tab checkTab = null;
+			try {
+				checkTab = (Tab) tabs.getFellow("tab_" + tabName.trim());
+				checkTab.setSelected(true);
+			} catch (final ComponentNotFoundException ex) {
+				// Ignore if can not get tab.
+			}
+
+			if (checkTab == null) {
+
+				final Tab tab = new Tab();
+				tab.setId("tab_" + tabName.trim());
+				tab.setLabel(tabName.trim());
+				tab.setClosable(true);
+
+				tab.setParent(tabs);
+
+				final Tabpanels tabpanels = (Tabpanels) center.getFellow("divCenter").getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter").getFellow("tabpanelsBoxIndexCenter");
+				final Tabpanel tabpanel = new Tabpanel();
+				tabpanel.setHeight("100%");
+				tabpanel.setStyle("padding: 0px;");
+				tabpanel.setParent(tabpanels);
 
 				/**
-				 * Check if the tab is already opened than select them and<br>
-				 * go out of here. If not than create them.<br>
+				 * Create the page and put it in the tabs area. If zul-file
+				 * is not found, detach the created tab
 				 */
-
-				Tab checkTab = null;
 				try {
-					// checkTab = (Tab) tabs.getFellow(tabName);
-					checkTab = (Tab) tabs.getFellow("tab_" + tabName.trim());
-					checkTab.setSelected(true);
-				} catch (final ComponentNotFoundException ex) {
-					// Ignore if can not get tab.
+					Executions.createComponents(zulFilePathName, tabpanel, null);
+					tab.setSelected(true);
+				} catch (final Exception e) {
+					tab.detach();
 				}
 
-				if (checkTab == null) {
-
-					final Tab tab = new Tab();
-					tab.setId("tab_" + tabName.trim());
-					tab.setLabel(tabName.trim());
-					tab.setClosable(true);
-
-					tab.setParent(tabs);
-
-					final Tabpanels tabpanels = (Tabpanels) center.getFellow("divCenter").getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter").getFellow("tabpanelsBoxIndexCenter");
-					final Tabpanel tabpanel = new Tabpanel();
-					tabpanel.setHeight("100%");
-					tabpanel.setStyle("padding: 0px;");
-					tabpanel.setParent(tabpanels);
-
-					/**
-					 * Create the page and put it in the tabs area. If zul-file
-					 * is not found, detach the created tab
-					 */
-					try {
-						Executions.createComponents(zulFilePathName, tabpanel, null);
-						tab.setSelected(true);
-					} catch (final Exception e) {
-						tab.detach();
-					}
-
-				}
-			/*} else {
-				 get an instance of the borderlayout defined in the zul-file 
-				final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
-				 get an instance of the searched CENTER layout area 
-				final Center center = bl.getCenter();
-				 clear the center child comps 
-				center.getChildren().clear();
-				*//**
-				 * create the page and put it in the center layout area
-				 *//*
-				Executions.createComponents(zulFilePathName, center, null);
-			}*/
+			}
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("--> calling zul-file: " + zulFilePathName);
