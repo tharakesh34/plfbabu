@@ -49,7 +49,38 @@
 				<north border="none" />
 	
 				<center border="none">
-
+				<div>
+				<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row visible="false">
+									<label id="label_ExpenseTypeSearch_ExpenceTypeId" value="${c:l('label_ExpenseTypeSearch_ExpenceTypeId.value')}" />
+									<listbox id="sortOperator_expenceTypeId" width="43px" mold="select" rows="1" />
+									 <textbox id="expenceTypeId" width="171px" maxlength="19" />
+								</row>
+								<row>
+									<label id="label_ExpenseTypeSearch_ExpenceTypeName" value="${c:l('label_ExpenseTypeSearch_ExpenceTypeName.value')}" />
+									<listbox id="sortOperator_expenceTypeName" width="43px" mold="select" rows="1" />
+									 <textbox id="expenceTypeName" width="250px" maxlength="100" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label id="label_ExpenseTypeSearch_RecordStatus" value="${c:l('label_ExpenseTypeSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+									<label id="label_ExpenseTypeSearch_RecordType" value="${c:l('label_ExpenseTypeSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 					<listbox id="listBoxExpenseType"  vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
 						<listhead sizable="true">
 							<listheader id="listheader_ExpenceTypeName" label="${c:l('listheader_ExpenceTypeName.label')}" sort="auto" 
@@ -63,6 +94,7 @@
 						</listhead>		
 			
 					</listbox>
+					</div>
 				</center>
 				<south border="none" >
 					<paging id="pagingExpenseTypeList" />

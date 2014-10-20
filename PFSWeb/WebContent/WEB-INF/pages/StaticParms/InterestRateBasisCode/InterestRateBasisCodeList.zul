@@ -55,32 +55,93 @@
 
 			<borderlayout id="borderLayout_InterestRateBasisCodeList">
 				<north border="none" />
-
 				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_InterestRateBasisCodeSearch_IntRateBasisCode"
+										value="${c:l('label_InterestRateBasisCodeSearch_IntRateBasisCode.value')}" />
+									<listbox
+										id="sortOperator_intRateBasisCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="intRateBasisCode"
+										width="100px" maxlength="8" />
+									<label
+										id="label_InterestRateBasisCodeSearch_IntRateBasisDesc"
+										value="${c:l('label_InterestRateBasisCodeSearch_IntRateBasisDesc.value')}" />
+									<listbox
+										id="sortOperator_intRateBasisDesc" width="43px" mold="select"
+										rows="1" />
+									<textbox id="intRateBasisDesc"
+										width="320px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_InterestRateBasisCodeSearch_IntRateBasisIsActive"
+										value="${c:l('label_InterestRateBasisCodeSearch_IntRateBasisIsActive.value')}" />
+									<listbox
+										id="sortOperator_intRateBasisIsActive" width="43px"
+										mold="select" rows="1" />
+									<checkbox id="intRateBasisIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_InterestRateBasisCodeSearch_RecordStatus"
+										value="${c:l('label_InterestRateBasisCodeSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_InterestRateBasisCodeSearch_RecordType"
+										value="${c:l('label_InterestRateBasisCodeSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 
-					<listbox id="listBoxInterestRateBasisCode"
-						vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-						width="100%" height="100%" multiple="false">
-						<listhead sizable="true">
-							<listheader id="listheader_IntRateBasisCode"
-								label="${c:l('listheader_IntRateBasisCode.label')}" sort="auto"
-								width="15%" />
-							<listheader id="listheader_IntRateBasisDesc"
-								label="${c:l('listheader_IntRateBasisDesc.label')}" sort="auto"
-								width="55%" />
-							<listheader
-								id="listheader_IntRateBasisIsActive"
-								label="${c:l('listheader_IntRateBasisIsActive.label')}"
-								sort="auto" width="10%" />
-							<listheader id="listheader_RecordStatus"
-								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="10%" />
-							<listheader id="listheader_RecordType"
-								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="10%" />
-						</listhead>
-					</listbox>
-
+						<listbox id="listBoxInterestRateBasisCode"
+							vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_IntRateBasisCode"
+									label="${c:l('listheader_IntRateBasisCode.label')}" sort="auto"
+									width="15%" />
+								<listheader
+									id="listheader_IntRateBasisDesc"
+									label="${c:l('listheader_IntRateBasisDesc.label')}" sort="auto"
+									width="55%" />
+								<listheader
+									id="listheader_IntRateBasisIsActive"
+									label="${c:l('listheader_IntRateBasisIsActive.label')}"
+									sort="auto" width="10%" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									width="10%" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									width="10%" />
+							</listhead>
+						</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingInterestRateBasisCodeList" />

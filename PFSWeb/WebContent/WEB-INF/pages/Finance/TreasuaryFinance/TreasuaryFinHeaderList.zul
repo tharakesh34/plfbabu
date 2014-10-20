@@ -57,7 +57,50 @@
 			</north>
 
 			<center border="none">
-
+			<div>
+			<grid id ="searchGrid" sclass="GridLayoutNoBorder"
+							fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+						<column width="130px" />
+						<column width="50px" />
+						<column  />
+						<column width="130px" />
+						<column width="50px" />
+						<column  />
+					</columns>
+							<rows>
+								<row>
+									<label id="label_TreasuaryFinanceSearch_FinReference" value="${c:l('label_TreasuaryFinanceSearch_FinReference.value')}" />
+									<listbox id="sortOperator_finReference" width="43px" mold="select" rows="1" />
+									  <uppercasebox  id="finReference" width="300px" maxlength="50" />
+									<label id="label_TreasuaryFinanceSearch_TotPriAmount" value="${c:l('label_TreasuaryFinanceSearch_TotPriAmount.value')}" />
+									<listbox id="sortOperator_totPriAmount" width="43px" mold="select" rows="1" />
+									  <decimalbox  id="totPriAmount" width="300px" maxlength="50"/>
+								</row>
+								<row>
+									<label id="label_TreasuaryFinanceSearch_finCcy" value="${c:l('label_TreasuaryFinanceSearch_finCcy.value')}" />
+									<listbox id="sortOperator_finCcy" width="43px" mold="select" rows="1" />
+									  <textbox  id="finCcy" width="300px" maxlength="50" />
+									<label id="label_TreasuaryFinanceSearch_startDate" value="${c:l('label_TreasuaryFinanceSearch_startDate.value')}" />
+									<listbox id="sortOperator_startDate" width="43px" mold="select" rows="1" />
+									  <datebox  id="startDate" width="150px" maxlength="50" />
+								</row>
+								<row>
+									<label id="label_TreasuaryFinanceSearch_maturityDate" value="${c:l('label_TreasuaryFinanceSearch_maturityDate.value')}" />
+									<listbox id="sortOperator_maturityDate" width="43px" mold="select" rows="1" />
+									  <datebox  id="maturityDate" width="150px" maxlength="50" />
+								</row>
+								<row id="row_AlwWorkflow" visible="false">
+									<label id="label_TreasuaryFinanceSearch_RecordStatus" value="${c:l('label_TreasuaryFinanceSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+									<label id="label_TreasuaryFinanceSearch_RecordType" value="${c:l('label_TreasuaryFinanceSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 				<listbox id="listBoxTrFinHeader" fixedLayout="true"
 					vflex="true" span="true"
 					emptyMessage="${c:l('listbox.emptyMessage')}"
@@ -88,6 +131,7 @@
 					</listhead>
 
 				</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingTFinHeaderList" />

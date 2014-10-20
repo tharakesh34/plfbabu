@@ -49,7 +49,38 @@
 				<north border="none" />
 	
 				<center border="none">
-
+				<div>
+				<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row visible = "false">
+									<label id="label_PropertyTypeSearch_PropertyTypeId" value="${c:l('label_PropertyTypeSearch_PropertyTypeId.value')}" />
+									<listbox id="sortOperator_propertyTypeId" width="43px" mold="select" rows="1" />
+									  <uppercasebox  id="propertyTypeId" width="90px" maxlength="10" />
+								</row>
+								<row>
+									<label id="label_PropertyTypeSearch_PropertyTypeName" value="${c:l('label_PropertyTypeSearch_PropertyTypeName.value')}" />
+									<listbox id="sortOperator_propertyTypeName" width="43px" mold="select" rows="1" />
+									 <textbox id="propertyTypeName" width="250px" maxlength="50" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label id="label_PropertyTypeSearch_RecordStatus" value="${c:l('label_PropertyTypeSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+									<label id="label_PropertyTypeSearch_RecordType" value="${c:l('label_PropertyTypeSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 					<listbox id="listBoxPropertyType"  vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
 						<listhead sizable="true">
 							<listheader id="listheader_PropertyTypeName" label="${c:l('listheader_PropertyTypeName.label')}" sort="auto" 
@@ -63,6 +94,7 @@
 						</listhead>		
 			
 					</listbox>
+					</div>
 				</center>
 				<south border="none" >
 					<paging id="pagingPropertyTypeList" />

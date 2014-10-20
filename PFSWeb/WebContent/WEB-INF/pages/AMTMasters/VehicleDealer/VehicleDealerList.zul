@@ -49,7 +49,74 @@
 				<north border="none" />
 	
 				<center border="none">
-
+					<div>
+					<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>							
+							<rows>
+								<row>
+									<label
+										id="label_VehicleDealerSearch_DealerType"
+										value="${c:l('label_VehicleDealerSearch_DealerType.value')}" />
+									<listbox
+										id="sortOperator_dealerType" width="43px" mold="select"
+										rows="1" />
+									<combobox id="dealerType" />
+								</row>
+								<row visible="false">
+									<label
+										id="label_VehicleDealerSearch_DealerId"
+										value="${c:l('label_VehicleDealerSearch_DealerId.value')}" />
+									<listbox id="sortOperator_dealerId"
+										width="43px" mold="select" rows="1" />
+									<textbox id="dealerId" width="200px"
+										maxlength="19" />
+								</row>
+								<row>
+									<label
+										id="label_VehicleDealerSearch_DealerName"
+										value="${c:l('label_VehicleDealerSearch_DealerName.value')}" />
+									<listbox
+										id="sortOperator_dealerName" width="43px" mold="select"
+										rows="1" />
+									<textbox id="dealerName"
+										width="300px" maxlength="50" />
+									<label
+										id="label_VehicleDealerSearch_DealerTelephone"
+										value="${c:l('label_VehicleDealerSearch_DealerTelephone.value')}" />
+									<listbox
+										id="sortOperator_dealerTelephone" width="43px" mold="select"
+										rows="1" />
+									<textbox id="dealerTelephone"
+										width="200px" maxlength="19" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_VehicleDealerSearch_RecordStatus"
+										value="${c:l('label_VehicleDealerSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_VehicleDealerSearch_RecordType"
+										value="${c:l('label_VehicleDealerSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 					<listbox id="listBoxVehicleDealer"  vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
 						<listhead sizable="true">
 						    <listheader id="listheader_DealerType" label="${c:l('listheader_DealerType.label')}" sort="auto" 
@@ -69,6 +136,7 @@
 						</listhead>		
 			
 					</listbox>
+					</div>
 				</center>
 				<south border="none" >
 					<paging id="pagingVehicleDealerList" />

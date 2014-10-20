@@ -185,7 +185,7 @@
 															<space
 																spacing="2px" />
 															<combobox
-																id="cbDimension" readonly="true" width="50px" />
+																id="cbDimension" readonly="true" width="80px" />
 														</hbox>
 													</row>
 													<row>

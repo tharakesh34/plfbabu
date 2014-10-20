@@ -7,54 +7,108 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_VehicleModelList"  apply="${vehicleModelListCtrl}"
+	<window id="window_VehicleModelList" apply="${vehicleModelListCtrl}"
 		border="none" width="100%">
-			<div sclass="z-toolbar" style="padding:0px" height="28px">
-				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
-	
-					<!-- COMMON BUTTONS -->
-					<label value="" />	
-					<!-- SEARCH AREA -->
-					<toolbar align="center" sclass="toolbar-center">
-						<button
-							id="button_VehicleModelList_VehicleModelSearchDialog" 
-							label = "${c:l('label_Filter')}"
-							autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_VehicleModelList_VehicleModelSearchDialog.tooltiptext')}" />
-						<button id="button_VehicleModelList_PrintList"
-							 label = "${c:l('label_Print')}"
-							autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_VehicleModelList_PrintList.tooltiptext')}" />
-					</toolbar>
-	
-					<!-- CRUD BUTTONS -->
-					<toolbar align="end" sclass="toolbar-end">
-						<button id="button_VehicleModelList_NewVehicleModel"
-							 label = "${c:l('label_New')}"
-							autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_VehicleModelList_NewVehicleModel.tooltiptext')}" />
-						<button id="btnRefresh" 
-							label = "${c:l('label_Refresh')}"
-							autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp" 
-							label = "${c:l('label_Help')}"
-							autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-					</toolbar>
-				</hbox>
-			</div>
+		<div sclass="z-toolbar" style="padding:0px" height="28px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="30%,40%,30%">
 
-			<borderlayout id="borderLayout_VehicleModelList">
-				<north border="none" />
-	
-				<center border="none">
+				<!-- COMMON BUTTONS -->
+				<label value="" />
+				<!-- SEARCH AREA -->
+				<toolbar align="center" sclass="toolbar-center">
+					<button
+						id="button_VehicleModelList_VehicleModelSearchDialog"
+						label="${c:l('label_Filter')}"
+						autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
+						tooltiptext="${c:l('button_VehicleModelList_VehicleModelSearchDialog.tooltiptext')}" />
+					<button id="button_VehicleModelList_PrintList"
+						label="${c:l('label_Print')}"
+						autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
+						tooltiptext="${c:l('button_VehicleModelList_PrintList.tooltiptext')}" />
+				</toolbar>
 
-					<listbox id="listBoxVehicleModel"  vflex="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end" sclass="toolbar-end">
+					<button id="button_VehicleModelList_NewVehicleModel"
+						label="${c:l('label_New')}"
+						autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
+						tooltiptext="${c:l('button_VehicleModelList_NewVehicleModel.tooltiptext')}" />
+					<button id="btnRefresh"
+						label="${c:l('label_Refresh')}"
+						autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+					<button id="btnHelp" label="${c:l('label_Help')}"
+						autodisable="button_VehicleModelList_VehicleModelSearchDialog,button_VehicleModelList_PrintList,button_VehicleModelList_NewVehicleModel,btnRefresh,btnHelp"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderLayout_VehicleModelList">
+			<north border="none" />
+
+			<center border="none">
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true">
+						<columns>
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="false">
+								<label
+									id="label_VehicleModelSearch_VehicleModelId"
+									value="${c:l('label_VehicleModelSearch_VehicleModelId.value')}" />
+								<listbox
+									id="sortOperator_vehicleModelId" width="43px" mold="select"
+									rows="1" />
+								<textbox id="vehicleModelId"
+									width="171px" maxlength="19" />
+							</row>
+							<row>
+								<label
+									id="label_VehicleModelSearch_VehicleModelDesc"
+									value="${c:l('label_VehicleModelSearch_VehicleModelDesc.value')}" />
+								<listbox
+									id="sortOperator_vehicleModelDesc" width="43px" mold="select"
+									rows="1" />
+								<textbox id="vehicleModelDesc"
+									width="300px" maxlength="50" />
+							</row>
+							<row id="row_AlwWorkflow">
+								<label
+									id="label_VehicleModelSearch_RecordStatus"
+									value="${c:l('label_VehicleModelSearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_recordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="100px"
+									maxlength="50" />
+								<label
+									id="label_VehicleModelSearch_RecordType"
+									value="${c:l('label_VehicleModelSearch_RecordType.value')}" />
+								<listbox id="sortOperator_recordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="100px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxVehicleModel" vflex="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
 						<listhead sizable="true">
-							<listheader id="listheader_VehicleManufacterId" label="${c:l('listheader_ManufacturerName.label')}" sort="auto" 
+							<listheader
+								id="listheader_VehicleManufacterId"
+								label="${c:l('listheader_ManufacturerName.label')}" sort="auto"
 								width="50%" />
-							<listheader id="listheader_VehicleModelDesc" label="${c:l('listheader_VehicleModelDesc.label')}" sort="auto" 
+							<listheader id="listheader_VehicleModelDesc"
+								label="${c:l('listheader_VehicleModelDesc.label')}" sort="auto"
 								width="50%" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
@@ -62,14 +116,15 @@
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
 								width="0%" />
-						</listhead>		
-			
+						</listhead>
+
 					</listbox>
-				</center>
-				<south border="none" >
-					<paging id="pagingVehicleModelList" />
-				</south>
-				
-			</borderlayout>
+				</div>
+			</center>
+			<south border="none">
+				<paging id="pagingVehicleModelList" />
+			</south>
+
+		</borderlayout>
 	</window>
 </zk>

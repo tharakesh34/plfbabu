@@ -56,6 +56,76 @@
 		<borderlayout id="borderLayout_SecurityRoleList">
 			<north border="none" />
 			<center border="none">
+			<div>
+			<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px; padding-left:5px; padding-right:5px;">
+					<columns>
+						<column width="130px" />
+						<column width="50px" />
+						<column  />
+						<column width="130px" />
+						<column width="50px" />
+						<column  />
+					</columns>
+					<rows>
+					<row visible="false">
+							<label id="label_SecurityRoleSearch_RoleID"
+								value="${c:l('label_SecurityRoleSearch_RoleID.value')}" />
+							<listbox id="sortOperator_roleID"
+								width="43px" mold="select" rows="1" />
+							<intbox id="roleID" width="90%"
+								maxlength="12" />
+						</row>
+						<row>
+							<label id="label_SecurityRoleSearch_RoleApp"
+								value="${c:l('label_SecurityRoleSearch_RoleApp.value')}" />
+							<listbox id="sortOperator_roleApp"
+								width="43px" mold="select" rows="1" />
+							<combobox id="roleApp" width="180px"
+								maxlength="100" readonly="true" />
+							<label id="label_SecurityRoleSearch_RoleCd"
+								value="${c:l('label_SecurityRoleSearch_RoleCd.value')}" />
+							<listbox id="sortOperator_roleCd"
+								width="43px" mold="select" rows="1" />
+							<uppercasebox id="roleCd" width="300px"
+								maxlength="50" />
+						</row>
+						<row>
+							<label
+								id="label_SecurityRoleSearch_RoleDesc"
+								value="${c:l('label_SecurityRoleSearch_RoleDesc.value')}" />
+							<listbox id="sortOperator_roleDesc"
+								width="43px" mold="select" rows="1" />
+							<textbox id="roleDesc" width="300px"
+								maxlength="100" />
+						</row>
+						<row visible="false">
+							<label
+								id="label_SecurityRoleSearch_RoleCategory"
+								value="${c:l('label_SecurityRoleSearch_RoleCategory.value')}" />
+							<listbox id="sortOperator_roleCategory"
+								width="43px" mold="select" rows="1" />
+							<uppercasebox id="roleCategory" width="95%"
+								maxlength="100" />
+						</row>
+						<row id="row_AlwWorkflow">
+							<label
+								id="label_SecurityRoleSearch_RecordStatus"
+								value="${c:l('label_SecurityRoleSearch_RecordStatus.value')}" />
+							<listbox id="sortOperator_recordStatus"
+								width="43px" mold="select" rows="1" />
+							<uppercasebox id="recordStatus"
+								width="100px" maxlength="50" />
+							<label
+								id="label_SecurityRoleSearch_RecordType"
+								value="${c:l('label_SecurityRoleSearch_RecordType.value')}" />
+							<listbox id="sortOperator_recordType"
+								width="43px" mold="select" rows="1" />
+							<listbox id="recordType" width="100px"
+								mold="select" />
+						</row>
+					</rows>
+				</grid>
 				<listbox id="listBoxSecurityRole" vflex="true"
 					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 					height="100%" multiple="false">
@@ -80,6 +150,7 @@
 							width="0%" />
 					</listhead>
 				</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingSecurityRoleList" />

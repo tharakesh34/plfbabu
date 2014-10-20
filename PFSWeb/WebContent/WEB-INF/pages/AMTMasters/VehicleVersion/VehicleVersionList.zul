@@ -16,14 +16,14 @@
 				<!-- COMMON BUTTONS -->
 				<label value="" />
 				<!-- SEARCH AREA -->
-				<toolbar align="center" sclass="toolbar-center" >
+				<toolbar align="center" sclass="toolbar-center">
 					<button
 						id="button_VehicleVersionList_VehicleVersionSearchDialog"
-						 label = "${c:l('label_Filter')}"
+						label="${c:l('label_Filter')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_VehicleVersionList_VehicleVersionSearchDialog.tooltiptext')}" />
 					<button id="button_VehicleVersionList_PrintList"
-						 label = "${c:l('label_Print')}"
+						label="${c:l('label_Print')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_VehicleVersionList_PrintList.tooltiptext')}" />
 				</toolbar>
@@ -31,16 +31,15 @@
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
 					<button
-						id="button_VehicleVersionList_NewVehicleVersion" 
-						label = "${c:l('label_New')}"
+						id="button_VehicleVersionList_NewVehicleVersion"
+						label="${c:l('label_New')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_VehicleVersionList_NewVehicleVersion.tooltiptext')}" />
-					<button id="btnRefresh" 
-						label = "${c:l('label_Refresh')}"
+					<button id="btnRefresh"
+						label="${c:l('label_Refresh')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-					<button id="btnHelp" 
-						label = "${c:l('label_Help')}"
+					<button id="btnHelp" label="${c:l('label_Help')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
 				</toolbar>
@@ -50,24 +49,84 @@
 		<borderlayout id="borderLayout_VehicleVersionList">
 			<north border="none" />
 			<center border="none">
-				<listbox id="listBoxVehicleVersion" vflex="true"
-					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-					height="100%" multiple="false">
-					<listhead sizable="true">
-						<listheader id="listheader_VehicleModelId"
-							label="${c:l('listheader_VehicleModelId.label')}" sort="auto"
-							width="32%" />
-						<listheader id="listheader_VehicleVersionCode"
-							label="${c:l('listheader_VehicleVersionCode.label')}" sort="auto"
-							width="68%" />
-						<listheader id="listheader_RecordStatus"
-							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-							width="0%" />
-						<listheader id="listheader_RecordType"
-							label="${c:l('listheader_RecordType.label')}" sort="auto"
-							width="0%" />
-					</listhead>
-				</listbox>
+				<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true">
+						<columns>
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+							<column width="130px" />
+							<column width="50px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="false">
+								<label
+									id="label_VehicleVersionSearch_VehicleVersionId"
+									value="${c:l('label_VehicleVersionSearch_VehicleVersionId.value')}" />
+								<listbox
+									id="sortOperator_vehicleVersionId" width="43px" mold="select"
+									rows="1" />
+								<textbox id="vehicleVersionId"
+									width="171px" maxlength="19" />
+							</row>
+							<row>
+								<label
+									id="label_VehicleVersionSearch_VehicleModelId"
+									value="${c:l('label_VehicleVersionSearch_VehicleModelId.value')}" />
+								<listbox
+									id="sortOperator_vehicleModelId" width="43px" mold="select"
+									rows="1" />
+								<textbox id="vehicleModelId"
+									width="171px" maxlength="19" />
+								<label
+									id="label_VehicleVersionSearch_VehicleVersionCode"
+									value="${c:l('label_VehicleVersionSearch_VehicleVersionCode.value')}" />
+								<listbox
+									id="sortOperator_vehicleVersionCode" width="43px" mold="select"
+									rows="1" />
+								<textbox id="vehicleVersionCode"
+									width="250px" maxlength="50" />
+							</row>
+							<row id="row_AlwWorkflow">
+								<label
+									id="label_VehicleVersionSearch_RecordStatus"
+									value="${c:l('label_VehicleVersionSearch_RecordStatus.value')}" />
+								<listbox id="sortOperator_recordStatus"
+									width="43px" mold="select" rows="1" />
+								<textbox id="recordStatus" width="100px"
+									maxlength="50" />
+								<label
+									id="label_VehicleVersionSearch_RecordType"
+									value="${c:l('label_VehicleVersionSearch_RecordType.value')}" />
+								<listbox id="sortOperator_recordType"
+									width="43px" mold="select" rows="1" />
+								<listbox id="recordType" width="100px"
+									mold="select" />
+							</row>
+						</rows>
+					</grid>
+					<listbox id="listBoxVehicleVersion" vflex="true"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false">
+						<listhead sizable="true">
+							<listheader id="listheader_VehicleModelId"
+								label="${c:l('listheader_VehicleModelId.label')}" sort="auto"
+								width="32%" />
+							<listheader
+								id="listheader_VehicleVersionCode"
+								label="${c:l('listheader_VehicleVersionCode.label')}"
+								sort="auto" width="68%" />
+							<listheader id="listheader_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+								width="0%" />
+							<listheader id="listheader_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="auto"
+								width="0%" />
+						</listhead>
+					</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingVehicleVersionList" />

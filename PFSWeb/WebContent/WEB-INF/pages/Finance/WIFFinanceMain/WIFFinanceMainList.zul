@@ -56,7 +56,80 @@
 				</north>
 
 				<center border="none">
-
+					<div>
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+							fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+								<label id="label_WIFFinanceMainSearch_FinReference"
+										value="${c:l('label_WIFFinanceMainSearch_FinReference.value')}" />
+									<listbox id="sortOperator_finReference" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="finReference" width="180px" maxlength="20" />
+									<label id="label_WIFFinanceMainSearch_FinType"
+										value="${c:l('label_WIFFinanceMainSearch_FinType.value')}" />
+									<listbox id="sortOperator_finType" width="43px" mold="select" rows="1" />
+									<textbox id="finType" width="72px" maxlength="8" />
+									
+								</row>
+								<row>
+									<label id="label_WIFFinanceMainSearch_FinCcy"
+										value="${c:l('label_WIFFinanceMainSearch_FinCcy.value')}" />
+									<listbox id="sortOperator_finCcy" width="43px" mold="select" rows="1" />
+									<textbox id="finCcy" width="50px" maxlength="3" />
+									<label id="label_WIFFinanceMainSearch_FinStartDate"
+										value="${c:l('label_WIFFinanceMainSearch_FinStartDate.value')}" />
+									<listbox id="sortOperator_finStartDate" width="43px" mold="select"
+										rows="1" />
+									<datebox id="finStartDate" width="100px" format="dd/MM/yyyy" />
+								</row>
+								<row visible="false">
+									<label id="label_WIFFinanceMainSearch_ScheduleMethod"
+										value="${c:l('label_WIFFinanceMainSearch_ScheduleMethod.value')}" />
+									<listbox id="sortOperator_scheduleMethod" width="43px" mold="select"
+										rows="1" />
+									<textbox id="scheduleMethod" width="72px" maxlength="8" />
+									<label id="label_WIFFinanceMainSearch_ProfitDaysBasis"
+										value="${c:l('label_WIFFinanceMainSearch_ProfitDaysBasis.value')}" />
+									<listbox id="sortOperator_profitDaysBasis" width="43px" mold="select"
+										rows="1" />
+									<textbox id="profitDaysBasis" width="72px" maxlength="8" />
+								</row>
+								
+								<row visible="false">
+								<label id="label_WIFFinanceMainSearch_CustID"
+										value="${c:l('label_WIFFinanceMainSearch_CustID.value')}" visible ="true"/>
+									<listbox id="sortOperator_custID" width="43px" mold="select" rows="1" visible ="true"/>
+									<textbox id="custID" width="171px" maxlength="6" visible ="true"/>
+									<label id="label_WIFFinanceMainSearch_FinIsActive"
+										value="${c:l('label_WIFFinanceMainSearch_FinIsActive.value')}" />
+									<listbox id="sortOperator_finIsActive" width="43px" mold="select" rows="1" />
+									<checkbox id="finIsActive" checked="false" />
+									</row>
+									<row id="row_AlwWorkflow">
+									<label id="label_WIFFinanceMainSearch_RecordStatus"
+										value="${c:l('label_WIFFinanceMainSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus" width="100px" maxlength="50" />
+								
+									<label id="label_WIFFinanceMainSearch_RecordType"
+										value="${c:l('label_WIFFinanceMainSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 					<listbox id="listBoxWIFFinanceMain"
 						emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
 						vflex="true" span="true"
@@ -95,6 +168,7 @@
 								hflex="min" />
 						</listhead>
 					</listbox>
+					</div>
 				</center>
 				<south border="none">
 					<paging id="pagingWIFFinanceMainList" />

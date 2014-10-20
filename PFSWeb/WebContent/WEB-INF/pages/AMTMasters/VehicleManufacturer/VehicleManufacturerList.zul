@@ -52,10 +52,41 @@
 			<north border="none" />
 
 			<center border="none">
-
+				<div>
+				<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row visible= "false">
+									<label id="label_VehicleManufacturerSearch_ManufacturerId" value="${c:l('label_VehicleManufacturerSearch_ManufacturerId.value')}" />
+									<listbox id="sortOperator_manufacturerId" width="43px" mold="select" rows="1" />
+									  <uppercasebox  id="manufacturerId" width="171px" maxlength="19" />
+								</row>
+								<row>
+									<label id="label_VehicleManufacturerSearch_ManufacturerName" value="${c:l('label_VehicleManufacturerSearch_ManufacturerName.value')}" />
+									<listbox id="sortOperator_manufacturerName" width="43px" mold="select" rows="1" />
+									 <textbox id="manufacturerName" width="300px" maxlength="50" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label id="label_VehicleManufacturerSearch_RecordStatus" value="${c:l('label_VehicleManufacturerSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+									<label id="label_VehicleManufacturerSearch_RecordType" value="${c:l('label_VehicleManufacturerSearch_RecordType.value')}" />
+									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
+										<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
 				<listbox id="listBoxVehicleManufacturer"
 				        tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true">
+						height="100%" multiple="false" span="true">
 					<listhead sizable="true">
 						<listheader id="listheader_ManufacturerName"
 							label="${c:l('listheader_ManufacturerName.label')}" sort="auto"
@@ -69,6 +100,7 @@
 					</listhead>
 
 				</listbox>
+				</div>
 			</center>
 			<south border="none">
 				<paging id="pagingVehicleManufacturerList" />
