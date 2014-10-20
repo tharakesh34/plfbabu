@@ -309,8 +309,7 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getDashBoardType() {
 
 		if(arrDashBoardtype==null){
-			arrDashBoardtype = new ArrayList<ValueLabel>(10);
-			arrDashBoardtype.add(new ValueLabel("", Labels.getLabel("common.Select")));
+			arrDashBoardtype = new ArrayList<ValueLabel>(9);
 			arrDashBoardtype.add(new ValueLabel("bar", Labels.getLabel("label_Select_Bar")));
 			arrDashBoardtype.add(new ValueLabel("column", Labels.getLabel("label_Select_Column")));
 			arrDashBoardtype.add(new ValueLabel("line", Labels.getLabel("label_Select_Line")));
