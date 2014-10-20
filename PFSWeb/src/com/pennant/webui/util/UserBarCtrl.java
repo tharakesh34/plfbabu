@@ -71,6 +71,7 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.service.MenuDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
@@ -284,8 +285,8 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 	 * @param event
 	 */
 	public void onTimer$hostStatusTimer(Event event) {
-				
-		Date date = new Date();
+		
+		Date date  = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("dd/MMM/yyyy");
 		label_currentDate.setValue(dateFormat.format(date));
 		dateFormat = new java.text.SimpleDateFormat("HH:mm:ss");
