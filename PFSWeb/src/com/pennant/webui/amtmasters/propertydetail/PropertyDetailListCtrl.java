@@ -39,26 +39,31 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.amtmasters.propertydetail;
 
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.amtmasters.propertydetail.model.PropertyDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +108,15 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 	protected Paging pagingPropertyDetailList; // autowired
 	protected Listbox listBoxPropertyDetail; // autowired
 
+	protected Textbox propertyDetailId; // autowired
+	protected Listbox sortOperator_propertyDetailId; // autowired
+	protected Textbox propertyDetailDesc; // autowired
+	protected Listbox sortOperator_propertyDetailDesc; // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType;	// autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+
 	// List headers
 	protected Listheader listheader_PropertyDetailDesc; // autowired
 	protected Listheader listheader_RecordStatus; // autowired
@@ -113,10 +130,12 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<PropertyDetail> searchObj;
-	
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+
 	private transient PropertyDetailService propertyDetailService;
 	private transient WorkFlowDetails workFlowDetails=null;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -126,13 +145,13 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 
 	public void onCreate$window_PropertyDetailList(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("PropertyDetail");
 		boolean wfAvailable=true;
-		
+
 		if (moduleMapping.getWorkflowType()!=null){
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("PropertyDetail");
-			
+
 			if (workFlowDetails==null){
 				setWorkFlowEnabled(false);
 			}else{
@@ -143,11 +162,29 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 		}else{
 			wfAvailable=false;
 		}
-		
+		this.sortOperator_propertyDetailId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_propertyDetailId.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_propertyDetailDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_propertyDetailDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
-		
+
 		this.borderLayout_PropertyDetailList.setHeight(getBorderLayoutHeight());
+		this.listBoxPropertyDetail.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingPropertyDetailList.setPageSize(getListRows());
@@ -155,7 +192,7 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 
 		this.listheader_PropertyDetailDesc.setSortAscending(new FieldComparator("propertyDetailDesc", true));
 		this.listheader_PropertyDetailDesc.setSortDescending(new FieldComparator("propertyDetailDesc", false));
-		
+
 		if (isWorkFlowEnabled()){
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
@@ -165,13 +202,16 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
+
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<PropertyDetail>(PropertyDetail.class,getListRows());
 		this.searchObj.addSort("PropertyDetailId", false);
-
+		this.searchObj.addField("propertyDetailId");
+		this.searchObj.addField("propertyDetailDesc");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		this.searchObj.addTabelName("AMTPropertyDetail_View");
-		
+
 		// Workflow
 		if (isWorkFlowEnabled()) {
 			if (isFirstTask()) {
@@ -190,8 +230,7 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 			this.button_PropertyDetailList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxPropertyDetail,this.pagingPropertyDetailList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxPropertyDetail.setItemRenderer(new PropertyDetailListModelItemRenderer());
 		}
@@ -204,11 +243,11 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("PropertyDetailList");
-		
+
 		this.button_PropertyDetailList_NewPropertyDetail.setVisible(getUserWorkspace().isAllowed("button_PropertyDetailList_NewPropertyDetail"));
 		this.button_PropertyDetailList_PropertyDetailSearchDialog.setVisible(getUserWorkspace().isAllowed("button_PropertyDetailList_PropertyDetailFindDialog"));
 		this.button_PropertyDetailList_PrintList.setVisible(getUserWorkspace().isAllowed("button_PropertyDetailList_PrintList"));
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -218,7 +257,7 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 	 * @param event
 	 * @throws Exception
 	 */
-	
+
 	public void onPropertyDetailItemDoubleClicked(Event event) throws Exception {
 		logger.debug(event.toString());
 
@@ -229,7 +268,7 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 			// CAST AND STORE THE SELECTED OBJECT
 			final PropertyDetail aPropertyDetail = (PropertyDetail) item.getAttribute("data");
 			final PropertyDetail propertyDetail = getPropertyDetailService().getPropertyDetailById(aPropertyDetail.getId());
-			
+
 			if(propertyDetail==null){
 				String[] errParm= new String[1];
 				String[] valueParm= new String[1];
@@ -281,7 +320,7 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
+
 		if(aPropertyDetail.getWorkflowId()==0 && isWorkFlowEnabled()){
 			aPropertyDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
@@ -328,9 +367,21 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingPropertyDetailList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_PropertyDetailList, event);
-		this.window_PropertyDetailList.invalidate();
+		this.sortOperator_propertyDetailDesc.setSelectedIndex(0);
+		this.propertyDetailDesc.setValue("");
+		this.sortOperator_propertyDetailId.setSelectedIndex(0);
+		this.propertyDetailId.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		//Clear All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxPropertyDetail,this.pagingPropertyDetailList);
 		logger.debug("Leaving");
 	}
 
@@ -340,24 +391,7 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 	
 	public void onClick$button_PropertyDetailList_PropertyDetailSearchDialog(Event event) throws Exception {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		/*
-		 * we can call our PropertyDetailDialog zul-file with parameters. So we can
-		 * call them with a object of the selected PropertyDetail. For handed over
-		 * these parameter only a Map is accepted. So we put the PropertyDetail object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("propertyDetailCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/AMTMasters/PropertyDetail/PropertyDetailSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -373,6 +407,59 @@ public class PropertyDetailListCtrl extends GFCBaseListCtrl<PropertyDetail> impl
 		new PTListReportUtils("PropertyDetail", getSearchObj(),this.pagingPropertyDetailList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
+
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		// PropertyDetailId
+		if (!StringUtils.trimToEmpty(this.propertyDetailId.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_propertyDetailId.getSelectedItem(),
+					this.propertyDetailId.getValue(), "PropertyDetailId");
+		}
+
+		// PropertyDetailDesc
+		if (!StringUtils.trimToEmpty(this.propertyDetailDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_propertyDetailDesc.getSelectedItem(),
+					this.propertyDetailDesc.getValue(), "PropertyDetailDesc");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxPropertyDetail,this.pagingPropertyDetailList);
+
+		logger.debug("Leaving");
+
+	}
+
 
 	public void setPropertyDetailService(PropertyDetailService propertyDetailService) {
 		this.propertyDetailService = propertyDetailService;

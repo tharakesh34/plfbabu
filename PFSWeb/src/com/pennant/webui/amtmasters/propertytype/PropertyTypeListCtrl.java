@@ -46,19 +46,24 @@ package com.pennant.webui.amtmasters.propertytype;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.amtmasters.propertytype.model.PropertyTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +108,15 @@ public class PropertyTypeListCtrl extends GFCBaseListCtrl<PropertyType> implemen
 	protected Paging pagingPropertyTypeList; // autowired
 	protected Listbox listBoxPropertyType; // autowired
 
+	protected Textbox propertyTypeId; // autowired
+	protected Listbox sortOperator_propertyTypeId; // autowired
+	protected Textbox propertyTypeName; // autowired
+	protected Listbox sortOperator_propertyTypeName; // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType;	// autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+
 	// List headers
 	protected Listheader listheader_PropertyTypeName; // autowired
 	protected Listheader listheader_RecordStatus; // autowired
@@ -113,7 +130,9 @@ public class PropertyTypeListCtrl extends GFCBaseListCtrl<PropertyType> implemen
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<PropertyType> searchObj;
-	
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+
 	private transient PropertyTypeService propertyTypeService;
 	private transient WorkFlowDetails workFlowDetails=null;
 	
@@ -143,12 +162,29 @@ public class PropertyTypeListCtrl extends GFCBaseListCtrl<PropertyType> implemen
 		}else{
 			wfAvailable=false;
 		}
-		
+		this.sortOperator_propertyTypeId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_propertyTypeId.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_propertyTypeName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_propertyTypeName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 		
 		this.borderLayout_PropertyTypeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxPropertyType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingPropertyTypeList.setPageSize(getListRows());
 		this.pagingPropertyTypeList.setDetailed(true);
@@ -169,6 +205,10 @@ public class PropertyTypeListCtrl extends GFCBaseListCtrl<PropertyType> implemen
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<PropertyType>(PropertyType.class,getListRows());
 		this.searchObj.addSort("PropertyTypeId", false);
+		this.searchObj.addField("propertyTypeId");
+		this.searchObj.addField("propertyTypeName");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		this.searchObj.addTabelName("AMTPropertyType_View");
 		
@@ -190,8 +230,7 @@ public class PropertyTypeListCtrl extends GFCBaseListCtrl<PropertyType> implemen
 			this.button_PropertyTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxPropertyType,this.pagingPropertyTypeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxPropertyType.setItemRenderer(new PropertyTypeListModelItemRenderer());
 		}
@@ -208,7 +247,7 @@ public class PropertyTypeListCtrl extends GFCBaseListCtrl<PropertyType> implemen
 		this.button_PropertyTypeList_NewPropertyType.setVisible(getUserWorkspace().isAllowed("button_PropertyTypeList_NewPropertyType"));
 		this.button_PropertyTypeList_PropertyTypeSearchDialog.setVisible(getUserWorkspace().isAllowed("button_PropertyTypeList_PropertyTypeFindDialog"));
 		this.button_PropertyTypeList_PrintList.setVisible(getUserWorkspace().isAllowed("button_PropertyTypeList_PrintList"));
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -328,9 +367,20 @@ public class PropertyTypeListCtrl extends GFCBaseListCtrl<PropertyType> implemen
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingPropertyTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_PropertyTypeList, event);
-		this.window_PropertyTypeList.invalidate();
+		this.sortOperator_propertyTypeId.setSelectedIndex(0);
+		this.propertyTypeId.setValue("");
+		this.sortOperator_propertyTypeName.setSelectedIndex(0);
+		this.propertyTypeName.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clear All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxPropertyType,this.pagingPropertyTypeList);
 		logger.debug("Leaving");
 	}
 
@@ -340,24 +390,7 @@ public class PropertyTypeListCtrl extends GFCBaseListCtrl<PropertyType> implemen
 	
 	public void onClick$button_PropertyTypeList_PropertyTypeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		/*
-		 * we can call our PropertyTypeDialog zul-file with parameters. So we can
-		 * call them with a object of the selected PropertyType. For handed over
-		 * these parameter only a Map is accepted. So we put the PropertyType object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("propertyTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/AMTMasters/PropertyType/PropertyTypeSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -373,6 +406,59 @@ public class PropertyTypeListCtrl extends GFCBaseListCtrl<PropertyType> implemen
 		new PTListReportUtils("PropertyType", getSearchObj(),this.pagingPropertyTypeList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
+
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		// PropertyTypeId
+		if (!StringUtils.trimToEmpty(this.propertyTypeId.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_propertyTypeId.getSelectedItem(),
+					this.propertyTypeId.getValue(), "PropertyTypeId");
+		}
+
+		// PropertyTypeName
+		if (!StringUtils.trimToEmpty(this.propertyTypeName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_propertyTypeName.getSelectedItem(),
+					this.propertyTypeName.getValue(), "PropertyTypeName");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxPropertyType,this.pagingPropertyTypeList);
+
+		logger.debug("Leaving");
+
+	}
+
 
 	public void setPropertyTypeService(PropertyTypeService propertyTypeService) {
 		this.propertyTypeService = propertyTypeService;

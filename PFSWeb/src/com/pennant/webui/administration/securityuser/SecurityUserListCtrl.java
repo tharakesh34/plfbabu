@@ -268,7 +268,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> implemen
 				this.sortOperator_RecordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 				this.recordType=PennantAppUtil.setRecordType(this.recordType);
 
-				this.sortOperator_RecordType.setSelectedIndex(1);
+				this.sortOperator_RecordType.setSelectedIndex(0);
 				this.recordType.setSelectedIndex(0);
 
 			}else{

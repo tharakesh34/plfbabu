@@ -48,19 +48,26 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PennantReferenceIDUtil;
 import com.pennant.app.util.SystemParameterDetails;
@@ -70,12 +77,16 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.service.finance.TreasuaryFinanceService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.finance.treasuaryfinance.model.TreasuaryFinHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -101,6 +112,21 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 	public Paging       	pagingTFinHeaderList;                     			// autoWired
 	public Listbox      	listBoxTrFinHeader;                        			// autoWired
 
+	protected Textbox finReference;              // autowired
+	protected Listbox sortOperator_finReference; // autowired
+	protected Decimalbox totPriAmount;               // autowired
+	protected Listbox sortOperator_totPriAmount;     // autowired
+	protected Textbox finCcy;                    // autowired
+	protected Listbox sortOperator_finCcy;          // autowired
+	protected Datebox startDate;                    // autowired
+	protected Listbox sortOperator_startDate;          // autowired
+	protected Datebox maturityDate;                    // autowired
+	protected Listbox sortOperator_maturityDate;          // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType;	// autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+
 	// List headers
 	protected Listheader listheader_InvReqRef;                    				// autoWired
 	protected Listheader listheader_TotPrincipal;                         	 	// autoWired
@@ -118,6 +144,8 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<InvestmentFinHeader> searchObj;
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
 	private transient TreasuaryFinanceService treasuaryFinanceService;
 	private WorkFlowDetails workFlowDetails = null;
 
@@ -139,11 +167,39 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 	public void onCreate$window_TreasuaryFinHeaderList(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 
+		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_finCcy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_totPriAmount.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_totPriAmount.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_startDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_startDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_maturityDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_maturityDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_TreasuaryFinHeaderList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxTrFinHeader.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingTFinHeaderList.setPageSize(getListRows());
 		this.pagingTFinHeaderList.setDetailed(true);
@@ -167,7 +223,7 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<InvestmentFinHeader>(InvestmentFinHeader.class,getListRows());
 		this.searchObj.addSort("InvestmentRef", false);
-		
+
 		//Field Declarations for Fetching List Data
 		this.searchObj.addField("InvestmentRef");
 		this.searchObj.addField("TotPrincipalAmt");
@@ -177,10 +233,8 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 		this.searchObj.addField("MaturityDate");
 		this.searchObj.addField("RecordStatus");
 		this.searchObj.addField("RecordType");
-
-		this.searchObj.addSort("InvestmentRef", false);
 		this.searchObj.addTabelName("InvestmentFinHeader_View");
-		
+
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			if (isFirstTask()) {
@@ -209,10 +263,11 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 
 		setSearchObj(this.searchObj);
 
-		// Set the ListModel for the articles.
-		getPagedListWrapper().init(this.searchObj, this.listBoxTrFinHeader, this.pagingTFinHeaderList);
+		doSearch();
 		// set the itemRenderer
 		this.listBoxTrFinHeader.setItemRenderer(new TreasuaryFinHeaderListModelItemRenderer());
+
+
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -337,28 +392,7 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 	 */
 	public void onClick$button_InvestmentFinHeaderList_SearchDialog(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-
-		/*
-		 * we can call our SecurityGroupDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected SecurityGroup. For handed over
-		 * these parameter only a Map is accepted. So we put the SecurityGroup object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("treasuryFinHeaderListCtrl", this);
-		map.put("searchObject", this.searchObj);
-		map.put("listBoxTreasuryFinance", this.listBoxTrFinHeader);
-		map.put("pagingSecurityGroupList", this.pagingTFinHeaderList);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/TreasuaryFinance/TreasuaryFinanceSearchDialog.zul" 
-					, null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
-
+		doSearch();
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -372,9 +406,27 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		this.pagingTFinHeaderList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_TreasuaryFinHeaderList, event);
-		this.window_TreasuaryFinHeaderList.invalidate();
+		this.sortOperator_finCcy.setSelectedIndex(0);
+		this.finCcy.setValue("");
+		this.sortOperator_finReference.setSelectedIndex(0);
+		this.finReference.setValue("");
+		this.sortOperator_maturityDate.setSelectedIndex(0);
+		this.maturityDate.setValue(null);
+		this.sortOperator_startDate.setSelectedIndex(0);
+		this.startDate.setValue(null);
+		this.sortOperator_totPriAmount.setSelectedIndex(0);
+		this.totPriAmount.setText("");
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears all the filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxTrFinHeader,this.pagingTFinHeaderList);
+
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -420,6 +472,65 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 		treasuaryFinHeader.setInvestmentRef(String.valueOf(PennantReferenceIDUtil.genInvetmentNewRef()));
 		treasuaryFinHeader.setStartDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		return treasuaryFinHeader;
+	}
+
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		// FinCcy
+		if (!StringUtils.trimToEmpty(this.finCcy.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finCcy.getSelectedItem(),this.finCcy.getValue(), "FinCcy");
+		}
+		// FinReference
+		if (!StringUtils.trimToEmpty(this.finReference.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finReference.getSelectedItem(),this.finReference.getValue(), "InvestmentRef");
+		}
+		//TotPriAmount
+		if (this.totPriAmount.getValue() != null) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_totPriAmount.getSelectedItem(),
+					PennantApplicationUtil.formateAmount(this.totPriAmount.getValue(), PennantConstants.defaultCCYDecPos), "TotPrincipalAmt");
+		}
+		//MaturityDate
+		if (this.maturityDate.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_maturityDate.getSelectedItem(), DateUtility.formatDate(this.maturityDate.getValue(), PennantConstants.DBDateFormat), "MaturityDate");
+		}
+		//StartDate
+		if (this.startDate.getValue()!=null) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_startDate.getSelectedItem(), DateUtility.formatDate(this.startDate.getValue(), PennantConstants.DBDateFormat), "StartDate");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxTrFinHeader,this.pagingTFinHeaderList);
+
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

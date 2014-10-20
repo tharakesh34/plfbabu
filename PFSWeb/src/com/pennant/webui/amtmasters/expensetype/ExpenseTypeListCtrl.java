@@ -46,19 +46,24 @@ package com.pennant.webui.amtmasters.expensetype;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.amtmasters.expensetype.model.ExpenseTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +108,15 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 	protected Paging pagingExpenseTypeList; // autowired
 	protected Listbox listBoxExpenseType; // autowired
 
+	protected Textbox expenceTypeId; // autowired
+	protected Listbox sortOperator_expenceTypeId; // autowired
+	protected Textbox expenceTypeName; // autowired
+	protected Listbox sortOperator_expenceTypeName; // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType;	// autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+
 	// List headers
 	protected Listheader listheader_ExpenceTypeName; // autowired
 	protected Listheader listheader_RecordStatus; // autowired
@@ -113,7 +130,9 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<ExpenseType> searchObj;
-	
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+
 	private transient ExpenseTypeService expenseTypeService;
 	private transient WorkFlowDetails workFlowDetails=null;
 	
@@ -143,11 +162,30 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 		}else{
 			wfAvailable=false;
 		}
-		
+
+		this.sortOperator_expenceTypeId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_expenceTypeId.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_expenceTypeName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_expenceTypeName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 		
 		this.borderLayout_ExpenseTypeList.setHeight(getBorderLayoutHeight());
+		this.listBoxExpenseType.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingExpenseTypeList.setPageSize(getListRows());
@@ -169,6 +207,10 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<ExpenseType>(ExpenseType.class,getListRows());
 		this.searchObj.addSort("ExpenceTypeId", false);
+		this.searchObj.addField("expenceTypeId");
+		this.searchObj.addField("expenceTypeName");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		this.searchObj.addTabelName("AMTExpenseType_View");
 		
@@ -190,8 +232,7 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 			this.button_ExpenseTypeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxExpenseType,this.pagingExpenseTypeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxExpenseType.setItemRenderer(new ExpenseTypeListModelItemRenderer());
 		}
@@ -208,7 +249,7 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 		this.button_ExpenseTypeList_NewExpenseType.setVisible(getUserWorkspace().isAllowed("button_ExpenseTypeList_NewExpenseType"));
 		this.button_ExpenseTypeList_ExpenseTypeSearchDialog.setVisible(getUserWorkspace().isAllowed("button_ExpenseTypeList_ExpenseTypeFindDialog"));
 		this.button_ExpenseTypeList_PrintList.setVisible(getUserWorkspace().isAllowed("button_ExpenseTypeList_PrintList"));
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -328,9 +369,21 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingExpenseTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_ExpenseTypeList, event);
-		this.window_ExpenseTypeList.invalidate();
+		this.sortOperator_expenceTypeId.setSelectedIndex(0);
+		this.expenceTypeId.setValue("");
+		this.sortOperator_expenceTypeName.setSelectedIndex(0);
+		this.expenceTypeName.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		//Clear All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxExpenseType,this.pagingExpenseTypeList);
 		logger.debug("Leaving");
 	}
 
@@ -340,24 +393,7 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 	
 	public void onClick$button_ExpenseTypeList_ExpenseTypeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		/*
-		 * we can call our ExpenseTypeDialog zul-file with parameters. So we can
-		 * call them with a object of the selected ExpenseType. For handed over
-		 * these parameter only a Map is accepted. So we put the ExpenseType object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("expenseTypeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/AMTMasters/ExpenseType/ExpenseTypeSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -373,6 +409,53 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 		new PTListReportUtils("ExpenseType", getSearchObj(),this.pagingExpenseTypeList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
+
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		// ExpenceTypeID
+		if (!StringUtils.trimToEmpty(this.expenceTypeId.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_expenceTypeId.getSelectedItem(),this.expenceTypeId.getValue(), "ExpenceTypeId");
+		}
+
+		// ExpenseTypeName
+		if (!StringUtils.trimToEmpty(this.expenceTypeName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_expenceTypeName.getSelectedItem(),this.expenceTypeName.getValue(), "ExpenceTypeName");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxExpenseType,this.pagingExpenseTypeList);
+
+		logger.debug("Leaving");
+
+	}
+
 
 	public void setExpenseTypeService(ExpenseTypeService expenseTypeService) {
 		this.expenseTypeService = expenseTypeService;

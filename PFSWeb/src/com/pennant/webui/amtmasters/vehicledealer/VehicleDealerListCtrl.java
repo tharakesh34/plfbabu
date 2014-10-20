@@ -46,19 +46,25 @@ package com.pennant.webui.amtmasters.vehicledealer;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,11 +76,15 @@ import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.amtmasters.vehicledealer.model.VehicleDealerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -101,6 +111,19 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 	protected Paging pagingVehicleDealerList; 				// autowired
 	protected Listbox listBoxVehicleDealer; 				// autowired
 
+	protected Textbox dealerId; // autowired
+	protected Listbox sortOperator_dealerId; // autowired
+	protected Textbox dealerName; // autowired
+	protected Listbox sortOperator_dealerName; // autowired
+	protected Textbox recordStatus; // autowired
+	protected Listbox recordType;	// autowired
+	protected Listbox sortOperator_recordStatus; // autowired
+	protected Listbox sortOperator_recordType; // autowired
+	protected Combobox dealerType; // autowired
+	protected Listbox sortOperator_dealerType; // autowired
+	protected Textbox dealerTelephone; // autowired
+	protected Listbox sortOperator_dealerTelephone; // autowired
+
 	// List headers
 	protected Listheader listheader_DealerType;
 	protected Listheader listheader_DealerName; 	// autowired
@@ -117,7 +140,9 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<VehicleDealer> searchObj;
-	
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+
 	private transient VehicleDealerService vehicleDealerService;
 	private transient WorkFlowDetails workFlowDetails=null;
 	
@@ -149,50 +174,67 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 		} else {
 			wfAvailable = false;
 		}
+		this.sortOperator_dealerId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_dealerId.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_dealerName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_dealerName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_dealerType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_dealerType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		fillComboBox(this.dealerType, "", PennantStaticListUtil.getDealerType(), "");
+
+		this.sortOperator_dealerTelephone.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_dealerTelephone.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_VehicleDealerList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxVehicleDealer.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingVehicleDealerList.setPageSize(getListRows());
 		this.pagingVehicleDealerList.setDetailed(true);
 
-		this.listheader_DealerType.setSortAscending(new FieldComparator(
-				"dealerType", true));
-		this.listheader_DealerType.setSortDescending(new FieldComparator(
-				"dealerType", false));
-		this.listheader_DealerName.setSortAscending(new FieldComparator(
-				"dealerName", true));
-		this.listheader_DealerName.setSortDescending(new FieldComparator(
-				"dealerName", false));
-		this.listheader_DealerTelephone.setSortAscending(new FieldComparator(
-				"dealerTelephone", true));
-		this.listheader_DealerTelephone.setSortDescending(new FieldComparator(
-				"dealerTelephone", false));
-		this.listheader_DealerFax.setSortAscending(new FieldComparator(
-				"dealerFax", true));
-		this.listheader_DealerFax.setSortDescending(new FieldComparator(
-				"dealerFax", false));
+		this.listheader_DealerType.setSortAscending(new FieldComparator("dealerType", true));
+		this.listheader_DealerType.setSortDescending(new FieldComparator("dealerType", false));
+		this.listheader_DealerName.setSortAscending(new FieldComparator("dealerName", true));
+		this.listheader_DealerName.setSortDescending(new FieldComparator("dealerName", false));
+		this.listheader_DealerTelephone.setSortAscending(new FieldComparator("dealerTelephone", true));
+		this.listheader_DealerTelephone.setSortDescending(new FieldComparator("dealerTelephone", false));
+		this.listheader_DealerFax.setSortAscending(new FieldComparator("dealerFax", true));
+		this.listheader_DealerFax.setSortDescending(new FieldComparator("dealerFax", false));
 		if (isWorkFlowEnabled()) {
-			this.listheader_RecordStatus.setSortAscending(new FieldComparator(
-					"recordStatus", true));
-			this.listheader_RecordStatus.setSortDescending(new FieldComparator(
-					"recordStatus", false));
-			this.listheader_RecordType.setSortAscending(new FieldComparator(
-					"recordType", true));
-			this.listheader_RecordType.setSortDescending(new FieldComparator(
-					"recordType", false));
+			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
+			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
+			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
+			this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
 		} else {
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
 
 		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<VehicleDealer>(
-				VehicleDealer.class, getListRows());
+		this.searchObj = new JdbcSearchObject<VehicleDealer>(VehicleDealer.class, getListRows());
 		this.searchObj.addSort("DealerId", false);
+		this.searchObj.addField("dealerId");
+		this.searchObj.addField("dealerType");
+		this.searchObj.addField("dealerName");
+		this.searchObj.addField("dealerTelephone");
+		this.searchObj.addField("dealerFax");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		this.searchObj.addTabelName("AMTVehicleDealer_View");
 
@@ -204,8 +246,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 				button_VehicleDealerList_NewVehicleDealer.setVisible(false);
 			}
 
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace()
-					.getUserRoles(), isFirstTask());
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		}
 
 		setSearchObj(this.searchObj);
@@ -217,9 +258,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 			PTMessageUtils.showErrorMessage(PennantJavaUtil
 					.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,
-					this.listBoxVehicleDealer, this.pagingVehicleDealerList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxVehicleDealer
 			.setItemRenderer(new VehicleDealerListModelItemRenderer());
@@ -383,9 +422,25 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingVehicleDealerList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_VehicleDealerList, event);
-		this.window_VehicleDealerList.invalidate();
+		this.sortOperator_dealerId.setSelectedIndex(0);
+		this.dealerId.setValue("");
+		this.sortOperator_dealerName.setSelectedIndex(0);
+		this.dealerName.setValue("");
+		this.sortOperator_dealerTelephone.setSelectedIndex(0);
+		this.dealerTelephone.setValue("");
+		this.sortOperator_dealerType.setSelectedIndex(0);
+		this.dealerType.setSelectedIndex(0);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		//Clear All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxVehicleDealer,this.pagingVehicleDealerList);
 		logger.debug("Leaving");
 	}
 
@@ -393,30 +448,9 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 	 * call the VehicleDealer dialog
 	 */
 
-	public void onClick$button_VehicleDealerList_VehicleDealerSearchDialog(
-			Event event) throws Exception {
+	public void onClick$button_VehicleDealerList_VehicleDealerSearchDialog(Event event) throws Exception {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		/*
-		 * we can call our VehicleDealerDialog zul-file with parameters. So we
-		 * can call them with a object of the selected VehicleDealer. For handed
-		 * over these parameter only a Map is accepted. So we put the
-		 * VehicleDealer object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("vehicleDealerCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerSearchDialog.zul",
-					null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "
-					+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -432,6 +466,64 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> implem
 		logger.debug(event.toString());
 		new PTListReportUtils("VehicleDealer", getSearchObj(),this.pagingVehicleDealerList.getTotalSize()+1);
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		// Dealer Telephone
+		if (!StringUtils.trimToEmpty(this.dealerTelephone.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dealerTelephone.getSelectedItem(),this.dealerTelephone.getValue(), "DealerTelephone");
+		}
+
+		// DealerName
+		if (!StringUtils.trimToEmpty(this.dealerName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dealerName.getSelectedItem(),this.dealerName.getValue(), "DealerName");
+		}
+		// DealerID
+		if (!StringUtils.trimToEmpty(this.dealerId.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dealerId.getSelectedItem(),this.dealerId.getValue(), "DealerId");
+		}
+
+		//Dealer Type
+		if (this.dealerType.getValue()!= null && !PennantConstants.List_Select.equals(this.dealerType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dealerType.getSelectedItem(),this.dealerType.getSelectedItem().getValue().toString(), "DealerType");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxVehicleDealer,this.pagingVehicleDealerList);
+
+		logger.debug("Leaving");
+
 	}
 
 	public void setVehicleDealerService(

@@ -44,20 +44,27 @@
 package com.pennant.webui.administration.securityrolegroups;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -69,11 +76,15 @@ import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.administration.securityrole.model.SecurityRoleListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -96,6 +107,21 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 	 */
 	protected  Window       window_SecurityRoleGroupsList;                      // autowired
 	protected  Borderlayout borderLayout_SecurityRoleList;                     // autowired
+	protected Intbox     roleID;                                  // autoWired
+	protected Listbox    sortOperator_roleID;                     // autoWired
+	protected Combobox   roleApp;                                 // autoWired
+	protected Listbox    sortOperator_roleApp;                    // autoWired
+	protected Textbox    roleCd;                                  // autoWired
+	protected Listbox    sortOperator_roleCd;                     // autoWired
+	protected Textbox    roleDesc;                                // autoWired
+	protected Listbox    sortOperator_roleDesc;                   // autoWired
+	protected Textbox    recordStatus;                            // autoWired
+	protected Listbox    recordType;	                          // autoWired
+	protected Listbox    sortOperator_recordStatus;               // autoWired
+	protected Listbox    sortOperator_recordType;                 // autoWired
+	protected Textbox    roleCategory;                            // autoWired
+	protected Listbox    sortOperator_roleCategory;               // autoWired
+
 	// List headers
 	protected  Listheader   listheader_RoleApp;                                 // autowired
 	protected  Listheader   listheader_RoleCd;                                  // autowired
@@ -114,6 +140,9 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<SecurityRole>   searchObj;
+	protected Row     row_AlwWorkflow;
+	protected Grid     searchGrid;
+
 	private transient SecurityRoleService securityRoleService;
 	private transient WorkFlowDetails      workFlowDetails=null;
 
@@ -149,7 +178,33 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 		}else{
 			wfAvailable=false;
 		}
+		this.sortOperator_roleID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleID.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		this.sortOperator_roleApp.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleApp.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		fillComboBox(this.roleApp,"",PennantStaticListUtil.getAppCodes(),"");
 
+		this.sortOperator_roleCd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleCd.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_roleDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_roleCategory.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_roleCategory.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -160,6 +215,8 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 		 */
 
 		this.borderLayout_SecurityRoleList.setHeight(getBorderLayoutHeight());
+		this.listBoxSecurityRole.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
+
 		// set the paging parameters
 		this.getPagingSecurityRoleList().setPageSize(getListRows());
 		this.getPagingSecurityRoleList().setDetailed(true);
@@ -185,17 +242,22 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<SecurityRole>(SecurityRole.class,getListRows());
 		this.searchObj.addSort("roleCd", false);
+		this.searchObj.addField("roleCd");
+		this.searchObj.addField("roleApp");
+		this.searchObj.addField("roleID");
+		this.searchObj.addField("roleDesc");
+		this.searchObj.addField("lovDescRoleAppName");
+		this.searchObj.addField("roleCategory");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		this.searchObj.addTabelName("SecRoles_View");
 		setSearchObj(this.searchObj);
 		if (!isWorkFlowEnabled() && wfAvailable){
-
 			this.button_SecurityRoleList_SecurityRoleSearchDialog.setVisible(false);
 			this.button_SecurityRoleList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.getListBoxSecurityRole()
-					,this.getPagingSecurityRoleList());
+			doSearch();
 			// set the itemRenderer
 			this.getListBoxSecurityRole().setItemRenderer(new SecurityRoleListModelItemRenderer());
 		}	
@@ -320,9 +382,22 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("entering into "+event.toString());
-		this.getPagingSecurityRoleList().setActivePage(0);
-		Events.postEvent("onCreate", this.window_SecurityRoleGroupsList, event);
-		this.window_SecurityRoleGroupsList.invalidate();
+		this.sortOperator_roleApp.setSelectedIndex(0);
+		this.roleApp.setSelectedIndex(0);
+		this.sortOperator_roleCd.setSelectedIndex(0);
+		this.roleCd.setValue("");
+		this.sortOperator_roleDesc.setSelectedIndex(0);
+		this.roleDesc.setValue("");
+		if(isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//  Clears All FIlters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.getListBoxSecurityRole(),this.getPagingSecurityRoleList());
 		logger.debug("leaving "+event.toString());
 	}
 
@@ -335,26 +410,7 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 	public void onClick$button_SecurityRoleList_SecurityRoleSearchDialog(Event event)
 	throws Exception {
 		logger.debug("Entering into"+event.toString());
-		/*
-		 * we can call our SecurityRoleDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected SecurityRole. For handed over
-		 * these parameter only a Map is accepted. So we put the SecurityRole object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("securityRoleCtrl", this);
-		map.put("searchObject", this.searchObj);
-		map.put("listBoxSecurityRole", this.listBoxSecurityRole);
-		map.put("pagingSecurityRoleList",this.pagingSecurityRoleList);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/Administration/SecurityRole" +
-					"/SecurityRoleSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -370,7 +426,63 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> im
 		logger.debug("Leaving "+event.toString());
 	}
 
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+		//RoleId
+		if(this.roleID.getValue()!=null){
+			searchObj = getSearchFilter(searchObj,this.sortOperator_roleID.getSelectedItem(),this.roleID.getValue(), "RoleID");
+		}
+		//ROleApp
+		if (this.roleApp.getValue()!= null && !PennantConstants.List_Select.equals(this.roleApp.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_roleApp.getSelectedItem(),this.roleApp.getSelectedItem().getValue().toString(), "RoleApp");
+		}
+		//ROleCd
+		if (!StringUtils.trimToEmpty(this.roleCd.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_roleCd.getSelectedItem(),this.roleCd.getValue(), "RoleCd");
+		}
+		//ROleDesc
+		if (!StringUtils.trimToEmpty(this.roleDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_roleDesc.getSelectedItem(),this.roleDesc.getValue(), "RoleDesc");
+		}
+
+		//ROleCategory
+		if (!StringUtils.trimToEmpty(this.roleCategory.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_roleCategory.getSelectedItem(),this.roleCategory.getValue(), "RoleCategory");
+		}
+		
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSecurityRole,this.pagingSecurityRoleList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

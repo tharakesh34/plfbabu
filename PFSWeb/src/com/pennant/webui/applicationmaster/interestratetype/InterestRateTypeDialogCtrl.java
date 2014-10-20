@@ -47,7 +47,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,7 +61,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
@@ -72,7 +70,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.InterestRateType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -83,7 +80,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -150,7 +146,6 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 	// ServiceDAOs / Domain Classes
 	private transient InterestRateTypeService interestRateTypeService;
 	private transient PagedListService pagedListService;
-	public List<ValueLabel> listRateType = PennantStaticListUtil.getInterestRateType(true);
 
 	/**
 	 * default constructor.<br>
@@ -203,8 +198,8 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().alocateRoleAuthorities(getRole(),"InterestRateTypeDialog");
 		}
-
-		setListRateType();
+		fillComboBox(this.intRateTypeCode,"",PennantStaticListUtil.getInterestRateType(true),"");
+	
 		
 		// READ OVERHANDED parameters !
 		// we get the interestRateTypeListWindow controller. So we have access
@@ -434,8 +429,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 	public void doWriteBeanToComponents(InterestRateType aInterestRateType) {
 		logger.debug("Entering");
 		
-		this.intRateTypeCode.setValue(PennantAppUtil.getlabelDesc(aInterestRateType.getIntRateTypeCode(),listRateType));
-		//this.intRateTypeCode.setValue(aInterestRateType.getIntRateTypeCode());
+		fillComboBox(this.intRateTypeCode,aInterestRateType.getIntRateTypeCode(),PennantStaticListUtil.getInterestRateType(true),"");
 		this.intRateTypeDesc.setValue(aInterestRateType.getIntRateTypeDesc());
 		this.intRateTypeIsActive.setChecked(aInterestRateType.isIntRateTypeIsActive());
 		this.recordStatus.setValue(aInterestRateType.getRecordStatus());
@@ -636,7 +630,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 		setValidationOn(true);
 
 		if (!this.intRateTypeCode.isDisabled()){
-			this.intRateTypeCode.setConstraint(new StaticListValidator(listRateType,
+			this.intRateTypeCode.setConstraint(new StaticListValidator(PennantStaticListUtil.getInterestRateType(true),
 					Labels.getLabel("label_InterestRateTypeDialog_IntRateTypeCode.value")));
 		}
 		
@@ -1064,21 +1058,6 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 		return processCompleted;
 	}
 
-	/**
-	 * Method For Rendering List into ComboBox
-	 */
-	private void setListRateType(){
-		logger.debug("Entering");
-		for (int i = 0; i < listRateType.size(); i++) {
-
-			Comboitem comboitem = new Comboitem();
-			comboitem = new Comboitem();
-			comboitem.setLabel(listRateType.get(i).getLabel());
-			comboitem.setValue(listRateType.get(i).getValue());
-			this.intRateTypeCode.appendChild(comboitem);
-		} 
-		logger.debug("Leaving");
-	}
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//

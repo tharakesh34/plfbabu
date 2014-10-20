@@ -45,20 +45,26 @@ package com.pennant.webui.administration.securitygroup;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +77,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.administration.securitygroup.model.SecurityGroupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +108,16 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> implem
 	protected Borderlayout  borderLayout_SecurityGroupList;                     // autoWired
 	protected Paging        pagingSecurityGroupList;                            // autoWired
 	protected Listbox       listBoxSecurityGroup;                               // autoWired
+	protected Intbox   grpID;                                                   // autoWired
+	protected Listbox  sortOperator_grpID;                                      // autoWired
+	protected Textbox  grpCode;                                                 // autoWired
+	protected Listbox  sortOperator_grpCode;                                    // autoWired
+	protected Textbox  grpDesc;                                                 // autoWired
+	protected Listbox  sortOperator_grpDesc;                                    // autoWired
+	protected Textbox  recordStatus;                                            // autoWired
+	protected Listbox  recordType;                                             	// autoWired
+	protected Listbox  sortOperator_recordStatus;                               // autoWired
+	protected Listbox  sortOperator_recordType;      
 	
 	// List headers
 	protected Listheader    listheader_GrpCode;                                 // autoWired
@@ -116,7 +135,8 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> implem
 	
 	/* NEEDED for the ReUse in the SearchWindow*/
 	protected JdbcSearchObject<SecurityGroup> searchObj;
-	
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
 	/* row count for listBox*/
 	private transient SecurityGroupService   securityGroupService;
 	private transient WorkFlowDetails  workFlowDetails = null;
@@ -158,7 +178,26 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> implem
 		}else{
 			wfAvailable=false;
 		}
+		this.sortOperator_grpID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.sortOperator_grpCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_grpDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);	
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -169,6 +208,8 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> implem
 		 */
 
 		this.borderLayout_SecurityGroupList.setHeight(getBorderLayoutHeight());
+		this.listBoxSecurityGroup.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
+
 		/* set the paging parameters*/
 		this.pagingSecurityGroupList.setPageSize(getListRows());
 		this.pagingSecurityGroupList.setDetailed(true);
@@ -190,6 +231,11 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> implem
 		/* create the searchObject and initial sorting */
 		this.searchObj = new JdbcSearchObject<SecurityGroup>(SecurityGroup.class,getListRows());
 		this.searchObj.addSort("grpCode", false);
+		this.searchObj.addField("grpCode");
+		this.searchObj.addField("grpDesc");
+		this.searchObj.addField("grpID");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		this.searchObj.addTabelName("SecGroups_View");
 		
 		/* WorkFlow*/
@@ -209,9 +255,7 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> implem
 			this.button_SecurityGroupList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			/* Set the ListModel for the articles.*/
-			getPagedListWrapper().init(this.searchObj,this.listBoxSecurityGroup
-					,this.pagingSecurityGroupList);
+			doSearch();
 			/* set the itemRenderer*/
 			this.listBoxSecurityGroup.setItemRenderer(new SecurityGroupListModelItemRenderer());
 		}	
@@ -358,9 +402,20 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> implem
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		this.pagingSecurityGroupList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_SecurityGroupList, event);
-		this.window_SecurityGroupList.invalidate();
+		this.sortOperator_grpCode.setSelectedIndex(0);
+		this.grpCode.setValue("");
+		this.sortOperator_grpDesc.setSelectedIndex(0);
+		this.grpDesc.setValue("");
+		if(isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		// Clear All The Filters
+		this.searchObj.clearFilters();
+		/* Set the ListModel for the articles.*/
+		getPagedListWrapper().init(this.searchObj,this.listBoxSecurityGroup,this.pagingSecurityGroupList);
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -369,26 +424,7 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> implem
 	 */
 	public void onClick$button_SecurityGroupList_SecurityGroupSearchDialog(Event event)	throws Exception {
 		logger.debug("Entering " + event.toString());
-		
-		/*
-		 * we can call our SecurityGroupDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected SecurityGroup. For handed over
-		 * these parameter only a Map is accepted. So we put the SecurityGroup object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("securityGroupCtrl", this);
-		map.put("searchObject", this.searchObj);
-		map.put("listBoxSecurityGroup", this.listBoxSecurityGroup);
-		map.put("pagingSecurityGroupList", this.pagingSecurityGroupList);
-
-		/* call the ZUL-file with the parameters packed in a map*/
-		try {
-			Executions.createComponents("/WEB-INF/pages/Administration/SecurityGroup" + "/SecurityGroupSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -403,7 +439,54 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> implem
 		new PTListReportUtils("SecurityGroup", getSearchObj(),this.pagingSecurityGroupList.getTotalSize()+1);
 		logger.debug("Leaving" +event.toString());
 	}
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
 
+		this.searchObj.clearFilters();
+		// GroupId
+		if(this.grpID.getValue()!=null){
+			searchObj = getSearchFilter(searchObj,this.sortOperator_grpID.getSelectedItem(),this.grpID.getValue(), "GrpID");
+		}
+		// Group Code
+		if (!StringUtils.trimToEmpty(this.grpCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_grpCode.getSelectedItem(),this.grpCode.getValue(), "GrpCode");
+		}
+		// Group Description
+		if (!StringUtils.trimToEmpty(this.grpDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_grpDesc.getSelectedItem(),this.grpDesc.getValue(), "GrpDesc");
+		}
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxSecurityGroup,this.pagingSecurityGroupList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

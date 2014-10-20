@@ -45,20 +45,26 @@ package com.pennant.webui.dashboard.dashboardconfiguration;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Panel;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,11 +76,15 @@ import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.dashboard.dashboardconfiguration.model.DashboardConfigurationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -102,6 +112,22 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 	protected Paging 		pagingDashboardConfigurationList; 								// autoWired
 	protected Listbox 		listBoxDashboardConfiguration; 									// autoWired
 
+	protected Textbox  dashboardCode; 										// autoWired
+	protected Listbox  sortOperator_dashboardCode; 							// autoWired
+	protected Textbox  dashboardDesc; 										// autoWired
+	protected Listbox  sortOperator_dashboardDesc; 							// autoWired
+	protected Combobox dashboardType; 										// autoWired
+	protected Listbox  sortOperator_dashboardType; 							// autoWired
+	protected Textbox  caption; 										    // autoWired
+	protected Listbox  sortOperator_caption; 							    // autoWired
+	protected Textbox  subCaption; 										    // autoWired
+	protected Listbox  sortOperator_subCaption; 							// autoWired
+	protected Combobox  dimension; 										    // autoWired
+	protected Listbox  sortOperator_dimension; 							    // autoWired
+	protected Textbox recordStatus; 										// autoWired
+	protected Listbox recordType;											// autoWired
+	protected Listbox sortOperator_recordStatus; 							// autoWired
+	protected Listbox sortOperator_recordType; 								// autoWired
 	// List headers
 	protected Listheader listheader_DashboardCode; 											// autoWired
 	protected Listheader listheader_DashboardDesc; 											// autoWired
@@ -117,6 +143,9 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<DashboardConfiguration> searchObj;
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+
 	private transient DashboardConfigurationService dashboardConfigurationService;
 	private transient WorkFlowDetails workFlowDetails=null;
 
@@ -159,10 +188,44 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 				wfAvailable=false;
 			}
 
+			this.sortOperator_caption.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_caption.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_dashboardCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_dashboardCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_dashboardDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_dashboardDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+			this.sortOperator_dashboardType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getEqualOperators()));
+			this.sortOperator_dashboardType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			fillComboBox(this.dashboardType, "", PennantStaticListUtil.getDashBoardType(), "");
+
+			this.sortOperator_dimension.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_dimension.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			fillComboBox(this.dimension, "", PennantStaticListUtil.getChartDimensions(), "");
+			
+			if (isWorkFlowEnabled()){
+				this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+				this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+				this.sortOperator_recordStatus.setSelectedIndex(0);
+				this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+				this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+				this.recordType=setRecordType(this.recordType);
+				this.sortOperator_recordType.setSelectedIndex(0);
+				this.recordType.setSelectedIndex(0);
+				this.sortOperator_recordType.setSelectedIndex(0);
+				this.recordType.setSelectedIndex(0);
+			}else{
+				this.row_AlwWorkflow.setVisible(false);
+			}
+
+
 			// set components visible dependent of the users rights 
 			doCheckRights();
 
 			this.borderLayout_DashboardConfigurationList.setHeight(getBorderLayoutHeight());
+			this.listBoxDashboardConfiguration.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 			// set the paging parameters
 			this.pagingDashboardConfigurationList.setPageSize(getListRows());
@@ -188,6 +251,14 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 			// ++ create the searchObject and initialize sorting ++//
 			this.searchObj = new JdbcSearchObject<DashboardConfiguration>(DashboardConfiguration.class,getListRows());
 			this.searchObj.addSort("DashboardCode", false);
+			this.searchObj.addField("dashboardCode");
+			this.searchObj.addField("dashboardDesc");
+			this.searchObj.addField("dashboardType");
+			this.searchObj.addField("dimension");
+			this.searchObj.addField("subCaption");
+			this.searchObj.addField("caption");
+			this.searchObj.addField("recordType");
+			this.searchObj.addField("recordStatus");
 			// WorkFlow
 			if (isWorkFlowEnabled()) {
 				this.searchObj.addTabelName("DashboardConfiguration_View");
@@ -209,8 +280,7 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 				this.button_DashboardConfigurationList_PrintList.setVisible(false);
 				PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 			}else{
-				// Set the ListModel for the articles.
-				getPagedListWrapper().init(this.searchObj,this.listBoxDashboardConfiguration,this.pagingDashboardConfigurationList);
+				doSearch();
 				// set the itemRenderer
 				this.listBoxDashboardConfiguration.setItemRenderer(new DashboardConfigurationListModelItemRenderer());
 			}
@@ -362,9 +432,27 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering"+event.toString());
-		this.pagingDashboardConfigurationList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_DashboardConfigurationList, event);
-		this.window_DashboardConfigurationList.invalidate();
+		this.sortOperator_dashboardType.setSelectedIndex(0);
+		this.dashboardType.setSelectedIndex(0);
+		this.sortOperator_caption.setSelectedIndex(0);
+		this.caption.setValue("");
+		this.sortOperator_dashboardCode.setSelectedIndex(0);
+		this.dashboardCode.setValue("");
+		this.sortOperator_dashboardDesc.setSelectedIndex(0);
+		this.dashboardDesc.setValue("");
+		this.sortOperator_dimension.setSelectedIndex(0);
+		this.dimension.setSelectedIndex(0);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears the Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxDashboardConfiguration,this.pagingDashboardConfigurationList);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -373,24 +461,7 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 	 */
 	public void onClick$button_DashboardConfigurationList_Search(Event event) throws Exception {
 		logger.debug("Entering"+event.toString());
-		/*
-		 * we can call our DashboardDetailDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected DashboardDetail. For handed over
-		 * these parameter only a Map is accepted. So we put the DashboardDetail object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("dashboardConfigurationCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/DashBoards/DashBoardConfiguration" +
-					"/DashboardConfigurationSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -406,6 +477,68 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 		new PTListReportUtils("DashboardDetail", getSearchObj(),this.pagingDashboardConfigurationList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+		//Caption
+		if (!StringUtils.trimToEmpty(this.caption.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_caption.getSelectedItem(),this.caption.getValue(), "Caption");
+		}
+		// Sub Caption
+		if (!StringUtils.trimToEmpty(this.subCaption.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_subCaption.getSelectedItem(),this.subCaption.getValue(), "SubCaption");
+		}
+		//DashBoardCode
+		if (!StringUtils.trimToEmpty(this.dashboardCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dashboardCode.getSelectedItem(),this.dashboardCode.getValue(), "DashboardCode");
+		}
+		//DashBoardDescription
+		if (!StringUtils.trimToEmpty(this.dashboardDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dashboardDesc.getSelectedItem(),this.dashboardDesc.getValue(), "DashboardDesc");
+		}
+		//Dimension
+		if (this.dimension.getValue()!= null && !PennantConstants.List_Select.equals(this.dimension.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dimension.getSelectedItem(),this.dimension.getSelectedItem().getValue().toString(), "Dimension");
+		}
+		//DashBoardType
+		if (this.dashboardType.getValue()!= null && !PennantConstants.List_Select.equals(this.dashboardType.getSelectedItem().getValue()) ) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_dashboardType.getSelectedItem(),this.dashboardType.getSelectedItem().getValue().toString(), "DashboardType");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxDashboardConfiguration,this.pagingDashboardConfigurationList);
+
+		logger.debug("Leaving");
+	}
+
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

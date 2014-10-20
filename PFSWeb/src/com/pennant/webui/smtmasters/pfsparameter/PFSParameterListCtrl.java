@@ -45,19 +45,24 @@ package com.pennant.webui.smtmasters.pfsparameter;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.smtmasters.pfsparameter.model.PFSParameterListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +108,17 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 	protected Paging 		pagingPFSParameterList; 				// autowired
 	protected Listbox 		listBoxPFSParameter; 					// autowired
 
+	protected Textbox sysParmCode; 					// autowired
+	protected Listbox sortOperator_sysParmCode; 	// autowired
+	protected Textbox sysParmDesc; 					// autowired
+	protected Listbox sortOperator_sysParmDesc; 	// autowired
+	protected Textbox sysParmValue; 				// autowired
+	protected Listbox sortOperator_sysParmValue; 	// autowired
+	protected Textbox recordStatus; 				// autowired
+	protected Listbox recordType;					// autowired
+	protected Listbox sortOperator_recordStatus; 	// autowired
+	protected Listbox sortOperator_recordType; 		// autowired
+	
 	// List headers
 	protected Listheader listheader_SysParmCode;  // autowired
 	protected Listheader listheader_SysParmDesc;  // autowired
@@ -115,6 +134,8 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<PFSParameter> searchObj;
+	protected Row  row_AlwWorkflow;
+	protected Grid searchGrid;
 	private transient PFSParameterService pFSParameterService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
@@ -157,7 +178,25 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 		} else {
 			wfAvailable = false;
 		}
-
+		this.sortOperator_sysParmCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sysParmCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_sysParmDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sysParmDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_sysParmValue.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_sysParmValue.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
+		
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -168,7 +207,7 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 		 */
 
 		this.borderLayout_PFSParameterList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxPFSParameter.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingPFSParameterList.setPageSize(getListRows());
 		this.pagingPFSParameterList.setDetailed(true);
@@ -193,9 +232,10 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<PFSParameter>(PFSParameter.class,getListRows());
 		this.searchObj.addSort("SysParmCode", false);
-
-		this.searchObj.addTabelName("SMTparameters_View");
-
+		this.searchObj.addField("sysParmCode");
+		this.searchObj.addField("sysParmDesc");
+		this.searchObj.addField("sysParmValue");
+		
 		// Workflow
 		if (isWorkFlowEnabled()) {
 			if (isFirstTask()) {
@@ -203,9 +243,10 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 			} else {
 				button_PFSParameterList_NewPFSParameter.setVisible(false);
 			}
-
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace()
-					.getUserRoles(), isFirstTask());
+			this.searchObj.addTabelName("SMTparameters_View");
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		}else{
+			this.searchObj.addTabelName("SMTparameters_AView");
 		}
 
 		setSearchObj(this.searchObj);
@@ -215,8 +256,7 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 			this.button_PFSParameterList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxPFSParameter, this.pagingPFSParameterList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxPFSParameter.setItemRenderer(new PFSParameterListModelItemRenderer());
 		}
@@ -367,9 +407,22 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingPFSParameterList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_PFSParameterList, event);
-		this.window_PFSParameterList.invalidate();
+		this.sortOperator_sysParmCode.setSelectedIndex(0);
+		this.sysParmCode.setValue("");
+		this.sortOperator_sysParmDesc.setSelectedIndex(0);
+		this.sysParmDesc.setValue("");
+		this.sortOperator_sysParmValue.setSelectedIndex(0);
+		this.sysParmValue.setValue("");
+		if(isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clears All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxPFSParameter, this.pagingPFSParameterList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -380,24 +433,7 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 	 */
 	public void onClick$button_PFSParameterList_PFSParameterSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		/*
-		 * we can call our PFSParameterDialog zul-file with parameters. So we
-		 * can call them with a object of the selected PFSParameter. For handed
-		 * over these parameter only a Map is accepted. So we put the
-		 * PFSParameter object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("pFSParameterCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterSearchDialog.zul",
-					null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -412,7 +448,60 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> implemen
 		new PTListReportUtils("PFSParameter", getSearchObj(),this.pagingPFSParameterList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
 	}
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+		
+		this.searchObj.clearFilters();
+		//sysParmCode
+		if (!StringUtils.trimToEmpty(this.sysParmCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_sysParmCode.getSelectedItem(),
+					this.sysParmCode.getValue(), "SysParmCode");
+		}
+		//SysparmDesc
+		if (!StringUtils.trimToEmpty(this.sysParmDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_sysParmDesc.getSelectedItem(),
+					this.sysParmDesc.getValue(), "SysParmDesc");
+		}
+		//SysParmValue
+		if (!StringUtils.trimToEmpty(this.sysParmValue.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_sysParmValue.getSelectedItem(),
+					this.sysParmValue.getValue(), "SysParmValue");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
 
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxPFSParameter,this.pagingPFSParameterList);
+
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

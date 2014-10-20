@@ -46,19 +46,24 @@ package com.pennant.webui.amtmasters.course;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.amtmasters.course.model.CourseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +108,15 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 	protected Paging pagingCourseList; // autowired
 	protected Listbox listBoxCourse; // autowired
 
+	protected Textbox courseName;                        // autowired
+	protected Listbox sortOperator_courseName;           // autowired
+	protected Textbox courseDesc;                        // autowired
+	protected Listbox sortOperator_courseDesc;           // autowired
+	protected Textbox recordStatus;                      // autowired
+	protected Listbox recordType;	                     // autowired
+	protected Listbox sortOperator_recordStatus;         // autowired
+	protected Listbox sortOperator_recordType;           // autowired
+
 	// List headers
 	protected Listheader listheader_CourseName; // autowired
 	protected Listheader listheader_RecordStatus; // autowired
@@ -113,7 +130,9 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Course> searchObj;
-	
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
+
 	private transient CourseService courseService;
 	private transient WorkFlowDetails workFlowDetails=null;
 	
@@ -143,12 +162,31 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 		}else{
 			wfAvailable=false;
 		}
-		
+
+		this.sortOperator_courseName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_courseName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_courseDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_courseDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 		
 		this.borderLayout_CourseList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxCourse.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingCourseList.setPageSize(getListRows());
 		this.pagingCourseList.setDetailed(true);
@@ -169,9 +207,12 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<Course>(Course.class,getListRows());
 		this.searchObj.addSort("CourseName", false);
-
+		this.searchObj.addField("courseName");
+		this.searchObj.addField("courseDesc");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		this.searchObj.addTabelName("AMTCourse_View");
-		
+
 		// Workflow
 		if (isWorkFlowEnabled()) {
 			if (isFirstTask()) {
@@ -190,8 +231,7 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 			this.button_CourseList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxCourse,this.pagingCourseList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxCourse.setItemRenderer(new CourseListModelItemRenderer());
 		}
@@ -281,7 +321,7 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
+
 		if(aCourse.getWorkflowId()==0 && isWorkFlowEnabled()){
 			aCourse.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
@@ -328,36 +368,31 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingCourseList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_CourseList, event);
-		this.window_CourseList.invalidate();
+		this.sortOperator_courseName.setSelectedIndex(0);
+		this.courseName.setValue("");
+		this.sortOperator_courseDesc.setSelectedIndex(0);
+		this.courseDesc.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		//Clear All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxCourse,this.pagingCourseList);
 		logger.debug("Leaving");
 	}
 
 	/*
 	 * call the Course dialog
 	 */
-	
+
 	public void onClick$button_CourseList_CourseSearchDialog(Event event) throws Exception {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		/*
-		 * we can call our CourseDialog zul-file with parameters. So we can
-		 * call them with a object of the selected Course. For handed over
-		 * these parameter only a Map is accepted. So we put the Course object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("courseCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/AMTMasters/Course/CourseSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -370,9 +405,62 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 	public void onClick$button_CourseList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		 new PTListReportUtils("Course", getSearchObj(),this.pagingCourseList.getTotalSize()+1);
+		new PTListReportUtils("Course", getSearchObj(),this.pagingCourseList.getTotalSize()+1);
 		logger.debug("Leaving");
 	}
+
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		// CourseDescription
+		if (!StringUtils.trimToEmpty(this.courseDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_courseDesc.getSelectedItem(),
+					this.courseDesc.getValue(), "CourseDesc");
+		}
+
+		// CourseName
+		if (!StringUtils.trimToEmpty(this.courseName.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_courseName.getSelectedItem(),
+					this.courseName.getValue(), "CourseName");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxCourse,this.pagingCourseList);
+
+		logger.debug("Leaving");
+
+	}
+
 
 	public void setCourseService(CourseService courseService) {
 		this.courseService = courseService;

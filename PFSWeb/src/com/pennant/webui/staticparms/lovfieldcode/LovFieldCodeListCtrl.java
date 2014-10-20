@@ -46,19 +46,25 @@ package com.pennant.webui.staticparms.lovfieldcode;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +77,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.staticparms.lovfieldcode.model.LovFieldCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -100,6 +109,19 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> implemen
 	protected Paging        pagingLovFieldCodeList; 			       // autoWired
 	protected Listbox       listBoxLovFieldCode; 				       // autoWired
 
+	protected Textbox  fieldCode; 						     // autoWired
+	protected Listbox  sortOperator_fieldCode; 			     // autoWired
+	protected Textbox  fieldCodeDesc; 					     // autoWired
+	protected Listbox  sortOperator_fieldCodeDesc; 		     // autoWired
+	protected Textbox  fieldCodeType; 					     // autoWired
+	protected Listbox  sortOperator_fieldCodeType; 		     // autoWired
+	protected Checkbox isActive; 						     // autoWired
+	protected Listbox  sortOperator_isActive; 			     // autoWired
+	protected Textbox  recordStatus; 					     // autoWired
+	protected Listbox  recordType;						     // autoWired
+	protected Listbox  sortOperator_recordStatus; 		     // autoWired
+	protected Listbox  sortOperator_recordType; 			 // autoWired
+
 	// List headers
 	protected Listheader listheader_FieldCode; 					       // autoWired
 	protected Listheader listheader_FieldCodeDesc; 				       // autoWired
@@ -117,6 +139,9 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> implemen
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<LovFieldCode>   searchObj;
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+
 	private transient LovFieldCodeService      lovFieldCodeService;
 	private transient WorkFlowDetails          workFlowDetails=null;
 
@@ -151,11 +176,36 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> implemen
 			wfAvailable=false;
 		}
 
+		this.sortOperator_fieldCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_fieldCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_fieldCodeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_fieldCodeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_fieldCodeType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_fieldCodeType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_isActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_isActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType = setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		} else {
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_LovFieldCodeList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxLovFieldCode.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
+		
 		// set the paging parameters
 		this.pagingLovFieldCodeList.setPageSize(getListRows());
 		this.pagingLovFieldCodeList.setDetailed(true);
@@ -183,6 +233,13 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> implemen
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<LovFieldCode>(LovFieldCode.class,getListRows());
 		this.searchObj.addSort("FieldCode", false);
+		this.searchObj.addField("fieldCode");
+		this.searchObj.addField("fieldCodeDesc");
+		this.searchObj.addField("fieldCodeType");
+		this.searchObj.addField("isActive");
+		this.searchObj.addField("fieldEdit");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -204,8 +261,7 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> implemen
 			this.button_LovFieldCodeList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxLovFieldCode,this.pagingLovFieldCodeList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxLovFieldCode.setItemRenderer(new LovFieldCodeListModelItemRenderer());
 		}
@@ -346,9 +402,24 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> implemen
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingLovFieldCodeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_LovFieldCodeList, event);
-		this.window_LovFieldCodeList.invalidate();
+		this.sortOperator_fieldCode.setSelectedIndex(0);
+		this.fieldCode.setValue("");
+		this.sortOperator_fieldCodeDesc.setSelectedIndex(0);
+		this.fieldCodeDesc.setValue("");
+		this.sortOperator_fieldCodeType.setSelectedIndex(0);
+		this.fieldCodeType.setValue("");
+		this.sortOperator_isActive.setSelectedIndex(0);
+		this.isActive.setChecked(false);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clear All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxLovFieldCode,this.pagingLovFieldCodeList);
 		logger.debug("Leaving");
 	}
 
@@ -357,24 +428,7 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> implemen
 	 */
 	public void onClick$button_LovFieldCodeList_LovFieldCodeSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our LovFieldCodeDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected LovFieldCode. For handed over
-		 * these parameter only a Map is accepted. So we put the LovFieldCode object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("lovFieldCodeCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/StaticParms/LovFieldCode/LovFieldCodeSearchDialog.zul",null,map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -391,6 +445,57 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> implemen
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	public void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+		//FieldCode
+		if (!StringUtils.trimToEmpty(this.fieldCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_fieldCode.getSelectedItem(),this.fieldCode.getValue(), "FieldCode");
+		}
+		//FieldCodeDesc
+		if (!StringUtils.trimToEmpty(this.fieldCodeDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_fieldCodeDesc.getSelectedItem(),this.fieldCodeDesc.getValue(), "FieldCodeDesc");
+		}
+		//FieldCodeType
+		if (!StringUtils.trimToEmpty(this.fieldCodeType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_fieldCodeType.getSelectedItem(),this.fieldCodeType.getValue(), "FieldCodeType");
+		}
+		// Active
+		int intActive=0;
+		if(this.isActive.isChecked()){
+			intActive=1;
+		}
+		searchObj = getSearchFilter(searchObj, this.sortOperator_isActive.getSelectedItem(),intActive, "isActive");
+
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null&& !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxLovFieldCode,this.pagingLovFieldCodeList);
+		logger.debug("Leaving");
+	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

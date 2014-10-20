@@ -45,19 +45,24 @@ package com.pennant.webui.staticparms.schedulemethod;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +75,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.staticparms.schedulemethod.model.ScheduleMethodListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +107,15 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> impl
 	protected Paging 		pagingScheduleMethodList; 			// autoWired
 	protected Listbox 		listBoxScheduleMethod; 				// autoWired
 
+	protected Textbox schdMethod; 							// autoWired
+	protected Listbox sortOperator_schdMethod; 				// autoWired
+	protected Textbox schdMethodDesc; 						// autoWired
+	protected Listbox sortOperator_schdMethodDesc; 			// autoWired
+	protected Textbox recordStatus;	 						// autoWired
+	protected Listbox recordType; 							// autoWired
+	protected Listbox sortOperator_recordStatus; 			// autoWired
+	protected Listbox sortOperator_recordType; 				// autoWired
+
 	// List headers
 	protected Listheader listheader_SchdMethod; 				// autoWired
 	protected Listheader listheader_SchdMethodDesc; 			// autoWired
@@ -113,6 +130,8 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> impl
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<ScheduleMethod> searchObj;
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
 
 	private transient ScheduleMethodService scheduleMethodService;
 	private transient WorkFlowDetails workFlowDetails = null;
@@ -155,10 +174,28 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> impl
 			wfAvailable = false;
 		}
 
+		this.sortOperator_schdMethod.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_schdMethod.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_schdMethodDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_schdMethodDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_ScheduleMethodList.setHeight(getBorderLayoutHeight());
+		this.listBoxScheduleMethod.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingScheduleMethodList.setPageSize(getListRows());
@@ -182,6 +219,10 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> impl
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<ScheduleMethod>(ScheduleMethod.class, getListRows());
 		this.searchObj.addSort("SchdMethod", false);
+		this.searchObj.addField("schdMethod");
+		this.searchObj.addField("schdMethodDesc");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -204,8 +245,7 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> impl
 			this.button_ScheduleMethodList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxScheduleMethod, this.pagingScheduleMethodList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxScheduleMethod.setItemRenderer(new ScheduleMethodListModelItemRenderer());
 		}
@@ -355,9 +395,21 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> impl
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingScheduleMethodList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_ScheduleMethodList, event);
-		this.window_ScheduleMethodList.invalidate();
+
+		this.sortOperator_schdMethod.setSelectedIndex(0);
+		this.schdMethod.setValue("");
+		this.sortOperator_schdMethodDesc.setSelectedIndex(0);
+		this.schdMethodDesc.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clear All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(getSearchObj(), this.listBoxScheduleMethod,this.pagingScheduleMethodList);
 		logger.debug("Leaving");
 	}
 
@@ -367,25 +419,7 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> impl
 
 	public void onClick$button_ScheduleMethodList_ScheduleMethodSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our ScheduleMethodDialog ZUL-file with parameters. So we
-		 * can call them with a object of the selected ScheduleMethod. For
-		 * handed over these parameter only a Map is accepted. So we put the
-		 * ScheduleMethod object in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("scheduleMethodCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/StaticParms/ScheduleMethod/ScheduleMethodSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
 
@@ -398,6 +432,55 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> impl
 	public void onClick$button_ScheduleMethodList_PrintList(Event event)throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		new PTListReportUtils("ScheduleMethod", getSearchObj(),this.pagingScheduleMethodList.getTotalSize()+1);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+		//SchdMethod
+		if (!StringUtils.trimToEmpty(this.schdMethod.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_schdMethod.getSelectedItem(),
+					this.schdMethod.getValue(), "SchdMethod");
+		}
+		//SchdMethodDesc
+		if (!StringUtils.trimToEmpty(this.schdMethodDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_schdMethodDesc.getSelectedItem(),
+					this.schdMethodDesc.getValue(), "SchdMethodDesc");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxScheduleMethod,this.pagingScheduleMethodList);
+
 		logger.debug("Leaving");
 	}
 

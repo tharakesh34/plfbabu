@@ -46,19 +46,24 @@ package com.pennant.webui.amtmasters.vehicleversion;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.amtmasters.vehicleversion.model.VehicleVersionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -101,6 +109,18 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 	protected Paging pagingVehicleVersionList; 				// autowired
 	protected Listbox listBoxVehicleVersion; 				// autowired
 
+	protected Textbox vehicleVersionId; 				// autowired
+	protected Listbox sortOperator_vehicleVersionId; 	// autowired
+	protected Textbox vehicleModelId; 					// autowired
+	protected Listbox sortOperator_vehicleModelId; 		// autowired
+	protected Textbox vehicleVersionCode; 				// autowired
+	protected Listbox sortOperator_vehicleVersionCode; 	// autowired
+	protected Textbox recordStatus; 					// autowired
+	protected Listbox recordType;						// autowired
+	protected Listbox sortOperator_recordStatus; 		// autowired
+	protected Listbox sortOperator_recordType; 			// autowired
+
+
 	// List headers
 	protected Listheader listheader_VehicleModelId; 		// autowired
 	protected Listheader listheader_VehicleVersionCode; 	// autowired
@@ -115,6 +135,8 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<VehicleVersion> searchObj;
+	protected Grid searchGrid;
+	protected Row row_AlwWorkflow;
 
 	private transient VehicleVersionService vehicleVersionService;
 	private transient WorkFlowDetails workFlowDetails=null;
@@ -158,24 +180,40 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 		}else{
 			wfAvailable=false;
 		}
+		this.sortOperator_vehicleVersionId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_vehicleVersionId.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_vehicleModelId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_vehicleModelId.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_vehicleVersionCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_vehicleVersionCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
 
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_VehicleVersionList.setHeight(getBorderLayoutHeight());
-
+		this.listBoxVehicleVersion.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingVehicleVersionList.setPageSize(getListRows());
 		this.pagingVehicleVersionList.setDetailed(true);
 
-		this.listheader_VehicleModelId.setSortAscending(new FieldComparator(
-				"vehicleModelId", true));
-		this.listheader_VehicleModelId.setSortDescending(new FieldComparator(
-				"vehicleModelId", false));
-		this.listheader_VehicleVersionCode.setSortAscending(new FieldComparator(
-				"vehicleVersionCode", true));
-		this.listheader_VehicleVersionCode.setSortDescending(new FieldComparator(
-				"vehicleVersionCode", false));
+		this.listheader_VehicleModelId.setSortAscending(new FieldComparator("vehicleModelId", true));
+		this.listheader_VehicleModelId.setSortDescending(new FieldComparator("vehicleModelId", false));
+		this.listheader_VehicleVersionCode.setSortAscending(new FieldComparator("vehicleVersionCode", true));
+		this.listheader_VehicleVersionCode.setSortDescending(new FieldComparator("vehicleVersionCode", false));
 
 		if (isWorkFlowEnabled()){
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator(
@@ -192,9 +230,12 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 		}
 
 		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<VehicleVersion>(
-				VehicleVersion.class, getListRows());
+		this.searchObj = new JdbcSearchObject<VehicleVersion>(VehicleVersion.class, getListRows());
 		this.searchObj.addSort("VehicleVersionId", false);
+		this.searchObj.addField("vehicleVersionId");
+		this.searchObj.addField("lovDescVehicleModelDesc");
+		this.searchObj.addField("vehicleModelId");
+		this.searchObj.addField("vehicleVersionCode");
 
 		this.searchObj.addTabelName("AMTVehicleVersion_View");
 
@@ -219,12 +260,9 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 			PTMessageUtils.showErrorMessage(PennantJavaUtil
 					.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		}else{
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,
-					this.listBoxVehicleVersion, this.pagingVehicleVersionList);
+			doSearch();
 			// set the itemRenderer
-			this.listBoxVehicleVersion
-			.setItemRenderer(new VehicleVersionListModelItemRenderer());
+			this.listBoxVehicleVersion.setItemRenderer(new VehicleVersionListModelItemRenderer());
 		}
 		logger.debug("Leaving");
 	}
@@ -376,9 +414,22 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingVehicleVersionList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_VehicleVersionList, event);
-		this.window_VehicleVersionList.invalidate();
+		this.sortOperator_vehicleVersionId.setSelectedIndex(0);
+		this.vehicleVersionId.setValue("");
+		this.sortOperator_vehicleModelId.setSelectedIndex(0);
+		this.vehicleModelId.setValue("");
+		this.sortOperator_vehicleVersionCode.setSelectedIndex(0);
+		this.vehicleVersionCode.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		//Clear All Filters
+		this.searchObj.clearFilters();
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxVehicleVersion,this.pagingVehicleVersionList);
 		logger.debug("Leaving");
 	}
 
@@ -388,27 +439,10 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 	public void onClick$button_VehicleVersionList_VehicleVersionSearchDialog(
 			Event event) throws Exception {
 		logger.debug("Entering");
-		logger.debug(event.toString());
-		/*
-		 * we can call our VehicleVersionDialog zul-file with parameters. So we can
-		 * call them with a object of the selected VehicleVersion. For handed over
-		 * these parameter only a Map is accepted. So we put the VehicleVersion object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("vehicleVersionCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the zul-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-						"/WEB-INF/pages/AMTMasters/VehicleVersion/VehicleVersionSearchDialog.zul",null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving");
 	}
+
 
 	/**
 	 * When the vehicleVersion print button is clicked.
@@ -423,6 +457,63 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+
+		// VehicleModelID
+		if (!StringUtils.trimToEmpty(this.vehicleModelId.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_vehicleModelId.getSelectedItem(),
+					this.vehicleModelId.getValue(), "VehicleModelId");
+		}
+		//VehicleVersionId
+		if (!StringUtils.trimToEmpty(this.vehicleVersionId.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_vehicleVersionId.getSelectedItem(),
+					this.vehicleVersionId.getValue(), "VehicleVersionId");
+		}
+
+
+		// VehicleVersionCode
+		if (!StringUtils.trimToEmpty(this.vehicleVersionCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_vehicleVersionCode.getSelectedItem(),
+					this.vehicleVersionCode.getValue(), "VehicleVersionCode");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxVehicleVersion,this.pagingVehicleVersionList);
+
+		logger.debug("Leaving");
+
+	}
 	public void setVehicleVersionService(VehicleVersionService vehicleVersionService) {
 		this.vehicleVersionService = vehicleVersionService;
 	}

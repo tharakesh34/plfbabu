@@ -45,19 +45,25 @@ package com.pennant.webui.staticparms.language;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
@@ -70,10 +76,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.staticparms.language.model.LanguageListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.PTMessageUtils;
+import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
+import com.pennant.webui.util.searching.SearchOperators;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -99,6 +108,18 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 	protected Paging 		pagingLanguageList;			// autoWired
 	protected Listbox 		listBoxLanguage; 			// autoWired
 
+	protected Textbox 	lngCode; 					// autoWired
+	protected Listbox 	sortOperator_lngCode; 		// autoWired
+	protected Textbox 	lngDesc; 					// autoWired
+	protected Listbox 	sortOperator_lngDesc; 		// autoWired
+	protected Intbox 	lngNumber; 					// autoWired
+	protected Listbox 	sortOperator_lngNumber; 	// autoWired
+	protected Textbox 	recordStatus; 				// autoWired
+	protected Listbox 	recordType; 				// autoWired
+	protected Listbox 	sortOperator_recordStatus; 	// autoWired
+	protected Listbox 	sortOperator_recordType; 	// autoWired
+
+
 	// List headers
 	protected Listheader listheader_LngCode; 			// autoWired
 	protected Listheader listheader_LngDesc; 			// autoWired
@@ -114,6 +135,8 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Language> searchObj;
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
 
 	private transient LanguageService languageService;
 	private transient WorkFlowDetails workFlowDetails = null;
@@ -156,7 +179,24 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 		} else {
 			wfAvailable = false;
 		}
-
+		this.sortOperator_lngCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_lngCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_lngDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_lngDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_lngNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_lngNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		if (isWorkFlowEnabled()){
+			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+			this.recordType=setRecordType(this.recordType);
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}else{
+			this.row_AlwWorkflow.setVisible(false);
+		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -166,6 +206,7 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 		 * filled by onClientInfo() in the indexCtroller
 		 */
 		this.borderLayout_LanguageList.setHeight(getBorderLayoutHeight());
+		this.listBoxLanguage.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 
 		// set the paging parameters
 		this.pagingLanguageList.setPageSize(getListRows());
@@ -191,7 +232,11 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 		// ++ create the searchObject and initialize sorting ++//
 		this.searchObj = new JdbcSearchObject<Language>(Language.class,	getListRows());
 		this.searchObj.addSort("LngCode", false);
-
+		this.searchObj.addField("lngCode");
+		this.searchObj.addField("lngDesc");
+		this.searchObj.addField("lngNumber");
+		this.searchObj.addField("recordStatus");
+		this.searchObj.addField("recordType");
 		// Work flow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("BMTLanguage_View");
@@ -212,8 +257,7 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 			this.button_LanguageList_PrintList.setVisible(false);
 			PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxLanguage,this.pagingLanguageList);
+			doSearch();
 			// set the itemRenderer
 			this.listBoxLanguage.setItemRenderer(new LanguageListModelItemRenderer());
 		}
@@ -365,9 +409,24 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		this.pagingLanguageList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_LanguageList, event);
-		this.window_LanguageList.invalidate();
+		this.sortOperator_lngCode.setSelectedIndex(0);
+		this.lngCode.setValue("");
+		this.sortOperator_lngDesc.setSelectedIndex(0);
+		this.lngDesc.setValue("");
+		this.sortOperator_lngNumber.setSelectedIndex(0);
+		this.lngNumber.setValue(null);
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+
+		//Clear All Filters
+		this.searchObj.clearFilters();
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxLanguage,this.pagingLanguageList);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -379,25 +438,7 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 	 */
 	public void onClick$button_LanguageList_LanguageSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		/*
-		 * we can call our LanguageDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected Language. For handed over
-		 * these parameter only a Map is accepted. So we put the Language object
-		 * in a HashMap.
-		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("languageCtrl", this);
-		map.put("searchObject", this.searchObj);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/StaticParms/Language/LanguageSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
+		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -411,6 +452,56 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> implements Seria
 		logger.debug("Entering" + event.toString());
 		new PTListReportUtils("Language", getSearchObj(),this.pagingLanguageList.getTotalSize()+1);
 		logger.debug("Leaving" + event.toString());
+	}
+	/**
+	 * Method for Searching List based on Filters
+	 */
+	private void doSearch() {
+		logger.debug("Entering");
+
+		this.searchObj.clearFilters();
+		//LngCode
+		if (!StringUtils.trimToEmpty(this.lngCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_lngCode.getSelectedItem(),this.lngCode.getValue(), "LngCode");
+		}
+		//LngDesc
+		if (!StringUtils.trimToEmpty(this.lngDesc.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_lngDesc.getSelectedItem(),this.lngDesc.getValue(), "LngDesc");
+		}
+		//LngNumber
+		if (this.lngNumber.getValue()!= null) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_lngNumber.getSelectedItem(),this.lngNumber.getValue(), "LngNumber");
+		}
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.recordType
+				.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "
+						+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxLanguage,this.pagingLanguageList);
+
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

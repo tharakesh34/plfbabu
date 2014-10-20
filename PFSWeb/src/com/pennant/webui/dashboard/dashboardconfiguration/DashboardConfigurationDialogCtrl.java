@@ -65,7 +65,6 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
@@ -77,7 +76,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -93,7 +91,6 @@ import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.dashboard.DashboardCreate;
@@ -202,9 +199,6 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 	private transient DashboardConfigurationService dashboardConfigurationService;
 	private transient PagedListService pagedListService;
 
-	private List<ValueLabel> listDashboardType = PennantStaticListUtil.getDashBoardType(); 	// autoWiredgetChartDimensions()
-	private List<ValueLabel> listDimensions = PennantStaticListUtil.getChartDimensions();
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -267,11 +261,11 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 			setDashboardConfigurationListCtrl(null);
 		}
 
+		fillComboBox(this.dashboardType, "", PennantStaticListUtil.getDashBoardType(), "");
+		fillComboBox(this.cbDimension, "", PennantStaticListUtil.getChartDimensions(), "");
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getDashboardConfiguration());
-		setListType(this.listDashboardType,this.dashboardType);
-		setListType(this.listDimensions,this.cbDimension);
 		logger.debug("Leaving"+event.toString());
 	}
 
@@ -619,38 +613,11 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 		this.isAdtDataSource.setChecked(aDashboardConfiguration.isAdtDataSource());
 		this.remarks.setValue(aDashboardConfiguration.getRemarks());
 		this.isMultiSeries.setChecked(aDashboardConfiguration.isMultiSeries());
-		if(aDashboardConfiguration.isNew()){
-			this.dashboardType.setValue(PennantAppUtil.getlabelDesc(
-					"",PennantStaticListUtil.getDashBoardType()));
-		}else{
-			this.dashboardType.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(aDashboardConfiguration.getDashboardType()),PennantStaticListUtil.getDashBoardType()));
-		}
-		if(aDashboardConfiguration.isNew()){
-			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(Labels
-							.getLabel("label_Select_2D")),PennantStaticListUtil.getChartDimensions()));
-
-		}else{
-			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(aDashboardConfiguration.getDimension()),PennantStaticListUtil.getChartDimensions()));
-
-		}
-
+		fillComboBox(this.dashboardType,  aDashboardConfiguration.getDashboardType(),PennantStaticListUtil.getDashBoardType(), "");
+		fillComboBox(this.cbDimension,aDashboardConfiguration.getDimension() , PennantStaticListUtil.getChartDimensions(), "");	
 		logger.debug("Leaving");
 	}
-	private void setListType(List<ValueLabel> listDashboardType,Combobox comboBox) {
-		logger.debug("Entering ");
-		for (int i = 0; i < listDashboardType.size(); i++) {
-
-			Comboitem comboitem = new Comboitem();
-			comboitem = new Comboitem();
-			comboitem.setLabel(listDashboardType.get(i).getLabel());
-			comboitem.setValue(listDashboardType.get(i).getValue());
-			comboBox.appendChild(comboitem);
-		}
-		logger.debug("Leaving ");
-	}
+	
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -696,7 +663,6 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
 		try {
 			String dashboardType = (String) this.dashboardType.getSelectedItem().getValue();
 			if (StringUtils.trimToEmpty(dashboardType).equalsIgnoreCase("")) {
@@ -999,7 +965,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 		}
 
 		if (!this.dashboardType.isDisabled()) {
-			this.dashboardType.setConstraint(new StaticListValidator(listDashboardType
+			this.dashboardType.setConstraint(new StaticListValidator(PennantStaticListUtil.getDashBoardType()
 					,Labels.getLabel("label_DashboardConfigurationDialog_DashboardType.value")));
 		}
 		if (!this.dashboardCaption.isDisabled()) {
