@@ -273,7 +273,7 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void onFulfill$custDftCcy(Event event) {
 		logger.debug("Entering");
 		Object object=this.custDftCcy.getObject();
-		if (object!=null && object instanceof Currency) {
+		if (object instanceof Currency) {
 			Currency currency=(Currency) object;
 			ccyformatt=currency.getCcyEditField();
 		}else{
