@@ -43,7 +43,6 @@
 
 package com.pennant.webui.finance.externalfinance;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
