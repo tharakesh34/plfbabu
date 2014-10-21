@@ -72,7 +72,7 @@
 								
 									<label id="label_FinanceWorkFlowSearch_ScreenCode" value="${c:l('label_FinanceWorkFlowSearch_ScreenCode.value')}" />
 									<listbox id="sortOperator_screenCode" width="43px" mold="select" rows="1" />
-									<textbox id="screenCode" width="27px" maxlength="3" />
+									<textbox id="screenCode" width="40px" maxlength="3" />
 								</row>
 								<row>
 									<label id="label_FinanceWorkFlowSearch_WorkFlowType" value="${c:l('label_FinanceWorkFlowSearch_WorkFlowType.value')}" />
