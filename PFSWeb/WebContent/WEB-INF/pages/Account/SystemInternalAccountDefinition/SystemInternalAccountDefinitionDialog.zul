@@ -107,17 +107,7 @@
 									id="label_SystemInternalAccountDefinitionDialog_SIAAcType"
 									value="${c:l('label_SystemInternalAccountDefinitionDialog_SIAAcType.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<hbox>
-										<textbox id="sIAAcType"
-											width="72px" visible="false" />
-										<textbox
-											id="lovDescSIAAcTypeName" width="250px" readonly="true" />
-										<button
-											id="btnSearchSIAAcType"
-											image="/images/icons/LOVSearch.png"  />
-									</hbox>
+									<extendedcombobox id="sIAAcType" />
 								</hbox>
 							</row>
 							<row>

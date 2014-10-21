@@ -66,6 +66,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -84,7 +85,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -109,7 +109,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 	protected Textbox	   sIACode;	                                    // autowired
 	protected Textbox	   sIAName;	                                    // autowired
 	protected Textbox	   sIAShortName;	                            // autowired
-	protected Textbox	   sIAAcType;	                                // autowired
+	protected ExtendedCombobox	   sIAAcType;	                                // autowired
 	protected Textbox	   sIANumber;	                                // autowired
 
 	protected Label	       recordStatus;	                            // autowired
@@ -144,8 +144,8 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 	protected Button	                                      btnHelp;	                                                                                   // autowire
 	protected Button	                                      btnNotes;	                                                                               // autowire
 
-	protected Button	                                      btnSearchSIAAcType;	                                                                       // autowire
-	protected Textbox	                                      lovDescSIAAcTypeName;
+	//protected Button	                                      btnSearchSIAAcType;	                                                                       // autowire
+	//protected Textbox	                                      lovDescSIAAcTypeName;
 	private transient String	                              oldVar_lovDescSIAAcTypeName;
 
 	// ServiceDAOs / Domain Classes
@@ -234,7 +234,14 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 		this.sIACode.setMaxlength(8);
 		this.sIAName.setMaxlength(50);
 		this.sIAShortName.setMaxlength(15);
+		
 		this.sIAAcType.setMaxlength(8);
+		this.sIAAcType.setMandatoryStyle(true);
+		this.sIAAcType.setModuleName("SystemInternalAccountType");
+		this.sIAAcType.setValueColumn("AcType");
+		this.sIAAcType.setDescColumn("AcTypeDesc");
+		this.sIAAcType.setValidateColumns(new String[] { "AcType" });
+		
 		this.sIANumber.setMaxlength(8);
 		this.sIAheadCode.setMaxlength(2);
 		if(SystemParameterDetails.getSystemParameterValue("CBI_AVAIL").equals("Y")){
@@ -454,9 +461,9 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 			this.sIAheadCode.setValue(headcode);
 		}
 		if (aSystemInternalAccountDefinition.isNewRecord()) {
-			this.lovDescSIAAcTypeName.setValue("");
+			this.sIAAcType.setDescription("");
 		} else {
-			this.lovDescSIAAcTypeName.setValue(aSystemInternalAccountDefinition.getSIAAcType() + "-" + aSystemInternalAccountDefinition.getLovDescSIAAcTypeName());
+			this.sIAAcType.setDescription(aSystemInternalAccountDefinition.getLovDescSIAAcTypeName());
 		}
 		this.recordStatus.setValue(aSystemInternalAccountDefinition.getRecordStatus());
 		logger.debug("Leaving");
@@ -489,8 +496,8 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 			wve.add(we);
 		}
 		try {
-			aSystemInternalAccountDefinition.setLovDescSIAAcTypeName(this.lovDescSIAAcTypeName.getValue());
-			aSystemInternalAccountDefinition.setSIAAcType(this.sIAAcType.getValue());
+			aSystemInternalAccountDefinition.setLovDescSIAAcTypeName(this.sIAAcType.getDescription());
+			aSystemInternalAccountDefinition.setSIAAcType(this.sIAAcType.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -599,7 +606,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 		this.oldVar_sIAName = this.sIAName.getValue();
 		this.oldVar_sIAShortName = this.sIAShortName.getValue();
 		this.oldVar_sIAAcType = this.sIAAcType.getValue();
-		this.oldVar_lovDescSIAAcTypeName = this.lovDescSIAAcTypeName.getValue();
+		this.oldVar_lovDescSIAAcTypeName = this.sIAAcType.getDescription();
 		this.oldVar_sIANumber = this.sIANumber.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
@@ -614,7 +621,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 		this.sIAName.setValue(this.oldVar_sIAName);
 		this.sIAShortName.setValue(this.oldVar_sIAShortName);
 		this.sIAAcType.setValue(this.oldVar_sIAAcType);
-		this.lovDescSIAAcTypeName.setValue(this.oldVar_lovDescSIAAcTypeName);
+		this.sIAAcType.setDescription(this.oldVar_lovDescSIAAcTypeName);
 		this.sIANumber.setValue(this.oldVar_sIANumber);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -776,7 +783,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 
 		this.sIAName.setReadonly(isReadOnly("SystemInternalAccountDefinitionDialog_sIAName"));
 		this.sIAShortName.setReadonly(isReadOnly("SystemInternalAccountDefinitionDialog_sIAShortName"));
-		this.btnSearchSIAAcType.setDisabled(isReadOnly("SystemInternalAccountDefinitionDialog_sIAAcType"));
+		this.sIAAcType.setReadonly(isReadOnly("SystemInternalAccountDefinitionDialog_sIAAcType"));
 		this.sIANumber.setReadonly(isReadOnly("SystemInternalAccountDefinitionDialog_sIANumber"));
 
 		if (isWorkFlowEnabled()) {
@@ -807,7 +814,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 		this.sIACode.setReadonly(true);
 		this.sIAName.setReadonly(true);
 		this.sIAShortName.setReadonly(true);
-		this.btnSearchSIAAcType.setDisabled(true);
+		this.sIAAcType.setReadonly(true);
 		this.sIANumber.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
@@ -834,7 +841,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 		this.sIAName.setValue("");
 		this.sIAShortName.setValue("");
 		this.sIAAcType.setValue("");
-		this.lovDescSIAAcTypeName.setValue("");
+		this.sIAAcType.setDescription("");
 		this.sIANumber.setValue("");
 		logger.debug("Leaving");
 	}
@@ -1057,21 +1064,22 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 		return processCompleted;
 	}
 
-	public void onClick$btnSearchSIAAcType(Event event) {
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_SystemInternalAccountDefinitionDialog, "SystemInternalAccountType");
+	public void onFulfill$sIAAcType(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = sIAAcType.getObject();
 		if (dataObject instanceof String) {
 			this.sIAAcType.setValue(dataObject.toString());
-			this.lovDescSIAAcTypeName.setValue("");
+			this.sIAAcType.setDescription("");
 			this.sIAheadCode.setValue("");
 		} else {
 			AccountType details = (AccountType) dataObject;
 			if (details != null) {
 				this.sIAAcType.setValue(details.getAcType());
-				this.lovDescSIAAcTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
+				this.sIAAcType.setDescription(details.getAcTypeDesc());
 				//this.sIAheadCode.setValue(details.getAcHeadCode().substring(0,2));
 			}
 		}
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1170,11 +1178,11 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 	}
 
 	private void doSetLOVValidation() {
-		this.lovDescSIAAcTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAAcType.value"), null, true));
+		this.sIAAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAAcType.value"), null, true));
 	}
 
 	private void doRemoveLOVValidation() {
-		this.lovDescSIAAcTypeName.setConstraint("");
+		this.sIAAcType.setConstraint("");
 	}
 
 	private Notes getNotes() {
@@ -1190,7 +1198,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 		this.sIACode.setErrorMessage("");
 		this.sIAName.setErrorMessage("");
 		this.sIAShortName.setErrorMessage("");
-		this.lovDescSIAAcTypeName.setErrorMessage("");
+		this.sIAAcType.setErrorMessage("");
 		this.sIANumber.setErrorMessage("");
 		logger.debug("Leaving");
 	}
