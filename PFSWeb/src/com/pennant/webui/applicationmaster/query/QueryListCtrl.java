@@ -225,7 +225,7 @@ public class QueryListCtrl extends GFCBaseListCtrl<Query> implements Serializabl
 			this.sortOperator_RecordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);
 
-			this.sortOperator_RecordType.setSelectedIndex(1);
+			this.sortOperator_RecordType.setSelectedIndex(0);
 			this.recordType.setSelectedIndex(0);
 
 		}else{
