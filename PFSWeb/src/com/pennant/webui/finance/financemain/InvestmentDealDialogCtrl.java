@@ -84,7 +84,6 @@ import com.pennant.backend.service.finance.TreasuaryFinanceService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
