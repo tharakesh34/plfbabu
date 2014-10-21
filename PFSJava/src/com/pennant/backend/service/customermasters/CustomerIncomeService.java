@@ -65,7 +65,7 @@ public interface CustomerIncomeService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
-	public BigDecimal getTotalIncomeByCustomer(long custId);
+	BigDecimal getTotalIncomeByCustomer(long custId);
 	Map<String, BigDecimal> getCustomerIncomeByCustomer(long custID, boolean isWIF);
 	List<CustomerIncome> getCustomerIncomes(long custID, boolean isWIF);
 }
