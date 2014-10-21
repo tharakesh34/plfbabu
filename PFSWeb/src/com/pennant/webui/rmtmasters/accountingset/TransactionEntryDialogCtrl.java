@@ -394,7 +394,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	 */
 	public void onUser$btnValidateSave(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (!StringUtils.trimToEmpty(this.amountRule.getValue()).equals("") && validate(event)) {
+		if (validate(event)) {
 			doSave();
 		}
 		
@@ -1712,6 +1712,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	 */
 	private boolean validate(ForwardEvent event) throws InterruptedException {
 		boolean noerrors = false;
+		if(StringUtils.trimToEmpty(this.amountRule.getValue()).equals("")){
+			return true;
+		}
 		// object containing errors and variables
 		Object[] data = (Object[]) event.getOrigin().getData();
 		// array of errors
