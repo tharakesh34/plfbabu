@@ -85,12 +85,7 @@
 									id="label_ProductAssetDialog_AssetCode"
 									value="${c:l('label_ProductAssetDialog_AssetCode.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="assetCode"
-										width="162px" />
-									<button id="btnSearchFieldCode"
-										image="/images/icons/LOVSearch.png"  />
+									<extendedcombobox id="assetCode"/>	
 								</hbox>
 							</row>
 							<row visible="true">

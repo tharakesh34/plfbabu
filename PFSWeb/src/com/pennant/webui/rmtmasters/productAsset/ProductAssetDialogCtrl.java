@@ -68,6 +68,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -86,7 +87,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -109,7 +109,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 
 	protected Window 	window_ProductAssetDialog; 		// autoWired
 	private Textbox 	productCode;					// autoWired
-	private Textbox 	assetCode;						// autoWired
+	private ExtendedCombobox 	assetCode;				// autoWired
 	private Textbox 	assetDesc;						// autoWired
 	private Checkbox 	assetIsActive;					// autoWired
 
@@ -144,7 +144,6 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 	protected Button btnClose; 		// autoWire
 	protected Button btnHelp; 		// autoWire
 	protected Button btnNotes; 		// autoWire
-	protected Button btnSearchFieldCode; // autoWired
 
 	// ServiceDAOs / Domain Classes
 	private transient ProductService productService;
@@ -246,7 +245,17 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
 		this.productCode.setMaxlength(8);
+		
 		this.assetCode.setMaxlength(8);
+		this.assetCode.setMandatoryStyle(true);
+		this.assetCode.setModuleName("LovFieldDetail");
+		this.assetCode.setValueColumn("FieldCode");
+		this.assetCode.setDescColumn("FieldCodeValue");
+		this.assetCode.setValidateColumns(new String[] { "FieldCodeValue" });
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("FieldCode","FINASSTYP", Filter.OP_EQUAL);
+		this.assetCode.setFilters(filters);
+		
 		this.assetDesc.setMaxlength(50);
 
 		if (isWorkFlowEnabled()){
@@ -498,7 +507,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 			wve.add(we);
 		}
 		try {
-			aProductAsset.setAssetCode(this.assetCode.getValue());
+			aProductAsset.setAssetCode(this.assetCode.getValidatedValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -653,6 +662,11 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 		if (!this.productCode.isReadonly()){
 			this.productCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[]{Labels.getLabel("label_ProductAssetDialog_ProductCode.value")}));
+		}
+		
+		if (!this.assetCode.isReadonly()){
+			this.assetCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[]{Labels.getLabel("label_ProductAssetDialog_AssetCode.value")}));
 		}	
 		logger.debug("Leaving");
 	}
@@ -664,6 +678,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.productCode.setConstraint("");
+		this.assetCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -777,12 +792,11 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 
 		if (getProductAsset().isNewRecord()){
 			this.btnCancel.setVisible(false);
-			this.btnSearchFieldCode.setDisabled(false);
+			this.assetCode.setReadonly(false);
 		}else{
 			this.btnCancel.setVisible(true);
 		}
 		this.productCode.setReadonly(true);
-		this.assetCode.setReadonly(true);
 		this.assetDesc.setReadonly(true);
 		this.assetIsActive.setDisabled(isReadOnly("ProductAssetDialog_assetIsActive"));
 
@@ -822,7 +836,6 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 		logger.debug("Entering");
 
 		this.productCode.setReadonly(true);
-		this.btnSearchFieldCode.setDisabled(true);
 		this.assetCode.setReadonly(true);
 		this.assetDesc.setReadonly(true);
 
@@ -1007,19 +1020,18 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 	// +++++++++++++ Search Button Component Events++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public void onClick$btnSearchFieldCode(Event event){
+	public void onFulfill$assetCode(Event event){
 		logger.debug("Entering");	   
-		
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("FieldCode","FINASSTYP", Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_ProductAssetDialog, "LovFieldDetail",filters);
-
+		Object dataObject = assetCode.getObject();
 		if (dataObject instanceof String){
 			this.assetCode.setValue(dataObject.toString());
+			this.assetCode.setDescription("");
+			this.assetDesc.setValue("");
 		}else{
 			LovFieldDetail details= (LovFieldDetail) dataObject;
 			if (details != null) {
 				this.assetCode.setValue(details.getFieldCodeValue());
+				this.assetCode.setDescription("");
 				this.assetDesc.setValue(details.getValueDesc());
 			}
 		}
