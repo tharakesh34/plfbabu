@@ -290,43 +290,13 @@
 														id="label_SecurityUserDialog_UsrLanguage"
 														value="${c:l('label_SecurityUserDialog_UsrLanguage.value')}" />
 													<hbox>
-														<space
-															spacing="2px" sclass="mandatory" />
-														<hbox>
-															<textbox
-																id="usrLanguage" maxlength="2" width="20px"
-																visible="false" />
-															<textbox
-																id="lovDescUsrLanguage" width="300px" readonly="true" />
-															<button
-																id="btnSearchUsrLanguage"
-																tooltiptext="${c:l('btnSearchUsrLanguage.tooltiptext')}"
-																image="/images/icons/LOVSearch.png" 
-																autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
-															</button>
-														</hbox>
+														<extendedcombobox id="usrLanguage" />
 													</hbox>
 													<label
 														id="label_SecurityUserDialog_UsrBranchCode"
 														value="${c:l('label_SecurityUserDialog_UsrBranchCode.value')}" />
 													<hbox>
-														<space
-															spacing="2px" sclass="mandatory" />
-														<hbox>
-															<textbox
-																id="usrBranchCode" width="150px" visible="false" />
-															<textbox
-																id="lovDescUsrBranchCodeName" width="300px"
-																readonly="true" />
-															<button
-																id="btnSearchUsrBranchCode"
-																tooltiptext="${c:l('btnSearchUsrBranchCode.tooltiptext')}"
-																image="/images/icons/LOVSearch.png" 
-																autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
-															</button>
-														</hbox>
+														<extendedcombobox id="usrBranchCode" />
 													</hbox>
 												</row>
 												<row visible="true">
@@ -345,23 +315,7 @@
 														id="label_SecurityUserDialog_UsrDeptCode"
 														value="${c:l('label_SecurityUserDialog_UsrDeptCode.value')}" />
 													<hbox>
-														<space
-															spacing="2px" sclass="mandatory" />
-
-														<hbox>
-															<textbox
-																id="usrDeptCode" width="150px" visible="false" />
-															<textbox
-																id="lovDescUsrDeptCodeName" width="300px"
-																readonly="true" />
-															<button
-																id="btnSearchUsrDeptCode"
-																tooltiptext="${c:l('btnSearchUsrDeptCode.tooltiptext')}"
-																image="/images/icons/LOVSearch.png" 
-																autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
-															</button>
-														</hbox>
+														<extendedcombobox id="usrDeptCode" />
 													</hbox>
 												</row>
 												<row visible="true">

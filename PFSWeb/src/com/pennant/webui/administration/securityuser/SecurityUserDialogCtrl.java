@@ -118,7 +118,6 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -156,10 +155,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	protected Checkbox   usrAcExp;                                 // autoWired
 	protected Checkbox   usrCredentialsExp;                        // autoWired
 	protected Checkbox   usrAcLocked;                              // autoWired
-	protected Textbox    usrLanguage;                              // autoWired
+	protected ExtendedCombobox    usrLanguage;                     // autoWired
 	protected Combobox   usrDftAppId;                              // autoWired
-	protected Textbox    usrBranchCode;                            // autoWired
-	protected Textbox    usrDeptCode;                              // autoWired
+	protected ExtendedCombobox    usrBranchCode;                   // autoWired
+	protected ExtendedCombobox    usrDeptCode;                     // autoWired
 	protected Checkbox   usrIsMultiBranch;                         // autoWired
 	protected Row        rowSecurityUserDialogUsrPwd;              // autoWired
 	protected Row        rowSecurityUserDialogUsrConfirmPwd;       // autoWired
@@ -176,12 +175,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	protected Button     btnClose;                                 // autoWired
 	protected Button     btnHelp;                                  // autoWired
 	protected Button     btnNotes;                                 // autoWired
-	protected Button     btnSearchUsrLanguage;                     // autoWired
-	protected Button     btnSearchUsrBranchCode;                   // autoWired
-	protected Textbox    lovDescUsrBranchCodeName;                 // autoWired
-	protected Button     btnSearchUsrDeptCode;                     // autoWired
-	protected Textbox    lovDescUsrDeptCodeName;                   // autoWired
-	protected Textbox    lovDescUsrLanguage;                       // autoWired
 	protected Label      label_PwdStatus;                          // autoWired
 	protected Div        div_PwdStatusMeter;                       // autoWired
 	protected ExtendedCombobox        usrDesg;                     // autoWired
@@ -330,9 +323,28 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrLName.setMaxlength(50);
 		this.usrMobile.setMaxlength(15);
 		this.usrEmail.setMaxlength(50);
+		
 		this.usrLanguage.setMaxlength(4);
-		this.usrBranchCode.setMaxlength(10);
+		this.usrLanguage.setMandatoryStyle(true);
+		this.usrLanguage.setModuleName("Language");
+		this.usrLanguage.setValueColumn("LngCode");
+		this.usrLanguage.setDescColumn("LngDesc");
+		this.usrLanguage.setValidateColumns(new String[] { "LngCode" });
+		
+		this.usrBranchCode.setMaxlength(8);
+		this.usrBranchCode.setMandatoryStyle(true);
+		this.usrBranchCode.setModuleName("Branch");
+		this.usrBranchCode.setValueColumn("BranchCode");
+		this.usrBranchCode.setDescColumn("BranchDesc");
+		this.usrBranchCode.setValidateColumns(new String[] { "BranchCode" });
+		
 		this.usrDeptCode.setMaxlength(8);
+		this.usrDeptCode.setMandatoryStyle(true);
+		this.usrDeptCode.setModuleName("Department");
+		this.usrDeptCode.setValueColumn("DeptCode");
+		this.usrDeptCode.setDescColumn("DeptDesc");
+		this.usrDeptCode.setValidateColumns(new String[] { "DeptCode" });
+		
 		this.usrDesg.setMaxlength(8);
         this.usrDesg.setMandatoryStyle(true);
 		this.usrDesg.setModuleName("Designation");
@@ -574,15 +586,13 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrLanguage.setValue(aSecurityUser.getUsrLanguage());
 		if (aSecurityUser.isNewRecord()){
 			this.usrEnabled.setChecked(true);
-			this.lovDescUsrBranchCodeName.setValue("");
-			this.lovDescUsrDeptCodeName.setValue("");
-			this.lovDescUsrLanguage.setValue("");
+			this.usrBranchCode.setDescription("");
+			this.usrDeptCode.setDescription("");
+			this.usrLanguage.setDescription("");
 		}else{
-			this.lovDescUsrBranchCodeName.setValue(aSecurityUser.getUsrBranchCode()
-					+"-"+aSecurityUser.getLovDescUsrBranchCodeName());
-			this.lovDescUsrDeptCodeName.setValue(aSecurityUser.getUsrDeptCode()
-					+"-"+aSecurityUser.getLovDescUsrDeptCodeName());
-			this.lovDescUsrLanguage.setValue(aSecurityUser.getUsrLanguage()+"-"+aSecurityUser.getLovDescUsrLanguage());
+			this.usrBranchCode.setDescription(aSecurityUser.getLovDescUsrBranchCodeName());
+			this.usrDeptCode.setDescription(aSecurityUser.getLovDescUsrDeptCodeName());
+			this.usrLanguage.setDescription(aSecurityUser.getLovDescUsrLanguage());
 		}
 		this.usrDesg.setValue(aSecurityUser.getUsrDesg());
 		this.usrDesg.setDescription(aSecurityUser.getLovDescUsrDesg());
@@ -731,8 +741,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			wve.add(we);
 		}
 		try {
-			aSecurityUser.setLovDescUsrLanguage(this.lovDescUsrLanguage.getValue());
-			aSecurityUser.setUsrLanguage(this.usrLanguage.getValue());
+			aSecurityUser.setLovDescUsrLanguage(this.usrLanguage.getDescription());
+			aSecurityUser.setUsrLanguage(this.usrLanguage.getValidatedValue());
 
 		}catch (WrongValueException we ) {
 			wve.add(we);
@@ -750,14 +760,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 			wve.add(we);
 		}
 		try {
-			aSecurityUser.setLovDescUsrBranchCodeName(this.lovDescUsrBranchCodeName.getValue());
-			aSecurityUser.setUsrBranchCode(this.usrBranchCode.getValue());	
+			aSecurityUser.setLovDescUsrBranchCodeName(this.usrBranchCode.getDescription());
+			aSecurityUser.setUsrBranchCode(this.usrBranchCode.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			aSecurityUser.setLovDescUsrDeptCodeName(this.lovDescUsrDeptCodeName.getValue());
-			aSecurityUser.setUsrDeptCode(this.usrDeptCode.getValue());	
+			aSecurityUser.setLovDescUsrDeptCodeName(this.usrDeptCode.getDescription());
+			aSecurityUser.setUsrDeptCode(this.usrDeptCode.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -924,12 +934,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.oldVar_usrLanguage = this.usrLanguage.getValue();
 		this.oldVar_usrDftAppId = this.usrDftAppId.getValue();
 		this.oldVar_usrBranchCode = this.usrBranchCode.getValue();
-		this.oldVar_lovDescUsrBranchCodeName = this.lovDescUsrBranchCodeName.getValue();
+		this.oldVar_lovDescUsrBranchCodeName = this.usrBranchCode.getDescription();
 		this.oldVar_usrDeptCode = this.usrDeptCode.getValue();
-		this.oldVar_lovDescUsrDeptCodeName = this.lovDescUsrDeptCodeName.getValue();
+		this.oldVar_lovDescUsrDeptCodeName = this.usrDeptCode.getDescription();
 		this.oldVar_usrIsMultiBranch = this.usrIsMultiBranch.isChecked();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
-		this.oldVar_lovDescUsrLanguage=this.lovDescUsrLanguage.getValue();
+		this.oldVar_lovDescUsrLanguage=this.usrLanguage.getDescription();
 		this.oldVar_usrConfirmPwd=this.usrConfirmPwd.getValue();
 		this.oldVar_usrDesg=this.usrDesg.getValue();
 		logger.debug("Leaving ");
@@ -959,12 +969,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrLanguage.setValue(this.oldVar_usrLanguage);
 		this.usrDftAppId.setValue(this.oldVar_usrDftAppId);
 		this.usrBranchCode.setValue(this.oldVar_usrBranchCode);
-		this.lovDescUsrBranchCodeName.setValue(this.oldVar_lovDescUsrBranchCodeName);
+		this.usrBranchCode.setDescription(this.oldVar_lovDescUsrBranchCodeName);
 		this.usrDeptCode.setValue(this.oldVar_usrDeptCode);
-		this.lovDescUsrDeptCodeName.setValue(this.oldVar_lovDescUsrDeptCodeName);
+		this.usrDeptCode.setDescription(this.oldVar_lovDescUsrDeptCodeName);
 		this.usrIsMultiBranch.setChecked(this.oldVar_usrIsMultiBranch);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
-		this.lovDescUsrLanguage.setValue(this.oldVar_lovDescUsrLanguage);
+		this.usrLanguage.setDescription(this.oldVar_lovDescUsrLanguage);
 		this.usrConfirmPwd.setValue(this.oldVar_usrConfirmPwd);
 		this.div_PwdStatusMeter.setStyle("background-color:white");
 		this.label_PwdStatus.setValue("");
@@ -1147,11 +1157,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering ");
-		this.lovDescUsrBranchCodeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
+		this.usrBranchCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
 				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrBranchCode.value")}));
-		this.lovDescUsrDeptCodeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
+		this.usrDeptCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
 				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrDeptCode.value")}));
-		this.lovDescUsrLanguage.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
+		this.usrLanguage.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
 				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrLanguage.value")}));
 		this.usrDesg.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
 				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrDesg.value")}));
@@ -1163,9 +1173,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	 */
 	private void doRemoveLOVValidation()  {
 		logger.debug("Entering ");
-		this.lovDescUsrBranchCodeName.setConstraint("");
-		this.lovDescUsrDeptCodeName.setConstraint("");
-		this.lovDescUsrLanguage.setConstraint("");
+		this.usrBranchCode.setConstraint("");
+		this.usrDeptCode.setConstraint("");
+		this.usrLanguage.setConstraint("");
 		this.usrDesg.setConstraint("");
 		logger.debug("Leaving ");
 	}
@@ -1187,9 +1197,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrCanSignonFrom.setErrorMessage("");
 		this.usrCanSignonTo.setErrorMessage("");
 		this.usrLanguage.setErrorMessage("");
-		this.lovDescUsrBranchCodeName.setErrorMessage("");		
-		this.lovDescUsrDeptCodeName.setErrorMessage("");
-		this.lovDescUsrLanguage.setErrorMessage("");
+		this.usrBranchCode.setErrorMessage("");		
+		this.usrDeptCode.setErrorMessage("");
+		this.usrLanguage.setErrorMessage("");
 		this.usrDftAppId.setErrorMessage("");
 		this.usrDesg.setErrorMessage("");
 		logger.debug("Leaving ");
@@ -1328,10 +1338,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrCanOverrideLimits.setDisabled(isReadOnly("SecurityUserDialog_usrCanOverrideLimits"));
 		this.usrCredentialsExp.setDisabled(isReadOnly("SecurityUserDialog_usrCredentialsExp"));
 		this.usrLanguage.setReadonly(isReadOnly("SecurityUserDialog_usrLanguage"));
-		this.btnSearchUsrLanguage.setDisabled(isReadOnly("SecurityUserDialog_usrLanguage")); 
 		this.usrDftAppId.setDisabled(isReadOnly("SecurityUserDialog_usrDftAppCode")); 
-		this.btnSearchUsrBranchCode.setDisabled(isReadOnly("SecurityUserDialog_usrBranchCode"));
-		this.btnSearchUsrDeptCode.setDisabled(isReadOnly("SecurityUserDialog_usrDeptCode"));
+		this.usrBranchCode.setReadonly(isReadOnly("SecurityUserDialog_usrBranchCode"));
+		this.usrDeptCode.setReadonly(isReadOnly("SecurityUserDialog_usrDeptCode"));
 		this.usrIsMultiBranch.setDisabled(isReadOnly("SecurityUserDialog_usrIsMultiBranch"));
 		this.usrConfirmPwd.setReadonly(isReadOnly("SecurityUserDialog_usrConfirmPwd"));
 		this.usrDesg.setReadonly(isReadOnly("SecurityUserDialog_usrLanguage"));
@@ -1378,10 +1387,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrAcLocked.setDisabled(true);
 		this.usrLanguage.setReadonly(true);
 		this.usrDftAppId.setDisabled(true);
-		this.btnSearchUsrBranchCode.setDisabled(true);
-		this.btnSearchUsrDeptCode.setDisabled(true);
+		this.usrBranchCode.setReadonly(true);
+		this.usrDeptCode.setReadonly(true);
 		this.usrIsMultiBranch.setDisabled(true);
-		this.btnSearchUsrLanguage.setDisabled(true);
 		this.usrDesg.setReadonly(true);
 
 		if(isWorkFlowEnabled()){
@@ -1420,9 +1428,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrLanguage.setValue("");
 		this.usrDftAppId.setValue("");
 		this.usrBranchCode.setValue("");
-		this.lovDescUsrBranchCodeName.setValue("");
+		this.usrBranchCode.setDescription("");
 		this.usrDeptCode.setValue("");
-		this.lovDescUsrDeptCodeName.setValue("");
+		this.usrDeptCode.setDescription("");
 		this.usrIsMultiBranch.setChecked(false);
 		this.usrDesg.setValue("");
 		this.usrDesg.setDescription("");
@@ -1683,18 +1691,17 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	 * This method displays ExtendedSearchListBox with branch details
 	 * @param event
 	 */
-	public void onClick$btnSearchUsrBranchCode(Event event){
+	public void onFulfill$usrBranchCode(Event event){
 		logger.debug("Entering  "+event.toString());
-		Object dataObject = ExtendedSearchListBox.show(this.window_SecurityUserDialog,"Branch");
+		Object dataObject = usrBranchCode.getObject();
 		if (dataObject instanceof String){
 			this.usrBranchCode.setValue(dataObject.toString());
-			this.lovDescUsrBranchCodeName.setValue("");
+			this.usrBranchCode.setDescription("");
 		}else{
 			Branch details= (Branch) dataObject;
 			if (details != null) {
 				this.usrBranchCode.setValue(details.getBranchCode());
-				this.lovDescUsrBranchCodeName.setValue(details.getBranchCode()
-						+"-"+details.getBranchDesc());
+				this.usrBranchCode.setDescription(details.getBranchDesc());
 			}
 		}
 		logger.debug("Leaving"+event.toString());
@@ -1705,18 +1712,18 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	 * This method displays ExtendedSearchListBox with Language details
 	 * @param event
 	 */
-	public void onClick$btnSearchUsrLanguage(Event event){
+	public void onFulfill$usrLanguage(Event event){
 		logger.debug("Entering  "+event.toString());
-		Object dataObject = ExtendedSearchListBox.show(this.window_SecurityUserDialog,"Language");
+		Object dataObject = usrLanguage.getObject();
 		if (dataObject instanceof String){
 			this.usrLanguage.setValue(dataObject.toString());
-			this.lovDescUsrLanguage.setValue("");
+			this.usrLanguage.setDescription("");
 		} 
 		else{
 			Language details=(Language)dataObject;
 			if(details!=null){
 				this.usrLanguage.setValue(details.getLngCode().trim());
-				this.lovDescUsrLanguage.setValue(details.getLngCode()+"-"+details.getLngDesc());
+				this.usrLanguage.setDescription(details.getLngDesc());
 
 			}
 		}
@@ -1728,17 +1735,17 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	 * This method displays ExtendedSearchListBox with Department details
 	 * @param event
 	 */
-	public void onClick$btnSearchUsrDeptCode(Event event){
+	public void onFulfill$usrDeptCode(Event event){
 		logger.debug("Entering " + event.toString());
-		Object dataObject = ExtendedSearchListBox.show(this.window_SecurityUserDialog,"Department");
+		Object dataObject = usrDeptCode.getObject();
 		if (dataObject instanceof String){
 			this.usrDeptCode.setValue(dataObject.toString());
-			this.lovDescUsrDeptCodeName.setValue("");
+			this.usrDeptCode.setDescription("");
 		}else{
 			Department details= (Department) dataObject;
 			if (details != null) {
 				this.usrDeptCode.setValue(details.getDeptCode());
-				this.lovDescUsrDeptCodeName.setValue(details.getDeptCode()+"-"+details.getDeptDesc());
+				this.usrDeptCode.setDescription(details.getDeptDesc());
 			}
 		}
 		logger.debug("Leaving " + event.toString());
