@@ -1881,7 +1881,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void onFulfill$facilityCCY(Event event) {
 		logger.debug("Entering");
 		Object object = this.facilityCCY.getObject();
-		if (object != null && object instanceof Currency) {
+		if (object instanceof Currency) {
 			Currency currency = (Currency) object;
 			ccyFormat = currency.getCcyEditField();
 		}
