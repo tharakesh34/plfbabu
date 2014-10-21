@@ -1420,7 +1420,7 @@ public class ScheduleCalculator {
 		isCompareToExpected = false;
 		expectedResult = BigDecimal.ZERO;
 		
-		BigDecimal totalDesiredProfit = financeMain.getTotalProfit();
+		BigDecimal totalDesiredProfit = financeMain.getTotalGrossPft();
 		
 		BigDecimal totOrginalPayment = BigDecimal.ZERO;
 
