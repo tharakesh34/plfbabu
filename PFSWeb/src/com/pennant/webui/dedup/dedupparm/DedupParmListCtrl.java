@@ -539,7 +539,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 		
 		// De-dup parameter query module
 		if (!StringUtils.trimToEmpty(this.queryModule.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_queryModule.getSelectedItem(), this.queryModules.getValue(), "queryModule");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_queryModule.getSelectedItem(), this.queryModule.getValue(), "queryModule");
 		}
 		// De-dup parameter query desc
 		if (!StringUtils.trimToEmpty(this.queryDesc.getValue()).equals("")) {
