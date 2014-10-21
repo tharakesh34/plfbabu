@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -1165,6 +1164,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl implements 
 	 * @param acId
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private String getAcBalance(String acId){
 		if (!StringUtils.trimToEmpty(acId).equals("")) {
 			return PennantAppUtil.amountFormate(getAccountInterfaceService().getAccountAvailableBal(acId), formatter);
