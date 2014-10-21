@@ -988,7 +988,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl implements Serializabl
 	}
 	public void onFulfill$finCcy(Event event){
 		Object obj=this.finCcy.getObject();
-		if (obj !=null && obj instanceof Currency) {
+		if (obj instanceof Currency) {
 			Currency currency=(Currency) obj;
 			this.ccyFormat=currency.getCcyEditField();
 		}
