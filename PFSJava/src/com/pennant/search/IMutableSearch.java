@@ -25,25 +25,25 @@ import java.util.List;
  * 
  */
 public interface IMutableSearch extends ISearch {
-	public IMutableSearch setFirstResult(int firstResult);
+	 IMutableSearch setFirstResult(int firstResult);
 
-	public IMutableSearch setMaxResults(int maxResults);
+	 IMutableSearch setMaxResults(int maxResults);
 
-	public IMutableSearch setPage(int page);
+	 IMutableSearch setPage(int page);
 
-	public IMutableSearch setSearchClass(Class<?> searchClass);
+	 IMutableSearch setSearchClass(Class<?> searchClass);
 
-	public IMutableSearch setFilters(List<Filter> filters);
+	 IMutableSearch setFilters(List<Filter> filters);
 
-	public IMutableSearch setDisjunction(boolean disjunction);
+	 IMutableSearch setDisjunction(boolean disjunction);
 
-	public IMutableSearch setSorts(List<Sort> sorts);
+	 IMutableSearch setSorts(List<Sort> sorts);
 
-	public IMutableSearch setFields(List<Field> fields);
+	 IMutableSearch setFields(List<Field> fields);
 	
-	public IMutableSearch setDistinct(boolean distinct);
+	 IMutableSearch setDistinct(boolean distinct);
 
-	public IMutableSearch setFetches(List<String> fetches);
+	 IMutableSearch setFetches(List<String> fetches);
 
-	public IMutableSearch setResultMode(int resultMode);
+	 IMutableSearch setResultMode(int resultMode);
 }
