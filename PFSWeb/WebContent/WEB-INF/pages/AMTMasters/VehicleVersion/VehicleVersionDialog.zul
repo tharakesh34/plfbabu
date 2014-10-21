@@ -74,17 +74,7 @@
 									id="label_VehicleVersionDialog_VehicleModelId"
 									value="${c:l('label_VehicleVersionDialog_VehicleModelId.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<hbox>
-										<longbox id="vehicleModelId"
-											width="171px" visible="false" />
-										<textbox
-											id="lovDescVehicleModelIdName" width="171px" readonly="true" />
-										<button
-											id="btnSearchVehicleModelId"
-											image="/images/icons/LOVSearch.png"  />
-									</hbox>
+									<extendedcombobox id="vehicleModelId"/>
 								</hbox>
 							</row>
 							<row visible="true">
