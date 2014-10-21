@@ -278,7 +278,7 @@ public class Filter implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public void add(Filter filter) {
-		if (value == null || !(value instanceof List)) {
+		if (!(value instanceof List)) {
 			value = new ArrayList<Filter>();
 		}
 		((List<Filter>) value).add(filter);
@@ -290,9 +290,9 @@ public class Filter implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
     public void remove(Filter filter) {
-		if (value == null || !(value instanceof List)) {
+		if (!(value instanceof List)) {
 			return;
-		}
+			}
 		((List<Filter>) value).remove(filter);
 	}
 
