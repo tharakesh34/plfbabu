@@ -61,12 +61,12 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.amtmasters.VehicleManufacturer;
@@ -84,7 +84,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -107,9 +106,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 */
 	protected Window window_VehicleModelDialog; // autowired
 	protected Textbox vehicleModelDesc; 		// autowired
-	protected Longbox vehicleManufacterId;
-	protected Textbox lovDescManufacter;
-	protected Button  btnSearchManufacter;
+	protected ExtendedCombobox vehicleManufacterId;
 
 	protected Label recordStatus; // autowired
 	protected Radiogroup userAction;
@@ -225,6 +222,13 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
 		this.vehicleModelDesc.setMaxlength(50);
+		this.vehicleManufacterId.setInputAllowed(false);
+		this.vehicleManufacterId.setDisplayStyle(3); 
+		this.vehicleManufacterId.setMandatoryStyle(true);
+		this.vehicleManufacterId.setModuleName("VehicleManufacturer");
+		this.vehicleManufacterId.setValueColumn("ManufacturerId");
+		this.vehicleManufacterId.setDescColumn("ManufacturerName");
+		this.vehicleManufacterId.setValidateColumns(new String[] { "ManufacturerId" });
 		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
@@ -427,11 +431,11 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 	public void doWriteBeanToComponents(VehicleModel aVehicleModel) {
 		logger.debug("Entering") ;
 		this.vehicleModelDesc.setValue(aVehicleModel.getVehicleModelDesc());
-		this.vehicleManufacterId.setValue(aVehicleModel.getVehicleManufacturerId());
+		this.vehicleManufacterId.setValue(String.valueOf(aVehicleModel.getVehicleManufacturerId()));
 		if (aVehicleModel.isNewRecord()){
-			   this.lovDescManufacter.setValue("");
+			   this.vehicleManufacterId.setDescription("");
 		}else{
-			   this.lovDescManufacter.setValue(aVehicleModel.getVehicleManufacturerId()+"-"+aVehicleModel.getLovDescVehicleManufacturerName());
+			   this.vehicleManufacterId.setDescription(aVehicleModel.getLovDescVehicleManufacturerName());
 		}
 		this.recordStatus.setValue(aVehicleModel.getRecordStatus());
 		logger.debug("Leaving");
@@ -449,8 +453,8 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		
 		try {
-			aVehicleModel.setLovDescManufacter(this.lovDescManufacter.getValue());
-			aVehicleModel.setVehicleManufacturerId(this.vehicleManufacterId.getValue());	
+			aVehicleModel.setLovDescManufacter(this.vehicleManufacterId.getDescription());
+			aVehicleModel.setVehicleManufacturerId(Long.valueOf(this.vehicleManufacterId.getValidatedValue()));	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -506,9 +510,9 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
-			this.lovDescManufacter.focus();
+			this.vehicleManufacterId.focus();
 		} else {
-			this.lovDescManufacter.focus();
+			this.vehicleManufacterId.focus();
 			if (isWorkFlowEnabled()){
 				this.btnNotes.setVisible(true);
 				doEdit();
@@ -543,8 +547,8 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 */
 	private void doStoreInitValues() {
 		logger.debug("Entering");
-		this.oldVar_lovDescManufacter=this.lovDescManufacter.getValue();
-		this.oldVar_vehicleManufacterId=this.vehicleManufacterId.longValue();
+		this.oldVar_lovDescManufacter=this.vehicleManufacterId.getValue();
+		this.oldVar_vehicleManufacterId=Long.valueOf(this.vehicleManufacterId.getValue());
 		this.oldVar_vehicleModelDesc = this.vehicleModelDesc.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving") ;
@@ -555,8 +559,8 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 */
 	private void doResetInitValues() {
 		logger.debug("Entering");
-		this.vehicleManufacterId.setValue(this.oldVar_vehicleManufacterId);
-		this.lovDescManufacter.setValue(this.oldVar_lovDescManufacter);
+		this.vehicleManufacterId.setValue(String.valueOf(this.oldVar_vehicleManufacterId));
+		this.vehicleManufacterId.setValue(this.oldVar_lovDescManufacter);
 		this.vehicleModelDesc.setValue(this.oldVar_vehicleModelDesc);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 		
@@ -576,7 +580,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering");
 		//To clear the Error Messages
 		doClearMessage();
-		if (this.oldVar_vehicleManufacterId != this.vehicleManufacterId.longValue()){
+		if (this.oldVar_vehicleManufacterId != Long.valueOf(this.vehicleManufacterId.getValue())){
 			return true;
 		}
 		if (this.oldVar_vehicleModelDesc != this.vehicleModelDesc.getValue()) {
@@ -720,7 +724,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchManufacter.setDisabled(true);
+		this.vehicleManufacterId.setReadonly(true);
 		this.vehicleModelDesc.setReadonly(true);
 		
 		if(isWorkFlowEnabled()){
@@ -742,8 +746,8 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 	public void doClear() {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
-		this.vehicleManufacterId.setText("");
-		this.lovDescManufacter.setValue("");
+		this.vehicleManufacterId.setValue("");
+		this.vehicleManufacterId.setDescription("");
 		this.vehicleModelDesc.setValue("");
 	logger.debug("Leaving");
 	}
@@ -968,19 +972,20 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 		return processCompleted;
 	}
 	
-	public void onClick$btnSearchManufacter(Event event){
-		   
-		   Object dataObject = ExtendedSearchListBox.show(this.window_VehicleModelDialog,"VehicleManufacturer");
+	public void onFulfill$vehicleManufacterId(Event event){
+		logger.debug("Entering"+event);
+		   Object dataObject = vehicleManufacterId.getObject();
 		   if (dataObject instanceof String){
-			   this.vehicleManufacterId.setText(dataObject.toString());
-			   this.lovDescManufacter.setValue("");
+			   this.vehicleManufacterId.setValue(dataObject.toString());
+			   this.vehicleManufacterId.setDescription("");
 		   }else{
 			   VehicleManufacturer details= (VehicleManufacturer) dataObject;
 				if (details != null) {
-					this.vehicleManufacterId.setValue(details.getManufacturerId());
-					this.lovDescManufacter.setValue(details.getManufacturerId()+"-"+details.getManufacturerName());
+					this.vehicleManufacterId.setValue(String.valueOf(details.getManufacturerId()));
+					this.vehicleManufacterId.setDescription(details.getManufacturerName());
 				}
 		   }
+		   logger.debug("Leaving"+event);
 		}
 
 
@@ -1082,10 +1087,10 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 	}	
 
 	private void doSetLOVValidation() {
-		this.lovDescManufacter.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleManufacturerDialog_ManufacturerId.value"), null, true));
+		this.vehicleManufacterId.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleManufacturerDialog_ManufacturerId.value"), null, true));
 	}
 	private void doRemoveLOVValidation() {
-		this.lovDescManufacter.setConstraint("");
+		this.vehicleManufacterId.setConstraint("");
 	}
 	
 	private Notes getNotes(){
@@ -1098,7 +1103,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl implements Serializable 
 	
 	private void doClearMessage() {
 		logger.debug("Entering");
-		this.lovDescManufacter.setErrorMessage("");
+		this.vehicleManufacterId.setErrorMessage("");
 		this.vehicleModelDesc.setErrorMessage("");
 	logger.debug("Leaving");
 	}
