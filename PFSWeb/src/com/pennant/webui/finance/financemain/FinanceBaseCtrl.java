@@ -3568,7 +3568,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 				// validate finance profit rate
 				if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getValue().equals("")) {
-					errorList.add(new ErrorDetails("btnSearchGraceBaseRate", "E0013", new String[] {}, new String[] {}));
+					errorList.add(new ErrorDetails("graceBaseRate", "E0013", new String[] {}, new String[] {}));
 				}
 
 				// validate selected profit date is matching to profit frequency or not
@@ -3655,7 +3655,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			//FinanceMain Details Tab ---> 3. Repayment Period Details
 
 			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getValue().equals("")) {
-				errorList.add(new ErrorDetails("btnSearchRepayBaseRate", "E0013", new String[] {}, null));
+				errorList.add(new ErrorDetails("repayBaseRate", "E0013", new String[] {}, null));
 			}
 
 			// validate selected repayments date is matching to repayments
@@ -4267,7 +4267,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.graceBaseRate.getDescription().equals("")) {
+				if (this.graceBaseRate.getValue().equals("")) {
 					aFinanceMain.setLovDescGraceBaseRateName("");
 					aFinanceMain.setGraceBaseRate(null);
 				} else {
@@ -4291,7 +4291,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.graceSpecialRate.getDescription().equals("")) {
+				if (this.graceSpecialRate.getValue().equals("")) {
 					aFinanceMain.setLovDescGraceSpecialRateName("");
 					aFinanceMain.setGraceSpecialRate(null);
 				} else {
@@ -4317,7 +4317,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			try {
 				if (this.gracePftRate.getValue() != null && !this.gracePftRate.isReadonly()) {
 					if ((this.gracePftRate.getValue().intValue() > 0) && 
-							(!this.graceBaseRate.getDescription().equals(""))) {
+							(!this.graceBaseRate.getValue().equals(""))) {
 
 						throw new WrongValueException(this.gracePftRate, Labels.getLabel("EITHER_OR",
 								new String[] {Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_GraceBaseRate.value"),
@@ -4493,7 +4493,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.repayBaseRate.getDescription().equals("")) {
+			if (this.repayBaseRate.getValue().equals("")) {
 				aFinanceMain.setLovDescRepayBaseRateName("");
 				aFinanceMain.setRepayBaseRate(null);
 			} else {
@@ -4507,7 +4507,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.repaySpecialRate.getDescription().equals("")) {
+			if (this.repaySpecialRate.getValue().equals("")) {
 				aFinanceMain.setLovDescRepaySpecialRateName("");
 				aFinanceMain.setRepaySpecialRate(null);
 			} else {
@@ -4563,7 +4563,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		try {
 			if (this.repayProfitRate.getValue() != null && !this.repayProfitRate.isReadonly()) {
 				if ((this.repayProfitRate.getValue().intValue() > 0)
-						&& (!this.repayBaseRate.getDescription().equals(""))) {
+						&& (!this.repayBaseRate.getValue().equals(""))) {
 					throw new WrongValueException(this.repayProfitRate, Labels.getLabel("EITHER_OR",
 							new String[] {Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_RepayBaseRate.value"),
 							Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_ProfitRate.value") }));
@@ -5742,7 +5742,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				this.grcMargin.setValue(financeType.getFinGrcMargin());
 			}
 
-			if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getDescription().equals("")) {
+			if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getValue().equals("")) {
 
 				this.graceBaseRate.setValue(financeType.getFinGrcBaseRate());
 
@@ -5751,7 +5751,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			}
 
 			if (!this.graceSpecialRate.isReadonly()
-					&& this.graceSpecialRate.getDescription().equals("")) {
+					&& this.graceSpecialRate.getValue().equals("")) {
 
 				this.graceSpecialRate.setValue(financeType.getFinGrcSplRate());
 				this.graceSpecialRate.setDescription(financeType.getFinGrcSplRate() == null ?
@@ -5880,7 +5880,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		if(CalculationConstants.RATE_BASIS_R.equals(getComboboxValue(this.repayRateBasis))){
 
-			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getDescription().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getValue().equals("")) {
 
 				this.repayBaseRate.setValue(financeType.getFinBaseRate());
 
@@ -5888,7 +5888,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 						: financeType.getLovDescFinBaseRateName());
 			}
 
-			if (!this.repaySpecialRate.isReadonly() && this.repaySpecialRate.getDescription().equals("")) {
+			if (!this.repaySpecialRate.isReadonly() && this.repaySpecialRate.getValue().equals("")) {
 
 				this.repaySpecialRate.setValue(financeType.getFinSplRate());
 
