@@ -56,20 +56,20 @@ import com.pennant.backend.service.MenuDetailsService;
  */
 public class MenuDetailsServiceImpl implements MenuDetailsService {
 
-	private MenuDetailsDAO MenuDetailsDAO;
+	private MenuDetailsDAO menuDetailsDAO;
 
 	/**
 	 * @return the menuDetailsDAO
 	 */
 	public MenuDetailsDAO getMenuDetailsDAO() {
-		return MenuDetailsDAO;
+		return menuDetailsDAO;
 	}
 
 	/**
 	 * @param menuDetailsDAO the menuDetailsDAO to set
 	 */
 	public void setMenuDetailsDAO(MenuDetailsDAO menuDetailsDAO) {
-		MenuDetailsDAO = menuDetailsDAO;
+		this.menuDetailsDAO = menuDetailsDAO;
 	}
 
 	/**
@@ -78,11 +78,11 @@ public class MenuDetailsServiceImpl implements MenuDetailsService {
 	 * @see de.forsthaus.backend.dao.MenuDetailsDAO#getMenuDetailsByApp(java.lang.String)
 	 */
 	public List<MenuDetails> getMenuDetailsByApp(String appCode) {
-		return MenuDetailsDAO.getMenuDetailsByApp(appCode);
+		return menuDetailsDAO.getMenuDetailsByApp(appCode);
 	}
 
 	@Override
     public Map<String, Object> getLastLoginInfo(String procedureName, String usrLogin, Map<String, Object> inputParamMap,  Map<String, Object> outputParamMap) {
-		return MenuDetailsDAO.getLastLoginInfo(procedureName, usrLogin, inputParamMap, outputParamMap);	    
+		return menuDetailsDAO.getLastLoginInfo(procedureName, usrLogin, inputParamMap, outputParamMap);	    
     }
 }
