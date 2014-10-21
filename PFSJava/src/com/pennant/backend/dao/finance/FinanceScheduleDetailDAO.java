@@ -85,5 +85,5 @@ public interface FinanceScheduleDetailDAO {
 	void updateForRpy(FinanceScheduleDetail financeScheduleDetail, String rpyFor);
 	Date getFirstRepayDate(String finReference);
 	List<ScheduleMapDetails> getFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate, Date schdTodate);
-	public List<AccountHoldStatus> getFutureInstAmtByRepayAc(Date dateValueDate, Date futureDate);
+	List<AccountHoldStatus> getFutureInstAmtByRepayAc(Date dateValueDate, Date futureDate);
 }
