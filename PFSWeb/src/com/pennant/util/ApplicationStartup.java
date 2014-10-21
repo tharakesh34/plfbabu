@@ -8,14 +8,11 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
-import org.quartz.CronTrigger;
-import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
-import com.pennant.app.util.StatisticsSheduler;
 import com.pennant.app.util.SystemParameterDetails;
 
 public class ApplicationStartup  implements ServletContextListener
@@ -31,6 +28,7 @@ public class ApplicationStartup  implements ServletContextListener
 		SchedulerFactory sf = new StdSchedulerFactory();
 		Scheduler schedular = null;
 		try{
+			@SuppressWarnings("unused")
 			ServletContext sc = event.getServletContext();
 			schedular = sf.getScheduler();
 			//cornExpression is the String value which represents job shecdule frequency for e.g one job has to execute 
