@@ -80,6 +80,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.HolidayUtil;
 import com.pennant.backend.dao.smtmasters.WeekendMasterDAO;
@@ -101,7 +102,6 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.pagging.PagedListWrapper;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -124,7 +124,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 	 */
 	protected Window window_HolidayMasterDialog; // autoWired
 
-	protected Textbox holidayCode; 		// autoWired
+	protected ExtendedCombobox holidayCode; 		// autoWired
 	protected Textbox holidayCodeDesc; 	// autoWired
 	protected Decimalbox holidayYear; 	// autoWired
 	protected Combobox holidayType;		// autoWired
@@ -172,7 +172,6 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 	protected Button btnHelp; 			// autowire
 	protected Button btnNotes; 			// autowire
 	protected Button btnNew_HolidayDet; // autowire
-	protected Button btnSearchHolidayCode; // autowire
 	protected Listheader listheader_HolidayCode;
 
 	// ServiceDAOs / Domain Classes
@@ -261,6 +260,12 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 		logger.debug("Entering ");
 		// Empty sent any required attributes
 		this.holidayCode.setMaxlength(3);
+		this.holidayCode.setMandatoryStyle(true);
+		this.holidayCode.setModuleName("Currency");
+		this.holidayCode.setValueColumn("CcyCode");
+		this.holidayCode.setDescColumn("CcyDesc");
+		this.holidayCode.setValidateColumns(new String[] { "CcyCode" });
+		
 		this.holidayCodeDesc.setMaxlength(50);
 		this.holidayYear.setMaxlength(4);
 		this.holidayYear.setFormat("###0");
@@ -398,17 +403,18 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 	 * @param event
 	 * 
 	 */
-	public void onClick$btnSearchHolidayCode(Event event) {
+	public void onFulfill$holidayCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_HolidayMasterDialog, "Currency");
+		Object dataObject = holidayCode.getObject();
 		if (dataObject instanceof String) {
 			this.holidayCode.setValue(dataObject.toString());
+			this.holidayCode.setDescription("");
 			this.holidayCodeDesc.setValue("");
 		} else {
 			Currency details = (Currency) dataObject;
 			if (details != null) {
 				this.holidayCode.setValue(details.getCcyCode());
+				this.holidayCode.setDescription("");
 				this.holidayCodeDesc.setValue(details.getCcyDesc());
 			}
 		}
@@ -923,8 +929,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 	private void doEdit() {
 		logger.debug("Entering ");
 		if (getHolidayMaster().isNewRecord()) {
-			this.holidayCode.setReadonly(true);
-			this.btnSearchHolidayCode.setVisible(true);
+			this.holidayCode.setReadonly(false);
 			this.holidayType.setDisabled(false);
 			this.holidayYear.setDisabled(false);
 			this.btnCancel.setVisible(false);
@@ -935,7 +940,6 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 			this.holidayType.setDisabled(true);
 			this.holidayYear.setDisabled(true);
 			this.btnCancel.setVisible(true);
-			this.btnSearchHolidayCode.setVisible(false);
 			this.holidayCodeDesc.focus();
 			this.btnNew_HolidayDet.setVisible(true);
 		}

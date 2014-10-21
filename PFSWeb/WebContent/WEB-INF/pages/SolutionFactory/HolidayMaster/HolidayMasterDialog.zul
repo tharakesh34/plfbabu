@@ -69,13 +69,7 @@
 										id="label_HolidayMasterDialog_HolidayCode"
 										value="${c:l('label_HolidayMasterDialog_HolidayCode.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<textbox id="holidayCode"
-											maxlength="3" width="45px" />
-										<button
-											id="btnSearchHolidayCode" image="/images/icons/LOVSearch.png"
-											 />
+										<extendedcombobox id="holidayCode" />
 									</hbox>
 								</row>
 								<row>
