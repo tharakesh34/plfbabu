@@ -78,6 +78,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -98,7 +99,6 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.pagging.PagedListWrapper;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -121,7 +121,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	protected Window window_WeekendMasterDialog; // autowired
 
-	protected Textbox weekendCode; // autowired
+	protected ExtendedCombobox weekendCode; // autowired
 	protected Textbox weekendDesc; // autowired
 	protected Listbox weekend; // autowired
 	protected Textbox weekendText; // autowired
@@ -156,8 +156,6 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected Button btnClose; // autowire
 	protected Button btnHelp; // autowire
 	protected Button btnNotes; // autowire
-
-	protected Button btnSearchCurrencyCode;// autowire
 
 	private List<ValueLabel> weekendList = null;
 	protected Paging paging;
@@ -254,6 +252,12 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.weekendCode.setMaxlength(3);
+		this.weekendCode.setMandatoryStyle(true);
+		this.weekendCode.setModuleName("Currency");
+		this.weekendCode.setValueColumn("CcyCode");
+		this.weekendCode.setDescColumn("CcyDesc");
+		this.weekendCode.setValidateColumns(new String[] { "CcyCode" });
+		
 		this.weekendDesc.setMaxlength(50);
 		this.weekend.setMaxlength(50);
 
@@ -801,7 +805,6 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.btnCancel.setVisible(false);
 		} else {
 			this.weekendCode.setReadonly(true);
-			this.btnSearchCurrencyCode.setVisible(false);
 			this.btnCancel.setVisible(true);
 		}
 
@@ -829,7 +832,6 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 	public void doReadOnly() {
 		logger.debug("Entering doReadOnly()");
 		this.weekendCode.setReadonly(true);
-		this.btnSearchCurrencyCode.setDisabled(true);
 		this.weekendDesc.setReadonly(false);
 		this.weekend.setDisabled(true);
 
@@ -846,20 +848,22 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Leaving doReadOnly()");
 	}
 
-	public void onClick$btnSearchCurrencyCode(Event event) {
-		logger.debug("onClick$btnSearchCurrencyCode()");
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_WeekendMasterDialog, "Currency");
+	public void onFulfill$weekendCode(Event event) {
+		logger.debug("Entering"+event);
+		Object dataObject = weekendCode.getObject();
 		if (dataObject instanceof String) {
 			this.weekendCode.setValue(dataObject.toString());
-
+			this.weekendCode.setDescription("");
+			this.weekendDesc.setValue("");
 		} else {
 			Currency details = (Currency) dataObject;
 			if (details != null) {
 				this.weekendCode.setValue(details.getCcyCode());
+				this.weekendCode.setDescription("");
 				this.weekendDesc.setValue(details.getCcyDesc());
 			}
 		}
+		logger.debug("Leaving"+event);
 	}
 
 	/**

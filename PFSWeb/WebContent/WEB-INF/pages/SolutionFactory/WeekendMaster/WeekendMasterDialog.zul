@@ -76,13 +76,7 @@
 													id="label_WeekendMasterDialog_WeekendCode"
 													value="${c:l('label_WeekendMasterDialog_WeekendCode.value')}" />
 												<hbox>
-													<space spacing="2px"
-														sclass="mandatory" />
-													<textbox
-														id="weekendCode" maxlength="3" width="45px" />
-													<button
-														id="btnSearchCurrencyCode"
-														image="/images/icons/LOVSearch.png"  />
+													<extendedcombobox id="weekendCode"/>	
 												</hbox>
 											</row>
 											<row visible="true">
