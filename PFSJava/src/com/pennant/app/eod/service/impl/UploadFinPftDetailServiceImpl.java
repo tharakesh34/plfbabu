@@ -44,7 +44,7 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 		
 		ChunkContext context = null;
 		ExecutionStatus exeStatus = null;
-		if(object != null &&  object instanceof ChunkContext) {
+		if(object instanceof ChunkContext) {
 			context = (ChunkContext)object;
 		} else {
 			exeStatus = (ExecutionStatus)object;
