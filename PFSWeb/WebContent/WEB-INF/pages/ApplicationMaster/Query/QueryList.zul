@@ -18,10 +18,6 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
 						style="border-style: none;">
-						<button id="button_QueryList_NewQuery"
-							 label = "NEW" visible="false"
-							autodisable="button_QueryList_QuerySearch,button_QueryList_PrintList,button_QueryList_NewQuery,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_QueryList_NewQuery.tooltiptext')}" />
 						<button id="button_QueryList_QuerySearch"
 							 label="Search"
 							autodisable="button_QueryList_QuerySearch,button_QueryList_PrintList,button_QueryList_NewQuery,btnRefresh,btnHelp"
@@ -34,6 +30,10 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
+					    <button id="button_QueryList_NewQuery"
+							 label = "NEW" visible="false"
+							autodisable="button_QueryList_QuerySearch,button_QueryList_PrintList,button_QueryList_NewQuery,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_QueryList_NewQuery.tooltiptext')}" />
 						<button id="btnRefresh" 
 							label="Refresh"
 							autodisable="button_QueryList_QuerySearch,button_QueryList_PrintList,button_QueryList_NewQuery,btnRefresh,btnHelp"
@@ -97,7 +97,7 @@
 								</row>
 								<row>
 									<label id="label_QueryList_Active"
-										value="${c:l('label_CityList_Active.value')}" />
+										value="${c:l('label_QueryList_Active.value')}" />
 									<listbox id="sortOperator_Active"
 										width="43px" mold="select" rows="1" />
 									<checkbox id="active"
