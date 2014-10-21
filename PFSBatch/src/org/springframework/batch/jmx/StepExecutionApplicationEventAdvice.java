@@ -18,7 +18,6 @@ package org.springframework.batch.jmx;
 
 import org.aspectj.lang.JoinPoint;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
