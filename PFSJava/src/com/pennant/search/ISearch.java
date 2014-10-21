@@ -85,7 +85,7 @@ public interface ISearch {
 	 * 
 	 * @see #getResultMode()
 	 */
-	public static final int RESULT_AUTO = 0;
+	 static final int RESULT_AUTO = 0;
 
 	/**
 	 * Value for result mode. <code>RESULT_ARRAY</code> returns each result as
@@ -104,7 +104,7 @@ public interface ISearch {
 	 * 
 	 * @see #getResultMode()
 	 */
-	public static final int RESULT_ARRAY = 1;
+	 static final int RESULT_ARRAY = 1;
 
 	/**
 	 * Value for result mode. <code>RESULT_LIST</code> returns each result as a
@@ -122,7 +122,7 @@ public interface ISearch {
 	 * 
 	 * @see #getResultMode()
 	 */
-	public static final int RESULT_LIST = 2;
+	 static final int RESULT_LIST = 2;
 
 	/**
 	 * Value for result mode. <code>RESULT_MAP</code> returns each row as a map
@@ -141,7 +141,7 @@ public interface ISearch {
 	 * 
 	 * @see #getResultMode()
 	 */
-	public static final int RESULT_MAP = 3;
+	 static final int RESULT_MAP = 3;
 
 	/**
 	 * Value for result mode. <code>RESULT_SINGLE</code> - Exactly one field or
@@ -160,7 +160,7 @@ public interface ISearch {
 	 * 
 	 * @see #getResultMode()
 	 */
-	public static final int RESULT_SINGLE = 4;
+	 static final int RESULT_SINGLE = 4;
 
 	/**
 	 * Zero based index of first result record to return.
@@ -168,7 +168,7 @@ public interface ISearch {
 	 * <p>
 	 * <code>&lt;= 0</code> for unspecified value.
 	 */
-	public int getFirstResult();
+	 int getFirstResult();
 
 	/**
 	 * The maximum number of records to return. Also used as page size when
@@ -177,7 +177,7 @@ public interface ISearch {
 	 * <p>
 	 * <code>&lt;= 0</code> for unspecified value.
 	 */
-	public int getMaxResults();
+	 int getMaxResults();
 
 	/**
 	 * Zero based index of the page of records to return. The size of a page is
@@ -193,25 +193,16 @@ public interface ISearch {
 	 * <p>
 	 * <code>&lt;= 0</code> for unspecified value.
 	 */
-	public int getPage();
-
-	public Class<?> getSearchClass();
-
-	public List<Filter> getFilters();
-
-	public boolean isDisjunction();
-
-	public List<Sort> getSorts();
-
-	public List<Field> getFields();
-	
-	public boolean isDistinct();
-
-	public List<String> getFetches();
-	
-	public String getTabelName();
-
-	public String getWhereClause();
+	 int getPage();
+	 Class<?> getSearchClass();
+	 List<Filter> getFilters();
+	 boolean isDisjunction();
+	 List<Sort> getSorts();
+	 List<Field> getFields();
+	 boolean isDistinct();
+	 List<String> getFetches();
+	 String getTabelName();
+	 String getWhereClause();
 	
 	/**
 	 * Result mode tells the search what form to use for the results. Options
@@ -226,6 +217,6 @@ public interface ISearch {
 	 * @see #RESULT_MAP
 	 * @see #RESULT_SINGLE
 	 */
-	public int getResultMode();
+	 int getResultMode();
 
 }
