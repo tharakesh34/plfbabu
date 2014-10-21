@@ -816,7 +816,7 @@ public class SearchUtil {
 	 * Return true if the search objects have equivalent contents.
 	 */
 	public static boolean equals(ISearch search, Object obj) {
-		if (search == obj){
+		if (search.equals(obj)){
 			return true;
 		}
 		if (!(obj instanceof ISearch)){
