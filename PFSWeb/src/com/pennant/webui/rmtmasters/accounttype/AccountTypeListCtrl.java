@@ -493,6 +493,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 		/*this.pagingAccountTypeList.setActivePage(0);
 		Events.postEvent("onCreate", this.window_AccountTypeList, event);
 		this.window_AccountTypeList.invalidate();*/
+		doSearch();
 		logger.debug("Leaving"+event.toString());
 	}
 
