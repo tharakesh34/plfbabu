@@ -66,9 +66,9 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -89,7 +89,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -110,9 +109,9 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window 		window_FinanceWorkFlowDialog; 	// autoWired
-	protected Textbox 		finType; 						// autoWired
+	protected ExtendedCombobox 	finType; 					// autoWired
 	protected Combobox 		screenCode; 					// autoWired
-	protected Textbox 		workFlowType; 					// autoWired
+	protected ExtendedCombobox 	workFlowType; 				// autoWired
 	protected Combobox 		moduleName; 					// autoWired
 	protected Label 		recordStatus; 					// autoWired
 	protected Radiogroup 	userAction;
@@ -145,12 +144,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	protected Button btnHelp; 		// autoWire
 	protected Button btnNotes; 		// autoWire
 
-	protected Button btnSearchFinType; 		// autoWire
-	protected Textbox lovDescFinTypeName;
 	private transient String 		oldVar_lovDescFinTypeName;
 	
-	protected Button btnSearchWorkFlowType; // autoWire
-	protected Textbox lovDescWorkFlowTypeName;
 	private transient String 		oldVar_lovDescWorkFlowTypeName;
 
 	// ServiceDAOs / Domain Classes
@@ -233,7 +228,13 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Entering") ;
 		//Empty sent any required attributes
 		this.finType.setMaxlength(8);
-		this.workFlowType.setMaxlength(50);
+		this.finType.setMandatoryStyle(true);
+		doSetFinTypeProperties();
+		this.workFlowType.setMandatoryStyle(true);
+		this.workFlowType.setModuleName("WorkFlowDetails");
+		this.workFlowType.setValueColumn("WorkFlowType");
+		this.workFlowType.setDescColumn("WorkFlowDesc");
+		this.workFlowType.setValidateColumns(new String[] { "WorkFlowType" });
         this.screenCode.setSelectedIndex(0);
         readOnlyComponent(true, this.screenCode);
         
@@ -248,6 +249,25 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Leaving") ;
 	}
 
+	
+	private void doSetFinTypeProperties(){
+		logger.debug("Entering") ;
+		if (this.moduleName.getSelectedItem() != null && !this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
+			if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_FINANCE)) {
+				this.finType.setModuleName("FinanceType");
+				this.finType.setValueColumn("FinType");
+				this.finType.setDescColumn("FinTypeDesc");
+				this.finType.setValidateColumns(new String[] { "FinType" });
+			}else if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_FACILITY)) {
+				this.finType.setModuleName("CAFFacilityType");
+				this.finType.setValueColumn("FacilityType");
+				this.finType.setDescColumn("FacilityDesc");
+				this.finType.setValidateColumns(new String[] { "FacilityType" });
+			}
+		}
+		logger.debug("Leaving") ;
+	}
+	
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
@@ -446,15 +466,15 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.workFlowType.setValue(aFinanceWorkFlow.getWorkFlowType());
 
 		if (aFinanceWorkFlow.isNewRecord()){
-			this.lovDescFinTypeName.setValue("");
-			this.lovDescWorkFlowTypeName.setValue("");
+			this.finType.setDescription("");
+			this.workFlowType.setDescription("");
 		}else{
 			if (aFinanceWorkFlow.getModuleName().equals(PennantConstants.WORFLOW_MODULE_FINANCE)) {
-				this.lovDescFinTypeName.setValue(aFinanceWorkFlow.getFinType()+"-"+aFinanceWorkFlow.getLovDescFinTypeName());
+				this.finType.setDescription(aFinanceWorkFlow.getLovDescFinTypeName());
 			}else if (aFinanceWorkFlow.getModuleName().equals(PennantConstants.WORFLOW_MODULE_FACILITY)) {
-				this.lovDescFinTypeName.setValue(aFinanceWorkFlow.getFinType()+"-"+aFinanceWorkFlow.getLovDescFacilityTypeName());
+				this.finType.setDescription(aFinanceWorkFlow.getLovDescFacilityTypeName());
 			}
-			this.lovDescWorkFlowTypeName.setValue(aFinanceWorkFlow.getWorkFlowType()+"-"+aFinanceWorkFlow.getLovDescWorkFlowTypeName());
+			this.workFlowType.setDescription(aFinanceWorkFlow.getLovDescWorkFlowTypeName());
 		}
 		this.recordStatus.setValue(aFinanceWorkFlow.getRecordStatus());
 		logger.debug("Leaving");
@@ -481,8 +501,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 			wve.add(we);
 		}
 		try {
-			aFinanceWorkFlow.setLovDescFinTypeName(this.lovDescFinTypeName.getValue());
-			aFinanceWorkFlow.setFinType(this.finType.getValue());	
+			aFinanceWorkFlow.setLovDescFinTypeName(this.finType.getDescription());
+			aFinanceWorkFlow.setFinType(this.finType.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -492,8 +512,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 			wve.add(we);
 		}
 		try {
-			aFinanceWorkFlow.setLovDescWorkFlowTypeName(this.lovDescWorkFlowTypeName.getValue());
-			aFinanceWorkFlow.setWorkFlowType(this.workFlowType.getValue());	
+			aFinanceWorkFlow.setLovDescWorkFlowTypeName(this.workFlowType.getDescription());
+			aFinanceWorkFlow.setWorkFlowType(this.workFlowType.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -582,10 +602,10 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Entering");
 		this.oldVar_finType = this.finType.getValue();
 		this.oldVar_moduleName = this.moduleName.getSelectedItem().getValue().toString();
-		this.oldVar_lovDescFinTypeName = this.lovDescFinTypeName.getValue();
+		this.oldVar_lovDescFinTypeName = this.finType.getDescription();
 		this.oldVar_screenCode = this.screenCode.getValue();
 		this.oldVar_workFlowType = this.workFlowType.getValue();
-		this.oldVar_lovDescWorkFlowTypeName = this.lovDescWorkFlowTypeName.getValue();
+		this.oldVar_lovDescWorkFlowTypeName = this.workFlowType.getDescription();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving") ;
 	}
@@ -596,10 +616,10 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	private void doResetInitValues() {
 		logger.debug("Entering");
 		this.finType.setValue(this.oldVar_finType);
-		this.lovDescFinTypeName.setValue(this.oldVar_lovDescFinTypeName);
+		this.finType.setDescription(this.oldVar_lovDescFinTypeName);
 		this.screenCode.setValue(this.oldVar_screenCode);
 		this.workFlowType.setValue(this.oldVar_workFlowType);
-		this.lovDescWorkFlowTypeName.setValue(this.oldVar_lovDescWorkFlowTypeName);
+		this.workFlowType.setDescription(this.oldVar_lovDescWorkFlowTypeName);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
 		if(isWorkFlowEnabled()){
@@ -662,16 +682,16 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * Set Validations for LOV Fields
 	 */	
 	private void doSetLOVValidation() {
-		this.lovDescFinTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value"), null, true));
-		this.lovDescWorkFlowTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_WorkFlowType.value"), null, true));
+		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value"), null, true));
+		this.workFlowType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_WorkFlowType.value"), null, true));
 	}
 	
 	/**
 	 * Remove Validations for LOV Fields
 	 */
 	private void doRemoveLOVValidation() {
-		this.lovDescFinTypeName.setConstraint("");
-		this.lovDescWorkFlowTypeName.setConstraint("");
+		this.finType.setConstraint("");
+		this.workFlowType.setConstraint("");
 	}
 	
 	/**
@@ -679,9 +699,10 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	private void doClearMessage() {
 		logger.debug("Entering");
-		this.lovDescFinTypeName.setErrorMessage("");
+		this.finType.setErrorMessage("");
 		this.screenCode.setErrorMessage("");
-		this.lovDescWorkFlowTypeName.setErrorMessage("");
+		this.workFlowType.setErrorMessage("");
+		this.moduleName.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
@@ -778,17 +799,17 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Entering");
 
 		if (getFinanceWorkFlow().isNewRecord()){
-			this.btnSearchFinType.setDisabled(false);
+			this.finType.setReadonly(false);
 			this.moduleName.setDisabled(false);
 			this.btnCancel.setVisible(false);
 		}else{
-			this.btnSearchFinType.setDisabled(true);
+			this.finType.setReadonly(true);
 			this.moduleName.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
 
 		this.screenCode.setDisabled(isReadOnly("FinanceWorkFlowDialog_screenCode"));
-		this.btnSearchWorkFlowType.setDisabled(isReadOnly("FinanceWorkFlowDialog_workFlowType"));
+		this.workFlowType.setReadonly(isReadOnly("FinanceWorkFlowDialog_workFlowType"));
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -814,9 +835,9 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchFinType.setDisabled(true);
+		this.finType.setReadonly(true);
 		this.screenCode.setDisabled(true);
-		this.btnSearchWorkFlowType.setDisabled(true);
+		this.workFlowType.setReadonly(true);
 
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -839,10 +860,10 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		
 		// remove validation, if there are a save before
 		this.finType.setValue("");
-		this.lovDescFinTypeName.setValue("");
+		this.finType.setDescription("");
 		this.screenCode.setValue("");
 		this.workFlowType.setValue("");
-		this.lovDescWorkFlowTypeName.setValue("");
+		this.workFlowType.setDescription("");
 		logger.debug("Leaving");
 	}
 
@@ -1088,51 +1109,46 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	// +++++++++++++ Search Button Component Events++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public void onClick$btnSearchFinType(Event event){
+	public void onFulfill$finType(Event event){
 		logger.debug("Entering" + event.toString());
 		
 		if (this.moduleName.getSelectedItem() == null || this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
 			throw new WrongValueException(this.moduleName,Labels.getLabel("FIELD_IS_MAND",new String[]{Labels.getLabel("label_FinanceWorkFlowDialog_moduleName.value")}));
 		}
 		Object dataObject=null;
-		if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_FINANCE)) {
-			dataObject = ExtendedSearchListBox.show(this.window_FinanceWorkFlowDialog,"FinanceType");
-		}else if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_FACILITY)) {
-			dataObject = ExtendedSearchListBox.show(this.window_FinanceWorkFlowDialog,"CAFFacilityType");
-		}
 		if (dataObject instanceof String){
 			this.finType.setValue(dataObject.toString());
-			this.lovDescFinTypeName.setValue("");
+			this.finType.setDescription("");
 		} else {
 			if (dataObject instanceof FinanceType) {
 				FinanceType details = (FinanceType) dataObject;
 				if (details != null) {
 					this.finType.setValue(details.getFinType());
-					this.lovDescFinTypeName.setValue(details.getFinType() + "-" + details.getFinTypeDesc());
+					this.finType.setDescription(details.getFinTypeDesc());
 				}
 			} else if (dataObject instanceof CAFFacilityType) {
 				CAFFacilityType details = (CAFFacilityType) dataObject;
 				if (details != null) {
 					this.finType.setValue(details.getFacilityType());
-					this.lovDescFinTypeName.setValue(details.getFacilityType() + "-" + details.getFacilityDesc());
+					this.finType.setDescription(details.getFacilityDesc());
 				}
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	public void onClick$btnSearchWorkFlowType(Event event){
+	public void onFulfill$workFlowType(Event event){
 		logger.debug("Entering" + event.toString());
 		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceWorkFlowDialog,"WorkFlowDetails");
+		Object dataObject = workFlowType.getObject();
 		if (dataObject instanceof String){
 			this.workFlowType.setValue(dataObject.toString());
-			this.lovDescWorkFlowTypeName.setValue("");
+			this.workFlowType.setDescription("");
 		}else{
 			WorkFlowDetails details= (WorkFlowDetails) dataObject;
 			if (details != null) {
 				this.workFlowType.setValue(details.getWorkFlowType());
-				this.lovDescWorkFlowTypeName.setValue(details.getWorkFlowType()+"-"+details.getWorkFlowDesc());
+				this.workFlowType.setDescription(details.getWorkFlowDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1158,7 +1174,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void onChange$moduleName(Event event){
 		logger.debug("Entering" + event.toString());
 		this.finType.setValue("");
-		this.lovDescFinTypeName.setValue("");
+		this.finType.setDescription("");
+		doSetFinTypeProperties();
 		logger.debug("Leaving" + event.toString());
 	}
 

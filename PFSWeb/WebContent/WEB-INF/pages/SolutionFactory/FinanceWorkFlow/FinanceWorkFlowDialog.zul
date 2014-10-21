@@ -81,15 +81,7 @@
 									id="label_FinanceWorkFlowDialog_FinType"
 									value="${c:l('label_FinanceWorkFlowDialog_FinType.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="finType" width="72px"
-										visible="false" />
-									<textbox id="lovDescFinTypeName"
-										width="250px" readonly="true" />
-									<button
-										id="btnSearchFinType"
-										image="/images/icons/LOVSearch.png"  />
+									<extendedcombobox id="finType"/>	
 								</hbox>
 							</row>
 							<row visible="true">
@@ -108,15 +100,7 @@
 									id="label_FinanceWorkFlowDialog_WorkFlowType"
 									value="${c:l('label_FinanceWorkFlowDialog_WorkFlowType.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="workFlowType"
-										width="450px" visible="false" />
-									<textbox
-										id="lovDescWorkFlowTypeName" width="250px" readonly="true" />
-									<button
-										id="btnSearchWorkFlowType"
-										image="/images/icons/LOVSearch.png"  />
+									<extendedcombobox id="workFlowType"/>	
 								</hbox>
 							</row>
 						</rows>
