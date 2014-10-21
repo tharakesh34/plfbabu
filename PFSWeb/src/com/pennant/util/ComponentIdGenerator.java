@@ -42,7 +42,7 @@ public class ComponentIdGenerator implements IdGenerator {
 		if (compInfo != null) {
 			pageName = compInfo.getParent().getPageDefinition()
 					.getRequestPath();
-			pageName = pageName.substring(pageName.lastIndexOf("/") + 1,
+			pageName = pageName.substring(pageName.lastIndexOf('/') + 1,
 					pageName.lastIndexOf("zul") - 1);
 		}
 
