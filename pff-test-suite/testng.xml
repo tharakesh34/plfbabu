@@ -13,11 +13,7 @@
 			<class name="com.pennant.test.schedule.ChangeRepayTestFactory" />
 			<class name="com.pennant.test.schedule.AddDisbursementTestFactory" />
 			<class name="com.pennant.test.schedule.ChangeRateTestFactory" />
+			<class name="com.pennant.test.schedule.AddTermTestFactory" />
 		</classes>
-	</test>
-	<test name="schedule-test-others">
-		<packages>
-			<package name="com.pennant.test.disburse.*" />
-		</packages>
 	</test>
 </suite>
