@@ -1379,7 +1379,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finRepayPftOnFrq.setChecked(aFinanceMain.isFinRepayPftOnFrq());
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 		this.repayMargin.setValue(aFinanceMain.getRepayMargin());
-		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,");
+		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,GRCNDPAY,");
 
 		if (!StringUtils.trimToEmpty(aFinanceMain.getRepayBaseRate()).equals("")) {
 
@@ -2861,7 +2861,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		  if(this.stepFinance.isChecked()){
 			 fillComboBox(this.repayRateBasis, CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
 			 this.repayRateBasis.setDisabled(true);
-			 fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,");
+			 fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,GRCNDPAY,");
 			 this.cbScheduleMethod.setDisabled(true);
 		  }
 			

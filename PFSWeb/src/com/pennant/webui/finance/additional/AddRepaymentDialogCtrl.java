@@ -479,12 +479,12 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				this.cbSchdMthd.setDisabled(false);
 				this.wIAmount.setDisabled(true);
 			}else {
-				fillComboBox(this.cbSchdMthd,getFinanceScheduleDetail().getSchdMethod(), schMthds, "" );
+				fillComboBox(this.cbSchdMthd,getFinanceScheduleDetail().getSchdMethod(), schMthds, ",GRCNDPAY," );
 				this.cbSchdMthd.setDisabled(true);
 				this.wIAmount.setDisabled(false);
 			}
 		}else {
-			fillComboBox(this.cbSchdMthd, "", schMthds, "");
+			fillComboBox(this.cbSchdMthd, "", schMthds, ",GRCNDPAY,");
 			this.cbSchdMthd.setDisabled(true);
 		}
 		//Check if schedule header is null or not and set the recal type fields.
@@ -1014,7 +1014,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				fillComboBox(this.cbSchdMthd,"", schMthds, excludeFields);
 			}else if((frSpecifier.equals(CalculationConstants.REPAY) ||frSpecifier.equals(CalculationConstants.MATURITY)) && 
 					(toSpecifier.equals(CalculationConstants.REPAY) || (toSpecifier.equals(CalculationConstants.MATURITY)))) {
-				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(), schMthds, "");
+				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(), schMthds, ",GRCNDPAY,");
 				this.cbSchdMthd.setDisabled(true);
 				if(this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.PFT)) {
 					this.wIAmount.setValue(PennantAppUtil.formateAmount(

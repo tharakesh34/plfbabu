@@ -2164,7 +2164,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.finRepayPftOnFrq.setChecked(aFinanceMain.isFinRepayPftOnFrq());
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 		this.repayMargin.setValue(aFinanceMain.getRepayMargin());
-		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,");
+		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,GRCNDPAY,");
 
 		if (!StringUtils.trimToEmpty(aFinanceMain.getRepayBaseRate()).equals("")) {
 
@@ -3289,7 +3289,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		} else {
 			fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
 			this.repayRateBasis.setDisabled(isReadOnly("FinanceMainDialog_repayRateBasis"));
-			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,");
+			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,GRCNDPAY,");
 			this.cbScheduleMethod.setDisabled(isReadOnly("FinanceMainDialog_scheduleMethod"));
 		}
 		logger.debug("Leaving : "+event.toString());
@@ -5697,7 +5697,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		if (getComboboxValue(this.cbScheduleMethod).equals("#")) {
-			fillComboBox(this.cbScheduleMethod, financeType.getFinSchdMthd(), schMethodList, "");
+			fillComboBox(this.cbScheduleMethod, financeType.getFinSchdMthd(), schMethodList, ",NO_PAY,GRCNDPAY,");
 		}
 
 		if (getComboboxValue(this.cbProfitDaysBasis).equals("#")) {
@@ -6780,7 +6780,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		if(this.stepFinance.isChecked()){
 			fillComboBox(this.repayRateBasis,CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
 			this.repayRateBasis.setDisabled(true);
-			fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,");
+			fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,GRCNDPAY,");
 			this.cbScheduleMethod.setDisabled(true);
 		} 
 	}

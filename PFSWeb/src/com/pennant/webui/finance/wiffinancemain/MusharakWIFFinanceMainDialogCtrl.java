@@ -1041,7 +1041,7 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 		this.finRepayPftOnFrq.setChecked(aFinanceMain.isFinRepayPftOnFrq());
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 		this.repayMargin.setValue(aFinanceMain.getRepayMargin());
-		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,");
+		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,GRCNDPAY,");
 
 		if (!StringUtils.trimToEmpty(aFinanceMain.getRepayBaseRate()).equals("")) {
 
@@ -5070,7 +5070,7 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 
 		if (getComboboxValue(this.cbScheduleMethod).equals("#")) {
 			fillComboBox(this.cbScheduleMethod, 
-					getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, "");
+					getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",GRCNDPAY,");
 		}
 
 		if (getComboboxValue(this.cbProfitDaysBasis).equals("#")) {

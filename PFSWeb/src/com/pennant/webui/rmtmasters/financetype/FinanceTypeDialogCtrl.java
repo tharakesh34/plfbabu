@@ -1303,7 +1303,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		fillFrqCode(this.cbfinRpyFrqCode, aFinanceType.getFinRpyFrq(), isReadOnly("FinanceTypeDialog_finRpyFrq"));
 		fillFrqMth(this.cbfinRpyFrqMth, aFinanceType.getFinRpyFrq(), isReadOnly("FinanceTypeDialog_finRpyFrq"));
 		fillFrqDay(this.cbfinRpyFrqDays, aFinanceType.getFinRpyFrq(), isReadOnly("FinanceTypeDialog_finRpyFrq"));
-		fillComboBox(this.cbfinSchdMthd, aFinanceType.getFinSchdMthd(), schMthds, "");
+		fillComboBox(this.cbfinSchdMthd, aFinanceType.getFinSchdMthd(), schMthds, ",NO_PAY,GRCNDPAY,");
 		this.finIsIntCpz.setChecked(aFinanceType.isFinIsIntCpz());
 		this.finCpzFrq.setValue(aFinanceType.getFinCpzFrq());
 		fillFrqCode(this.cbfinCpzFrqCode, aFinanceType.getFinCpzFrq(), isReadOnly("FinanceTypeDialog_finCpzFrq"));

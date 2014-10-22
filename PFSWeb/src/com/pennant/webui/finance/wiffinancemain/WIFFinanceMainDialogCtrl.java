@@ -1154,7 +1154,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.finRepayPftOnFrq.setChecked(aFinanceMain.isFinRepayPftOnFrq());
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 		this.repayMargin.setValue(aFinanceMain.getRepayMargin());
-		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,");
+		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,GRCNDPAY,");
 
 		if (!StringUtils.trimToEmpty(aFinanceMain.getRepayBaseRate()).equals("")) {
 
@@ -2321,7 +2321,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if(this.stepFinance.isChecked()){
 				fillComboBox(this.repayRateBasis, CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
 				this.repayRateBasis.setDisabled(true);
-				fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,");
+				fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,GRCNDPAY,");
 				this.cbScheduleMethod.setDisabled(true);
 			}
 			// stores the initial data for comparing if they are changed
@@ -4501,12 +4501,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if(this.stepFinance.isChecked()){
 			fillComboBox(this.repayRateBasis,CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
 			this.repayRateBasis.setDisabled(true);
-			fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,");
+			fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,GRCNDPAY,");
 			this.cbScheduleMethod.setDisabled(true);
 		} else {
 			fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
 			this.repayRateBasis.setDisabled(false);//--TODO : Apply right
-			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,");
+			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,GRCNDPAY,");
 			this.cbScheduleMethod.setDisabled(false);//--TODO : Apply right
 		}
 		logger.debug("Leaving : "+event.toString());
@@ -5797,7 +5797,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (getComboboxValue(this.cbScheduleMethod).equals("#")) {
 			fillComboBox(this.cbScheduleMethod, 
-					getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, "");
+					getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",GRCNDPAY,");
 		}
 
 		if (getComboboxValue(this.cbProfitDaysBasis).equals("#")) {

@@ -318,7 +318,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 			}
 		}
 		setProfitDaysCalType();
-		setScheduleMethod();
+		fillComboBox(this.finSchdMthd, "", listScheduleMethod, ",NO_PAY,GRCNDPAY,");
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -333,20 +333,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 			comboitem.setLabel(listProfitDaysBasis.get(i).getLabel());
 			comboitem.setValue(listProfitDaysBasis.get(i).getValue());
 			this.finDaysCalType.appendChild(comboitem);
-		}
-		logger.debug("Leaving ");
-	}
-	/**
-	 * This method sets all rightsTypes as ComboItems for ComboBox
-	 */
-	private void setScheduleMethod() {
-		logger.debug("Entering ");
-		Comboitem comboitem;
-		for (int i = 0; i < listScheduleMethod.size(); i++) {
-			comboitem = new Comboitem();
-			comboitem.setLabel(listScheduleMethod.get(i).getLabel());
-			comboitem.setValue(listScheduleMethod.get(i).getValue());
-			this.finSchdMthd.appendChild(comboitem);
 		}
 		logger.debug("Leaving ");
 	}

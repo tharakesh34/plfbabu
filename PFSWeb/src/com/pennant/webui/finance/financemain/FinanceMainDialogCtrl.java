@@ -7706,7 +7706,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (getComboboxValue(this.cbScheduleMethod).equals("#")) {
 			fillComboBox(this.cbScheduleMethod, 
-					getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), PennantAppUtil.getScheduleMethod(), "");
+					getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), PennantAppUtil.getScheduleMethod(), ",GRCNDPAY,");
 		}
 
 		if (getComboboxValue(this.cbProfitDaysBasis).equals("#")) {

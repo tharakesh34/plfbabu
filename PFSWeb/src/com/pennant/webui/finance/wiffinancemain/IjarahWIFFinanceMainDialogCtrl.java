@@ -1051,7 +1051,7 @@ public class IjarahWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finRepayPftOnFrq.setChecked(aFinanceMain.isFinRepayPftOnFrq());
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 		this.repayMargin.setValue(aFinanceMain.getRepayMargin());
-		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,");
+		fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(), schMethodList, ",NO_PAY,GRCNDPAY,");
 
 		if (!StringUtils.trimToEmpty(aFinanceMain.getRepayBaseRate()).equals("")) {
 
