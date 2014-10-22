@@ -2032,7 +2032,7 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = orgFinScheduleData.getFinanceMain();
 		orgFinScheduleData = calEffectiveRate(orgFinScheduleData, CalculationConstants.TOTAL,
-		        (finMain.getTotalProfit().add(finMain.getTotalCpz())), finMain.getFinStartDate(),
+		        finMain.getTotalGrossPft(), finMain.getFinStartDate(),
 		        finMain.getMaturityDate(), true);
 
 		finScheduleData.getFinanceMain().setEffectiveRateOfReturn(
