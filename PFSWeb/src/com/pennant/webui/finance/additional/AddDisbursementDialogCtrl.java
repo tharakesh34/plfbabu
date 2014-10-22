@@ -109,9 +109,10 @@ public class AddDisbursementDialogCtrl  extends GFCBaseCtrl implements Serializa
 	protected Combobox 		cbReCalType; 					// autowired
 	protected Row 			tillDateRow;					// autowired
 	protected Row 			addTermRow;						// autowired
+	protected Row 			disbursementAccount;			// autowired
 	protected Textbox 		disbAcctId; 					// autoWired
-	protected Space 		space_disbAcctId;						// autoWired
-	protected Button 		btnSearchDisbAcctId; 					// autoWired
+	protected Space 		space_disbAcctId;				// autoWired
+	protected Button 		btnSearchDisbAcctId; 			// autoWired
 
 	private Date lastPaidDate = null;
 
@@ -177,6 +178,9 @@ public class AddDisbursementDialogCtrl  extends GFCBaseCtrl implements Serializa
 			setFinanceScheduleDetail(null);
 		}
 		
+		if (args.containsKey("isWIF")) {
+			this.disbursementAccount.setVisible(false);
+		} 
 
 		// READ OVERHANDED params !
 		// we get the WIFFinanceMainDialogCtrl controller. So we have access
@@ -451,7 +455,7 @@ public class AddDisbursementDialogCtrl  extends GFCBaseCtrl implements Serializa
 							new String[]{Labels
 									.getLabel("label_AddDisbursementDialog_FromDate.value")}));
 		}
-		if (!this.btnSearchDisbAcctId.isDisabled()) {
+		if (this.disbursementAccount.isVisible()) {
 			this.disbAcctId.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
 					new String[] { Labels.getLabel("label_AddDisbursementDialog_DisbAcctId.value") }));
 		}

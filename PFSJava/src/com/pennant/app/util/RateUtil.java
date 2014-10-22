@@ -73,8 +73,8 @@ public class RateUtil implements Serializable {
 	 * the given date returns Base rate,Special rate ,Reference Rate in a HashMap
 	 */
 	public static RateDetail getRefRate(RateDetail rateDetail) {
+		logger.debug("Entering");
 		boolean error = false;
-		logger.info("Entering");
 
 		ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 
@@ -159,7 +159,7 @@ public class RateUtil implements Serializable {
 			rateDetail.setErrorDetails(errorDetails.get(0));
 		}
 
-		logger.info("Leaving");
+		logger.debug("Leaving");
 		return rateDetail;
 	}
 

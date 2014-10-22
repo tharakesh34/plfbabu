@@ -1259,6 +1259,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			map.put("disbursement", true);
 			map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 			map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+			map.put("isWIF",isWIF);
 
 			// call the ZUL-file with the parameters packed in a map
 			try {
@@ -1419,6 +1420,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("disbursement", true);
 		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("isWIF", isWIF);
 		
 		try {
 			Executions.createComponents(
