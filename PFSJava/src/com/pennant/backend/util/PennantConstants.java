@@ -321,9 +321,6 @@ public class PennantConstants {
 	public static final String RVW_UNPAID_REVIEWS = "RVWUPR";
 	public static final String RVW_ALL = "RVWALL";
 
-	//server Operating system 
-	public static final String server_OperatingSystem = "WINDOWS"; //if Os is Linux set "LINUX"
-
 	public static final String AGREEMENT_DEFINITION_DOCS = "DOC, TXT, PNG, JPEG, GIF, PDF";
 
 	//Mail Template Configuration Type Codes

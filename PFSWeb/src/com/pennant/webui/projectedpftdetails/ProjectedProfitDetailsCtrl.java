@@ -233,6 +233,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl{
 		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
 		SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
 		String usrName = (securityUser.getUsrFName().trim() +" "+securityUser.getUsrMName().trim()+" "+securityUser.getUsrLName()).trim();
+		String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
 		
 		reportArgumentsMap.put("userName", usrName);
 		reportArgumentsMap.put("reportHeading", reportConfiguration.getReportHeading());
@@ -255,7 +256,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl{
 			reportArgumentsMap.put("whereCondition", "");
 		}
 
-		if(PennantConstants.server_OperatingSystem.equals("LINUX")){			
+		if(serverOperateSystem.equals("LINUX")){			
 			reportArgumentsMap.put("organizationLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_ORG_LOGO_PATH").toString());
 			reportArgumentsMap.put("productLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_PRODUCT_LOGO_PATH").toString());
 		}else{
@@ -266,7 +267,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl{
 		reportArgumentsMap.put("searchCriteria", searchCriteriaDesc.toString());
 		String reportName=reportConfiguration.getReportJasperName();//This will come dynamically
 		String reportSrc = "";
-		if(PennantConstants.server_OperatingSystem.equals("LINUX")){		
+		if(serverOperateSystem.equals("LINUX")){		
 			reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_ORG_PATH").toString()+"/"+ reportName+".jasper";
 		}else{
 			reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_ORG_PATH").toString()+"/"+ reportName+".jasper";

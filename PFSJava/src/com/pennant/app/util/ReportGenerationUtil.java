@@ -82,9 +82,10 @@ public class ReportGenerationUtil implements Serializable {
 		logger.debug("Entering");
 
 		String reportSrc = "";
+		String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
 
 		reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_FINANCE_PATH").toString()+ "/" +reportName+ ".jasper";
-        if(PennantConstants.server_OperatingSystem.equals("LINUX")){			
+        if(serverOperateSystem.equals("LINUX")){			
         	reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_FINANCE_PATH").toString()+ "/" +reportName+ ".jasper";
         }
 
@@ -120,6 +121,7 @@ public class ReportGenerationUtil implements Serializable {
 		try {
 			JRBeanCollectionDataSource subListDS;
 			Map<String, Object> parameters = new HashMap<String, Object>();
+			String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
 			
 			// Generate the main report data source
 			List mainList = new ArrayList();
@@ -142,7 +144,7 @@ public class ReportGenerationUtil implements Serializable {
 
 			// Set the parameters
 			parameters.put("userName", userName);
-			if(PennantConstants.server_OperatingSystem.equals("LINUX")){			
+			if(serverOperateSystem.equals("LINUX")){			
 				parameters.put("organizationLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_ORG_LOGO_PATH").toString());
 				parameters.put("productLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_PRODUCT_LOGO_PATH").toString());
 	        }else{
@@ -202,9 +204,10 @@ public class ReportGenerationUtil implements Serializable {
 		try {
 			JRBeanCollectionDataSource subListDS = null;
 			Map<String, Object> parameters = new HashMap<String, Object>();
+			String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
 			
 			String reportSrc = "";
-			if(PennantConstants.server_OperatingSystem.equals("LINUX")){	
+			if(serverOperateSystem.equals("LINUX")){	
 				reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_AGRMNT_PATH").toString()+"/ChecksMain.jasper";
 			}else{
 				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_AGRMNT_PATH").toString()+"/ChecksMain.jasper";
@@ -225,7 +228,7 @@ public class ReportGenerationUtil implements Serializable {
 
 			// Set the parameters
 			parameters.put("userName", userName);
-			if(PennantConstants.server_OperatingSystem.equals("LINUX")){			
+			if(serverOperateSystem.equals("LINUX")){			
 				parameters.put("organizationLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_ORG_LOGO_PATH").toString());
 				parameters.put("productLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_PRODUCT_LOGO_PATH").toString());
 	        }else{

@@ -316,11 +316,14 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreem
 			if (getFacility() != null) {
 				custid = getFacility().getCustID();
 				String templatePath = "";
-				if (PennantConstants.server_OperatingSystem.equals("WINDOWS")) {
+				String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
+				
+				if (serverOperateSystem.equals("WINDOWS")) {
 					templatePath = SystemParameterDetails.getSystemParameterValue("FINANCE_AGREEMENTS_PATH").toString() + "/";
 				} else {
 					templatePath = SystemParameterDetails.getSystemParameterValue("LINUX_AGGREMENTS_TEMPLATES_PATH").toString();
 				}
+				
 				TemplateEngine engine = new TemplateEngine(templatePath, templatePath);
 				engine.setTemplate(data.getLovDescAggReportName());
 				engine.loadTemplate();

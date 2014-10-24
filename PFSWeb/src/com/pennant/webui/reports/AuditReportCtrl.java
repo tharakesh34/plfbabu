@@ -119,10 +119,11 @@ public class AuditReportCtrl extends GFCBaseCtrl implements Serializable {
 		map.put("productLogo",productLogo);
 			
 		String userName=getUserWorkspace().getUserDetails().getUsername();
+		String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
 
 		map.put("userName", userName);
 		String reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_AUDIT_PATH").toString()+ "/" +reportName+ ".jasper";
-		if(PennantConstants.server_OperatingSystem.equals("LINUX")){
+		if(serverOperateSystem.equals("LINUX")){
 			 reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_AUDIT_PATH").toString()+ "/" +reportName+ ".jasper";
 		}
 		try {			

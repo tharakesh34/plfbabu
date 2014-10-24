@@ -66,7 +66,6 @@ import com.pennant.backend.model.reports.ReportListHeader;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.reports.ReportListService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.systemmasters.academic.AcademicListCtrl;
 
 public class PTListReportUtils implements Serializable {
@@ -109,9 +108,10 @@ public class PTListReportUtils implements Serializable {
 			Map<String, Object> parameters = header.getReportListHeader(header);
 
 			parameters = reportList.getMainHeaderDetails(parameters);
+			String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
 			
 			//Set Report Images to parameter Fields
-			if(PennantConstants.server_OperatingSystem.equals("LINUX")){
+			if(serverOperateSystem.equals("LINUX")){
 				parameters.put("organizationLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_ORG_LOGO_PATH").toString());
 				parameters.put("productLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_PRODUCT_LOGO_PATH").toString());
 			}else{
@@ -130,20 +130,20 @@ public class PTListReportUtils implements Serializable {
 			if(module.equals(Labels.getLabel("label_CheckList.value"))){
 
 				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_LIST_PATH").toString()+"/"+"CheckListReport.jasper";
-				if(PennantConstants.server_OperatingSystem.equals("LINUX")){
+				if(serverOperateSystem.equals("LINUX")){
 					reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_LIST_PATH").toString()+ "/" +"CheckListReport.jasper";
 				}
 				reportList.getLabels();
 			} else if(module.equals(Labels.getLabel("label_SecurityRole.value"))){
 				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_LIST_PATH").toString()+"/"+"SecRoles.jasper";
-				if(PennantConstants.server_OperatingSystem.equals("LINUX")){
+				if(serverOperateSystem.equals("LINUX")){
 					reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_LIST_PATH").toString()+ "/" +"CheckListReport.jasper";
 				}
 				reportList.getLabels();
 			} else {
 
 				reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_LIST_PATH").toString()+"/"+reportList.getReportFileName()+ ".jasper";
-				if(PennantConstants.server_OperatingSystem.equals("LINUX")){
+				if(serverOperateSystem.equals("LINUX")){
 					reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_LIST_PATH").toString()+ "/" +reportList.getReportFileName()+ ".jasper";
 				}
 				reportList.getLabels();

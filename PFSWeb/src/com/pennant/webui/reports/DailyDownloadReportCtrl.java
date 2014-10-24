@@ -301,7 +301,8 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 		logger.debug("Entering");
 
 		String reportSrc = "";
-		if(PennantConstants.server_OperatingSystem.equals("LINUX")){		
+		String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
+		if(serverOperateSystem.equals("LINUX")){		
 			reportSrc = SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_DAILYDOWNLOAD").toString()+"/"+folderPath+"/"+ reportName+".jasper";
 		}else{
 			reportSrc = SystemParameterDetails.getSystemParameterValue("REPORTS_DAILYDOWNLOAD").toString()+"/"+folderPath+"/"+ reportName+".jasper";
@@ -312,7 +313,7 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
 		reportArgumentsMap.put("whereCondition","");
 
-		if(PennantConstants.server_OperatingSystem.equals("LINUX")){			
+		if(serverOperateSystem.equals("LINUX")){			
 			reportArgumentsMap.put("organizationLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_ORG_LOGO_PATH").toString());
 			reportArgumentsMap.put("productLogo",SystemParameterDetails.getSystemParameterValue("LINUX_REPORTS_PRODUCT_LOGO_PATH").toString());
 		}else{
@@ -434,8 +435,9 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 
 		File folder = null;
 		String tempFolderLocation = null;
+		String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
 		
-		if(PennantConstants.server_OperatingSystem.equals("LINUX")){		
+		if(serverOperateSystem.equals("LINUX")){		
 			tempFolderLocation = SystemParameterDetails.getSystemParameterValue("LINUX_DAILYDOWNLOAD_FOLDER_PATH").toString();
 		}else{
 			tempFolderLocation = SystemParameterDetails.getSystemParameterValue("DAILYDOWNLOAD_FOLDER_PATH").toString();

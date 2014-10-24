@@ -32,7 +32,6 @@ import com.aspose.words.ParagraphAlignment;
 import com.aspose.words.Run;
 import com.aspose.words.SaveFormat;
 import com.pennant.app.util.SystemParameterDetails;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.document.generator.HandleHtmlMergeField;
 import com.pennant.document.generator.Template;
 
@@ -48,9 +47,10 @@ public class  TemplateEngine {
 	
 	public TemplateEngine() throws Exception {
 		loadLicence();
+		String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
 		
 		String templatePath = "";
-		if(PennantConstants.server_OperatingSystem.equals("WINDOWS")){
+		if(serverOperateSystem.equals("WINDOWS")){
 			templatePath=SystemParameterDetails.getSystemParameterValue("FINANCE_AGREEMENTS_PATH").toString();
 		}else{
 			templatePath = SystemParameterDetails.getSystemParameterValue("LINUX_AGGREMENTS_TEMPLATES_PATH").toString();
@@ -61,9 +61,10 @@ public class  TemplateEngine {
 	public TemplateEngine(String assetCode) throws Exception {
 		
 		loadLicence();
+		String serverOperateSystem =  SystemParameterDetails.getSystemParameterValue("SERVER_OPERATESYSTEM").toString();
 
 		String templatePath = "";
-		if(PennantConstants.server_OperatingSystem.equals("WINDOWS")){
+		if(serverOperateSystem.equals("WINDOWS")){
 			templatePath=SystemParameterDetails.getSystemParameterValue("FINANCE_AGREEMENTS_PATH").toString()+"/"+assetCode;
 		}else{
 			templatePath = SystemParameterDetails.getSystemParameterValue("LINUX_AGGREMENTS_TEMPLATES_PATH").toString();
