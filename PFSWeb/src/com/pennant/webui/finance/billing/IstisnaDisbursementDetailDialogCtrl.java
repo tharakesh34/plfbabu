@@ -281,7 +281,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl implements 
 		int finFormatter = getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter();
 		
 		if(getFinanceDisbursement().getDisbType().equals("E")){
-			this.disbAccountId.setFinanceDetails(finType, PennantConstants.ISTISNA_EXPENCE_ACCNT_EVENT_CODE, finCCY);
+			this.disbAccountId.setFinanceDetails(finType, PennantConstants.FinanceAccount_ISEXPACCT, finCCY);
 			this.disbAccountId.setFormatter(finFormatter);
 	        this.disbAccountId.setCustCIF("");
 		} else if(getFinanceDisbursement().getDisbType().equals("A")) {

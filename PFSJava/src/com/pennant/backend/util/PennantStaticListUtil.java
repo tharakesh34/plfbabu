@@ -1043,32 +1043,19 @@ public class PennantStaticListUtil {
 		return categoryCodes;
 	}
 	
-	/**
-	 * List of Different Account Event Types
-	 * 
-	 * @return
-	 */
 	public static ArrayList<ValueLabel> getAccountEventsList() {
 		ArrayList<ValueLabel> eventrList = new ArrayList<ValueLabel>();
 		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_DISB, Labels.getLabel("label_DISBURSE")));
 		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_REPY, Labels.getLabel("label_REPAY")));
 		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_DWNP, Labels.getLabel("label_DOWNPAY")));
-		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_EXPN, Labels.getLabel("label_EXPENSE")));
-		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_BILL, Labels.getLabel("label_BILL")));
-		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_ADVP, Labels.getLabel("label_ADVPAY")));
 		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_ERLS, Labels.getLabel("label_ERLS")));
-		//eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_ISDA, Labels.getLabel("label_ISDA")));
 		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_ISCONTADV, Labels.getLabel("label_ISCONTADV")));
 		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_ISBILLACCT, Labels.getLabel("label_ISBILLACCT")));
 		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_ISCNSLTACCT, Labels.getLabel("label_ISCNSLTACCT")));
+		eventrList.add(new ValueLabel(PennantConstants.FinanceAccount_ISEXPACCT, Labels.getLabel("label_ISEXPACCT")));
 		return eventrList;
 	}
 	
-	/**
-	 * List of Different Account Event Types
-	 * 
-	 * @return
-	 */
 	public static ArrayList<ValueLabel> getWorkFlowConditionList() {
 		ArrayList<ValueLabel> 	workFlowConditionList = new ArrayList<ValueLabel>(6);
 		workFlowConditionList.add(new ValueLabel(PennantConstants.WF_PAST_DUE, Labels.getLabel("WF_PAST_DUE")));
@@ -1081,11 +1068,6 @@ public class PennantStaticListUtil {
 		return workFlowConditionList;
 	}
 	
-	/**
-	 * List of Different Audit  Types
-	 * 
-	 * @return
-	 */
 	public static ArrayList<ValueLabel> getCreditReviewAuditTypesList() {
 		if(creditReviewAuditTypesList == null){
 			creditReviewAuditTypesList = new ArrayList<ValueLabel>(3);

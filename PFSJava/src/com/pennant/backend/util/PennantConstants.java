@@ -274,16 +274,11 @@ public class PennantConstants {
 	public static final String FinanceAccount_DISB = "DISB";  
 	public static final String FinanceAccount_REPY = "REPAY";  
 	public static final String FinanceAccount_DWNP = "DWNP";  
-	public static final String FinanceAccount_EXPN = "EXPN";  
-	public static final String FinanceAccount_BILL = "BILL";  
-	public static final String FinanceAccount_ADVP = "ADVP";  
 	public static final String FinanceAccount_ERLS = "ERLS";  
-	public static final String FinanceAccount_ISDA = "ISDA";  
 	public static final String FinanceAccount_ISCONTADV = "CONTADV";  
 	public static final String FinanceAccount_ISBILLACCT = "BILLACCT";  
 	public static final String FinanceAccount_ISCNSLTACCT = "CNSLTFEE";  
-	
-	
+	public static final String FinanceAccount_ISEXPACCT = "EXPENSE";
 
 	public static final String SYSCUST = "SYSCUST";
 	public static final String SYSCNTG = "SYSCNTG";
@@ -600,9 +595,6 @@ public class PennantConstants {
 	
 	public static final int CURRENCY_USD_FORMATTER = 2;
 	public static final int CURRENCY_BHD_FORMATTER = 3;
-	
-	// For Istisna AccountSelection boxes
-	public static final String ISTISNA_EXPENCE_ACCNT_EVENT_CODE = "ISEXP";
 	
 	//Early Settlement Agreement Codes
 	public static final String EARLYSTL_AGGCODE = "'INSRELEASELETTER', 'TRAFFICRELEASELETTER'";
