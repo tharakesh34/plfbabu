@@ -331,6 +331,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 									remarks = remarks + " Advance " + " - ";
 								} else if (StringUtils.trimToEmpty(disbursement.getDisbType()).equals("E")) {
 									remarks = remarks + " Expense " + " - ";
+								} else if (StringUtils.trimToEmpty(disbursement.getDisbType()).equals("C")) {
+									remarks = remarks + " Consultancy Fee " + " - ";
 								}
 								if (StringUtils.trimToEmpty(disbursement.getDisbType()).equals("B")) {
 									remarks =remarks+ disbursement.getDisbRemarks() + " " + PennantAppUtil.amountFormate(disbursement.getDisbClaim(),getFinScheduleData().getFinanceMain().getLovDescFinFormatter());

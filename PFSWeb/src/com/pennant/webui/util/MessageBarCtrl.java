@@ -185,13 +185,18 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 		statusBarVersionIndicator.setParent(columns);
 
 		// Column for the Host Details 
-	    Column hostEnq = new Column();
-	    Image hostStatus =  new Image("/images/Pennant/HostUp.png");
-	    hostStatus.setStyle("background-color: #D6DCDE; padding: 0px");
-	    hostEnq.setStyle("background-color: #D6DCDE; padding: 0px");
-	    hostStatus.setTooltiptext(Labels.getLabel("label_HostStatus"));
-	    hostStatus.setParent(hostEnq);
-	    hostEnq.setParent(columns);
+		String hostStatusReq = com.pennant.app.util.SystemParameterDetails
+				.getSystemParameterValue("HOSTSTATUS_REQUIRED").toString();
+		
+		if (hostStatusReq.equals("Y")) {
+			Column hostEnq = new Column();
+			Image hostStatus =  new Image("/images/Pennant/HostUp.png");
+			hostStatus.setStyle("background-color: #D6DCDE; padding: 0px");
+			hostEnq.setStyle("background-color: #D6DCDE; padding: 0px");
+			hostStatus.setTooltiptext(Labels.getLabel("label_HostStatus"));
+			hostStatus.setParent(hostEnq);
+			hostEnq.setParent(columns);
+		}
 	    
 		Div div = new Div();
 		div.setStyle("padding: 1px;");
