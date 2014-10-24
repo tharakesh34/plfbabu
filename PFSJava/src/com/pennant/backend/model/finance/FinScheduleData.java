@@ -226,7 +226,11 @@ public class FinScheduleData {
 		if(financeType.isFInIsAlwGrace()){
 			
 			//Default Grace Period Group box UnVisible by setting Allow grace period to FALSE
-			this.financeMain.setAllowGrcPeriod(false);
+			if(financeType.getFinCategory().equals(PennantConstants.FINANCE_PRODUCT_ISTISNA)){
+				this.financeMain.setAllowGrcPeriod(financeType.isFInIsAlwGrace());
+			}else{
+				this.financeMain.setAllowGrcPeriod(false);
+			}
 			
 			this.financeMain.setGraceBaseRate(financeType.getFinGrcBaseRate());
 			this.financeMain.setLovDescGraceBaseRateName(financeType.getLovDescFinGrcBaseRateName());

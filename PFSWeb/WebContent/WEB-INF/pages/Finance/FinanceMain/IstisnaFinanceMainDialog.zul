@@ -180,20 +180,6 @@
 													<currencyBox
 														id="finAmount" />
 													<label
-														id="label_IstisnaFinanceMainDialog_DownPayment"
-														value="${c:l('label_IstisnaFinanceMainDialog_DownPayment.value')}"
-														visible="false" />
-													<currencyBox
-														id="downPayment" visible="false" />
-												</row>
-												<row id="row_downpayAcc"
-													visible="false">
-													<label
-														id="label_IstisnaFinanceMainDialog_DownPayAccount"
-														value="${c:l('label_IstisnaFinanceMainDialog_DownPayAccount.value')}" />
-													<accountSelectionBox
-														id="downPayAccount" />
-													<label
 														id="label_IstisnaFinanceMainDialog_AlwGrace"
 														value="${c:l('label_IstisnaFinanceMainDialog_AlwGrace.value')}"
 														visible="false" />
@@ -204,6 +190,20 @@
 														<checkbox
 															id="allowGrace" checked="true" />
 													</hbox>
+												</row>
+												<row id="row_downPayBank"
+													visible="false">
+													<label
+														id="label_IstisnaFinanceMainDialog_DownPayment"
+														value="${c:l('label_IstisnaFinanceMainDialog_DownPayment.value')}"
+														visible="false" />
+													<currencyBox
+														id="downPayBank" visible="false" />
+													<label
+														id="label_IstisnaFinanceMainDialog_DownPayAccount"
+														value="${c:l('label_IstisnaFinanceMainDialog_DownPayAccount.value')}" />
+													<accountSelectionBox
+														id="downPayAccount" />
 												</row>
 												<row>
 													<label

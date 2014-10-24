@@ -74,7 +74,6 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
@@ -154,8 +153,6 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 
 	//Finance Main Details Tab---> 1. Key Details
 	protected CurrencyBox 	securityDeposit;								// autoWired
-	protected CurrencyBox 	downPayment; 									// autoWired
-	protected Row 			row_downpayAcc;									// autoWired
 
 	protected Label 		label_IstisnaFinanceMainDialog_CommitRef; 		// autoWired
 	protected Label 		label_IstisnaFinanceMainDialog_CbbApproved;		// autoWired
@@ -269,7 +266,6 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		setLabel_FinanceMainDialog_GraceMargin(label_IstisnaFinanceMainDialog_GraceMargin);
 		setLabel_FinanceMainDialog_StepPolicy(label_IstisnaFinanceMainDialog_StepPolicy);
 		setLabel_FinanceMainDialog_numberOfSteps(label_IstisnaFinanceMainDialog_numberOfSteps);
-		this.downPayBank = downPayment;
 		setProductCode("Istisna");
 
 		
@@ -558,16 +554,15 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired() && 
 				aFinanceDetail.getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {
 			this.label_IstisnaFinanceMainDialog_DownPayment.setVisible(true);
-			this.downPayment.setDisabled(isReadOnly("FinanceMainDialog_downPayment"));
-			this.downPayment.setVisible(true);
-			this.row_downpayAcc.setVisible(true);
+			this.downPayBank.setDisabled(isReadOnly("FinanceMainDialog_downPayment"));
+			this.downPayBank.setVisible(true);
 
 			if (aFinanceMain.isNewRecord()) {
-				this.downPayment.setValue(BigDecimal.ZERO);
+				this.downPayBank.setValue(BigDecimal.ZERO);
 				this.downPayAccount.setValue("");
 				
 			} else {
-				this.downPayment.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayment(),
+				this.downPayBank.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayment(),
 						aFinanceMain.getLovDescFinFormatter()));
 				this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
 			}
@@ -1264,7 +1259,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.oldVar_finContractDate = this.finContractDate.getValue();
 		this.oldVar_finAmount = this.finAmount.getValue();
 		this.oldVar_securityDeposit = this.securityDeposit.getValue();
-		this.oldVar_downPayment = this.downPayment.getValue();
+		this.oldVar_downPayment = this.downPayBank.getValue();
 		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_finBranch = this.finBranch.getValue();
 		this.oldVar_lovDescFinBranchName = this.finBranch.getDescription();
@@ -1382,7 +1377,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.finContractDate.setValue(this.oldVar_finContractDate);
 		this.finAmount.setValue(this.oldVar_finAmount);
 		this.securityDeposit.setValue(this.oldVar_securityDeposit);
-		this.downPayment.setValue(this.oldVar_downPayment);
+		this.downPayBank.setValue(this.oldVar_downPayment);
 		this.finRepaymentAmount.setValue(this.oldVar_finRepaymentAmount);
 		this.custID.setValue(this.oldVar_custID);
 		this.finBranch.setValue(this.oldVar_finBranch);
@@ -1673,7 +1668,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 
 		BigDecimal oldDwnPayment = PennantAppUtil.unFormateAmount(this.oldVar_downPayment, formatter);
-		BigDecimal new_dwnPayment = PennantAppUtil.unFormateAmount(this.downPayment.getValue(), formatter);
+		BigDecimal new_dwnPayment = PennantAppUtil.unFormateAmount(this.downPayBank.getValue(), formatter);
 		if (oldDwnPayment.compareTo(new_dwnPayment) != 0) {
 			return true;
 		}
@@ -1871,7 +1866,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.finContractDate.setConstraint("");
 		this.finAmount.setConstraint("");
 		this.securityDeposit.setConstraint("");
-		this.downPayment.setConstraint("");
+		this.downPayBank.setConstraint("");
 		//M_ this.custID.setConstraint("");
 		this.finBranch.setConstraint("");
 		this.repayAcctId.setConstraint("");
@@ -2067,7 +2062,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.finContractDate.setErrorMessage("");
 		this.finAmount.setErrorMessage("");
 		this.securityDeposit.setErrorMessage("");
-		this.downPayment.setErrorMessage("");
+		this.downPayBank.setErrorMessage("");
 		//M_ this.custID.setErrorMessage("");
 		this.finBranch.setErrorMessage("");
 		this.repayAcctId.setErrorMessage("");
@@ -2949,7 +2944,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 				this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 				this.securityDeposit.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 				this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
-				this.downPayment.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 
 				try {
 					if (getChildWindowDialogCtrl().getClass().getField("ccyFormatter") != null) {
