@@ -3923,48 +3923,19 @@ public class ScheduleCalculator {
 	 * Process		:
 	 *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-
 	private FinanceScheduleDetail calPftPriRpy(FinScheduleData finScheduleData,
 	        FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
+		//NO PAYMENT: Applicable for Grace Period And REPAYMENT period with PFT or PRI+PFT)
 		if (curSchd.getSchdMethod().equals(CalculationConstants.NOPAY)) {
-
 			curSchd.setProfitSchd(BigDecimal.ZERO);
 			curSchd.setPrincipalSchd(BigDecimal.ZERO);
-
-			// store first repay amount
-			if (curTerm == 1) {
-				financeMain.setFirstRepay(curSchd.getRepayAmount());
-			}
-
-			if (recalStartDate != null) {
-				if (curSchd.getSchDate().compareTo(recalStartDate) >= 0
-				        && !isFirstAdjSet
-				        && !curSchd.isDefered()
-				        && curSchd.getSchDate().after(
-				                finScheduleData.getFinanceMain().getGrcPeriodEndDate())) {
-					isFirstAdjSet = true;
-					firstAdjAmount = curSchd.getRepayAmount();
-				}
-			}
-
-			if (recalEndDate != null) {
-				if (recalEndDate.compareTo(curSchd.getSchDate()) <= 0 && isFirstAdjSet
-				        && !curSchd.isDefered()) {
-					isLastAdjSet = true;
-					lastAdjAmount = curSchd.getRepayAmount();
-				}
-			}
-
-			logger.debug("Leaving");
-			return curSchd;
-		}
-
-		if (curSchd.getSchdMethod().equals(CalculationConstants.EQUAL)) {
-
+			
+			//EQUAL PAYMENT: Applicable for REPAYMENT period
+		} else if (curSchd.getSchdMethod().equals(CalculationConstants.EQUAL)) {
 			if (calProfitToSchd(curSchd, prvSchd).compareTo(curSchd.getRepayAmount()) < 0) {
 				curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
 			} else {
@@ -3972,135 +3943,68 @@ public class ScheduleCalculator {
 			}
 
 			curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
-
-			// store first repay amount
-			if (curTerm == 1) {
-				financeMain.setFirstRepay(curSchd.getRepayAmount());
-			}
-
-			// store last repay amount
-			financeMain.setLastRepay(curSchd.getRepayAmount());
-
-			if (recalStartDate != null) {
-				//if (recalStartDate.compareTo(curSchd.getSchDate()) >= 0
-				if (curSchd.getSchDate().compareTo(recalStartDate) >= 0
-				        && !isFirstAdjSet
-				        && !curSchd.isDefered()
-				        && curSchd.getSchDate().after(
-				                finScheduleData.getFinanceMain().getGrcPeriodEndDate())) {
-					isFirstAdjSet = true;
-					firstAdjAmount = curSchd.getRepayAmount();
-				}
-			}
-
-			if (recalEndDate != null) {
-				if (recalEndDate.compareTo(curSchd.getSchDate()) <= 0 && isFirstAdjSet
-				        && !curSchd.isDefered()) {
-					isLastAdjSet = true;
-					lastAdjAmount = curSchd.getRepayAmount();
-				}
-			}
-
-			logger.debug("Leaving");
-			return curSchd;
-		}
-
-		if (curSchd.getSchdMethod().equals(CalculationConstants.PRI)) {
+	        
+			//PRINCIPAL ONLY: Applicable for REPAYMENT period
+        } else if (curSchd.getSchdMethod().equals(CalculationConstants.PRI)) {
 			curSchd.setProfitSchd(BigDecimal.ZERO);
 			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
-
-			// store first repay amount
-			if (curTerm == 1) {
-				financeMain.setFirstRepay(curSchd.getPrincipalSchd());
-			}
-
-			// store last repay amount
-			financeMain.setLastRepay(curSchd.getPrincipalSchd());
-
-			if (recalStartDate != null) {
-				//if (recalStartDate.compareTo(curSchd.getSchDate()) >= 0
-				if (curSchd.getSchDate().compareTo(recalStartDate) >= 0
-				        && !isFirstAdjSet
-				        && !curSchd.isDefered()
-				        && curSchd.getSchDate().after(
-				                finScheduleData.getFinanceMain().getGrcPeriodEndDate())) {
-					isFirstAdjSet = true;
-					firstAdjAmount = curSchd.getPrincipalSchd();
-				}
-			}
-
-			if (recalEndDate != null) {
-				if (recalEndDate.compareTo(curSchd.getSchDate()) <= 0 && isFirstAdjSet
-				        && !curSchd.isDefered()) {
-					isLastAdjSet = true;
-					lastAdjAmount = curSchd.getPrincipalSchd();
-				}
-			}
-
-			logger.debug("Leaving");
-			return curSchd;
-		}
-
-		if (curSchd.getSchdMethod().equals(CalculationConstants.PFT)) {
-
+			
+			//CALCULATED PROFIT ONLY: Applicable for GRACE & REPAYMENT period
+        } else if (curSchd.getSchdMethod().equals(CalculationConstants.PFT)) {
 			//IF Scheduled Profit cannot change (Effective Rate Calculation) Then leave actual scheduled else calculate
 			if (!isProtectSchdPft) {
 				curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));	
             } 
 			curSchd.setPrincipalSchd(BigDecimal.ZERO);
 			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
-
-			// store first repay amount
-			if (curTerm == 1) {
-				financeMain.setFirstRepay(curSchd.getProfitSchd());
-			}
-
-			// store last repay amount
-			financeMain.setLastRepay(curSchd.getProfitSchd());
-
-			logger.debug("Leaving");
-			return curSchd;
-		}
-
-		if (curSchd.getSchdMethod().equals(CalculationConstants.PRI_PFT)) {
-
+			
+			//PRINCIPAL + CALCULATED PROFIT: Applicable for GRACE & REPAYMENT period
+        } else if (curSchd.getSchdMethod().equals(CalculationConstants.PRI_PFT)) {
 			//IF Scheduled Profit cannot change (Effective Rate Calculation) Then leave actual scheduled else calculate
 			if (!isProtectSchdPft) {
 				curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));	
             } 
 			
 			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+			
+			//NOPAYMENT IN GRACE SCHEDULES AND COMPLETE PAYMENT AT GRACE END DATE: Applicable for GRACE period Only
+        } else if (curSchd.getSchdMethod().equals(CalculationConstants.GRCENDPAY)) {
+        	curSchd.setProfitSchd(BigDecimal.ZERO);
+			curSchd.setPrincipalSchd(BigDecimal.ZERO);
+			
+			if (curSchd.getSchDate().equals(financeMain.getGrcPeriodEndDate())) {
+				curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
+            }
+		}
 
-			// store first repay amount
-			if (curTerm == 1) {
-				financeMain.setFirstRepay(curSchd.getPrincipalSchd());
+		
+		//COMMON CODE FOR all schedule methods
+		curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+		
+		// store first repay amount
+		if (curTerm == 1) {
+			financeMain.setFirstRepay(curSchd.getRepayAmount());
+		}
+		
+		// store last repay amount
+				financeMain.setLastRepay(curSchd.getRepayAmount());
+
+		if (recalStartDate != null) {
+			if (curSchd.getSchDate().compareTo(recalStartDate) >= 0
+			        && !isFirstAdjSet
+			        && !curSchd.isDefered()
+			        && curSchd.getSchDate().after(financeMain.getGrcPeriodEndDate())) {
+				isFirstAdjSet = true;
+				firstAdjAmount = curSchd.getRepayAmount();
 			}
+		}
 
-			// store last repay amount
-			financeMain.setLastRepay(curSchd.getPrincipalSchd());
-
-			if (recalStartDate != null) {
-				//if (recalStartDate.compareTo(curSchd.getSchDate()) <= 0
-				if (curSchd.getSchDate().compareTo(recalStartDate) >= 0
-				        && !isFirstAdjSet
-				        && !curSchd.isDefered()
-				        && curSchd.getSchDate().after(
-				                finScheduleData.getFinanceMain().getGrcPeriodEndDate())) {
-					isFirstAdjSet = true;
-					firstAdjAmount = curSchd.getPrincipalSchd();
-				}
+		if (recalEndDate != null) {
+			if (recalEndDate.compareTo(curSchd.getSchDate()) <= 0 && isFirstAdjSet
+			        && !curSchd.isDefered()) {
+				isLastAdjSet = true;
+				lastAdjAmount = curSchd.getRepayAmount();
 			}
-
-			if (recalEndDate != null) {
-				if (recalEndDate.compareTo(curSchd.getSchDate()) <= 0 && isFirstAdjSet
-				        && !curSchd.isDefered()) {
-					isLastAdjSet = true;
-					lastAdjAmount = curSchd.getPrincipalSchd();
-				}
-			}
-
-			logger.debug("Leaving");
-			return curSchd;
 		}
 
 		logger.debug("Leaving");

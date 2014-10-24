@@ -63,6 +63,7 @@ public class CalculationConstants {
 	public static final String PRI_PFT = "PRI_PFT";
 	public static final String PFT = "PFT";
 	public static final String NOPAY = "NO_PAY";
+	public static final String GRCENDPAY = "GRCNDPAY";
 
 	//Reducing, Flat, Convert FLat to Reducing, At Maturity
 	public static final String RATE_BASIS_R = "R";
