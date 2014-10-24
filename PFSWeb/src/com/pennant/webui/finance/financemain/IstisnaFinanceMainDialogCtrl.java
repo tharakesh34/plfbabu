@@ -3647,17 +3647,20 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			
 			boolean disbVaidated = false;
 			for (FinanceDisbursement finDisb : getDisbursementDetailDialogCtrl().getDisbursementDetails()) {
-				if (!finDisb.getDisbDate().after(this.finStartDate.getValue())) {
+				if (finDisb.getDisbDate().compareTo(this.finStartDate.getValue()) >= 0) {
 					if(finDisb.getDisbType().equals("A") || finDisb.getDisbType().equals("B")){
 						if(finDisb.getDisbAmount().compareTo(BigDecimal.ZERO) > 0){
 							disbVaidated = true;
 						}
 					}
+				}else{
+					disbVaidated = false;
+					break;
 				}
 			}
 			
 			if(!disbVaidated){
-				PTMessageUtils.showErrorMessage("Must have Minimum one Disbursement Payment(Either Advance or Billing) on or before Cureent Application Date");
+				PTMessageUtils.showErrorMessage(Labels.getLabel("label_IstisnaFinanceMainDialog_ValidateAsset.value"));
 				return null;
 			}
 		}
