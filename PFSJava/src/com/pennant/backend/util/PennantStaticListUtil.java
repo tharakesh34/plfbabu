@@ -339,7 +339,6 @@ public class PennantStaticListUtil {
 
 		if(accountPurposes == null){
 			accountPurposes = new ArrayList<ValueLabel>(10);
-			accountPurposes.add(new ValueLabel("", Labels.getLabel("common.Select")));
 			accountPurposes.add(new ValueLabel("M", Labels.getLabel("label_Movement")));
 			accountPurposes.add(new ValueLabel("F", Labels.getLabel("label_Finance")));
 			accountPurposes.add(new ValueLabel("U", Labels.getLabel("label_UnEarned")));
