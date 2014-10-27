@@ -47,7 +47,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -63,7 +62,6 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
@@ -76,7 +74,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.AccountType;
@@ -87,7 +84,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -174,7 +170,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient AccountTypeService accountTypeService;
 	private transient PagedListService pagedListService;
 
-	private List<ValueLabel> listAcPurpose = PennantStaticListUtil.getAccountPurpose(); // autoWired
 
 	String CBI_Available = (String) SystemParameterDetails
 			.getSystemParameterValue("CBI_AVAIL");
@@ -234,8 +229,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			getUserWorkspace().alocateRoleAuthorities(getRole(),
 					"AccountTypeDialog");
 		}
-
-		setListAcPurpose();
 
 		// READ OVERHANDED parameters !
 		// we get the accountTypeListWindow controller. So we have access
@@ -501,8 +494,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.acType.setValue(aAccountType.getAcType());
 		this.acTypeDesc.setValue(aAccountType.getAcTypeDesc());
 		this.acLmtCategory.setValue(aAccountType.getAcLmtCategory());
-		this.acPurpose.setValue(PennantAppUtil.getlabelDesc(
-				aAccountType.getAcPurpose(), listAcPurpose));
+		fillComboBox(this.acPurpose, aAccountType.getAcPurpose(), PennantStaticListUtil.getAccountPurpose(), "");
 		this.acHeadCode.setText(aAccountType.getAcHeadCode() == null ? ""
 				: StringUtils.leftPad(
 						String.valueOf(aAccountType.getAcHeadCode()), 4, '0'));
@@ -815,7 +807,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.acPurpose.isDisabled()) {
-			this.acPurpose.setConstraint(new StaticListValidator(listAcPurpose,
+			this.acPurpose.setConstraint(new StaticListValidator(PennantStaticListUtil.getAccountPurpose(),
 							Labels.getLabel("label_AccountTypeDialog_AcPurpose.value")));
 		}
 		if (!this.acHeadCode.isReadonly() && CBI_Available.equals("Y") !=true) {
@@ -1304,22 +1296,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-
-	/**
-	 * Method for Preparing AccountType Purpose List
-	 */
-	private void setListAcPurpose() {
-		logger.debug("Entering");
-		for (int i = 0; i < listAcPurpose.size(); i++) {
-			Comboitem comboitem = new Comboitem();
-			comboitem = new Comboitem();
-			comboitem.setLabel(listAcPurpose.get(i).getLabel());
-			comboitem.setValue(listAcPurpose.get(i).getValue());
-			this.acPurpose.appendChild(comboitem);
-		}
-		logger.debug("Leaving");
-	}
-
 	/**
 	 * Method to be called after checking customer system account checkBox
 	 */

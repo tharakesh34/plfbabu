@@ -198,8 +198,6 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl implements Serializa
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().alocateRoleAuthorities(getRole(),"InterestRateTypeDialog");
 		}
-		fillComboBox(this.intRateTypeCode,"",PennantStaticListUtil.getInterestRateType(true),"");
-	
 		
 		// READ OVERHANDED parameters !
 		// we get the interestRateTypeListWindow controller. So we have access

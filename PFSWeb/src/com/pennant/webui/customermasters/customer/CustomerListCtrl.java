@@ -483,13 +483,13 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 		this.sortOperator_custCoreBank.setSelectedIndex(0);
 		this.custCoreBank.setValue("");
 		this.sortOperator_custCtgCode.setSelectedIndex(0);
-		this.custCtgCode.setValue("");
+		this.custCtgCode.setSelectedIndex(0);
 		this.sortOperator_custDftBranch.setSelectedIndex(0);
 		this.custDftBranch.setValue("");
 		this.sortOperator_custShrtName.setSelectedIndex(0);
 		this.custShrtName.setValue("");
 		this.sortOperator_custTypeCode.setSelectedIndex(0);
-		fillComboBox(this.custCtgCode, "", PennantStaticListUtil.getCustCtgType(), "");
+		this.custTypeCode.setValue("");
 
 		if (isWorkFlowEnabled()) {
 			this.sortOperator_recordStatus.setSelectedIndex(0);

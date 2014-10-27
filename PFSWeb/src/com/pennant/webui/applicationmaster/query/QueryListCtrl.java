@@ -52,7 +52,6 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -134,6 +133,7 @@ public class QueryListCtrl extends GFCBaseListCtrl<Query> implements Serializabl
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Query> searchObj;
+	protected Row row_AlwWorkflow;
 
 	private transient QueryService queryService;
 	private transient WorkFlowDetails workFlowDetails=null;
@@ -229,12 +229,7 @@ public class QueryListCtrl extends GFCBaseListCtrl<Query> implements Serializabl
 			this.recordType.setSelectedIndex(0);
 
 		}else{
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.label_QueryList_RecordStatus.setVisible(false);
-			this.label_QueryList_RecordType.setVisible(false);
-			this.sortOperator_RecordStatus.setVisible(false);
-			this.sortOperator_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 		/* set components visible dependent on the users rights */
 		doCheckRights();
@@ -375,11 +370,6 @@ public class QueryListCtrl extends GFCBaseListCtrl<Query> implements Serializabl
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		this.pagingQueryList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_QueryList, event);
-		this.window_QueryList.invalidate();
-
-
 		this.sortOperator_QueryCode.setSelectedIndex(0);
 		this.queryCode.setValue("");
 		this.sortOperator_QueryModule.setSelectedIndex(0);

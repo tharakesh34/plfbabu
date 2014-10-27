@@ -55,10 +55,8 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -72,7 +70,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.service.dedup.DedupParmService;
@@ -138,9 +135,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 	protected Listbox sortOperator_recordStatus;// autoWired
 	protected Listbox sortOperator_recordType; 	// autoWired
 	
-	protected Label label_DedupParmSearch_RecordStatus; // autoWired
-	protected Label label_DedupParmSearch_RecordType; 	// autoWired
-	protected Label label_DedupParmSearchResult; 		// autoWired
+	protected Row row_AlwWorkflow;
 	
 	protected Grid	                       searchGrid;	
 	protected Textbox	                   moduleType;	                                                  // autowired
@@ -149,7 +144,6 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 	protected Row	                       workFlowFrom;
 
 	private transient boolean	           approvedList	    = false;
-	private List<ValueLabel>           listDedupParams = PennantStaticListUtil.getCategoryType();
 
 	// Check Rights
 	protected Button btnHelp; 									 // autoWired
@@ -214,20 +208,16 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 		
 		this.sortOperator_querySubCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_querySubCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		fillComboBox(this.querySubCode, "", PennantStaticListUtil.getCategoryType(), "");
 	
 		if (isWorkFlowEnabled()){
 			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
+			this.recordType=setRecordType(this.recordType);	
 		}else{
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
-			this.label_DedupParmSearch_RecordStatus.setVisible(false);
-			this.label_DedupParmSearch_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 
 		/* set components visible dependent on the users rights */
@@ -273,28 +263,10 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 				this.fromApproved.setSelected(true);
 			}
 		}
-		setListDedupParam();
+	
 		logger.debug("Leaving" + event.toString());
 	}
-	/**
-	 * This method sets all rightsTypes as ComboItems for ComboBox
-	 */
-	private void setListDedupParam() {
-		logger.debug("Entering ");
-		Comboitem comboitem =  new Comboitem();
-		comboitem.setValue("");
-		comboitem.setLabel("");
-		this.querySubCode.appendChild(comboitem);
-		this.querySubCode.setSelectedItem(comboitem);
-		for (int i = 0; i < listDedupParams.size(); i++) {
-			comboitem = new Comboitem();
-			comboitem.setLabel(listDedupParams.get(i).getLabel());
-			comboitem.setValue(listDedupParams.get(i).getValue());
-			this.querySubCode.appendChild(comboitem);
-			this.querySubCode.setSelectedIndex(0);
-		}
-		logger.debug("Leaving ");
-	}
+	
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
@@ -471,9 +443,6 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 		}
 
 		doSearch();
-		/*this.pagingDedupParmList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_DedupParmList, event);
-		this.window_DedupParmList.invalidate();*/
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -538,15 +507,16 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 		}
 		
 		// De-dup parameter query module
-		if (!StringUtils.trimToEmpty(this.queryModule.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_queryModule.getSelectedItem(), this.queryModule.getValue(), "queryModule");
+
+		if (!StringUtils.trimToEmpty(this.queryModules.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_queryModule.getSelectedItem(), this.queryModules.getValue(), "queryModule");
 		}
 		// De-dup parameter query desc
 		if (!StringUtils.trimToEmpty(this.queryDesc.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_queryDesc.getSelectedItem(), this.queryDesc.getValue(), "queryDesc");
 		}
 		// De-dup parameter query code
-		if (null !=this.querySubCode.getSelectedItem() && !StringUtils.trimToEmpty(this.querySubCode.getSelectedItem().getValue().toString()).equals("")){
+		if (this.querySubCode.getValue()!= null && !PennantConstants.List_Select.equals(this.querySubCode.getSelectedItem().getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_querySubCode.getSelectedItem(), this.querySubCode.getSelectedItem().getValue().toString(), "querySubCode");
 		}
 		// Record Status
@@ -554,7 +524,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
 		}
 		// Record Type
-		if (this.recordType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+		if (this.recordType.getSelectedItem()!= null && !PennantConstants.List_Select.equals(this.recordType.getSelectedItem().getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
 		}
 		if (logger.isDebugEnabled()) {

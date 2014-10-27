@@ -47,7 +47,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,7 +60,6 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
@@ -72,7 +70,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -83,7 +80,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -148,7 +144,6 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl implements Serializable 
 	// ServiceDAOs / Domain Classes
 	private transient SecurityRoleService  securityRoleService;
 	private transient PagedListService      pagedListService;
-	private List<ValueLabel>  listRoleApp = PennantStaticListUtil.getAppCodes(); 
 
 	/**
 	 * default constructor.<br>
@@ -210,7 +205,6 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl implements Serializable 
 			setSecurityRoleListCtrl(null);
 		}
 
-		setListRoleApp();
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getSecurityRole());
@@ -434,16 +428,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 */
 	public void doWriteBeanToComponents(SecurityRole aSecurityRole) {
 		logger.debug("Entering ");
-
-		if(securityRole.isNew()){
-			this.roleApp.setSelectedIndex(0);
-
-		}else{
-			this.roleApp.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(securityRole.getRoleApp()),PennantStaticListUtil.getAppCodes()));
-
-		}
-
+		fillComboBox(this.roleApp, String.valueOf(aSecurityRole.getRoleApp()), PennantStaticListUtil.getAppCodes(), "");
 		this.roleCd.setValue(aSecurityRole.getRoleCd());
 		this.roleDesc.setValue(aSecurityRole.getRoleDesc());
 		this.roleCategory.setValue(aSecurityRole.getRoleCategory());
@@ -566,23 +551,6 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl implements Serializable 
 
 	}
 
-	/**
-	 * This method sets all roleApps as ComboItems for ComboBox
-	 */
-	private void setListRoleApp() {
-		logger.debug("Entering ");
-		for (int i = 0; i < listRoleApp.size(); i++) {
-
-			Comboitem comboitem = new Comboitem();
-			comboitem = new Comboitem();
-			comboitem.setLabel(listRoleApp.get(i).getLabel());
-			comboitem.setValue(listRoleApp.get(i).getValue());
-			this.roleApp.appendChild(comboitem);
-
-		}
-		logger.debug("Leaving ");
-	}
-
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -648,7 +616,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl implements Serializable 
 		setValidationOn(true);
 
 		if (!this.roleApp.isDisabled()) {
-			this.roleApp.setConstraint(new StaticListValidator(listRoleApp
+			this.roleApp.setConstraint(new StaticListValidator(PennantStaticListUtil.getAppCodes()
 					,Labels.getLabel("label_SecurityRoleDialog_RoleApp.value")));
 		}
 

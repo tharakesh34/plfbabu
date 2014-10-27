@@ -62,7 +62,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
@@ -84,7 +83,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -194,12 +192,6 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 	// ServiceDAOs / Domain Classes
 	private transient ExtendedFieldDetailService extendedFieldDetailService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
-
-	private List<ValueLabel> listFieldList = PennantStaticListUtil.getAdditionalFieldList(); // autowired
-	private ArrayList<ValueLabel> listFieldTypeList = PennantStaticListUtil.getFieldType();
-	private ArrayList<ValueLabel> fieldConstraintList = PennantStaticListUtil.getRegexType();
-	private ArrayList<ValueLabel> dateConstraintList = PennantStaticListUtil.getDateType();
-
 	protected Row rowfieldDefaultValue;
 	protected Row rowfieldList;
 	protected Row rowfieldMinValue;
@@ -288,8 +280,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().alocateRoleAuthorities(getRole(), "ExtendedFieldDetailDialog");
 			}
-
-			setListFieldList();
+			fillComboBox(this.combofieldList, "", PennantStaticListUtil.getAdditionalFieldList(), "");
 
 			// READ OVERHANDED params !
 			// we get the extendedFieldDetailListWindow controller. So we have
@@ -550,14 +541,14 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 
 		this.fieldName.setValue(aExtendedFieldDetail.getFieldName());
 
-		fillCombobox(this.fieldType,listFieldTypeList,aExtendedFieldDetail.getFieldType());
+		fillComboBox(this.fieldType,aExtendedFieldDetail.getFieldType(),PennantStaticListUtil.getFieldType(),"");
 
 		if(isTextType()){
-			fillCombobox(this.fieldConstraint,fieldConstraintList,aExtendedFieldDetail.getFieldConstraint());
-			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldConstraint(), fieldConstraintList));
+			fillComboBox(this.fieldConstraint,aExtendedFieldDetail.getFieldConstraint(),PennantStaticListUtil.getRegexType(),"");
+			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldConstraint(), PennantStaticListUtil.getRegexType()));
 		}else if(isDateType()){
-			fillCombobox(this.fieldConstraint,dateConstraintList,aExtendedFieldDetail.getFieldConstraint().split(",")[0]);
-			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldConstraint().split(",")[0], dateConstraintList));
+			fillComboBox(this.fieldConstraint,aExtendedFieldDetail.getFieldConstraint().split(",")[0],PennantStaticListUtil.getDateType(),"");
+			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldConstraint().split(",")[0], PennantStaticListUtil.getDateType()));
 		}
 
 		this.fieldLength.setValue(aExtendedFieldDetail.getFieldLength());
@@ -565,7 +556,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 		this.fieldLabel.setValue(aExtendedFieldDetail.getFieldLabel());
 		this.fieldMandatory.setChecked(aExtendedFieldDetail.isFieldMandatory());
 		this.fieldSeqOrder.setValue(aExtendedFieldDetail.getFieldSeqOrder());
-		this.combofieldList.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldList(), listFieldList));
+		this.combofieldList.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldList(), PennantStaticListUtil.getAdditionalFieldList()));
 		this.fieldDefaultValue.setValue(aExtendedFieldDetail.getFieldDefaultValue());
 		this.fieldMinValue.setValue(aExtendedFieldDetail.getFieldMinValue());
 		this.fieldMaxValue.setValue(aExtendedFieldDetail.getFieldMaxValue());
@@ -1214,7 +1205,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 					false, false, 1, 1000));
 		}
 		if (!this.combofieldList.isDisabled() && rowfieldList.isVisible()) {
-			this.combofieldList.setConstraint(new StaticListValidator(listFieldList, Labels
+			this.combofieldList.setConstraint(new StaticListValidator(PennantStaticListUtil.getAdditionalFieldList(), Labels
 					.getLabel("label_ExtendedFieldDetailDialog_FieldList.value")));
 		}
 
@@ -1704,37 +1695,6 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 		return processCompleted;
 	}
 
-	private void fillCombobox(Combobox combobox,ArrayList<ValueLabel> arrayList,String value){
-		combobox.getItems().clear();
-		Comboitem comboitem = new Comboitem();		
-		comboitem.setLabel("----Select-----");
-		comboitem.setValue("");
-		combobox.appendChild(comboitem);
-		combobox.setSelectedItem(comboitem);
-
-		if (arrayList!=null) {
-			for (int i = 0; i < arrayList.size(); i++) {
-				comboitem = new Comboitem();
-				comboitem.setLabel(arrayList.get(i).getLabel());
-				comboitem.setValue(arrayList.get(i).getValue());
-				combobox.appendChild(comboitem);
-				if (StringUtils.trimToEmpty(value).equals(arrayList.get(i).getValue())) {
-					combobox.setSelectedItem(comboitem);
-				}
-			}
-		} 
-	}
-
-	private void setListFieldList() {
-		for (int i = 0; i < listFieldList.size(); i++) {
-			Comboitem comboitem = new Comboitem();
-			comboitem = new Comboitem();
-			comboitem.setLabel(listFieldList.get(i).getLabel());
-			comboitem.setValue(listFieldList.get(i).getValue());
-			this.combofieldList.appendChild(comboitem);
-		}
-	}
-
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1923,7 +1883,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 			this.rowConstraint.setVisible(true);
 			if(newSelection){
 				this.fieldConstraint.getItems().clear();
-				fillCombobox(this.fieldConstraint,fieldConstraintList,"");
+				fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
 			}
 		} else if (isNumericType()) {
 			this.rowfieldDefaultValue.setVisible(true);
@@ -2015,7 +1975,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl implements Serial
 				this.rowConstraint.setVisible(true);
 				if(newSelection){
 					this.fieldConstraint.getItems().clear();
-					fillCombobox(this.fieldConstraint,dateConstraintList,"");
+					fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getDateType(),"");
 				}else{
 					onChangeDateConstraint(getExtendedFieldDetail().getFieldConstraint().split(",")[0],false);
 				}

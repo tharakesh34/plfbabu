@@ -261,8 +261,6 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 			setDashboardConfigurationListCtrl(null);
 		}
 
-		fillComboBox(this.dashboardType, "", PennantStaticListUtil.getDashBoardType(), "");
-		fillComboBox(this.cbDimension, "", PennantStaticListUtil.getChartDimensions(), "");
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getDashboardConfiguration());
@@ -277,9 +275,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl implements Ser
 		// Empty sent any required attributes
 		this.dashboardCode.setMaxlength(20);
 		this.dashboardDesc.setMaxlength(50);
-
-
-
+		
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 			this.statusRow.setVisible(true);

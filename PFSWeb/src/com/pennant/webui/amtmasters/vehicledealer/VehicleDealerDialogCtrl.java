@@ -47,7 +47,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,7 +60,6 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
@@ -71,7 +69,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -175,8 +172,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 	private transient VehicleDealerService vehicleDealerService;
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
-	private List<ValueLabel> listDealerType = PennantStaticListUtil.getDealerType(); // autowired
- 
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -544,7 +540,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	public void doWriteBeanToComponents(VehicleDealer aVehicleDealer) {
 		logger.debug("Entering") ;
-		fillComboBox(dealerType, aVehicleDealer.getDealerType(), listDealerType);
+		fillComboBox(dealerType, aVehicleDealer.getDealerType(), PennantStaticListUtil.getDealerType(),"");
 		this.dealerName.setValue(aVehicleDealer.getDealerName());
 		this.dealerTelephone.setValue(aVehicleDealer.getDealerTelephone());
 		this.dealerFax.setValue(aVehicleDealer.getDealerFax());
@@ -1348,28 +1344,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 		}
 		logger.debug("Leaving");
 	}
-
-	private void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
-		logger.debug("Entering");
-
-		combobox.getChildren().clear();
-		Comboitem comboitem = new Comboitem();
-		comboitem.setValue("#");
-		comboitem.setLabel(Labels.getLabel("Combo.Select"));
-		combobox.appendChild(comboitem);
-		combobox.setSelectedItem(comboitem);
-		for (int i = 0; i < list.size(); i++) {
-			comboitem = new Comboitem();
-			comboitem.setValue(StringUtils.trim(list.get(i).getValue()));
-			comboitem.setLabel(StringUtils.trim(list.get(i).getLabel()));
-			combobox.appendChild(comboitem);
-			if (StringUtils.trimToEmpty(value).equals(StringUtils.trim(list.get(i).getValue()))) {
-				combobox.setSelectedItem(comboitem);
-			}
-		}
-		logger.debug("Leaving");
-	}
-
+	
 	public void setNotes_entered(String notes) {
 		if (!isNotes_Entered()){
 			if (org.apache.commons.lang.StringUtils.trimToEmpty(notes).equalsIgnoreCase("Y")){

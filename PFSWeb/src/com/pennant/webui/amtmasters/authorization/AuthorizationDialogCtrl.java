@@ -44,7 +44,6 @@ package com.pennant.webui.amtmasters.authorization;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -70,7 +69,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.amtmasters.Authorization;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -153,6 +151,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl implements Serializable
 																	// per param
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
+	@SuppressWarnings("unused")
 	private transient long oldVar_AuthUserId;
 	private transient String oldVar_AuthType;
 	private transient String oldVar_AuthName;
@@ -181,7 +180,6 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl implements Serializable
 	// ServiceDAOs / Domain Classes
 	private transient AuthorizationService authorizationService;
 	private transient PagedListService pagedListService;
-	private List<ValueLabel> listAuthType = PennantStaticListUtil.getAuthTypes();
 
 	/**
 	 * default constructor.<br>
@@ -547,7 +545,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	private void doResetInitValues() {
 		logger.debug("Entering");
-		fillComboBox(this.authType, this.oldVar_AuthType, listAuthType, "");
+		fillComboBox(this.authType, this.oldVar_AuthType, PennantStaticListUtil.getAuthTypes(), "");
 		this.authName.setValue(this.oldVar_AuthName);
 		this.authDept.setValue(this.oldVar_AuthDept);
 		this.authDeptName.setValue(this.oldVar_AuthDeptName);
@@ -571,8 +569,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Entering");
 		this.authUserId.setValue( aAuthorization.getAuthUserId());
 		this.authUserIdName.setValue( aAuthorization.getAuthUserIdName());
-		
-		fillComboBox(this.authType, aAuthorization.getAuthType(), listAuthType, "");
+		fillComboBox(this.authType, aAuthorization.getAuthType(), PennantStaticListUtil.getAuthTypes(), "");
 		this.authName.setValue(aAuthorization.getAuthName());
 		this.authDept.setValue(aAuthorization.getAuthDept());
 		this.authDesig.setValue(aAuthorization.getAuthDesig());
@@ -698,7 +695,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Entering");
 		// Auth Type
 		if (!this.authType.isDisabled()) {
-			this.authType.setConstraint(new StaticListValidator(listAuthType, Labels.getLabel("label_AuthorizationDialog_AuthType.value")));
+			this.authType.setConstraint(new StaticListValidator(PennantStaticListUtil.getAuthTypes(), Labels.getLabel("label_AuthorizationDialog_AuthType.value")));
 		}
 		// Auth Name
 		if (!this.authName.isReadonly()) {

@@ -101,7 +101,6 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
@@ -544,16 +543,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private Tab accountingEvent; // autoWired
 	private Tab finTypeAccountDetails; // autoWired
 	private Tab extendedDetails;    // autoWired
-
-	private final List<ValueLabel> pftDays = PennantAppUtil.getProfitDaysBasis();
-	private final List<ValueLabel> RvwRateAppPeriods = PennantStaticListUtil.getReviewRateAppliedPeriods();
-	private final List<ValueLabel> schMthds = PennantAppUtil.getScheduleMethod();
-	private final List<ValueLabel> schPftRateType = PennantStaticListUtil.getInterestRateType(true);
-	private final List<ValueLabel> rpyMthd = PennantAppUtil.getRepayMethods();
-	private final List<ValueLabel> scCalCode = PennantStaticListUtil.getSchCalCodes();
-	private final List<ValueLabel> scheduleOn = PennantStaticListUtil.getScheduleOn();
-	private final List<ValueLabel> stepPolicies = PennantAppUtil.getStepPoliciesList();
-
 	private int borderLayoutHeight = 0;
 	
     protected Button  btnNew_FinTypeAccount;
@@ -1197,7 +1186,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.finProvisionAcType.setDescription(aFinanceType.getLovDescFinProvisionAcTypeName());
 			this.finDivision.setDescription(aFinanceType.getLovDescFinDivisionName());
 		}
-		fillComboBox(this.cbfinDaysCalType, aFinanceType.getFinDaysCalType(), pftDays, "");
+		fillComboBox(this.cbfinDaysCalType, aFinanceType.getFinDaysCalType(), PennantAppUtil.getProfitDaysBasis(), "");
 		this.finAcType.setValue(aFinanceType.getFinAcType());
 		this.finIsOpenNewFinAc.setChecked(aFinanceType.isFinIsOpenNewFinAc());
 		this.finContingentAcType.setValue(aFinanceType.getFinContingentAcType());
@@ -1241,7 +1230,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		doCheckFinAEMaturity(aFinanceType.getFinCategory());
 		checkFinisDownPayreq();
 		//================= Tab 2
-		fillComboBox(this.cbfinGrcRateType, aFinanceType.getFinGrcRateType(), schPftRateType, ",C,");
+		fillComboBox(this.cbfinGrcRateType, aFinanceType.getFinGrcRateType(), PennantStaticListUtil.getInterestRateType(true), ",C,");
 		this.finGrcIntRate.setValue(aFinanceType.getFinGrcIntRate());
 		this.finGrcBaseRate.setValue(aFinanceType.getFinGrcBaseRate());
 		if (aFinanceType.getLovDescFinBaseRateName() != null) {
@@ -1257,7 +1246,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		fillFrqMth(this.cbfinGrcDftIntFrqMth, aFinanceType.getFinGrcDftIntFrq(), isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
 		fillFrqDay(this.cbfinGrcDftIntFrqDays, aFinanceType.getFinGrcDftIntFrq(), isReadOnly("FinanceTypeDialog_finGrcDftIntFrq"));
 		this.finIsAlwGrcRepay.setChecked(aFinanceType.isFinIsAlwGrcRepay());
-		fillComboBox(this.finGrcSchdMthd, aFinanceType.getFinGrcSchdMthd(), schMthds, ",EQUAL,PRI,PRI_PFT,");
+		fillComboBox(this.finGrcSchdMthd, aFinanceType.getFinGrcSchdMthd(), PennantAppUtil.getScheduleMethod(), ",EQUAL,PRI,PRI_PFT,");
 		this.finGrcIsIntCpz.setChecked(aFinanceType.isFinGrcIsIntCpz());
 		this.finGrcCpzFrq.setValue(aFinanceType.getFinGrcCpzFrq());
 		fillFrqCode(this.cbfinGrcCpzFrqCode, aFinanceType.getFinGrcCpzFrq(), isReadOnly("FinanceTypeDialog_finGrcCpzFrq"));
@@ -1268,7 +1257,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		fillFrqCode(this.cbfinGrcRvwFrqCode, aFinanceType.getFinGrcRvwFrq(), isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
 		fillFrqMth(this.cbfinGrcRvwFrqMth, aFinanceType.getFinGrcRvwFrq(), isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
 		fillFrqDay(this.cbfinGrcRvwFrqDays, aFinanceType.getFinGrcRvwFrq(), isReadOnly("FinanceTypeDialog_finGrcRvwFrq"));
-		fillComboBox(this.cbfinGrcRvwRateApplFor, aFinanceType.getFinGrcRvwRateApplFor(), RvwRateAppPeriods, "");
+		fillComboBox(this.cbfinGrcRvwRateApplFor, aFinanceType.getFinGrcRvwRateApplFor(), PennantStaticListUtil.getReviewRateAppliedPeriods(), "");
 		this.finGrcAlwIndRate.setChecked(aFinanceType.isFinGrcAlwIndRate());
 		this.finGrcIndBaseRate.setValue(aFinanceType.getFinGrcIndBaseRate());
 		this.finIsIntCpzAtGrcEnd.setChecked(aFinanceType.isFinIsIntCpzAtGrcEnd());
@@ -1282,7 +1271,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.lovDescFinGrcIndBaseRateName.setValue(aFinanceType.getFinGrcIndBaseRate() + "-" + aFinanceType.getLovDescFinGrcIndBaseRateName());
 		}
 		//================= Tab 3
-		fillComboBox(this.cbfinRateType, aFinanceType.getFinRateType(), schPftRateType, "");
+		fillComboBox(this.cbfinRateType, aFinanceType.getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
 		this.finIntRate.setValue(aFinanceType.getFinIntRate());
 		this.finBaseRate.setValue(aFinanceType.getFinBaseRate());
 		if (aFinanceType.getLovDescFinGrcBaseRateName() != null) {
@@ -1303,7 +1292,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		fillFrqCode(this.cbfinRpyFrqCode, aFinanceType.getFinRpyFrq(), isReadOnly("FinanceTypeDialog_finRpyFrq"));
 		fillFrqMth(this.cbfinRpyFrqMth, aFinanceType.getFinRpyFrq(), isReadOnly("FinanceTypeDialog_finRpyFrq"));
 		fillFrqDay(this.cbfinRpyFrqDays, aFinanceType.getFinRpyFrq(), isReadOnly("FinanceTypeDialog_finRpyFrq"));
-		fillComboBox(this.cbfinSchdMthd, aFinanceType.getFinSchdMthd(), schMthds, ",NO_PAY,GRCNDPAY,");
+		fillComboBox(this.cbfinSchdMthd, aFinanceType.getFinSchdMthd(), PennantAppUtil.getScheduleMethod(), ",NO_PAY,GRCNDPAY,");
 		this.finIsIntCpz.setChecked(aFinanceType.isFinIsIntCpz());
 		this.finCpzFrq.setValue(aFinanceType.getFinCpzFrq());
 		fillFrqCode(this.cbfinCpzFrqCode, aFinanceType.getFinCpzFrq(), isReadOnly("FinanceTypeDialog_finCpzFrq"));
@@ -1314,8 +1303,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		fillFrqCode(this.cbfinRvwFrqCode, aFinanceType.getFinRvwFrq(), isReadOnly("FinanceTypeDialog_finRvwFrq"));
 		fillFrqMth(this.cbfinRvwFrqMth, aFinanceType.getFinRvwFrq(), isReadOnly("FinanceTypeDialog_finRvwFrq"));
 		fillFrqDay(this.cbfinRvwFrqDays, aFinanceType.getFinRvwFrq(), isReadOnly("FinanceTypeDialog_finRvwFrq"));
-		fillComboBox(this.cbfinRvwRateApplFor, aFinanceType.getFinRvwRateApplFor(), RvwRateAppPeriods, "");
-		fillComboBox(this.cbfinSchCalCodeOnRvw, aFinanceType.getFinSchCalCodeOnRvw(), scCalCode, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+		fillComboBox(this.cbfinRvwRateApplFor, aFinanceType.getFinRvwRateApplFor(), PennantStaticListUtil.getReviewRateAppliedPeriods(), "");
+		fillComboBox(this.cbfinSchCalCodeOnRvw, aFinanceType.getFinSchCalCodeOnRvw(), PennantStaticListUtil.getSchCalCodes(), ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
 		this.finAlwIndRate.setChecked(aFinanceType.isFinAlwIndRate());
 		if (aFinanceType.getLovDescFinIndBaseRateName() != null) {
 			this.finIndBaseRate.setDescription(aFinanceType.getLovDescFinIndBaseRateName());
@@ -1324,7 +1313,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finMinTerm.setValue(aFinanceType.getFinMinTerm());
 		this.finMaxTerm.setValue(aFinanceType.getFinMaxTerm());
 		this.finDftTerms.setValue(aFinanceType.getFinDftTerms());
-		fillComboBox(this.cbfinRepayMethod, aFinanceType.getFInRepayMethod(), rpyMthd, "");
+		fillComboBox(this.cbfinRepayMethod, aFinanceType.getFInRepayMethod(), PennantAppUtil.getRepayMethods(), "");
 		this.finIsAlwPartialRpy.setChecked(aFinanceType.isFinIsAlwPartialRpy());
 		this.finODRpyTries.setValue(aFinanceType.getFinODRpyTries());
 		this.finIsAlwDifferment.setChecked(aFinanceType.isFinIsAlwDifferment());
@@ -1333,7 +1322,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finIsAlwFrqDifferment.setChecked(aFinanceType.isFinIsAlwFrqDifferment());
 		this.finMaxFrqDifferment.setValue(aFinanceType.getFinMaxFrqDifferment());
 		doDisableOrEnableDifferments(aFinanceType.isFinIsAlwFrqDifferment(), this.finMaxFrqDifferment, isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
-		fillComboBox(this.cbFinScheduleOn, aFinanceType.getFinScheduleOn(), scheduleOn, "");
+		fillComboBox(this.cbFinScheduleOn, aFinanceType.getFinScheduleOn(), PennantStaticListUtil.getScheduleOn(), "");
 		this.finPftUnChanged.setChecked(aFinanceType.isFinPftUnChanged());
 		doCheckPftCpzFrq();
 		doCheckRpyDefferment();
@@ -1645,7 +1634,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.stepFinance.setChecked(aFinanceType.isStepFinance());
 		this.steppingMandatory.setChecked(aFinanceType.isSteppingMandatory());
 		this.allowManualSteps.setChecked(aFinanceType.isAlwManualSteps());
-		fillComboBox(this.dftStepPolicy, StringUtils.trimToEmpty(aFinanceType.getDftStepPolicy()), this.stepPolicies, "");
+		fillComboBox(this.dftStepPolicy, StringUtils.trimToEmpty(aFinanceType.getDftStepPolicy()),  PennantAppUtil.getStepPoliciesList(), "");
 		this.lovDescStepPolicyCodename.setValue(aFinanceType.getAlwdStepPolicies());
 		
 		//======================  Hidden Fields
@@ -1657,7 +1646,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finGrcAlwRateChgAnyDate.setChecked(aFinanceType.isFinGrcAlwRateChgAnyDate());
 		this.fInMinRate.setValue(aFinanceType.getFInMinRate());
 		this.finMaxRate.setValue(aFinanceType.getFinMaxRate());
-		fillComboBox(this.cbFinGrcScheduleOn, aFinanceType.getFinGrcScheduleOn(), scheduleOn, "");
+		fillComboBox(this.cbFinGrcScheduleOn, aFinanceType.getFinGrcScheduleOn(), PennantStaticListUtil.getScheduleOn(), "");
 	
 		this.fInGrcMinRate.setValue(aFinanceType.getFInGrcMinRate());
 		this.finGrcMaxRate.setValue(aFinanceType.getFinGrcMaxRate());
@@ -3159,7 +3148,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.lovDescStepPolicyCodename.setValue(this.oldVar_alwdStepPolices);;
 		this.steppingMandatory.setChecked(this.oldVar_steppingMandatory);
 		this.allowManualSteps.setChecked(this.oldVar_allowManualSteps);
-        fillComboBox(this.dftStepPolicy, this.oldVar_dftStepPolicy, this.stepPolicies, "");
+        fillComboBox(this.dftStepPolicy, this.oldVar_dftStepPolicy,  PennantAppUtil.getStepPoliciesList(), "");
 		if (isWorkFlowEnabled()) {
 			this.userAction.setSelectedIndex(0);
 		}
@@ -4636,7 +4625,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			if (details != null) {
 				this.finCcy.setValue(details.getCcyCode());
 				this.finCcy.setDescription(details.getCcyDesc());
-				fillComboBox(this.cbfinDaysCalType, details.getCcyDrRateBasisCode(), pftDays, "");
+				fillComboBox(this.cbfinDaysCalType, details.getCcyDrRateBasisCode(), PennantAppUtil.getProfitDaysBasis(), "");
 				// To Format Amount based on the currency
 				getFinanceType().setLovDescFinFormetter(details.getCcyEditField());
 				this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceType().getLovDescFinFormetter()));
@@ -5848,11 +5837,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			if (this.finIsRvwAlw.isChecked()) {
 				if (getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.PRI_PFT) || getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.PFT)) {
 					// Schedule Calculation Codes
-					fillComboBox(this.cbfinSchCalCodeOnRvw, "TILLMDT", scCalCode, "");
+					fillComboBox(this.cbfinSchCalCodeOnRvw, "TILLMDT", PennantStaticListUtil.getSchCalCodes(), "");
 					this.cbfinSchCalCodeOnRvw.setDisabled(true);
 				} else {
 					// Schedule Calculation Codes
-					fillComboBox(this.cbfinSchCalCodeOnRvw, "", scCalCode, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+					fillComboBox(this.cbfinSchCalCodeOnRvw, "", PennantStaticListUtil.getSchCalCodes(), ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
 					this.cbfinSchCalCodeOnRvw.setDisabled(false);
 				}
 			}
@@ -5903,7 +5892,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.space_cbfinSchCalCodeOnRvw.setSclass("mandatory");
 				if (this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.PRI_PFT)
 				        || this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.PFT)) {
-					fillComboBox(this.cbfinSchCalCodeOnRvw, "TILLMDT", scCalCode, "");
+					fillComboBox(this.cbfinSchCalCodeOnRvw, "TILLMDT", PennantStaticListUtil.getSchCalCodes(), "");
 					this.cbfinSchCalCodeOnRvw.setDisabled(true);
 					this.space_cbfinSchCalCodeOnRvw.setSclass("none");
 				}
@@ -5960,7 +5949,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.stepFinance.setChecked(getFinanceType().isStepFinance());
 		this.steppingMandatory.setChecked(getFinanceType().isSteppingMandatory());
 		this.allowManualSteps.setChecked(getFinanceType().isAlwManualSteps());
-		fillComboBox(this.dftStepPolicy, StringUtils.trimToEmpty(getFinanceType().getDftStepPolicy()), this.stepPolicies, "");
+		fillComboBox(this.dftStepPolicy, StringUtils.trimToEmpty(getFinanceType().getDftStepPolicy()),  PennantAppUtil.getStepPoliciesList(), "");
 		this.lovDescStepPolicyCodename.setValue(getFinanceType().getAlwdStepPolicies());
 		logger.debug("Leaving ");
 	}
@@ -7107,10 +7096,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
         if(!StringUtils.trimToEmpty(selectedValues).equals("")){
         	List<String> polociesList = Arrays.asList(selectedValues.split(","));
         	if(!polociesList.contains(this.dftStepPolicy.getSelectedItem().getValue().toString())){
-        		fillComboBox(this.dftStepPolicy, "", this.stepPolicies, "");
+        		fillComboBox(this.dftStepPolicy, "",  PennantAppUtil.getStepPoliciesList(), "");
         	}
         } else {
-        	fillComboBox(this.dftStepPolicy, "", this.stepPolicies, "");
+        	fillComboBox(this.dftStepPolicy, "",  PennantAppUtil.getStepPoliciesList(), "");
         }
     	logger.debug("Leaving  "+event.toString());
 	}

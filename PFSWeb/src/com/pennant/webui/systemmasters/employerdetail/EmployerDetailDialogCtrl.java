@@ -47,7 +47,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -75,7 +74,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
@@ -296,8 +294,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	// ServiceDAOs / Domain Classes
 	private transient EmployerDetailService employerDetailService;
-	private transient PagedListService pagedListService;
-	private List<ValueLabel> listEmpAlocationType=PennantStaticListUtil.getEmpAlocList();
 
 	/**
 	 * default constructor.<br>
@@ -878,7 +874,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.empWebSite.setValue(aEmployerDetail.getEmpWebSite());
 		this.contactPersonName.setValue(aEmployerDetail.getContactPersonName());
 		this.contactPersonNo.setValue(aEmployerDetail.getContactPersonNo());
-		fillComboBox(this.empAlocationType, aEmployerDetail.getEmpAlocationType(), listEmpAlocationType,"");
+		fillComboBox(this.empAlocationType, aEmployerDetail.getEmpAlocationType(), PennantStaticListUtil.getEmpAlocList(),"");
 
 		if (aEmployerDetail.isNewRecord()){
 			this.lovDescIndustryDesc.setValue("");
@@ -1243,7 +1239,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		//Emp Alocation Type
 		if (!this.empAlocationType.isReadonly()){
-			this.empAlocationType.setConstraint(new StaticListValidator(listEmpAlocationType,
+			this.empAlocationType.setConstraint(new StaticListValidator(PennantStaticListUtil.getEmpAlocList(),
 					Labels.getLabel("label_EmployerDetailDialog_EmpAlocationType.value")));
 		}
 		logger.debug("Leaving");
@@ -1732,7 +1728,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void setEmployerDetail(EmployerDetail employerDetail) {
 		this.employerDetail = employerDetail;
 	}
-
 	public void setEmployerDetailService(EmployerDetailService employerDetailService) {
 		this.employerDetailService = employerDetailService;
 	}
@@ -1744,24 +1739,13 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void setEmployerDetailListCtrl(EmployerDetailListCtrl employerDetailListCtrl) {
 		this.employerDetailListCtrl = employerDetailListCtrl;
 	}
-
 	public EmployerDetailListCtrl getEmployerDetailListCtrl() {
 		return this.employerDetailListCtrl;
 	}
 
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
-
-
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-
 	public void setNotes_Entered(boolean notesEntered) {
 		this.notes_Entered = notesEntered;
 	}

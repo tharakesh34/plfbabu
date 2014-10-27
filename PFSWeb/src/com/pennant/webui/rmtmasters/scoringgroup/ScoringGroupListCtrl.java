@@ -56,6 +56,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Intbox;
@@ -82,6 +83,7 @@ import com.pennant.backend.service.rmtmasters.ScoringGroupService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
@@ -140,14 +142,13 @@ public class ScoringGroupListCtrl extends GFCBaseListCtrl<ScoringGroup> implemen
 	protected Intbox  overrideScore;                       // autoWired
 	protected Listbox sortOperator_overrideScore;          // autoWired
 	protected Listbox sortOperator_CategoryType;		   // autoWired
-	protected Textbox categoryType;
+	protected Combobox categoryType;
 	protected Textbox recordStatus;                        // autoWired
 	protected Listbox recordType;	                       // autoWired
 	protected Listbox sortOperator_recordStatus;           // autoWired
 	protected Listbox sortOperator_recordType;             // autoWired
 
-	protected Label label_ScoringGroupSearch_RecordStatus; // autoWired
-	protected Label label_ScoringGroupSearch_RecordType;   // autoWired
+	protected Row row_AlwWorkflow;
 	protected Label label_ScoringGroupSearchResult;        // autoWired
 	
 	protected Grid	                       searchGrid;	
@@ -229,7 +230,8 @@ public class ScoringGroupListCtrl extends GFCBaseListCtrl<ScoringGroup> implemen
 		
 		this.sortOperator_CategoryType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_CategoryType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
+		fillComboBox(this.categoryType, "", PennantStaticListUtil.getCategoryType(), "");
+	
 		if (isWorkFlowEnabled()){
 			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
@@ -237,12 +239,7 @@ public class ScoringGroupListCtrl extends GFCBaseListCtrl<ScoringGroup> implemen
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
-			this.label_ScoringGroupSearch_RecordStatus.setVisible(false);
-			this.label_ScoringGroupSearch_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 
 		/* set components visible dependent on the users rights */
@@ -495,7 +492,7 @@ public class ScoringGroupListCtrl extends GFCBaseListCtrl<ScoringGroup> implemen
 		this.scoreGroupName.setValue("");
 		this.sortOperator_scoreGroupId.setSelectedIndex(0);
 		this.scoreGroupId.setText("");
-		this.categoryType.setValue("");
+		this.categoryType.setSelectedIndex(0);
 		this.sortOperator_CategoryType.setSelectedIndex(0);
 		if (isWorkFlowEnabled()) {
 			this.sortOperator_recordStatus.setSelectedIndex(0);
@@ -506,9 +503,6 @@ public class ScoringGroupListCtrl extends GFCBaseListCtrl<ScoringGroup> implemen
 		}
 
 		doSearch();
-		/*this.pagingScoringGroupList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_ScoringGroupList, event);
-		this.window_ScoringGroupList.invalidate();*/
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -574,8 +568,8 @@ public class ScoringGroupListCtrl extends GFCBaseListCtrl<ScoringGroup> implemen
 		if (!StringUtils.trimToEmpty(this.scoreGroupName.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_scoreGroupName.getSelectedItem(), this.scoreGroupName.getValue(), "scoreGroupName");
 		}
-		if (!StringUtils.trimToEmpty(this.categoryType.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_CategoryType.getSelectedItem(), this.categoryType.getValue(), "categoryType");
+		if (this.categoryType.getSelectedItem()!=null && !PennantConstants.List_Select.equals(this.categoryType.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_CategoryType.getSelectedItem(), this.categoryType.getSelectedItem().getValue().toString(), "categoryType");
 		}
 		if (isoverride.isChecked()) {
 			searchObj = getSearchFilter(searchObj,this.sortOperator_isoverride.getSelectedItem(), 1,"isoverride");

@@ -128,10 +128,10 @@
 									<listbox
 										id="sortOperator_CategoryType" width="43px" mold="select"
 										rows="1" />
-									<textbox id="categoryType"
-										width="100px" maxlength="50" />
+									<combobox id="categoryType"
+										width="100px" />
 								</row>
-								<row>
+								<row id="row_AlwWorkflow">
 									<label
 										id="label_ScoringGroupSearch_RecordStatus"
 										value="${c:l('label_ScoringGroupSearch_RecordStatus.value')}" />

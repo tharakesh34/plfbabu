@@ -87,7 +87,6 @@ import org.zkoss.zul.impl.LabelElement;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.dedup.DedupParm;
@@ -520,7 +519,7 @@ public class DedupParmDialogCtrl extends GFCBaseListCtrl<DedupParm>  implements 
 		logger.debug("Entering");
 		if(moduleName.equals(PennantConstants.DedupCust)){
 			this.queryModule.setValue(moduleName);
-			fillComboBox(this.custCtgCode,aDedupParm.getQuerySubCode(),PennantStaticListUtil.getCategoryType());		
+			fillComboBox(this.custCtgCode,aDedupParm.getQuerySubCode(),PennantStaticListUtil.getCategoryType(),"");		
 		}else if(moduleName.equals(PennantConstants.DedupFinance)){
 			this.queryModule.setValue(moduleName);
 		}
@@ -2164,26 +2163,6 @@ public class DedupParmDialogCtrl extends GFCBaseListCtrl<DedupParm>  implements 
 	}
 	public void setNotes_Entered(boolean notesEntered) {
 		this.notes_Entered = notesEntered;
-	}
-	
-	private void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
-		logger.debug("Entering fillComboBox()");
-		combobox.getChildren().clear();
-		Comboitem comboitem = new Comboitem();
-		comboitem.setValue("#");
-		comboitem.setLabel(Labels.getLabel("Combo.Select"));
-		combobox.appendChild(comboitem);
-		combobox.setSelectedItem(comboitem);
-		for (int i = 0; i < list.size(); i++) {
-			comboitem = new Comboitem();
-			comboitem.setValue(StringUtils.trim(list.get(i).getValue()));
-			comboitem.setLabel(StringUtils.trim(list.get(i).getLabel()));
-			combobox.appendChild(comboitem);
-			if (StringUtils.trimToEmpty(value).equals(StringUtils.trim(list.get(i).getValue()))) {
-				combobox.setSelectedItem(comboitem);
-			}
-		}
-		logger.debug("Leaving fillComboBox()");
 	}
 
 }

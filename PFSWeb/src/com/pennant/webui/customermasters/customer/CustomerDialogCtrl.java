@@ -394,14 +394,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Listheader listheader_CustDirector_RecordType;
 	private List<DirectorDetail> directorList = new ArrayList<DirectorDetail>();
 	private List<DirectorDetail> oldVar_DirectorList = new ArrayList<DirectorDetail>();
-	private List<ValueLabel>	genderCodes	      = PennantAppUtil.getGenderCodes();
-	private List<ValueLabel>	maritalStsTypes	      = PennantAppUtil.getMaritalStsTypes();
 	protected Label label_CustomerDialog_CustNationality;
 	private boolean isCountryBehrain = false;
 	private transient DirectorDetailService directorDetailService;
-	protected List<ValueLabel> custRelationList = PennantStaticListUtil.getCustRelationList();
-	protected List<ValueLabel> targetList = PennantStaticListUtil.getCustTargetValues();
-	protected List<ValueLabel> purposeRelation = PennantStaticListUtil.getPurposeOfRelation();
 	private boolean isCustRelated = false;
 	/**
 	 * default constructor.<br>
@@ -863,9 +858,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) {
 		logger.debug("Entering");
 		Customer aCustomer = aCustomerDetails.getCustomer();
-		fillComboBox(this.custGenderCode, aCustomer.getCustGenderCode(), genderCodes, "");
+		fillComboBox(this.custGenderCode, aCustomer.getCustGenderCode(), PennantAppUtil.getGenderCodes(), "");
 		fillComboBox(this.custSalutationCode, aCustomer.getCustSalutationCode(), PennantAppUtil.getSalutationCodes(aCustomer.getCustGenderCode()), "");
-		fillComboBox(this.custMaritalSts, aCustomer.getCustMaritalSts(), maritalStsTypes, "");
+		fillComboBox(this.custMaritalSts, aCustomer.getCustMaritalSts(), PennantAppUtil.getMaritalStsTypes(), "");
 		this.custID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(StringUtils.trimToEmpty(aCustomer.getCustCIF()));
 		if (!StringUtils.trimToEmpty(aCustomer.getCustShrtName()).equals("")) {
@@ -984,7 +979,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		
 		this.custAddlVar81.setValue(aCustomer.getCustAddlVar81());
-		fillComboBox(this.custAddlVar82, aCustomer.getCustAddlVar82(), targetList, "");
+		fillComboBox(this.custAddlVar82, aCustomer.getCustAddlVar82(), PennantStaticListUtil.getCustTargetValues(), "");
 		if (StringUtils.trimToEmpty(aCustomer.getCustAddlVar83()).equals("1")) {
 			this.custAddlVar83.setChecked(true);
 		}else{
@@ -1000,7 +995,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}else{
 			this.custAddlVar85.setChecked(false);
 		}
-		fillComboBox(this.custAddlVar86, aCustomer.getCustAddlVar86(), purposeRelation, "");
+		fillComboBox(this.custAddlVar86, aCustomer.getCustAddlVar86(),PennantStaticListUtil.getPurposeOfRelation(), "");
 		this.custAddlVar87.setValue(aCustomer.getCustAddlVar87());	
 		this.custAddlVar88.setValue(aCustomer.getCustAddlVar88());	
 		this.custAddlVar1.setValue(aCustomer.getCustAddlVar1());	
@@ -3483,8 +3478,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 	
 	private void doFillCustRelation(String custRelation){
 		logger.debug("Entering");
-		for (int i=0;i<custRelationList.size();i++) {
-			ValueLabel valueLabel = custRelationList.get(i);
+		for (int i=0;i<PennantStaticListUtil.getCustRelationList().size();i++) {
+			ValueLabel valueLabel = PennantStaticListUtil.getCustRelationList().get(i);
 			Radio radio = new Radio();
 			radio.setId(valueLabel.getValue());
 			radio.setValue(valueLabel.getValue());

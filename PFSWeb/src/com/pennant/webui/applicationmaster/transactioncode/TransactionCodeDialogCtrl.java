@@ -47,7 +47,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,7 +61,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
@@ -72,7 +70,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -83,7 +80,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -101,7 +97,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 
 	private static final long serialVersionUID = -5775295643429759088L;
 	private final static Logger logger = Logger.getLogger(TransactionCodeDialogCtrl.class);
-	
+
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 * All the components that are defined here and have a corresponding
@@ -150,9 +146,6 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 	private transient TransactionCodeService transactionCodeService;
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
-	
-	private List<ValueLabel> listTranType=PennantStaticListUtil.getTranType(); // autoWired
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -206,8 +199,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 			getUserWorkspace().alocateRoleAuthorities(getRole(), "TransactionCodeDialog");
 		}
 
-		setListTranType();
-	
+
 		// READ OVERHANDED parameters !
 		// we get the transactionCodeListWindow controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
@@ -438,7 +430,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Entering") ;
 		this.tranCode.setValue(aTransactionCode.getTranCode());
 		this.tranDesc.setValue(aTransactionCode.getTranDesc());
-		this.tranType.setValue(PennantAppUtil.getlabelDesc(aTransactionCode.getTranType(),listTranType));
+		fillComboBox(this.tranType,aTransactionCode.getTranType(),PennantStaticListUtil.getTranType(),"");
 		this.tranIsActive.setChecked(aTransactionCode.isTranIsActive());
 		this.recordStatus.setValue(aTransactionCode.getRecordStatus());
 		
@@ -645,7 +637,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.tranType.isDisabled()){
-			this.tranType.setConstraint(new StaticListValidator(listTranType,
+			this.tranType.setConstraint(new StaticListValidator(PennantStaticListUtil.getTranType(),
 					Labels.getLabel("label_TransactionCodeDialog_TranType.value")));
 		}	
 	logger.debug("Leaving");
@@ -1094,18 +1086,6 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl implements Serializab
 	/**
 	 * Method For Rendering List into ComboBox
 	 */
-	private void setListTranType(){
-		logger.debug("Entering");
-		for (int i = 0; i < listTranType.size(); i++) {
-
-			Comboitem comboitem = new Comboitem();
-			comboitem = new Comboitem();
-			comboitem.setLabel(listTranType.get(i).getLabel());
-			comboitem.setValue(listTranType.get(i).getValue());
-			this.tranType.appendChild(comboitem);
-		} 
-		logger.debug("Leaving");
-	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//

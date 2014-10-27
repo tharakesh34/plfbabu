@@ -61,7 +61,6 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.GroupsModelArray;
@@ -78,7 +77,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -176,9 +174,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	private transient FinanceTypeService financeTypeService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
-	private List<ValueLabel>           listProfitDaysBasis=PennantAppUtil.getProfitDaysBasis();
-	private List<ValueLabel>           listScheduleMethod=PennantAppUtil.getScheduleMethod();
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -229,9 +224,11 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 
 		this.sortOperator_finDaysCalType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finDaysCalType.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		fillComboBox(this.finDaysCalType, "", PennantAppUtil.getProfitDaysBasis(), "");
 
 		this.sortOperator_finSchdMthd.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finSchdMthd.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		fillComboBox(this.finSchdMthd, "", PennantAppUtil.getScheduleMethod(), ",NO_PAY,GRCNDPAY,");
 
 		this.sortOperator_finIsAlwGrace.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_finIsAlwGrace.setItemRenderer(new SearchOperatorListModelItemRenderer());
@@ -317,26 +314,9 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 				this.fromApproved.setSelected(true);
 			}
 		}
-		setProfitDaysCalType();
-		fillComboBox(this.finSchdMthd, "", listScheduleMethod, ",NO_PAY,GRCNDPAY,");
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * This method sets all rightsTypes as ComboItems for ComboBox
-	 */
-	private void setProfitDaysCalType() {
-		logger.debug("Entering ");
-		Comboitem comboitem;
-		for (int i = 0; i < listProfitDaysBasis.size(); i++) {
-			comboitem = new Comboitem();
-			comboitem.setLabel(listProfitDaysBasis.get(i).getLabel());
-			comboitem.setValue(listProfitDaysBasis.get(i).getValue());
-			this.finDaysCalType.appendChild(comboitem);
-		}
-		logger.debug("Leaving ");
-	}
-	
 	/**
 	 * Internal Method for Grouping List items
 	 */
@@ -525,11 +505,11 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		this.sortOperator_finCcy.setSelectedIndex(0);
 		this.finCcy.setValue("");
 		this.sortOperator_finDaysCalType.setSelectedIndex(0);
-		this.finDaysCalType.setValue("");
+		this.finDaysCalType.setSelectedIndex(0);
 		this.sortOperator_finIsAlwGrace.setSelectedIndex(0);
 		this.finIsAlwGrace.setChecked(false);
 		this.sortOperator_finSchdMthd.setSelectedIndex(0);
-		this.finSchdMthd.setValue("");
+		this.finSchdMthd.setSelectedIndex(0);
 		this.sortOperator_finType.setSelectedIndex(0);
 		this.finType.setValue("");
 		this.sortOperator_finTypeDesc.setSelectedIndex(0);
@@ -621,12 +601,12 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		if (!StringUtils.trimToEmpty(this.finDivision.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj,this.sortOperator_finDivision.getSelectedItem(), this.finDivision.getValue() , "finDivision");
 		}
-		//Finance Category
+		//Finance Ccy
 		if (!StringUtils.trimToEmpty(this.finCcy.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_finCcy.getSelectedItem(), this.finCategory.getValue() , "finCategory");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finCcy.getSelectedItem(), this.finCcy.getValue() , "finCcy");
 		}
 		//Finance Days Calculation Type
-		if (null !=this.finDaysCalType.getSelectedItem() && !StringUtils.trimToEmpty(this.finDaysCalType.getSelectedItem().getValue().toString()).equals("")){
+		if (null !=this.finDaysCalType.getSelectedItem() && !PennantConstants.List_Select.equals(this.finDaysCalType.getSelectedItem().getValue())){
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finDaysCalType.getSelectedItem(), this.finDaysCalType.getSelectedItem().getValue().toString(), "finDaysCalType");
 		}
 
@@ -638,7 +618,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		}
 
 		//Finance Schedule Method
-		if (null !=this.finSchdMthd.getSelectedItem() && !StringUtils.trimToEmpty(this.finSchdMthd.getSelectedItem().getValue().toString()).equals("")){
+		if (null !=this.finSchdMthd.getSelectedItem() && !PennantConstants.List_Select.equals(this.finSchdMthd.getSelectedItem().getValue())){
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finSchdMthd.getSelectedItem(), this.finSchdMthd.getSelectedItem().getValue().toString(), "finSchdMthd");
 		}
 		//Finance Finance Type

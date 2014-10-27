@@ -46,7 +46,6 @@ package com.pennant.webui.rmtmasters.accounttype;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -56,7 +55,6 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -69,11 +67,9 @@ import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
-
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
@@ -155,8 +151,6 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 	protected Row	                       workFlowFrom;
 
 	private transient boolean	           approvedList	    = false;
-	private List<ValueLabel>           listAccPurposeType = PennantStaticListUtil.getAccountPurpose();
-
 	// checkRights
 	protected Button btnHelp; 										// auto wired
 	protected Button button_AccountTypeList_NewAccountType; 		// auto wired
@@ -217,6 +211,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 
 		this.sortOperator_acPurpose.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_acPurpose.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		fillComboBox(this.acPurpose, "", PennantStaticListUtil.getAccountPurpose(), "");
 
 		this.sortOperator_internalAc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_internalAc.setItemRenderer(new SearchOperatorListModelItemRenderer());
@@ -295,23 +290,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 				this.fromApproved.setSelected(true);
 			}
 		}
-		setListAccountPurpose();
 		logger.debug("Leaving"+event.toString());
-	}
-	/**
-	 * This method sets all rightsTypes as ComboItems for ComboBox
-	 */
-	private void setListAccountPurpose() {
-		logger.debug("Entering ");
-		Comboitem comboitem;
-		for (int i = 0; i < listAccPurposeType.size(); i++) {
-			comboitem = new Comboitem();
-			comboitem.setLabel(listAccPurposeType.get(i).getLabel());
-			comboitem.setValue(listAccPurposeType.get(i).getValue());
-			this.acPurpose.appendChild(comboitem);
-		}
-		this.acPurpose.setSelectedIndex(0);
-		logger.debug("Leaving ");
 	}
 	/**
 	 * SetVisible for components by checking if there's a right for it.
@@ -490,9 +469,6 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 			this.sortOperator_recordType.setSelectedIndex(0);
 			this.recordType.setSelectedIndex(0);
 		}
-		/*this.pagingAccountTypeList.setActivePage(0);
-		Events.postEvent("onCreate", this.window_AccountTypeList, event);
-		this.window_AccountTypeList.invalidate();*/
 		doSearch();
 		logger.debug("Leaving"+event.toString());
 	}
@@ -560,7 +536,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 		if (!StringUtils.trimToEmpty(this.acTypeDesc.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_acTypeDesc.getSelectedItem(), this.acTypeDesc.getValue(), "acTypeDesc");
 		}
-		if (null !=this.acPurpose.getSelectedItem() && !StringUtils.trimToEmpty(this.acPurpose.getSelectedItem().getValue().toString()).equals("")){
+		if(this.acPurpose.getSelectedItem()!=null && !PennantConstants.List_Select.equals(this.acPurpose.getSelectedItem().getValue())){
 			searchObj = getSearchFilter(searchObj, this.sortOperator_acPurpose.getSelectedItem(), this.acPurpose.getSelectedItem().getValue().toString(), "acPurpose");
 		}
 		 if (internalAc.isChecked()) { 
