@@ -548,8 +548,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				}
 				
 				if ((curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) && 
-						(curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) > 0 ||
-						curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) > 0)) {
+						((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid()) ||
+						(curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0 && curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()))) {
 
 					comboitem = new Comboitem();
 					comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(),PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
@@ -587,8 +587,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				if ((curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))  
-						&& (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) > 0 ||
-						curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) > 0)) {
+						&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid()) ||
+								(curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0 && curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()))) {
 					
 					comboitem = new Comboitem();
 					comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
