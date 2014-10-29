@@ -3995,7 +3995,13 @@ public class ScheduleCalculator {
 			        && !curSchd.isDefered()
 			        && curSchd.getSchDate().after(financeMain.getGrcPeriodEndDate())) {
 				isFirstAdjSet = true;
-				firstAdjAmount = curSchd.getRepayAmount();
+				
+				//For PRI_PFT Method only, First Adjustment amounts taken as Principal Amount
+				if (curSchd.getSchdMethod().equals(CalculationConstants.PRI_PFT)) {
+					firstAdjAmount = curSchd.getPrincipalSchd();
+				}else{
+					firstAdjAmount = curSchd.getRepayAmount();
+				}
 			}
 		}
 
@@ -4003,7 +4009,12 @@ public class ScheduleCalculator {
 			if (recalEndDate.compareTo(curSchd.getSchDate()) <= 0 && isFirstAdjSet
 			        && !curSchd.isDefered()) {
 				isLastAdjSet = true;
-				lastAdjAmount = curSchd.getRepayAmount();
+				//For PRI_PFT Method only, Last Adjustment amounts taken as Principal Amount
+				if (curSchd.getSchdMethod().equals(CalculationConstants.PRI_PFT)) {
+					lastAdjAmount = curSchd.getPrincipalSchd();
+				}else{
+					lastAdjAmount = curSchd.getRepayAmount();
+				}
 			}
 		}
 
