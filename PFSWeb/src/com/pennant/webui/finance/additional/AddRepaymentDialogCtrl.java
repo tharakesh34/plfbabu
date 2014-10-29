@@ -707,7 +707,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		
 		if(this.fromDateRow.isVisible()){
 			try {
-				if(this.cbFromDate.getSelectedIndex() == 0) {
+				if(this.cbFromDate.getSelectedIndex() <= 0) {
 					throw new WrongValueException(this.cbFromDate, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value") }));
 				}
@@ -877,28 +877,39 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		if (selectedRecalType.equals(CalculationConstants.RPYCHG_TILLDATE) || 
 				selectedRecalType.equals(CalculationConstants.RPYCHG_TILLMDT)) {
 			
-		  if(selectedRecalType.equals(CalculationConstants.RPYCHG_TILLDATE)){
-				this.fromDateRow.setVisible(true);
-				if(isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))){
-					fillSchToDates(this.cbFromDate, getFinScheduleData().getFinanceScheduleDetails(),
-							(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
+			if(selectedRecalType.equals(CalculationConstants.RPYCHG_TILLDATE)){
+				
+				try {
+					if(isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))){
+						fillSchToDates(this.cbFromDate, getFinScheduleData().getFinanceScheduleDetails(),
+								(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
+					}
+				} catch (WrongValueException e) {
+					this.cbReCalType.setSelectedIndex(0);
+					throw e;
 				}
-			this.label_ChangeRepaymentDialog_TillDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_TillDate.value"));
+				
+				this.fromDateRow.setVisible(true);
+				this.label_ChangeRepaymentDialog_TillDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_TillDate.value"));
 			} else {
 				this.fromDateRow.setVisible(false);
 				this.label_ChangeRepaymentDialog_TillDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value"));
 			}
 			
-			this.tillDateRow.setVisible(true);
-			if (isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))) {
-				fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
-						(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
+			try {
+				if (isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))) {
+					fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
+							(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
+				}
+			} catch (WrongValueException e) {
+				this.cbReCalType.setSelectedIndex(0);
+				this.fromDateRow.setVisible(false);
+				throw e;
 			}
+			this.tillDateRow.setVisible(true);
 			this.numOfTermsRow.setVisible(false);
-		} else if (selectedRecalType
-				.equals(CalculationConstants.RPYCHG_ADDRECAL)
-				|| selectedRecalType
-						.equals(CalculationConstants.RPYCHG_ADDTERM)) {
+		} else if (selectedRecalType.equals(CalculationConstants.RPYCHG_ADDRECAL)
+				|| selectedRecalType.equals(CalculationConstants.RPYCHG_ADDTERM)) {
 			
 			if(this.cbTillDate.getItemCount() > 0){
 				this.cbTillDate.setSelectedIndex(0);
