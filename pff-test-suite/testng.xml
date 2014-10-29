@@ -14,6 +14,7 @@
 			<class name="com.pennant.test.schedule.AddDisbursementTestFactory" />
 			<class name="com.pennant.test.schedule.ChangeRateTestFactory" />
 			<class name="com.pennant.test.schedule.AddTermTestFactory" />
+			<class name="com.pennant.test.schedule.AddDefermentTestFactory" /> 
 		</classes>
 	</test>
 </suite>
