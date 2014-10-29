@@ -5851,10 +5851,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 	
 	private void changeFrequencies(){
 		logger.debug("Entering");
-		if(!StringUtils.trimToEmpty(this.depreciationFrq.getValue()).equals("")){
+/*		if(!StringUtils.trimToEmpty(this.depreciationFrq.getValue()).equals("")){
 			changeAutoFrequency(this.depreciationFrq,  this.cbDepreciationFrqCode, this.cbDepreciationFrqMth, 
 					this.cbDepreciationFrqDay,  isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
-		}
+		}*/
 		if(!StringUtils.trimToEmpty(this.gracePftFrq.getValue()).equals("")){
 			changeAutoFrequency(this.gracePftFrq, this.cbGracePftFrqCode, this.cbGracePftFrqMth,
 					this.cbGracePftFrqDay, isReadOnly("WIFFinanceMainDialog_gracePftFrq"));

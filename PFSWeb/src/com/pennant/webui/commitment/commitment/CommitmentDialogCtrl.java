@@ -45,6 +45,7 @@ package com.pennant.webui.commitment.commitment;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -98,6 +99,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -394,6 +396,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	boolean	                             maintain	             = false;
 	boolean	                             newMaintain	         = false;
 	BigDecimal	                         oldCmtAmount	         = BigDecimal.ZERO;
+	boolean								 proceed				 = true;
 	protected Label	                     labelCustIDName;
 	public int	                       borderLayoutHeight	= 0;
 	Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
@@ -1303,9 +1306,37 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 			if (maintain) {
 				//New Commitment amount cannot be less than Utilized Amount
 				if (this.cmtAmount.getValue().compareTo(this.cmtUtilizedAmount.getValue()) < 0) {
-					throw new WrongValueException(this.cmtAmount, Labels.getLabel("AMOUNT_NO_LESS", new String[] { Labels.getLabel("label_CommitmentDialog_CmtAmount.value"),
-					        Labels.getLabel("label_CommitmentDialog_CmtUtilizedAmount.value") }));
+					/*throw new WrongValueException(this.cmtAmount, Labels.getLabel("AMOUNT_NO_LESS", new String[] { Labels.getLabel("label_CommitmentDialog_CmtAmount.value"),
+					        Labels.getLabel("label_CommitmentDialog_CmtUtilizedAmount.value") }));*/
 				}
+				
+				ErrorDetails errorDetails = null;
+				if (this.cmtAmount.getValue().compareTo(this.cmtUtilizedAmount.getValue()) < 0) {
+					BigDecimal percentage = this.cmtUtilizedAmount.getValue().subtract(this.cmtAmount.getValue()).multiply(BigDecimal.valueOf(100)).divide(this.cmtAmount.getValue(), RoundingMode.HALF_DOWN);
+					if(percentage.compareTo(BigDecimal.valueOf(20)) <= 0){
+						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "CM001",
+								new String[]{percentage.toString()},null),"");
+					} else {
+						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "CM002",
+								new String[]{percentage.toString()},null),"");
+					}
+					
+					if(errorDetails != null){
+						    String errMsgs[] = errorDetails.getError().split("%");
+							final String msg = errMsgs[0]+"% \n"+errMsgs[1];
+							final String title = Labels.getLabel("message.Information");
+							proceed = true;
+							MultiLineMessageBox.doSetTemplate();
+							int conf = MultiLineMessageBox.show(msg, title,
+									MultiLineMessageBox.YES | MultiLineMessageBox.NO,
+									MultiLineMessageBox.QUESTION, true);
+
+							if (conf == MultiLineMessageBox.NO) {
+								proceed = false; 
+							} 
+					}
+				}
+				
 			}
 			if (this.cmtAmount.getValue() != null) {
 				aCommitment.setCmtAmount(PennantApplicationUtil.unFormateAmount(this.cmtAmount.getValue(), defaultCCYDecPos));
@@ -2027,10 +2058,17 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// force validation, if on, than execute by component.getValue()
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		if (!PennantConstants.RECORD_TYPE_DEL.equals(aCommitment.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aCommitment.getRecordType()) 
+				&& isValidation() 
+				&& !this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel")
+				&& !this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Reject")
+				&& !this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Resubmit")) {
 			doSetValidation();
 			// fill the Commitment object with the components data
 			doWriteComponentsToBean(aCommitment);
+			if(!proceed){
+				return;
+			}
 		}
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
