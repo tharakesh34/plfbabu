@@ -2830,7 +2830,6 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				this.disbAcctId.setCustCIF("");
 				this.repayAcctId.setCustCIF("");
 				this.downPayAccount.setCustCIF("");
-				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_CustID.value") }));
 			}
 		}
 		//doFillCommonDetails();
