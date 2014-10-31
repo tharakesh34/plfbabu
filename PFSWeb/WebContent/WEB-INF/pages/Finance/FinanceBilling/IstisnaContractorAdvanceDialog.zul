@@ -92,12 +92,15 @@
 										<space spacing="2px" />
 										<textbox id="lovDescCustCIF"
 											width="250px" readonly="true" />
-									</hbox>
-									<hbox visible="false">
-										<space spacing="2px" sclass="mandatory" />
-										<longbox id="disbBenificiary" visible="false" width="100px" />
-										<button id="btnSearchBenfCIF" image="/images/icons/LOVSearch.png"  />
-										<label id="benfShrtName" />
+										<hbox visible="false">
+											<space spacing="2px"
+												sclass="mandatory" />
+											<longbox
+												id="disbBenificiary" visible="false" width="100px" />
+											<button
+												id="btnSearchBenfCIF" image="/images/icons/LOVSearch.png" />
+											<label id="benfShrtName" />
+										</hbox>
 									</hbox>
 								</row>
 								<row>
@@ -108,15 +111,16 @@
 									<label
 										id="label_IstisnaContractorAdvanceDialog_disbAccountId"
 										value="${c:l('label_IstisnaContractorAdvanceDialog_disbAccountId.value')}" />
-									<hbox>
-										<accountSelectionBox id="disbAccountId"  />
-										<longbox id="disbExpType"
-											readonly="true" visible="false" />
-										<textbox id="lovDescDisbExpType" visible="false" />
-										<button
-											id="btnSearchDisbExpType" image="/images/icons/LOVSearch.png"
-											visible="false"  />
-									</hbox>
+									<accountSelectionBox
+										id="disbAccountId" />
+								</row>
+								<row visible="false">
+									<longbox id="disbExpType"
+										readonly="true" visible="false" />
+									<textbox id="lovDescDisbExpType"
+										visible="false" />
+									<button id="btnSearchDisbExpType"
+										image="/images/icons/LOVSearch.png" visible="false" />
 								</row>
 								<row visible="false">
 									<label

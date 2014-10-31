@@ -106,15 +106,16 @@
 									<label
 										id="label_IstisnaConsultingFeeDialog_disbAccountId"
 										value="${c:l('label_IstisnaConsultingFeeDialog_disbAccountId.value')}" />
-									<hbox>
-										<accountSelectionBox id="disbAccountId" />
-										<longbox id="disbExpType"
-											readonly="true" visible="false" />
-										<textbox id="lovDescDisbExpType" visible="false" />
-										<button
-											id="btnSearchDisbExpType" image="/images/icons/LOVSearch.png"
-											visible="false"  />
-									</hbox>
+									<accountSelectionBox
+										id="disbAccountId" />
+								</row>
+								<row visible="false">
+									<longbox id="disbExpType"
+										readonly="true" visible="false" />
+									<textbox id="lovDescDisbExpType"
+										visible="false" />
+									<button id="btnSearchDisbExpType"
+										image="/images/icons/LOVSearch.png" visible="false" />
 								</row>
 								<row>
 									<label

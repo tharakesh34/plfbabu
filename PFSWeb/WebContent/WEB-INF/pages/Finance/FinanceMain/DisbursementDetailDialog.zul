@@ -8,20 +8,17 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<style>
-		.decimalToString{ 
-			border:none; 
-			background-color:white; 
-			font-weight:bold;
-		}
+		.decimalToString{ border:none; background-color:white;
+		font-weight:bold; }
 	</style>
-	
+
 	<window>
 		<window id="window_DisbursementDetailDialog" border="none"
 			apply="${disbursementDetailDialogCtrl}" width="100%" height="100%"
 			sizable="false">
 
 			<borderlayout id="borderlayoutDisbursementDetail">
-				<center border="none" autoscroll="true"  >
+				<center border="none" autoscroll="true">
 					<groupbox style="border:none;">
 						<grid id="grid_effRateOfReturn"
 							sclass="GridLayoutNoBorder" fixedLayout="true">
@@ -84,109 +81,124 @@
 									<label
 										id="label_DisbursementDetailDialog_Expenses"
 										value="${c:l('label_DisbursementDetailDialog_Expenses.value')}" />
-									<decimalbox id="disb_expenses" tabindex="-1"
-										disabled="true" sclass="decimalToString" />
+									<decimalbox id="disb_expenses"
+										tabindex="-1" disabled="true" sclass="decimalToString" />
 									<label
 										id="label_DisbursementDetailDialog_TotalBilling"
 										value="${c:l('label_DisbursementDetailDialog_TotalBilling.value')}" />
-									<decimalbox id="disb_totalBilling" tabindex="-1"
-										disabled="true" sclass="decimalToString"/>
+									<decimalbox id="disb_totalBilling"
+										tabindex="-1" disabled="true" sclass="decimalToString" />
 								</row>
 								<row>
 									<label
 										id="label_DisbursementDetailDialog_ConsultFee"
 										value="${c:l('label_DisbursementDetailDialog_ConsultFee.value')}" />
-									<decimalbox id="disb_consultFee" tabindex="-1"
-										disabled="true" sclass="decimalToString"/>
+									<decimalbox id="disb_consultFee"
+										tabindex="-1" disabled="true" sclass="decimalToString" />
 									<label
 										id="label_DisbursementDetailDialog_TotalCost"
 										value="${c:l('label_DisbursementDetailDialog_TotalCost.value')}" />
-									<decimalbox id="disb_totalCost" tabindex="-1"
-										disabled="true" sclass="decimalToString"/>
+									<decimalbox id="disb_totalCost"
+										tabindex="-1" disabled="true" sclass="decimalToString" />
 								</row>
 							</rows>
 						</grid>
-						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-							width="100%" widths="70%,30%">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%" widths="70%,30%">
 
-						<toolbar align="start" sclass="toolbar-start" width="100%">
-							<button
-								label="${c:l('label_AddExpense.value')}" id="btnAddExpense"
-								tooltiptext="${c:l('btnAddExpense.tooltiptext')}"
-								 />
-							<button
-								label="${c:l('label_AddContractAdvance.value')}" id="btnAddContractAdv"
-								tooltiptext="${c:l('btnAddContractAdvance.tooltiptext')}"
-								 />
-							<button
-								label="${c:l('label_AddBilling.value')}" id="btnAddBilling"
-								tooltiptext="${c:l('btnAddBilling.tooltiptext')}"
-								 />
-							<button
-								label="${c:l('label_AddConsultingFee.value')}" id="btnAddConsultingFee"
-								tooltiptext="${c:l('btnAddConsultingFee.tooltiptext')}"
-								 />
-						</toolbar>
- 
+							<toolbar align="start"
+								sclass="toolbar-start" width="100%">
+								<button
+									label="${c:l('label_AddExpense.value')}" id="btnAddExpense"
+									tooltiptext="${c:l('btnAddExpense.tooltiptext')}" />
+								<button
+									label="${c:l('label_AddContractAdvance.value')}"
+									id="btnAddContractAdv"
+									tooltiptext="${c:l('btnAddContractAdvance.tooltiptext')}" />
+								<button
+									label="${c:l('label_AddBilling.value')}" id="btnAddBilling"
+									tooltiptext="${c:l('btnAddBilling.tooltiptext')}" />
+								<button
+									label="${c:l('label_AddConsultingFee.value')}"
+									id="btnAddConsultingFee"
+									tooltiptext="${c:l('btnAddConsultingFee.tooltiptext')}" />
+							</toolbar>
 
-						<toolbar align="end" sclass="toolbar-end" width = "100%">
-							<button id="btnAddContributor"  label = "ADD"
-								tooltiptext="${c:l('btnClose.tooltiptext')}" />
-						</toolbar>
-					</hbox>
- 						<listbox id="listBoxContributorDetails" height="100px"
-							fixedLayout="true" span="true" sclass = ""
+
+							<toolbar align="end" sclass="toolbar-end"
+								width="100%">
+								<button id="btnAddContributor"
+									label="${c:l('label_AddContractor.value')}"
+									tooltiptext="${c:l('btnAddContractor.tooltiptext')}" />
+							</toolbar>
+						</hbox>
+						<listbox id="listBoxContributorDetails"
+							height="100px" fixedLayout="true" span="true" sclass=""
 							emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
-							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" checkmark="true"
-							multiple="false" >
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							checkmark="true" multiple="false">
 							<listhead sizable="false">
-								<listheader id="listheader_DisbursementDetailDialog_AssetContractor"
-									label="${c:l('listheader_DisbursementDetailDialog_AssetContractor.label')}" sort="false"
+								<listheader
+									id="listheader_DisbursementDetailDialog_AssetContractor"
+									label="${c:l('listheader_DisbursementDetailDialog_AssetContractor.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_AssetDesc"
+									label="${c:l('listheader_DisbursementDetailDialog_AssetDesc.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_AssetValue"
+									label="${c:l('listheader_DisbursementDetailDialog_AssetValue.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_AssetBillPercent"
+									label="${c:l('listheader_DisbursementDetailDialog_ContributorBillPercent.label')}"
+									sort="false" hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="false"
 									hflex="min" />
-								<listheader id="listheader_DisbursementDetailDialog_AssetDesc"
-									label="${c:l('listheader_DisbursementDetailDialog_AssetDesc.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_DisbursementDetailDialog_AssetValue"
-									label="${c:l('listheader_DisbursementDetailDialog_AssetValue.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_DisbursementDetailDialog_AssetBillPercent"
-									label="${c:l('listheader_DisbursementDetailDialog_ContributorBillPercent.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min"/>
-						</listhead>						
-					</listbox>
-					<listbox id="listBoxDisbursementDetail"
-						fixedLayout="true" span="true"
-						emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-						multiple="false" height="100px">
-						<listhead sizable="false">
-							<listheader id="listheader_DisbursementDetailDialog_DisbDate"
-								label="${c:l('listheader_DisbursementDetailDialog_DisbDate.label')}" sort="false"
-								hflex="min" />
-							<listheader id="listheader_DisbursementDetailDialog_Event"
-								label="${c:l('listheader_DisbursementDetailDialog_Event.label')}" sort="false"
-								hflex="min" />
-							<listheader id="listheader_DisbursementDetailDialog_Amount"
-								label="${c:l('listheader_DisbursementDetailDialog_Amount.label')}" sort="false"
-								hflex="min" />
-							<listheader id="listheader_DisbursementDetailDialog_ClaimAmount"
-								label="${c:l('listheader_DisbursementDetailDialog_ClaimAmount.label')}" sort="false"
-								hflex="min" />
-							<listheader id="listheader_DisbursementDetailDialog_Account"
-								label="${c:l('listheader_DisbursementDetailDialog_Account.label')}" sort="false"
-								hflex="min" />
-							<listheader id="listheader_DisbursementDetailDialog_EndBal"
-								label="${c:l('listheader_DisbursementDetailDialog_EndBal.label')}" sort="false"
-								hflex="min" />
-							<listheader id="listheader_DisbursementDetailDialog_Retension"
-								label="${c:l('listheader_DisbursementDetailDialog_Retension.label')}" sort="false"
-								hflex="min" />
-							<listheader id="listheader_DisbursementDetailDialog_Remarks"
-								label="${c:l('listheader_DisbursementDetailDialog_Remarks.label')}" sort="false"
-								hflex="min" />
-						</listhead>
-					</listbox>
+							</listhead>
+						</listbox>
+						<listbox id="listBoxDisbursementDetail"
+							fixedLayout="true" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							multiple="false" height="100px">
+							<listhead sizable="false">
+								<listheader
+									id="listheader_DisbursementDetailDialog_DisbDate"
+									label="${c:l('listheader_DisbursementDetailDialog_DisbDate.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_Event"
+									label="${c:l('listheader_DisbursementDetailDialog_Event.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_Amount"
+									label="${c:l('listheader_DisbursementDetailDialog_Amount.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_ClaimAmount"
+									label="${c:l('listheader_DisbursementDetailDialog_ClaimAmount.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_Account"
+									label="${c:l('listheader_DisbursementDetailDialog_Account.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_EndBal"
+									label="${c:l('listheader_DisbursementDetailDialog_EndBal.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_Retension"
+									label="${c:l('listheader_DisbursementDetailDialog_Retension.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_DisbursementDetailDialog_Remarks"
+									label="${c:l('listheader_DisbursementDetailDialog_Remarks.label')}"
+									sort="false" hflex="min" />
+							</listhead>
+						</listbox>
 					</groupbox>
 				</center>
 			</borderlayout>

@@ -117,7 +117,6 @@ public class AccountSelectionBox extends Hbox {
 
 		space = new Space();
 		space.setWidth("2px");
-		space.setSclass("");
 		this.appendChild(space);
 
 		//Hbox

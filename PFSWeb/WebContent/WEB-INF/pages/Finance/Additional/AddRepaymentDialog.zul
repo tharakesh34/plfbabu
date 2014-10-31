@@ -85,7 +85,7 @@
 							<row id="fromDateRow" visible="false">
 								<label
 									id="label_ChangeRepaymentDialog_TillFromDate"
-									value="${c:l('label_ChangeRepaymentDialog_FromDate.value')}" />
+									value="${c:l('label_ChangeRepaymentDialog_CalFromDate.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" id="space_TillFromDate" />
@@ -100,7 +100,7 @@
 							<row id="tillDateRow" visible="false">
 								<label
 									id="label_ChangeRepaymentDialog_TillDate"
-									value="${c:l('label_ChangeRepaymentDialog_TillDate.value')}" />
+									value="${c:l('label_ChangeRepaymentDialog_CalToDate.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" id="space_TillDate" />
