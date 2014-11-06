@@ -601,7 +601,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			details.setCustID(queue.getCustomerID());
 
 			//Prepare Overdue Penalty rate Details & set to Finance Overdue Details
-			FinODPenaltyRate penaltyRate = getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(queue.getFinReference(), "");
+			FinODPenaltyRate penaltyRate = getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(queue.getFinReference(), "_AView");
 
 			if(penaltyRate != null){
 				details.setApplyODPenalty(penaltyRate.isApplyODPenalty());

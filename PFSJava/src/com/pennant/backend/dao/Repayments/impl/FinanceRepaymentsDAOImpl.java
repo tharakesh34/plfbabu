@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.Repayments.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -476,6 +477,28 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
+	
+	/**
+	 * Get Total Repayment Profit Amount till Date
+	 */
+	@Override
+	public BigDecimal getPaidPft(String finReference , Date finPostDate){
+		logger.debug("Entering");
+		
+		FinanceRepayments repayment = new FinanceRepayments();
+		repayment.setFinReference(finReference);
+		repayment.setFinPostDate(finPostDate);
+
+		StringBuilder selectSql = new StringBuilder(" SELECT SUM(FinSchdPftPaid) FROM FinRepayDetails ");
+		selectSql.append(" where FinReference=:FinReference AND  FinPostDate < :FinPostDate ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayment);
+		BigDecimal totalPftPaid = new BigDecimal(this.namedParameterJdbcTemplate.queryForLong(selectSql.toString(), beanParameters));
+
+		logger.debug("Leaving");
+		return totalPftPaid;
+	}
 	
 	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
 		String[][] parms = new String[2][1];

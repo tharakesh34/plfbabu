@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.Repayments;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -28,5 +29,6 @@ public interface FinanceRepaymentsDAO {
 	FinRepayHeader getFinRepayHeader(String finReference, long linkedTranId, String type);
 	void deleteFinRepayHeaderByTranId(String finReference, long linkedTranId, String string);
 	void deleteFinRepaySchListByTranId(String finReference, long linkedTranId, String string);
+	BigDecimal getPaidPft(String finReference, Date finPostDate);
 
 }

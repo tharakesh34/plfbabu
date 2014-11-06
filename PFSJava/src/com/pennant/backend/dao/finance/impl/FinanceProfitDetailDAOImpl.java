@@ -494,9 +494,12 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		accumulateDetail.setMonthStartDate(DateUtility.getMonthStartDate(valueDate));
 
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO MonthlyAccumulateDetail ");
-		insertSql.append(" Select FinReference, :MonthEndDate AS  MonthEndDate,  (TotalPftPaid+TdPftAccrued) AS PftAccrued, ");
+		insertSql.append(" Select FinReference, :MonthEndDate AS  MonthEndDate, " );
+		insertSql.append(" CASE WHEN PftInSusp = '1' THEN (TotalPftPaid+AcrTsfdInSusp) ELSE (TotalPftPaid + TdPftAccrued) END  AS PftAccrued, ");
 		insertSql.append(" CASE WHEN PftInSusp = '1' THEN AcrTsfdInSusp ELSE (TotalPftPaid + TdPftAccrued - PftAccrueTsfd) END  AS PftTsfd , ");
-		insertSql.append(" SuspPftAccrueTsfd AS SuspPftAccrued, (SuspPftAccrueTsfd - TdPftAccrueSusp) AS SuspPftTsfd, AccumulatedDepPri, DepreciatePri ");
+		insertSql.append(" SuspPftAccrueTsfd AS SuspPftAccrued, " );
+		insertSql.append(" CASE WHEN PftInSusp = '1' THEN (CASE WHEN (SuspPftAccrueTsfd > AcrTsfdInSusp) THEN " );
+		insertSql.append(" (SuspPftAccrueTsfd - TdPftAccrueSusp + AcrTsfdInSusp) ELSE TdPftAccrueSusp END ) ELSE 0 END AS SuspPftTsfd, AccumulatedDepPri, DepreciatePri ");
 		insertSql.append(" FROM FinPftDetails where FinIsActive = 1 OR (FinIsActive = 0 AND LatestRpyDate >= :MonthStartDate AND LatestRpyDate <= :MonthEndDate ) ");
 		
 		logger.debug("insertSql: " + insertSql.toString());

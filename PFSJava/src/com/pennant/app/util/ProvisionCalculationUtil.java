@@ -206,6 +206,7 @@ public class ProvisionCalculationUtil implements Serializable {
 					movement.setProvisionDue(BigDecimal.ZERO);
 					movement.setProvisionPostSts("C");
 					movement.setLinkedTranId((Long)returnList.get(1));
+					movement.setUserDetails(procProvision.getUserDetails());
 
 					//Update Provision Movement Details
 					getProvisionDAO().updateProvAmt(movement, "");

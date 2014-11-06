@@ -1062,7 +1062,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
                     }
 					
 					//Fetch Past Due Modified Schedule Details List
-					pastdueDefDateList = getFinODDetailsDAO().getMismatchODDates(financeMain.getFinReference(), schDateList);
+					if(!schDateList.isEmpty()){
+						pastdueDefDateList = getFinODDetailsDAO().getMismatchODDates(financeMain.getFinReference(), schDateList);
+					}
 				}
 				
 				// Process on Overdue Details with Past due Deferment Schedules

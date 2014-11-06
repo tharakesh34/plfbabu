@@ -544,7 +544,8 @@ public class AmortizationServiceImpl implements AmortizationService {
 		sqlQuery.append(" T3.SchDate < Convert(DateTime,DATEADD(dd,-(DAY(CustStsChgDate)-1),CustStsChgDate)) LEFT JOIN ");
 		sqlQuery.append(" FinScheduleDetails T5 ON T5.FinReference=T1.FinReference and  ");
 		sqlQuery.append(" T5.SchDate >= Convert(DateTime,DATEADD(dd,-(DAY(CustStsChgDate)-1),CustStsChgDate)) ");
-		sqlQuery.append(" Where PftInSusp= '1'  and FinIsActive= '1' and MaturityDate > Convert(DateTime,DATEADD(dd,-(DAY(CustStsChgDate)-1),CustStsChgDate)) ");
+		sqlQuery.append(" Where PftInSusp= '1'  and (FinIsActive = 1 OR (FinIsActive = 0 AND LatestRpyDate >= ? AND LatestRpyDate <= ? )) " );
+		sqlQuery.append(" and MaturityDate > Convert(DateTime,DATEADD(dd,-(DAY(CustStsChgDate)-1),CustStsChgDate)) ");
 		sqlQuery.append(" Group By T1.FinReference,T2.CustStsChgDate) T INNER JOIN FinRepayDetails T1 ON T.FinReference=T1.FinReference ");
 		sqlQuery.append(" Inner Join FinScheduleDetails T2 ON T2.FinReference=T1.FinReference and T2.SchDate=T1.FinSchdDate ");
 		sqlQuery.append(" where T1.FinSchdDate>= CurSchDate AND T1.FinReference IN (Select FinReference from FinRepayDetails ");
