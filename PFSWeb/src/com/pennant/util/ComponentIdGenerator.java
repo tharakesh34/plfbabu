@@ -1,96 +1,64 @@
 package com.pennant.util;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
+import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.metainfo.ComponentInfo;
 import org.zkoss.zk.ui.metainfo.Property;
 import org.zkoss.zk.ui.sys.IdGenerator;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Textbox;
-
-import com.pennant.AccountSelectionBox;
-import com.pennant.CurrencyBox;
-import com.pennant.ExtendedCombobox;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennant.webui.util.searchdialogs.ExtendedStaticListBox;
+import org.zkoss.zul.Window;
 
 public class ComponentIdGenerator implements IdGenerator {
-	private static final String PREFIX = "zk_comp_";
+	private static final String DEFAULT_PREFIX = "zk_comp_";
+	private static final String[] COMPONENTS = { "Textbox", "Intbox",
+			"Decimalbox", "Datebox", "Checkbox", "Radio", "Radiogroup",
+			"Combobox", "Listbox", "Button", "Menuitem", "Tab" };
+	private static final String[] CUSTOM_COMPONENTS = { "Uppercasebox",
+			"ExtendedCombobox", "CurrencyBox", "AccountSelectionBox",
+			"ExtendedSearchListBox" };
+	private static final boolean LOG_REQUESTED = false;
+	private static final String LOG_PATH = "D:/IDLog.txt";
 
 	@Override
 	public String nextComponentUuid(Desktop desktop, Component comp,
 			ComponentInfo compInfo) {
-		// Set the index back to the desktop
-		String number;
-
-		if ((number = (String) desktop.getAttribute("Id_Num")) == null) {
-			number = "0";
+		// Generate the default UUID for unlisted components
+		if (!contains(COMPONENTS, comp.getClass().getSimpleName())
+				&& !contains(CUSTOM_COMPONENTS, comp.getClass().getSimpleName())) {
+			return null;
 		}
-
-		int index = Integer.parseInt(number);
-		index++;
-
-		desktop.setAttribute("Id_Num", String.valueOf(index));
-
-		// Get the page file name
-		String pageName = "";
-
-		if (compInfo != null) {
-			pageName = compInfo.getParent().getPageDefinition()
-					.getRequestPath();
-			pageName = pageName.substring(pageName.lastIndexOf('/') + 1,
-					pageName.lastIndexOf("zul") - 1);
-		}
-
-		StringBuilder uuid = new StringBuilder("");
 
 		// Use "id" if one available
-		if (compInfo != null) {
-			for (Property property : compInfo.getProperties()) {
-				if ("id".equals(property.getName())) {
-					if (isInputComponent(compInfo)) {
-						uuid.append(pageName).append("_");
-					}
-					uuid.append(property.getRawValue()).append("_");
-					uuid.append(index);
+		String uuid = getId(comp, compInfo);
 
-					return uuid.toString();
-				}
-			}
+		if (!"".equals(uuid)) {
+			return uuid;
 		}
 
-		// Derive based on parent
-		Component parent = comp.getParent();
+		// Derive id for descendants of custom components
+		uuid = getCustomComponentChildId(comp);
 
-		if (parent != null) {
-			if (isCustomComponent(parent)) {
-				uuid.append(comp.getClass().getSimpleName()).append("_")
-						.append(parent.getUuid());
-
-				return uuid.toString();
-			}
-
-			if (isCustomChild(comp)) {
-				Component g = parent.getParent();
-
-				if (g != null && isCustomComponent(g)) {
-					uuid.append(comp.getClass().getSimpleName()).append("_")
-							.append(parent.getUuid());
-
-					return uuid.toString();
-				}
-			}
+		if (!"".equals(uuid)) {
+			return uuid;
 		}
 
-		if (uuid.length() == 0) {
-			return PREFIX + index;
-		}
+		// Unable to generate "UUID" based on the "id"
+		logInfo(comp, compInfo);
 
-		return null;
+		Object idNum = desktop.getAttribute("Id_Num");
+		int index = idNum == null ? 0 : Integer.parseInt((String) idNum);
+		index++;
+
+		// Set the new id number back to the desktop
+		desktop.setAttribute("Id_Num", String.valueOf(index));
+
+		return DEFAULT_PREFIX + index;
 	}
 
 	@Override
@@ -107,45 +75,145 @@ public class ComponentIdGenerator implements IdGenerator {
 		return null;
 	}
 
-	private boolean isCustomComponent(Component component) {
-		if (component instanceof ExtendedCombobox) {
-			return true;
-		} else if (component instanceof ExtendedSearchListBox) {
-			return true;
-		} else if (component instanceof ExtendedStaticListBox) {
-			return true;
-		} else if (component instanceof AccountSelectionBox) {
-			return true;
-		} else if (component instanceof CurrencyBox) {
-			return true;
+	private String getId(Component comp, ComponentInfo info) {
+		String uuid = comp.getId();
+
+		if ("".equals(uuid) && info != null) {
+			for (Property property : info.getProperties()) {
+				if ("id".equals(property.getName())) {
+					uuid = property.getRawValue();
+					break;
+				}
+			}
+		}
+
+		if (!"".equals(uuid)) {
+			// Get the id of the window
+			String windowId = "";
+			IdSpace idSpace = comp.getSpaceOwner();
+
+			if (idSpace != null && idSpace instanceof Window) {
+				windowId = ((Window) idSpace).getId();
+			}
+
+			if (!"".equals(windowId)) {
+				uuid = windowId + "_" + uuid;
+			} else {
+				uuid = "";
+			}
+		}
+
+		return uuid;
+	}
+
+	private String getCustomComponentChildId(Component comp) {
+		return getCustomComponentChildId(comp, comp, 1);
+	}
+
+	private String getCustomComponentChildId(Component orig, Component comp,
+			int level) {
+		Component parent = comp.getParent();
+
+		if (parent != null) {
+			if (contains(CUSTOM_COMPONENTS, parent.getClass().getSimpleName())) {
+				String suffix = orig.getClass().getSimpleName();
+
+				if ("ExtendedSearchListBox".equals(parent.getClass()
+						.getSimpleName())) {
+					if ("Button".equals(orig.getClass().getSimpleName())) {
+						Button button = (Button) orig;
+
+						if (!"".equals(button.getLabel())) {
+							suffix += "_" + button.getLabel();
+						}
+					}
+				}
+
+				return parent.getUuid() + "_" + suffix;
+			}
+
+			if (level == 6) {
+				return "";
+			}
+
+			return getCustomComponentChildId(orig, parent, level + 1);
+		}
+
+		return "";
+	}
+
+	private boolean contains(String[] array, String value) {
+		for (String element : array) {
+			if (element.equals(value)) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
-	private boolean isCustomChild(Component component) {
-		if (component instanceof Textbox) {
-			return true;
-		} else if (component instanceof Button) {
-			return true;
-		} else if (component instanceof Decimalbox) {
-			return true;
-		} else if (component instanceof Listitem) {
-			return true;
-		} else if (component instanceof Listcell) {
-			return true;
+	protected void logInfo(String message) {
+		if (!LOG_REQUESTED) {
+			return;
 		}
 
-		return false;
+		BufferedWriter writer;
+
+		try {
+			writer = new BufferedWriter(new FileWriter(LOG_PATH, true));
+			writer.append(message);
+			writer.append("\n");
+
+			writer.close();
+		} catch (IOException e) {
+			// Skip
+		} finally {
+			writer = null;
+		}
 	}
 
-	private boolean isInputComponent(ComponentInfo info) {
-		String components = "textbox|button|text|uppercasebox|listbox|checkbox|radiogroup|radio|decimalbox|extendedcombobox|accountSelectionBox|currencyBox";
-
-		if (info.getTag() != null && components.indexOf(info.getTag()) >= 0) {
-			return true;
+	protected void logInfo(StringBuffer message) {
+		if (!LOG_REQUESTED) {
+			return;
 		}
 
-		return false;
+		logInfo(message.toString());
+	}
+
+	protected void logInfo(Component comp, ComponentInfo info) {
+		if (!LOG_REQUESTED) {
+			return;
+		}
+
+		StringBuffer message = new StringBuffer();
+		message.append(comp.toString());
+		message.append("\n");
+
+		if (info != null) {
+			for (Property property : info.getProperties()) {
+				message.append("- Property: ");
+				message.append(property.getName());
+				message.append(":");
+				message.append(property.getRawValue());
+				message.append("\n");
+			}
+		}
+
+		message.append("- Ancestors: ");
+		message.append(getAncestors(comp));
+		message.append("\n");
+
+		logInfo(message);
+	}
+
+	protected String getAncestors(Component comp) {
+		String result = "";
+		Component parent = comp.getParent();
+
+		if (parent != null) {
+			result = " // " + parent + getAncestors(parent);
+		}
+
+		return result;
 	}
 }
