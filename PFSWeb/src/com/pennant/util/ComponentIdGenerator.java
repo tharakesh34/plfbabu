@@ -18,7 +18,7 @@ public class ComponentIdGenerator implements IdGenerator {
 	private static final String DEFAULT_PREFIX = "zk_comp_";
 	private static final String[] COMPONENTS = { "Textbox", "Intbox",
 			"Decimalbox", "Datebox", "Checkbox", "Radio", "Radiogroup",
-			"Combobox", "Listbox", "Button", "Menuitem", "Tab" };
+			"Combobox", "Listbox", "Button", "Menu", "Menuitem", "Tab" };
 	private static final String[] CUSTOM_COMPONENTS = { "Uppercasebox",
 			"ExtendedCombobox", "CurrencyBox", "AccountSelectionBox",
 			"ExtendedSearchListBox" };
