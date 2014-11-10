@@ -59,6 +59,8 @@ public class AddTermTest {
 
 		PrintFactory.toConsole(expLastRepayAmt, actLastRepayAmt);
 		PrintFactory.toConsole(expTotalProfit, actTotProfit);
+		
+		PrintFactory.scheduleToExcel(name, schedule);
 
 		if (null == Dataset.getString(data, 24)) {
 			Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
@@ -71,8 +73,6 @@ public class AddTermTest {
 			Assert.assertTrue((actLast2RepayAmt.longValue() == expLastRepayAmt || actLastRepayAmt
 					.longValue() == expLastRepayAmt));
 		}
-
-		PrintFactory.scheduleToExcel(name, schedule);
 
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
 	}

@@ -75,10 +75,10 @@ public class AddDefermentTest {
 		PrintFactory.toConsole(expLastRepayAmt, actLastRepayAmt);
 		PrintFactory.toConsole(expTotalProfit, actTotProfit);
 
+		PrintFactory.scheduleToExcel(name, schedule);
+
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
-
-		PrintFactory.scheduleToExcel(name, schedule);
 
 		if (!defMethod.equals(PennantConstants.DEF_METHOD_RECALRATE)) {
 			Assert.assertEquals(actTotDefPri.longValue(), expTotDefPri);
