@@ -14,6 +14,7 @@ import jxl.read.biff.BiffException;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.util.PrintFactory;
 
 public class Dataset {
 	public static boolean loaded;
@@ -23,6 +24,9 @@ public class Dataset {
 		URL url = (new Dataset()).getClass().getClassLoader()
 				.getResource("dataset-schedule.xls");
 		schedule = Workbook.getWorkbook(new File(url.getPath()));
+
+		PrintFactory.folderPath = StringUtils.substringBeforeLast(
+				url.getPath(), "/") + "/reports/";
 
 		loaded = true;
 	}

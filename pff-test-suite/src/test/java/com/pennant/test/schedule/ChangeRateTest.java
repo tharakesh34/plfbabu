@@ -80,6 +80,8 @@ public class ChangeRateTest {
 
 		PrintFactory.toConsole(expLastRepayAmt, actLastRepayAmt);
 		PrintFactory.toConsole(expTotalProfit, actTotProfit);
+		
+		PrintFactory.scheduleToExcel(name, schedule);
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);

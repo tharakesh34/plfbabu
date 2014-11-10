@@ -25,7 +25,7 @@ public class AddTermTest {
 		this.schedule = schedule;
 		this.data = data;
 	}
-	
+
 	@Test
 	public void testSchedule() throws IllegalAccessException,
 			InstantiationException, InvocationTargetException,
@@ -54,7 +54,7 @@ public class AddTermTest {
 		BigDecimal actLastRepayAmt = schedule.getFinanceScheduleDetails()
 				.get(schedule.getFinanceScheduleDetails().size() - 1)
 				.getRepayAmount();
-		
+
 		BigDecimal actTotProfit = schedule.getFinanceMain().getTotalGrossPft();
 
 		PrintFactory.toConsole(expLastRepayAmt, actLastRepayAmt);
@@ -62,16 +62,18 @@ public class AddTermTest {
 
 		if (null == Dataset.getString(data, 24)) {
 			Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
-		}else{
+		} else {
 			BigDecimal actLast2RepayAmt = schedule.getFinanceScheduleDetails()
 					.get(schedule.getFinanceScheduleDetails().size() - 2)
 					.getRepayAmount();
-			
+
 			PrintFactory.toConsole(expLastRepayAmt, actLast2RepayAmt);
 			Assert.assertTrue((actLast2RepayAmt.longValue() == expLastRepayAmt || actLastRepayAmt
 					.longValue() == expLastRepayAmt));
 		}
-		
+
+		PrintFactory.scheduleToExcel(name, schedule);
+
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
 	}
 
@@ -83,7 +85,7 @@ public class AddTermTest {
 		// Get the parameters
 		int addterms = Dataset.getInt(data, 0);
 		String scheduleMethod = Dataset.getString(data, 1);
-		
+
 		// Generate the schedule.
 		schedule = ScheduleCalculator.addTerm(schedule, addterms,
 				scheduleMethod);

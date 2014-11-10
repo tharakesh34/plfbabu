@@ -50,17 +50,17 @@ public class AddDefermentTest {
 			schedule = AddDefermentTest.execute(schedule,
 					Arrays.copyOfRange(data, 17, 22));
 		}
-		
+
 		BigDecimal actClosingBal = null;
 		BigDecimal actTotDefPri = null;
 		BigDecimal actTotDefPft = null;
-		
+
 		// Get the actual results
 		BigDecimal actLastRepayAmt = schedule.getFinanceScheduleDetails()
 				.get(schedule.getFinanceScheduleDetails().size() - 1)
 				.getRepayAmount();
 		BigDecimal actTotProfit = schedule.getFinanceMain().getTotalGrossPft();
-		if(!defMethod.equals(PennantConstants.DEF_METHOD_RECALRATE)){
+		if (!defMethod.equals(PennantConstants.DEF_METHOD_RECALRATE)) {
 			actClosingBal = schedule.getFinanceScheduleDetails()
 					.get(schedule.getFinanceScheduleDetails().size() - 1)
 					.getClosingBalance();
@@ -71,14 +71,16 @@ public class AddDefermentTest {
 					.get(schedule.getFinanceScheduleDetails().size() - 1)
 					.getDefProfitSchd();
 		}
-		
+
 		PrintFactory.toConsole(expLastRepayAmt, actLastRepayAmt);
 		PrintFactory.toConsole(expTotalProfit, actTotProfit);
 
 		Assert.assertEquals(actLastRepayAmt.longValue(), expLastRepayAmt);
 		Assert.assertEquals(actTotProfit.longValue(), expTotalProfit);
-		
-		if(!defMethod.equals(PennantConstants.DEF_METHOD_RECALRATE)){
+
+		PrintFactory.scheduleToExcel(name, schedule);
+
+		if (!defMethod.equals(PennantConstants.DEF_METHOD_RECALRATE)) {
 			Assert.assertEquals(actTotDefPri.longValue(), expTotDefPri);
 			Assert.assertEquals(actTotDefPft.longValue(), expTotDefPft);
 			Assert.assertEquals(actClosingBal.longValue(), 0);

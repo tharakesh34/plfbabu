@@ -10,7 +10,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 
 public class PrintFactory {
 	static final String TAB = "\t";
-	static final String folderPath = "D:/ScheduleResults/";
+	public static String folderPath = "";
 
 	public static void toConsole(String name) {
 		System.out.print("- Executing ");
