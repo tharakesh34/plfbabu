@@ -33,8 +33,10 @@ public class Dataset {
 
 	public static Sheet getSchedule(String name) throws BiffException,
 			IOException {
-		if (!loaded) {
-			load();
+		synchronized (Dataset.class) {
+			if (!loaded) {
+				load();
+			}
 		}
 
 		return schedule.getSheet(name);
