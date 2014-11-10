@@ -13,7 +13,7 @@
 		<spring.version>3.0.7.RELEASE</spring.version>
 		<spring.security.version>3.1.1.RELEASE</spring.security.version>
 		<spring.batch.version>2.1.8.RELEASE</spring.batch.version>
-		<zk.version>7.0.3</zk.version>
+		<zk.version>7.0.3.1</zk.version>
 		<jasperreports.version>4.5.0</jasperreports.version>
 	</properties>
 

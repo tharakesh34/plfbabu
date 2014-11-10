@@ -172,6 +172,7 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 	}
 
 	private transient UserWorkspace userWorkspace;
+
 	@Override
 	public void onEvent(Event evt) throws Exception {
 		final Object controller = getController();
@@ -180,7 +181,34 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 		if (mtd != null) {
 			isAllowed(mtd);
 		}
+		setWindowStyle(evt);
 		super.onEvent(evt);
+	}
+	
+	/**
+	 * @param evt
+	 * 
+	 *  Set the style window.setContentStyle("padding:0px") <br>
+	 * 
+	 *  List zul's window and it's parent window and Dialog zul's window
+	 */
+	private void setWindowStyle(Event evt) {
+		if (evt.getTarget() != null && !"outerIndexWindow".equals(evt.getTarget().getId())) {
+			Window window = null;
+			if (evt.getTarget() instanceof Window) {
+				window = (Window) evt.getTarget();
+				if (window.getId().indexOf("List") > 0) {
+					window.setContentStyle("padding:0px");
+					if (window.getParent() instanceof Window) {
+						window = (Window) window.getParent();
+						window.setContentStyle("padding:0px");
+					}
+				} else if (window.getParent() instanceof Window) {
+					window = (Window) window.getParent();
+					window.setContentStyle("padding:0px");
+				}
+			}
+		}
 	}
 
 	/**
@@ -1003,35 +1031,37 @@ abstract public class GFCBaseCtrl extends GenericForwardComposer implements Seri
 		return borderLayoutHeight;
 	}
 
-	
-public String getBorderLayoutHeight() {
-		
+	public String getBorderLayoutHeight() {
+
 		if (listRowHeight == 0 || rowheight == 0) {
 			if ("ie".equals(Executions.getCurrent().getBrowser())) {
+				listRowHeight = 30;
+				rowheight = 25;
+			} else if ("webkit".equals(Executions.getCurrent().getBrowser())) {
 				listRowHeight = 28;
-				rowheight = 28;
-			} else {
-				listRowHeight = 25;
-				rowheight = 28;
+				rowheight = 24;
+			} else { // gecko
+				listRowHeight = 28;
+				rowheight = 24;
 			}
 		}
-		
+
 		if(this.borderLayoutHeight == 0){		
 			if (this.borderLayoutHeight == 0) {
 				this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
 				this.gridRows = Math.round(this.borderLayoutHeight / rowheight) - 1;
 				this.listRows = Math.round(this.borderLayoutHeight / listRowHeight) - 1;
 			}
-			
-		return borderLayoutHeight +"px";
-	}
+
+			return borderLayoutHeight +"px";
+		}
 		return borderLayoutHeight +"px";
 	}
 	
 	public String getListBoxHeight(int gridRowCount) {
 		getBorderLayoutHeight();
 		int listboxheight = this.borderLayoutHeight;
-		listboxheight = listboxheight - (gridRowCount * rowheight) - 30;
+		listboxheight = listboxheight - (gridRowCount * rowheight) ;
 		this.listRows = Math.round(listboxheight / listRowHeight) - 1;
 		return listboxheight + "px";
 	}
