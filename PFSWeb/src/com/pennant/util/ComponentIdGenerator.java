@@ -12,6 +12,7 @@ import org.zkoss.zk.ui.metainfo.ComponentInfo;
 import org.zkoss.zk.ui.metainfo.Property;
 import org.zkoss.zk.ui.sys.IdGenerator;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Radio;
 import org.zkoss.zul.Window;
 
 public class ComponentIdGenerator implements IdGenerator {
@@ -46,6 +47,15 @@ public class ComponentIdGenerator implements IdGenerator {
 
 		if (!"".equals(uuid)) {
 			return uuid;
+		}
+
+		// Derive id for "action" within workflow process
+		if ("Radio".equals(comp.getClass().getSimpleName())) {
+			uuid = getWorkflowActionId(comp);
+
+			if (!"".equals(uuid)) {
+				return uuid;
+			}
 		}
 
 		// Unable to generate "UUID" based on the "id"
@@ -137,6 +147,19 @@ public class ComponentIdGenerator implements IdGenerator {
 			}
 
 			return getCustomComponentChildId(orig, parent, level + 1);
+		}
+
+		return "";
+	}
+
+	private String getWorkflowActionId(Component comp) {
+		Component parent = comp.getParent();
+
+		if (parent != null) {
+			if ("Radiogroup".equals(parent.getClass().getSimpleName())
+					&& "userAction".equals(parent.getId())) {
+				return parent.getUuid() + "_" + ((Radio) comp).getLabel();
+			}
 		}
 
 		return "";
