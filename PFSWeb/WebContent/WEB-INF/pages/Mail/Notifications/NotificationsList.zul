@@ -94,7 +94,7 @@
 
 									<textbox id="ruleModule" width="200px" maxlength="50" />
 								</row>
-								<row>
+								<row id="row_AlwWorkflow">
 									<label id="label_NotificationsSearch_RecordStatus"
 										value="${c:l('label_NotificationsSearch_RecordStatus.value')}" />
 									<listbox id="sortOperator_recordStatus"  width="43px" mold="select" rows="1" />

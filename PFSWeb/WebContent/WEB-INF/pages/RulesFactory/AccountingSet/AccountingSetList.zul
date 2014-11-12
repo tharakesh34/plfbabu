@@ -100,7 +100,7 @@
 								<textbox id="accountSetCodeName"
 									width="200px" maxlength="50" />
 							</row>
-							<row>
+							<row id="row_AlwWorkflow">
 								<label
 									id="label_AccountingSetSearch_RecordStatus"
 									value="${c:l('label_AccountingSetSearch_RecordStatus.value')}" />

@@ -134,8 +134,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 	protected Listbox recordType;				// autoWired
 	protected Listbox sortOperator_recordStatus;// autoWired
 	protected Listbox sortOperator_recordType; 	// autoWired
-	
-	protected Row row_AlwWorkflow;
+	protected  Row    row_AlwWorkflow;
 	
 	protected Grid	                       searchGrid;	
 	protected Textbox	                   moduleType;	                                                  // autowired

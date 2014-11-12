@@ -56,7 +56,6 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -143,12 +142,8 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> implements Serializable 
 	protected Textbox RuleModule;                                      // autowired
 	protected Listbox sortOperator_ruleEvent;                               // autowired
 	protected Uppercasebox ruleEvent;                                            // autowired
-	
-	
-	protected Label label_RuleSearch_RecordStatus; 						// autoWired
-	protected Label label_RuleSearch_RecordType; 						// autoWired
-	protected Label label_RuleSearchResult; 							// autoWired
-	
+	 			
+	protected Row  			row_AlwWorkflow;
 	private Grid 			searchGrid;							// autowired
 	protected Textbox 		moduleType; 						// autowired
 	protected Radio			fromApproved;
@@ -255,10 +250,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> implements Serializable 
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 		
 		

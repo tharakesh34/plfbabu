@@ -103,7 +103,7 @@
 									<textbox id="templateType"
 										width="90px" maxlength="10" />
 								</row>
-								<row>
+								<row id="row_AlwWorkflow">
 									<label
 										id="label_MailTemplateList_RecordStatus"
 										value="${c:l('label_MailTemplateList_RecordStatus.value')}" />

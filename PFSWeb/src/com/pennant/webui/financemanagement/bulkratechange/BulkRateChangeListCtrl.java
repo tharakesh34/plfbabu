@@ -110,7 +110,7 @@ public class BulkRateChangeListCtrl extends GFCBaseListCtrl<BulkProcessHeader> i
 	protected Row workFlowFrom;
 	protected Row reCalTypeRow;
     protected Label label_BulkRateChangeSearch_newProcessedRate;
-    
+    protected Row row_AlwWorkflow;
 	private transient boolean approvedList = false;
 
 	// NEEDED for the ReUse in the SearchWindow
@@ -197,10 +197,7 @@ public class BulkRateChangeListCtrl extends GFCBaseListCtrl<BulkProcessHeader> i
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 			
 		}
 

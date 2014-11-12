@@ -81,7 +81,7 @@
 								<combobox id="subModuleName"
 									width="250px" maxlength="50" />
 							</row>
-							<row>
+							<row id="row_AlwWorkflow">
 								<label id="label_ExtendedFieldDetailSearch_RecordStatus" value="${c:l('label_ExtendedFieldDetailSearch_RecordStatus.value')}" />
 									<listbox id="sortOperator_recordStatus" width="43px" mold="select" rows="1" />
 										<textbox id="recordStatus" width="100px" maxlength="50" />

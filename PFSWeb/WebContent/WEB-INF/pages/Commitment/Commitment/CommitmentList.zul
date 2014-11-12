@@ -164,7 +164,7 @@
 										width="120px" />
 								</row>
 
-								<row>
+								<row id="row_AlwWorkflow">
 									<label
 										id="label_CommitmentList_RecordStatus"
 										value="${c:l('label_CommitmentList_RecordStatus.value')}" />

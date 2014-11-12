@@ -81,7 +81,6 @@ import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.model.systemmasters.Industry;
 import com.pennant.backend.model.systemmasters.Province;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.EmployerDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;

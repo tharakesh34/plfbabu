@@ -57,7 +57,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -158,10 +157,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> implemen
 	protected Button    btnHelp;                                            
 	protected Button    button_SecurityUserList_NewSecurityUser;            
 	protected Button    button_SecurityUserList_SecurityUserSearch;   
-	protected Button    button_SecurityUserList_PrintList;                  
-	protected Label  	label_SecurityUserList_RecordStatus; 						// autoWired
-	protected Label  	label_SecurityUserList_RecordType; 							// autoWired
-
+	protected Button    button_SecurityUserList_PrintList;
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<SecurityUser> searchObj;
 
@@ -173,7 +169,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> implemen
 	protected Radio			fromApproved;
 	protected Radio			fromWorkFlow;
 	protected Row			workFlowFrom;
-
+	protected Row row_AlwWorkflow;
 	private transient boolean  approvedList=false;
 	private transient boolean  userModule=false;
 	private transient boolean  enqModule=false;
@@ -272,12 +268,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> implemen
 				this.recordType.setSelectedIndex(0);
 
 			}else{
-				this.recordStatus.setVisible(false);
-				this.recordType.setVisible(false);
-				this.label_SecurityUserList_RecordStatus.setVisible(false);
-				this.label_SecurityUserList_RecordType.setVisible(false);
-				this.sortOperator_RecordStatus.setVisible(false);
-				this.sortOperator_RecordType.setVisible(false);
+				this.row_AlwWorkflow.setVisible(false);
 			}
 			
 			/* set components visible dependent of the users rights */

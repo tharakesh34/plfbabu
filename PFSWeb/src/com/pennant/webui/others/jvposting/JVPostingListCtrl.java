@@ -56,7 +56,6 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -129,8 +128,6 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> implements Ser
 	protected Button button_JVPostingList_NewJVPosting; // autowired
 	protected Button button_JVPostingList_JVPostingSearch; // autowired
 	protected Button button_JVPostingList_PrintList; // autowired
-	protected Label label_JVPostingList_RecordStatus; // autoWired
-	protected Label label_JVPostingList_RecordType; // autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<JVPosting> searchObj;
@@ -159,6 +156,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> implements Ser
 	protected Radio fromApproved;
 	protected Radio fromWorkFlow;
 	protected Row workFlowFrom;
+	protected Row row_AlwWorkflow;
 
 	private transient boolean approvedList = false;
 	private transient boolean workFlowList = false;
@@ -242,12 +240,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> implements Ser
 			this.recordType.setSelectedIndex(0);
 
 		} else {
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.label_JVPostingList_RecordStatus.setVisible(false);
-			this.label_JVPostingList_RecordType.setVisible(false);
-			this.sortOperator_RecordStatus.setVisible(false);
-			this.sortOperator_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 		/* set components visible dependent on the users rights */
 		doCheckRights();

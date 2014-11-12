@@ -115,7 +115,7 @@
 								<datebox id="reCalToDate" 
 									maxlength="50" />
 							</row>
-							<row>
+							<row id="row_AlwWorkflow">
 								<label
 									id="label_BulkRateChangeSearch_RecordStatus"
 									value="${c:l('label_BulkRateChangeSearch_RecordStatus.value')}" />

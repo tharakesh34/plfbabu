@@ -131,7 +131,7 @@
 								
 						<label value="" />
 						</row>
-						<row>
+						<row id="row_AlwWorkflow">
 							<label
 								id="label_FinanceTypeSearch_RecordStatus"
 								value="${c:l('label_FinanceTypeSearch_RecordStatus.value')}" />

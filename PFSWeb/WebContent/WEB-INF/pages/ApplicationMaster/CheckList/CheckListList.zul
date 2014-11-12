@@ -108,7 +108,7 @@
 									<checkbox id="active"
 										checked="false" />
 								</row>
-								<row>
+								<row id="row_AlwWorkflow">
 									<label
 										id="label_CheckListSearch_RecordStatus"
 										value="${c:l('label_CheckListSearch_RecordStatus.value')}" />

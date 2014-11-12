@@ -90,7 +90,7 @@
 									<textbox id="productDesc"
 										width="150px" maxlength="50" />
 								</row>
-								<row>
+								<row id="row_AlwWorkflow">
 									<label
 										id="label_ProductSearch_RecordStatus"
 										value="${c:l('label_ProductSearch_RecordStatus.value')}" />

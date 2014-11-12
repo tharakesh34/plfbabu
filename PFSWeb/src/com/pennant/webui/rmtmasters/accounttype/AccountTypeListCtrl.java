@@ -57,7 +57,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -139,10 +138,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 	protected Listbox 	recordType;							// auto wired
 	protected Listbox 	sortOperator_recordStatus; 			// auto wired
 	protected Listbox 	sortOperator_recordType; 			// auto wired
-
-	protected Label label_AccountTypeSearch_RecordStatus; 	// auto wired
-	protected Label label_AccountTypeSearch_RecordType; 	// auto wired
-	protected Label label_AccountTypeSearchResult; 			// auto wired
+    protected Row row_AlwWorkflow;
 	
 	protected Grid	                       searchGrid;	
 	protected Textbox	                   moduleType;	                                                  // autowired
@@ -229,12 +225,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> implements
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
-			this.label_AccountTypeSearch_RecordStatus.setVisible(false);
-			this.label_AccountTypeSearch_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();

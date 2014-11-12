@@ -59,7 +59,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -135,11 +134,9 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> implements Ser
 	protected Textbox recordStatus; 					// autowired
 	protected Listbox recordType;						// autowired
 	protected Listbox sortOperator_recordStatus; 		// autowired
-	protected Listbox sortOperator_recordType; 			// autowired
+	protected Listbox sortOperator_recordType; 	
 	
-	protected Label label_CheckListSearch_RecordStatus; // autowired
-	protected Label label_CheckListSearch_RecordType; 	// autowired
-	protected Label label_CheckListSearchResult; 		// autowired
+	protected Row row_AlwWorkflow; 		// autowired
 
 	private Grid 			searchGrid;							// autowired
 	protected Textbox 		moduleType; 						// autowired
@@ -209,13 +206,8 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> implements Ser
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
-			this.label_CheckListSearch_RecordStatus.setVisible(false);
-			this.label_CheckListSearch_RecordType.setVisible(false);
-		}
+			this.row_AlwWorkflow.setVisible(false);
+			}
 		
 		/* set components visible dependent on the users rights */
 		doCheckRights();

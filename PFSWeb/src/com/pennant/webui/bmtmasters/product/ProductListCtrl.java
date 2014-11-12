@@ -56,7 +56,6 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -126,9 +125,7 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 	protected Listbox sortOperator_recordStatus; 	// autowired
 	protected Listbox sortOperator_recordType; 		// autowired
 
-	protected Label label_ProductSearch_RecordStatus; // autowired
-	protected Label label_ProductSearch_RecordType;	  // autowired
-	protected Label label_ProductSearchResult; 		  // autowired
+	protected Row row_AlwWorkflow;		  // autowired
 	
 	private Grid 			searchGrid;							// autowired
 	protected Textbox 		moduleType; 						// autowired
@@ -212,12 +209,7 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> implements Seriali
 			.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
-			this.label_ProductSearch_RecordStatus.setVisible(false);
-			this.label_ProductSearch_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 		
 		/* set components visible dependent on the users rights */

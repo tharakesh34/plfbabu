@@ -155,7 +155,7 @@
 									<checkbox id="usrAcLocked" />
 								</row>
 
-								<row>
+								<row id="row_AlwWorkflow"> 
 									<label
 										id="label_SecurityUserList_RecordStatus"
 										value="${c:l('label_SecurityUserList_RecordStatus.value')}" />

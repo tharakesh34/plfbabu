@@ -57,7 +57,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -148,16 +147,12 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 	protected Listbox sortOperator_recordStatus; // autowired
 	protected Listbox sortOperator_recordType; // autowired
 
-	protected Label label_CustomerSearch_RecordStatus; // autowired
-	protected Label label_CustomerSearch_RecordType; // autowired
-	protected Label label_CustomerSearchResult; // autowired
-
 	protected Grid searchGrid; // autowired
 	protected Textbox moduleType; // autowired
 	protected Radio fromApproved;
 	protected Radio fromWorkFlow;
 	protected Row workFlowFrom;
-
+	protected Row row_AlwWorkflow;
 	private transient boolean approvedList = false;
 
 	// NEEDED for the ReUse in the SearchWindow
@@ -232,12 +227,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> implements Seria
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
-			this.label_CustomerSearch_RecordStatus.setVisible(false);
-			this.label_CustomerSearch_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 
 		/* set components visible dependent of the users rights */

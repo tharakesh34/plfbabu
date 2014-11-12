@@ -86,7 +86,7 @@
 									<textbox id="ruleCodeDesc"
 										width="200px" maxlength="50" />
 								</row>
-								<row>
+								<row id="row_AlwWorkflow">
 									<label
 										id="label_RuleSearch_RecordStatus"
 										value="${c:l('label_RuleSearch_RecordStatus.value')}" />

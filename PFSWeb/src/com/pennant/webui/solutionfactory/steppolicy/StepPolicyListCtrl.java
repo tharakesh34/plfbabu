@@ -55,7 +55,6 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -126,7 +125,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> implem
 	protected  Listbox  sortOperator_recordType;
 	protected  Listbox  recordType;
 	
-	protected Label label_StepPolicySearch_RecordStatus; 		// autowired
+	protected Row row_AlwWorkflow; 		// autowired
 
 	private Grid 			searchGrid;							// autowired
 	protected Textbox 		moduleType; 						// autowired
@@ -199,11 +198,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> implem
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
-			this.label_StepPolicySearch_RecordStatus.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 
 

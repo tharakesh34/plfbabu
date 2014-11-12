@@ -57,7 +57,6 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -133,8 +132,6 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 	protected Button	                   button_CommitmentList_NewCommitment;	                      // autowired
 	protected Button	                   button_CommitmentList_CommitmentSearch;	                      // autowired
 	protected Button	                   button_CommitmentList_PrintList;	                          // autowired
-	protected Label	                       label_CommitmentList_RecordStatus;	                          // autoWired
-	protected Label	                       label_CommitmentList_RecordType;	                          // autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Commitment>	searchObj;
@@ -183,7 +180,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 	protected Radio	                       fromApproved;
 	protected Radio	                       fromWorkFlow;
 	protected Row	                       workFlowFrom;
-
+	protected Row 						   row_AlwWorkflow;
 	private transient boolean	           approvedList	    = false;
 
 	/**
@@ -263,12 +260,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> implements S
 			this.recordType.setSelectedIndex(0);
 
 		} else {
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.label_CommitmentList_RecordStatus.setVisible(false);
-			this.label_CommitmentList_RecordType.setVisible(false);
-			this.sortOperator_RecordStatus.setVisible(false);
-			this.sortOperator_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 		/* set components visible dependent on the users rights */
 		doCheckRights();

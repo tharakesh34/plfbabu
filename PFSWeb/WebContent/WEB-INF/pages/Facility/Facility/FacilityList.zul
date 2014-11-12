@@ -98,7 +98,7 @@
 									<listbox id="sortOperator_PresentingUnit" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="presentingUnit" width="200px" maxlength="50" />
 								</row>
-								<row>
+								<row id="row_AlwWorkflow">
 									<label id="label_FacilityList_RecordStatus" value="${c:l('label_FacilityList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />

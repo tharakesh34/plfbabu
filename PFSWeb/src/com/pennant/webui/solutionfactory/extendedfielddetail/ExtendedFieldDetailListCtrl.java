@@ -61,7 +61,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -132,9 +131,7 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	protected Listbox sortOperator_recordStatus; // autowired
 	protected Listbox sortOperator_recordType; // autowired
 	
-	protected Label label_ExtendedFieldDetailSearch_RecordStatus; // autowired
-	protected Label label_ExtendedFieldDetailSearch_RecordType; // autowired
-	protected Label label_ExtendedFieldDetailSearchResult; // autowired
+	protected Row row_AlwWorkflow;
 	
 	protected Grid	                       searchGrid;	
 	protected Textbox	                   moduleType;	                                                  // autowired
@@ -231,12 +228,7 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 				this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 				this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 			}else{
-				this.recordStatus.setVisible(false);
-				this.recordType.setVisible(false);
-				this.sortOperator_recordStatus.setVisible(false);
-				this.sortOperator_recordType.setVisible(false);
-				this.label_ExtendedFieldDetailSearch_RecordStatus.setVisible(false);
-				this.label_ExtendedFieldDetailSearch_RecordType.setVisible(false);
+				this.row_AlwWorkflow.setVisible(false);
 			}
 
 			fillComboBox(moduleName, null, modulesList, "");

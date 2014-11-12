@@ -114,7 +114,7 @@
 								<textbox id="custTypeCode" width="171px"
 									maxlength="50" />
 							</row>
-							<row>
+							<row id="row_AlwWorkflow">
 								<label
 									id="label_CustomerSearch_RecordStatus"
 									value="${c:l('label_CustomerSearch_RecordStatus.value')}" />

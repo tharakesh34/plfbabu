@@ -105,7 +105,7 @@
 									width="150px"/>
 							</row>
 
-							<row>
+							<row id="row_AlwWorkflow">
 								<label
 									id="label_CreditApplicationReviewSearch_RecordStatus"
 									value="${c:l('label_CreditApplicationReviewSearch_RecordStatus.value')}" />

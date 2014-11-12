@@ -64,7 +64,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.GroupsModelArray;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -152,8 +151,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	protected  Listbox  sortOperator_recordType;
 	protected  Listbox  recordType;
 
-	protected Label label_FinanceTypeSearch_RecordType; 	// autowired
-	protected Label label_FinanceTypeSearch_RecordStatus; 		// autowired
+	protected Row row_AlwWorkflow;
 
 	private Grid 			searchGrid;							// autowired
 	protected Textbox 		moduleType; 						// autowired
@@ -243,12 +241,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = PennantAppUtil.setRecordType(this.recordType);
 		} else {
-			this.recordStatus.setVisible(false);
-			this.recordType.setVisible(false);
-			this.sortOperator_recordStatus.setVisible(false);
-			this.sortOperator_recordType.setVisible(false);
-			this.label_FinanceTypeSearch_RecordStatus.setVisible(false);
-			this.label_FinanceTypeSearch_RecordType.setVisible(false);
+			this.row_AlwWorkflow.setVisible(false);
 		}
 
 

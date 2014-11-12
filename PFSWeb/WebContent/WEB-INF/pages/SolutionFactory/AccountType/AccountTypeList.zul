@@ -112,7 +112,7 @@
 								<checkbox id="acTypeIsActive"
 									checked="false" />
 							</row>
-							<row>
+							<row id="row_AlwWorkflow">
 							<label
 								id="label_AccountTypeSearch_RecordStatus"
 								value="${c:l('label_AccountTypeSearch_RecordStatus.value')}" />
