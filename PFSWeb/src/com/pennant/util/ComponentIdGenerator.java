@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.IdSpace;
@@ -61,7 +62,7 @@ public class ComponentIdGenerator implements IdGenerator {
 			} else {
 				// The UUID already exist within the desktop
 				logInfo(comp, compInfo);
-				
+
 				return uuid + "_dupl_" + getNextIndex(desktop);
 			}
 		}
@@ -154,7 +155,10 @@ public class ComponentIdGenerator implements IdGenerator {
 		if (parent != null) {
 			if ("Radiogroup".equals(parent.getClass().getSimpleName())
 					&& "userAction".equals(parent.getId())) {
-				return parent.getUuid() + "_" + ((Radio) comp).getLabel();
+				return parent.getUuid()
+						+ "_"
+						+ StringUtils.replace(((Radio) comp).getLabel(), " ",
+								"");
 			}
 		}
 
