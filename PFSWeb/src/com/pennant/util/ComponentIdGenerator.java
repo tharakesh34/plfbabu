@@ -38,37 +38,33 @@ public class ComponentIdGenerator implements IdGenerator {
 		// Use "id" if one available
 		String uuid = getId(comp, compInfo);
 
-		if (!"".equals(uuid)) {
-			return uuid;
+		if ("".equals(uuid)) {
+			// Derive id for descendants of custom components
+			uuid = getCustomComponentChildId(comp);
 		}
 
-		// Derive id for descendants of custom components
-		uuid = getCustomComponentChildId(comp);
-
-		if (!"".equals(uuid)) {
-			return uuid;
-		}
-
-		// Derive id for "action" within workflow process
-		if ("Radio".equals(comp.getClass().getSimpleName())) {
-			uuid = getWorkflowActionId(comp);
-
-			if (!"".equals(uuid)) {
-				return uuid;
+		if ("".equals(uuid)) {
+			// Derive id for "action" within workflow process
+			if ("Radio".equals(comp.getClass().getSimpleName())) {
+				uuid = getWorkflowActionId(comp);
 			}
 		}
 
-		// Unable to generate "UUID" based on the "id"
-		logInfo(comp, compInfo);
+		if ("".equals(uuid)) {
+			// Unable to generate "UUID"
+			logInfo(comp, compInfo);
 
-		Object idNum = desktop.getAttribute("Id_Num");
-		int index = idNum == null ? 0 : Integer.parseInt((String) idNum);
-		index++;
-
-		// Set the new id number back to the desktop
-		desktop.setAttribute("Id_Num", String.valueOf(index));
-
-		return DEFAULT_PREFIX + index;
+			return DEFAULT_PREFIX + getNextIndex(desktop);
+		} else {
+			if (desktop.getComponentByUuidIfAny(uuid) == null) {
+				return uuid;
+			} else {
+				// The UUID already exist within the desktop
+				logInfo(comp, compInfo);
+				
+				return uuid + "_dupl_" + getNextIndex(desktop);
+			}
+		}
 	}
 
 	@Override
@@ -163,6 +159,18 @@ public class ComponentIdGenerator implements IdGenerator {
 		}
 
 		return "";
+	}
+
+	private int getNextIndex(Desktop desktop) {
+		// Generate new id number
+		Object idNum = desktop.getAttribute("Id_Num");
+		int index = idNum == null ? 0 : Integer.parseInt((String) idNum);
+		index++;
+
+		// Set the new id number back to the desktop
+		desktop.setAttribute("Id_Num", String.valueOf(index));
+
+		return index;
 	}
 
 	private boolean contains(String[] array, String value) {
