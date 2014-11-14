@@ -190,7 +190,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 	private OverdueChargeRecoveryService overdueChargeRecoveryService;
 	
 	private List<ValueLabel> enquiryList = PennantStaticListUtil.getEnquiryFilters();
-	int listRows;
 
 	/**
 	 * default constructor.<br>
@@ -284,11 +283,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> impl
 
 		//Set listbox height and set paging size
 		this.borderlayout_Enquiry.setHeight(getBorderLayoutHeight());
-		int dialogHeight =  grid_enquiryDetails.getRows().getVisibleItemCount()* 20 + 128 ; 
-		int listboxHeight = borderLayoutHeight-dialogHeight;
-		listBoxEnquiryResult.setHeight(listboxHeight+"px");
-		listRows = Math.round(listboxHeight/ 24);
-		this.pagingEnquiryList.setPageSize(listRows);
+		this.listBoxEnquiryResult.setHeight(getListBoxHeight(this.grid_enquiryDetails.getRows().getVisibleItemCount()+1));
+		this.pagingEnquiryList.setPageSize(getListRows());
 
 		logger.debug("Leaving" + event.toString());
 

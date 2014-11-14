@@ -87,7 +87,10 @@
 <div id='<%=chartId%>Div' align='center'>Chart</div>
 <div id='<%=chartId%>ExportData'></div>
 <script type='text/javascript'>
-    var chart_<%=chartId%> = new FusionCharts("<%=chartSWF%>", "<%=chartId%>","<%=chartWidthStr%>"
+
+	FusionCharts.setCurrentRenderer('javascript');   /* Forcing to render by javascript*/
+	
+	var chart_<%=chartId%> = new FusionCharts("<%=chartSWF%>", "<%=chartId%>","<%=chartWidthStr%>"
     ,"<%=chartHeightStr%>", "<%=debugModeInt%>","<%=regWithJSInt%>");
 
     <%if (strXML.equals("")) {%>
@@ -99,8 +102,6 @@
         chart_<%=chartId%>.setDataXML("<%=strXML%>");
     <%}%>
 
-      /* FusionCharts.setCurrentRenderer('javascript');   Forcing to render by javascript*/
-     
       chart_<%=chartId%>.configure("ChartNoDataText", "No Current Records To Display");//when there is no reocords message
       //<!-- Finally, render the chart.-->
       chart_<%=chartId%>.render("<%=chartId%>Div");

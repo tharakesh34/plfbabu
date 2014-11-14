@@ -232,25 +232,25 @@ public class DealFinanceListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 		this.listheader_CustomerCIF.setSortAscending(new FieldComparator("lovDescCustCIF", true));
 		this.listheader_CustomerCIF.setSortDescending(new FieldComparator("lovDescCustCIF", false));
-		
+
 		this.listheader_CustomerName.setSortDescending(new FieldComparator("LovDescCustShrtName", true));
 		this.listheader_CustomerName.setSortAscending(new FieldComparator("LovDescCustShrtName", true));
-		
+
 		this.listheader_FinReference.setSortAscending(new FieldComparator("finReference", true));
 		this.listheader_FinReference.setSortDescending(new FieldComparator("finReference", false));
-		
+
 		this.listheader_INVFinReference.setSortAscending(new FieldComparator("InvestmentRef", true));
 		this.listheader_INVFinReference.setSortDescending(new FieldComparator("InvestmentRef", false));
-		
+
 		this.listheader_ProductName.setSortAscending(new FieldComparator("lovDescProductCodeName", true));
 		this.listheader_ProductName.setSortDescending(new FieldComparator("lovDescProductCodeName", false));
-		
+
 		this.listheader_FinType.setSortAscending(new FieldComparator("finType", true));
 		this.listheader_FinType.setSortDescending(new FieldComparator("finType", false));
-		
+
 		this.listheader_FinCcy.setSortAscending(new FieldComparator("finCcy", true));
 		this.listheader_FinCcy.setSortDescending(new FieldComparator("finCcy", false));
-		
+
 		this.listheader_FinAmount.setSortAscending(new FieldComparator("finAmount", true));
 		this.listheader_FinAmount.setSortDescending(new FieldComparator("finAmount", false));
 
@@ -284,7 +284,6 @@ public class DealFinanceListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		 this.searchObj.addField("RecordType");
 
 		 this.searchObj.addSort("LovDescProductCodeName",false);
-		 this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_NOT_EQUAL));
 		 this.searchObj.addTabelName("FinanceMain_DView");
 
 		 if (getUserWorkspace().getUserRoles() != null
@@ -354,7 +353,7 @@ public class DealFinanceListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 			this.investmentFinHeader = getTreasuaryFinanceService().getTreasuaryFinHeader(finReference, "_AView");
 			this.investmentFinHeader.setFinanceDetail(afinanceDetail);			
 			aFinanceMain.setInvestmentRef(investmentFinHeader.getInvestmentRef());
-			
+
 			if (aFinanceMain.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				PTMessageUtils.showErrorMessage("Not Allowed to maintain This Record");
 			} else {
@@ -385,7 +384,7 @@ public class DealFinanceListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		// create a new FinanceMain object, We GET it from the back end.
 		final FinanceDetail aFinanceDetail = getFinanceDetailService().getNewFinanceDetail(false);
 		aFinanceDetail.setNewRecord(true);
-		
+
 		/*
 		 * we can call our SelectFinanceType ZUL-file with parameters. So we can
 		 * call them with a object of the selected FinanceMain. For handed over
@@ -423,8 +422,8 @@ public class DealFinanceListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
-		
-		
+
+
 		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
 			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
@@ -503,6 +502,8 @@ public class DealFinanceListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 		//Clears all the filters
 		this.searchObj.clearFilters();
+		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_NOT_EQUAL));
+		
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj,this.listBoxFinanceMain,this.pagingFinanceMainList);
 
@@ -537,6 +538,7 @@ public class DealFinanceListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		logger.debug("Entering");
 
 		this.searchObj.clearFilters();
+		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_NOT_EQUAL));
 
 		// InvestmentRef
 		if (!StringUtils.trimToEmpty(this.investmentRef.getValue()).equals("")) {
@@ -631,7 +633,7 @@ public class DealFinanceListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	public void setSearchObj(JdbcSearchObject<FinanceMain> searchObj) {
 		this.searchObj = searchObj;
 	}
-	
+
 	public TreasuaryFinanceService getTreasuaryFinanceService() {
 		return treasuaryFinanceService;
 	}
@@ -647,5 +649,5 @@ public class DealFinanceListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	public InvestmentFinHeader getInvestmentFinHeader() {
 		return investmentFinHeader;
 	}
-	
+
 }

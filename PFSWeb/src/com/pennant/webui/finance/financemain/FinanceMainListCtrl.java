@@ -165,7 +165,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 	private Textbox loanType;//Field for Maintain Different Finance Product Types
 	private String menuItemRightName = null;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -175,16 +175,16 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 	public void onCreate$window_FinanceMainList(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
-		
+
 		//Getting Menu Item Right Name
 		if (event.getTarget() != null && event.getTarget().getParent() != null
 				&& event.getTarget().getParent().getParent()!=null && 
 				event.getTarget().getParent().getParent().getParent() != null && 
 				event.getTarget().getParent().getParent().getParent().getParent() != null) {
-			
+
 			String menuItemName = ((Tabbox)event.getTarget().getParent().getParent().getParent()).getSelectedTab().getId();
 			menuItemName = menuItemName.trim().replace("tab_", "menu_Item_");
-			
+
 			if(getUserWorkspace().getHasMenuRights().containsKey(menuItemName)){
 				menuItemRightName = getUserWorkspace().getHasMenuRights().get(menuItemName);
 			}
@@ -254,78 +254,74 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.listheader_FinAmount.setSortAscending(new FieldComparator("finAmount", true));
 		this.listheader_FinAmount.setSortDescending(new FieldComparator("finAmount", false));
 		/*		this.listheader_FinancingAmount.setSortAscending(new FieldComparator("lovDescFinancingAmount", true));
-		this.listheader_FinancingAmount.setSortDescending(new FieldComparator("lovDescFinancingAmount", false));
-		 */		this.listheader_ScheduleMethod.setSortAscending(new FieldComparator("scheduleMethod", true));
-		 this.listheader_ScheduleMethod.setSortDescending(new FieldComparator("scheduleMethod", false));
+		this.listheader_FinancingAmount.setSortDescending(new FieldComparator("lovDescFinancingAmount", false));*/		
+		this.listheader_ScheduleMethod.setSortAscending(new FieldComparator("scheduleMethod", true));
+		this.listheader_ScheduleMethod.setSortDescending(new FieldComparator("scheduleMethod", false));
 
-		 this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
-		 this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
-		 this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
-		 this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
+		this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
+		this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
+		this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
+		this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
 
-		 // ++ create the searchObject and initial sorting ++//
-		 this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class,getListRows());
-		 this.searchObj.addSort("FinReference", false);
+		// ++ create the searchObject and initial sorting ++//
+		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class,getListRows());
+		this.searchObj.addSort("FinReference", false);
 
-		 //Field Declarations for Fetching List Data
-		 this.searchObj.addField("FinReference");
-		 this.searchObj.addField("FinType");
-		 this.searchObj.addField("FinCcy");
-		 this.searchObj.addField("ScheduleMethod");
-		 this.searchObj.addField("FinAmount");
-		 this.searchObj.addField("DownPayment");
-		 this.searchObj.addField("FeeChargeAmt");
-		 this.searchObj.addField("LovDescCustCIF");
-		 this.searchObj.addField("LovDescCustShrtName");
-		 this.searchObj.addField("LovDescProductCodeName");
-		 this.searchObj.addField("LovDescFinFormatter");
-		 this.searchObj.addField("RecordStatus");
-		 this.searchObj.addField("RecordType");
+		//Field Declarations for Fetching List Data
+		this.searchObj.addField("FinReference");
+		this.searchObj.addField("FinType");
+		this.searchObj.addField("FinCcy");
+		this.searchObj.addField("ScheduleMethod");
+		this.searchObj.addField("FinAmount");
+		this.searchObj.addField("DownPayment");
+		this.searchObj.addField("FeeChargeAmt");
+		this.searchObj.addField("LovDescCustCIF");
+		this.searchObj.addField("LovDescCustShrtName");
+		this.searchObj.addField("LovDescProductCodeName");
+		this.searchObj.addField("LovDescFinFormatter");
+		this.searchObj.addField("RecordStatus");
+		this.searchObj.addField("RecordType");
 
-		 this.searchObj.addSort("LovDescProductCodeName",false);
-		 this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
-		 this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
-		 /*	if(!StringUtils.trimToEmpty(this.loanType.getValue()).equals("")){
+		/*	if(!StringUtils.trimToEmpty(this.loanType.getValue()).equals("")){
 			this.searchObj.addFilter(new Filter("lovDescProductCodeName", this.loanType.getValue().trim(), Filter.OP_EQUAL));
 		}
-		  */
+		 */
 
-		 boolean accessToCreateNewFin = getFinanceDetailService().checkFirstTaskOwnerAccess(this.loanType.getValue().trim(), 
-				 getUserWorkspace().getLoginUserDetails().getLoginUsrID());
+		boolean accessToCreateNewFin = getFinanceDetailService().checkFirstTaskOwnerAccess(this.loanType.getValue().trim(), 
+				getUserWorkspace().getLoginUserDetails().getLoginUsrID());
 
-		 this.searchObj.addTabelName("FinanceMain_TView");
-		 if (accessToCreateNewFin) {
-			 button_FinanceMainList_NewFinanceMain.setVisible(true);
-		 } else {
-			 button_FinanceMainList_NewFinanceMain.setVisible(false);
-		 }
+		this.searchObj.addTabelName("FinanceMain_TView");
+		if (accessToCreateNewFin) {
+			button_FinanceMainList_NewFinanceMain.setVisible(true);
+		} else {
+			button_FinanceMainList_NewFinanceMain.setVisible(false);
+		}
 
-		 if (getUserWorkspace().getUserRoles() != null
-				 && getUserWorkspace().getUserRoles().size() > 0) {
-			 String whereClause = "";
+		if (getUserWorkspace().getUserRoles() != null
+				&& getUserWorkspace().getUserRoles().size() > 0) {
+			String whereClause = "";
 
-			 for (int i = 0; i < getUserWorkspace().getUserRoles().size(); i++) {
-				 if (i > 0) {
-					 whereClause += " OR ";
-				 }
+			for (int i = 0; i < getUserWorkspace().getUserRoles().size(); i++) {
+				if (i > 0) {
+					whereClause += " OR ";
+				}
 
-				 whereClause += "(',' + nextRoleCode + ',' LIKE '%," + getUserWorkspace().getUserRoles().get(i) + ",%')";
-			 }
+				whereClause += "(',' + nextRoleCode + ',' LIKE '%," + getUserWorkspace().getUserRoles().get(i) + ",%')";
+			}
 
-			 whereClause += " ) AND ( " +getUsrFinAuthenticationQry(false);
+			whereClause += " ) AND ( " +getUsrFinAuthenticationQry(false);
 
-			 if (!"".equals(whereClause)) {
-				 this.searchObj.addWhereClause(whereClause);
-			 }
-		 }
+			if (!"".equals(whereClause)) {
+				this.searchObj.addWhereClause(whereClause);
+			}
+		}
 
-		 setSearchObj(this.searchObj);
-			 doSearch();
-			 // set the itemRenderer
-			 this.listBoxFinanceMain.setItemRenderer(new FinanceMainListModelItemRenderer());
-		
-		
-		 logger.debug("Leaving " + event.toString());
+		setSearchObj(this.searchObj);
+		doSearch();
+		// set the itemRenderer
+		this.listBoxFinanceMain.setItemRenderer(new FinanceMainListModelItemRenderer());
+
+		logger.debug("Leaving " + event.toString());
 	}
 
 	/**
@@ -334,7 +330,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("FinanceMainList");
-	
+
 		this.button_FinanceMainList_NewFinanceMain.setVisible(getUserWorkspace().isAllowed("button_FinanceMainList_NewFinanceMain"));
 		this.button_FinanceMainList_FinanceMainSearchDialog.setVisible(getUserWorkspace().isAllowed("button_FinanceMainList_FinanceMainFindDialog"));
 		this.button_FinanceMainList_PrintList.setVisible(getUserWorkspace().isAllowed("button_FinanceMainList_PrintList"));
@@ -358,7 +354,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 			final FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailById(aFinanceMain.getId(),false,"",false);
-	
+
 			if(financeDetail==null){
 				String[] errParm= new String[1];
 				String[] valueParm= new String[1];
@@ -369,7 +365,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 				, getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getError());
 			}else{
-				
+
 				//Setting Notes Count from the list View
 				financeDetail.getFinScheduleData().getFinanceMain().setLovDescNotes(aFinanceMain.getLovDescNotes());
 				showDetailView(financeDetail);
@@ -387,7 +383,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		// create a new FinanceMain object, We GET it from the back end.
 		final FinanceDetail aFinanceDetail = getFinanceDetailService().getNewFinanceDetail(false);
 		aFinanceDetail.setNewRecord(true);
-		
+
 		/*
 		 * we can call our SelectFinanceType ZUL-file with parameters. So we can
 		 * call them with a object of the selected FinanceMain. For handed over
@@ -420,14 +416,14 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	 */
 	protected void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
 		logger.debug("Entering");
-		
+
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
-		
+
 		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
 			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
@@ -447,7 +443,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		try {
 			String productType = aFinanceMain.getLovDescProductCodeName();
 			productType = (productType.substring(0, 1)).toUpperCase()+(productType.substring(1)).toLowerCase();
-			
+
 			StringBuilder fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
 			if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_IJARAH)) {
 				fileLocaation.append("IjarahFinanceMainDialog.zul");
@@ -470,7 +466,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 			} else {
 				fileLocaation.append("FinanceMainDialog.zul");
 			}
-			
+
 			Executions.createComponents(fileLocaation.toString(), this.window_FinanceMainList,map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
@@ -528,6 +524,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 		//Clears all the filters
 		this.searchObj.clearFilters();
+		this.searchObj.addSort("LovDescProductCodeName",false);
+		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
+		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
+		
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj,this.listBoxFinanceMain,this.pagingFinanceMainList);
 
@@ -563,6 +563,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 		this.searchObj.clearFilters();
 
+		this.searchObj.addSort("LovDescProductCodeName",false);
+		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
+		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
+
 		// CustId
 		if (!StringUtils.trimToEmpty(this.custID.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj,this.sortOperator_custID.getSelectedItem(),this.custID.getValue(), "CustID");
@@ -589,7 +593,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		//FinAmount
 		if (this.finAmount.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finAmount.getSelectedItem(),
-			        PennantApplicationUtil.formateAmount(this.finAmount.getValue(), PennantConstants.defaultCCYDecPos), "FinAmount");
+					PennantApplicationUtil.formateAmount(this.finAmount.getValue(), PennantConstants.defaultCCYDecPos), "FinAmount");
 		}
 		// FinStartDate
 		if (this.finStartDate.getValue()!=null) {

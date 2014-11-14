@@ -61,7 +61,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -172,8 +171,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	protected Listheader listheader_FinAmount;		// autoWired
 	protected Listheader listheader_CurFinAmount;	// autoWired
 	protected Listheader listheader_RecordStatus;	// autoWired
-    protected Label  label_FinancesList;            // autoWired
-	protected Label label_FinanceSelectResult; 			// autowired
 	private String moduleDefiner = "";
 	private String workflowCode = "";
 	private String eventCodeRef = "";
@@ -194,7 +191,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	private transient FinanceMaintenanceService financeMaintenanceService;
 	private transient RepaymentCancellationService repaymentCancellationService;
 	private FinanceMain financeMain;
-	private int listRows;
 	
 	/**
 	 * Default constructor
@@ -226,7 +222,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			
 			String menuItemName = tabbox.getSelectedTab().getId();
 			menuItemName = menuItemName.trim().replace("tab_", "menu_Item_");
-			this.label_FinancesList.setValue(Labels.getLabel(menuItemName));
 			if (getUserWorkspace().getHasMenuRights().containsKey(menuItemName)) {
 				menuItemRightName = getUserWorkspace().getHasMenuRights().get(menuItemName);
 			}
@@ -326,8 +321,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 		if (args.containsKey("searchObject")) {
 			searchObject = (JdbcSearchObject<FinanceMain>) args.get("searchObject");
 		}
-		this.getPagingFinanceList().setPageSize(20);
-		this.getPagingFinanceList().setDetailed(true);
+		this.borderlayout_FinanceSelect.setHeight(getBorderLayoutHeight());
+		this.listBoxFinance.setHeight(getListBoxHeight(this.grid_FinanceDetails.getRows().getVisibleItemCount()+1));
+		this.pagingFinanceList.setPageSize(getListRows());
+		this.pagingFinanceList.setDetailed(true);
+		
 		if (searchObject != null) {
 			// Render Search Object
 			paging(searchObject);
@@ -361,7 +359,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			}
 		}
 
-		showFinanceSeekDialog();
         if(moduleDefiner.equals(PennantConstants.TAKAFULPREMIUMEXCLUDE)){
         	this.listheader_RecordStatus.setVisible(false);
         }
@@ -394,17 +391,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	public void onClick$btnSearch(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSearch();
-		logger.debug("Leaving" + event.toString());
-	}
-
-	/**
-	 * when the "close" button is clicked. <br>
-	 * 
-	 * @param event
-	 */
-	public void onClick$btnCloseWindow(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		doClose();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -446,26 +432,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	private void doClose() throws InterruptedException {
 		logger.debug("Entering");
 		this.window_FinanceSelect.onClose();
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Opens the SearchDialog window modal.
-	 */
-	private void showFinanceSeekDialog() throws InterruptedException {
-		logger.debug("Entering");
-		try {
-			// open the dialog in modal mode
-			this.borderlayout_FinanceSelect.setHeight(getBorderLayoutHeight());
-			int dialogHeight =  grid_FinanceDetails.getRows().getVisibleItemCount()* 20 + 120; 
-			int listboxHeight = borderLayoutHeight-dialogHeight;
-			getListBoxFinance().setHeight(listboxHeight+"px");
-			listRows = Math.round(listboxHeight/ 23);
-			this.getPagingFinanceList().setPageSize(listRows);
-		} catch (final Exception e) {
-			logger.error(e);
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
 		logger.debug("Leaving");
 	}
 
@@ -1716,7 +1682,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			this.sortOperator_scheduleMethod.setSelectedIndex(0);
 			this.profitDaysBasis.setValue("");
 			this.sortOperator_profitDaysBasis.setSelectedIndex(0);
-			this.getListBoxFinance().getItems().clear();
+			this.listBoxFinance.getItems().clear();
 			this.searchObject.clearFilters();		
 			paging(getSearchObj());
 		}

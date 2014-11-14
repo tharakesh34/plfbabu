@@ -71,9 +71,9 @@
 						<grid sclass="GridLayoutNoBorder"
 							fixedLayout="true" style="border:0px">
 							<columns>
-								<column width="160px" />
+								<column width="188px" />
 								<column />
-								<column width="230px" />
+								<column width="188px" />
 								<column />
 							</columns>
 							<rows>

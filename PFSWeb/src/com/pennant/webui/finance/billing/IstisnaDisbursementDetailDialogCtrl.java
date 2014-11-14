@@ -707,7 +707,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl implements 
 
 			if(isNewDisbursement() || isEnq){
 				this.window_IstisnaDisbursement.setHeight("280px");
-				this.window_IstisnaDisbursement.setWidth("80%");
+				this.window_IstisnaDisbursement.setWidth("90%");
 				this.groupboxWf.setVisible(false);
 				this.window_IstisnaDisbursement.doModal() ;
 			}else{

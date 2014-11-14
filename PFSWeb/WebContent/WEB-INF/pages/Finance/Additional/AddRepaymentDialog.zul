@@ -19,8 +19,8 @@
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
 						style="border:0px">
 						<columns>
-							<column width="130px" />
-                            <column width="270px"/>
+							<column width="180px" />
+                            <column/>
 						</columns>
 						<rows>
 							<row>
@@ -99,7 +99,7 @@
 							</row>
 							<row id="tillDateRow" visible="false">
 								<label
-									id="label_ChangeRepaymentDialog_TillDate"
+									id="label_ChangeRepaymentDialog_TillToDate"
 									value="${c:l('label_ChangeRepaymentDialog_CalToDate.value')}" />
 								<hbox>
 									<space spacing="2px"

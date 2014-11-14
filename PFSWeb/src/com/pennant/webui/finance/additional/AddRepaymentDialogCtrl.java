@@ -114,7 +114,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 	protected Checkbox pftIntact; 					// autowired
 	protected Row numOfTermsRow;
 	protected Intbox adjTerms; 						// autowired
-	protected Label label_ChangeRepaymentDialog_TillDate; 	// autowired
+	protected Label label_ChangeRepaymentDialog_TillToDate; 	// autowired
    
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 				// overhanded per param
@@ -494,9 +494,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		if(getFinScheduleData().getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLDATE)) {
 			this.fromDateRow.setVisible(true);
 			this.tillDateRow.setVisible(true);
+			this.label_ChangeRepaymentDialog_TillToDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_CalToDate.value"));
 		}
 		if(getFinScheduleData().getFinanceMain().getRecalType().equals(CalculationConstants.RPYCHG_TILLMDT)) {
 			this.tillDateRow.setVisible(true);
+			this.label_ChangeRepaymentDialog_TillToDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_CalFromDate.value"));
 		}
 
 		logger.debug("Leaving");
@@ -890,10 +892,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				}
 				
 				this.fromDateRow.setVisible(true);
-				this.label_ChangeRepaymentDialog_TillDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_TillDate.value"));
+				this.label_ChangeRepaymentDialog_TillToDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_CalToDate.value"));
 			} else {
 				this.fromDateRow.setVisible(false);
-				this.label_ChangeRepaymentDialog_TillDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value"));
+				this.label_ChangeRepaymentDialog_TillToDate.setValue(Labels.getLabel("label_ChangeRepaymentDialog_CalFromDate.value"));
 			}
 			
 			try {
@@ -914,6 +916,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			if(this.cbTillDate.getItemCount() > 0){
 				this.cbTillDate.setSelectedIndex(0);
 			}
+			this.fromDateRow.setVisible(false);
 			this.tillDateRow.setVisible(false);
 			this.numOfTermsRow.setVisible(true);
 		} else {
@@ -921,6 +924,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 				this.cbTillDate.setSelectedIndex(0);
 			}
 			this.tillDateRow.setVisible(false);
+			this.fromDateRow.setVisible(false);
 			this.numOfTermsRow.setVisible(false);
 		}
 		logger.debug("Leaving" + event.toString());

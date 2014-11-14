@@ -71,6 +71,7 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.service.MenuDetailsService;
 import com.pennant.backend.util.PennantConstants;
@@ -290,7 +291,7 @@ public class UserBarCtrl extends GFCBaseCtrl implements Serializable {
 		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("dd/MMM/yyyy");
 		label_currentDate.setValue(dateFormat.format(date));
 		dateFormat = new java.text.SimpleDateFormat("HH:mm:ss");
-		label_currentTime.setValue(dateFormat.format(date));
+		label_currentTime.setValue(dateFormat.format(DateUtility.getUtilDate()));
 		String hostStatusReq = com.pennant.app.util.SystemParameterDetails
 				.getSystemParameterValue("HOSTSTATUS_REQUIRED").toString();
 		
