@@ -606,5 +606,6 @@ public class PennantConstants {
 	//Account Holding Type
 	public static final String HOLDTYPE_OVERDUE 	=	"P";
 	public static final String HOLDTYPE_FUTURE 		=	"F";
-	
+
+	public static final String FINANCE_PRODUCT_CONVENTIONAL = "CONV"; 
 }

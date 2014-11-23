@@ -2302,6 +2302,10 @@
 	<bean id="istnormFinanceMainDialogCtrl"
 		class="com.pennant.webui.finance.financemain.IstnormFinanceMainDialogCtrl"
 		parent="financeBaseCtrl" scope="prototype" />
+		
+	<bean id="convFinanceMainDialogCtrl"
+		class="com.pennant.webui.finance.financemain.ConvFinanceMainDialogCtrl"
+		parent="financeBaseCtrl" scope="prototype" />
 	
 	<!--============ Disbursement Detail ============== -->
 	

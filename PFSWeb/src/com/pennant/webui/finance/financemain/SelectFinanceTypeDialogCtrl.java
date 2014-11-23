@@ -405,6 +405,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 					fileLocaation.append("SukuknrmFinanceMainDialog.zul");
 				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_ISTNORM)) {
 					fileLocaation.append("IstnormFinanceMainDialog.zul"); 
+				} else if (productType.equalsIgnoreCase(PennantConstants.FINANCE_PRODUCT_CONVENTIONAL)) {
+					fileLocaation.append("ConvFinanceMainDialog.zul"); 
 				} else {
 					PTMessageUtils.showErrorMessage(Labels.getLabel("message.error.productNotFound", 
 							new String[]{productType}));	

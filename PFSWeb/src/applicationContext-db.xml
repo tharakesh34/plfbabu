@@ -88,8 +88,8 @@
 		<property name="searchSystemEnvironment" value="true" />
 		<property name="locations">
 		<list>
-			<value>file:${PFF_CONF_PATH}/jdbc.properties</value>
-			<value>file:${PFF_CONF_PATH}/mail.properties</value>
+			<value>file:${UPP_CONFIG_PATH}/jdbcb.properties</value>
+			<value>file:${UPP_CONFIG_PATH}/mail.properties</value> 
 		</list>
 	</property>
 	 </bean>
