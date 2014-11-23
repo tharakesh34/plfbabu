@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.core.GrantedAuthority;
@@ -54,11 +55,13 @@ import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.service.UserService;
+import com.pennant.webui.util.GeneralLabelLocator;
 
 
 /**
@@ -88,9 +91,9 @@ public class PolicyManager implements UserDetailsService, Serializable {
 				throw new UsernameNotFoundException("Invalid User");
 			}
 
-			/*if (!StringUtils.isEmpty(user.getUsrLanguage())) {
+			if (!StringUtils.isEmpty(user.getUsrLanguage())) {
 				Labels.register(new GeneralLabelLocator(user.getUsrLanguage()));
-			}*/  
+			}  
 			
 			securityRole= userService.getUserRolesByUserID(user.getId()); 	 
 			grantedAuthorities = getGrantedAuthority(user);
