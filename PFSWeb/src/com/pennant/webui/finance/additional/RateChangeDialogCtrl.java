@@ -370,9 +370,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		//Check if schedule header is null or not and set the recal type fields.
 		if(aFinSchData.getFinanceMain() != null ) {
-			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 		}else {
-			fillComboBox(this.cbReCalType, "", recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+			fillComboBox(this.cbReCalType, "", recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 		}
 		logger.debug("Leaving");
 	}
@@ -944,7 +944,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.baseRate.setValue("");
 		this.splRate.setValue("");
 		this.effectiveRate.setValue(BigDecimal.ZERO);
-		fillComboBox(this.cbReCalType, "", recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+		fillComboBox(this.cbReCalType, "", recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 		if (isValidComboValue(this.cbRateChangeFromDate,Labels.getLabel("label_RateChangeDialog_FromDate.value"))) {
 			this.cbRateChangeToDate.getItems().clear();
 			String frSpecifier = this.cbRateChangeFromDate.getSelectedItem().getAttribute("fromSpecifier").toString();
@@ -963,7 +963,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				if(frSpecifier.equals(CalculationConstants.GRACE) && 
 						getFinScheduleData().getFinanceMain().getGrcSchdMthd().equals(CalculationConstants.NOPAY)){
 					
-					fillComboBox(this.cbReCalType, "", recalTypes, ",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+					fillComboBox(this.cbReCalType, "", recalTypes, ",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 				}
 				
 			}else if((frSpecifier.equals(CalculationConstants.REPAY)) ||
