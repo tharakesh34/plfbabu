@@ -53,16 +53,17 @@
 									<row> 
 										<cell colspan="2"></cell>
 									</row>
-									<row>
-										<cell colspan="2">
-											<div align="center">
-												<hbox pack="start">
-													<button type="submit" id="btnLogin" label="Login" width="90px"/>													
-													<button type="reset" id="btnReset" label="Reset" width="90px"/>
+									<row align="left">
+									   <cell />
+										<cell>
+											<div >
+												<hbox>
+													<button type="submit" id="btnLogin" label="Login" width="87px"/>													
+													<button type="reset" id="btnReset" label="Reset" width="87px"/>
 												</hbox>
 											</div>
-										</cell>
-									</row>
+										</cell>			
+                                    </row>
 								</rows>
 							</grid>
 						</h:form>
