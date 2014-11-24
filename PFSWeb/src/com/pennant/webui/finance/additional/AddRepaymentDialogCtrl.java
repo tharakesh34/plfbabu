@@ -578,6 +578,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			this.cbRepayToDate.getItems().clear();
 		} else if(dateCombobox.getId().equals("cbTillDate")) {
 			this.cbTillDate.getItems().clear();
+		} else if(dateCombobox.getId().equals("cbFromDate")) {
+			this.cbFromDate.getItems().clear();
 		}
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
@@ -901,7 +903,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 			try {
 				if (isValidComboValue(this.cbRepayToDate,Labels.getLabel("label_ChangeRepaymentDialog_ToDate.value"))) {
 					fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
-							(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
+							(Date) this.cbRepayToDate.getSelectedItem().getValue(), true);
 				}
 			} catch (WrongValueException e) {
 				this.cbReCalType.setSelectedIndex(0);
@@ -934,7 +936,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering" + event.toString());
 		
 		fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
-				(Date) this.cbFromDate.getSelectedItem().getValue(), false);
+				(Date) this.cbFromDate.getSelectedItem().getValue(), true);
 		
 		logger.debug("Leaving" + event.toString());
 	}

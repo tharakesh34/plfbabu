@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.accounts.AccountsDAO;
@@ -171,7 +172,9 @@ public class AccountProcessUtil implements Serializable {
 				}
 				
 				//if Non of the Account is found create new A/c else update
-				updateAccountDetails(account, set, set.getPostAmount(), isRcdSave);	
+				if(!StringUtils.trimToEmpty(set.getAccount()).equals("")){
+					updateAccountDetails(account, set, set.getPostAmount(), isRcdSave);	
+				}
 
 			}
 		}

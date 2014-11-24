@@ -222,7 +222,7 @@ public class PFFCustomerPreparation {
 			//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			//<!-- Email Details 1 and 2-->
 			customerDetails.setCustomerEMailList(new ArrayList<CustomerEMail>());
-			if (!StringUtils.trimToEmpty(customerInterfaceData.getCustEMail1()).equals("")) {
+			if (!StringUtils.trimToEmpty(customerInterfaceData.getCustEMailTypeCode1()).equals("")) {
 				CustomerEMail customerEMail1 = new CustomerEMail();
 				customerEMail1.setRecordType(PennantConstants.RCD_ADD);
 				customerEMail1.setCustID(custid);
@@ -233,7 +233,7 @@ public class PFFCustomerPreparation {
 				customerEMail1.setCustEMail(customerInterfaceData.getCustEMail1());
 				customerDetails.getCustomerEMailList().add(customerEMail1);
 			}
-			if (!StringUtils.trimToEmpty(customerInterfaceData.getCustEMail2()).equals("")) {
+			if (!StringUtils.trimToEmpty(customerInterfaceData.getCustEMailTypeCode2()).equals("")) {
 				CustomerEMail customerEMail2 = new CustomerEMail();
 				customerEMail2.setRecordType(PennantConstants.RCD_ADD);
 				customerEMail2.setCustID(custid);
