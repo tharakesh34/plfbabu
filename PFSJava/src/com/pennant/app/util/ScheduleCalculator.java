@@ -3997,9 +3997,10 @@ public class ScheduleCalculator {
 				isFirstAdjSet = true;
 				
 				//For PRI_PFT Method only, First Adjustment amounts taken as Principal Amount
-				if (curSchd.getSchdMethod().equals(CalculationConstants.PRI_PFT)) {
+				if (curSchd.getSchdMethod().equals(CalculationConstants.PRI_PFT)
+				        || curSchd.getSchdMethod().equals(CalculationConstants.PRI)) {
 					firstAdjAmount = curSchd.getPrincipalSchd();
-				}else{
+				} else {
 					firstAdjAmount = curSchd.getRepayAmount();
 				}
 			}
@@ -4010,9 +4011,10 @@ public class ScheduleCalculator {
 			        && !curSchd.isDefered()) {
 				isLastAdjSet = true;
 				//For PRI_PFT Method only, Last Adjustment amounts taken as Principal Amount
-				if (curSchd.getSchdMethod().equals(CalculationConstants.PRI_PFT)) {
+				if (curSchd.getSchdMethod().equals(CalculationConstants.PRI_PFT)
+				        || curSchd.getSchdMethod().equals(CalculationConstants.PRI)) {
 					lastAdjAmount = curSchd.getPrincipalSchd();
-				}else{
+				} else {
 					lastAdjAmount = curSchd.getRepayAmount();
 				}
 			}
