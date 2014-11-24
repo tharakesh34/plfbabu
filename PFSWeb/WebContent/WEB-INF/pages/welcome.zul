@@ -78,7 +78,7 @@
 
 				</vlayout>
 			</north>
-			<center border="none" autoscroll="true">
+			<center border="none" autoscroll="true" style="padding-top:10px;">
 				<portallayout id="dashBoardsPortalLayout"
 					maximizedMode="whole">
 					<portalchildren id="firstPortalChildColumn" />
