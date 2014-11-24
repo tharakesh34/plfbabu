@@ -980,7 +980,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					ReturnDataSet set = list.get(i);
 					set.setLinkedTranId(linkedTranId);
 					set.setPostDate(curBDay);
-					if (!("0000".equals(set.getErrorId()) || "".equals(set.getErrorId()))) {
+					if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || "".equals(StringUtils.trimToEmpty(set.getErrorId())))) {
 						errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
 								set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
 					} else {

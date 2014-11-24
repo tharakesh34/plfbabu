@@ -26,14 +26,18 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.AccountPostingTemp;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.coreinterface.model.CoreBankAccountPosting;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
+import com.pennant.coreinterface.model.CustomerInterfaceData;
+import com.pennant.coreinterface.model.CustomerInterfaceData.CustomerIdentity;
+import com.pennant.coreinterface.model.CustomerInterfaceData.CustomerRating;
 import com.pennant.equation.util.DateUtility;
 
-public class InterfaceDAOImpl {
+public class InterfaceDAOImpl implements InterfaceDAO {
 
 	private static Logger logger = Logger.getLogger(InterfaceDAOImpl.class);
 
@@ -46,7 +50,7 @@ public class InterfaceDAOImpl {
 	}
 	
 	
-	
+	@Override
 	public List<CoreBankAccountDetail>  fetchAccountDetails(CoreBankAccountDetail coreAcct) {
 		List<CoreBankAccountDetail> list = new ArrayList<CoreBankAccountDetail>();
 		StringBuffer temAccTypes = new StringBuffer();
@@ -63,12 +67,13 @@ public class InterfaceDAOImpl {
 		coreAcct.setAcType(temAccTypes.toString());
 
 		StringBuilder selectQuery = new StringBuilder();
-		selectQuery.append(" SELECT SCAB+SCAN+SCAS as accountNumber, SCACT as acType, SCSHN as custShrtName");
+		selectQuery.append(" SELECT SCAB+SCAN+SCAS as accountNumber, SCACT as acType, SCSHN as custShrtName, SCCCY as AcCcy, SCBAL AS AcBal, ");
+		selectQuery.append(" CASE when SCBAL < 0 THEN '-' ELSE '+' END  as AmountSign ");
 		selectQuery.append(" FROM GFPF GFPF");
 		selectQuery.append(" INNER JOIN SCPF SCPF ON SCPF.SCAN = GFPF.GFCUS");
-		selectQuery.append(" where GFPF.GFCUS =:custCIF");
+		selectQuery.append(" where GFPF.GFCUS =:CustCIF");
 		selectQuery.append(" AND SCPF.SCAI14 <> 'Y' AND SCPF.SCAI17 <> 'Y' AND SCPF.SCAI20 <> 'Y' AND SCPF.SCAI30 <> 'Y'");
-		selectQuery.append(" AND SCPF.SCCCY =:acCcy AND SCPF.SCACT in(");
+		selectQuery.append(" AND SCPF.SCACT in(");
 		selectQuery.append(temAccTypes.toString());
 		selectQuery.append(" )");
 
@@ -90,7 +95,7 @@ public class InterfaceDAOImpl {
 
 	}
 	
-	
+	@Override
 	public List<CoreBankAccountPosting> validateAccount(List<CoreBankAccountPosting> accountPostings) {
 		logger.debug("Entering");
 		CoreBankAccountPosting temp = null;
@@ -100,7 +105,7 @@ public class InterfaceDAOImpl {
 
 		deleteQuery.append("DELETE FROM ACCFINDET_temp");
 
-		selectQuery.append(" SELECT ErrorCode, ErrorMessage FROM ACCFINDET_TEMP");
+		selectQuery.append(" SELECT AccountNumber AS Account, ErrorCode, ErrorMessage FROM ACCFINDET_TEMP");
 		selectQuery.append(" WHERE  ReqRefId =:ReqRefId and ReqRefSeq =:ReqRefSeq");
 
 		insertQuery.append("INSERT INTO ACCFINDET_temp(ReqRefId, ReqRefSeq, CustCIF, AcCcy, AcSPCode, AcBranch, AccountNumber, CreateNew, CreateIfNF, InternalAc, OpenStatus, ErrorCode, ErrorMessage)");
@@ -120,14 +125,13 @@ public class InterfaceDAOImpl {
 			SqlParameterSource beanParameters = null;
 			RowMapper<CoreBankAccountPosting> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(CoreBankAccountPosting.class);
 
-
-
 			for(CoreBankAccountPosting item: accountPostings) {				
 				beanParameters = new BeanPropertySqlParameterSource(item);
 				temp = this.namedParameterJdbcTemplate.queryForObject(selectQuery.toString(), beanParameters, typeRowMapper);
 
 				item.setErrorCode(temp.getErrorCode());
 				item.setErrorMessage(temp.getErrorMessage());
+				item.setAccount(temp.getAccount());
 			}
 
 
@@ -140,34 +144,32 @@ public class InterfaceDAOImpl {
 
 	}
 	
-	public CoreBankAccountDetail fetchAccountBalance(String accountNumber) {
+	@Override
+	public List<CoreBankAccountDetail> fetchAccountBalance(List<String> accountNumberList) {
 		logger.debug("Entering");
 
-		CoreBankAccountDetail cbAccount = new CoreBankAccountDetail();
-
-		cbAccount.setAccountNumber(accountNumber);
-
+		Map<String,List<String>> map=new HashMap<String, List<String>>();
+		map.put("AccNumberList", accountNumberList);
+		
 		StringBuilder selectSql = new StringBuilder();		
-		selectSql.append(" select SCAB+SCAN+SCAS as AccountNumber, Balance as AcBal,");
-		selectSql.append(" case when Balance < 0 then '-' else '+' end  as AmountSign"); 
-		selectSql.append(" from AccountBalance");
-		selectSql.append(" where SCAB+SCAN+SCAS =:AccountNumber");
+		selectSql.append(" select SCAB+SCAN+SCAS as AccountNumber, SCBAL as AcBal, SCCCY AS AcCcy,SCSHN as AcShrtName , SCACT AS AcType, ");
+		selectSql.append(" case when SCBAL < 0 then '-' else '+' end  as AmountSign"); 
+		selectSql.append(" from SCPF ");
+		selectSql.append(" where SCAB+SCAN+SCAS IN(:AccNumberList) "); 
 
 		logger.debug("selectSql: " + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cbAccount);
 		RowMapper<CoreBankAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(CoreBankAccountDetail.class);
-
+		
+		List<CoreBankAccountDetail> list = null;
 		try {
-			cbAccount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			list =  this.namedParameterJdbcTemplate.query(selectSql.toString(), map, typeRowMapper);		
 		} catch (EmptyResultDataAccessException e) {
-			logger.debug("Leaving");
-			cbAccount = null;
 		}
 		logger.debug("Leaving");
-		return cbAccount;
+		return list;
 	}
 	
+	@Override
 	public CoreBankAccountDetail fetchAccount(CoreBankAccountDetail accountDetail) {
 		logger.debug("Entering");
 
@@ -189,6 +191,7 @@ public class InterfaceDAOImpl {
 		return accountDetail;
 	}
 	
+	@Override
 	public void saveAccountDetails(List<CoreBankAccountDetail> accountDetail) {
 		logger.debug("Entering");
 
@@ -216,6 +219,7 @@ public class InterfaceDAOImpl {
 
 	}
 	
+	@Override
 	public void saveAccountPostings(List<AccountPostingTemp> accountPostings) {
 		logger.debug("Entering");
 
@@ -243,6 +247,7 @@ public class InterfaceDAOImpl {
 
 	}
 	
+	@Override
 	public List<AccountPostingTemp> executeAccPosting(List<AccountPostingTemp> accPostingTempList) throws Exception{
 		logger.debug("Entering");
 				
@@ -309,10 +314,11 @@ public class InterfaceDAOImpl {
 		return accPostingTempList;
 	}
 	
+	@Override
 	public List<CoreBankAccountPosting> fetchAccountPostingForFin(List<CoreBankAccountPosting> list) {
 		logger.debug("Entering");
 		
-		StringBuilder selectSql = new StringBuilder("SELECT Error as errorId, ErrDesc as errorMsg FROM AccountPosting_Temp");
+		StringBuilder selectSql = new StringBuilder("SELECT AccNumber as Account, PostingRef as PostRef, Error as errorId, ErrDesc as errorMsg FROM AccountPosting_Temp");
 		selectSql.append(" WHERE ReqRefId =:ReqRefId and ReqRefSeq =:ReqRefSeq");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -322,7 +328,15 @@ public class InterfaceDAOImpl {
 		try{		
 			for(CoreBankAccountPosting item: list) {
 				beanParameters = new BeanPropertySqlParameterSource(item);
-				item = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+				CoreBankAccountPosting temp = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+				
+				item.setErrorCode(temp.getErrorCode());
+				item.setErrorMessage(temp.getErrorMessage());
+				item.setAccount(temp.getAccount());
+				item.setPostRef(StringUtils.trimToEmpty(temp.getPostRef()));
+				if(StringUtils.trimToEmpty(item.getInternalAc()).equals("Y")){
+					item.setAcType(item.getAcSPCode());
+				}
 			}
 			
 		}catch (Exception e) {
@@ -334,6 +348,7 @@ public class InterfaceDAOImpl {
 		return list;
 	}
 		
+	@Override
 	public List<CoreBankAccountDetail> fetchAccountForFin(List<CoreBankAccountDetail> list) {
 		logger.debug("Entering");
 		
@@ -345,9 +360,12 @@ public class InterfaceDAOImpl {
 		SqlParameterSource beanParameters = null;
 		RowMapper<CoreBankAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(CoreBankAccountDetail.class);
 		try{		
-			for(CoreBankAccountDetail item: list) {
-				beanParameters = new BeanPropertySqlParameterSource(item);
-				item = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			for(CoreBankAccountDetail detail: list) {
+				beanParameters = new BeanPropertySqlParameterSource(detail);
+				CoreBankAccountDetail item = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+				detail.setAccountNumber(item.getAccountNumber());
+				detail.setErrorCode(item.getErrorCode());
+				detail.setErrorMessage(item.getErrorMessage());
 			}
 			
 		}catch (Exception e) {
@@ -359,8 +377,7 @@ public class InterfaceDAOImpl {
 		return list;
 	}
 	
-
-	
+	@Override
 	public String executeAccountForFin(final int reqRefId, final String createNow) {
 		logger.debug("Entering");
 
@@ -399,7 +416,7 @@ public class InterfaceDAOImpl {
 		return "";
 	}
 	
-	
+	@Override
 	public List<CoreBankAccountDetail> updateAccountDetailsIds(List<CoreBankAccountDetail> list) {
 		logger.debug("Entering");
 
@@ -434,6 +451,7 @@ public class InterfaceDAOImpl {
 		return list;
 	}
 	
+	@Override
 	public List<CoreBankAccountPosting> prepareAccPostinIds(List<CoreBankAccountPosting> list) {
 		logger.debug("Entering");
 
@@ -469,7 +487,7 @@ public class InterfaceDAOImpl {
 	}
 	
 	
-	
+	@Override
 	public CoreBankingCustomer fetchCustomerDetails(CoreBankingCustomer customer) throws CustomerNotFoundException {
 		logger.debug("Entering");
 		
@@ -500,7 +518,71 @@ public class InterfaceDAOImpl {
 		return customer;
 	}
 	
+	@Override
+	public CustomerInterfaceData getCustDetails(String custCIF, String custLoc) {
+		logger.debug("Entering");
+		CustomerInterfaceData customerInterfaceData = new CustomerInterfaceData();
+		customerInterfaceData.setCustCIF(custCIF);
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(" SELECT * FROM CUST_DETAILS_VIEW WHERE CustCIF=:CustCIF");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerInterfaceData);
+		RowMapper<CustomerInterfaceData> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(CustomerInterfaceData.class);
+
+		logger.debug("Leaving");
+
+		try{		
+			customerInterfaceData = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);			
+			setCustDocDetails(customerInterfaceData);
+			setCustRatings(customerInterfaceData);
+		}catch (Exception e) {
+			logger.error(e);
+		}
+
+		return customerInterfaceData;
+	}
 	
+	private  CustomerInterfaceData setCustDocDetails(CustomerInterfaceData customerInterfaceData) throws Exception{
+		logger.debug("Entering");
+		
+		CoreBankAccountDetail detail = new CoreBankAccountDetail();
+		detail.setCustCIF(customerInterfaceData.getCustCIF());
+
+		StringBuilder selectSql = new StringBuilder();		
+		selectSql.append("SELECT CustIDType, CustIDNumber, CustIDCountry, CustIDIssueDate, CustIDExpDate FROM CUST_DOCDETAILS_View WHERE CustCIF= :CustCIF");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		RowMapper<CustomerIdentity> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(CustomerIdentity.class);
+		
+		List<CustomerIdentity> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);		
+		customerInterfaceData.setCustomerIdentitylist(list);
+		logger.debug("Leaving");
+		return customerInterfaceData;
+	}
+	
+	private  CustomerInterfaceData setCustRatings(CustomerInterfaceData customerInterfaceData) throws Exception{
+		logger.debug("Entering");
+		
+		CoreBankAccountDetail detail = new CoreBankAccountDetail();
+		detail.setCustCIF(customerInterfaceData.getCustCIF());
+
+		StringBuilder selectSql = new StringBuilder();		
+		selectSql.append("SELECT CustRatingType,CustLongRate, CustShortRate FROM CUST_RATINGS_View WHERE CustCIF = :CustCIF");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(CustomerRating.class);
+		
+		List<CustomerRating> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);		
+		customerInterfaceData.setCustomerRatinglist(list);
+		logger.debug("Leaving");
+		return customerInterfaceData;
+	}
+	
+	@Override
 	public Map<String, String> getCalendarWorkingDays()  {
 		logger.debug("Entering");
 		Map<String, String > map = new HashMap<String, String>();
@@ -528,8 +610,7 @@ public class InterfaceDAOImpl {
 	}
 	
 	
-	
-	public static BigDecimal getDecimalDate(Date date){
+	private BigDecimal getDecimalDate(Date date){
 		BigDecimal as400Date= null;
 		BigDecimal dateInt = null;
 		String strDate = null;
@@ -549,7 +630,6 @@ public class InterfaceDAOImpl {
 
 		return as400Date;
 	}
-	
 	
 	public void disConnection() {
 		// TODO

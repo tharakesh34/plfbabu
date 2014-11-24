@@ -1,10 +1,11 @@
 package com.pennant.corebanking.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.corebanking.dao.impl.InterfaceDAOImpl;
+import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.CoreBankAvailCustomer;
 import com.pennant.coreinterface.model.CoreBankNewCustomer;
@@ -16,14 +17,14 @@ import com.pennant.coreinterface.service.CustomerDataProcess;
 public class CustomerDataProcessImpl extends GenericProcess implements CustomerDataProcess {
 	
 	private static Logger logger = Logger.getLogger(CustomerDataProcessImpl.class);
-	private InterfaceDAOImpl interfaceDAO;
+	private InterfaceDAO interfaceDAO;
 	
 	@Override
 	public CustomerInterfaceData getCustomerFullDetails(String custCIF,String custLoc) throws CustomerNotFoundException {
 		logger.debug("Entering");
-
+		CustomerInterfaceData interfaceData = getInterfaceDAO().getCustDetails(custCIF, custLoc);
 		logger.debug("Leaving");
-		return null;
+		return interfaceData;
 	}
 	
 	@Override
@@ -32,7 +33,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 		logger.debug("Entering");
 
 		logger.debug("Leaving");
-		return null;
+		return new ArrayList<CustomerCollateral>();
 	}
 	
 	/**
@@ -69,10 +70,10 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public InterfaceDAOImpl getInterfaceDAO() {
+	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
-	public void setInterfaceDAO(InterfaceDAOImpl interfaceDAO) {
+	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}
 

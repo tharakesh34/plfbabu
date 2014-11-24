@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.corebanking.dao.impl.InterfaceDAOImpl;
+import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.FinanceCancellation;
 import com.pennant.coreinterface.service.FinanceCancellationProcess;
 
@@ -12,7 +12,7 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 
 	private static Logger	logger	= Logger.getLogger(FinanceCancellationProcessImpl.class);
 
-	private InterfaceDAOImpl interfaceDAO;
+	private InterfaceDAO interfaceDAO;
 
 	/**
 	 * 
@@ -35,10 +35,10 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public InterfaceDAOImpl getInterfaceDAO() {
+	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
-	public void setInterfaceDAO(InterfaceDAOImpl interfaceDAO) {
+	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}
 	

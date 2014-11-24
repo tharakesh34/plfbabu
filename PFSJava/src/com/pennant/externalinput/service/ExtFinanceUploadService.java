@@ -58,7 +58,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
-import com.pennant.equation.util.HostConnection;
 import com.pennant.externalinput.ExtFinanceData;
 
 public class ExtFinanceUploadService {
@@ -77,7 +76,6 @@ public class ExtFinanceUploadService {
 	private AccountsDAO accountsDAO;
 	private FinanceDetailService financeDetailService;
 	private AccountInterfaceService accountInterfaceService;
-	private HostConnection hostConnection;
 
 	private BigDecimal zeroValue = BigDecimal.ZERO;
 	private Date dateValueDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
@@ -2491,14 +2489,6 @@ public class ExtFinanceUploadService {
 
 	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
-	}
-
-	public void setHostConnection(HostConnection hostConnection) {
-		this.hostConnection = hostConnection;
-	}
-
-	public HostConnection getHostConnection() {
-		return hostConnection;
 	}
 
 	private String getValue(HSSFCell cell) {

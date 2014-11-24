@@ -46,7 +46,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.corebanking.dao.impl.InterfaceDAOImpl;
+import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
 import com.pennant.coreinterface.model.EquationAccountType;
 import com.pennant.coreinterface.model.EquationCurrency;
@@ -61,7 +61,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	
 	private static Logger logger = Logger.getLogger(DailyDownloadProcessImpl.class);
 
-	private InterfaceDAOImpl interfaceDAO;
+	private InterfaceDAO interfaceDAO;
 
 	/**
 	 * Method for Importing Currency Details
@@ -145,10 +145,10 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public InterfaceDAOImpl getInterfaceDAO() {
+	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
-	public void setInterfaceDAO(InterfaceDAOImpl interfaceDAO) {
+	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}
 }

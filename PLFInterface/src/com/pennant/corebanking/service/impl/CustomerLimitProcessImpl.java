@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.corebanking.dao.impl.InterfaceDAOImpl;
+import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.exception.CustomerLimitProcessException;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.service.CustomerLimitProcess;
@@ -14,7 +14,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 
 	private static Logger logger = Logger.getLogger(CustomerLimitProcessImpl.class);
 
-	private InterfaceDAOImpl interfaceDAO;
+	private InterfaceDAO interfaceDAO;
 	
 	/**
 	 * Method for Fetching List of Limit Category Customers
@@ -77,10 +77,10 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public InterfaceDAOImpl getInterfaceDAO() {
+	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
-	public void setInterfaceDAO(InterfaceDAOImpl interfaceDAO) {
+	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}
 

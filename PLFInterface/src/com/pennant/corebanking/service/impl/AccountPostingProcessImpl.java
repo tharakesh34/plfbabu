@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.corebanking.dao.impl.InterfaceDAOImpl;
+import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.model.AccountPostingTemp;
 import com.pennant.coreinterface.model.CoreBankAccountPosting;
@@ -17,7 +17,7 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 
 	private static Logger logger = Logger.getLogger(AccountPostingProcessImpl.class);
 	
-	private InterfaceDAOImpl interfaceDAO;
+	private InterfaceDAO interfaceDAO;
 
 	/**
 	 * Method for Fetching account detail Numbers depends on Parameter key fields
@@ -105,10 +105,10 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public InterfaceDAOImpl getInterfaceDAO() {
+	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
-	public void setInterfaceDAO(InterfaceDAOImpl interfaceDAO) {
+	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}
 	

@@ -318,17 +318,17 @@ public class AccountingDetailDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> i
 					}
 
 					//Adding List Group to ListBox
-					if(i == 0){
+					/*if(i == 0){
 						Listgroup listgroup = new Listgroup(entry.getFinEvent() +"-"+ entry.getLovDescEventCodeName());
 						this.listBoxFinAccountings.appendChild(listgroup);
-					}
+					}*/
 
 					Hbox hbox = new Hbox();
 					Label label = new Label(PennantAppUtil.getlabelDesc(
 							entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
 					label.setStyle(sClassStyle);
 					hbox.appendChild(label);
-					if (!entry.getPostStatus().equals("")) {
+					if (!StringUtils.trimToEmpty(entry.getPostStatus()).equals("")) {
 						Label la = new Label("*");
 						la.setStyle("color:red;");
 						hbox.appendChild(la);
@@ -384,7 +384,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> i
 					lc.setStyle("font-weight:bold;text-align:right;");
 					lc.setStyle(sClassStyle+"font-weight:bold;text-align:right;");
 					lc.setParent(item);
-					lc = new Listcell(entry.getErrorId().equals("0000") ? "" : entry.getErrorId());
+					lc = new Listcell(StringUtils.trimToEmpty(entry.getErrorId()).equals("0000") ? "" : StringUtils.trimToEmpty(entry.getErrorId()));
 					lc.setStyle("font-weight:bold;color:red;");
 					lc.setTooltiptext(entry.getErrorMsg());
 					lc.setParent(item);

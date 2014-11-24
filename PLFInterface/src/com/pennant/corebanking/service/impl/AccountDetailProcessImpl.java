@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.corebanking.dao.impl.InterfaceDAOImpl;
+import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
 import com.pennant.coreinterface.model.AccountBalance;
@@ -16,7 +16,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 
 	private static Logger logger = Logger.getLogger(AccountDetailProcessImpl.class);
 
-	private InterfaceDAOImpl interfaceDAO;
+	private InterfaceDAO interfaceDAO;
 
 	/**
 	 * Method for Fetching List of account details depends on Parameter key
@@ -88,7 +88,11 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 		logger.debug("Entering");
 		
 		try {
-			coreAcct = getInterfaceDAO().fetchAccountBalance(coreAcct.getAccountNumber());
+			List<String> accNumList = new ArrayList<String>();
+			accNumList.add(coreAcct.getAccountNumber());
+			List<CoreBankAccountDetail> acList = getInterfaceDAO().fetchAccountBalance(accNumList);
+			coreAcct = acList.get(0);
+			
 		} catch (Exception e) { 
 			logger.error("Exception " + e);
 			throw new AccountNotFoundException(e.getMessage());
@@ -105,8 +109,17 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 	public List<CoreBankAccountDetail> fetchAccountsListAvailableBal(
 			List<CoreBankAccountDetail> coreAcctList, boolean isCcyCheck)
 			throws AccountNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug("Entering");
+		
+		List<String> accNumList = new ArrayList<String>();
+		for (int i = 0; i < coreAcctList.size(); i++) {
+			accNumList.add(coreAcctList.get(i).getAccountNumber());
+		}
+		
+		List<CoreBankAccountDetail>  list = getInterfaceDAO().fetchAccountBalance(accNumList);
+		
+		logger.debug("Leaving");
+		return list;
 	}
 
 	@Override
@@ -127,10 +140,10 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public InterfaceDAOImpl getInterfaceDAO() {
+	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
-	public void setInterfaceDAO(InterfaceDAOImpl interfaceDAO) {
+	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}
 

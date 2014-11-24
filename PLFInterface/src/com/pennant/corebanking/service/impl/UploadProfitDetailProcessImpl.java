@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.corebanking.dao.impl.InterfaceDAOImpl;
+import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.EodFinProfitDetail;
 import com.pennant.coreinterface.service.UploadProfitDetailProcess;
 
@@ -12,7 +12,7 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 
 	private static Logger logger = Logger.getLogger(UploadProfitDetailProcessImpl.class);
 	
-	private InterfaceDAOImpl interfaceDAO;
+	private InterfaceDAO interfaceDAO;
 
 	@Override
 	public void doUploadPftDetails(List<EodFinProfitDetail> profitDetails, boolean isItFirstCall) throws Exception {
@@ -25,10 +25,10 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public InterfaceDAOImpl getInterfaceDAO() {
+	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
-	public void setInterfaceDAO(InterfaceDAOImpl interfaceDAO) {
+	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}
 	

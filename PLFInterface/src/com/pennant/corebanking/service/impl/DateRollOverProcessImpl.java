@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.corebanking.dao.impl.InterfaceDAOImpl;
+import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
 import com.pennant.coreinterface.service.DateRollOverProcess;
 
@@ -13,7 +13,7 @@ public class DateRollOverProcessImpl implements DateRollOverProcess{
 	
 	private static Logger logger = Logger.getLogger(DateRollOverProcessImpl.class);
 	
-	private InterfaceDAOImpl interfaceDAO;
+	private InterfaceDAO interfaceDAO;
 	
 	/**
 	 * Method for Changing Calendar Days from CoreBanking
@@ -40,10 +40,10 @@ public class DateRollOverProcessImpl implements DateRollOverProcess{
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public InterfaceDAOImpl getInterfaceDAO() {
+	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
-	public void setInterfaceDAO(InterfaceDAOImpl interfaceDAO) {
+	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}
 
