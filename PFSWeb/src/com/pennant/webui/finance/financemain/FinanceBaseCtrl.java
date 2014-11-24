@@ -3496,7 +3496,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			}
 
 			// validate finance reference number
-			if (!this.finReference.isReadonly() && this.finReference.getValue() != null) {
+			if (!this.finReference.isReadonly() && !StringUtils.trimToEmpty(this.finReference.getValue()).equals("")) {
 				if (getFinanceDetailService().isFinReferenceExits(this.finReference.getValue(), "_View", false)) {
 
 					errorList.add(new ErrorDetails("finReference","E0006",new String[] {
@@ -3946,7 +3946,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
 
 		try {
-			if (this.finReference.getValue().equals("")) {
+			if (StringUtils.trimToEmpty(this.finReference.getValue()).equals("")) {
 				this.finReference.setValue(String.valueOf(PennantReferenceIDUtil.genNewWhatIfRef(false)));
 			} 
 			aFinanceMain.setFinReference(this.finReference.getValue());

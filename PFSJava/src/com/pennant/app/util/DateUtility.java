@@ -712,7 +712,12 @@ public final class DateUtility {
 		}
 		
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
-		int months = convert(date1).get(Calendar.MONTH) - convert(date2).get(Calendar.MONTH);
+		int months = 0;
+		if (includeDate2 && getMonthEndDate(date1).compareTo(date1) == 0) {
+			months = convert(addDays(date1, 1)).get(Calendar.MONTH) - convert(date2).get(Calendar.MONTH);
+		}else{
+			months = convert(date1).get(Calendar.MONTH) - convert(date2).get(Calendar.MONTH);
+		}
 		
 		months += years * 12;
 		java.util.Date date3 = addMonths(date2, months);

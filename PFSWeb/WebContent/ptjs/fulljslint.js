@@ -361,7 +361,6 @@
 // can contain data and other functions.
 
 var JSLINT = (function () {
-    "use strict";
 
     var adsafe_id,      // The widget's ADsafe id.
         adsafe_may,     // The widget may load approved scripts.

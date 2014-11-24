@@ -980,7 +980,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 			this.payOffProfit.setValue(PennantAppUtil.amountFormate(finSummary.getPayOffProfit(), finSummary.getCcyEditField()));
 			this.totalPayOff.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPayOff(), finSummary.getCcyEditField()));
 			this.overDueInstlments.setValue(String.valueOf(finSummary.getOverDueInstlments()));
-			this.overDueInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getOverDueInstlementPft(), finSummary.getCcyEditField()));
+			this.overDueInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getOverDueInstlementPft().add(financeSummary.getFinODTotPenaltyBal()) 
+					                               ,finSummary.getCcyEditField()));
 			this.finProfitrate.setValue(PennantApplicationUtil.formatRate(finSummary.getFinRate().doubleValue(), 2));
 			this.paidInstlments.setValue(String.valueOf(finSummary.getPaidInstlments()));
 			this.paidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid(), finSummary.getCcyEditField()));

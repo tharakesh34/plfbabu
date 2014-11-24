@@ -430,12 +430,12 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		if(repayList != null && !repayList.isEmpty()){
 			
 			FinanceRepayments repayment = repayList.get(0);
-			Date postDate = repayment.getFinPostDate();
+			Date rpyValueDate = repayment.getFinValueDate();
 			
 			//Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
 			//If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
 			//============================================
-			List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference, postDate);
+			List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference, rpyValueDate);
 			if(list != null && !list.isEmpty()){
 				return "Finance is Maintained after this Repayment done.";
 			}
@@ -465,7 +465,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			//Is Schedule Regenerated >>> Adjust Finance Details From Log Tables to Main Tables and remove data from Log Tables
 			//Otherwise Only Schedule Change with Repayments Amount
 			//============================================
-			FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(finReference, finEventCode, postDate);
+			FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(finReference, finEventCode, rpyValueDate);
 			boolean isMigratedRepayment = false;
 			if(detail == null){
 				logger.debug("Log Entry Details Missing. Cancellation process for Manual Reversal Payment Process");
@@ -617,7 +617,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 				//Remove Repayments Terms based on Linked Transaction ID
 				//============================================
-				getFinanceRepaymentsDAO().deleteRpyDetailbyMaxPostDate(postDate, finReference);
+				getFinanceRepaymentsDAO().deleteRpyDetailbyMaxPostDate(rpyValueDate, finReference);
 				
 			}
 			

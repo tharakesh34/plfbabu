@@ -435,7 +435,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 						if (prvRecovery != null && prvRecovery.isRcdCanDel()) {
 							prvPenalty = prvPenalty.subtract(prvRecovery.getPenalty());
-							prvPenaltyBal = prvPenaltyBal.subtract(prvRecovery.getPenaltyBal());
+							prvPenaltyBal = prvPenaltyBal.subtract(prvRecovery.getPenalty());
 						}
 						resetTotals = false;
 					}
@@ -529,7 +529,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 				//Total Penalty Details Recalculation 
 				prvPenalty = recovery.getPenalty().add(prvPenalty);
-				prvPenaltyBal = recovery.getPenalty().add(recovery.getPenaltyBal()).add(prvPenaltyBal);
+				prvPenaltyBal = recovery.getPenalty().add(prvPenaltyBal);
 
 				if (PennantConstants.PERCONDUEDAYS.equals(odDetails.getODChargeType())) {
 					recovery.setPenaltyBal(recovery.getPenalty().add(recovery.getPenaltyBal()));
