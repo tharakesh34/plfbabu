@@ -88,7 +88,7 @@
 <div id='<%=chartId%>ExportData'></div>
 <script type='text/javascript'>
 
-	FusionCharts.setCurrentRenderer('javascript');   /* Forcing to render by javascript*/
+	//FusionCharts.setCurrentRenderer('javascript');   /* Forcing to render by javascript*/
 	
 	var chart_<%=chartId%> = new FusionCharts("<%=chartSWF%>", "<%=chartId%>","<%=chartWidthStr%>"
     ,"<%=chartHeightStr%>", "<%=debugModeInt%>","<%=regWithJSInt%>");
