@@ -8,7 +8,7 @@
 				<center border="none">
 					<tabbox width="99%" height="100%" id="tabBoxIndexCenter">
 						<tabs id="tabsIndexCenter">
-							<tab id="financeTypeDetailsTab" label="Finance Main Details" />
+							<tab id="financeTypeDetailsTab" label="${c:l('finBasicDetails')}" />
 							<tab id="riaDetailsTab" label="RIA Details" />
 							<tab id="disburseDetailsTab" label="Advance and Billings" />
 							<tab id="repayGraphTab" visible="false" label="GraphReport" />
