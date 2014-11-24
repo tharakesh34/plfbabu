@@ -850,6 +850,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			Window window= (Window) this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
 			
 			String reportName = "FINENQ_ScheduleDetail";
+			
+			if(getFinanceDetail().getFinScheduleData().getFinanceType().getFinType().startsWith("CONV")){
+				reportName = "CFINENQ_ScheduleDetail";
+			}
+			
 			if(isWIF){
 				reportName = "WIFENQ_ScheduleDetail";
 				
