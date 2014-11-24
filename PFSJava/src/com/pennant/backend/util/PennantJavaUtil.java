@@ -626,7 +626,7 @@ public class PennantJavaUtil {
 			/*---------- Finance ---------*/
 			
 			put("WIFFinanceMain", new ModuleMapping(new FinanceMain(""), new String[] { "WIFFinanceMain", "WIFFinanceMain_View" },
-					new String[] { "FinReference","FinType", "LovDescFinFormatter", "FinAmount", "FinStartDate" }, null, "FACILITY_TERM_SHEET", 700));
+					new String[] { "FinReference","FinType", "FinStartDate" }, null, "FACILITY_TERM_SHEET", 700));
 			
 			put("WIFFinanceDisbursement", new ModuleMapping(new FinanceDisbursement(""), new String[] { "WIFFinDisbursementDetails", "WIFFinDisbursementDetails_AView" },
 					new String[] { "FinReference", "DisbDesc" }, null, null, 300));

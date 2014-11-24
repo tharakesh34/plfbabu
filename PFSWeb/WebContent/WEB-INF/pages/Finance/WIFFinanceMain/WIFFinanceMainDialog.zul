@@ -73,7 +73,7 @@
 						height="100%">
 						<tabs id="tabsIndexCenter">
 							<tab id="financeTypeDetailsTab"
-								label="Finance Main" />
+								label="${c:l('finBasicDetails')}" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto">

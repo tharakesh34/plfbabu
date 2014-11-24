@@ -264,6 +264,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> impleme
 		this.searchObj.addField("lovDescFinTypeName");
 		this.searchObj.addField("finCcy");
 		this.searchObj.addField("lovDescFinCcyName");
+		this.searchObj.addField("lovDescFinFormatter");
 		this.searchObj.addField("profitDaysBasis");
 		this.searchObj.addField("lovDescProfitDaysBasisName");
 		this.searchObj.addField("custID");
