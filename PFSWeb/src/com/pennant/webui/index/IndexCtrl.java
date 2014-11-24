@@ -51,6 +51,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.util.resource.Labels;
@@ -65,6 +66,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Image;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Menubar;
@@ -103,7 +105,8 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	protected Menubar mainMenuBar; // autowired
 	protected Label label_AppName; // autowired
-
+	protected Image imgsmallLogo;
+	
 	protected Intbox currentDesktopHeight; // autowired
 	protected Intbox currentDesktopWidth; // autowired
 	protected Checkbox CBtreeMenu; // autowired
@@ -133,6 +136,10 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 
 		//createMainTreeMenu();
 		this.label_AppName.setValue(this.appName);
+		
+		if (StringUtils.trimToEmpty(appName).contains("Loan")) {
+			this.imgsmallLogo.setSrc("/images/Pennant/PLFConvSmallLogo.png");
+		}
 
 		/**
 		 * public Day(int day, int month, int year)Constructs a new one day time
