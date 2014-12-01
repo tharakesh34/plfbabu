@@ -9,6 +9,7 @@ import jxl.Cell;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import com.pennant.app.util.ScheduleCalculator;
@@ -33,6 +34,14 @@ public class AddDisbursementTest {
 			NoSuchMethodException {
 		String name = Dataset.getString(data, 1);
 		PrintFactory.toConsole(name);
+
+		if (name.equals("SN09_RR_PRIPFT") || name.equals("SN09_RR_EQUAL")
+				|| name.equals("SN09_RR_PRI") || name.equals("SN13_RR_PRIPFT")
+				|| name.equals("SN13_RR_PRI") || name.equals("SN13_RR_EQUAL")
+				|| name.equals("SN13_RR_EQUAL_REQ")) {
+
+			throw new SkipException("");
+		}
 
 		// Get the expected results
 		long expLastRepayAmt = Dataset.getLong(data, 44);

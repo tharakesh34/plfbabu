@@ -9,6 +9,7 @@ import jxl.Cell;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import com.pennant.app.util.ScheduleCalculator;
@@ -35,20 +36,38 @@ public class AddDefermentTest {
 			NoSuchMethodException {
 		String name = Dataset.getString(data, 1);
 		PrintFactory.toConsole(name);
+		
+		if(name.equals("SN19_RR_PRIPFT")){
+			throw new SkipException("skipped..");
+		}
+		
+		if(!(name.startsWith("SN19") || name.startsWith("SN20"))){
+			throw new SkipException("skipped..");
+		}
 
 		// Get the expected results
-		long expLastRepayAmt = Dataset.getLong(data, 22);
-		long expTotalProfit = Dataset.getLong(data, 23);
-		long expTotDefPri = Dataset.getLong(data, 24);
-		long expTotDefPft = Dataset.getLong(data, 25);
+		long expLastRepayAmt = Dataset.getLong(data, 31);
+		long expTotalProfit = Dataset.getLong(data, 32);
+		long expTotDefPri = Dataset.getLong(data, 33);
+		long expTotDefPft = Dataset.getLong(data, 34);
 
 		// Calculate the schedule
 		schedule = CreateScheduleTest.execute(schedule,
 				Arrays.copyOfRange(data, 2, 17));
 
 		if (null != Dataset.getDate(data, 17)) {
-			schedule = AddDefermentTest.execute(schedule,
-					Arrays.copyOfRange(data, 17, 22));
+			schedule = execute(schedule,
+					Arrays.copyOfRange(data, 17, 23));
+		}
+		
+		if (null != Dataset.getDate(data, 23)) {
+			schedule = execute(schedule,
+					Arrays.copyOfRange(data, 23, 30));
+		}
+		
+		if (null != Dataset.getString(data, 30)) {
+			schedule = AddTermTest.execute(schedule,
+					Arrays.copyOfRange(data, 29, 31));
 		}
 
 		BigDecimal actClosingBal = null;
