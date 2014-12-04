@@ -19,19 +19,18 @@
 					<label value="" />
 
 					<!-- SEARCH AREA -->
-					<toolbar align="center"
-						sclass="toolbar-center">
+					<toolbar align="center" sclass="toolbar-center">
 						<button
 							id="button_AddressTypeList_AddressTypeSearchDialog" 
 							label = "${c:l('label_Filter')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"
-							tooltiptext="${c:l('button_AddressTypeList_AddressTypeSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_AddressTypeList_AddressTypeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_AddressTypeList_PrintList"
 							 label = "${c:l('label_Print')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"
-							tooltiptext="${c:l('button_AddressTypeList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_AddressTypeList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
@@ -41,17 +40,17 @@
 							label = "${c:l('label_New')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"
-							tooltiptext="${c:l('button_AddressTypeList_NewAddressType.tooltiptext')}" />
+							tooltiptext="${c:l('button_AddressTypeList_NewAddressType.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_AddressTypeList_AddressTypeSearchDialog,button_AddressTypeList_PrintList,
 							button_AddressTypeList_NewAddressType, btnRefresh, btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

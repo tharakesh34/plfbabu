@@ -17,38 +17,37 @@
 
 					<!-- COMMON BUTTONS -->
 					<label value="" />
-					<toolbar align="center"
-						style=" border-style: none;">
+					<toolbar align="center" sclass="toolbar-center">
 						<button
 							id="button_SecurityUserList_SecurityUserSearch" 
 							label = "${c:l('label_Filter')}"
 							tooltiptext="${c:l('button_SecurityUserRolesList_SecurityUserSearch.tooltiptext')}"
 							autodisable="button_SecurityUserList_SecurityUserSearch,button_SecurityUserList_PrintList
-							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp" />
+							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp" sclass="z-toolbarbutton" />
 						<button id="button_SecurityUserList_PrintList"
 							 label = "${c:l('label_Print')}"
 							tooltiptext="${c:l('button_SecurityUserRolesList_PrintList.tooltiptext')}"
 							autodisable="button_SecurityUserList_SecurityUserSearch,button_SecurityUserList_PrintList
-							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp" />
+							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp" sclass="z-toolbarbutton" />
 					</toolbar>
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style=" border-style: none;">
+					<toolbar align="end"  sclass="toolbar-end">
 					    <button
 							id="button_SecurityUserList_NewSecurityUser" 
 							label = "${c:l('label_New')}" visible="false" 
 							tooltiptext="${c:l('button_SecurityUserList_NewSecurityUser.tooltiptext')}"
 							autodisable="button_SecurityUserList_SecurityUserSearch,button_SecurityUserList_PrintList
-							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp"/>
+							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp" sclass="z-toolbarbutton"/>
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 							autodisable="button_SecurityUserList_SecurityUserSearch,button_SecurityUserList_PrintList
-							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp" />
+							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							autodisable="button_SecurityUserList_SecurityUserSearch,button_SecurityUserList_PrintList
-							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp" />
+							,button_SecurityUserList_NewSecurityUser,btnRefresh,btnHelp" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

@@ -24,11 +24,11 @@
 							id="button_CommitmentList_CommitmentSearch" 
 							label="${c:l('label_Filter')}"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_CommitmentList_CommitmentSearch.tooltiptext')}" />
+							tooltiptext="${c:l('button_CommitmentList_CommitmentSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_CommitmentList_PrintList"
 							 label="${c:l('label_Print')}" visible="false"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_CommitmentList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_CommitmentList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
@@ -36,15 +36,15 @@
 						<button id="button_CommitmentList_NewCommitment"
 							 label="${c:l('label_New')}" visible="false"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_CommitmentList_NewCommitment.tooltiptext')}" />
+							tooltiptext="${c:l('button_CommitmentList_NewCommitment.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label="${c:l('label_Refresh')}"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label="${c:l('label_Help')}"
 							autodisable="button_CommitmentList_CommitmentSearch,button_CommitmentList_PrintList,button_CommitmentList_NewCommitment,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

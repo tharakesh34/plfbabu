@@ -17,34 +17,33 @@
 					<!-- COMMON BUTTONS -->
 					<label value="" />
 					<!-- SEARCH AREA -->
-					<toolbar align="center"
-						style="border-style: none;">
+					<toolbar align="center" sclass="toolbar-center">
 						<button
 							id="button_LovFieldCodeList_LovFieldCodeSearchDialog"
 							label="${c:l('label_Filter')}"
 							autodisable="button_LovFieldCodeList_LovFieldCodeSearchDialog,button_LovFieldCodeList_PrintList,button_LovFieldCodeList_NewLovFieldCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_LovFieldCodeList_LovFieldCodeSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_LovFieldCodeList_LovFieldCodeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_LovFieldCodeList_PrintList"
 							label="${c:l('label_Print')}"
 							autodisable="button_LovFieldCodeList_LovFieldCodeSearchDialog,button_LovFieldCodeList_PrintList,button_LovFieldCodeList_NewLovFieldCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_LovFieldCodeList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_LovFieldCodeList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end"  sclass="toolbar-end">
 						<button
 							id="button_LovFieldCodeList_NewLovFieldCode"
 							label="${c:l('label_New')}"
 							autodisable="button_LovFieldCodeList_LovFieldCodeSearchDialog,button_LovFieldCodeList_PrintList,button_LovFieldCodeList_NewLovFieldCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_LovFieldCodeList_NewLovFieldCode.tooltiptext')}" />
+							tooltiptext="${c:l('button_LovFieldCodeList_NewLovFieldCode.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh"
 							label="${c:l('label_Refresh')}"
 							autodisable="button_LovFieldCodeList_LovFieldCodeSearchDialog,button_LovFieldCodeList_PrintList,button_LovFieldCodeList_NewLovFieldCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp"
 							label="${c:l('label_Help')}"
 							autodisable="button_LovFieldCodeList_LovFieldCodeSearchDialog,button_LovFieldCodeList_PrintList,button_LovFieldCodeList_NewLovFieldCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

@@ -18,33 +18,33 @@
 				<label value="" />
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center" style="border-style: none;">
+				<toolbar align="center"  sclass="toolbar-center">
 					<button
 						id="button_EducationalLoanList_EducationalLoanSearchDialog"
 						 label = "${c:l('label_Filter')}"
 						autodisable="button_EducationalLoanList_EducationalLoanSearchDialog,button_EducationalLoanList_PrintList,button_EducationalLoanList_NewEducationalLoan,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_EducationalLoanList_EducationalLoanSearchDialog.tooltiptext')}" />
+						tooltiptext="${c:l('button_EducationalLoanList_EducationalLoanSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="button_EducationalLoanList_PrintList"
 						 label = "${c:l('label_Print')}"
 						autodisable="button_EducationalLoanList_EducationalLoanSearchDialog,button_EducationalLoanList_PrintList,button_EducationalLoanList_NewEducationalLoan,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_EducationalLoanList_PrintList.tooltiptext')}" />
+						tooltiptext="${c:l('button_EducationalLoanList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end" style="border-style: none;">
+				<toolbar align="end"  sclass="toolbar-end">
 					<button
 						id="button_EducationalLoanList_NewEducationalLoan" 
 						label = "${c:l('label_New')}"
 						autodisable="button_EducationalLoanList_EducationalLoanSearchDialog,button_EducationalLoanList_PrintList,button_EducationalLoanList_NewEducationalLoan,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_EducationalLoanList_NewEducationalLoan.tooltiptext')}" />
+						tooltiptext="${c:l('button_EducationalLoanList_NewEducationalLoan.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
 						autodisable="button_EducationalLoanList_EducationalLoanSearchDialog,button_EducationalLoanList_PrintList,button_EducationalLoanList_NewEducationalLoan,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}"  sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						autodisable="button_EducationalLoanList_EducationalLoanSearchDialog,button_EducationalLoanList_PrintList,button_EducationalLoanList_NewEducationalLoan,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

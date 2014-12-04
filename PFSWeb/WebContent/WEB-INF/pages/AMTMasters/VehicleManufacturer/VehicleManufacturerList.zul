@@ -21,12 +21,12 @@
 						id="button_VehicleManufacturerList_VehicleManufacturerSearchDialog"
 						 label="${c:l('label_Filter')}"
 						autodisable="button_VehicleManufacturerList_VehicleManufacturerSearchDialog,button_VehicleManufacturerList_PrintList,button_VehicleManufacturerList_NewVehicleManufacturer,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_VehicleManufacturerList_VehicleManufacturerSearchDialog.tooltiptext')}" />
+						tooltiptext="${c:l('button_VehicleManufacturerList_VehicleManufacturerSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button
 						id="button_VehicleManufacturerList_PrintList" 
 						label="${c:l('label_Print')}"
 						autodisable="button_VehicleManufacturerList_VehicleManufacturerSearchDialog,button_VehicleManufacturerList_PrintList,button_VehicleManufacturerList_NewVehicleManufacturer,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_VehicleManufacturerList_PrintList.tooltiptext')}" />
+						tooltiptext="${c:l('button_VehicleManufacturerList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
@@ -35,15 +35,15 @@
 						id="button_VehicleManufacturerList_NewVehicleManufacturer"
 						 label="${c:l('label_New')}"
 						autodisable="button_VehicleManufacturerList_VehicleManufacturerSearchDialog,button_VehicleManufacturerList_PrintList,button_VehicleManufacturerList_NewVehicleManufacturer,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_VehicleManufacturerList_NewVehicleManufacturer.tooltiptext')}" />
+						tooltiptext="${c:l('button_VehicleManufacturerList_NewVehicleManufacturer.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnRefresh" 
 						label="${c:l('label_Refresh')}"
 						autodisable="button_VehicleManufacturerList_VehicleManufacturerSearchDialog,button_VehicleManufacturerList_PrintList,button_VehicleManufacturerList_NewVehicleManufacturer,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label="${c:l('label_Help')}"
 						autodisable="button_VehicleManufacturerList_VehicleManufacturerSearchDialog,button_VehicleManufacturerList_PrintList,button_VehicleManufacturerList_NewVehicleManufacturer,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

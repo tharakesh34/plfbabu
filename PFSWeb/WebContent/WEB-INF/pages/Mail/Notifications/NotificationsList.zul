@@ -21,40 +21,40 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						 sclass="toolbar-center">
 						<button
 							id="button_NotificationsList_NotificationsSearchDialog"
 							label="${c:l('label_Filter')}"
 							autodisable="button_NotificationsList_NotificationsSearchDialog,button_NotificationsList_PrintList,
 											 button_NotificationsList_NewNotifications, btnRefresh, btnHelp"
-							tooltiptext="${c:l('button_NotificationsList_NotificationsSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_NotificationsList_NotificationsSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_NotificationsList_PrintList"
 							 label="${c:l('label_Print')}"
 							autodisable="button_NotificationsList_NotificationsSearchDialog,button_NotificationsList_PrintList,
 											 button_NotificationsList_NewNotifications, btnRefresh, btnHelp"
-							tooltiptext="${c:l('button_NotificationsList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_NotificationsList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end"
-						style="float:right; border-style: none;">
+						 sclass="toolbar-end">
 						<button
 							id="button_NotificationsList_NewNotifications"
 							label="${c:l('label_New')}"
 							autodisable="button_NotificationsList_NotificationsSearchDialog,button_NotificationsList_PrintList,
 											 button_NotificationsList_NewNotifications, btnRefresh, btnHelp"
-							tooltiptext="${c:l('button_NotificationsList_NewNotifications.tooltiptext')}" />
+							tooltiptext="${c:l('button_NotificationsList_NewNotifications.tooltiptext')}" sclass="z-toolbarbutton" />
 
 						<button id="btnRefresh"
 							label="${c:l('label_Refresh')}"
 							autodisable="button_NotificationsList_NotificationsSearchDialog,button_NotificationsList_PrintList,
 											 button_NotificationsList_NewNotifications, btnRefresh, btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp"
 							label="${c:l('label_Help')}"
 							autodisable="button_NotificationsList_NotificationsSearchDialog,button_NotificationsList_PrintList,
 											 button_NotificationsList_NewNotifications, btnRefresh, btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

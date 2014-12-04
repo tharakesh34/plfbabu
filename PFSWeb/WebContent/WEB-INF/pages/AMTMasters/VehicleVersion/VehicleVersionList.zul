@@ -21,11 +21,11 @@
 						id="button_VehicleVersionList_VehicleVersionSearchDialog"
 						label="${c:l('label_Filter')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_VehicleVersionList_VehicleVersionSearchDialog.tooltiptext')}" />
+						tooltiptext="${c:l('button_VehicleVersionList_VehicleVersionSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="button_VehicleVersionList_PrintList"
 						label="${c:l('label_Print')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_VehicleVersionList_PrintList.tooltiptext')}" />
+						tooltiptext="${c:l('button_VehicleVersionList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
@@ -34,14 +34,14 @@
 						id="button_VehicleVersionList_NewVehicleVersion"
 						label="${c:l('label_New')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_VehicleVersionList_NewVehicleVersion.tooltiptext')}" />
+						tooltiptext="${c:l('button_VehicleVersionList_NewVehicleVersion.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnRefresh"
 						label="${c:l('label_Refresh')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnHelp" label="${c:l('label_Help')}"
 						autodisable="button_VehicleVersionList_VehicleVersionSearchDialog,button_VehicleVersionList_PrintList,button_VehicleVersionList_NewVehicleVersion,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

@@ -19,40 +19,39 @@
 					<label value="" />
 
 					<!-- SEARCH AREA -->
-					<toolbar align="center"
-						style="border-style: none;">
+					<toolbar align="center" sclass="toolbar-center">
 						<button
 							id="button_MaritalStatusCodeList_MaritalStatusCodeSearchDialog"
 							 label = "${c:l('label_Filter')}"
 							autodisable="button_MaritalStatusCodeList_MaritalStatusCodeSearchDialog,button_MaritalStatusCodeList_PrintList,
 												button_MaritalStatusCodeList_NewMaritalStatusCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_MaritalStatusCodeList_MaritalStatusCodeSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_MaritalStatusCodeList_MaritalStatusCodeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_MaritalStatusCodeList_PrintList" 
 							label = "${c:l('label_Print')}"
 							autodisable="button_MaritalStatusCodeList_MaritalStatusCodeSearchDialog,button_MaritalStatusCodeList_PrintList,
 												button_MaritalStatusCodeList_NewMaritalStatusCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_MaritalStatusCodeList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_MaritalStatusCodeList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end"  sclass="toolbar-end">
 						<button
 							id="button_MaritalStatusCodeList_NewMaritalStatusCode"
 							 label = "${c:l('label_New')}"
 							autodisable="button_MaritalStatusCodeList_MaritalStatusCodeSearchDialog,button_MaritalStatusCodeList_PrintList,
 												button_MaritalStatusCodeList_NewMaritalStatusCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_MaritalStatusCodeList_NewMaritalStatusCode.tooltiptext')}" />
+							tooltiptext="${c:l('button_MaritalStatusCodeList_NewMaritalStatusCode.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_MaritalStatusCodeList_MaritalStatusCodeSearchDialog,button_MaritalStatusCodeList_PrintList,
 												button_MaritalStatusCodeList_NewMaritalStatusCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_MaritalStatusCodeList_MaritalStatusCodeSearchDialog,button_MaritalStatusCodeList_PrintList,
 												button_MaritalStatusCodeList_NewMaritalStatusCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

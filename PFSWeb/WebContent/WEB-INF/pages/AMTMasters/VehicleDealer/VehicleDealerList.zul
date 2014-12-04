@@ -20,11 +20,11 @@
 							id="button_VehicleDealerList_VehicleDealerSearchDialog" 
 							label = "${c:l('label_Filter')}"
 							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,button_VehicleDealerList_PrintList,button_VehicleDealerList_NewVehicleDealer,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_VehicleDealerList_VehicleDealerSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_VehicleDealerList_VehicleDealerSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_VehicleDealerList_PrintList"
 							 label = "${c:l('label_Print')}"
 							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,button_VehicleDealerList_PrintList,button_VehicleDealerList_NewVehicleDealer,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_VehicleDealerList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_VehicleDealerList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 	
 					<!-- CRUD BUTTONS -->
@@ -32,15 +32,15 @@
 						<button id="button_VehicleDealerList_NewVehicleDealer"
 							 label = "${c:l('label_New')}"
 							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,button_VehicleDealerList_PrintList,button_VehicleDealerList_NewVehicleDealer,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_VehicleDealerList_NewVehicleDealer.tooltiptext')}" />
+							tooltiptext="${c:l('button_VehicleDealerList_NewVehicleDealer.tooltiptext')}"  sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,button_VehicleDealerList_PrintList,button_VehicleDealerList_NewVehicleDealer,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_VehicleDealerList_VehicleDealerSearchDialog,button_VehicleDealerList_PrintList,button_VehicleDealerList_NewVehicleDealer,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

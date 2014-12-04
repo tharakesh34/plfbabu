@@ -19,35 +19,34 @@
 					<label value="" />
 
 					<!-- SEARCH AREA -->
-					<toolbar align="center"
-						style="border-style: none;">
+					<toolbar align="center" sclass="toolbar-center">
 						<button
 							id="button_NationalityCodeList_NationalityCodeSearchDialog"
 							 label = "${c:l('label_Filter')}"
 							autodisable="button_NationalityCodeList_NationalityCodeSearchDialog,button_NationalityCodeList_PrintList,button_NationalityCodeList_NewNationalityCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_NationalityCodeList_NationalityCodeSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_NationalityCodeList_NationalityCodeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_NationalityCodeList_PrintList" 
 							label = "${c:l('label_Print')}"
 							autodisable="button_NationalityCodeList_NationalityCodeSearchDialog,button_NationalityCodeList_PrintList,button_NationalityCodeList_NewNationalityCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_NationalityCodeList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_NationalityCodeList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end"  sclass="toolbar-end">
 						<button
 							id="button_NationalityCodeList_NewNationalityCode" 
 							label = "${c:l('label_New')}"
 							autodisable="button_NationalityCodeList_NationalityCodeSearchDialog,button_NationalityCodeList_PrintList,button_NationalityCodeList_NewNationalityCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_NationalityCodeList_NewNationalityCode.tooltiptext')}" />
+							tooltiptext="${c:l('button_NationalityCodeList_NewNationalityCode.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_NationalityCodeList_NationalityCodeSearchDialog,button_NationalityCodeList_PrintList,button_NationalityCodeList_NewNationalityCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_NationalityCodeList_NationalityCodeSearchDialog,button_NationalityCodeList_PrintList,button_NationalityCodeList_NewNationalityCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

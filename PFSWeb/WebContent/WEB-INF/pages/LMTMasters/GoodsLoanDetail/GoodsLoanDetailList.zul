@@ -15,34 +15,34 @@
 					<label value="" />	
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						 sclass="toolbar-center">
 						<button
 							id="button_GoodsLoanDetailList_GoodsLoanDetailSearch"
 							 label = "${c:l('label_Filter')}"
 							autodisable="button_GoodsLoanDetailList_GoodsLoanDetailSearch,button_GoodsLoanDetailList_PrintList,button_GoodsLoanDetailList_NewGoodsLoanDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_GoodsLoanDetailList_GoodsLoanDetailSearch.tooltiptext')}" />
+							tooltiptext="${c:l('button_GoodsLoanDetailList_GoodsLoanDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_GoodsLoanDetailList_PrintList" 
 							label = "${c:l('label_Print')}" visible="false"
 							autodisable="button_GoodsLoanDetailList_GoodsLoanDetailSearch,button_GoodsLoanDetailList_PrintList,button_GoodsLoanDetailList_NewGoodsLoanDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_GoodsLoanDetailList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_GoodsLoanDetailList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end"  sclass="toolbar-end">
 					   <button
 							id="button_GoodsLoanDetailList_NewGoodsLoanDetail"
 							 label = "${c:l('label_New')}" visible="false"
 							autodisable="button_GoodsLoanDetailList_GoodsLoanDetailSearch,button_GoodsLoanDetailList_PrintList,button_GoodsLoanDetailList_NewGoodsLoanDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_GoodsLoanDetailList_NewGoodsLoanDetail.tooltiptext')}" />
+							tooltiptext="${c:l('button_GoodsLoanDetailList_NewGoodsLoanDetail.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_GoodsLoanDetailList_GoodsLoanDetailSearch,button_GoodsLoanDetailList_PrintList,button_GoodsLoanDetailList_NewGoodsLoanDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_GoodsLoanDetailList_GoodsLoanDetailSearch,button_GoodsLoanDetailList_PrintList,button_GoodsLoanDetailList_NewGoodsLoanDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

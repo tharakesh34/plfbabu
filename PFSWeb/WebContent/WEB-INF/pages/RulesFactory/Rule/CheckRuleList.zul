@@ -19,27 +19,27 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						 sclass="toolbar-center">
 						<button id="button_RuleList_RuleSearchDialog"
 							 label="${c:l('label_Filter')}"
-							tooltiptext="${c:l('button_RuleList_RuleSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_RuleList_RuleSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_RuleList_PrintList"
 							 label="${c:l('label_Print')}"
-							tooltiptext="${c:l('button_RuleList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_RuleList_PrintList.tooltiptext')}" sclass="z-toolbarbutton"/>
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end"
-						style="float:right; border-style: none;">
+						 sclass="toolbar-end">
 						<button id="button_RuleList_NewRule"
 							 label="${c:l('label_New')}"
-							tooltiptext="${c:l('button_RuleList_NewRule.tooltiptext')}" />
+							tooltiptext="${c:l('button_RuleList_NewRule.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label="${c:l('label_Refresh')}"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label="${c:l('label_Help')}"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

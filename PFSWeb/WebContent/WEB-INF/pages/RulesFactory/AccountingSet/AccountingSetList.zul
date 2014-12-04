@@ -17,33 +17,33 @@
 				<label value="" />
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center" sclass="toolbar-center">
+				<toolbar align="center" sclass="toolbar-center" >
 					<button
 						id="button_AccountingSetList_AccountingSetSearchDialog"
 						 label="${c:l('label_Filter')}"
 						autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_AccountingSetList_AccountingSetSearchDialog.tooltiptext')}" />
+						tooltiptext="${c:l('button_AccountingSetList_AccountingSetSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="button_AccountingSetList_PrintList"
 						 label="${c:l('label_Print')}"
 						autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_AccountingSetList_PrintList.tooltiptext')}" />
+						tooltiptext="${c:l('button_AccountingSetList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 				
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end" sclass="toolbar-end">
+				<toolbar align="end" sclass="toolbar-end" >
 					<button
 						id="button_AccountingSetList_NewAccountingSet" 
 						label="${c:l('label_New')}"
 						autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_AccountingSetList_NewAccountingSet.tooltiptext')}" />
+						tooltiptext="${c:l('button_AccountingSetList_NewAccountingSet.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnRefresh" 
 						label="${c:l('label_Refresh')}"
 						autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton"/>
 					<button id="btnHelp" 
 						label="${c:l('label_Help')}"
 						autodisable="button_AccountingSetList_AccountingSetSearchDialog,button_AccountingSetList_PrintList,button_AccountingSetList_NewAccountingSet,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

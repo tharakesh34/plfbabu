@@ -20,34 +20,34 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						sclass="toolbar-center">
+						sclass="toolbar-center" >
 						<button
 							id="button_TransactionCodeList_TransactionCodeSearchDialog"
 							 label = "${c:l('label_Filter')}"
 							autodisable="button_TransactionCodeList_TransactionCodeSearchDialog,button_TransactionCodeList_PrintList,button_TransactionCodeList_NewTransactionCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_TransactionCodeList_TransactionCodeSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_TransactionCodeList_TransactionCodeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_TransactionCodeList_PrintList" 
 							label = "${c:l('label_Print')}"
 							autodisable="button_TransactionCodeList_TransactionCodeSearchDialog,button_TransactionCodeList_PrintList,button_TransactionCodeList_NewTransactionCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_TransactionCodeList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_TransactionCodeList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" sclass="toolbar-end">
+					<toolbar align="end" sclass="toolbar-end" >
 						<button
 							id="button_TransactionCodeList_NewTransactionCode" 
 							label = "${c:l('label_New')}"
 							autodisable="button_TransactionCodeList_TransactionCodeSearchDialog,button_TransactionCodeList_PrintList,button_TransactionCodeList_NewTransactionCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_TransactionCodeList_NewTransactionCode.tooltiptext')}" />
+							tooltiptext="${c:l('button_TransactionCodeList_NewTransactionCode.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_TransactionCodeList_TransactionCodeSearchDialog,button_TransactionCodeList_PrintList,button_TransactionCodeList_NewTransactionCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_TransactionCodeList_TransactionCodeSearchDialog,button_TransactionCodeList_PrintList,button_TransactionCodeList_NewTransactionCode,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

@@ -90,58 +90,55 @@
 					width="100%">
 
 					<!-- COMMON BUTTONS -->
-					<toolbar align="start"
-						style="float:left; border-style: none;">
+					<toolbar align="start" sclass="toolbar-start" >
 
 						<button id="btnNew" visible="false"
 							 tooltiptext="${c:l('btnNew.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"  sclass="z-toolbarbutton"/>
 						<button id="btnEdit" visible="false"
 							 tooltiptext="${c:l('btnEdit.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						<button id="btnDelete" visible="false"
 							 tooltiptext="${c:l('btnDelete.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						<button id="btnSave"
 							label="SAVE"
 							tooltiptext="${c:l('btnSave.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
-							w:onClick="validateJs(false,true);" />
+							w:onClick="validateJs(false,true);" sclass="z-toolbarbutton" />
 						<button id="btnCancel" visible="false"
 							 tooltiptext="${c:l('btnCancel.tooltiptext')}" />
 						<button id="btnNotes" visible="false"
 							 tooltiptext="${c:l('btnNotes.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						<button id="btnValidate"
 							tooltiptext="${c:l('button_Validation.tooltiptext')}"
 							label="BUILD	"	
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" > 
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"  sclass="z-toolbarbutton"> 
 						 </button>
 						<button id="btnSimulate"
 							tooltiptext="${c:l('button_Simulation.tooltiptext')}"
 							label="SIMULATE"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
-							w:onClick="validateJs(true,false);"
+							w:onClick="validateJs(true,false);" sclass="z-toolbarbutton"
 							/>
 		 
 							
 					</toolbar>
 					<!-- SEARCH AREA -->
-					<toolbar align="center"
-						style="float:left; border-style: none;">
+					<toolbar align="center" sclass="toolbar-center">
 						<hbox align="center" style="padding: 2px"></hbox>
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end"
-						style="float:right; border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnHelp" 
 							label = "HELP"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						<button id="btnClose" 
 							tooltiptext="${c:l('btnClose.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

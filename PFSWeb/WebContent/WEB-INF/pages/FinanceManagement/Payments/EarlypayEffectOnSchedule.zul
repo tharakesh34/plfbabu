@@ -17,27 +17,24 @@
 				width="100%">
 
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					style="float:left; border-style: none;">
+				<toolbar align="start" sclass="toolbar-start">
 				</toolbar>
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none;">
+				<toolbar align="center" sclass="toolbar-center">
 					<hbox align="center" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
+				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnHelp" 
 						label="${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
-						autodisable="btnHelp,btnClose,btnProceed" />
+						autodisable="btnHelp,btnClose,btnProceed" sclass="z-toolbarbutton"  />
 					<button id="btnClose" 
 						image="/images/icons/btn_exitdoor2_16x16.gif"
 						tooltiptext="${c:l('btnClose.tooltiptext')}"
-						autodisable="btnHelp,btnClose,btnProceed" />
+						autodisable="btnHelp,btnClose,btnProceed" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

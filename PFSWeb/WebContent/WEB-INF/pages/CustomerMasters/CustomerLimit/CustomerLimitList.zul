@@ -16,36 +16,34 @@
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;" width="150px">
+					style="border-style: none;" width="150px" sclass="toolbar-start">
 					<hbox align="center" style="padding: 2px" />
 				</toolbar>
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none;">
+				<toolbar align="center" sclass="toolbar-center">
 					<hbox align="center">
 						<button
 							id="button_CustomerLimitList_CustomerLimitSearchDialog" 
 							label = "${c:l('label_Filter')}"
-							tooltiptext="${c:l('button_CustomerLimitList_CustomerLimitSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_CustomerLimitList_CustomerLimitSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_CustomerLimitList_PrintList"
 							 label = "${c:l('label_Print')}"
-							tooltiptext="${c:l('button_CustomerLimitList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_CustomerLimitList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</hbox>
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
+				<toolbar align="end" sclass="toolbar-end">
 					<button id="button_CustomerLimitList_NewCustomerLimit"
 						 label = "${c:l('label_New')}"
-						tooltiptext="${c:l('button_CustomerLimitList_NewCustomerLimit.tooltiptext')}" />
+						tooltiptext="${c:l('button_CustomerLimitList_NewCustomerLimit.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

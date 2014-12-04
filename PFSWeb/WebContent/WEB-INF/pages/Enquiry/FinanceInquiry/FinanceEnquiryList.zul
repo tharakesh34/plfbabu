@@ -18,7 +18,7 @@
 					<label />
 
 					<toolbar align="center"
-						style="border-style: none;">
+						 sclass="toolbar-center">
 						<button id="button_Search"
 							label="${c:l('label_FinanceEnquiryList_Search.value')}"
 							tooltiptext="${c:l('label_FinanceEnquiryList_button_Search.tooltiptext')}" sclass="z-toolbarbutton"/>
@@ -31,7 +31,7 @@
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end"  sclass="toolbar-end">
 						
 					</toolbar>
 					<menubar id="menubar" width="auto" sclass="toolbar_menu">

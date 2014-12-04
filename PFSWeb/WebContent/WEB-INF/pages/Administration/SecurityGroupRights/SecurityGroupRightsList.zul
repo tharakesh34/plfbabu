@@ -16,31 +16,31 @@
 				<!-- COMMON BUTTONS -->
 				<label value="" />
 				<!-- SEARCH AREA -->
-				<toolbar align="center" style="border-style: none;">
+				<toolbar align="center"  sclass="toolbar-center">
 					<button
 						id="button_SecurityGroupList_SecurityGroupSearchDialog"
 						 label = "${c:l('label_Filter')}"
 						tooltiptext="${c:l('button_SecurityGroupList_SecurityGroupSearchDialog.tooltiptext')}"
 						autodisable="button_SecurityGroupList_SecurityGroupSearchDialog
-							,button_SecurityGroupList_PrintList,btnRefresh,btnHelp" />
+							,button_SecurityGroupList_PrintList,btnRefresh,btnHelp" sclass="z-toolbarbutton" />
 					<button id="button_SecurityGroupList_PrintList"
 						 label = "${c:l('label_Print')}"
 						tooltiptext="${c:l('button_SecurityGroupList_PrintList.tooltiptext')}"
 						autodisable="button_SecurityGroupList_SecurityGroupSearchDialog
-							,button_SecurityGroupList_PrintList,btnRefresh,btnHelp" />
+							,button_SecurityGroupList_PrintList,btnRefresh,btnHelp" sclass="z-toolbarbutton" />
 				</toolbar>
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end" style="border-style: none;">
+				<toolbar align="end"  sclass="toolbar-end">
 					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 						autodisable="button_SecurityGroupList_SecurityGroupSearchDialog
-							,button_SecurityGroupList_PrintList,btnRefresh,btnHelp" />
+							,button_SecurityGroupList_PrintList,btnRefresh,btnHelp" sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
 						autodisable="button_SecurityGroupList_SecurityGroupSearchDialog
-							,button_SecurityGroupList_PrintList,btnRefresh,btnHelp" />
+							,button_SecurityGroupList_PrintList,btnRefresh,btnHelp" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

@@ -27,8 +27,7 @@
 				width="100%">
 
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					style="float:left; border-style: none;">
+				<toolbar align="start"  sclass="toolbar-start">
 
 					<!-- Module - Control Menu -->
 					<menubar style="border:1px solid #D8D8D8"
@@ -47,17 +46,15 @@
 					</menubar>
 				</toolbar>
 				<!-- SEARCH AREA -->
-				<toolbar align="center"
-					style="float:left; border-style: none;">
+				<toolbar align="center"  sclass="toolbar-center">
 					<hbox align="center" style="padding: 2px"></hbox>
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
+				<toolbar align="end"  sclass="toolbar-end">
 					<button id="btnClose" 
 						tooltiptext="${c:l('btnClose.tooltiptext')}"
-						label="${c:l('label_Close')}" />
+						label="${c:l('label_Close')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

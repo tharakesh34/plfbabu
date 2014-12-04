@@ -27,12 +27,12 @@
 								id="button_InvestmentFinHeaderList_SearchDialog" 
 								label="${c:l('label_Filter')}"
 								autodisable="button_InvestmentFinHeaderList_SearchDialog, button_InvestmentFinHeaderList_PrintList,button_InvestmentFinHeaderList_NewFinance,btnRefresh,btnHelp"
-								tooltiptext="${c:l('button_InvestmentFinHeaderList_SearchDialog.tooltiptext')}" />
+								tooltiptext="${c:l('button_InvestmentFinHeaderList_SearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 							<button
 								id="button_InvestmentFinHeaderList_PrintList" 
 								label="${c:l('label_Print')}"
 								autodisable="button_InvestmentFinHeaderList_SearchDialog,button_InvestmentFinHeaderList_PrintList,button_InvestmentFinHeaderList_NewFinance,btnRefresh,btnHelp"
-								tooltiptext="${c:l('button_InvestmentFinHeaderList_PrintList.tooltiptext')}" />
+								tooltiptext="${c:l('button_InvestmentFinHeaderList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- CRUD BUTTONS -->
@@ -42,15 +42,15 @@
 								id="button_InvestmentFinHeaderList_NewFinance" 
 								label="${c:l('label_New')}"
 								autodisable="button_InvestmentFinHeaderList_SearchDialog,button_InvestmentFinHeaderList_PrintList,button_InvestmentFinHeaderList_NewFinance,btnRefresh,btnHelp"
-								tooltiptext="${c:l('button_InvestmentFinHeaderList_NewFinance.tooltiptext')}" />
+								tooltiptext="${c:l('button_InvestmentFinHeaderList_NewFinance.tooltiptext')}" sclass="z-toolbarbutton" />
 							<button id="btnRefresh" 
 								label="${c:l('label_Refresh')}"
 								autodisable="button_InvestmentFinHeaderList_SearchDialog,button_InvestmentFinHeaderList_PrintList,button_InvestmentFinHeaderList_NewFinance,btnRefresh,btnHelp"
-								tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+								tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 							<button id="btnHelp" 
 								label="${c:l('label_Help')}"
 								autodisable="button_InvestmentFinHeaderList_SearchDialog,button_InvestmentFinHeaderList_PrintList,button_InvestmentFinHeaderList_NewFinance,btnRefresh,btnHelp"
-								tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>

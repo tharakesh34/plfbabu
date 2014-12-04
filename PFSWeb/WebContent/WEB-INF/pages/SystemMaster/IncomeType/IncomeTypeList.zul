@@ -9,15 +9,15 @@
 					<!-- COMMON BUTTONS -->
 					<label value="" />
 					<!-- SEARCH AREA -->
-					<toolbar align="center" style="border-style: none;">
-						<button id="button_IncomeTypeList_IncomeTypeSearchDialog"  label="${c:l('label_Filter')}" autodisable="button_IncomeTypeList_IncomeTypeSearchDialog,button_IncomeTypeList_PrintList,button_IncomeTypeList_NewIncomeType,btnRefresh,btnHelp" tooltiptext="${c:l('button_IncomeTypeList_IncomeTypeSearchDialog.tooltiptext')}" />
-						<button id="button_IncomeTypeList_PrintList"  label="${c:l('label_Print')}" autodisable="button_IncomeTypeList_IncomeTypeSearchDialog,button_IncomeTypeList_PrintList,button_IncomeTypeList_NewIncomeType,btnRefresh,btnHelp" tooltiptext="${c:l('button_IncomeTypeList_PrintList.tooltiptext')}" />
+					<toolbar align="center"  sclass="toolbar-center">
+						<button id="button_IncomeTypeList_IncomeTypeSearchDialog"  label="${c:l('label_Filter')}" autodisable="button_IncomeTypeList_IncomeTypeSearchDialog,button_IncomeTypeList_PrintList,button_IncomeTypeList_NewIncomeType,btnRefresh,btnHelp" tooltiptext="${c:l('button_IncomeTypeList_IncomeTypeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="button_IncomeTypeList_PrintList"  label="${c:l('label_Print')}" autodisable="button_IncomeTypeList_IncomeTypeSearchDialog,button_IncomeTypeList_PrintList,button_IncomeTypeList_NewIncomeType,btnRefresh,btnHelp" tooltiptext="${c:l('button_IncomeTypeList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="fborder-style: none;">
-						<button id="button_IncomeTypeList_NewIncomeType"  label="${c:l('label_New')}" tooltiptext="${c:l('button_IncomeTypeList_NewIncomeType.tooltiptext')}" />
-						<button id="btnRefresh"  label="${c:l('label_Refresh')}" autodisable="button_IncomeTypeList_IncomeTypeSearchDialog,button_IncomeTypeList_PrintList,button_IncomeTypeList_NewIncomeType,btnRefresh,btnHelp" tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
-						<button id="btnHelp"  label="${c:l('label_Help')}" autodisable="button_IncomeTypeList_IncomeTypeSearchDialog,button_IncomeTypeList_PrintList,button_IncomeTypeList_NewIncomeType,btnRefresh,btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					<toolbar align="end"  sclass="toolbar-end">
+						<button id="button_IncomeTypeList_NewIncomeType"  label="${c:l('label_New')}" tooltiptext="${c:l('button_IncomeTypeList_NewIncomeType.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="btnRefresh"  label="${c:l('label_Refresh')}" autodisable="button_IncomeTypeList_IncomeTypeSearchDialog,button_IncomeTypeList_PrintList,button_IncomeTypeList_NewIncomeType,btnRefresh,btnHelp" tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="btnHelp"  label="${c:l('label_Help')}" autodisable="button_IncomeTypeList_IncomeTypeSearchDialog,button_IncomeTypeList_PrintList,button_IncomeTypeList_NewIncomeType,btnRefresh,btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

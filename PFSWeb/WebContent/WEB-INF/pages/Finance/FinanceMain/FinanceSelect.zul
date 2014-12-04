@@ -21,17 +21,17 @@
 					<label />
 
 					<!--  SEARCH AREA  -->
-					<toolbar align="center" sclass="toolbar-center">
+					<toolbar align="center" sclass="toolbar-center" >
 						<button id="btnSearch"
 							label="${c:l('btnSearch.label')}"
-							tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+							tooltiptext="${c:l('btnSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnClear"
 							label="${c:l('btnClear.label')}"
-							tooltiptext="${c:l('btnClear.tooltiptext')}" />
+							tooltiptext="${c:l('btnClear.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS  -->
-					<toolbar align="end" sclass="toolbar-end" />
+					<toolbar align="end" sclass="toolbar-end"  />
 				</hbox>
 			</div>
 

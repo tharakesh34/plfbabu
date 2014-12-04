@@ -20,7 +20,7 @@
 						sclass="toolbar-start">
 						<button  id="button_Print"
 							label = "${c:l('label_Print')}"
-							tooltiptext="${c:l('button_CustomerAccountDialog_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_CustomerAccountDialog_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<toolbar align="center"

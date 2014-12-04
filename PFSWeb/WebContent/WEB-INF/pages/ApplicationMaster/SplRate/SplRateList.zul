@@ -18,38 +18,38 @@
 				<label value="" />
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center" sclass="toolbar-center">
+				<toolbar align="center" sclass="toolbar-center" >
 					<button
 						id="button_SplRateList_SplRateSearchDialog" 
 						label = "${c:l('label_Filter')}"
 						autodisable="button_SplRateList_SplRateSearchDialog,button_SplRateList_PrintList,
 									 button_SplRateList_NewSplRate, btnRefresh, btnHelp"
-						tooltiptext="${c:l('button_SplRateList_SplRateSearchDialog.tooltiptext')}" />
+						tooltiptext="${c:l('button_SplRateList_SplRateSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="button_SplRateList_PrintList"
 						 label = "${c:l('label_Print')}"
 						autodisable="button_SplRateList_SplRateSearchDialog,button_SplRateList_PrintList,
 									 button_SplRateList_NewSplRate, btnRefresh, btnHelp"
-						tooltiptext="${c:l('button_SplRateList_PrintList.tooltiptext')}" />
+						tooltiptext="${c:l('button_SplRateList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end" sclass="toolbar-end">
+				<toolbar align="end" sclass="toolbar-end" >
 					<button id="button_SplRateList_NewSplRate"
 						 label = "${c:l('label_New')}"
 						autodisable="button_SplRateList_SplRateSearchDialog,button_SplRateList_PrintList,
 									 button_SplRateList_NewSplRate, btnRefresh, btnHelp"
-						tooltiptext="${c:l('button_SplRateList_NewSplRate.tooltiptext')}" />
+						tooltiptext="${c:l('button_SplRateList_NewSplRate.tooltiptext')}" sclass="z-toolbarbutton" />
 
 					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
 						autodisable="button_SplRateList_SplRateSearchDialog,button_SplRateList_PrintList,
 									 button_SplRateList_NewSplRate, btnRefresh, btnHelp"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						autodisable="button_SplRateList_SplRateSearchDialog,button_SplRateList_PrintList,
 									 button_SplRateList_NewSplRate, btnRefresh, btnHelp"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

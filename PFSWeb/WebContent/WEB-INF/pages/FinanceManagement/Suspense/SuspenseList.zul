@@ -20,32 +20,32 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						sclass="toolbar-center">
+						sclass="toolbar-center" >
 						<button
 							id="button_SuspenseList_SuspenseSearchDialog" 
 							label="${c:l('label_Filter')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog,button_SuspenseList_PrintList,btnRefresh,btnHelp, button_SuspenseList_NewSuspense"
-							tooltiptext="${c:l('button_SuspenseList_SuspenseSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_SuspenseList_SuspenseSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_SuspenseList_PrintList"
 							 label="${c:l('label_Print')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog,button_SuspenseList_PrintList,btnRefresh,btnHelp, button_SuspenseList_NewSuspense"
-							tooltiptext="${c:l('button_SuspenseList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_SuspenseList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" sclass="toolbar-end">
+					<toolbar align="end" sclass="toolbar-end" >
 						<button id="button_SuspenseList_NewSuspense" 
 							label="${c:l('label_New')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog,button_SuspenseList_PrintList,btnRefresh,btnHelp, button_SuspenseList_NewSuspense"
-							tooltiptext="${c:l('button_SuspenseList_NewSuspense.tooltiptext')}" />
+							tooltiptext="${c:l('button_SuspenseList_NewSuspense.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label="${c:l('label_Refresh')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog, button_SuspenseList_PrintList,btnRefresh,btnHelp, button_SuspenseList_NewSuspense"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label="${c:l('label_Help')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog,button_SuspenseList_PrintList,btnRefresh,btnHelp, button_SuspenseList_NewSuspense"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

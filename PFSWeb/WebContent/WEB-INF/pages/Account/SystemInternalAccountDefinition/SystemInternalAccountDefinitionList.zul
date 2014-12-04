@@ -24,12 +24,12 @@
 						id="button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog"
 						 label="${c:l('label_Filter')}"
 						autodisable="button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog,button_SystemInternalAccountDefinitionList_PrintList,button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog.tooltiptext')}" />
+						tooltiptext="${c:l('button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button
 						id="button_SystemInternalAccountDefinitionList_PrintList"
 						 label="${c:l('label_Print')}"
 						autodisable="button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog,button_SystemInternalAccountDefinitionList_PrintList,button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_SystemInternalAccountDefinitionList_PrintList.tooltiptext')}" />
+						tooltiptext="${c:l('button_SystemInternalAccountDefinitionList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
@@ -38,15 +38,15 @@
 						id="button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition"
 						 label="${c:l('label_New')}"
 						autodisable="button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog,button_SystemInternalAccountDefinitionList_PrintList,button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition.tooltiptext')}" />
+						tooltiptext="${c:l('button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnRefresh" 
 						label="${c:l('label_Refresh')}"
 						autodisable="button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog,button_SystemInternalAccountDefinitionList_PrintList,button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label="${c:l('label_Help')}"
 						autodisable="button_SystemInternalAccountDefinitionList_SystemInternalAccountDefinitionSearchDialog,button_SystemInternalAccountDefinitionList_PrintList,button_SystemInternalAccountDefinitionList_NewSystemInternalAccountDefinition,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

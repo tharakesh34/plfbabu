@@ -18,14 +18,13 @@
 					width="100%" widths="30%,40%,30%">
 
 					<toolbar align="start"
-						style="border-style: none;">
+						 sclass="toolbar-start">
 						<button  id="button_Print" visible="false"
 							label = "${c:l('label_Print')}"
-							tooltiptext="${c:l('button_CustomerEnquiryDialog_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_CustomerEnquiryDialog_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
-					<toolbar align="center"
-						style="border-style: none;margin:4px;float:right;">
+					<toolbar align="center" sclass="toolbar-center">
 						<label
 							value="${c:l('label_FinanceEnquiry_Filter')} : "
 							style="font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
@@ -33,7 +32,7 @@
 							width="60px" />
 					</toolbar>
 
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end"  sclass="toolbar-end">
 						<hbox width="250px"  >
 							<menubar id="menubar" width="auto"
 								  style="float:left; border-style: none;">

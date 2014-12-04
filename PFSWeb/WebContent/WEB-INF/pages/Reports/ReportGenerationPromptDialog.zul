@@ -29,11 +29,11 @@
 								<space spacing="10px"/>
 								 <button id="btnSaveTemplate" height="20"
 									label="${c:l('btnSave.label')}"
-									tooltiptext="${c:l('label_Add_Template.tooltipText')}" />
+									tooltiptext="${c:l('label_Add_Template.tooltipText')}" sclass="z-toolbarbutton" />
 								<space spacing="10px"/>
 								<button id="btnDeleteTemplate"
 									height="20" disabled="true" label="${c:l('btnDelete.label')}"
-									tooltiptext="${c:l('label_Delete_Template.tooltipText')}" />
+									tooltiptext="${c:l('label_Delete_Template.tooltipText')}" sclass="z-toolbarbutton" />
 							</hbox>
 						</toolbar>
 
@@ -76,13 +76,13 @@
 									<hbox align="start">
 										<button id="btnSearch"
 											height="20" label="${c:l('btnSearch.label')}"
-											tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+											tooltiptext="${c:l('btnSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 										<button id="btnClear"
 											height="20" label="${c:l('btnClear.label')}"
-											tooltiptext="${c:l('btnClear.tooltiptext')}" />
+											tooltiptext="${c:l('btnClear.tooltiptext')}" sclass="z-toolbarbutton" />
 										<button id="btnClose"
 											height="20" label="${c:l('btnClose.label')}"
-											tooltiptext="${c:l('btnClose.tooltiptext')}" />
+											tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 										<label
 											id="label_SecurityUserSearchResult" />
 									</hbox>

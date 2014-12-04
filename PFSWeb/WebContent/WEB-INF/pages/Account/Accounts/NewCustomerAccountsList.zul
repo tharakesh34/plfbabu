@@ -20,32 +20,32 @@
 					
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						 sclass="toolbar-center">
 						<button
 							id="button_AccountsList_AccountsSearchDialog" 
 							label = "${c:l('label_Filter')}"
 							autodisable="button_AccountsList_AcountsSearchDialog,button_AccountsList_PrintList,button_AccountsList_NewAccounts,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_AccountsList_AccountsSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_AccountsList_AccountsSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_AccountsList_PrintList"
 							label = "${c:l('label_Print')}"
 							autodisable="button_AccountsList_AccountsSearchDialog,button_AccountsList_PrintList,button_AccountsList_NewAccounts,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_AccountsList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_AccountsList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end"  sclass="toolbar-end">
 						<button id="button_AccountsList_NewAccounts"
 							label = "${c:l('label_New')}"
 							autodisable="button_AccountsList_AccountsSearchDialog,button_AccountsList_PrintList,button_AccountsList_NewAccounts,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_AccountsList_NewAccounts.tooltiptext')}" />
+							tooltiptext="${c:l('button_AccountsList_NewAccounts.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_AccountsList_AccountsSearchDialog,button_AccountsList_PrintList,button_AccountsList_NewAccounts,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_AccountsList_AccountsSearchDialog,button_AccountsList_PrintList,button_AccountsList_NewAccounts,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

@@ -14,23 +14,23 @@
 				width="100%" widths="30%,40%,30%">
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;">
+					 sclass="toolbar-start">
 					<button id="btnImportData"  label="Import"
 						tooltiptext="Import the Details"
-						autodisable="+btnSend,btnHelp" /> 
+						autodisable="+btnSend,btnHelp" sclass="z-toolbarbutton" /> 
 				</toolbar>
 				<!-- SEARCH AREA -->
-				<toolbar align="center" sclass="toolbar-center">
+				<toolbar align="center" sclass="toolbar-center" >
 					<label
 						value="${c:l('window_ImportData.title')}"
 						sclass="label-heading" />
 				</toolbar>
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					 sclass="toolbar-end">
 					<button id="btnHelp"  label="HELP"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
-						autodisable="+btnSend,btnHelp" />
+						autodisable="+btnSend,btnHelp" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

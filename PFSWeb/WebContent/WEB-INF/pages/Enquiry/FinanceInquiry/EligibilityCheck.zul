@@ -16,8 +16,7 @@
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 					width="100%" widths="30%,50%,20%">
 
-					<toolbar align="start"
-						style="border-style: none;margin:4px;">
+					<toolbar align="start"  sclass="toolbar-start">
 						<label value="${c:l('label_EligibilityCheck')}"
 							style="font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
 							font-size: 11px;font-style: normal;font-weight:bold;"
@@ -27,13 +26,13 @@
 					<label value="" />
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end"  sclass="toolbar-end">
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>
@@ -98,11 +97,11 @@
 
 									<!-- CRUD BUTTONS -->
 									<toolbar align="end"
-										style="border-style: none;">
+										sclass="toolbar-end">
 										<button id="btnStimulate"
 											 label="Eligibility Check"
 											style="font-weight:bold;" image="/images/icons/gear_16.png"
-											tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+											tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 									</toolbar>
 								</hbox>
 							</div>

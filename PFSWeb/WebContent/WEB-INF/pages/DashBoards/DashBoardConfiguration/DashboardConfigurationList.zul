@@ -16,36 +16,36 @@
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;" width="150px">
+					style="border-style: none;" width="150px" sclass="toolbar-start">
 					<hbox align="center" style="padding: 2px"></hbox>
 				</toolbar>
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center"
-					style="float:left; border-style: none;">
+					 sclass="toolbar-center">
 						<button
 							id="button_DashboardConfigurationList_Search"
 							label="${c:l('label_Filter')}"
-							tooltiptext="${c:l('button_DashboardConfigurationList_Search.tooltiptext')}" />
+							tooltiptext="${c:l('button_DashboardConfigurationList_Search.tooltiptext')}"  sclass="z-toolbarbutton" />
 						<button
 							id="button_DashboardConfigurationList_PrintList"
 							label="${c:l('label_Print')}"
-							tooltiptext="${c:l('button_DashboardConfigurationList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_DashboardConfigurationList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					 sclass="toolbar-end">
 					<button
 						id="button_DashboardConfigurationList_NewDashboardConfiguration"
 						label="${c:l('label_New')}"
-						tooltiptext="${c:l('button_DashboardConfigurationList_NewDashboardConfiguration.tooltiptext')}" />
+						tooltiptext="${c:l('button_DashboardConfigurationList_NewDashboardConfiguration.tooltiptext')}" sclass="z-toolbarbutton" />
 
 					<button id="btnRefresh"
 						label="${c:l('label_Refresh')}"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnHelp" label="${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"  sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>
