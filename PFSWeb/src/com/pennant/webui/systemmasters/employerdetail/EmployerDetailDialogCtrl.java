@@ -48,7 +48,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
-
+import com.pennant.backend.service.PagedListService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -291,6 +291,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Textbox lovDescCityName;
 	private transient String 		oldVar_LovDescCityName;
 
+	private transient PagedListService pagedListService;
+	
 	// ServiceDAOs / Domain Classes
 	private transient EmployerDetailService employerDetailService;
 
@@ -1747,6 +1749,14 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	}
 	public void setNotes_Entered(boolean notesEntered) {
 		this.notes_Entered = notesEntered;
+	}
+
+	public PagedListService getPagedListService() {
+		return pagedListService;
+	}
+
+	public void setPagedListService(PagedListService pagedListService) {
+		this.pagedListService = pagedListService;
 	}
 
 }
