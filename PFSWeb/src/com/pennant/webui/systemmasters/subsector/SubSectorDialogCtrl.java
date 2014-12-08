@@ -1070,8 +1070,8 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		} else {
 			Sector details = (Sector) dataObject;
 			if (details != null) {
-				this.sectorCode.setValue(details.getLovValue());
-				this.lovDescSectorCodeName.setValue(details.getLovValue() + "-" + details.getSectorDesc());
+				this.sectorCode.setValue(details.getSectorCode());
+				this.lovDescSectorCodeName.setValue(details.getSectorCode() + "-" + details.getSectorDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());

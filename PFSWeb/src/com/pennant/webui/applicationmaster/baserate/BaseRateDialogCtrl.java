@@ -1147,9 +1147,9 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	   }else{
 		   BaseRateCode details= (BaseRateCode) dataObject;
 			if (details != null) {
-				this.bRType.setValue(details.getLovValue());
+				this.bRType.setValue(details.getBRType());
 				   this.lovDescBRTypeName.setValue(
-						   details.getLovValue()+"-"+details.getBRTypeDesc());
+						   details.getBRType()+"-"+details.getBRTypeDesc());
 			}
 	   }
 	   logger.debug("Leaving"+event.toString());
